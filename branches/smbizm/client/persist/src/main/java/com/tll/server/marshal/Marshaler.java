@@ -48,8 +48,8 @@ import com.tll.model.schema.SchemaInfoException;
 import com.tll.server.rpc.entity.IEntityTypeResolver;
 
 /**
- * Marshaler - Converts server-side entities to client-bound Data transfer
- * objects and vice-versa.
+ * Marshaler - Converts server-side entities to client-bound value objects and
+ * vice-versa.
  * @author jpk
  */
 public final class Marshaler {
@@ -506,7 +506,7 @@ public final class Marshaler {
 							final IEntityType entityType = m.getEntityType();
 							final IEntity clcEntity =
 								m.isMarkedDeleted() ? null : unmarshalEntity((Class<IEntity>) etResolver
-											.resolveEntityClass(entityType), m,
+										.resolveEntityClass(entityType), m,
 										visited);
 							if(clcEntity instanceof IChildEntity) {
 								((IChildEntity) clcEntity).setParent(e);

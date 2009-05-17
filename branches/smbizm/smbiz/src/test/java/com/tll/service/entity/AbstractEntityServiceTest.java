@@ -19,6 +19,7 @@ import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
 import com.tll.di.OrmDaoModule;
 import com.tll.di.TransactionModule;
+import com.tll.di.ValidationModule;
 import com.tll.model.MockEntityFactory;
 
 /**
@@ -38,6 +39,7 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
+		modules.add(new ValidationModule());
 		modules.add(new ModelModule());
 		modules.add(new MockEntityFactoryModule(getConfig()));
 		modules.add(new DbDialectModule(getConfig()));

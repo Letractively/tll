@@ -44,6 +44,7 @@ public final class PersistContext implements Serializable {
 	private final INamedQueryResolver namedQueryResolver;
 	private final IExceptionHandler exceptionHandler;
 
+
 	/**
 	 * Constructor
 	 * @param refData
@@ -51,27 +52,26 @@ public final class PersistContext implements Serializable {
 	 * @param schemaInfo
 	 * @param marshaler
 	 * @param entityManagerFactory
+	 * @param entityTypeResolver
 	 * @param entityAssembler
 	 * @param entityServiceFactory
-	 * @param entityTypeResolver
 	 * @param namedQueryResolver
 	 * @param exceptionHandler
 	 */
 	@Inject
 	public PersistContext(RefData refData, MailManager mailManager, ISchemaInfo schemaInfo, Marshaler marshaler,
-			EntityManagerFactory entityManagerFactory, IEntityAssembler entityAssembler,
-			IEntityServiceFactory entityServiceFactory, IEntityTypeResolver entityTypeResolver,
-			INamedQueryResolver namedQueryResolver,
-			IExceptionHandler exceptionHandler) {
+			EntityManagerFactory entityManagerFactory, IEntityTypeResolver entityTypeResolver,
+			IEntityAssembler entityAssembler, IEntityServiceFactory entityServiceFactory,
+			INamedQueryResolver namedQueryResolver, IExceptionHandler exceptionHandler) {
 		super();
 		this.refData = refData;
 		this.mailManager = mailManager;
 		this.schemaInfo = schemaInfo;
 		this.marshaler = marshaler;
 		this.entityManagerFactory = entityManagerFactory;
+		this.entityTypeResolver = entityTypeResolver;
 		this.entityAssembler = entityAssembler;
 		this.entityServiceFactory = entityServiceFactory;
-		this.entityTypeResolver = entityTypeResolver;
 		this.namedQueryResolver = namedQueryResolver;
 		this.exceptionHandler = exceptionHandler;
 	}

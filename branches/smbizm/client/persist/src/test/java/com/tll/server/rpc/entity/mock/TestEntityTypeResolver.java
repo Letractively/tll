@@ -11,9 +11,8 @@ import com.tll.server.rpc.entity.IEntityTypeResolver;
 import com.tll.util.EnumUtil;
 import com.tll.util.StringUtil;
 
-
 /**
- * SmbizEntityTypeResolver
+ * TestEntityTypeResolver
  * @author jpk
  */
 public class TestEntityTypeResolver implements IEntityTypeResolver {

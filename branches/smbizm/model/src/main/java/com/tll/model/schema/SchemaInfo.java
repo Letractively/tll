@@ -185,7 +185,8 @@ public final class SchemaInfo implements ISchemaInfo {
 	 * @return true/false
 	 */
 	private boolean isRelational(final Method method) {
-		return method.getAnnotation(ManyToOne.class) != null || method.getAnnotation(OneToMany.class) != null
+		return "getParent".equals(method.getName()) || method.getAnnotation(ManyToOne.class) != null
+				|| method.getAnnotation(OneToMany.class) != null
 		|| method.getAnnotation(OneToOne.class) != null || method.getAnnotation(ManyToMany.class) != null;
 	}
 

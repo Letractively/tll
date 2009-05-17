@@ -46,23 +46,30 @@ public class BootstrapperTest {
 
 	private ServletContext getMockServletContext() {
 		assert daoMode != null;
-
+		final boolean isMock = !"ORM".equals(daoMode);
 		final StringBuilder sb = new StringBuilder();
 		sb.append("com.tll.di.VelocityModule\r\n");
 		sb.append("com.tll.di.MailModule\r\n");
 		sb.append("com.tll.di.RefDataModule\r\n");
+		sb.append("com.tll.di.ValidationModule\r\n");
 		sb.append("com.tll.di.ModelModule\r\n");
 		sb.append("com.tll.di.MockEntityFactoryModule\r\n");
-		sb.append("ORM".equals(daoMode) ? "com.tll.di.OrmDaoModule\r\n" : "com.tll.di.MockDaoModule\r\n");
+		if(!isMock) sb.append("com.tll.di.DbDialectModule\r\n");
+		sb.append(!isMock ? "com.tll.di.OrmDaoModule\r\n" : "com.tll.di.MockDaoModule\r\n");
 		sb.append("com.tll.di.EntityAssemblerModule\r\n");
 		sb.append("com.tll.di.EntityServiceFactoryModule\r\n");
-		if(employSecurity) sb.append("com.tll.di.AcegiModule\r\n");
+		if(employSecurity) sb.append("com.tll.di.SmbizAcegiModule\r\n");
+		sb.append("com.tll.di.LogExceptionHandlerModule\r\n");
+		sb.append("com.tll.di.ClientPersistModule\r\n");
+		sb.append("com.tll.di.ListingModule\r\n");
+		sb.append("com.tll.di.AppModule\r\n");
 
 		final MockServletContext context = new MockServletContext();
 		context.addInitParameter(Bootstrapper.DEPENDENCY_MODULE_CLASS_NAMES, sb.toString());
 
 		sb.setLength(0);
-		sb.append("com.tll.server.rpc.entity.PersistServiceBootstrapper\r\n");
+		sb.append("com.tll.server.rpc.entity.PersistContextBootstrapper\r\n");
+		sb.append("com.tll.server.rpc.listing.ListingContextBootstrapper\r\n");
 		if(employSecurity) sb.append("com.tll.server.SecurityContextBootstrapper\r\n");
 		sb.append("com.tll.server.AppContextBootstrapper\r\n");
 		context.addInitParameter(Bootstrapper.DEPENDENCY_HANDLER_CLASS_NAMES, sb.toString());
@@ -78,10 +85,9 @@ public class BootstrapperTest {
 		bootstraper.contextInitialized(event);
 		final PersistContext mec = (PersistContext) context.getAttribute(PersistContext.KEY);
 		final SecurityContext sc = (SecurityContext) context.getAttribute(SecurityContext.KEY);
-		// TODO move this test to webapp?
-		// final AppContext ac = (AppContext) context.getAttribute(AppContext.KEY);
+		final AppContext ac = (AppContext) context.getAttribute(AppContext.KEY);
+		Assert.assertNotNull(ac);
 		Assert.assertNotNull(mec);
-		// Assert.assertNotNull(ac);
 		if(employSecurity) Assert.assertNotNull(sc);
 	}
 }

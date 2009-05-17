@@ -48,7 +48,7 @@ public final class BuildTools {
 	                              ['com.tll.di.MockDaoModule', FLAG_MOCK],
 	                              ['com.tll.di.TransactionModule', FLAG_ORM],
 	                              ['com.tll.di.EntityServiceFactoryModule', FLAG_ALL],
-	                              ['com.tll.di.AcegiModule', FLAG_SECURITY_ACEGI],
+	                              ['com.tll.di.SmbizAcegiModule', FLAG_SECURITY_ACEGI],
 	                              ['com.tll.di.ClientPersistModule', FLAG_ALL],
 	                              ['com.tll.di.ListingModule', FLAG_ALL],
 	                              ['com.tll.di.AppModule', FLAG_ALL],

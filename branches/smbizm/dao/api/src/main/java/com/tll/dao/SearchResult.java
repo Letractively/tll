@@ -33,19 +33,28 @@ public final class SearchResult<T> {
 	}
 
 	/**
-	 * @return the uncast search result element.
+	 * @return the raw search result element.
 	 */
 	public T getElement() {
 		return element;
 	}
 
+	/**
+	 * Provides the property path that allows for value acquisition via
+	 * reflection.
+	 * @param propertyName the desired property <em>name</em> for which a full
+	 *        reflectable property path is desired
+	 * @return an OGNL compliant property path allowing for proper value
+	 *         acquisition via reflection
+	 */
 	public String getPropertyPath(final String propertyName) {
+		if(propertyName == null) return "element";
 		if(element instanceof IEntity) {
 			// entity
-			return propertyName == null ? "element" : ("element." + propertyName);
+			return "element." + propertyName;
 		}
 		// scalar
-		return propertyName == null ? "element" : ("element." + ((IScalar) element).getPropertyPath(propertyName));
+		return "element." + ((IScalar) element).getPropertyPath(propertyName);
 	}
 
 	/**

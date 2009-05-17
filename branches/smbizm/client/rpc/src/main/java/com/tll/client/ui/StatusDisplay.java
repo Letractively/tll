@@ -33,6 +33,21 @@ public class StatusDisplay extends Composite implements IStatusHandler {
 		public static final String STATUS_DISPLAY = "statusDisplay";
 	} // Styles
 
+	/**
+	 * StatusMsgDisplay
+	 * @author jpk
+	 */
+	private static final class StatusMsgDisplay extends Composite {
+
+		private final Label msg;
+
+		public StatusMsgDisplay(Msg statusMsg) {
+			msg = new Label(statusMsg.getMsg());
+			msg.setStylePrimaryName(statusMsg.getLevel().getName().toLowerCase());
+			initWidget(msg);
+		}
+	}
+
 	private final ScrollPanel sp = new ScrollPanel();
 	private final VerticalPanel vp = new VerticalPanel();
 	private final int attribs;
@@ -63,17 +78,6 @@ public class StatusDisplay extends Composite implements IStatusHandler {
 		final Status status = event.getStatus();
 		if(status != null) {
 			handleStatus(status);
-		}
-	}
-
-	private static final class StatusMsgDisplay extends Composite {
-
-		private final Label msg;
-
-		public StatusMsgDisplay(Msg statusMsg) {
-			msg = new Label(statusMsg.getMsg());
-			msg.setStylePrimaryName(statusMsg.getLevel().getName().toLowerCase());
-			initWidget(msg);
 		}
 	}
 

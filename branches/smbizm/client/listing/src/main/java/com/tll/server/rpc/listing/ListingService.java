@@ -209,6 +209,7 @@ IListingService<S, Model> {
 					ListingCache.clearState(request, listingName);
 				}
 				listingStatus = ListingStatus.NOT_CACHED;
+				status.addMsg("Cleared listing data for " + listingName, MsgLevel.INFO, MsgAttr.STATUS.flag);
 			}
 			else if(listingOp == ListingOp.CLEAR_ALL) {
 				// clear all
@@ -218,6 +219,7 @@ IListingService<S, Model> {
 					ListingCache.clearAll(request, listingRequest.getRetainStateOnClear());
 				}
 				listingStatus = ListingStatus.NOT_CACHED;
+				status.addMsg("Cleared ALL listing data", MsgLevel.INFO, MsgAttr.STATUS.flag);
 			}
 			else if(handler != null && !status.hasErrors()) {
 				// cache listing handler
@@ -230,7 +232,7 @@ IListingService<S, Model> {
 			}
 		} // !status.hasErrors()
 
-		final ListingPayload<Model> p = new ListingPayload<Model>(listingName, listingStatus);
+		final ListingPayload<Model> p = new ListingPayload<Model>(status, listingName, listingStatus);
 
 		// only provide page data when it is needed at the client and there are no
 		// errors

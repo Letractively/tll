@@ -28,11 +28,8 @@ public class SecurityContextBootstrapper implements IBootstrapHandler {
 
 	@Override
 	public void startup(Injector injector, ServletContext servletContext) {
-		AuthenticationManager authenticationManager = null;
-		AccessDecisionManager httpRequesetAccessDecisionManager = null;
-
-		authenticationManager = injector.getInstance(AuthenticationManager.class);
-		httpRequesetAccessDecisionManager =
+		final AuthenticationManager authenticationManager = injector.getInstance(AuthenticationManager.class);
+		final AccessDecisionManager httpRequesetAccessDecisionManager =
 			injector.getInstance(Key.get(AccessDecisionManager.class, Names.named(AcegiModule.ADM_HTTP_REQUEST)));
 
 		log.debug("Setting security context..");

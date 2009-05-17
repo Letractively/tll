@@ -5,20 +5,30 @@
  */
 package com.tll.di;
 
+import javax.persistence.EntityManagerFactory;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.config.Config;
 import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
+import com.tll.mail.MailManager;
+import com.tll.model.IEntityAssembler;
+import com.tll.model.schema.ISchemaInfo;
+import com.tll.refdata.RefData;
+import com.tll.server.marshal.Marshaler;
+import com.tll.server.rpc.IExceptionHandler;
 import com.tll.server.rpc.entity.IEntityTypeResolver;
 import com.tll.server.rpc.entity.INamedQueryResolver;
 import com.tll.server.rpc.entity.IPersistServiceImplResolver;
 import com.tll.server.rpc.entity.PersistContext;
 import com.tll.server.rpc.entity.PersistServiceDelegate;
-
+import com.tll.service.entity.IEntityServiceFactory;
 
 /**
  * ClientPersistModule
@@ -126,11 +136,41 @@ public class ClientPersistModule extends AbstractModule implements IConfigAware 
 		}
 		bind(INamedQueryResolver.class).to(nqClass).in(Scopes.SINGLETON);
 
+		// manually construct the persist context instance since we have optional
+		// constructor params
+
 		// PersistContext
-		bind(PersistContext.class).in(Scopes.SINGLETON);
+		bind(PersistContext.class).toProvider(new Provider<PersistContext>() {
+
+			@Inject
+			RefData refData;
+			@Inject(optional = true)
+			MailManager mailManager;
+			@Inject
+			ISchemaInfo schemaInfo;
+			@Inject
+			Marshaler marshaler;
+			@Inject(optional = true)
+			EntityManagerFactory entityManagerFactory;
+			@Inject
+			IEntityTypeResolver entityTypeResolver;
+			@Inject
+			IEntityAssembler entityAssembler;
+			@Inject
+			IEntityServiceFactory entityServiceFactory;
+			@Inject
+			INamedQueryResolver namedQueryResolver;
+			@Inject
+			IExceptionHandler exceptionHandler;
+
+			@Override
+			public PersistContext get() {
+				return new PersistContext(refData, mailManager, schemaInfo, marshaler, entityManagerFactory,
+						entityTypeResolver, entityAssembler, entityServiceFactory, namedQueryResolver, exceptionHandler);
+			}
+		}).in(Scopes.SINGLETON);
 
 		// PersistServiceDelegate
 		bind(PersistServiceDelegate.class).in(Scopes.SINGLETON);
 	}
-
 }

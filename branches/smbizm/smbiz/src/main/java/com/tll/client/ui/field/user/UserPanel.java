@@ -40,6 +40,10 @@ public class UserPanel extends FlowFieldPanel {
 			fw = fg.getFieldWidgetByName("userEmailAddress");
 			fw.getWidget().addStyleName(Style.GAP_RIGHT);
 			cmpsr.addField(fw);
+			cmpsr.stopFlow();
+			cmpsr.addField(fg.getFieldWidgetByName("userLocked"));
+			cmpsr.addField(fg.getFieldWidgetByName("userEnabled"));
+			cmpsr.resetFlow();
 			cmpsr.addField(fg.getFieldWidgetByName("user" + Model.NAME_PROPERTY));
 			cmpsr.addField(fg.getFieldWidgetByName("userExpires"));
 
@@ -60,13 +64,6 @@ public class UserPanel extends FlowFieldPanel {
 			cmpsr.addField(fg.getFieldWidgetByName("user" + Model.DATE_CREATED_PROPERTY));
 			cmpsr.stopFlow();
 			cmpsr.addField(fg.getFieldWidgetByName("user" + Model.DATE_MODIFIED_PROPERTY));
-			cmpsr.resetFlow();
-
-			// second row
-			cmpsr.newRow();
-			cmpsr.addField(fg.getFieldWidgetByName("userLocked"));
-			cmpsr.stopFlow();
-			cmpsr.addField(fg.getFieldWidgetByName("userEnabled"));
 			cmpsr.resetFlow();
 
 			// third row

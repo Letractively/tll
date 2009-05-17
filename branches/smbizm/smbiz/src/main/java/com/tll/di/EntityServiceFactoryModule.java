@@ -106,6 +106,7 @@ public class EntityServiceFactoryModule extends AbstractModule {
 
 			public UserCache get() {
 				final Cache cache = CacheManager.getInstance().getCache(USER_DETAILS_CACHE_NAME);
+				assert cache != null;
 				final EhCacheBasedUserCache uc = new EhCacheBasedUserCache();
 				uc.setCache(cache);
 				return uc;

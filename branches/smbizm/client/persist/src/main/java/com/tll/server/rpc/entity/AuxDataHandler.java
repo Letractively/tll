@@ -16,10 +16,7 @@ import java.util.Set;
 import com.tll.SystemError;
 import com.tll.common.data.AuxDataPayload;
 import com.tll.common.data.AuxDataRequest;
-import com.tll.common.data.IModelRelatedRequest;
-import com.tll.common.data.Status;
 import com.tll.common.model.IEntityType;
-import com.tll.common.model.IEntityTypeProvider;
 import com.tll.common.model.Model;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
@@ -34,36 +31,12 @@ import com.tll.service.entity.IEntityService;
  */
 public abstract class AuxDataHandler {
 
-	static final class EntityTypeRequest implements IModelRelatedRequest, IEntityTypeProvider {
-
-		private final IEntityType etype;
-		private final String descriptor;
-
-		/**
-		 * Constructor
-		 * @param etype
-		 * @param descriptor
-		 */
-		public EntityTypeRequest(IEntityType etype, String descriptor) {
-			super();
-			this.etype = etype;
-			this.descriptor = descriptor;
-		}
-
-		@Override
-		public IEntityType getEntityType() {
-			return etype;
-		}
-
-		@Override
-		public String descriptor() {
-			return descriptor;
-		}
-	} // EntityTypeRequest
-
 	/**
 	 * Attempts to resolve marshaling options from the persist svc delegate
 	 * falling back on the provided defaults.
+	 * <p>
+	 * NOTE: we provide a <code>null</code> status instance since the error is
+	 * spurious since we have a fallback marshal options instance.
 	 * @param delegate
 	 * @param entityType
 	 * @param fallback Used when no persist svc is resolved from the given entity
@@ -71,9 +44,9 @@ public abstract class AuxDataHandler {
 	 * @return Never-<code>null</code> instance.
 	 */
 	private static MarshalOptions getMarshalOptions(PersistServiceDelegate delegate, IEntityType entityType,
-			MarshalOptions fallback, Status status) {
+			MarshalOptions fallback) {
 		try {
-			return delegate.getMarshalOptions(new EntityTypeRequest(entityType, "Marshal Options request"), status);
+			return delegate.getMarshalOptions(new EntityTypeRequest(entityType, "Marshal Options request"), null);
 		}
 		catch(final SystemError e) {
 			return fallback;
@@ -128,7 +101,7 @@ public abstract class AuxDataHandler {
 							MsgLevel.ERROR, MsgAttr.STATUS.flag);
 				}
 				else {
-					final MarshalOptions mo = getMarshalOptions(delegate, et, MarshalOptions.NO_REFERENCES, payload.getStatus());
+					final MarshalOptions mo = getMarshalOptions(delegate, et, MarshalOptions.NO_REFERENCES);
 					final List<Model> elist = new ArrayList<Model>(list.size());
 					for(final IEntity e : list) {
 						final Model group = context.getMarshaler().marshalEntity(e, mo);
@@ -149,7 +122,7 @@ public abstract class AuxDataHandler {
 			final IEntity e =
 				context.getEntityAssembler().assembleEntity(
 						(Class<IEntity>) context.getEntityTypeResolver().resolveEntityClass(et), null, false);
-			final MarshalOptions mo = getMarshalOptions(delegate, et, MarshalOptions.NO_REFERENCES, payload.getStatus());
+			final MarshalOptions mo = getMarshalOptions(delegate, et, MarshalOptions.NO_REFERENCES);
 			final Model model = context.getMarshaler().marshalEntity(e, mo);
 			if(entityPrototypes == null) {
 				entityPrototypes = new HashSet<Model>();

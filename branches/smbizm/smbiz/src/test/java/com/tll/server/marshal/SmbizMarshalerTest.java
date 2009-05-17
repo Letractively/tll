@@ -13,6 +13,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.tll.AbstractInjectedTest;
 import com.tll.common.model.Model;
@@ -23,6 +24,8 @@ import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
 import com.tll.model.IEntity;
 import com.tll.model.MockEntityFactory;
+import com.tll.server.rpc.entity.IEntityTypeResolver;
+import com.tll.server.rpc.entity.SmbizEntityTypeResolver;
 import com.tll.util.CommonUtil;
 
 /**
@@ -54,6 +57,13 @@ import com.tll.util.CommonUtil;
 		modules.add(new ModelModule());
 		modules.add(new MockEntityFactoryModule(config));
 		modules.add(new MockDaoModule(config));
+		modules.add(new Module() {
+
+			@Override
+			public void configure(Binder binder) {
+				binder.bind(IEntityTypeResolver.class).toInstance(new SmbizEntityTypeResolver());
+			}
+		});
 	}
 
 	private Marshaler getMarshaler() {

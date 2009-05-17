@@ -13,10 +13,10 @@ import java.util.Map;
 public interface IScalar {
 
 	/**
+	 * Provides an OGNL compliant property path such that it is marshalable.
 	 * @param propertyName
 	 * @return The working property path
 	 */
-	// TODO make better
 	String getPropertyPath(String propertyName);
 
 	/**

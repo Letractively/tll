@@ -1,6 +1,18 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="smbiz-server-tests">
   
+  <test name="entity-type-tests" annotations="JDK">
+    <packages>
+      <package name="com.tll.server.rpc.entity.*" />
+    </packages>
+  </test>
+
+  <test name="marshal-tests" annotations="JDK">
+    <packages>
+      <package name="com.tll.server.marshal.*" />
+    </packages>
+  </test>
+
   <test name="server-bootstrap-test-orm-security" annotations="JDK">
     <parameter name="daoMode" value="ORM" />
     <parameter name="employSecurity" value="true" />
@@ -40,10 +52,4 @@
     </packages>
   </test>
   
-  <test name="marshal-tests" annotations="JDK">
-    <packages>
-      <package name="com.tll.server.marshal.*" />
-    </packages>
-  </test>
-
 </suite>

@@ -5,6 +5,7 @@
  */
 package com.tll.server.rpc.listing.mock;
 
+import com.google.inject.Inject;
 import com.tll.common.data.ListingRequest;
 import com.tll.common.model.IEntityType;
 import com.tll.common.search.ISearch;
@@ -28,6 +29,7 @@ public class TestListingDataProviderResolver implements IListingDataProviderReso
 	 * Constructor
 	 * @param etResolver
 	 */
+	@Inject
 	public TestListingDataProviderResolver(IEntityTypeResolver etResolver) {
 		super();
 		this.etResolver = etResolver;

@@ -38,7 +38,7 @@ import com.tll.config.IConfigKey;
  * dependency injection context.
  * @author jpk
  */
-public class AcegiModule extends AbstractModule implements IConfigAware {
+public abstract class AcegiModule extends AbstractModule implements IConfigAware {
 
 	private static final Log log = LogFactory.getLog(AcegiModule.class);
 
@@ -52,10 +52,9 @@ public class AcegiModule extends AbstractModule implements IConfigAware {
 	 * ConfigKeys - Config keys for the Acegi module.
 	 * @author jpk
 	 */
-	private static enum ConfigKeys implements IConfigKey {
+	public static enum ConfigKeys implements IConfigKey {
 
-		APP_NAME("server.app.name"),
-		USER_DETAILS_SERVICE_CLASSNAME("server.security.userDetailsService.classname");
+		APP_NAME("server.app.name");
 
 		private final String key;
 
@@ -92,35 +91,17 @@ public class AcegiModule extends AbstractModule implements IConfigAware {
 		this.config = config;
 	}
 
+	/**
+	 * Necessary provision to bind {@link UserDetailsService}.
+	 */
+	protected abstract void bindUserDetailsService();
+
 	@Override
 	protected void configure() {
 		if(config == null) throw new IllegalStateException("No config instance specified.");
 		log.info("Employing Acegi Security");
 
-		// UserDetailsService
-		bind(UserDetailsService.class).toProvider(new Provider<UserDetailsService>() {
-
-			@Override
-			public UserDetailsService get() {
-				final String cn = config.getString(ConfigKeys.USER_DETAILS_SERVICE_CLASSNAME.getKey());
-				if(cn == null) {
-					throw new IllegalStateException("No user details service class name specified in the configuration");
-				}
-				try {
-					return (UserDetailsService) Class.forName(cn).newInstance();
-				}
-				catch(final ClassNotFoundException e) {
-					throw new IllegalStateException("No user details service found for name: " + cn);
-				}
-				catch(final InstantiationException e) {
-					throw new IllegalStateException("Unable to instantiate for name: " + cn);
-				}
-				catch(final IllegalAccessException e) {
-					throw new IllegalStateException("Unable to access for name: " + cn);
-				}
-			}
-		}).in(Scopes.SINGLETON);
-
+		bindUserDetailsService();
 
 		// SaltSource
 		bind(SaltSource.class).toProvider(new Provider<SaltSource>() {

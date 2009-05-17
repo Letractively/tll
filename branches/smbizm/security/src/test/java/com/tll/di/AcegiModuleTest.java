@@ -5,12 +5,15 @@
  */
 package com.tll.di;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.AccessDecisionManager;
 import org.springframework.security.AuthenticationManager;
 import org.springframework.security.providers.anonymous.AnonymousAuthenticationProvider;
 import org.springframework.security.providers.dao.DaoAuthenticationProvider;
 import org.springframework.security.providers.dao.UserCache;
 import org.springframework.security.userdetails.UserDetails;
+import org.springframework.security.userdetails.UserDetailsService;
+import org.springframework.security.userdetails.UsernameNotFoundException;
 import org.testng.annotations.Test;
 
 import com.google.inject.Binder;
@@ -29,6 +32,28 @@ import com.tll.config.Config;
  */
 @Test
 public class AcegiModuleTest {
+
+	static class TestAcegiModule extends AcegiModule {
+
+		/**
+		 * Constructor
+		 * @param config
+		 */
+		public TestAcegiModule(Config config) {
+			super(config);
+		}
+
+		@Override
+		protected void bindUserDetailsService() {
+			bind(UserDetailsService.class).toInstance(new UserDetailsService() {
+
+				@Override
+				public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
+					return null;
+				}
+			});
+		}
+	}
 
 	public void testAcegiModuleLoad() throws Exception {
 		final Config config = Config.load();
@@ -59,7 +84,7 @@ public class AcegiModuleTest {
 
 				}).in(Scopes.SINGLETON);
 			}
-		}, new AcegiModule(config));
+		}, new TestAcegiModule(config));
 
 		// verify dao auth provider
 		final DaoAuthenticationProvider p = i.getInstance(DaoAuthenticationProvider.class);

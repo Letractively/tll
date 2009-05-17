@@ -35,13 +35,6 @@
       <artifactId>tll-config</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!-- 
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-service</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    -->
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-servlet</artifactId>

@@ -9,6 +9,8 @@ import java.io.Serializable;
 
 import javax.servlet.ServletContext;
 
+import com.google.inject.Inject;
+
 /**
  * ListingContext
  * @author jpk
@@ -29,6 +31,7 @@ public class ListingContext implements Serializable {
 	 * Constructor
 	 * @param listingDataProviderResolver
 	 */
+	@Inject
 	public ListingContext(IListingDataProviderResolver listingDataProviderResolver) {
 		super();
 		this.listingDataProviderResolver = listingDataProviderResolver;

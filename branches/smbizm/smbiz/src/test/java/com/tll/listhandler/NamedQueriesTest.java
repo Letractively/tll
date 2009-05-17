@@ -33,6 +33,7 @@ import com.tll.di.MockDaoModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
 import com.tll.di.OrmDaoModule;
+import com.tll.di.ValidationModule;
 import com.tll.model.IEntity;
 import com.tll.model.schema.PropertyType;
 import com.tll.service.entity.IEntityServiceFactory;
@@ -105,6 +106,7 @@ import com.tll.service.entity.IEntityServiceFactory;
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
+		modules.add(new ValidationModule());
 		modules.add(new ModelModule());
 		if(mock) {
 			modules.add(new MockEntityFactoryModule(getConfig()));

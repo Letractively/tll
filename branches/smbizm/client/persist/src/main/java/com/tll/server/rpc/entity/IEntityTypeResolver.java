@@ -14,17 +14,17 @@ import com.tll.common.model.IEntityType;
 public interface IEntityTypeResolver {
 
 	/**
-	 * Resolves the given class to an entity type.
+	 * Resolves the given {@link Class} to an {@link IEntityType}.
 	 * @param clz the entity class type
-	 * @return the resolved entity type
+	 * @return the resolved {@link IEntityType}
 	 * @throws IllegalArgumentException when the entity class type can't be
 	 *         resolved.
 	 */
 	IEntityType resolveEntityType(Class<?> clz) throws IllegalArgumentException;
 
 	/**
-	 * Resolves the given entity type to a class.
-	 * @param entityType
+	 * Resolves the given {@link IEntityType} to a {@link Class}.
+	 * @param entityType the entity type
 	 * @return the resolved entity class type
 	 * @throws IllegalArgumentException when the entity type can't be resolved.
 	 */

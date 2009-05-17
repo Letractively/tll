@@ -35,7 +35,7 @@ public enum SmbizEntityType implements IEntityType, INameValueProvider<String> {
 	ORDER_ITEM_TRANS("Order Item Transaction"),
 	PAYMENT_INFO("Payment Info"),
 	PAYMENT_TRANS("Payment Transaction"),
-	PCH("Product Catetgory Hierarchy"),
+	/*PCH("Product Catetgory Hierarchy"),*/
 	PROD_CAT("Product Category Binder"),
 	PRODUCT_CATEGORY("Product Category"),
 	PRODUCT_INVENTORY("Inventory Product"),

@@ -17,7 +17,7 @@ import com.tll.service.entity.user.IUserService;
 import com.tll.service.entity.user.UserService;
 
 /**
- * AccountRelatedServiceTest
+ * UserServiceTest
  * @author jpk
  */
 @Test(groups = "service.entity")
