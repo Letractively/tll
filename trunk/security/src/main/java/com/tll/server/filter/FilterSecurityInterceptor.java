@@ -17,7 +17,6 @@ import org.springframework.security.intercept.web.FilterInvocationDefinitionSour
 import org.springframework.security.intercept.web.FilterInvocationDefinitionSourceEditor;
 
 import com.tll.server.SecurityContext;
-import com.tll.server.SecurityMode;
 
 /**
  * FilterSecurityInterceptor
@@ -35,32 +34,24 @@ public class FilterSecurityInterceptor extends AbstractSecurityFilter {
 	public void init(FilterConfig config) throws ServletException {
 		log.debug("Initializing the FilterSecurityInterceptor..");
 		final SecurityContext sc = getSecurityContext(config);
-		if(sc.getSecurityMode() == SecurityMode.ACEGI) {
-			wrapped.setAuthenticationManager(sc.getAuthenticationManager());
-			wrapped.setAccessDecisionManager(sc.getHttpRequestAccessDecisionManager());
+		wrapped.setAuthenticationManager(sc.getAuthenticationManager());
+		wrapped.setAccessDecisionManager(sc.getHttpRequestAccessDecisionManager());
 
-			final String ods = config.getInitParameter("objectDefinitionSource");
-			if(ods == null) {
-				throw new Error("The init parameter 'objectDefinitionSource' must be declared");
-			}
-			final FilterInvocationDefinitionSourceEditor editor = new FilterInvocationDefinitionSourceEditor();
-			editor.setAsText(ods);
-			final FilterInvocationDefinitionSource fids = (FilterInvocationDefinitionSource) editor.getValue();
-			wrapped.setObjectDefinitionSource(fids);
+		final String ods = config.getInitParameter("objectDefinitionSource");
+		if(ods == null) {
+			throw new Error("The init parameter 'objectDefinitionSource' must be declared");
 		}
+		final FilterInvocationDefinitionSourceEditor editor = new FilterInvocationDefinitionSourceEditor();
+		editor.setAsText(ods);
+		final FilterInvocationDefinitionSource fids = (FilterInvocationDefinitionSource) editor.getValue();
+		wrapped.setObjectDefinitionSource(fids);
 	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
 		log.debug("FilterSecurityInterceptor filtering..");
-		final SecurityContext sc = getSecurityContext(request);
-		if(sc.getSecurityMode() == SecurityMode.ACEGI) {
-			wrapped.doFilter(request, response, chain);
-		}
-		else {
-			chain.doFilter(request, response);
-		}
+		wrapped.doFilter(request, response, chain);
 	}
 
 }

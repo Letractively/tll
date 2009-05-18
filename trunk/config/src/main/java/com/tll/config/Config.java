@@ -4,6 +4,7 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,20 +31,29 @@ public final class Config implements Configuration {
 	private static final Log log = LogFactory.getLog(Config.class);
 
 	/**
-	 * The base config file name.
+	 * The default loading routine where a classpath resource named:
+	 * {@link ConfigRef#DEFAULT_NAME} is sought.
+	 * @return New {@link Config} instance.
 	 */
-	public static final String DEFAULT_CONFIG_PROPERTIES_FILE_NAME = "config.properties";
+	public static Config load() {
+		return load(new ConfigRef());
+	}
 
 	/**
-	 * The config instance
+	 * Loads config resources returning a new {@link Config} instance.
+	 * @param refs The required resource refs defining what and how to load
+	 * @return New {@link Config} instance
 	 */
-	private static final Config instance = new Config();
-
-	/**
-	 * @return The {@link Config} instance.
-	 */
-	public static final Config instance() {
-		return instance;
+	public static Config load(ConfigRef... refs) {
+		if(refs == null || refs.length < 1) throw new IllegalArgumentException("No config refs specified.");
+		Config c = new Config();
+		for(ConfigRef ref : refs) {
+			Collection<URL> urls = ref.urls;
+			for(URL url : urls) {
+				c.loadProperties(url, ref.disableDelimeterParsing, true);
+			}
+		}
+		return c;
 	}
 
 	/**
@@ -53,34 +63,10 @@ public final class Config implements Configuration {
 
 	/**
 	 * Constructor
-	 * @throws RuntimeException When the configuration is not successfully loaded.
 	 */
 	private Config() {
 		super();
 		root = new CombinedConfiguration();
-	}
-
-	/**
-	 * Attempts to load properties from
-	 * {@link #DEFAULT_CONFIG_PROPERTIES_FILE_NAME} at the root of the classpath
-	 * with <em>NO</em> delimeter parsing.
-	 * @see #load(boolean, boolean)
-	 */
-	public void load() {
-		load(true, false);
-	}
-
-	/**
-	 * Attempts to load properties from
-	 * {@link #DEFAULT_CONFIG_PROPERTIES_FILE_NAME} at the root of the classpath.
-	 * @param disableDelimeterParsing
-	 * @param merge Replace existing properties with those of the same name at the
-	 *        given url?
-	 * @see #loadProperties(URL, boolean, boolean)
-	 */
-	public void load(boolean disableDelimeterParsing, boolean merge) {
-		loadProperties((Thread.currentThread().getContextClassLoader()).getResource(DEFAULT_CONFIG_PROPERTIES_FILE_NAME),
-				disableDelimeterParsing, merge);
 	}
 
 	/**
@@ -93,7 +79,7 @@ public final class Config implements Configuration {
 	 * @see CombinedConfiguration#append(Configuration)
 	 */
 	@SuppressWarnings("unchecked")
-	public void loadProperties(URL url, boolean disableDelimeterParsing, boolean merge) {
+	private void loadProperties(URL url, boolean disableDelimeterParsing, boolean merge) {
 		PropertiesConfiguration props;
 
 		// load the required base props
@@ -103,10 +89,11 @@ public final class Config implements Configuration {
 			props.load(url);
 		}
 		catch(ConfigurationException ce) {
-			throw new RuntimeException("Unable to load base configuration: " + ce.getMessage(), ce);
+			throw new RuntimeException("Unable to load properties '" + url + "': " + ce.getMessage(), ce);
 		}
 
 		if(merge) {
+			root.setDelimiterParsingDisabled(disableDelimeterParsing);
 			for(Iterator<String> itr = props.getKeys(); itr.hasNext();) {
 				String key = itr.next();
 				root.setProperty(key, props.getProperty(key));
@@ -119,178 +106,171 @@ public final class Config implements Configuration {
 		log.info("Properties loaded for: " + url.getPath());
 	}
 
-	private CombinedConfiguration safeGetRoot() {
-		assert root != null;
-		if(root.isEmpty()) {
-			// attempt to load default config props..
-			load();
-		}
-		return root;
-	}
-
 	public void addProperty(String key, Object value) {
-		safeGetRoot().addProperty(key, value);
+		root.addProperty(key, value);
 	}
 
 	public void clear() {
-		safeGetRoot().clear();
+		root.clear();
 	}
 
 	public void clearProperty(String key) {
-		safeGetRoot().clearProperty(key);
+		root.clearProperty(key);
 	}
 
 	public boolean containsKey(String key) {
-		return safeGetRoot().containsKey(key);
+		return root.containsKey(key);
 	}
 
 	public BigDecimal getBigDecimal(String key, BigDecimal defaultValue) {
-		return safeGetRoot().getBigDecimal(key, defaultValue);
+		return root.getBigDecimal(key, defaultValue);
 	}
 
 	public BigDecimal getBigDecimal(String key) {
-		return safeGetRoot().getBigDecimal(key);
+		return root.getBigDecimal(key);
 	}
 
 	public BigInteger getBigInteger(String key, BigInteger defaultValue) {
-		return safeGetRoot().getBigInteger(key, defaultValue);
+		return root.getBigInteger(key, defaultValue);
 	}
 
 	public BigInteger getBigInteger(String key) {
-		return safeGetRoot().getBigInteger(key);
+		return root.getBigInteger(key);
 	}
 
 	public boolean getBoolean(String key, boolean defaultValue) {
-		return safeGetRoot().getBoolean(key, defaultValue);
+		return root.getBoolean(key, defaultValue);
 	}
 
 	public Boolean getBoolean(String key, Boolean defaultValue) {
-		return safeGetRoot().getBoolean(key, defaultValue);
+		return root.getBoolean(key, defaultValue);
 	}
 
 	public boolean getBoolean(String key) {
-		return safeGetRoot().getBoolean(key);
+		return root.getBoolean(key);
 	}
 
 	public byte getByte(String key, byte defaultValue) {
-		return safeGetRoot().getByte(key, defaultValue);
+		return root.getByte(key, defaultValue);
 	}
 
 	public Byte getByte(String key, Byte defaultValue) {
-		return safeGetRoot().getByte(key, defaultValue);
+		return root.getByte(key, defaultValue);
 	}
 
 	public byte getByte(String key) {
-		return safeGetRoot().getByte(key);
+		return root.getByte(key);
 	}
 
 	public double getDouble(String key, double defaultValue) {
-		return safeGetRoot().getDouble(key, defaultValue);
+		return root.getDouble(key, defaultValue);
 	}
 
 	public Double getDouble(String key, Double defaultValue) {
-		return safeGetRoot().getDouble(key, defaultValue);
+		return root.getDouble(key, defaultValue);
 	}
 
 	public double getDouble(String key) {
-		return safeGetRoot().getDouble(key);
+		return root.getDouble(key);
 	}
 
 	public float getFloat(String key, float defaultValue) {
-		return safeGetRoot().getFloat(key, defaultValue);
+		return root.getFloat(key, defaultValue);
 	}
 
 	public Float getFloat(String key, Float defaultValue) {
-		return safeGetRoot().getFloat(key, defaultValue);
+		return root.getFloat(key, defaultValue);
 	}
 
 	public float getFloat(String key) {
-		return safeGetRoot().getFloat(key);
+		return root.getFloat(key);
 	}
 
 	public int getInt(String key, int defaultValue) {
-		return safeGetRoot().getInt(key, defaultValue);
+		return root.getInt(key, defaultValue);
 	}
 
 	public int getInt(String key) {
-		return safeGetRoot().getInt(key);
+		return root.getInt(key);
 	}
 
 	public Integer getInteger(String key, Integer defaultValue) {
-		return safeGetRoot().getInteger(key, defaultValue);
+		return root.getInteger(key, defaultValue);
 	}
 
-	public Iterator<?> getKeys() {
-		return safeGetRoot().getKeys();
+	@SuppressWarnings("unchecked")
+	public Iterator<String> getKeys() {
+		return root.getKeys();
 	}
 
-	public Iterator<?> getKeys(String prefix) {
-		return safeGetRoot().getKeys(prefix);
+	@SuppressWarnings("unchecked")
+	public Iterator<String> getKeys(String prefix) {
+		return root.getKeys(prefix);
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<?> getList(String key, List defaultValue) {
-		return safeGetRoot().getList(key, defaultValue);
+		return root.getList(key, defaultValue);
 	}
 
 	public List<?> getList(String key) {
-		return safeGetRoot().getList(key);
+		return root.getList(key);
 	}
 
 	public long getLong(String key, long defaultValue) {
-		return safeGetRoot().getLong(key, defaultValue);
+		return root.getLong(key, defaultValue);
 	}
 
 	public Long getLong(String key, Long defaultValue) {
-		return safeGetRoot().getLong(key, defaultValue);
+		return root.getLong(key, defaultValue);
 	}
 
 	public long getLong(String key) {
-		return safeGetRoot().getLong(key);
+		return root.getLong(key);
 	}
 
 	public Properties getProperties(String key) {
-		return safeGetRoot().getProperties(key);
+		return root.getProperties(key);
 	}
 
 	public Object getProperty(String key) {
-		return safeGetRoot().getProperty(key);
+		return root.getProperty(key);
 	}
 
 	public short getShort(String key, short defaultValue) {
-		return safeGetRoot().getShort(key, defaultValue);
+		return root.getShort(key, defaultValue);
 	}
 
 	public Short getShort(String key, Short defaultValue) {
-		return safeGetRoot().getShort(key, defaultValue);
+		return root.getShort(key, defaultValue);
 	}
 
 	public short getShort(String key) {
-		return safeGetRoot().getShort(key);
+		return root.getShort(key);
 	}
 
 	public String getString(String key, String defaultValue) {
-		return safeGetRoot().getString(key, defaultValue);
+		return root.getString(key, defaultValue);
 	}
 
 	public String getString(String key) {
-		return safeGetRoot().getString(key);
+		return root.getString(key);
 	}
 
 	public String[] getStringArray(String key) {
-		return safeGetRoot().getStringArray(key);
+		return root.getStringArray(key);
 	}
 
 	public boolean isEmpty() {
-		return safeGetRoot().isEmpty();
+		return root.isEmpty();
 	}
 
 	public void setProperty(String key, Object value) {
-		safeGetRoot().setProperty(key, value);
+		root.setProperty(key, value);
 	}
 
 	public Configuration subset(String prefix) {
-		return safeGetRoot().subset(prefix);
+		return root.subset(prefix);
 	}
 
 	/**
@@ -313,14 +293,23 @@ public final class Config implements Configuration {
 		return pc;
 	}
 
-	private PropertiesConfiguration filter(IConfigKeyProvider keyProvider) {
-		String[] keys = keyProvider == null ? null : keyProvider.getConfigKeys();
-		if(keys == null) return null;
-		PropertiesConfiguration pc = new PropertiesConfiguration();
-		for(String key : keys) {
-			pc.addProperty(key, root.getProperty(key));
+	/**
+	 * Filters the held properties returning a new instance containing only the
+	 * filtered properties.
+	 * @param filter the required filter to employ
+	 * @return a new {@link Config} containing only the filtered properties.
+	 */
+	@SuppressWarnings("unchecked")
+	public Config filter(IConfigFilter filter) {
+		if(filter == null) throw new IllegalArgumentException("A filter must be specified.");
+		Config cfg = new Config();
+		for(Iterator<String> itr = root.getKeys(); itr.hasNext();) {
+			String key = itr.next();
+			if(filter.accept(key)) {
+				cfg.addProperty(key, this.getProperty(key));
+			}
 		}
-		return pc;
+		return cfg;
 	}
 
 	/**
@@ -330,17 +319,6 @@ public final class Config implements Configuration {
 	 */
 	public void saveAsPropFile(File f) throws ConfigurationException {
 		subsetAsProps(null, null).save(f);
-	}
-
-	/**
-	 * Saves the cofiguration properties to file given a key provider which serves
-	 * as a filter.
-	 * @param f The file to save to
-	 * @param keyProvider A config key provider
-	 * @throws ConfigurationException
-	 */
-	public void saveAsPropFile(File f, IConfigKeyProvider keyProvider) throws ConfigurationException {
-		filter(keyProvider).save(f);
 	}
 
 	/**
@@ -368,15 +346,6 @@ public final class Config implements Configuration {
 	}
 
 	/**
-	 * Puts the held properties in a distinct map given a config key provider.
-	 * @param keyProvider The config key provider
-	 * @return Map of String property names and String property values
-	 */
-	public Map<String, String> asMap(IConfigKeyProvider keyProvider) {
-		return asMap(filter(keyProvider));
-	}
-
-	/**
 	 * Puts the held properties in distinct String keyed and valued map.
 	 * @param prefix the prefix of the keys for the subset. May be
 	 *        <code>null</code> in which case all properties are considered.
@@ -386,16 +355,6 @@ public final class Config implements Configuration {
 	 */
 	public Map<String, String> asMap(String prefix, String prependToken) {
 		return asMap(subsetAsProps(prefix, prependToken));
-	}
-
-	/**
-	 * Provides a {@link Properties} instance representation of this config
-	 * instance.
-	 * @param keyProvider The config key provider
-	 * @return java.util.Properties instance
-	 */
-	public Properties asProperties(IConfigKeyProvider keyProvider) {
-		return ConfigurationConverter.getProperties(filter(keyProvider));
 	}
 
 	/**

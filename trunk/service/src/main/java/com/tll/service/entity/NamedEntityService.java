@@ -6,6 +6,7 @@
 package com.tll.service.entity;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.ValidatorFactory;
 
 import com.tll.dao.IEntityDao;
 import com.tll.model.IEntityAssembler;
@@ -18,15 +19,16 @@ import com.tll.model.key.NameKey;
  * @author jpk
  */
 public abstract class NamedEntityService<N extends INamedEntity> extends EntityService<N> implements
-		INamedEntityService<N> {
+INamedEntityService<N> {
 
 	/**
 	 * Constructor
 	 * @param dao
 	 * @param entityAssembler
+	 * @param validatorFactory
 	 */
-	public NamedEntityService(IEntityDao dao, IEntityAssembler entityAssembler) {
-		super(dao, entityAssembler);
+	public NamedEntityService(IEntityDao dao, IEntityAssembler entityAssembler, ValidatorFactory validatorFactory) {
+		super(dao, entityAssembler, validatorFactory);
 	}
 
 	public N load(NameKey<N> key) throws EntityNotFoundException {

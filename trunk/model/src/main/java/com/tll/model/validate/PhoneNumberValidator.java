@@ -4,24 +4,28 @@
  */
 package com.tll.model.validate;
 
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
 import org.apache.oro.text.perl.Perl5Util;
-import org.hibernate.validator.Validator;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.NotReadablePropertyException;
 
+import com.tll.model.schema.IPropertyNameProvider;
 import com.tll.util.ValidationUtil;
 
 /**
  * PhoneNumberValidator
  * @author jpk
  */
-public class PhoneNumberValidator implements Validator<PhoneNumber>, IPropertyReference {
+public class PhoneNumberValidator implements ConstraintValidator<PhoneNumber, Object>, IPropertyNameProvider {
 
 	private String phonePropertyName;
 	private String countryPropertyName;
 
-	public String getPropertyReference() {
+	@Override
+	public String getPropertyName() {
 		return phonePropertyName;
 	}
 
@@ -30,15 +34,15 @@ public class PhoneNumberValidator implements Validator<PhoneNumber>, IPropertyRe
 		countryPropertyName = parameters.countryPropertyName();
 	}
 
-	public boolean isValid(Object value) {
+	public boolean isValid(Object value, ConstraintValidatorContext context) {
 		if(value == null) return true;
-		BeanWrapper bw = new BeanWrapperImpl(value);
-		Object pvPhone = bw.getPropertyValue(phonePropertyName);
+		final BeanWrapper bw = new BeanWrapperImpl(value);
+		final Object pvPhone = bw.getPropertyValue(phonePropertyName);
 		Object pvCountry = null;
 		try {
 			pvCountry = bw.getPropertyValue(countryPropertyName);
 		}
-		catch(NotReadablePropertyException e) {
+		catch(final NotReadablePropertyException e) {
 			// ok
 		}
 		if(pvPhone == null) return true;

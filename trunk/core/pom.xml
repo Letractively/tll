@@ -14,6 +14,28 @@
   <version>0.0.1-SNAPSHOT</version>
   <description>Core types used by tll projects.</description>
   
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>test-assets.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  
   <dependencies>
     <dependency>
       <groupId>commons-lang</groupId>
@@ -43,16 +65,16 @@
     </dependency>
     
     <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    
+    <dependency>
       <groupId>com.google.code.guice</groupId>
       <artifactId>guice</artifactId>
+      <scope>test</scope>
     </dependency>
-    
-    <!-- gwt-user is only needed to satisfy the IMarshalable interface -->
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-user</artifactId>
-    </dependency>
-    
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>

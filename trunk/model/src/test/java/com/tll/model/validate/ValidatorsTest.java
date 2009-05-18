@@ -9,14 +9,16 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.validation.ConstraintViolation;
+import javax.validation.Valid;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.validator.InvalidStateException;
-import org.hibernate.validator.InvalidValue;
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
-import org.hibernate.validator.Valid;
+import org.hibernate.validation.constraints.Length;
+import org.hibernate.validation.constraints.NotEmpty;
 import org.testng.annotations.Test;
 
 import com.tll.model.IEntity;
@@ -114,14 +116,14 @@ public class ValidatorsTest {
 			return "Test Entity";
 		}
 	}
-	
+
 	TestEntity getTestEntity() {
-		TestEntity e = new TestEntity();
+		final TestEntity e = new TestEntity();
 		e.setId(1);
 		e.setName("name");
-		e.setPhoneNumber("4154467890");
-		e.setPostalCode("55667");
-		e.setSsn("4445556666");
+		e.setPhoneNumber("x");
+		e.setPostalCode("y");
+		e.setSsn("t");
 		return e;
 	}
 
@@ -132,16 +134,12 @@ public class ValidatorsTest {
 	@Test
 	public final void testEntityValidation() throws Exception {
 		final TestEntity e = getTestEntity();
-		final IEntityValidator<TestEntity> validator = EntityValidatorFactory.instance(TestEntity.class);
+		final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		final Validator validator = factory.getValidator();
 		assert validator != null;
-		try {
-			validator.validate(e);
-		}
-		catch(final InvalidStateException ise) {
-			for(final InvalidValue em : ise.getInvalidValues()) {
-				logger.debug("prop: " + em.getPropertyPath());
-				logger.debug("msg: " + em.getMessage());
-			}
+		final Set<ConstraintViolation<TestEntity>> invalids = validator.validate(e);
+		for(final ConstraintViolation<TestEntity> em : invalids) {
+			logger.debug("prop: " + em.getPropertyPath() + ", msg: " + em.getMessage());
 		}
 	}
 

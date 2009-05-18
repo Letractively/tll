@@ -10,7 +10,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.hibernate.validator.ValidatorClass;
+import javax.validation.Constraint;
 
 /**
  * BusinessKeyUniqueness - Applied on a collection of entities. This edit
@@ -18,11 +18,12 @@ import org.hibernate.validator.ValidatorClass;
  * on the defined business keys for the entity type of the collection.
  * @author jpk
  */
-@ValidatorClass(BusinessKeyUniquenessValidator.class)
+@Constraint(validatedBy = BusinessKeyUniquenessValidator.class)
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface BusinessKeyUniqueness {
 	String type();
 	String message() default "{validator.business_key_uniqueness}";
+	Class<?>[] groups() default {};
 }

@@ -11,9 +11,15 @@
 package com.tll.server.filter;
 
 import java.io.IOException;
+import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -55,6 +61,7 @@ public class WebClientCacheFilter implements Filter {
 
 	public static final String INITPARAM_GWT_NOCACHE = "gwtNoCachePattern";
 	public static final String INITPARAM_GWT_CACHE = "gwtCachePattern";
+	public static final String INITPARAM_ONEDAY_CACHE_FILEEXTS = "oneDayCacheFileExts";
 
 	private static final String GWT_NOCACHE_DEFAULT = ".+\\.nocache.*";
 	private static final String GWT_CACHE_DEFAULT = ".+\\.cache.*";
@@ -70,6 +77,11 @@ public class WebClientCacheFilter implements Filter {
 	 */
 	private Pattern gwtCachePattern;
 
+	/**
+	 * The file extension tokens intended for 1-day caching.
+	 */
+	private String[] oneDayCacheFileExts;
+
 	public void init(FilterConfig filterConfig) /* throws ServletException */{
 		String dontCachePatternString = filterConfig.getInitParameter(INITPARAM_GWT_NOCACHE);
 		String cachePatternString = filterConfig.getInitParameter(INITPARAM_GWT_CACHE);
@@ -81,6 +93,18 @@ public class WebClientCacheFilter implements Filter {
 		}
 		gwtNoCachePattern = Pattern.compile(dontCachePatternString);
 		gwtCachePattern = Pattern.compile(cachePatternString);
+
+		final String token = filterConfig.getInitParameter(INITPARAM_ONEDAY_CACHE_FILEEXTS);
+		if(token != null) {
+			final StringTokenizer st = new StringTokenizer(token.trim());
+			final int num = st.countTokens();
+			if(num > 0) {
+				oneDayCacheFileExts = new String[st.countTokens()];
+				for(int i = 0; i < oneDayCacheFileExts.length; i++) {
+					oneDayCacheFileExts[i] = st.nextToken();
+				}
+			}
+		}
 	}
 
 	private enum CacheStatus {
@@ -103,10 +127,14 @@ public class WebClientCacheFilter implements Filter {
 		else if(gwtCachePattern.matcher(url).matches()) {
 			return CacheStatus.CACHE_1YEAR;
 		}
-		// cache css, js and image files
-		// TODO verify this is ok
-		else if(url.endsWith(".css") || url.endsWith(".js") || url.endsWith(".gif") || url.endsWith(".jpg")) {
-			return CacheStatus.CACHE_1DAY;
+
+		// handle one day caching
+		if(oneDayCacheFileExts != null) {
+			for(final String ext : oneDayCacheFileExts) {
+				if(url.endsWith(ext)) {
+					return CacheStatus.CACHE_1DAY;
+				}
+			}
 		}
 
 		// we are indifferent for any other request types
@@ -114,10 +142,10 @@ public class WebClientCacheFilter implements Filter {
 	}
 
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-			ServletException {
+	ServletException {
 		if(request instanceof HttpServletRequest) {
-			HttpServletRequest hRequest = (HttpServletRequest) request;
-			HttpServletResponse hResponse = (HttpServletResponse) response;
+			final HttpServletRequest hRequest = (HttpServletRequest) request;
+			final HttpServletResponse hResponse = (HttpServletResponse) response;
 			switch(getCacheStatus(hRequest.getRequestURL().toString())) {
 				case CACHE_1YEAR:
 					// the w3c spec requires a maximum age of 1 year

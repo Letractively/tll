@@ -19,7 +19,6 @@ import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationException;
 
 import com.tll.server.SecurityContext;
-import com.tll.server.SecurityMode;
 
 /**
  * AuthenticationProcessingFilter
@@ -55,17 +54,6 @@ public abstract class AuthenticationProcessingFilter extends AbstractSecurityFil
 	private final Wrapped wrapped = new Wrapped();
 
 	/**
-	 * Does non-Acegi filtering.
-	 * @param request
-	 * @param response
-	 * @param chain
-	 * @throws IOException
-	 * @throws ServletException
-	 */
-	protected abstract void doFilterNonAcegi(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException;
-
-	/**
 	 * Invoked upon successful authentication.
 	 * @param request
 	 * @param response
@@ -89,36 +77,29 @@ public abstract class AuthenticationProcessingFilter extends AbstractSecurityFil
 	public void init(FilterConfig config) throws ServletException {
 		log.debug("Initializing the AuthenticationProcessingFilter..");
 		final SecurityContext sc = getSecurityContext(config);
-		if(sc.getSecurityMode() == SecurityMode.ACEGI) {
-			wrapped.setAuthenticationManager(sc.getAuthenticationManager());
+		wrapped.setAuthenticationManager(sc.getAuthenticationManager());
 
-			final String afu = config.getInitParameter("authenticationFailureUrl");
-			if(afu == null) {
-				throw new Error("The init parameter 'authenticationFailureUrl' must be declared");
-			}
-			wrapped.setAuthenticationFailureUrl(afu);
-
-			final String dtu = config.getInitParameter("defaultTargetUrl");
-			if(dtu == null) {
-				throw new Error("The init parameter 'defaultTargetUrl' must be declared");
-			}
-			wrapped.setDefaultTargetUrl(dtu);
-
-			// avoids Acegi's SavedRequest mechanism
-			wrapped.setAlwaysUseDefaultTargetUrl(true);
+		final String afu = config.getInitParameter("authenticationFailureUrl");
+		if(afu == null) {
+			throw new Error("The init parameter 'authenticationFailureUrl' must be declared");
 		}
+		wrapped.setAuthenticationFailureUrl(afu);
+
+		final String dtu = config.getInitParameter("defaultTargetUrl");
+		if(dtu == null) {
+			throw new Error("The init parameter 'defaultTargetUrl' must be declared");
+		}
+		wrapped.setDefaultTargetUrl(dtu);
+
+		// avoids Acegi's SavedRequest mechanism
+		wrapped.setAlwaysUseDefaultTargetUrl(true);
 	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
 		log.debug("AuthenticationProcessingFilter filtering..");
-		if(getSecurityContext(request).getSecurityMode() == SecurityMode.ACEGI) {
-			wrapped.doFilter(request, response, chain);
-		}
-		else {
-			doFilterNonAcegi(request, response, chain);
-		}
+		wrapped.doFilter(request, response, chain);
 	}
 
 }

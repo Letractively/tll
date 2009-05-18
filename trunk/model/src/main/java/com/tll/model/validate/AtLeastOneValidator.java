@@ -6,7 +6,8 @@ package com.tll.model.validate;
 
 import java.util.Collection;
 
-import org.hibernate.validator.Validator;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 /**
  * AtLeastOneValidator - Ensures at least one elements exists in a
@@ -14,16 +15,13 @@ import org.hibernate.validator.Validator;
  * @see AtLeastOne
  * @author jpk
  */
-public class AtLeastOneValidator implements Validator<AtLeastOne> {
+public class AtLeastOneValidator implements ConstraintValidator<AtLeastOne, Collection<?>> {
 
 	public void initialize(AtLeastOne parameters) {
 		// no-op
 	}
 
-	@SuppressWarnings("unchecked")
-	public boolean isValid(Object value) {
-		if(value == null || value instanceof Collection == false) return true;
-		Collection clc = (Collection) value;
+	public boolean isValid(Collection<?> clc, ConstraintValidatorContext constraintContext) {
 		return clc.size() > 0;
 	}
 }

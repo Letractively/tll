@@ -2,7 +2,6 @@ package com.tll.mail;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.testng.Assert;
@@ -20,7 +19,9 @@ import com.tll.di.MailModule;
  * {@link IMailSender} test.
  * @author jpk
  */
-@Test(groups = "mail")
+@Test(groups = {
+	"mail",
+	"send" })
 public class MailSenderTest {
 
 	/**
@@ -36,8 +37,7 @@ public class MailSenderTest {
 
 				public VelocityEngine get() {
 					try {
-						final Properties vps = Config.instance().asProperties("velocity");
-						final VelocityEngine ve = new VelocityEngine(vps);
+						final VelocityEngine ve = new VelocityEngine();
 						ve.init();
 						return ve;
 					}
@@ -50,13 +50,16 @@ public class MailSenderTest {
 		}
 	}
 
+	private Config config;
+
 	private MailManager mailManager;
 
 	private MailRouting mailRouting;
 
 	@BeforeClass(groups = "mail")
 	protected void onSetUp() throws Exception {
-		Injector injector = Guice.createInjector(new MailModule(), new VelocityModule());
+		config = Config.load();
+		Injector injector = Guice.createInjector(new MailModule(config), new VelocityModule());
 		mailManager = injector.getInstance(MailManager.class);
 		Assert.assertNotNull(mailManager, "Unable to obtain the MailManager bean from the application context.");
 

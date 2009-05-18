@@ -19,6 +19,8 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Stage;
 import com.tll.config.Config;
+import com.tll.config.ConfigRef;
+import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
 
 /**
@@ -69,18 +71,23 @@ public final class Bootstrapper implements ServletContextListener {
 	 * params.
 	 * @param context The servlet context.
 	 * @param stage
+	 * @param config
 	 * @return new dependency injector instance
 	 */
-	private static Injector createInjector(ServletContext context, Stage stage) {
+	private static Injector createInjector(ServletContext context, Stage stage, Config config) {
 		final String[] moduleClassNames = StringUtils.split(context.getInitParameter(DEPENDENCY_MODULE_CLASS_NAMES));
 		if(moduleClassNames == null || moduleClassNames.length < 1) {
 			throw new Error("No bootstrap module class names declared.");
 		}
 
-		final List<Module> modules = new ArrayList<Module>(moduleClassNames.length);
+		final List<Module> modules = new ArrayList<Module>(moduleClassNames.length + 1);
 		for(final String mcn : moduleClassNames) {
 			try {
-				modules.add((Module) Class.forName(mcn, true, Bootstrapper.class.getClassLoader()).newInstance());
+				final Module m = (Module) Class.forName(mcn, true, Bootstrapper.class.getClassLoader()).newInstance();
+				if(m instanceof IConfigAware) {
+					((IConfigAware) m).setConfig(config);
+				}
+				modules.add(m);
 			}
 			catch(final ClassNotFoundException e) {
 				throw new Error("Module class: " + mcn + " not found.");
@@ -98,6 +105,8 @@ public final class Bootstrapper implements ServletContextListener {
 		}
 		return Guice.createInjector(stage, modules);
 	}
+
+	private List<IBootstrapHandler> handlers;
 
 	/**
 	 * Creates a dependency injector from the {@link ServletContext}'s init
@@ -126,15 +135,24 @@ public final class Bootstrapper implements ServletContextListener {
 		}
 	}
 
-	private List<IBootstrapHandler> handlers;
-
 	public void contextInitialized(ServletContextEvent event) {
 		final ServletContext servletContext = event.getServletContext();
 
-		final boolean debug = Config.instance().getBoolean(ConfigKeys.DEBUG_PARAM.getKey());
+		// load *all* found config properties
+		// NOTE: this is presumed to be the first contact point with the config
+		// instance!
+		final Config config;
+		try {
+			config = Config.load(new ConfigRef(true));
+		}
+		catch(final IllegalArgumentException e) {
+			throw new Error("Unable to load config: " + e.getMessage(), e);
+		}
+
+		final boolean debug = config.getBoolean(ConfigKeys.DEBUG_PARAM.getKey());
 
 		// create the dependency injector
-		final Injector injector = createInjector(servletContext, debug ? Stage.DEVELOPMENT : Stage.PRODUCTION);
+		final Injector injector = createInjector(servletContext, debug ? Stage.DEVELOPMENT : Stage.PRODUCTION, config);
 
 		// load the dependency handler definitions
 		loadDependencyHandlers(servletContext);

@@ -3,6 +3,7 @@
  */
 package com.tll.model.schema;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -14,14 +15,15 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
-import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Valid;
+import org.hibernate.validation.constraints.Length;
+import org.hibernate.validation.constraints.NotEmpty;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.tll.model.EntityBase;
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
 import com.tll.model.validate.AtLeastOne;
@@ -40,7 +42,9 @@ public class SchemaInfoTest {
 		C;
 	}
 
-	static class AllTypesEntity {
+	static class AllTypesData implements Serializable {
+
+		private static final long serialVersionUID = 1L;
 
 		private TestEnum enm;
 		private String string;
@@ -116,6 +120,49 @@ public class SchemaInfoTest {
 		}
 	}
 
+	static class TestEntityA extends EntityBase {
+
+		private static final long serialVersionUID = 3324870910518294253L;
+
+		private String aProp;
+
+		@Override
+		public Class<? extends IEntity> entityClass() {
+			return TestEntityA.class;
+		}
+
+		@Column
+		public String getAProp() {
+			return aProp;
+		}
+
+		public void setAProp(String prop) {
+			aProp = prop;
+		}
+
+	}
+
+	static class TestEntityB extends EntityBase {
+
+		private static final long serialVersionUID = -5868841032847881791L;
+
+		private TestEntityA entityA;
+
+		@Override
+		public Class<? extends IEntity> entityClass() {
+			return TestEntityB.class;
+		}
+
+		@ManyToOne
+		public TestEntityA getEntityA() {
+			return entityA;
+		}
+
+		public void setEntityA(TestEntityA entityA) {
+			this.entityA = entityA;
+		}
+	}
+
 	/**
 	 * TestEntity
 	 * @author jpk
@@ -125,14 +172,26 @@ public class SchemaInfoTest {
 		private static final long serialVersionUID = -8237732782824087760L;
 		public static final int MAXLEN_NAME = 64;
 
-		private AllTypesEntity relatedOne;
-
+		private TestEnum enm;
+		private String string;
+		private int integer;
+		private double dbl;
+		private float flot;
+		private char character;
+		private long lng;
+		private Date date;
+		private TestEntityB relatedOne;
 		private Set<TestEntity> relatedMany = new LinkedHashSet<TestEntity>();
-
-		private transient AllTypesEntity nested;
+		private transient AllTypesData nested;
+		private Map<String, String> smap;
 
 		public Class<? extends IEntity> entityClass() {
 			return TestEntity.class;
+		}
+
+		@Override
+		public String typeName() {
+			return "Test Entity";
 		}
 
 		@Column
@@ -142,24 +201,96 @@ public class SchemaInfoTest {
 			return name;
 		}
 
+		@Column
+		public TestEnum getEnm() {
+			return enm;
+		}
+
+		public void setEnm(TestEnum enm) {
+			this.enm = enm;
+		}
+
+		@Column
+		public String getString() {
+			return string;
+		}
+
+		public void setString(String string) {
+			this.string = string;
+		}
+
+		@Column
+		public int getInteger() {
+			return integer;
+		}
+
+		public void setInteger(int integer) {
+			this.integer = integer;
+		}
+
+		@Column
+		public double getDbl() {
+			return dbl;
+		}
+
+		public void setDbl(double dbl) {
+			this.dbl = dbl;
+		}
+
+		@Column
+		public float getFlot() {
+			return flot;
+		}
+
+		public void setFlot(float flot) {
+			this.flot = flot;
+		}
+
+		@Column
+		public char getCharacter() {
+			return character;
+		}
+
+		public void setCharacter(char character) {
+			this.character = character;
+		}
+
+		@Column
+		public long getLng() {
+			return lng;
+		}
+
+		public void setLng(long lng) {
+			this.lng = lng;
+		}
+
+		@Column
+		public Date getDate() {
+			return date;
+		}
+
+		public void setDate(Date date) {
+			this.date = date;
+		}
+
 		@Column(name = "data")
 		@NotNull
 		@Nested
-		public AllTypesEntity getNested() {
+		public AllTypesData getNested() {
 			return nested;
 		}
 
-		public void setNested(AllTypesEntity testData) {
+		public void setNested(AllTypesData testData) {
 			this.nested = testData;
 		}
 
 		@ManyToOne(fetch = FetchType.LAZY)
 		@JoinColumn(name = "related_one")
-		public AllTypesEntity getRelatedOne() {
+		public TestEntityB getRelatedOne() {
 			return relatedOne;
 		}
 
-		public void setRelatedOne(AllTypesEntity relatedOne) {
+		public void setRelatedOne(TestEntityB relatedOne) {
 			this.relatedOne = relatedOne;
 		}
 
@@ -176,9 +307,12 @@ public class SchemaInfoTest {
 			this.relatedMany = related;
 		}
 
-		@Override
-		public String typeName() {
-			return "Test Entity";
+		public Map<String, String> getSmap() {
+			return smap;
+		}
+
+		public void setSmap(Map<String, String> smap) {
+			this.smap = smap;
 		}
 	}
 
@@ -191,22 +325,47 @@ public class SchemaInfoTest {
 
 	@Test
 	public void test() throws Exception {
-		final ISchemaInfo schemaInfo = new SchemaInfo();
-		Assert.assertNotNull(schemaInfo);
+		final ISchemaInfo si = new SchemaInfo();
+		Assert.assertNotNull(si);
+		ISchemaProperty sp;
 
-		final Map<String, ISchemaProperty> fdMap = schemaInfo.getAllSchemaProperties(TestEntity.class);
-		Assert.assertNotNull(fdMap);
-		for(final String propName : fdMap.keySet()) {
-			final ISchemaProperty sp = fdMap.get(propName);
-			assert sp != null : "Got null schema property";
-			assert sp.getPropertyType() != null;
-			if(!sp.getPropertyType().isRelational()) {
-				assert sp instanceof PropertyMetadata : "Wrong ISchemaProperty impl instance.  Expected FieldData type";
-			}
-			else {
-				assert sp instanceof RelationInfo : "Wrong ISchemaProperty impl instance.  Expected RelationInfo type";
-			}
-		}
+		sp = si.getSchemaProperty(TestEntity.class, "enm");
+		assert sp.getPropertyType() == PropertyType.ENUM;
+
+		sp = si.getSchemaProperty(TestEntity.class, "string");
+		assert sp.getPropertyType() == PropertyType.STRING;
+
+		sp = si.getSchemaProperty(TestEntity.class, "integer");
+		assert sp.getPropertyType() == PropertyType.INT;
+
+		sp = si.getSchemaProperty(TestEntity.class, "dbl");
+		assert sp.getPropertyType() == PropertyType.DOUBLE;
+
+		sp = si.getSchemaProperty(TestEntity.class, "flot");
+		assert sp.getPropertyType() == PropertyType.FLOAT;
+
+		sp = si.getSchemaProperty(TestEntity.class, "character");
+		assert sp.getPropertyType() == PropertyType.CHAR;
+
+		sp = si.getSchemaProperty(TestEntity.class, "lng");
+		assert sp.getPropertyType() == PropertyType.LONG;
+
+		sp = si.getSchemaProperty(TestEntity.class, "date");
+		assert sp.getPropertyType() == PropertyType.DATE;
+
+		sp = si.getSchemaProperty(TestEntity.class, "relatedOne");
+		assert sp.getPropertyType() == PropertyType.RELATED_ONE;
+
+		sp = si.getSchemaProperty(TestEntity.class, "relatedMany");
+		assert sp.getPropertyType() == PropertyType.RELATED_MANY;
+
+		sp = si.getSchemaProperty(TestEntity.class, "nested");
+		assert sp.getPropertyType() == PropertyType.NESTED;
+
+		sp = si.getSchemaProperty(TestEntity.class, "relatedOne.entityA.aProp");
+		assert sp.getPropertyType() == PropertyType.STRING;
+
+		sp = si.getSchemaProperty(TestEntity.class, "smap");
+		assert sp.getPropertyType() == PropertyType.STRING_MAP;
 	}
-
 }

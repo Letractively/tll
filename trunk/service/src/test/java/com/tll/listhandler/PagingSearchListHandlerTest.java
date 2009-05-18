@@ -7,6 +7,8 @@ package com.tll.listhandler;
 import java.util.List;
 import java.util.Set;
 
+import javax.validation.ValidatorFactory;
+
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -19,9 +21,10 @@ import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.google.inject.Stage;
 import com.google.inject.TypeLiteral;
-import com.tll.AbstractDbTest;
+import com.tll.AbstractInjectedTest;
+import com.tll.DbTestSupport;
+import com.tll.config.Config;
 import com.tll.criteria.Criteria;
-import com.tll.dao.DaoMode;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
@@ -30,10 +33,11 @@ import com.tll.dao.jdbc.DbShell;
 import com.tll.di.DbDialectModule;
 import com.tll.di.DbShellModule;
 import com.tll.di.EntityAssemblerModule;
-import com.tll.di.OrmDaoModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
+import com.tll.di.OrmDaoModule;
 import com.tll.di.TransactionModule;
+import com.tll.di.ValidationModule;
 import com.tll.model.Address;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.MockEntityFactory;
@@ -45,7 +49,7 @@ import com.tll.service.entity.IEntityService;
  * @author jpk
  */
 @Test(groups = "listhandler")
-public class PagingSearchListHandlerTest extends AbstractDbTest {
+public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 
 	/**
 	 * TestEntityService
@@ -57,10 +61,11 @@ public class PagingSearchListHandlerTest extends AbstractDbTest {
 		 * Constructor
 		 * @param dao
 		 * @param entityAssembler
+		 * @param vfactory
 		 */
 		@Inject
-		public TestEntityService(IEntityDao dao, IEntityAssembler entityAssembler) {
-			super(dao, entityAssembler);
+		public TestEntityService(IEntityDao dao, IEntityAssembler entityAssembler, ValidatorFactory vfactory) {
+			super(dao, entityAssembler, vfactory);
 		}
 
 		@Override
@@ -74,13 +79,19 @@ public class PagingSearchListHandlerTest extends AbstractDbTest {
 	 */
 	private static final int NUM_LIST_ELEMENTS = 100;
 
+	private final Config config;
+
+	private final DbTestSupport dbSupport;
+
 	private DbShell db;
 
 	/**
 	 * Constructor
 	 */
 	public PagingSearchListHandlerTest() {
-		super(DaoMode.ORM, true, false);
+		super();
+		config = Config.load();
+		dbSupport = new DbTestSupport(config);
 	}
 
 	@BeforeClass(alwaysRun = true)
@@ -96,7 +107,9 @@ public class PagingSearchListHandlerTest extends AbstractDbTest {
 	@Override
 	protected void beforeClass() {
 		// create the db
-		db = Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new DbShellModule()).getInstance(DbShell.class);
+		db =
+			Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(config), new DbShellModule(config))
+			.getInstance(DbShell.class);
 		db.create();
 		db.clear();
 
@@ -114,13 +127,14 @@ public class PagingSearchListHandlerTest extends AbstractDbTest {
 
 	@Override
 	protected void addModules(List<Module> modules) {
+		modules.add(new ValidationModule());
 		modules.add(new ModelModule());
-		modules.add(new MockEntityFactoryModule());
+		modules.add(new MockEntityFactoryModule(config));
 		super.addModules(modules);
-		//Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), DaoMode.ORM.toString());
-		modules.add(new OrmDaoModule());
-		modules.add(new TransactionModule());
-		modules.add(new EntityAssemblerModule());
+		modules.add(new DbDialectModule(config));
+		modules.add(new OrmDaoModule(config));
+		modules.add(new TransactionModule(config));
+		modules.add(new EntityAssemblerModule(config));
 		modules.add(new Module() {
 
 			@Override
@@ -144,11 +158,11 @@ public class PagingSearchListHandlerTest extends AbstractDbTest {
 
 	protected final void stubListElements() {
 		// stub the list elements
-		startNewTransaction();
+		dbSupport.startNewTransaction();
 		final Set<Address> elements = getMockEntityFactory().getNEntityCopies(Address.class, NUM_LIST_ELEMENTS, true);
 		getEntityDao().persistAll(elements);
-		setComplete();
-		endTransaction();
+		dbSupport.setComplete();
+		dbSupport.endTransaction();
 	}
 
 	@Test
@@ -164,10 +178,10 @@ public class PagingSearchListHandlerTest extends AbstractDbTest {
 
 		final Criteria<Address> criteria = new Criteria<Address>(Address.class);
 		final Sorting sorting = new Sorting(new SortColumn("emailAddress"));
-		final IListHandler<SearchResult<Address>> listHandler =
-				ListHandlerFactory.create(criteria, sorting, ListHandlerType.PAGE, dataProvider);
+		final IListHandler<SearchResult<?>> listHandler =
+			ListHandlerFactory.create(criteria, sorting, ListHandlerType.PAGE, dataProvider);
 
-		List<SearchResult<Address>> list;
+		List<SearchResult<?>> list;
 
 		list = listHandler.getElements(0, pageSize, sorting);
 		assert (list != null && list.size() == pageSize) : "getElements() size mismatch";
@@ -178,11 +192,11 @@ public class PagingSearchListHandlerTest extends AbstractDbTest {
 		list = listHandler.getElements(pageSize * 2, pageSize, sorting);
 		assert (list != null && list.size() == pageSize) : "getElements() size mismatch";
 
-		final List<SearchResult<Address>> alist = listHandler.getElements(0, elements.size(), sorting);
+		final List<SearchResult<?>> alist = listHandler.getElements(0, elements.size(), sorting);
 		assert alist.size() == elements.size();
 
 		for(int i = 0; i < elements.size(); i++) {
-			final Address element = alist.get(i).getEntity();
+			final Address element = (Address) alist.get(i).getElement();
 			assert element != null : "Empty element in list";
 		}
 	}

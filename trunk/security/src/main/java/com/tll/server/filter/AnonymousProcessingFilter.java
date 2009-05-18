@@ -17,9 +17,6 @@ import org.springframework.security.providers.anonymous.AnonymousAuthenticationP
 import org.springframework.security.userdetails.memory.UserAttribute;
 import org.springframework.security.userdetails.memory.UserAttributeEditor;
 
-import com.tll.server.SecurityContext;
-import com.tll.server.SecurityMode;
-
 /**
  * AnonymousProcessingFilter
  * @author jpk
@@ -27,46 +24,37 @@ import com.tll.server.SecurityMode;
 public class AnonymousProcessingFilter extends AbstractSecurityFilter {
 
 	protected static final Log log = LogFactory.getLog(AnonymousProcessingFilter.class);
-	
+
 	/**
 	 * The wrapped {@link AnonymousAuthenticationProvider}.
 	 */
-	private org.springframework.security.providers.anonymous.AnonymousProcessingFilter wrapped;
+	private final org.springframework.security.providers.anonymous.AnonymousProcessingFilter wrapped =
+			new org.springframework.security.providers.anonymous.AnonymousProcessingFilter();
 
 	@Override
 	public void init(FilterConfig config) throws ServletException {
 		log.debug("Initializing AnonymousProcessingFilter..");
-		final SecurityContext sc = getSecurityContext(config);
-
-		if(sc.getSecurityMode() == SecurityMode.ACEGI) {
-			final String k = config.getInitParameter("key");
-			if(k == null) {
-				throw new Error("The init parameter 'key' must be declared");
-			}
-			wrapped.setKey(k);
-
-			final String ua = config.getInitParameter("userAttribute");
-			if(ua == null) {
-				throw new Error("The init parameter 'userAttribute' must be declared");
-			}
-			final UserAttributeEditor uae = new UserAttributeEditor();
-			uae.setAsText(ua);
-			final UserAttribute userAttribute = (UserAttribute) uae.getValue();
-			wrapped.setUserAttribute(userAttribute);
+		final String k = config.getInitParameter("key");
+		if(k == null) {
+			throw new ServletException("The init parameter 'key' must be declared");
 		}
+		wrapped.setKey(k);
+
+		final String ua = config.getInitParameter("userAttribute");
+		if(ua == null) {
+			throw new Error("The init parameter 'userAttribute' must be declared");
+		}
+		final UserAttributeEditor uae = new UserAttributeEditor();
+		uae.setAsText(ua);
+		final UserAttribute userAttribute = (UserAttribute) uae.getValue();
+		wrapped.setUserAttribute(userAttribute);
 	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-			ServletException {
+	ServletException {
 		log.debug("AnonymousProcessingFilter filtering..");
-		final SecurityContext sc = getSecurityContext(request);
-		if(sc.getSecurityMode() == SecurityMode.ACEGI) {
-			wrapped.doFilter(request, response, chain);
-		}
-		else {
-			chain.doFilter(request, response);
-		}
+		wrapped.doFilter(request, response, chain);
 	}
 
 }

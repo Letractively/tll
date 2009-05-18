@@ -6,7 +6,8 @@ package com.tll.model.validate;
 
 import java.util.Collection;
 
-import org.hibernate.validator.Validator;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 import com.tll.model.IEntity;
 import com.tll.model.key.BusinessKeyPropertyException;
@@ -18,21 +19,20 @@ import com.tll.model.key.NonUniqueBusinessKeyException;
  * @see BusinessKeyUniqueness
  * @author jpk
  */
-public class BusinessKeyUniquenessValidator implements Validator<BusinessKeyUniqueness> {
+public class BusinessKeyUniquenessValidator implements ConstraintValidator<BusinessKeyUniqueness, Collection<? extends IEntity>> {
 
 	public void initialize(BusinessKeyUniqueness parameters) {
 	}
 
-	@SuppressWarnings("unchecked")
-	public boolean isValid(Object value) {
+	public boolean isValid(Collection<? extends IEntity> clc, ConstraintValidatorContext constraintContext) {
 		try {
-			BusinessKeyUtil.isBusinessKeyUnique((Collection<? extends IEntity>) value);
+			BusinessKeyUtil.isBusinessKeyUnique(clc);
 			return true;
 		}
-		catch(BusinessKeyPropertyException e) {
+		catch(final BusinessKeyPropertyException e) {
 			return false;
 		}
-		catch(NonUniqueBusinessKeyException e) {
+		catch(final NonUniqueBusinessKeyException e) {
 			return false;
 		}
 	}

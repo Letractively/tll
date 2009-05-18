@@ -16,9 +16,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.security.ui.AccessDeniedHandlerImpl;
 import org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint;
 
-import com.tll.server.SecurityContext;
-import com.tll.server.SecurityMode;
-
 /**
  * ExceptionTranslationFilter
  * @author jpk
@@ -36,39 +33,30 @@ public class ExceptionTranslationFilter extends AbstractSecurityFilter {
 	@Override
 	public void init(FilterConfig config) throws ServletException {
 		log.debug("Initializing the ExceptionTranslationFilter..");
-		final SecurityContext sc = getSecurityContext(config);
-		if(sc.getSecurityMode() == SecurityMode.ACEGI) {
-			// access denied handler
-			final String ep = config.getInitParameter("errorPage");
-			if(ep == null) {
-				throw new Error("The init parameter 'errorPage' must be declared");
-			}
-			final AccessDeniedHandlerImpl impl = new AccessDeniedHandlerImpl();
-			impl.setErrorPage(ep);
-			wrapped.setAccessDeniedHandler(impl);
-
-			// authentication entry point
-			final String lfu = config.getInitParameter("loginFormUrl");
-			if(lfu == null) {
-				throw new ServletException("The init parameter 'loginFormUrl' must be declared");
-			}
-			final AuthenticationProcessingFilterEntryPoint apfep = new AuthenticationProcessingFilterEntryPoint();
-			apfep.setLoginFormUrl(lfu);
-			wrapped.setAuthenticationEntryPoint(apfep);
+		// access denied handler
+		final String ep = config.getInitParameter("errorPage");
+		if(ep == null) {
+			throw new Error("The init parameter 'errorPage' must be declared");
 		}
+		final AccessDeniedHandlerImpl impl = new AccessDeniedHandlerImpl();
+		impl.setErrorPage(ep);
+		wrapped.setAccessDeniedHandler(impl);
+
+		// authentication entry point
+		final String lfu = config.getInitParameter("loginFormUrl");
+		if(lfu == null) {
+			throw new ServletException("The init parameter 'loginFormUrl' must be declared");
+		}
+		final AuthenticationProcessingFilterEntryPoint apfep = new AuthenticationProcessingFilterEntryPoint();
+		apfep.setLoginFormUrl(lfu);
+		wrapped.setAuthenticationEntryPoint(apfep);
 	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
 		log.debug("ExceptionTranslationFilter filtering..");
-		final SecurityContext sc = getSecurityContext(request);
-		if(sc.getSecurityMode() == SecurityMode.ACEGI) {
-			wrapped.doFilter(request, response, chain);
-		}
-		else {
-			chain.doFilter(request, response);
-		}
+		wrapped.doFilter(request, response, chain);
 	}
 
 }

@@ -22,9 +22,9 @@ import com.google.inject.Inject;
 import com.google.inject.Key;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
-import com.google.inject.name.Named;
-import com.google.inject.name.Names;
 import com.tll.config.Config;
+import com.tll.config.IConfigAware;
+import com.tll.config.IConfigKey;
 import com.tll.mail.IComposer;
 import com.tll.mail.IMailContext;
 import com.tll.mail.IMailSender;
@@ -35,19 +35,78 @@ import com.tll.mail.SimpleComposer;
 import com.tll.mail.TemplateComposer;
 
 /**
- * MailModule
+ * MailModule - Module for programmatic email distribution.
  * @author jpk
  */
-public final class MailModule extends AbstractModule {
+public final class MailModule extends AbstractModule implements IConfigAware {
 
 	private static final Log log = LogFactory.getLog(MailModule.class);
 
 	/**
-	 * Constructor
+	 * ConfigKeys - Config keys for the mail module.
+	 * @author jpk
 	 */
-	public MailModule() {
-		super();
-		log.info("Employing mail module");
+	private static enum ConfigKeys implements IConfigKey {
+
+		DEFAULT_FROM_NAME("mail.default.FromName"),
+		DEFAULT_FROM_ADDRESS("mail.default.FromAddress"),
+		DEFAULT_TO_NAME("mail.default.ToName"),
+		DEFAULT_TO_ADDRESS("mail.default.ToAddress"),
+		PRIMARY_HOST("mail.host.primary"),
+		PRIMARY_HOST_USERNAME("mail.host.primary.username"),
+		PRIMARY_HOST_PASSWORD("mail.host.primary.password"),
+		SECONDARY_HOST("mail.host.secondary"),
+		SECONDARY_HOST_USERNAME("mail.host.secondary.username"),
+		SECONDARY_HOST_PASSWORD("mail.host.secondary.password"),
+		NUM_SEND_RETRIES("mail.numberOfSendRetries"),
+		SEND_RETRY_DELAY_MILIS("mail.sendRetryDelayMilis"),
+		TEMPLATE_PATH("mail.template.baseTemplatePath"),
+		TEMPLATE_SUFFIX_TEXT("mail.template.textTemplateSuffix"),
+		TEMPLATE_SUFFIX_HTML("mail.template.htmlTemplateSuffix");
+
+		private final String key;
+
+		private ConfigKeys(String key) {
+			this.key = key;
+		}
+
+		@Override
+		public String getKey() {
+			return key;
+		}
+	}
+
+	/**
+	 * MailTemplatePath annotation
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target( {
+		ElementType.FIELD,
+		ElementType.PARAMETER })
+	@BindingAnnotation
+	public @interface MailTemplatePath {
+	}
+
+	/**
+	 * MailTemplateSuffixText annotation
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target( {
+		ElementType.FIELD,
+		ElementType.PARAMETER })
+	@BindingAnnotation
+	public @interface MailTemplateSuffixText {
+	}
+
+	/**
+	 * MailTemplateSuffixHtml annotation
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target( {
+		ElementType.FIELD,
+		ElementType.PARAMETER })
+	@BindingAnnotation
+	public @interface MailTemplateSuffixHtml {
 	}
 
 	/**
@@ -83,14 +142,43 @@ public final class MailModule extends AbstractModule {
 	public @interface SecondaryMailSender {
 	}
 
+	Config config;
+
+	/**
+	 * Constructor
+	 */
+	public MailModule() {
+		super();
+	}
+
+	/**
+	 * Constructor
+	 * @param config
+	 */
+	public MailModule(Config config) {
+		super();
+		setConfig(config);
+	}
+
+	@Override
+	public void setConfig(Config config) {
+		this.config = config;
+	}
+
 	@Override
 	protected void configure() {
-		Names.bindProperties(this.binder(), Config.instance().asMap("mail", "mail."));
+		if(config == null) throw new IllegalStateException("No config instance set.");
+		log.info("Employing mail module");
 
 		// default mail routing object
 		bind(Key.get(MailRouting.class, DefaultMailRouting.class)).toProvider(new Provider<MailRouting>() {
 
 			public MailRouting get() {
+				String dfltFromName = config.getString(ConfigKeys.DEFAULT_FROM_NAME.getKey());
+				String dfltFromAddress = config.getString(ConfigKeys.DEFAULT_FROM_ADDRESS.getKey());
+				String dfltToName = config.getString(ConfigKeys.DEFAULT_TO_NAME.getKey());
+				String dfltToAddress = config.getString(ConfigKeys.DEFAULT_TO_ADDRESS.getKey());
+
 				final NameEmail dfltSender = new NameEmail(dfltFromName, dfltFromAddress);
 				final NameEmail dfltRecipient = new NameEmail(dfltToName, dfltToAddress);
 				final MailRouting mr = new MailRouting();
@@ -98,72 +186,52 @@ public final class MailModule extends AbstractModule {
 				mr.addRecipient(dfltRecipient);
 				return mr;
 			}
-
-			@Inject
-			@Named("mail.default.FromName")
-			String dfltFromName;
-			@Inject
-			@Named("mail.default.FromAddress")
-			String dfltFromAddress;
-			@Inject
-			@Named("mail.default.ToName")
-			String dfltToName;
-			@Inject
-			@Named("mail.default.ToAddress")
-			String dfltToAddress;
-
 		}).in(Scopes.SINGLETON);
 
 		// PrimaryMailSender
 		bind(Key.get(JavaMailSender.class, PrimaryMailSender.class)).toProvider(new Provider<JavaMailSender>() {
 
 			public JavaMailSender get() {
+				String host = config.getString(ConfigKeys.PRIMARY_HOST.getKey());
+				String username = config.getString(ConfigKeys.PRIMARY_HOST_USERNAME.getKey());
+				String password = config.getString(ConfigKeys.PRIMARY_HOST_PASSWORD.getKey());
 				final JavaMailSenderImpl impl = new JavaMailSenderImpl();
 				impl.setHost(host);
 				impl.setUsername(username);
 				impl.setPassword(password);
 				return impl;
 			}
-
-			@Inject
-			@Named("mail.host.primary")
-			String host;
-			@Inject
-			@Named("mail.host.primary.username")
-			String username;
-			@Inject
-			@Named("mail.host.primary.password")
-			String password;
-
 		}).in(Scopes.SINGLETON);
 
 		// SecondaryMailSender
 		bind(Key.get(JavaMailSender.class, SecondaryMailSender.class)).toProvider(new Provider<JavaMailSender>() {
 
 			public JavaMailSender get() {
+				String host = config.getString(ConfigKeys.SECONDARY_HOST.getKey());
+				String username = config.getString(ConfigKeys.SECONDARY_HOST_USERNAME.getKey());
+				String password = config.getString(ConfigKeys.SECONDARY_HOST_PASSWORD.getKey());
 				final JavaMailSenderImpl impl = new JavaMailSenderImpl();
 				impl.setHost(host);
 				impl.setUsername(username);
 				impl.setPassword(password);
 				return impl;
 			}
-
-			@Inject
-			@Named("mail.host.secondary")
-			String host;
-			@Inject
-			@Named("mail.host.secondary.username")
-			String username;
-			@Inject
-			@Named("mail.host.secondary.password")
-			String password;
-
 		}).in(Scopes.SINGLETON);
+
+		// bind template config props
+		final String tmpPath = config.getString(ConfigKeys.TEMPLATE_PATH.getKey());
+		final String tmpSfxTxt = config.getString(ConfigKeys.TEMPLATE_SUFFIX_TEXT.getKey());
+		final String tmpSfxHtm = config.getString(ConfigKeys.TEMPLATE_SUFFIX_HTML.getKey());
+		bindConstant().annotatedWith(MailTemplatePath.class).to(tmpPath);
+		bindConstant().annotatedWith(MailTemplateSuffixText.class).to(tmpSfxTxt);
+		bindConstant().annotatedWith(MailTemplateSuffixHtml.class).to(tmpSfxHtm);
 
 		// IMailSender
 		bind(IMailSender.class).toProvider(new Provider<IMailSender>() {
 
 			public IMailSender get() {
+				int numberOfSendRetries = config.getInt(ConfigKeys.NUM_SEND_RETRIES.getKey());
+				int sendRetryDelayMilis = config.getInt(ConfigKeys.SEND_RETRY_DELAY_MILIS.getKey());
 				final List<JavaMailSender> javaMailSenders = Arrays.asList(primary, secondary);
 
 				final List<IComposer<? extends IMailContext>> composers = new ArrayList<IComposer<? extends IMailContext>>(2);
@@ -179,12 +247,6 @@ public final class MailModule extends AbstractModule {
 			@Inject
 			@SecondaryMailSender
 			JavaMailSender secondary;
-			@Inject
-			@Named("mail.numberOfSendRetries")
-			int numberOfSendRetries;
-			@Inject
-			@Named("mail.sendRetryDelayMilis")
-			int sendRetryDelayMilis;
 			@Inject
 			TemplateComposer templateComposer;
 			@Inject

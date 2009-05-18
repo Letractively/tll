@@ -28,8 +28,6 @@ public abstract class AbstractInjectedTest {
 		return Guice.createInjector(Stage.DEVELOPMENT, modules);
 	}
 
-	protected static final Log staticLogger = LogFactory.getLog(AbstractInjectedTest.class);
-
 	protected final Log logger = LogFactory.getLog(this.getClass());
 
 	/**
@@ -49,6 +47,7 @@ public abstract class AbstractInjectedTest {
 	 */
 	protected final void buildInjector() {
 		assert injector == null : "The injector was already built";
+		logger.debug("Building dependency injector..");
 		final List<Module> modules = getModules();
 		if(modules != null && modules.size() > 0) {
 			this.injector = buildInjector(modules.toArray(new Module[modules.size()]));
@@ -65,13 +64,11 @@ public abstract class AbstractInjectedTest {
 	}
 
 	/**
-	 * Sub-classes should override this method to add the necessary Guice!!
-	 * modules.
-	 * @param modules
+	 * Sub-classes should override this method to add the needed dependency
+	 * injection modules.
+	 * @param modules the modules to add
 	 */
 	protected void addModules(List<Module> modules) {
-		// modules.add(new MockEntitiesModule());
-		// base impl no-op
 	}
 
 	/**

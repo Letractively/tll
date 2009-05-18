@@ -20,8 +20,9 @@
     </dependency>
     
     <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-user</artifactId>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
     </dependency>
     
     <dependency>
@@ -31,21 +32,9 @@
     
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
       <artifactId>tll-config</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!-- 
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-service</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    -->
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-servlet</artifactId>
@@ -77,7 +66,16 @@
     </dependency>
     -->
     
-    <!-- 
+    <dependency><!-- needed for DataAccessException -->
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency><!-- needed for mock http types -->
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
@@ -85,6 +83,6 @@
       <classifier>jdk15</classifier>
       <scope>test</scope>
     </dependency>
-    -->
+
   </dependencies>
 </project>

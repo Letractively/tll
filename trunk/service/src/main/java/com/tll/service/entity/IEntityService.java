@@ -5,13 +5,12 @@ import java.util.List;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
-
-import org.hibernate.validator.InvalidStateException;
+import javax.validation.ConstraintViolationException;
 
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.Sorting;
-import com.tll.listhandler.IListHandlerDataProvider;
+import com.tll.listhandler.IListingDataProvider;
 import com.tll.model.IEntity;
 import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.PrimaryKey;
@@ -22,7 +21,7 @@ import com.tll.service.IService;
  * @author jpk
  * @param <E>
  */
-public interface IEntityService<E extends IEntity> extends IListHandlerDataProvider<E>, IService {
+public interface IEntityService<E extends IEntity> extends IListingDataProvider, IService {
 
 	/**
 	 * Returns the class of the entity managed by this service.
@@ -67,9 +66,10 @@ public interface IEntityService<E extends IEntity> extends IListHandlerDataProvi
 	 * @return the persisted entity
 	 * @throws EntityExistsException if this entity violates a uniqueness
 	 *         constraint
-	 * @throws InvalidStateException When the entity validation check fails.
+	 * @throws ConstraintViolationException When the entity validation check
+	 *         fails.
 	 */
-	E persist(E entity) throws EntityExistsException, InvalidStateException;
+	E persist(E entity) throws EntityExistsException, ConstraintViolationException;
 
 	/**
 	 * This method persists all of the entities within the collection in a batch
@@ -77,10 +77,10 @@ public interface IEntityService<E extends IEntity> extends IListHandlerDataProvi
 	 * @param entities Collection of entities to update
 	 * @return separate collection of the persisted entities or <code>null</code>
 	 *         if the entities argument is <code>null</code>.
-	 * @throws InvalidStateException When one or more entites are found to be
-	 *         invalid.
+	 * @throws ConstraintViolationException When one or more entites are found to
+	 *         be invalid.
 	 */
-	Collection<E> persistAll(Collection<E> entities) throws InvalidStateException;
+	Collection<E> persistAll(Collection<E> entities) throws ConstraintViolationException;
 
 	/**
 	 * Removes the specified entity from the system. The input entity should have
