@@ -3,12 +3,11 @@ package com.tll.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.validator.NotEmpty;
-import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Range;
+import org.hibernate.validation.constraints.NotEmpty;
 
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
@@ -24,7 +23,7 @@ import com.tll.model.schema.BusinessObject;
 	@BusinessKeyDef(name = "Name", properties = { INamedEntity.NAME }),
 	@BusinessKeyDef(name = "Symbol", properties = { "symbol" }),
 	@BusinessKeyDef(name = "ISO4217", properties = { "iso4217" }) })
-public class Currency extends NamedEntity {
+	public class Currency extends NamedEntity {
 	private static final long serialVersionUID = -6944161437125857044L;
 
 	/**
@@ -85,7 +84,7 @@ public class Currency extends NamedEntity {
 	 */
 	@Column(name = "usd_exchange_rate", precision = 8, scale = 4)
 	@NotNull
-	@Range(min = 0L, max = 9999L)
+	// @Size(min = 0, max = 9999)
 	public float getUsdExchangeRate() {
 		return usdExchangeRate;
 	}

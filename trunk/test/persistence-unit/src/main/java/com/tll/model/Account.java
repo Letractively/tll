@@ -16,11 +16,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
-import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Valid;
+import org.hibernate.validation.constraints.Length;
+import org.hibernate.validation.constraints.NotEmpty;
 
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
@@ -36,7 +36,7 @@ import com.tll.model.validate.BusinessKeyUniqueness;
  */
 public class Account extends NamedTimeStampEntity implements IChildEntity<Account> {
 	private static final long serialVersionUID = 9049425291965389270L;
-	
+
 	static final String ASP_VALUE = "0";
 	static final String ISP_VALUE = "1";
 	static final String MERCHANT_VALUE = "2";
@@ -197,8 +197,8 @@ public class Account extends NamedTimeStampEntity implements IChildEntity<Accoun
 	}
 
 	@Transient
-	public AccountAddress getAccountAddress(String name) {
-		return findNamedEntityInCollection(this.addresses, name);
+	public AccountAddress getAccountAddress(String accountName) {
+		return findNamedEntityInCollection(this.addresses, accountName);
 	}
 
 	@Transient

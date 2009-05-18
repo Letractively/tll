@@ -4,11 +4,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Type;
-import org.hibernate.validator.NotEmpty;
-import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Valid;
+import org.hibernate.validation.constraints.NotEmpty;
 
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
@@ -24,7 +23,7 @@ import com.tll.model.schema.Nested;
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Name", properties = { INamedEntity.NAME }))
 public class NestedEntity extends NamedEntity {
 	private static final long serialVersionUID = -4655882279629798747L;
-	
+
 	private transient NestedData nestedData;
 
 	public Class<? extends IEntity> entityClass() {
@@ -46,7 +45,7 @@ public class NestedEntity extends NamedEntity {
 	}
 
 	@Column(name = "data")
-	@Type(type = "encobj")
+	// @Type(type = "encobj")
 	@NotNull
 	@Valid
 	@Nested

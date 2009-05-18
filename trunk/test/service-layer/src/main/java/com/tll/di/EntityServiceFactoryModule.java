@@ -1,11 +1,15 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.di;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
@@ -22,18 +26,13 @@ import com.tll.service.entity.IEntityServiceFactory;
  * EntityServiceFactoryModule
  * @author jpk
  */
-public class EntityServiceFactoryModule extends GModule {
+public class EntityServiceFactoryModule extends AbstractModule {
 
-	/**
-	 * Constructor
-	 */
-	public EntityServiceFactoryModule() {
-		super();
-		log.info("Employing Entity service module");
-	}
+	private static final Log log = LogFactory.getLog(EntityAssemblerModule.class);
 
 	@Override
 	protected void configure() {
+		log.info("Employing Entity service module");
 		bind(IAddressService.class).to(AddressService.class).in(Scopes.SINGLETON);
 		bind(IAccountService.class).to(AccountService.class).in(Scopes.SINGLETON);
 
@@ -47,7 +46,7 @@ public class EntityServiceFactoryModule extends GModule {
 
 			public IEntityServiceFactory get() {
 				final Map<Class<? extends IEntityService<? extends IEntity>>, IEntityService<? extends IEntity>> map =
-						new HashMap<Class<? extends IEntityService<? extends IEntity>>, IEntityService<? extends IEntity>>();
+					new HashMap<Class<? extends IEntityService<? extends IEntity>>, IEntityService<? extends IEntity>>();
 
 				map.put(IAccountService.class, accs);
 				map.put(IAddressService.class, adrs);
