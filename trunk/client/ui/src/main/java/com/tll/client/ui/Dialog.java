@@ -10,6 +10,8 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.widgetideas.client.GlassPanel;
 
 /**
  * Dialog
@@ -19,7 +21,7 @@ public class Dialog extends DialogBox {
 
 	private final Focusable focusOnCloseWidget;
 
-	private final boolean showOverlay;
+	private final GlassPanel glassPanel;
 
 	/**
 	 * Constructor
@@ -36,29 +38,32 @@ public class Dialog extends DialogBox {
 	public Dialog(Focusable focusOnCloseWidget, boolean showOverlay) {
 		super(false, true);
 		this.focusOnCloseWidget = focusOnCloseWidget;
-		this.showOverlay = showOverlay;
-	}
-
-	@Override
-	public void show() {
-		// we check for is attached (i.e. is showing) to avoid suprious call to
-		// App.busy() which will invalidate the glass panel counting mechanism
-		if(!isAttached()) {
-			if(showOverlay) UI.busy();
-			super.show();
+		if(showOverlay) {
+			this.glassPanel = new GlassPanel(false);
+			this.glassPanel.setVisible(false);
+			RootPanel.get().add(glassPanel);
+		}
+		else {
+			this.glassPanel = null;
 		}
 	}
 
 	@Override
-	public void hide() {
-		// we check for is attached (i.e. is showing) to avoid suprious call to
-		// App.unbusy() which will invalidate the glass panel counting mechanism
-		if(isAttached()) {
-			super.hide();
-			if(showOverlay) UI.unbusy();
-			if(focusOnCloseWidget != null) {
-				DeferredCommand.addCommand(new FocusCommand(focusOnCloseWidget, true));
-			}
+	public void onAttach() {
+		super.onAttach();
+		if(glassPanel != null) {
+			glassPanel.setVisible(true);
+		}
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		if(glassPanel != null) {
+			glassPanel.setVisible(false);
+		}
+		if(focusOnCloseWidget != null) {
+			DeferredCommand.addCommand(new FocusCommand(focusOnCloseWidget, true));
 		}
 	}
 
@@ -74,5 +79,4 @@ public class Dialog extends DialogBox {
 			}
 		}
 	}
-
 }

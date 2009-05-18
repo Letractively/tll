@@ -6,6 +6,7 @@ package com.tll.client.ui;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -19,15 +20,18 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
 import com.tll.client.data.rpc.ForgotPasswordCommand;
+import com.tll.client.data.rpc.IHasRpcHandlers;
+import com.tll.client.data.rpc.IRpcHandler;
 import com.tll.client.data.rpc.ISourcesUserSessionEvents;
 import com.tll.client.data.rpc.IUserSessionListener;
+import com.tll.client.data.rpc.RpcEvent;
 
 /**
  * LoginDialog
  * @author jpk
  */
 public class LoginDialog extends Dialog implements SubmitHandler, SubmitCompleteHandler, ClickHandler,
-		ISourcesUserSessionEvents {
+ ISourcesUserSessionEvents, IHasRpcHandlers {
 
 	private final Label lblStatusMsg;
 	private final FormPanel form;
@@ -88,6 +92,8 @@ public class LoginDialog extends Dialog implements SubmitHandler, SubmitComplete
 		form.setWidget(vert);
 
 		setWidget(form);
+
+		addRpcHandler(new RpcUiHandler(this));
 	}
 
 	public void addUserSessionListener(IUserSessionListener listener) {
@@ -108,6 +114,11 @@ public class LoginDialog extends Dialog implements SubmitHandler, SubmitComplete
 		return "Forgot Password".equals(lnkTgl.getTitle());
 	}
 
+	@Override
+	public HandlerRegistration addRpcHandler(IRpcHandler handler) {
+		return addHandler(handler, RpcEvent.TYPE);
+	}
+
 	public void onClick(ClickEvent event) {
 		if(event.getSource() == btnSubmit) {
 			if(isLoginMode()) {
@@ -122,7 +133,8 @@ public class LoginDialog extends Dialog implements SubmitHandler, SubmitComplete
 					return;
 				}
 
-				final ForgotPasswordCommand fpc = new ForgotPasswordCommand(this, emailAddress);
+				final ForgotPasswordCommand fpc = new ForgotPasswordCommand(emailAddress);
+				fpc.setSource(this);
 				fpc.execute();
 			}
 		}

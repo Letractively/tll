@@ -26,9 +26,14 @@ public interface IError {
 		 */
 		COMPOSITE;
 	}
-	
+
 	/**
 	 * @return The validation error type.
 	 */
 	Type getType();
+
+	/**
+	 * @return The "sourcing" (classifier) for this error.
+	 */
+	ErrorClassifier getClassifier();
 }

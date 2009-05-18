@@ -15,6 +15,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.tll.client.ui.IWidgetRef;
 import com.tll.client.ui.field.IFieldWidget.Styles;
 import com.tll.client.ui.msg.MsgPopupRegistry;
+import com.tll.client.validate.ErrorClassifier;
 import com.tll.client.validate.IError;
 import com.tll.client.validate.PopupValidationFeedback;
 import com.tll.client.validate.IError.Type;
@@ -38,7 +39,7 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	 * hoverability.
 	 */
 	private final Map<IFieldWidget<?>, MouseRegs> invalids = new HashMap<IFieldWidget<?>, MouseRegs>();
-	
+
 
 	/**
 	 * Constructor
@@ -49,37 +50,45 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	}
 
 	@Override
-	public void handleError(IWidgetRef source, IError error, int attribs) {
-		super.handleError(source, error, attribs);
-		
-		if(error.getType() == Type.SINGLE && Attrib.isLocal(attribs)) {
-			if(source instanceof IFieldWidget) {
-				// handle styling
-				source.getWidget().removeStyleName(Styles.DIRTY);
-				source.getWidget().addStyleName(Styles.INVALID);
+	public void handleError(IWidgetRef source, IError error) {
+		super.handleError(source, error);
+		if((source instanceof IFieldWidget) && error.getType() == Type.SINGLE) {
+			// handle styling
+			source.getWidget().removeStyleName(Styles.DIRTY);
+			source.getWidget().addStyleName(Styles.INVALID);
 
-				// track popup hovering
-				MouseRegs regs = invalids.get(source);
-				if(regs == null) {
-					regs = new MouseRegs();
-					invalids.put((IFieldWidget<?>) source, regs);
-				}
-				trackHover((IFieldWidget<?>) source, regs, true);
+			// track popup hovering
+			MouseRegs regs = invalids.get(source);
+			if(regs == null) {
+				regs = new MouseRegs();
+				invalids.put((IFieldWidget<?>) source, regs);
+			}
+			trackHover((IFieldWidget<?>) source, regs, true);
+
+			// turn off incremental validation when the error originates from the
+			// server
+			if(error.getClassifier() != null && error.getClassifier().isServer()) {
+				((IFieldWidget<?>) source).validateIncrementally(false);
 			}
 		}
 	}
 
 	@Override
-	public void resolveError(IWidgetRef source) {
-		super.resolveError(source);
+	public void resolveError(IWidgetRef source, ErrorClassifier classifier) {
+		super.resolveError(source, classifier);
 		if(source instanceof IFieldWidget) {
 			// handle styling
 			source.getWidget().removeStyleName(Styles.INVALID);
-			
+
 			// un-track popup hovering
 			final MouseRegs regs = invalids.remove(source);
 			if(regs != null) {
 				trackHover((IFieldWidget<?>) source, regs, false);
+			}
+
+			// reset incremental validation if server error
+			if(classifier != null && classifier.isServer()) {
+				((IFieldWidget<?>) source).validateIncrementally(true);
 			}
 		}
 	}
@@ -88,7 +97,21 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	public void onMouseOver(MouseOverEvent event) {
 		final IFieldWidget<?> field = resolveField(event);
 		if(field != null) {
-			mregistry.getOperator(field.getWidget(), false).showMsgs(!field.isValid());
+			mregistry.getOperator(field.getWidget(), false).showMsgs(true);
+		}
+	}
+
+	@Override
+	public void clear(ErrorClassifier classifier) {
+		super.clear(classifier);
+		if(classifier != null && classifier.isServer()) {
+			// NOTE: to reset incr. validation, we iterate over all invalids
+			// irregardless of classification,
+			// since we don't have easy access to the field widget in this context,
+			// and it doesn't hurt to iterate over all
+			for(final IFieldWidget<?> fw : invalids.keySet()) {
+				fw.validateIncrementally(true);
+			}
 		}
 	}
 
@@ -97,6 +120,7 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 		super.clear();
 		for(final IFieldWidget<?> fw : invalids.keySet()) {
 			trackHover(fw, invalids.get(fw), false);
+			fw.validateIncrementally(true);
 		}
 		invalids.clear();
 	}
@@ -104,11 +128,11 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	@Override
 	public void onMouseOut(MouseOutEvent event) {
 		final IFieldWidget<?> field = resolveField(event);
-		if(field != null && !field.isValid()) {
+		if(field != null) {
 			mregistry.getOperator(field.getWidget(), false).showMsgs(false);
 		}
 	}
-	
+
 	private IFieldWidget<?> resolveField(MouseEvent<?> event) {
 		final Object src = event.getSource();
 		for(final IFieldWidget<?> fw : invalids.keySet()) {

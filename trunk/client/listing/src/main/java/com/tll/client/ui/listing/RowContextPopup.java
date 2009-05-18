@@ -1,8 +1,8 @@
 package com.tll.client.ui.listing;
 
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.ui.option.Option;
@@ -15,17 +15,15 @@ import com.tll.client.ui.option.OptionsPopup;
  */
 public final class RowContextPopup extends OptionsPopup implements ClickHandler {
 
-	private static final int SHOW_DURATION = 2000; // 2s
-
 	/**
 	 * The bound {@link IRowOptionsDelegate}
 	 */
-	private IRowOptionsDelegate rowOpDelegate;
-	
+	private final IRowOptionsDelegate delegate;
+
 	/**
 	 * The needed table ref.
 	 */
-	private final HTMLTable table;
+	private final ListingTable<?> table;
 
 	/**
 	 * The row index for this row context.
@@ -34,56 +32,44 @@ public final class RowContextPopup extends OptionsPopup implements ClickHandler 
 
 	/**
 	 * Constructor
+	 * @param duration the time in mili-seconds to show the popup or
+	 *        <code>-1</code> meaning it is shown indefinitely.
 	 * @param table The table ref
+	 * @param delegate the required row ops delegate
 	 */
-	public RowContextPopup(HTMLTable table) {
-		super(SHOW_DURATION);
+	public RowContextPopup(int duration, ListingTable<?> table, IRowOptionsDelegate delegate) {
+		super(duration);
+		if(table == null) throw new IllegalArgumentException("Null table ref");
 		this.table = table;
-	}
-
-	/**
-	 * Sets or re-sets the row op delegate.
-	 * @param rowOpDelegate The row op delgate to set. Can't be <code>null</code>.
-	 */
-	public void setDelegate(IRowOptionsDelegate rowOpDelegate) {
-		if(rowOpDelegate == null) throw new IllegalArgumentException("A row op delegate must be specified");
-		this.rowOpDelegate = rowOpDelegate;
-	}
-
-	private void showAtRow(int row) {
-		if(rowOpDelegate == null) throw new IllegalStateException("No row op delegate set");
-		setOptions(rowOpDelegate.getOptions(row));
-		super.show();
+		this.table.addClickHandler(this);
+		if(delegate == null) throw new IllegalArgumentException("Null delegate");
+		this.delegate = delegate;
 	}
 
 	public void onClick(ClickEvent event) {
-		// assert sender == table.getTableWidget();
-
-		// TODO account for deleted rows!!!
 		final Cell cell = table.getCellForEvent(event);
 		final int row = cell.getRowIndex();
 
-		// account for header row
-		if(row < 1) return;
+		// account for header row and deleted rows
+		if(row < 1 || table.isRowMarkedDeleted(row)) return;
 
 		if(row != this.rowIndex) {
-			hide();
-			showAtRow(row);
+			this.rowIndex = row;
+			setOptions(delegate.getOptions(row));
 		}
-		else if(isShowing())
-			hide();
-		else
-			showAtRow(row);
 
-		this.rowIndex = row;
+		if(!isShowing()) {
+			final NativeEvent ne = event.getNativeEvent();
+			showAt(ne.getClientX(), ne.getClientY());
+		}
 	}
 
 	@Override
 	public void onOptionEvent(OptionEvent event) {
-		if(rowOpDelegate == null) throw new IllegalStateException("No row op delegate set");
+		if(delegate == null) throw new IllegalStateException("No row op delegate set");
 		super.onOptionEvent(event);
 		if(event.getOptionEventType() == OptionEvent.EventType.SELECTED) {
-			rowOpDelegate.handleOptionSelection(event.optionText, rowIndex);
+			delegate.handleOptionSelection(event.optionText, rowIndex);
 		}
 	}
 

@@ -4,14 +4,15 @@
  */
 package com.tll.client.ui.option;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -24,7 +25,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * @author jpk
  */
 public class OptionsPanel extends FocusPanel implements KeyDownHandler, MouseDownHandler, MouseOverHandler,
-		IHasOptionHandlers {
+MouseOutHandler, IHasOptionHandlers {
 
 	/**
 	 * Styles - (options.css)
@@ -37,7 +38,23 @@ public class OptionsPanel extends FocusPanel implements KeyDownHandler, MouseDow
 		public static final String ACTIVE = "active";
 	}
 
-	protected final List<Option> options = new ArrayList<Option>();
+	/**
+	 * MRegs
+	 * @author jpk
+	 */
+	static class MRegs {
+
+		final HandlerRegistration down, out, over;
+
+		public MRegs(HandlerRegistration down, HandlerRegistration out, HandlerRegistration over) {
+			super();
+			this.down = down;
+			this.out = out;
+			this.over = over;
+		}
+	} // MRegs
+
+	protected final HashMap<Option, MRegs> options = new HashMap<Option, MRegs>();
 	private final VerticalPanel vp = new VerticalPanel();
 	private int crntIndx = -1;
 
@@ -61,27 +78,21 @@ public class OptionsPanel extends FocusPanel implements KeyDownHandler, MouseDow
 	 * @param option The Option to add
 	 */
 	private void addOption(Option option) {
-		options.add(option);
+		final MRegs mreg =
+			new MRegs(option.addMouseDownHandler(this), option.addMouseOutHandler(this), option.addMouseOverHandler(this));
+		options.put(option, mreg);
 		vp.add(option);
-		option.addMouseDownHandler(this);
-		option.addMouseOverHandler(this);
-	}
-
-	/**
-	 * Removes an Option.
-	 * @param option The Option to remove from the UI panel
-	 * @param rmv Remove from {@link #options}?
-	 */
-	private void removeOption(Option option, boolean rmv) {
-		//option.removeMouseListener(this);
-		vp.remove(option);
-		if(rmv) options.remove(option);
 	}
 
 	private void clearOptions() {
 		crntIndx = -1;
-		for(final Option option : options) {
-			removeOption(option, false);
+		MRegs m;
+		for(final Option option : options.keySet()) {
+			vp.remove(option);
+			m = options.get(option);
+			m.down.removeHandler();
+			m.out.removeHandler();
+			m.over.removeHandler();
 		}
 		options.clear();
 	}
@@ -102,7 +113,7 @@ public class OptionsPanel extends FocusPanel implements KeyDownHandler, MouseDow
 
 	private void clearCurrentOption() {
 		if(crntIndx != -1) {
-			options.get(crntIndx).getElement().getParentElement().setClassName("");
+			vp.getWidget(crntIndx).getElement().getParentElement().setClassName("");
 			crntIndx = -1;
 		}
 	}
@@ -120,15 +131,16 @@ public class OptionsPanel extends FocusPanel implements KeyDownHandler, MouseDow
 
 		// unset current
 		if(crntIndx != -1) {
-			options.get(crntIndx).getElement().getParentElement().setClassName("");
+			vp.getWidget(crntIndx).getElement().getParentElement().setClassName("");
 		}
 
 		// set new current
-		options.get(index).getElement().getParentElement().setClassName(Styles.ACTIVE);
+		final Option crntOption = (Option) vp.getWidget(index);
+		crntOption.getElement().getParentElement().setClassName(Styles.ACTIVE);
 		this.crntIndx = index;
 
 		if(fireCurrentOptionChanged) {
-			fireEvent(new OptionEvent(OptionEvent.EventType.CHANGED, options.get(crntIndx).getText()));
+			fireEvent(new OptionEvent(OptionEvent.EventType.CHANGED, crntOption.getText()));
 		}
 	}
 
@@ -142,14 +154,14 @@ public class OptionsPanel extends FocusPanel implements KeyDownHandler, MouseDow
 				break;
 			case KeyCodes.KEY_ENTER:
 				if(crntIndx >= 0) {
-					fireEvent(new OptionEvent(OptionEvent.EventType.SELECTED, options.get(crntIndx).getText()));
+					fireEvent(new OptionEvent(OptionEvent.EventType.SELECTED, ((Option) vp.getWidget(crntIndx)).getText()));
 				}
 				break;
 		}
 	}
 
 	public void onMouseDown(MouseDownEvent event) {
-		final int index = options.indexOf(event.getSource());
+		final int index = vp.getWidgetIndex((Option) event.getSource());
 		if(index >= 0) {
 			setCurrentOption(index, false);
 			fireEvent(new OptionEvent(OptionEvent.EventType.SELECTED, ((Option) event.getSource()).getText()));
@@ -157,10 +169,18 @@ public class OptionsPanel extends FocusPanel implements KeyDownHandler, MouseDow
 	}
 
 	public void onMouseOver(MouseOverEvent event) {
-		final int index = options.indexOf(event.getSource());
+		final int index = vp.getWidgetIndex((Option) event.getSource());
 		if(index >= 0) {
 			setCurrentOption(index, false);
 			fireEvent(new OptionEvent(OptionEvent.EventType.CHANGED, ((Option) event.getSource()).getText()));
+		}
+	}
+
+	@Override
+	public void onMouseOut(MouseOutEvent event) {
+		final int index = vp.getWidgetIndex((Option) event.getSource());
+		if(index >= 0) {
+			clearCurrentOption();
 		}
 	}
 

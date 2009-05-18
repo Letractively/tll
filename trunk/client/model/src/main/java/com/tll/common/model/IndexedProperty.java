@@ -8,6 +8,7 @@ package com.tll.common.model;
 import java.util.List;
 
 import com.tll.model.schema.PropertyType;
+import com.tll.util.PropertyPath;
 
 /**
  * IndexedProperty - Represents a single indexed property referenced by a parent

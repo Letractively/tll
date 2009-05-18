@@ -7,8 +7,8 @@ package com.tll.client.listing;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.IMarshalable;
+import com.tll.client.data.rpc.IHasRpcHandlers;
 import com.tll.client.data.rpc.RpcCommand;
 import com.tll.common.data.ListingOp;
 import com.tll.common.data.ListingPayload;
@@ -41,25 +41,15 @@ public final class RemoteListingOperator<S extends ISearch> extends AbstractList
 	@SuppressWarnings("synthetic-access")
 	class ListingCommand extends RpcCommand<ListingPayload<Model>> {
 
-		/**
-		 * Constructor
-		 * @param sourcingWidget
-		 */
-		public ListingCommand(Widget sourcingWidget) {
-			super(sourcingWidget);
-		}
-
 		@Override
 		protected void doExecute() {
 			if(listingRequest == null) {
-				throw new IllegalStateException("No listing command set!");
+				throw new IllegalStateException("Null listing command");
+			}
+			if(sourcingWidget == null) {
+				throw new IllegalStateException("Null sourcing widget");
 			}
 			svc.process((ListingRequest) listingRequest, (AsyncCallback) getAsyncCallback());
-		}
-
-		@Override
-		protected void handleFailure(Throwable caught) {
-			super.handleFailure(caught);
 		}
 
 		@Override
@@ -72,8 +62,11 @@ public final class RemoteListingOperator<S extends ISearch> extends AbstractList
 			listingGenerated = payload.getListingStatus() == ListingStatus.CACHED;
 
 			if(!listingGenerated && op.isQuery()) {
-				// we need to re-create the listing on the server - the cache has expired
-				fetch(listingRequest.getOffset(), listingRequest.getSorting(), true);
+				if(!payload.hasErrors()) {
+					// we need to re-create the listing on the server - the cache has
+					// expired
+					fetch(listingRequest.getOffset(), listingRequest.getSorting(), true);
+				}
 			}
 			else {
 				// update client-side listing state
@@ -83,11 +76,13 @@ public final class RemoteListingOperator<S extends ISearch> extends AbstractList
 				// reset
 				listingRequest = null;
 				// fire the listing event
-				sourcingWidget.fireEvent(new ListingEvent<Model>(op, payload, listingDef.getPageSize()));
+				sourcingWidget.fireEvent(new ListingEvent<Model>(payload.getListingName(), op, payload
+						.getListSize(), payload.getPageElements(), payload.getOffset(), payload.getSorting(), listingDef
+						.getPageSize()));
 			}
 		}
 	}
-	
+
 	/**
 	 * The unique name that identifies the listing this command targets on the
 	 * server.
@@ -116,21 +111,24 @@ public final class RemoteListingOperator<S extends ISearch> extends AbstractList
 
 	private void execute() {
 		assert listingRequest != null;
-		final ListingCommand cmd = new ListingCommand(sourcingWidget);
+		final ListingCommand cmd = new ListingCommand();
+		if(sourcingWidget instanceof IHasRpcHandlers) {
+			cmd.setSource(sourcingWidget);
+		}
 		cmd.execute();
 	}
 
 	/**
 	 * Fetches listing data sending the listing definition in case it isn't cached
 	 * server-side.
-	 * @param offset The listing index offset
-	 * @param sorting The sorting directive
+	 * @param ofst The listing index offset
+	 * @param srtg The sorting directive
 	 * @param refresh Force the listing to be re-queried on the server if it is
 	 *        cached?
 	 */
-	private void fetch(int offset, Sorting sorting, boolean refresh) {
+	private void fetch(int ofst, Sorting srtg, boolean refresh) {
 		this.listingRequest =
-				new ListingRequest<S>(listingName, listingDef, refresh ? ListingOp.REFRESH : ListingOp.FETCH, offset, sorting);
+			new ListingRequest<S>(listingName, listingDef, refresh ? ListingOp.REFRESH : ListingOp.FETCH, ofst, srtg);
 		execute();
 	}
 
@@ -141,12 +139,12 @@ public final class RemoteListingOperator<S extends ISearch> extends AbstractList
 	 * listing definition will be issued. This is intended to save on network
 	 * bandwidth as the case when the server-side listing cache is expired is
 	 * assumed to not occur frequently.
-	 * @param offset The listing index offset
-	 * @param sorting The sorting directive
+	 * @param ofst The listing index offset
+	 * @param srtg The sorting directive
 	 */
 	@Override
-	protected void doFetch(int offset, Sorting sorting) {
-		listingRequest = new ListingRequest<S>(listingName, offset, sorting);
+	protected void doFetch(int ofst, Sorting srtg) {
+		listingRequest = new ListingRequest<S>(listingName, ofst, srtg);
 		execute();
 	}
 

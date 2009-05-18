@@ -48,52 +48,69 @@
                 <property name="gwt.shell.startupUrl" value="UITests.html" />
                 <echo message="test classpath: ${gwt.compile.classpath}" />
                 <ant antfile="${basedir}/../build-gwt.xml">
-                  <!-- <target name="build-shell-exec-file" />
-                  <target name="build-shell-debug-exec-file" /> -->
-                  <target name="compile" />
+                  <target name="build-shell-exec-file" />
+                  <target name="build-shell-debug-exec-file" />
+                  <!-- <target name="compile" /> -->
                 </ant>
               </tasks>
             </configuration>
           </execution>
         </executions>
       </plugin>
-      
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-gwt-war-dir</id>
+            <goals>
+              <goal>directory-single</goal>
+            </goals>
+            <phase>process-test-classes</phase>
+            <configuration>
+              <finalName>war</finalName>
+              <outputDirectory>target</outputDirectory>
+              <appendAssemblyId>false</appendAssemblyId>
+              <descriptors>
+                <descriptor>gwt-test-war-dir.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>test-assets.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
 
   <dependencies>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-refdata</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-model</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-dao</artifactId>
+      <artifactId>tll-common</artifactId>
       <version>${project.version}</version>
     </dependency>
     
     <dependency>
       <groupId>com.google.code.gwt-log</groupId>
       <artifactId>gwt-log</artifactId>
-      <scope>provided</scope>
     </dependency>
+    <!-- 
     <dependency>
       <groupId>com.google.code.gwt-incubator</groupId>
-      <artifactId>gwt-incubator-glasspanel</artifactId>
-      <scope>provided</scope>
+      <artifactId>gwt-incubator</artifactId>
     </dependency>
-    
+    -->
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>
@@ -114,21 +131,21 @@
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>
       <version>${project.version}</version>
-      <classifier>tests</classifier>
+      <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-ui</artifactId>
       <version>${project.version}</version>
-      <classifier>tests</classifier>
+      <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-model</artifactId>
       <version>${project.version}</version>
-      <classifier>tests</classifier>
+      <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
     

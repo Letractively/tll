@@ -15,13 +15,14 @@ import org.springframework.mail.MailSendException;
 import com.tll.common.data.Payload;
 import com.tll.common.data.Status;
 import com.tll.common.data.rpc.IForgotPasswordService;
+import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.mail.IMailContext;
 import com.tll.mail.MailManager;
 import com.tll.mail.MailRouting;
-import com.tll.model.ChangeUserCredentialsFailedException;
+import com.tll.model.IUserRef;
+import com.tll.service.ChangeUserCredentialsFailedException;
 import com.tll.service.IForgotPasswordHandler;
-import com.tll.service.IForgotPasswordHandler.IUserRef;
 import com.tll.util.StringUtil;
 
 /**
@@ -32,10 +33,10 @@ public class ForgotPasswordService extends RpcServlet implements IForgotPassword
 
 	private static final long serialVersionUID = 1144692563596509841L;
 	private static final String EMAIL_TEMPLATE_NAME = "forgot-password";
-	
+
 	private ForgotPasswordServiceContext getContext() {
 		return (ForgotPasswordServiceContext) getThreadLocalRequest().getSession(false).getServletContext().getAttribute(
-				ForgotPasswordServiceContext.SERVLET_CONTEXT_KEY);
+				ForgotPasswordServiceContext.KEY);
 	}
 
 	public Payload requestPassword(final String emailAddress) {
@@ -44,7 +45,7 @@ public class ForgotPasswordService extends RpcServlet implements IForgotPassword
 		final Map<String, Object> data = new HashMap<String, Object>();
 
 		if(StringUtil.isEmpty(emailAddress)) {
-			status.addMsg("An email address must be specified.", MsgLevel.ERROR);
+			status.addMsg("An email address must be specified.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 		}
 		else {
 			final ForgotPasswordServiceContext context = getContext();
@@ -59,16 +60,19 @@ public class ForgotPasswordService extends RpcServlet implements IForgotPassword
 				final MailRouting mr = mailManager.buildAppSenderMailRouting(user.getEmailAddress());
 				final IMailContext mailContext = mailManager.buildTextTemplateContext(mr, EMAIL_TEMPLATE_NAME, data);
 				mailManager.sendEmail(mailContext);
-				status.addMsg("Password reminder email was sent.", MsgLevel.INFO);
+				status.addMsg("Password reminder email was sent.", MsgLevel.INFO, MsgAttr.STATUS.flag);
 			}
 			catch(final EntityNotFoundException nfe) {
-				context.getExceptionHandler().handleException(p.getStatus(), nfe, nfe.getMessage(), false);
+				exceptionToStatus(nfe, status);
+				context.getExceptionHandler().handleException(nfe);
 			}
 			catch(final ChangeUserCredentialsFailedException e) {
-				context.getExceptionHandler().handleException(p.getStatus(), e, e.getMessage(), false);
+				exceptionToStatus(e, status);
+				context.getExceptionHandler().handleException(e);
 			}
 			catch(final MailSendException mse) {
-				context.getExceptionHandler().handleException(p.getStatus(), mse, mse.getMessage(), true);
+				exceptionToStatus(mse, status);
+				context.getExceptionHandler().handleException(mse);
 			}
 		}
 

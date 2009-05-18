@@ -36,8 +36,8 @@ final class MsgPopup extends PopupPanel implements IMsgOperator {
 	 * showing the popup.
 	 */
 	private PopupHideTimer hideTimer;
-	
-	private final SimpleMsgPanel msgPanel = new SimpleMsgPanel();
+
+	private final MsgPanel msgPanel = new MsgPanel();
 
 	/**
 	 * Constructor
@@ -57,6 +57,13 @@ final class MsgPopup extends PopupPanel implements IMsgOperator {
 	}
 
 	/**
+	 * @return The number of contained messages.
+	 */
+	public int getNumMsgs() {
+		return msgPanel.size();
+	}
+
+	/**
 	 * @return the reference element
 	 */
 	public Widget getRefWidget() {
@@ -68,32 +75,43 @@ final class MsgPopup extends PopupPanel implements IMsgOperator {
 	 * @param refWidget the reference element. Can't be <code>null</code>.
 	 */
 	public void setRefWidget(Widget refWidget) {
-		if(refWidget == null) throw new IllegalArgumentException();
+		if(refWidget == null) throw new IllegalArgumentException("Null ref widget");
 		this.refWidget = refWidget;
 	}
 
-	/**
-	 * Adds a single {@link Msg} to this panel.
-	 * @param msg
-	 */
-	public void addMsg(Msg msg) {
-		msgPanel.addMsg(msg);
-	}
-
-	/**
-	 * Adds multiple {@link Msg}s to this panel.
-	 * <p>
-	 * NOTE: {@link Msg}s are added in the order based on the order of the
-	 * provided iterable.
-	 * @param msgs
-	 */
-	public void addMsgs(Iterable<Msg> msgs) {
-		msgPanel.addMsgs(msgs);
+	@Override
+	public void addMsg(Msg msg, Integer classifier) {
+		msgPanel.addMsg(msg, classifier);
 	}
 
 	@Override
-	public void showMsgs(Position position, int milliDuration, boolean showMsgLevelImages) {
-		setPosition(position);
+	public void addMsgs(Iterable<Msg> msgs, Integer classifier) {
+		msgPanel.addMsgs(msgs, classifier);
+	}
+
+	@Override
+	public void removeMsg(Msg msg) {
+		msgPanel.removeMsg(msg);
+	}
+
+	@Override
+	public void removeMsgs(Iterable<Msg> msgs) {
+		msgPanel.removeMsgs(msgs);
+	}
+
+	@Override
+	public void removeMsgs(int classifier) {
+		msgPanel.removeMsgs(classifier);
+	}
+
+	@Override
+	public void removeUnclassifiedMsgs() {
+		msgPanel.removeUnclassifiedMsgs();
+	}
+
+	@Override
+	public void showMsgs(Position desiredPosition, int milliDuration, boolean showMsgLevelImages) {
+		setPosition(desiredPosition);
 		setDuration(milliDuration);
 		msgPanel.setShowMsgLevelImages(showMsgLevelImages);
 		showMsgs(true);
@@ -110,6 +128,8 @@ final class MsgPopup extends PopupPanel implements IMsgOperator {
 	@Override
 	public void showMsgs(boolean show) {
 		if(show) {
+			// don't show when there are no messages to show
+			if(getNumMsgs() < 1) return;
 			// make sure we aren't currently cloaked!
 			if(!DOMExt.isCloaked(refWidget.getElement())) {
 				setAutoHideEnabled(duration <= 0);

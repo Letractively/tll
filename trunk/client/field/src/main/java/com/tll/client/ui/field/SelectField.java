@@ -45,7 +45,24 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 		@Override
 		public V getValue() {
 			final int i = getSelectedIndex();
-			return i == -1 ? null : getDataValue(getValue(i));
+			// NOTE: we ignore the first index since it is an empty placeholder
+			return i < 1 ? null : getDataValue(getValue(i));
+		}
+
+		@Override
+		public void setValue(V value) {
+			setSelectedIndex(-1);
+			if(value != null) {
+				// NOTE: we start from index of 1 since the first index is always
+				// stubbed as empty
+				for(int i = 1; i < getItemCount(); i++) {
+					final V dv = getDataValue(getValue(i));
+					if(value.equals(dv)) {
+						setSelectedIndex(i);
+						return;
+					}
+				}
+			}
 		}
 
 		@Override
@@ -61,24 +78,11 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 		}
 
 		@Override
-		public void setValue(V value) {
-			setSelectedIndex(-1);
-			if(value != null) {
-				for(int i = 0; i < getItemCount(); i++) {
-					if(value.equals(getDataValue(getValue(i)))) {
-						setSelectedIndex(i);
-						return;
-					}
-				}
-			}
-		}
-
-		@Override
 		public HandlerRegistration addValueChangeHandler(ValueChangeHandler<V> handler) {
 			return addHandler(handler, ValueChangeEvent.getType());
 		}
 	}
-	
+
 	/**
 	 * The list box widget.
 	 */
@@ -99,7 +103,7 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 		lb.addBlurHandler(this);
 		setData(data);
 	}
-	
+
 	@Override
 	public void setEnabled(boolean enabled) {
 		lb.setEnabled(enabled);
@@ -111,6 +115,7 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 		super.setData(data);
 		final V oldval = lb.getValue();
 		lb.clear();
+		lb.addItem(""); // ensure we have a null/empty option
 		for(final V val : data.keySet()) {
 			lb.addItem(data.get(val));
 			if(ObjectUtil.equals(val, oldval)) {

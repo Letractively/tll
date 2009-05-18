@@ -16,7 +16,7 @@ import com.tll.common.model.ModelKey;
  * @author jpk
  */
 public class ModelListingWidget extends ListingWidget<Model, ModelListingTable>
-		implements IModelChangeHandler {
+implements IModelChangeHandler {
 
 	/**
 	 * Constructor
@@ -57,17 +57,16 @@ public class ModelListingWidget extends ListingWidget<Model, ModelListingTable>
 				addRow(event.getModel());
 				break;
 			case UPDATED: {
-				final ModelKey modelRef = event.getModel().getRefKey();
-				final int rowIndex = getRowIndex(modelRef);
+				final ModelKey mkey = event.getModel().getKey();
+				final int rowIndex = getRowIndex(mkey);
 				if(rowIndex != -1) {
 					assert rowIndex > 0; // header row
-					// TODO determine how to handle named query specific model data!!
 					updateRow(rowIndex, event.getModel());
 				}
 				break;
 			}
 			case DELETED: {
-				final ModelKey modelRef = event.getModelRef();
+				final ModelKey modelRef = event.getModelKey();
 				final int rowIndex = getRowIndex(modelRef);
 				if(rowIndex != -1) {
 					assert rowIndex > 0; // header row

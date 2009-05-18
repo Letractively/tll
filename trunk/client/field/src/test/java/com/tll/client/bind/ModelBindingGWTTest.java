@@ -166,7 +166,7 @@ public class ModelBindingGWTTest extends GWTTestCase {
 	 * @throws Exception
 	 */
 	protected Model[] stubLeftAndRight() throws Exception {
-		final Model left = MockModelStubber.stubAccount();
+		final Model left = MockModelStubber.stubAccount(true);
 		final Model right = left.copy(true);
 		// right.setAsRoot();
 

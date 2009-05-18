@@ -41,56 +41,37 @@ public final class Status implements IMarshalable {
 		return errors;
 	}
 
-	public List<Msg> getAllMsgs() {
+	/**
+	 * @return All held {@link Msg}s.
+	 */
+	public List<Msg> getMsgs() {
 		return msgs;
 	}
 
 	/**
-	 * @return {@link List} of messages deemed for global display.
+	 * @return A {@link List} of messages having attributes matching those given.
+	 * @param attribs The desired attributes to filter against
 	 */
-	public List<Msg> getGlobalDisplayMsgs() {
+	public List<Msg> getMsgs(int attribs) {
 		if(msgs == null) return null;
 		final List<Msg> list = new ArrayList<Msg>();
 		for(final Msg msg : msgs) {
-			if(!msg.hasAttribute(MsgAttr.NODISPLAY) && !msg.hasAttribute(MsgAttr.EXCEPTION)) {
-				list.add(msg);
+			final int mas = msg.getAttributes();
+			for(final MsgAttr a : MsgAttr.values()) {
+				if(((mas & a.flag) == a.flag) && ((attribs & a.flag) == a.flag)) {
+					list.add(msg);
+				}
 			}
 		}
 		return list;
 	}
 
-	/**
-	 * @return {@link List} of messages associated with a UI field.
-	 */
-	public List<Msg> getFieldMsgs() {
-		if(msgs == null) return null;
-		final List<Msg> list = new ArrayList<Msg>();
-		for(final Msg msg : msgs) {
-			if(msg.hasAttribute(MsgAttr.FIELD)) {
-				list.add(msg);
+	public void addMsgs(List<Msg> messages) {
+		if(messages != null) {
+			for(final Msg m : messages) {
+				addMsg(m);
 			}
 		}
-		return list;
-	}
-
-	public void addMsgs(List<Msg> msgs) {
-		if(msgs == null || msgs.size() < 1) {
-			return;
-		}
-		if(this.msgs == null) {
-			this.msgs = new ArrayList<Msg>();
-		}
-		this.msgs.addAll(msgs);
-		for(final Msg msg : msgs) {
-			if(msg.getLevel().isError()) {
-				this.errors = true;
-				break;
-			}
-		}
-	}
-
-	public int getNumTotalMsgs() {
-		return msgs == null ? 0 : msgs.size();
 	}
 
 	public void addMsg(Msg msg) {
@@ -114,7 +95,7 @@ public final class Status implements IMarshalable {
 	 * @see Msg#Msg(String, MsgLevel, int, String)
 	 */
 	public void addMsg(String msg, MsgLevel level, int attribs, String refToken) {
-		addMsg(new Msg(msg, level, (attribs | MsgAttr.STATUS.flag), refToken));
+		addMsg(new Msg(msg, level, attribs, refToken));
 	}
 
 	/**
@@ -125,18 +106,6 @@ public final class Status implements IMarshalable {
 	 */
 	public void addMsg(String msg, MsgLevel level, int attribs) {
 		addMsg(msg, level, attribs, null);
-	}
-
-	/**
-	 * Adds a {@link Msg} w/ no ref token and no attributes.
-	 * <p>
-	 * <strong>NOTE: </strong>Adding messages via this method will, by default, be
-	 * displayed in the UI.
-	 * @param msg
-	 * @param level
-	 */
-	public void addMsg(String msg, MsgLevel level) {
-		addMsg(msg, level, MsgAttr.NONE.flag, null);
 	}
 
 	@Override

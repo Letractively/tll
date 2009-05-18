@@ -1,25 +1,16 @@
 @CHARSET "ISO-8859-1";
 
-.msg {
-  
+.cmsg {
 }
 
-/* 
-this is problematic - 
-so for now we accept multiple msgs of differing msg levels to 
-appear stacked rather than horizontally spaced.
-.msg .msg {
-  float: left;
-  margin-right: 5px;
+.cmsg .msg {
 }
-*/
 
 .msg ul {
   margin: 1px;
 }
 
 .msg .ic {
-  float: left;
   margin: 2px;
 }
 
@@ -44,7 +35,7 @@ appear stacked rather than horizontally spaced.
 }
 
 .msg .info * {
-  color: #2C6688;
+  color: #2C6688 !important;
 }
 
 .msg .warn {
@@ -53,7 +44,7 @@ appear stacked rather than horizontally spaced.
 }
 
 .msg .warn * {
-  color: #666600;
+  color: #666600 !important;
 }
 
 .msg .error {
@@ -62,7 +53,7 @@ appear stacked rather than horizontally spaced.
 }
 
 .msg .error * {
-  color: #CC0000;
+  color: #CC0000 !important;
 }
 
 .msg .fatal {
@@ -71,7 +62,7 @@ appear stacked rather than horizontally spaced.
 }
 
 .msg .fatal * {
-  color: maroon;
+  color: maroon !important;
 }
 
 /* global msg panel specific */
@@ -89,7 +80,11 @@ appear stacked rather than horizontally spaced.
 }
 
 .gmsg .container {
-  margin: 2px;
+  /*margin: 2px;*/
   padding-left: 2px;
   padding-right: 2px;
+}
+
+.gmsg .ic {
+	float:left;
 }

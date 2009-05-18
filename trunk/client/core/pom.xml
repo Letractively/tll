@@ -13,19 +13,35 @@
   <name>client-core</name>
   <version>${project.parent.version}</version>
   <description>Houses core client and server assets for use by all other client modules.</description>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>client-server-jar.xml</descriptor>
+                <descriptor>test-assets.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
   <dependencies>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-core</artifactId>
+      <artifactId>tll-common</artifactId>
       <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-core</artifactId>
-      <version>${project.version}</version>
-      <classifier>sources</classifier>
-      <!-- <scope>provided</scope> -->
     </dependency>
   </dependencies>
 

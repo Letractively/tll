@@ -6,6 +6,7 @@ package com.tll.client.ui.listing;
 
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
@@ -13,12 +14,14 @@ import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingHandler;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ListingEvent;
+import com.tll.client.model.IHasModelChangeHandlers;
+import com.tll.client.model.IModelChangeHandler;
+import com.tll.client.model.ModelChangeEvent;
 
 /**
  * ListingWidget - Base class for all listing {@link Widget}s in the app.
@@ -27,7 +30,7 @@ import com.tll.client.listing.ListingEvent;
  * @param <T> the table widget type
  */
 public class ListingWidget<R, T extends ListingTable<R>> extends Composite implements
-		Focusable, KeyDownHandler, IListingHandler<R> {
+ Focusable, KeyDownHandler, IListingHandler<R>, IHasModelChangeHandlers {
 
 	/**
 	 * Styles - (tableview.css)
@@ -111,14 +114,24 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 		if(config.isShowNavBar()) {
 			navBar = new ListingNavBar<R>(config);
 			tableViewPanel.add(navBar.getWidget());
+			navBar.setAddRowDelegate(config.getAddRowHandler());
 		}
 		else {
 			navBar = null;
 		}
 
+		// row delegate?
+		final IRowOptionsDelegate rod = config.getRowOptionsHandler();
+		if(rod != null) rowPopup = new RowContextPopup(2000, table, rod);
+
 		focusPanel.add(tableViewPanel);
 
 		initWidget(focusPanel);
+	}
+
+	@Override
+	public HandlerRegistration addModelChangeHandler(IModelChangeHandler handler) {
+		return addHandler(handler, ModelChangeEvent.TYPE);
 	}
 
 	/**
@@ -149,28 +162,6 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 	}
 
 	/**
-	 * Routes row clicks to the given row options delgate.
-	 * @param rowOptionsDelegate The row options delegate
-	 */
-	public final void setRowOptionsDelegate(IRowOptionsDelegate rowOptionsDelegate) {
-		if(rowPopup == null) {
-			rowPopup = new RowContextPopup(table);
-			focusPanel.addMouseDownHandler(rowPopup);
-		}
-		rowPopup.setDelegate(rowOptionsDelegate);
-	}
-
-	/**
-	 * Sets the add row delegate in the nav bar which must already be present.
-	 * @param addRowDelegate The add row delegate which will handle add row
-	 *        requests emanating from the nav bar.
-	 */
-	public final void setAddRowDelegate(IAddRowDelegate addRowDelegate) {
-		if(navBar == null) throw new IllegalStateException();
-		navBar.setAddRowDelegate(addRowDelegate);
-	}
-
-	/**
 	 * @return The number of rows <em>shown</em> in the listing.
 	 */
 	public final int getNumRows() {
@@ -195,6 +186,10 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 		table.markRowDeleted(rowIndex, markDeleted);
 	}
 
+	public final boolean isRowMarkedDeleted(int rowIndex) {
+		return table.isRowMarkedDeleted(rowIndex);
+	}
+
 	public final int getTabIndex() {
 		return focusPanel.getTabIndex();
 	}
@@ -213,6 +208,10 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 
 	public void onKeyDown(KeyDownEvent event) {
 		delegateEvent(table, event);
+	}
+
+	public final void setPortalHeight(String height) {
+		portal.setHeight(height);
 	}
 
 	public final void onListingEvent(ListingEvent<R> event) {

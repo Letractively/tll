@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.common.data.Payload;
 
 /**
@@ -12,33 +13,36 @@ import com.tll.common.data.Payload;
  * execution.
  * @author jpk
  */
-public final class RpcCommandChain implements IRpcCommand<Payload> {
+public final class RpcCommandChain implements AsyncCallback<Payload>, IRpcCommand {
 
 	/**
 	 * The list of commands to be executed.
 	 */
-	private final List<IRpcCommand<? extends Payload>> chain = new ArrayList<IRpcCommand<? extends Payload>>(3);
+	private final List<RpcCommand<Payload>> chain = new ArrayList<RpcCommand<Payload>>(3);
 
 	/**
 	 * The command iterator.
 	 */
-	private Iterator<IRpcCommand<? extends Payload>> cmdIterator;
+	private Iterator<RpcCommand<Payload>> cmdIterator;
 
 	/**
 	 * The current command being executed.
 	 */
-	private IRpcCommand<? extends Payload> currentCommand;
+	private RpcCommand<Payload> currentCommand;
+
+	@Override
+	public void setSource(Widget source) {
+		for(final RpcCommand<Payload> cmd : chain) {
+			cmd.setSource(source);
+		}
+	}
 
 	/**
 	 * Adds a command to be executed upon successful completion of this command.
 	 * @param command The chain command to be executed.
 	 */
-	public void addCommand(IRpcCommand<? extends Payload> command) {
+	public void addCommand(RpcCommand<Payload> command) {
 		chain.add(command);
-	}
-
-	public void setAsyncCallback(AsyncCallback<Payload> callback) {
-		throw new UnsupportedOperationException("Chained RPC commands do not support setting the async callback");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -75,5 +79,4 @@ public final class RpcCommandChain implements IRpcCommand<Payload> {
 		currentCommand = null;
 		cmdIterator = null;
 	}
-
 }

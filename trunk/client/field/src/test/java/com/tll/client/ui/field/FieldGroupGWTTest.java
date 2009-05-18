@@ -11,7 +11,7 @@ import java.util.Set;
 
 import com.google.gwt.junit.client.GWTTestCase;
 import com.tll.client.mock.MockFieldGroupProviders;
-import com.tll.criteria.IPropertyNameProvider;
+import com.tll.model.schema.IPropertyNameProvider;
 
 /**
  * FieldGroupGWTTest

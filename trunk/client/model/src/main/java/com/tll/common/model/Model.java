@@ -18,6 +18,7 @@ import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.model.schema.IPropertyMetadataProvider;
 import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
+import com.tll.util.PropertyPath;
 import com.tll.util.StringUtil;
 
 /**
@@ -26,7 +27,7 @@ import com.tll.util.StringUtil;
  * @author jpk
  */
 public final class Model implements IMarshalable, IBindable, IPropertyMetadataProvider,
-		IDescriptorProvider, Iterable<IModelProperty> {
+ IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 
 	/**
 	 * Entity id property name
@@ -148,11 +149,10 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	}
 
 	/**
-	 * Provides the <em>unique</em> {@link ModelKey} for this model/entity
-	 * instance.
-	 * @return the ref key for this model
+	 * Provides the <em>unique</em> {@link ModelKey} for this instance.
+	 * @return the unique key
 	 */
-	public ModelKey getRefKey() {
+	public ModelKey getKey() {
 		return new ModelKey(entityType, getId(), getName());
 	}
 
@@ -339,7 +339,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		assert prop != null;
 		if(!prop.getType().isModelRef()) {
 			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
-					"model reference");
+			"model reference");
 		}
 		return ((IModelRefProperty) prop).getModel();
 	}
@@ -357,7 +357,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		assert prop != null;
 		if(prop.getType() != PropertyType.RELATED_ONE) {
 			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
-					"related one");
+			"related one");
 		}
 		return (RelatedOneProperty) prop;
 	}
@@ -375,7 +375,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		assert prop != null;
 		if(prop.getType() != PropertyType.RELATED_MANY) {
 			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
-					"related many");
+			"related many");
 		}
 		return (RelatedManyProperty) prop;
 	}
@@ -427,7 +427,13 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		final int len = pp.depth();
 		for(int i = 0; i < len; i++) {
 			final String pname = pp.nameAt(i);
-			final int index = pp.indexAt(i);
+			final int index;
+			try {
+				index = pp.indexAt(i);
+			}
+			catch(final IllegalArgumentException e) {
+				throw new MalformedPropPathException(e.getMessage());
+			}
 			final boolean indexed = (index >= 0);
 			final boolean atEnd = (i == len - 1);
 
@@ -622,11 +628,11 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 			if(prop instanceof IModelRefProperty) {
 				final IModelRefProperty mrp = (IModelRefProperty) prop;
 				final Model model =
-						(copyMarkedDeleted || (!copyMarkedDeleted && mrp.getModel() != null && !mrp.getModel().isMarkedDeleted())) ?
-						(copyReferences || !mrp.isReference()) ? copy(mrp.getModel(), copyReferences, copyMarkedDeleted, visited)
-								: mrp.getModel()
-								: null;
-				copy.props.add(new RelatedOneProperty(mrp.getRelatedType(), mrp.getPropertyName(), mrp.isReference(), model));
+					(copyMarkedDeleted || (!copyMarkedDeleted && mrp.getModel() != null && !mrp.getModel().isMarkedDeleted())) ?
+							(copyReferences || !mrp.isReference()) ? copy(mrp.getModel(), copyReferences, copyMarkedDeleted, visited)
+									: mrp.getModel()
+									: null;
+									copy.props.add(new RelatedOneProperty(mrp.getRelatedType(), mrp.getPropertyName(), mrp.isReference(), model));
 			}
 
 			// related many...
@@ -639,8 +645,8 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 					for(final Model model : list) {
 						if(copyMarkedDeleted || (!copyMarkedDeleted && !model.isMarkedDeleted())) {
 							nlist
-									.add((copyReferences || !rmp.isReference()) ? copy(model, copyReferences, copyMarkedDeleted, visited)
-											: model);
+							.add((copyReferences || !rmp.isReference()) ? copy(model, copyReferences, copyMarkedDeleted, visited)
+									: model);
 						}
 					}
 				}
@@ -780,24 +786,24 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 
 	@Override
 	public String descriptor() {
-		return getRefKey().descriptor();
+		return getKey().descriptor();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if(this == obj) return true;
 		if(!(obj instanceof Model)) return false;
-		return getRefKey().equals(((Model) obj).getRefKey());
+		return getKey().equals(((Model) obj).getKey());
 	}
 
 	@Override
 	public int hashCode() {
-		return getRefKey().hashCode();
+		return getKey().hashCode();
 	}
 
 	@Override
 	public String toString() {
-		return getRefKey().toString()/* + " [" + ((Object) this).hashCode() + ']'*/;
+		return getKey().toString()/* + " [" + ((Object) this).hashCode() + ']'*/;
 	}
 
 }

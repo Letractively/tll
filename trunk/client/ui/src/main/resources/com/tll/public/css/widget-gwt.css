@@ -50,7 +50,7 @@ a, a:visited, a:hover {
   margin: 0;
   padding: 2px 3px;
   text-decoration: none;
-  font-size: small;
+  /*font-size: small;*/
   cursor: pointer;
   cursor: hand;
   background: url("images/hborder.png") repeat-x 0px -27px;
@@ -611,7 +611,7 @@ a, a:visited, a:hover {
   cursor: pointer;
   cursor: hand;
   font-weight: bold;
-  font-size: 1.3em;
+  /*font-size: 1.3em;*/
   padding: 3px;
   border: 1px solid #bbbbbb;
   border-bottom: 0px;
@@ -1061,7 +1061,7 @@ a, a:visited, a:hover {
 }
 td.datePickerMonth {
   text-align: center;
-  vertical-align: center;
+  vertical-align: middle;
   white-space: nowrap;
   font-size: 70%;
   font-weight: bold;
@@ -1075,4 +1075,7 @@ td.datePickerMonth {
   cursor: hand;
   cursor: pointer;
   padding: 0px 4px;
+}
+
+.gwt-GlassPanel {
 }

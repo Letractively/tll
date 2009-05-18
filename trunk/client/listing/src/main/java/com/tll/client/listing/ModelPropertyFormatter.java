@@ -35,6 +35,7 @@ public abstract class ModelPropertyFormatter {
 	 * @throws IllegalStateException When the given property name is malformed.
 	 */
 	public static String pformat(Model model, String propName, GlobalFormat format) {
+		if(model == null) return null;
 		try {
 			// resolve the property
 			final IPropertyValue pv = model.getPropertyValue(propName);
@@ -43,7 +44,7 @@ public abstract class ModelPropertyFormatter {
 			if(pv.getType().isSelfFormatting()) {
 				return ((ISelfFormattingPropertyValue) pv).asString();
 			}
-			
+
 			// format the value..
 			return Fmt.format(pv.getValue(), format);
 		}

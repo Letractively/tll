@@ -16,7 +16,8 @@ import com.tll.common.msg.Msg.MsgLevel;
  * @author jpk
  */
 public class Error implements IError {
-	
+
+	private final ErrorClassifier sourcing;
 	private final List<Msg> errorMsgs;
 
 	@Override
@@ -26,19 +27,28 @@ public class Error implements IError {
 
 	/**
 	 * Constructor
+	 * @param classifier
 	 * @param errorMsg
 	 */
-	public Error(String errorMsg) {
+	public Error(ErrorClassifier classifier, String errorMsg) {
+		this.sourcing = classifier;
 		errorMsgs = new ArrayList<Msg>();
 		errorMsgs.add(new Msg(errorMsg, MsgLevel.ERROR));
 	}
 
 	/**
 	 * Constructor
+	 * @param sourcing
 	 * @param errorMsgs
 	 */
-	public Error(List<Msg> errorMsgs) {
+	public Error(ErrorClassifier sourcing, List<Msg> errorMsgs) {
+		this.sourcing = sourcing;
 		this.errorMsgs = errorMsgs;
+	}
+
+	@Override
+	public ErrorClassifier getClassifier() {
+		return sourcing;
 	}
 
 	/**

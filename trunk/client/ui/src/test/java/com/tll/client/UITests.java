@@ -6,12 +6,14 @@ import java.util.Arrays;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -24,6 +26,7 @@ import com.tll.client.ui.IWidgetRef;
 import com.tll.client.ui.Position;
 import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.client.ui.msg.IMsgOperator;
+import com.tll.client.ui.msg.MsgLevelImageBundle;
 import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.ui.msg.Msgs;
 import com.tll.client.ui.option.IOptionHandler;
@@ -31,6 +34,8 @@ import com.tll.client.ui.option.Option;
 import com.tll.client.ui.option.OptionEvent;
 import com.tll.client.ui.option.OptionsPanel;
 import com.tll.client.ui.option.OptionsPopup;
+import com.tll.client.ui.toolbar.Toolbar;
+import com.tll.client.ui.toolbar.ToolbarImageBundle;
 import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgLevel;
 
@@ -48,27 +53,36 @@ public final class UITests extends AbstractUITest {
 	@Override
 	protected UITestCase[] getTestCases() {
 		return new UITestCase[] {
-			new MsgsText(), new BusyPanelTest(), new DialogTest(), new OptionsPanelTest(), new OptionsPopupTest(),
-			new MsgPopupRegistryTest(), new GlobalMsgPanelTest() };
+			new MsgsText(),
+			new MsgPopupRegistryTest(),
+			new GlobalMsgPanelTest(),
+			new BusyPanelTest(),
+			new DialogTest(),
+			new OptionsPanelTest(),
+			new OptionsPopupTest(),
+			new OptionsPopupTest2(),
+			new PushButtonStyleTest(),
+			new ToolbarStyleTest(),
+		};
 	}
-	
+
 	static final class MsgsText extends DefaultUITestCase {
-		
+
 		static final Msg m1 = new Msg("This is message 1", MsgLevel.INFO);
 		static final Msg m2 = new Msg("This is message 2", MsgLevel.WARN);
 		static final Msg m3 = new Msg("This is message 3", MsgLevel.ERROR);
 		static final ArrayList<Msg> mlist;
-		
+
 		static {
 			mlist = new ArrayList<Msg>();
 			mlist.add(m1);
 			mlist.add(m2);
 			mlist.add(m3);
 		}
-		
+
 		FlowPanel pnl;
 		Label lblA, lblB;
-		
+
 		/**
 		 * Constructor
 		 */
@@ -79,6 +93,7 @@ public final class UITests extends AbstractUITest {
 		@Override
 		protected void init() {
 			pnl = new FlowPanel();
+			RootPanel.get().getElement().getStyle().setProperty("backgroundColor", "silver");
 			lblA = new Label("Label A");
 			lblB = new Label("Label B");
 			pnl.add(lblA);
@@ -99,29 +114,528 @@ public final class UITests extends AbstractUITest {
 		protected Button[] getTestActions() {
 			return new Button[] {
 				new Button("Post single on Label A", new ClickHandler() {
-				
+
 					@Override
 					public void onClick(ClickEvent event) {
 						Msgs.post(m1, lblA);
 					}
-				}),
-				new Button("Post multiple on Label A", new ClickHandler() {
-					
+				}), new Button("Post multiple on Label A", new ClickHandler() {
+
 					@Override
 					public void onClick(ClickEvent event) {
 						Msgs.post(mlist, lblA);
 					}
-				}),
-				new Button("Post timed single on Label A", new ClickHandler() {
-					
+				}), new Button("Post timed single on Label A", new ClickHandler() {
+
 					@Override
 					public void onClick(ClickEvent event) {
 						Msgs.post(m1, lblA, Position.BOTTOM, 1000, true);
 					}
+				}), };
+		}
+	}
+
+	/**
+	 * MsgPopupRegistryTest
+	 * @author jpk
+	 */
+	static final class MsgPopupRegistryTest extends UITestCase {
+
+		static final Msg msgInfo = new Msg("An info message.", MsgLevel.INFO);
+		static final Msg msgWarn = new Msg("A warn message.", MsgLevel.WARN);
+		static final Msg msgError = new Msg("An error message.", MsgLevel.ERROR);
+		static final Msg msgFatal = new Msg("A fatal message.", MsgLevel.FATAL);
+
+		static final Msg cmsgInfo = new Msg("A classified info message.", MsgLevel.INFO);
+		static final Msg cmsgWarn = new Msg("A classified warn message.", MsgLevel.WARN);
+		static final Msg cmsgError = new Msg("A classified error message.", MsgLevel.ERROR);
+		static final Msg cmsgFatal = new Msg("A classified fatal message.", MsgLevel.FATAL);
+
+		static final Msg[] allMsgs = new Msg[] {
+			msgInfo, msgWarn, msgError, msgFatal };
+
+		static final Msg[] allCMsgs = new Msg[] {
+			cmsgInfo, cmsgWarn, cmsgError, cmsgFatal };
+
+		static final int classifier = 1;
+
+		MsgPopupRegistry registry;
+		HorizontalPanel layout;
+		VerticalPanel buttonPanel;
+		FlowPanel context, nestedContext;
+		Label refWidget;
+		boolean bTglShowImg = true;
+
+		@Override
+		public String getName() {
+			return "MsgPopupRegistry";
+		}
+
+		@Override
+		public String getDescription() {
+			return "Tests MsgPopupRegistry routines.";
+		}
+
+		private void stubContext() {
+			context = new FlowPanel();
+			context.setSize("200px", "200px");
+			context.getElement().getStyle().setProperty("border", "1px solid gray");
+			context.getElement().getStyle().setProperty("padding", "10px");
+
+			nestedContext = new FlowPanel();
+			nestedContext.setSize("100px", "100px");
+			nestedContext.getElement().getStyle().setProperty("border", "1px solid gray");
+			nestedContext.getElement().getStyle().setProperty("padding", "5px");
+			context.add(nestedContext);
+
+			refWidget = new Label("Ref Widget");
+			refWidget.getElement().getStyle().setProperty("border", "1px solid gray");
+			refWidget.getElement().getStyle().setProperty("margin", "5px");
+			nestedContext.add(refWidget);
+		}
+
+		private void stubTestButtons() {
+			buttonPanel = new VerticalPanel();
+			buttonPanel.add(new Button("Show All Msgs", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					registry.getOperator(context, true).showMsgs(true);
+				}
+			}));
+			buttonPanel.add(new Button("Hide All Msgs", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					registry.getOperator(context, true).showMsgs(false);
+				}
+			}));
+
+			buttonPanel.add(new Button("Clear All Messages", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					registry.getOperator(context, true).clearMsgs();
+				}
+			}));
+			buttonPanel.add(new Button("Clear Ref Widget Messages", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					registry.getOperator(refWidget, false).clearMsgs();
+				}
+			}));
+			buttonPanel.add(new Button("Add Ref Widget Messages", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					registry.getOperator(refWidget, false).addMsgs(Arrays.asList(allMsgs), null);
+				}
+			}));
+			buttonPanel.add(new Button("Add classified Messages", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					registry.getOperator(refWidget, false).addMsgs(Arrays.asList(allCMsgs), classifier);
+				}
+			}));
+			buttonPanel.add(new Button("Remove classified Messages", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					registry.getOperator(refWidget, false).removeMsgs(classifier);
+				}
+			}));
+
+			// show/hide msg level images
+			final Button btnLevel = new Button("Show Msg Level Imgs");
+			btnLevel.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					final IMsgOperator op = registry.getOperator(context, true);
+					op.showMsgs(Position.BOTTOM, -1, bTglShowImg);
+					btnLevel.setText(bTglShowImg ? "Hide Msg Level Imgs" : "Show Msg Level Imgs");
+					bTglShowImg = !bTglShowImg;
+				}
+			});
+			buttonPanel.add(btnLevel);
+
+			buttonPanel.add(new Button("Test cloaking", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					registry.clear();
+					final IMsgOperator operator = registry.getOperator(refWidget, false);
+					operator.addMsg(msgWarn, null);
+					nestedContext.setVisible(false);
+					operator.showMsgs(true);
+					Window
+					.alert("No message popup should appear even though showMsgs() was called because the nestedContext's visibliity was just set to false.");
+					nestedContext.setVisible(true);
+					operator.showMsgs(true);
+					Window.alert("Now it should be showing because the nestedContext's visibliity was just set to true.");
+				}
+			}));
+			buttonPanel.add(new Button("Test scroll handling", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					Window.alert("TODO: implement");
+				}
+			}));
+			buttonPanel.add(new Button("Test drag handling", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					Window.alert("TODO: implement");
+				}
+			}));
+		}
+
+		@Override
+		public void load() {
+			registry = new MsgPopupRegistry();
+			stubContext();
+			stubTestButtons();
+			layout = new HorizontalPanel();
+			layout.add(buttonPanel);
+			layout.add(context);
+			layout.getElement().getStyle().setProperty("margin", "1em");
+			layout.setSpacing(5);
+			RootPanel.get().add(layout);
+		}
+
+		@Override
+		public void unload() {
+			layout.removeFromParent();
+			context = null;
+			buttonPanel = null;
+			layout = null;
+			registry.clear();
+			registry = null;
+		}
+	} // MsgPopupRegistryTest
+
+	/**
+	 * BusyPanelTest - Tests the {@link BusyPanel}.
+	 * @author jpk
+	 */
+	static final class BusyPanelTest extends UITestCase {
+
+		HorizontalPanel layout;
+		VerticalPanel buttonPanel;
+		FlowPanel context;
+		AbsolutePanel localOverlay;
+		BusyPanel busyPanel;
+
+		@Override
+		public String getName() {
+			return "BusyPanel";
+		}
+
+		@Override
+		public String getDescription() {
+			return "Tests the BusyPanel globally and locally.";
+		}
+
+		private void stubContext() {
+			context = new FlowPanel();
+			context.setSize("200px", "200px");
+			context.getElement().getStyle().setProperty("border", "1px solid gray");
+			context.getElement().getStyle().setProperty("padding", "10px");
+			busyPanel = new BusyPanel(true);
+		}
+
+		private void stubTestButtons() {
+			buttonPanel = new VerticalPanel();
+
+			buttonPanel.add(new Button("Test Local", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					if(localOverlay != null) {
+						RootPanel.get().remove(localOverlay);
+					}
+					localOverlay = BusyPanel.getAbsoluteOverlay(context);
+					localOverlay.add(busyPanel, 0, 0);
+				}
+			}));
+			buttonPanel.add(new Button("Test Global", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					RootPanel.get().add(busyPanel, 0, 0);
+				}
+			}));
+		}
+
+		@Override
+		public void load() {
+			stubContext();
+			stubTestButtons();
+			layout = new HorizontalPanel();
+			// realize scrolling for testing purposes
+			layout.setWidth("1000px");
+			layout.setHeight("1000px");
+			layout.add(buttonPanel);
+			layout.add(context);
+			layout.getElement().getStyle().setProperty("margin", "1em");
+			layout.setSpacing(5);
+			RootPanel.get().add(layout);
+		}
+
+		@Override
+		public void unload() {
+			busyPanel.removeFromParent();
+			busyPanel = null;
+			layout.removeFromParent();
+			context = null;
+			buttonPanel = null;
+			layout = null;
+		}
+
+	} // BusyPanelTest
+
+	/**
+	 * GlobalMsgPanelTest
+	 * @author jpk
+	 */
+	static final class GlobalMsgPanelTest extends DefaultUITestCase {
+
+		static final int classifier = 1;
+
+		static IWidgetRef createRef(final Widget w, final String descriptor) {
+			return new IWidgetRef() {
+
+				@Override
+				public Widget getWidget() {
+					return w;
+				}
+
+				@Override
+				public String descriptor() {
+					return descriptor;
+				}
+			};
+		}
+
+		/**
+		 * Factory method for creating test {@link Msg}s.
+		 * @param level the msg level
+		 * @param cfr optional classifier id
+		 * @param num the number of messages to create
+		 * @return newly created list of {@link Msg}s.
+		 */
+		static ArrayList<Msg> stubMsgs(MsgLevel level, Integer cfr, int num) {
+			final ArrayList<Msg> list = new ArrayList<Msg>(num);
+			for(int i = 0; i < num; i++) {
+				String s;
+				if(cfr == null) {
+					s = "This is " + level.getName() + " message #" + Integer.toString(i + 1);
+				}
+				else {
+					s =
+						"This is classified " + level.getName() + " message #" + Integer.toString(i + 1) + " (cid: " + cfr
+						+ ")";
+				}
+				list.add(new Msg(s, level));
+			}
+			return list;
+		}
+
+		GlobalMsgPanel gmp;
+		HorizontalPanel refWidgetPanel;
+		IWidgetRef tb1, tb2, lbl;
+
+		/**
+		 * Constructor
+		 */
+		public GlobalMsgPanelTest() {
+			super("GlobalMsgPanel", "Verifies the GlobalMsgPanel layout and its operations.");
+		}
+
+		@Override
+		protected Widget getContext() {
+			if(gmp == null) {
+				gmp = new GlobalMsgPanel();
+			}
+			return gmp;
+		}
+
+		@Override
+		protected void init() {
+			refWidgetPanel = new HorizontalPanel();
+			refWidgetPanel.getElement().getStyle().setProperty("margin", "1em");
+			refWidgetPanel.setSpacing(5);
+
+			TextBox tb = new TextBox();
+			tb.setValue("Text Box 1");
+			tb1 = createRef(tb, "Text Box 1");
+			refWidgetPanel.add(tb1.getWidget());
+
+			tb = new TextBox();
+			tb.setValue("Text Box 2");
+			tb2 = createRef(tb, "Text Box 2");
+			refWidgetPanel.add(tb2.getWidget());
+
+			lbl = createRef(new Label("Num Msgs"), "Num Msgs");
+			refWidgetPanel.add(lbl.getWidget());
+
+			RootPanel.get().add(refWidgetPanel);
+		}
+
+		@Override
+		protected void teardown() {
+			refWidgetPanel.removeFromParent();
+			refWidgetPanel = null;
+		}
+
+		@Override
+		protected Button[] getTestActions() {
+			return new Button[] {
+				new Button("Clear all Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.clear();
+					}
+				}),
+				new Button("Remove Fatal Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.remove(MsgLevel.FATAL);
+					}
+				}),
+				new Button("Remove Error Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.remove(MsgLevel.ERROR);
+					}
+				}),
+				new Button("Remove Warn Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.remove(MsgLevel.WARN);
+					}
+				}),
+				new Button("Remove Info Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.remove(MsgLevel.INFO);
+					}
+				}),
+				new Button("Remove Text Box 1 Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.remove(tb1, null);
+					}
+				}),
+				new Button("Remove Text Box 2 Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.remove(tb2, null);
+					}
+				}),
+				new Button("Remove Label Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.remove(lbl, null);
+					}
+				}),
+				new Button("Remove Un-sourced Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.removeUnsourced(null);
+					}
+				}),
+				new Button("Remove Classified Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.remove(classifier);
+					}
+				}),
+				new Button("Add Fatal Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.add(tb1, stubMsgs(MsgLevel.FATAL, null, 1), null);
+						gmp.add(tb2, stubMsgs(MsgLevel.FATAL, null, 1), null);
+						gmp.add(lbl, stubMsgs(MsgLevel.FATAL, null, 1), null);
+					}
+				}),
+				new Button("Add Error Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.add(tb1, stubMsgs(MsgLevel.ERROR, null, 1), null);
+						gmp.add(tb2, stubMsgs(MsgLevel.ERROR, null, 1), null);
+						gmp.add(lbl, stubMsgs(MsgLevel.ERROR, null, 1), null);
+					}
+				}),
+				new Button("Add Warn Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.add(tb1, stubMsgs(MsgLevel.WARN, null, 1), null);
+						gmp.add(tb2, stubMsgs(MsgLevel.WARN, null, 1), null);
+						gmp.add(lbl, stubMsgs(MsgLevel.WARN, null, 1), null);
+					}
+				}),
+				new Button("Add Info Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.add(tb1, stubMsgs(MsgLevel.INFO, null, 1), null);
+						gmp.add(tb2, stubMsgs(MsgLevel.INFO, null, 1), null);
+						gmp.add(lbl, stubMsgs(MsgLevel.INFO, null, 1), null);
+					}
+				}),
+				new Button("Add Un-sourced Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.add(stubMsgs(MsgLevel.INFO, null, 1), null);
+						gmp.add(stubMsgs(MsgLevel.WARN, null, 1), null);
+						gmp.add(stubMsgs(MsgLevel.ERROR, null, 1), null);
+						gmp.add(stubMsgs(MsgLevel.FATAL, null, 1), null);
+					}
+				}),
+				new Button("Add Classified Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.add(stubMsgs(MsgLevel.INFO, classifier, 1), classifier);
+						gmp.add(stubMsgs(MsgLevel.WARN, classifier, 1), classifier);
+						gmp.add(stubMsgs(MsgLevel.ERROR, classifier, 1), classifier);
+						gmp.add(stubMsgs(MsgLevel.FATAL, classifier, 1), classifier);
+					}
+				}),
+				new Button("Show Size", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						final StringBuilder sb = new StringBuilder();
+						sb.append("Total size: " + gmp.size() + "\r\n");
+						sb.append(MsgLevel.INFO + " size: " + gmp.size(MsgLevel.INFO) + "\r\n");
+						sb.append(MsgLevel.WARN + " size: " + gmp.size(MsgLevel.WARN) + "\r\n");
+						sb.append(MsgLevel.ERROR + " size: " + gmp.size(MsgLevel.ERROR) + "\r\n");
+						sb.append(MsgLevel.FATAL + " size: " + gmp.size(MsgLevel.FATAL) + "\r\n");
+						Window.alert(sb.toString());
+					}
 				}),
 			};
 		}
-	}
+	} // GlobalMsgPanelTest
 
 	/**
 	 * DialogTest
@@ -296,7 +810,7 @@ public final class UITests extends AbstractUITest {
 	}
 
 	/**
-	 * OptionsPanelTest
+	 * OptionsPopupTest
 	 * @author jpk
 	 */
 	static final class OptionsPopupTest extends UITestCase {
@@ -306,12 +820,12 @@ public final class UITests extends AbstractUITest {
 
 		@Override
 		public String getDescription() {
-			return "Tests the OptionsPopup panel.";
+			return "Tests the OptionsPopup panel with a hide duration.";
 		}
 
 		@Override
 		public String getName() {
-			return "OptionsPopup";
+			return "OptionsPopup - hide duration";
 		}
 
 		@Override
@@ -326,18 +840,9 @@ public final class UITests extends AbstractUITest {
 			contextArea.getElement().getStyle().setProperty("margin", "1em");
 			contextArea.getElement().getStyle().setProperty("border", "1px solid gray");
 
-			// IMPT: this enables the popup to be positioned at the mouse click location!
+			// IMPT: this enables the popup to be positioned at the mouse click
+			// location!
 			contextArea.addMouseDownHandler(popup);
-
-			contextArea.addClickHandler(new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					if(!popup.isShowing()) {
-						popup.show();
-					}
-				}
-			});
 
 			RootPanel.get().add(contextArea);
 		}
@@ -351,430 +856,151 @@ public final class UITests extends AbstractUITest {
 	} // OptionsPopupTest
 
 	/**
-	 * GlobalMsgPanelTest
+	 * OptionsPopupTest
 	 * @author jpk
 	 */
-	static final class GlobalMsgPanelTest extends DefaultUITestCase {
+	static final class OptionsPopupTest2 extends UITestCase {
 
-		static IWidgetRef createRef(final Widget w, final String descriptor) {
-			return new IWidgetRef() {
-
-				@Override
-				public Widget getWidget() {
-					return w;
-				}
-
-				@Override
-				public String descriptor() {
-					return descriptor;
-				}
-			};
-		}
-
-		static Iterable<Msg> stubMsgs(MsgLevel level, int num) {
-			final ArrayList<Msg> list = new ArrayList<Msg>(num);
-			for(int i = 0; i < num; i++) {
-				list.add(new Msg("This is " + level.getName() + " message #" + Integer.toString(i + 1), level));
-			}
-			return list;
-		}
-		
-		GlobalMsgPanel gmp;
-		HorizontalPanel refWidgetPanel;
-		IWidgetRef refTextBox1, refTextBox2, refLabel;
-
-		/**
-		 * Constructor
-		 */
-		public GlobalMsgPanelTest() {
-			super("GlobalMsgPanel", "Verifies the GlobalMsgPanel layout and its operations.");
-		}
-
-		@Override
-		protected Widget getContext() {
-			if(gmp == null) {
-				gmp = new GlobalMsgPanel();
-			}
-			return gmp;
-		}
-
-		@Override
-		protected void init() {
-			refWidgetPanel = new HorizontalPanel();
-			refWidgetPanel.getElement().getStyle().setProperty("margin", "1em");
-			refWidgetPanel.setSpacing(5);
-
-			TextBox tb = new TextBox();
-			tb.setValue("Text Box 1");
-			refTextBox1 = createRef(tb, "Text Box 1");
-			refWidgetPanel.add(refTextBox1.getWidget());
-
-			tb = new TextBox();
-			tb.setValue("Text Box 2");
-			refTextBox2 = createRef(tb, "Text Box 2");
-			refWidgetPanel.add(refTextBox2.getWidget());
-
-			refLabel = createRef(new Label("Label"), "Label");
-			refWidgetPanel.add(refLabel.getWidget());
-
-			RootPanel.get().add(refWidgetPanel);
-		}
-
-		@Override
-		protected void teardown() {
-			refWidgetPanel.removeFromParent();
-			refWidgetPanel = null;
-		}
-		
-		@Override
-		protected Button[] getTestActions() {
-			return new Button[] { 
-				new Button("Clear all Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.clear();
-					}
-				}),
-				new Button("Clear Fatal Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.clear(MsgLevel.FATAL);
-					}
-				}),
-				new Button("Clear Error Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.clear(MsgLevel.ERROR);
-					}
-				}),
-				new Button("Clear Warn Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.clear(MsgLevel.WARN);
-					}
-				}),
-				new Button("Clear Info Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.clear(MsgLevel.INFO);
-					}
-				}),
-				new Button("Remove Text Box 1 Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.remove(refTextBox1);
-					}
-				}),
-				new Button("Remove Text Box 2 Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.remove(refTextBox2);
-					}
-				}),
-				new Button("Remove Label Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.remove(refLabel);
-					}
-				}),
-				new Button("Remove Un-sourced Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.removeUnsourced();
-					}
-				}),
-				new Button("Add Fatal Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.add(refTextBox1, stubMsgs(MsgLevel.FATAL, 1));
-						gmp.add(refTextBox2, stubMsgs(MsgLevel.FATAL, 1));
-						gmp.add(refLabel, stubMsgs(MsgLevel.FATAL, 1));
-					}
-				}),
-				new Button("Add Error Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.add(refTextBox1, stubMsgs(MsgLevel.ERROR, 1));
-						gmp.add(refTextBox2, stubMsgs(MsgLevel.ERROR, 1));
-						gmp.add(refLabel, stubMsgs(MsgLevel.ERROR, 1));
-					}
-				}),
-				new Button("Add Warn Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.add(refTextBox1, stubMsgs(MsgLevel.WARN, 1));
-						gmp.add(refTextBox2, stubMsgs(MsgLevel.WARN, 1));
-						gmp.add(refLabel, stubMsgs(MsgLevel.WARN, 1));
-					}
-				}),
-				new Button("Add Info Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.add(refTextBox1, stubMsgs(MsgLevel.INFO, 1));
-						gmp.add(refTextBox2, stubMsgs(MsgLevel.INFO, 1));
-						gmp.add(refLabel, stubMsgs(MsgLevel.INFO, 1));
-					}
-				}),
-				new Button("Add Un-sourced Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.add(stubMsgs(MsgLevel.INFO, 1));
-						gmp.add(stubMsgs(MsgLevel.WARN, 1));
-						gmp.add(stubMsgs(MsgLevel.ERROR, 1));
-						gmp.add(stubMsgs(MsgLevel.FATAL, 1));
-					}
-				})
-			};
-		}
-	} // GlobalMsgPanelTest
-
-	/**
-	 * MsgPopupRegistryTest
-	 * @author jpk
-	 */
-	static final class MsgPopupRegistryTest extends UITestCase {
-
-		static final Msg msgInfo = new Msg("An info message.", MsgLevel.INFO);
-		static final Msg msgWarn = new Msg("A warn message.", MsgLevel.WARN);
-		static final Msg msgError = new Msg("An error message.", MsgLevel.ERROR);
-		static final Msg msgFatal = new Msg("A fatal message.", MsgLevel.FATAL);
-
-		static final Msg[] allMsgs = new Msg[] {
-			msgInfo, msgWarn, msgError, msgFatal };
-
-		MsgPopupRegistry registry;
-		HorizontalPanel layout;
-		VerticalPanel buttonPanel;
-		FlowPanel context, nestedContext;
-		Label refWidget;
-
-		@Override
-		public String getName() {
-			return "MsgPopupRegistry";
-		}
+		FocusPanel contextArea;
+		OptionsPopup popup;
 
 		@Override
 		public String getDescription() {
-			return "Tests MsgPopupRegistry routines.";
+			return "Tests the OptionsPopup panel with NO hide duration.";
 		}
 
-		private void stubContext() {
-			context = new FlowPanel();
-			context.setSize("200px", "200px");
-			context.getElement().getStyle().setProperty("border", "1px solid gray");
-			context.getElement().getStyle().setProperty("padding", "10px");
-
-			nestedContext = new FlowPanel();
-			nestedContext.setSize("100px", "100px");
-			nestedContext.getElement().getStyle().setProperty("border", "1px solid gray");
-			nestedContext.getElement().getStyle().setProperty("padding", "5px");
-			context.add(nestedContext);
-
-			refWidget = new Label("Ref Widget");
-			refWidget.getElement().getStyle().setProperty("border", "1px solid gray");
-			refWidget.getElement().getStyle().setProperty("margin", "5px");
-			nestedContext.add(refWidget);
-		}
-
-		private void stubTestButtons() {
-			buttonPanel = new VerticalPanel();
-
-			buttonPanel.add(new Button("Show All Messages", new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					registry.getOperator(context, true).showMsgs(true);
-				}
-			}));
-			buttonPanel.add(new Button("Hide All Messages", new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					registry.getOperator(context, true).showMsgs(false);
-				}
-			}));
-			buttonPanel.add(new Button("Clear All Messages", new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					registry.getOperator(context, true).clearMsgs();
-				}
-			}));
-			buttonPanel.add(new Button("Clear Ref Widget Messages", new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					registry.getOperator(refWidget, false).clearMsgs();
-				}
-			}));
-			buttonPanel.add(new Button("Add Ref Widget Messages", new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					registry.addMsgs(Arrays.asList(allMsgs), refWidget, false);
-				}
-			}));
-			buttonPanel.add(new Button("Set Ref Widget Messages", new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					registry.addMsgs(Arrays.asList(allMsgs), refWidget, true);
-				}
-			}));
-			buttonPanel.add(new Button("Show Message Level Images", new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					registry.getOperator(context, true).showMsgs(Position.BOTTOM, -1, true);
-				}
-			}));
-			buttonPanel.add(new Button("Hide Message Level Images", new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					registry.getOperator(context, true).showMsgs(Position.BOTTOM, -1, false);
-				}
-			}));
-			buttonPanel.add(new Button("Test cloaking", new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					registry.clear();
-					registry.addMsg(msgWarn, refWidget, false);
-					final IMsgOperator operator = registry.getOperator(refWidget, false);
-					nestedContext.setVisible(false);
-					operator.showMsgs(true);
-					Window
-							.alert("No message popup should appear even though showMsgs() was called because the nestedContext's visibliity was just set to false.");
-
-					nestedContext.setVisible(true);
-					operator.showMsgs(true);
-					Window.alert("Now it should be showing because the nestedContext's visibliity was just set to true.");
-				}
-			}));
-			buttonPanel.add(new Button("Test scroll handling", new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					Window.alert("TODO: implement");
-				}
-			}));
-			buttonPanel.add(new Button("Test drag handling", new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					Window.alert("TODO: implement");
-				}
-			}));
+		@Override
+		public String getName() {
+			return "OptionsPopup - Indefinite";
 		}
 
 		@Override
 		public void load() {
-			registry = new MsgPopupRegistry();
-			stubContext();
-			stubTestButtons();
-			layout = new HorizontalPanel();
-			layout.add(buttonPanel);
-			layout.add(context);
-			layout.getElement().getStyle().setProperty("margin", "1em");
-			layout.setSpacing(5);
-			RootPanel.get().add(layout);
+			popup = new OptionsPopup();
+			popup.setOptions(new Option[] {
+				new Option("Option 1"), new Option("Option 2"), new Option("Option 3"), new Option("Option 4"),
+				new Option("Option 5") });
+
+			contextArea = new FocusPanel();
+			contextArea.setSize("200px", "200px");
+			contextArea.getElement().getStyle().setProperty("margin", "1em");
+			contextArea.getElement().getStyle().setProperty("border", "1px solid gray");
+
+			// IMPT: this enables the popup to be positioned at the mouse click
+			// location!
+			contextArea.addMouseDownHandler(popup);
+
+			RootPanel.get().add(contextArea);
 		}
 
 		@Override
 		public void unload() {
-			layout.removeFromParent();
-			context = null;
-			buttonPanel = null;
-			layout = null;
-			registry.clear();
-			registry = null;
+			RootPanel.get().remove(contextArea);
+			contextArea = null;
+			popup = null;
 		}
-	} // MsgManagerTest
+	} // OptionsPopupTest2
 
 	/**
-	 * BusyPanelTest - Tests the {@link BusyPanel}.
+	 * PushButtonStyleTest
 	 * @author jpk
 	 */
-	static final class BusyPanelTest extends UITestCase {
+	static final class PushButtonStyleTest extends UITestCase {
 
-		HorizontalPanel layout;
-		VerticalPanel buttonPanel;
-		FlowPanel context;
-		BusyPanel busyPanel;
-
-		@Override
-		public String getName() {
-			return "BusyPanel";
-		}
+		FlowPanel contextArea;
+		PushButton b1, b2, b3;
 
 		@Override
 		public String getDescription() {
-			return "Tests the BusyPanel globally and locally.";
+			return "Tests the PushButton styling.";
 		}
 
-		private void stubContext() {
-			context = new FlowPanel();
-			context.setSize("200px", "200px");
-			context.getElement().getStyle().setProperty("border", "1px solid gray");
-			context.getElement().getStyle().setProperty("padding", "10px");
-			busyPanel = new BusyPanel(true, null, 20);
-		}
-
-		private void stubTestButtons() {
-			buttonPanel = new VerticalPanel();
-
-			buttonPanel.add(new Button("Test Local", new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					BusyPanel.getAbsoluteOverlay(context).add(busyPanel, 0, 0);
-				}
-			}));
-			buttonPanel.add(new Button("Test Global", new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					RootPanel.get().add(busyPanel, 0, 0);
-				}
-			}));
+		@Override
+		public String getName() {
+			return "PushButton CSS Styling Test";
 		}
 
 		@Override
 		public void load() {
-			stubContext();
-			stubTestButtons();
-			layout = new HorizontalPanel();
-			layout.add(buttonPanel);
-			layout.add(context);
-			layout.getElement().getStyle().setProperty("margin", "1em");
-			layout.setSpacing(5);
-			RootPanel.get().add(layout);
+			contextArea = new FlowPanel();
+			contextArea.setSize("200px", "200px");
+			contextArea.getElement().getStyle().setProperty("margin", "1em");
+			contextArea.getElement().getStyle().setProperty("border", "1px solid gray");
+			contextArea.getElement().getStyle().setProperty("padding", "1em");
+			RootPanel.get().add(contextArea);
+
+			b1 = new PushButton("Push Button 1");
+			b1.getElement().getStyle().setProperty("margin", "1em");
+			b2 = new PushButton(MsgLevelImageBundle.INSTANCE.error().createImage());
+			b2.getElement().getStyle().setProperty("margin", "1em");
+			b3 = new PushButton(MsgLevelImageBundle.INSTANCE.warn().createImage());
+			b3.getElement().getStyle().setProperty("margin", "1em");
+			contextArea.add(b1);
+			contextArea.add(b2);
+			contextArea.add(b3);
 		}
 
 		@Override
 		public void unload() {
-			busyPanel.removeFromParent();
-			busyPanel = null;
-			layout.removeFromParent();
-			context = null;
-			buttonPanel = null;
-			layout = null;
+			RootPanel.get().remove(contextArea);
+			contextArea = null;
+			b1 = b2 = b3 = null;
+		}
+	} // PushButtonStyleTest
+
+	/**
+	 * ToolbarStyleTest
+	 * @author jpk
+	 */
+	static final class ToolbarStyleTest extends UITestCase {
+
+		FlowPanel contextArea;
+		Toolbar tb;
+
+		@Override
+		public String getDescription() {
+			return "Tests the Toolbar styling.";
 		}
 
-	} // BusyPanelTest
+		@Override
+		public String getName() {
+			return "Toolbar Styling Test";
+		}
+
+		@Override
+		public void load() {
+			contextArea = new FlowPanel();
+			contextArea.getElement().getStyle().setProperty("margin", "1em");
+			contextArea.getElement().getStyle().setProperty("border", "1px solid gray");
+			contextArea.getElement().getStyle().setProperty("padding", "3em");
+			RootPanel.get().add(contextArea);
+
+			tb = new Toolbar();
+			contextArea.add(tb);
+
+			// add contents to the the toolbar
+			final PushButton pb = new PushButton(MsgLevelImageBundle.INSTANCE.info().createImage());
+			pb.setEnabled(false);
+			tb.addButton(pb, "Info");
+			tb.add(ToolbarImageBundle.INSTANCE.split().createImage());
+			tb.addButton(new PushButton(MsgLevelImageBundle.INSTANCE.error().createImage()), "Error");
+			tb.add(ToolbarImageBundle.INSTANCE.split().createImage());
+			tb.addButton(new PushButton(MsgLevelImageBundle.INSTANCE.warn().createImage()), "Warn");
+			tb.addButton(new PushButton(MsgLevelImageBundle.INSTANCE.warn().createImage()), "Warn");
+			tb.addButton(new PushButton(MsgLevelImageBundle.INSTANCE.warn().createImage()), "Warn");
+			tb.add(ToolbarImageBundle.INSTANCE.split().createImage());
+			final Label lbl = new Label("This is a label");
+			lbl.setWidth("100%");
+			tb.add(lbl);
+
+			tb.add(new PushButton(MsgLevelImageBundle.INSTANCE.fatal().createImage()));
+		}
+
+		@Override
+		public void unload() {
+			RootPanel.get().remove(contextArea);
+			contextArea = null;
+			tb = null;
+		}
+	} // ToolbarStyleTest
 }

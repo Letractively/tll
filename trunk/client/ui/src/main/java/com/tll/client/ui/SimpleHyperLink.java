@@ -21,16 +21,16 @@ import com.google.gwt.user.client.ui.Widget;
  * @author jpk
  */
 public class SimpleHyperLink extends Widget implements HasText, HasHTML, HasClickHandlers {
-	
+
 	/**
 	 * Styles - (widget-tll.css)
 	 * @author jpk
 	 */
 	static class Styles {
 
-		public static final String SIMPLE = "tll-SimpleHyperLink";
+		public static final String SHL = "tll-shl";
 	}
-	
+
 	/**
 	 * Constructor
 	 */
@@ -58,7 +58,7 @@ public class SimpleHyperLink extends Widget implements HasText, HasHTML, HasClic
 		// prevents text selection by double-click
 		getElement().setPropertyString("href", "#");
 
-		setStyleName(Styles.SIMPLE);
+		setStyleName(Styles.SHL);
 
 		if(text != null) {
 			if(html) {
@@ -73,7 +73,7 @@ public class SimpleHyperLink extends Widget implements HasText, HasHTML, HasClic
 			addClickHandler(clickHandler);
 		}
 	}
-	
+
 	/**
 	 * Constructs
 	 * @param text a String or <code>null</code>

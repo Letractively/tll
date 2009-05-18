@@ -45,7 +45,7 @@ public class MockModelStubber {
 		 */
 		COMPLEX;
 	}
-	
+
 	/**
 	 * Global static for ensuring all ids are unique for proper equals/hashcode
 	 * behavior down the line.
@@ -62,7 +62,7 @@ public class MockModelStubber {
 			case SIMPLE:
 				return stubAddress(1);
 			case COMPLEX:
-				return stubAccount();
+				return stubAccount(true);
 			default:
 				throw new UnsupportedOperationException("Unhandled model type");
 		}
@@ -96,17 +96,20 @@ public class MockModelStubber {
 	 * <p>
 	 * Of note, this model has a related one model ("parent") and two indexable
 	 * models ("addresses").
+	 * @param addAddresses Add related many addresses?
 	 * @return A stubbed root model for testing.
 	 */
-	public static Model stubAccount() {
+	public static Model stubAccount(boolean addAddresses) {
 		final Model account = stubAccount(stubAccount(null, MockEntityType.ACCOUNT, 1), MockEntityType.ACCOUNT, 2);
 
 		final Model aa1 = stubAccountAddress(account, stubAddress(1), 1);
 		final Model aa2 = stubAccountAddress(account, stubAddress(2), 2);
 
-		final Set<Model> addresses = new LinkedHashSet<Model>();
-		addresses.add(aa1);
-		addresses.add(aa2);
+		final Set<Model> addresses = addAddresses ? new LinkedHashSet<Model>() : null;
+		if(addresses != null) {
+			addresses.add(aa1);
+			addresses.add(aa2);
+		}
 		account.set(new RelatedManyProperty(MockEntityType.ACCOUNT_ADDRESS, "addresses", false, addresses));
 
 		return account;
@@ -122,20 +125,20 @@ public class MockModelStubber {
 	public static Model stubAccount(Model parentAccount, MockEntityType accountType, int num) {
 		final Model m = stubModel(accountType, "ISP " + num, true);
 		m
-				.set(new EnumPropertyValue("status", new PropertyMetadata(PropertyType.ENUM, false, true, 16),
-						AccountStatus.OPEN));
+		.set(new EnumPropertyValue("status", new PropertyMetadata(PropertyType.ENUM, false, true, 16),
+				AccountStatus.OPEN));
 		m.set(new BooleanPropertyValue("persistPymntInfo", new PropertyMetadata(PropertyType.BOOL, false, true, -1),
 				Boolean.TRUE));
 		m.set(new StringPropertyValue("billingModel", new PropertyMetadata(PropertyType.STRING, false, true, 32),
-				"a billing model"));
+		"a billing model"));
 		m.set(new StringPropertyValue("billingCycle", new PropertyMetadata(PropertyType.STRING, false, true, 32),
-				"a billing cycle"));
+		"a billing cycle"));
 		m
-				.set(new DatePropertyValue("dateLastCharged", new PropertyMetadata(PropertyType.DATE, false, true, 32),
-						new Date()));
+		.set(new DatePropertyValue("dateLastCharged", new PropertyMetadata(PropertyType.DATE, false, true, 32),
+				new Date()));
 		m
-				.set(new DatePropertyValue("nextChargeDate", new PropertyMetadata(PropertyType.DATE, false, true, 32),
-						new Date()));
+		.set(new DatePropertyValue("nextChargeDate", new PropertyMetadata(PropertyType.DATE, false, true, 32),
+				new Date()));
 		m.set(new DatePropertyValue("dateCancelled", new PropertyMetadata(PropertyType.DATE, false, true, 32), new Date()));
 		m.set(new RelatedOneProperty(MockEntityType.CURRENCY, "currency", true, stubCurrency()));
 		m.set(new RelatedOneProperty(MockEntityType.PAYMENT_INFO, "paymentInfo", false, stubPaymentInfo()));
@@ -185,17 +188,17 @@ public class MockModelStubber {
 				"zip " + num));
 		address.set(new StringPropertyValue("country", new PropertyMetadata(PropertyType.STRING, false, true, 32),
 				"country " + num));
-		
+
 		// test boolean prop types..
 		address.set(new BooleanPropertyValue("boolean", new PropertyMetadata(PropertyType.BOOL, false, true, -1),
 				Boolean.TRUE));
 
 		// test float prop types..
 		address.set(new DoublePropertyValue("float", new PropertyMetadata(PropertyType.FLOAT, false, true, 8), 33.33d));
-		
+
 		// test double prop types..
 		address.set(new DoublePropertyValue("double", new PropertyMetadata(PropertyType.DOUBLE, false, true, 8), 44.44d));
-		
+
 		return address;
 	}
 
@@ -220,33 +223,33 @@ public class MockModelStubber {
 		m.set(new StringPropertyValue("paymentData_bankAccountNo", new PropertyMetadata(PropertyType.STRING, false, false,
 				16), "0005543"));
 		m.set(new StringPropertyValue("paymentData_bankName", new PropertyMetadata(PropertyType.STRING, false, false, 16),
-				"bank name"));
+		"bank name"));
 		m.set(new StringPropertyValue("paymentData_bankRoutingNo", new PropertyMetadata(PropertyType.STRING, false, false,
 				16), "77777"));
 		m.set(new EnumPropertyValue("paymentData_ccType", new PropertyMetadata(PropertyType.ENUM, false, false, 16),
 				CreditCardType.VISA));
 		m.set(new StringPropertyValue("paymentData_ccNum", new PropertyMetadata(PropertyType.STRING, false, false, 16),
-				"4111111111111111"));
+		"4111111111111111"));
 		m.set(new StringPropertyValue("paymentData_ccCvv2", new PropertyMetadata(PropertyType.STRING, false, false, 16),
-				"834"));
+		"834"));
 		m.set(new IntPropertyValue("paymentData_ccExpMonth", new PropertyMetadata(PropertyType.INT, false, false, 16), 8));
 		m
-				.set(new IntPropertyValue("paymentData_ccExpYear", new PropertyMetadata(PropertyType.INT, false, false, 16),
-						2012));
+		.set(new IntPropertyValue("paymentData_ccExpYear", new PropertyMetadata(PropertyType.INT, false, false, 16),
+				2012));
 		m.set(new StringPropertyValue("paymentData_ccName", new PropertyMetadata(PropertyType.STRING, false, false, 16),
-				"cc name"));
+		"cc name"));
 		m.set(new StringPropertyValue("paymentData_ccAddress1",
 				new PropertyMetadata(PropertyType.STRING, false, false, 16), "88 Broadway"));
 		m.set(new StringPropertyValue("paymentData_ccAddress2",
 				new PropertyMetadata(PropertyType.STRING, false, false, 16), "#32"));
 		m.set(new StringPropertyValue("paymentData_ccCity", new PropertyMetadata(PropertyType.STRING, false, false, 16),
-				"Sacramento"));
+		"Sacramento"));
 		m.set(new StringPropertyValue("paymentData_ccState", new PropertyMetadata(PropertyType.STRING, false, false, 16),
-				"CA"));
+		"CA"));
 		m.set(new StringPropertyValue("paymentData_ccZip", new PropertyMetadata(PropertyType.STRING, false, false, 16),
-				"99885"));
+		"99885"));
 		m.set(new StringPropertyValue("paymentData_ccCountry", new PropertyMetadata(PropertyType.STRING, false, false, 16),
-				"us"));
+		"us"));
 
 		return m;
 	}

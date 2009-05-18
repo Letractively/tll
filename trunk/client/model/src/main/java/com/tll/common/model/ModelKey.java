@@ -12,7 +12,7 @@ import com.tll.key.IKey;
  * @author jpk
  */
 @SuppressWarnings("serial")
-public class ModelKey implements IKey<Model> {
+public class ModelKey implements IKey<Model>, IEntityTypeProvider {
 
 	/**
 	 * The entity type.
@@ -48,13 +48,18 @@ public class ModelKey implements IKey<Model> {
 		setName(name);
 	}
 
+	@Override
+	public Class<Model> getType() {
+		return Model.class;
+	}
+
 	public IEntityType getEntityType() {
 		return type;
 	}
 
 	public void setEntityType(IEntityType type) {
 		if(type == null) {
-			throw new IllegalArgumentException("A type must be specified for ref keys");
+			throw new IllegalArgumentException("Null entity type");
 		}
 		this.type = type;
 	}
@@ -83,26 +88,22 @@ public class ModelKey implements IKey<Model> {
 	}
 
 	@Override
-	public Class<Model> getType() {
-		return Model.class;
-	}
-
-	@Override
 	public boolean isSet() {
 		return type != null && id != null;
 	}
 
 	@Override
 	public String descriptor() {
-		return (name != null) ? type.getPresentationName() + " '" + name + '\'' : type.getPresentationName();
+		return isSet() ? (name != null) ? type.descriptor() + " '" + name + '\'' : type.descriptor()
+				: "-unset-";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 

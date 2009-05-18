@@ -18,7 +18,7 @@ import com.google.gwt.user.client.ui.Widget;
  * </ol>
  * @author jpk
  */
-public class GridFieldComposer implements IFieldComposer {
+public class GridFieldComposer extends AbstractFieldComposer {
 
 	/**
 	 * Styles - (field.css)
@@ -30,7 +30,7 @@ public class GridFieldComposer implements IFieldComposer {
 		 * Style applied to the grid containing the fields.
 		 */
 		public static final String FIELD_GRID = "fgrid";
-		
+
 		public static final String CELL_LABEL = "cell-lbl";
 
 		public static final String CELL_FIELD = "cell-fld";
@@ -50,22 +50,18 @@ public class GridFieldComposer implements IFieldComposer {
 		super();
 	}
 
+	@Override
 	public void setCanvas(Panel canvas) {
-		// clear state
-		if(grid == null) {
-			grid = new Grid(0, 2);
-			grid.addStyleName(Styles.FIELD_GRID);
-		}
-		else {
-			grid.clear();
-		}
+		if(this.canvas != null && this.canvas == canvas) return;
+		super.setCanvas(canvas);
+		grid = new Grid(0, 2);
+		grid.addStyleName(Styles.FIELD_GRID);
 		rowIndex = -1;
-
-		// bind
 		canvas.add(grid);
 	}
 
-	private void add(FieldLabel fldLbl, Widget w) {
+	@Override
+	public void add(FieldLabel fldLbl, Widget w) {
 		grid.resizeRows(++rowIndex + 1);
 		if(fldLbl != null) {
 			grid.getCellFormatter().setStyleName(rowIndex, 0, Styles.CELL_LABEL);
@@ -75,30 +71,17 @@ public class GridFieldComposer implements IFieldComposer {
 		grid.getCellFormatter().setStyleName(rowIndex, 1, Styles.CELL_FIELD);
 	}
 
-	/**
-	 * Adds a non-field Widget row.
-	 * @param w The non-field Widget to add
-	 */
+	@Override
 	public void addWidget(Widget w) {
 		add(null, w);
 	}
 
-	/**
-	 * Adds a field label and Widget row. If the label text is <code>null</code>,
-	 * no label is added. If the Widget is an IField
-	 * {@link #addField(IFieldWidget)} should be called instead.
-	 * @param label The label text
-	 * @param w The non-IField and non-FieldPanel Widget to add
-	 */
+	@Override
 	public void addWidget(String label, Widget w) {
 		add(label == null ? null : new FieldLabel(label), w);
 	}
 
-	/**
-	 * Adds a field to the canvas. The field label is extracted from the given
-	 * field and if non-<code>null</code>, is added as well.
-	 * @param field The field to add
-	 */
+	@Override
 	public void addField(IFieldWidget<?> field) {
 		add(field.getFieldLabel(), field.getWidget());
 	}

@@ -10,15 +10,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.IWidgetRef;
 import com.tll.client.validate.CompositeValidator;
+import com.tll.client.validate.ErrorClassifier;
 import com.tll.client.validate.Errors;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
-import com.tll.common.model.PropertyPath;
 import com.tll.model.schema.IPropertyMetadataProvider;
+import com.tll.util.PropertyPath;
+import com.tll.util.StringUtil;
 
 /**
  * FieldGroup - A group of {@link IField}s which may in turn be nested
@@ -106,11 +109,11 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	}
 
 	/**
-	 * Recursively extracts all {@link IFieldWidget}s whose property name starts
-	 * with the given property path. The found fields are added to the given set.
-	 * @param propPath The property path that all matching fields' property name
-	 *        must start with. If <code>null</code>, all encountered
-	 *        {@link IFieldWidget}s are included
+	 * Recursively extracts all {@link IFieldWidget}s whose property name matches
+	 * by regular expression the given property path. The found fields are added
+	 * to the given set.
+	 * @param propPath The regex token of the property path. If <code>null</code>,
+	 *        all encountered {@link IFieldWidget}s are included
 	 * @param group The field group to search
 	 * @param set The set of found fields
 	 */
@@ -118,7 +121,7 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		Set<FieldGroup> gset = null;
 		for(final IField fld : group) {
 			if(fld instanceof IFieldWidget) {
-				if(propPath == null || ((IFieldWidget<?>) fld).getPropertyName().startsWith(propPath)) {
+				if(propPath == null || ((IFieldWidget<?>) fld).getPropertyName().matches(propPath)) {
 					set.add((IFieldWidget<?>) fld);
 				}
 			}
@@ -140,7 +143,7 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	 * @param field
 	 * @param parentPropPath The parent property path to pre-pend
 	 */
-	private static void setParentPropertyPath(IField field, String parentPropPath) {
+	private static void setParentPropertyPath(IField field, final String parentPropPath) {
 		if(field instanceof FieldGroup) {
 			for(final IField f : (FieldGroup) field) {
 				setParentPropertyPath(f, parentPropPath);
@@ -150,6 +153,29 @@ public final class FieldGroup implements IField, Iterable<IField> {
 			assert field instanceof IFieldWidget;
 			((IFieldWidget<?>) field).setPropertyName(PropertyPath.getPropertyPath(parentPropPath, ((IFieldWidget<?>) field)
 					.getPropertyName()));
+		}
+	}
+
+	/**
+	 * Recursively replaces the parent property path with the given replacement
+	 * parent property path.
+	 * @param field the current field
+	 * @param old the existing parent property path
+	 * @param repl the replacement parent property path
+	 */
+	private static void replaceParentPropertyPath(IField field, final String old, final String repl) {
+		if(field instanceof FieldGroup) {
+			for(final IField f : (FieldGroup) field) {
+				replaceParentPropertyPath(f, old, repl);
+			}
+		}
+		else {
+			assert field instanceof IFieldWidget;
+			final IFieldWidget<?> fw = ((IFieldWidget<?>) field);
+			final String pname = fw.getPropertyName();
+			final PropertyPath p = new PropertyPath(pname);
+			p.replace(old, repl);
+			fw.setPropertyName(p.toString());
 		}
 	}
 
@@ -185,6 +211,75 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	}
 
 	/**
+	 * Creates a nested path token.
+	 * @param parents
+	 * @param field
+	 * @param includeFirstParent include the first parent in the path?
+	 * @return the created nested path
+	 */
+	private static String nestedPath(List<IField> parents, IField field, boolean includeFirstParent) {
+		final StringBuilder sb = new StringBuilder();
+		for(int i = (includeFirstParent ? 0 : 1); i < parents.size(); i++) {
+			sb.append(parents.get(i).descriptor());
+			sb.append(" - ");
+		}
+		sb.append(field.descriptor());
+		return sb.toString();
+	}
+
+	/**
+	 * Recursive validation routine that maintains a single {@link Errors}
+	 * instance and tracks the nesting. Nesting is tracked to assemble a "fully
+	 * qualified" field better validation feedback.
+	 * @param errors the sole constant instance
+	 * @param group the field group
+	 * @param parents the field group parents
+	 */
+	private static void validate(final Errors errors, FieldGroup group,
+			List<FieldGroup> parents) {
+		for(final IField field : group) {
+			if(field instanceof FieldGroup) {
+				final ArrayList<FieldGroup> list = new ArrayList<FieldGroup>(parents.size() + 1);
+				list.addAll(parents);
+				list.add(group);
+				validate(errors, ((FieldGroup) field), list);
+			}
+			else {
+				try {
+					field.validate();
+				}
+				catch(final ValidationException e) {
+					final ArrayList<IField> list = new ArrayList<IField>(parents.size() + 1);
+					list.addAll(parents);
+					list.add(group);
+					errors.add(e.getError(), new IWidgetRef() {
+
+						@Override
+						public Widget getWidget() {
+							return field.getWidget();
+						}
+
+						@SuppressWarnings("synthetic-access")
+						@Override
+						public String descriptor() {
+							return nestedPath(list, field, false);
+						}
+					});
+				}
+			}
+		}
+
+		if(group.validator != null) {
+			try {
+				group.validator.validate(null);
+			}
+			catch(final ValidationException e) {
+				errors.add(e.getError(), group);
+			}
+		}
+	}
+
+	/**
 	 * The required presentation worthy and unique name to ascribe to this group.
 	 */
 	private String name;
@@ -193,6 +288,11 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	 * The collection of child fields.
 	 */
 	private final Set<IField> fields = new HashSet<IField>();
+
+	/**
+	 * On ordered collection of commands to be executed before validation happens.
+	 */
+	private ArrayList<Command> preValidationActions;
 
 	/**
 	 * The field group validator(s).
@@ -208,7 +308,7 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	 * The error handler to employ for validation.
 	 */
 	private IErrorHandler errorHandler;
-	
+
 	/**
 	 * Constructor
 	 * @param name The required unique name for this field group.
@@ -216,6 +316,23 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	public FieldGroup(String name) {
 		super();
 		setName(name);
+	}
+
+	public void addPreValidationAction(Command action) {
+		if(preValidationActions == null) {
+			preValidationActions = new ArrayList<Command>();
+		}
+		preValidationActions.add(action);
+	}
+
+	public void removePreValidationAction(Command action) {
+		if(action != null && preValidationActions != null) {
+			preValidationActions.remove(action);
+		}
+	}
+
+	public void clearPreValidationActions() {
+		if(preValidationActions != null) preValidationActions.clear();
 	}
 
 	@Override
@@ -232,7 +349,9 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	}
 
 	public void setName(String name) {
-		if(name == null) throw new IllegalArgumentException();
+		if(StringUtil.isEmpty(name)) {
+			throw new IllegalArgumentException("A field group must have a name.");
+		}
 		this.name = name;
 	}
 
@@ -254,12 +373,12 @@ public final class FieldGroup implements IField, Iterable<IField> {
 
 	/**
 	 * Recursively searches for a field having the given name.
-	 * @param name
+	 * @param nme
 	 * @return The found field or <code>null</code> if no field exists with the
 	 *         given name.
 	 */
-	public IField getFieldByName(String name) {
-		return findByName(name, this);
+	public IField getFieldByName(String nme) {
+		return findByName(nme, this);
 	}
 
 	/**
@@ -273,20 +392,20 @@ public final class FieldGroup implements IField, Iterable<IField> {
 
 	/**
 	 * Recursively searches for a field widget having the given name.
-	 * @param name
+	 * @param nme
 	 * @return The found field widget or <code>null</code> if no field widget
 	 *         exists with the given name.
 	 */
-	public IFieldWidget<?> getFieldWidgetByName(String name) {
-		final IField f = findByName(name, this);
+	public IFieldWidget<?> getFieldWidgetByName(String nme) {
+		final IField f = findByName(nme, this);
 		return f instanceof IFieldWidget ? (IFieldWidget<?>) f : null;
 	}
 
 	/**
-	 * Finds all {@link IFieldWidget}s whose property name begins with the given
-	 * property path.
-	 * @param propPath The property path. If <code>null</code>, all
-	 *        {@link IFieldWidget}s are included.
+	 * Finds all {@link IFieldWidget}s whose property name matches the given regex
+	 * prop path token.
+	 * @param propPath The property path as a regular expression token. If
+	 *        <code>null</code>, all {@link IFieldWidget}s are included.
 	 * @return Set of matching fields never <code>null</code> but may be empty
 	 *         (when no matches found).
 	 */
@@ -295,7 +414,7 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		findFieldWidgets(propPath, this, set);
 		return set;
 	}
-	
+
 	/**
 	 * Adds a field to this field group.
 	 * @param field The field to add
@@ -322,12 +441,30 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	}
 
 	/**
-	 * Adds multiple fields to this group.
-	 * @param fields The fields to add
+	 * Recursively pre-pends the given parent property path to all held field
+	 * widgets in this group.
+	 * @param parentPropPath
 	 */
-	public void addFields(Iterable<IField> fields) {
-		if(fields != null) {
-			for(final IField fld : fields) {
+	public void setParentPropertyPath(String parentPropPath) {
+		setParentPropertyPath(this, parentPropPath);
+	}
+
+	/**
+	 * Replaces the parent property paths of all held field widgets.
+	 * @param existing the existing parent property path to replace
+	 * @param repl the replacement parent property path
+	 */
+	public void replaceParentPropertyPath(String existing, String repl) {
+		replaceParentPropertyPath(this, existing, repl);
+	}
+
+	/**
+	 * Adds multiple fields to this group.
+	 * @param flds The fields to add
+	 */
+	public void addFields(Iterable<IField> flds) {
+		if(flds != null) {
+			for(final IField fld : flds) {
 				addField(fld);
 			}
 		}
@@ -335,11 +472,11 @@ public final class FieldGroup implements IField, Iterable<IField> {
 
 	/**
 	 * Adds an array of fields to this group.
-	 * @param fields The array of fields to add
+	 * @param flds The array of fields to add
 	 */
-	public void addFields(IField[] fields) {
-		if(fields != null) {
-			for(final IField fld : fields) {
+	public void addFields(IField[] flds) {
+		if(flds != null) {
+			for(final IField fld : flds) {
 				addField(fld);
 			}
 		}
@@ -350,11 +487,11 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	 * @param parentPropPath Pre-pended to the each field's property name before
 	 *        the fields are added. May be <code>null</code> in which case the
 	 *        fields' property names remain un-altered.
-	 * @param fields The fields to add
+	 * @param flds The fields to add
 	 */
-	public void addFields(String parentPropPath, Iterable<IField> fields) {
-		if(fields != null) {
-			for(final IField fld : fields) {
+	public void addFields(String parentPropPath, Iterable<IField> flds) {
+		if(flds != null) {
+			for(final IField fld : flds) {
 				addField(parentPropPath, fld);
 			}
 		}
@@ -365,11 +502,11 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	 * @param parentPropPath Pre-pended to the each field's property name before
 	 *        the fields are added. May be <code>null</code> in which case the
 	 *        fields' property names remain un-altered.
-	 * @param fields The fields to add
+	 * @param flds The fields to add
 	 */
-	public void addFields(String parentPropPath, IField[] fields) {
-		if(fields != null) {
-			for(final IField fld : fields) {
+	public void addFields(String parentPropPath, IField[] flds) {
+		if(flds != null) {
+			for(final IField fld : flds) {
 				addField(parentPropPath, fld);
 			}
 		}
@@ -413,12 +550,14 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		}
 	}
 
+	@Override
 	public void applyPropertyMetadata(IPropertyMetadataProvider provider) {
 		for(final IField f : fields) {
 			f.applyPropertyMetadata(provider);
 		}
 	}
 
+	@Override
 	public boolean isRequired() {
 		for(final IField field : fields) {
 			if(field.isRequired()) return true;
@@ -426,12 +565,14 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		return false;
 	}
 
+	@Override
 	public void setRequired(boolean required) {
 		for(final IField field : fields) {
 			field.setRequired(required);
 		}
 	}
 
+	@Override
 	public boolean isReadOnly() {
 		for(final IField field : fields) {
 			if(!field.isReadOnly()) return false;
@@ -443,12 +584,14 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	 * Iterates over the child fields, setting their readOnly property.
 	 * @param readOnly true/false
 	 */
+	@Override
 	public void setReadOnly(boolean readOnly) {
 		for(final IField field : fields) {
 			field.setReadOnly(readOnly);
 		}
 	}
 
+	@Override
 	public boolean isEnabled() {
 		for(final IField field : fields) {
 			if(!field.isEnabled()) return false;
@@ -456,12 +599,14 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		return true;
 	}
 
+	@Override
 	public void setEnabled(boolean enabled) {
 		for(final IField field : fields) {
 			field.setEnabled(enabled);
 		}
 	}
 
+	@Override
 	public boolean isVisible() {
 		for(final IField field : fields) {
 			if(field.isVisible()) return true;
@@ -469,18 +614,20 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		return false;
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		for(final IField field : fields) {
 			field.setVisible(visible);
 		}
 	}
 
+	@Override
 	public void clearValue() {
 		for(final IField f : fields) {
 			f.clearValue();
 		}
 	}
-	
+
 	/**
 	 * Removes all child fields from this group.
 	 */
@@ -488,9 +635,17 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		fields.clear();
 	}
 
+	@Override
 	public void reset() {
 		for(final IField f : fields) {
 			f.reset();
+		}
+	}
+
+	@Override
+	public void validateIncrementally(boolean validate) {
+		for(final IField f : fields) {
+			f.validateIncrementally(validate);
 		}
 	}
 
@@ -501,89 +656,26 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		return fields.size();
 	}
 
-	public void addValidator(IValidator validator) {
-		if(validator != null) {
+	public void addValidator(IValidator vldtr) {
+		if(vldtr != null) {
 			if(this.validator == null) {
 				this.validator = new CompositeValidator();
 			}
-			this.validator.add(validator);
+			this.validator.add(vldtr);
 		}
 	}
 
 	public void removeValidator(Class<? extends IValidator> type) {
 		if(validator != null) this.validator.remove(type);
 	}
-	
-	/**
-	 * Creates a nested path token.
-	 * @param parents
-	 * @param field
-	 * @param includeFirstParent include the first parent in the path?
-	 * @return the created nested path
-	 */
-	static String nestedPath(List<IField> parents, IField field, boolean includeFirstParent) {
-		final StringBuilder sb = new StringBuilder();
-		for(int i = (includeFirstParent ? 0 : 1); i < parents.size(); i++) {
-			sb.append(parents.get(i).descriptor());
-			sb.append(" - ");
-		}
-		sb.append(field.descriptor());
-		return sb.toString();
-	}
-
-	/**
-	 * Recursive validation routine that maintains a single {@link Errors}
-	 * instance and tracks the nesting. Nesting is tracked to assemble a "fully
-	 * qualified" field better validation feedback.
-	 * @param errors the sole constant instance
-	 * @param group the field group
-	 * @param parents the field group parents
-	 */
-	private static void validate(final Errors errors, FieldGroup group,
-			List<FieldGroup> parents) {
-		for(final IField field : group) {
-			if(field instanceof FieldGroup) {
-				final ArrayList<FieldGroup> list = new ArrayList<FieldGroup>(parents.size() + 1);
-				list.addAll(parents);
-				list.add(group);
-				validate(errors, ((FieldGroup) field), list);
-			}
-			else {
-				try {
-					field.validate();
-				}
-				catch(final ValidationException e) {
-					final ArrayList<IField> list = new ArrayList<IField>(parents.size() + 1);
-					list.addAll(parents);
-					list.add(group);
-					errors.add(e.getError(), new IWidgetRef() {
-
-						@Override
-						public Widget getWidget() {
-							return field.getWidget();
-						}
-
-						@Override
-						public String descriptor() {
-							return nestedPath(list, field, false);
-						}
-					});
-				}
-			}
-		}
-		
-		if(group.validator != null) {
-			try {
-				group.validator.validate(null);
-			}
-			catch(final ValidationException e) {
-				errors.add(e.getError(), group);
-			}
-		}
-	}
 
 	public void validate() throws ValidationException {
-		final Errors errors = new Errors();
+		if(preValidationActions != null) {
+			for(final Command action : preValidationActions) {
+				action.execute();
+			}
+		}
+		final Errors errors = new Errors(ErrorClassifier.CLIENT);
 		validate(errors, this, new ArrayList<FieldGroup>());
 		if(errors.size() > 0) {
 			throw new ValidationException(errors);
@@ -616,7 +708,7 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	@Override
 	public int hashCode() {
 		assert name != null;
-		return 37 + name.hashCode();
+		return name.hashCode();
 	}
 
 	@Override

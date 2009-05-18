@@ -56,11 +56,7 @@ public final class ListingHandler<R> {
 
 		this.listHandler = listHandler;
 		this.listingName = listingName;
-		this.pageSize = pageSize == -1 ? listHandler.size() : pageSize;
-	}
-
-	public String getListingName() {
-		return listingName;
+		this.pageSize = pageSize;
 	}
 
 	public List<R> getElements() {
@@ -71,10 +67,6 @@ public final class ListingHandler<R> {
 		return offset;
 	}
 
-	public int getPageSize() {
-		return pageSize;
-	}
-
 	public int size() {
 		return listHandler.size();
 	}
@@ -83,32 +75,33 @@ public final class ListingHandler<R> {
 		return sorting;
 	}
 
-	public void query(int offset, Sorting sorting, boolean force) throws EmptyListException, IndexOutOfBoundsException,
-			ListingException {
+	public void query(int ofst, Sorting srtg, boolean force) throws EmptyListException, IndexOutOfBoundsException,
+	ListingException {
 
 		if(!force && listHandler.size() < 1) {
 			throw new EmptyListException("No list elements exist");
 		}
 
-		if(offset < 0 || (!force && offset > listHandler.size() - 1)) {
-			throw new IndexOutOfBoundsException("Listing offset " + offset + " is out of bounds");
+		if(ofst < 0 || (!force && ofst > listHandler.size() - 1)) {
+			throw new IndexOutOfBoundsException("Listing offset " + ofst + " is out of bounds");
 		}
 
 		// do we need to actually re-query?
-		if(!force && page != null && this.offset == offset && this.sorting != null && this.sorting.equals(sorting)) {
+		if(!force && page != null && this.offset == ofst && this.sorting != null && this.sorting.equals(srtg)) {
 			return;
 		}
 
 		// query
+		final int psize = pageSize == -1 ? listHandler.size() : pageSize;
 		try {
-			page = listHandler.getElements(offset, pageSize, sorting);
+			page = listHandler.getElements(ofst, psize, srtg);
 		}
 		catch(final ListHandlerException e) {
 			throw new ListingException(listingName, e.getMessage());
 		}
 
 		// update state
-		this.offset = offset;
-		this.sorting = sorting;
+		this.offset = ofst;
+		this.sorting = srtg;
 	}
 }

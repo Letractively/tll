@@ -8,7 +8,7 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.bind.IBindingAction;
+import com.tll.client.bind.FieldModelBinding;
 import com.tll.common.bind.IBindable;
 import com.tll.common.model.Model;
 
@@ -23,6 +23,23 @@ import com.tll.common.model.Model;
 public abstract class FieldPanel<W extends Widget> extends Composite implements IFieldBoundWidget {
 
 	/**
+	 * Styles (field.css)
+	 * @author jpk
+	 */
+	public static final class Styles {
+
+		/**
+		 * Style indicating a UI artifact is a field title.
+		 */
+		public static final String FIELD_TITLE = "fldtitle";
+
+		/**
+		 * Style indicating a field panel.
+		 */
+		public static final String FIELD_PANEL = "fpnl";
+	}
+
+	/**
 	 * The field group.
 	 */
 	private FieldGroup group;
@@ -33,9 +50,9 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	private Model model;
 
 	/**
-	 * The optional action.
+	 * The optional binding.
 	 */
-	private IBindingAction action;
+	private FieldModelBinding binding;
 
 	private boolean drawn;
 
@@ -46,19 +63,26 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 		super();
 	}
 
+	@Override
+	protected void initWidget(Widget widget) {
+		widget.addStyleName(Styles.FIELD_PANEL);
+		super.initWidget(widget);
+	}
+
+	@Override
 	public final FieldGroup getFieldGroup() {
 		if(group == null) {
-			Log.debug(toString() + ".generateFieldGroup()..");
+			Log.debug(this + " generating fields..");
 			setFieldGroup(generateFieldGroup());
 		}
 		return group;
 	}
 
+	@Override
 	public final void setFieldGroup(FieldGroup fields) {
-		if(fields == null) {
-			throw new IllegalArgumentException("A field group must be specified");
-		}
+		if(fields == null) throw new IllegalArgumentException("Null fields");
 		if(this.group != fields) {
+			if(binding != null && binding.isSet()) throw new IllegalStateException("Already set binding");
 			this.group = fields;
 			this.group.setWidget(this);
 		}
@@ -75,25 +99,34 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 		if(this.model != null && model == this.model) {
 			return;
 		}
-		Log.debug("AbstractBindableWidget.setModel() - START");
+		Log.debug(this + " setting model..");
 
 		final IBindable old = this.model;
 
-		if(old != null) {
-			Log.debug("AbstractBindableWidget - unbinding existing action..");
-			action.unset(this);
+		if(old != null && binding != null) {
+			Log.debug(this + " unbinding..");
+			binding.unbind();
 		}
 
+		getFieldGroup().clearValue();
 		this.model = model;
 
-		// apply property metadata
-		getFieldGroup().applyPropertyMetadata(model);
+		if(model != null) {
+			// apply property metadata
+			getFieldGroup().applyPropertyMetadata(model);
+			// don't do incremental validation when the model is new
+			getFieldGroup().validateIncrementally(!model.isNew());
+		}
 
-		if(action != null) {
-			action.set(this);
-			if(isAttached() && (model != null)) {
-				Log.debug("AbstractBindableWidget - re-binding existing action..");
-				action.bind(this);
+		if(binding != null) {
+			if(model != null) {
+				Log.debug(this + " binding..");
+				binding.set(this);
+				binding.bind();
+			}
+			else {
+				Log.debug(this + " unbinding..");
+				binding.unbind();
 			}
 		}
 		//Log.debug("AbstractBindableWidget - firing 'model' prop change event..");
@@ -101,13 +134,19 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	}
 
 	@Override
-	public final IBindingAction getAction() {
-		return action;
+	public final FieldModelBinding getBinding() {
+		return binding;
 	}
 
 	@Override
-	public final void setAction(IBindingAction action) {
-		this.action = action;
+	public void setBinding(FieldModelBinding binding) {
+		if(binding == null) throw new IllegalArgumentException("Null binding");
+		if(this.binding != null) throw new IllegalStateException("Binding already set");
+		if(model != null) {
+			binding.set(this);
+			binding.bind();
+		}
+		this.binding = binding;
 	}
 
 	/**
@@ -150,7 +189,7 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	protected void draw() {
 		final IFieldRenderer<W> renderer = getRenderer();
 		if(renderer != null) {
-			Log.debug(toString() + ": rendering fields..");
+			Log.debug(this + ": rendering..");
 			renderer.render(getWidget(), getFieldGroup());
 		}
 	}
@@ -158,10 +197,7 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	@Override
 	protected void onAttach() {
 		Log.debug("Attaching " + this + "..");
-		if(action != null) {
-			Log.debug("Setting action [" + action + "] on [" + this + "]..");
-			action.set(this);
-		}
+		// if(binding != null) binding.set(this);
 		super.onAttach();
 		//Log.debug("Firing prop change 'attach' event for " + toString() + "..");
 		//changeSupport.firePropertyChange(PropertyChangeType.ATTACHED.prop(), false, true);
@@ -171,10 +207,7 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	protected void onLoad() {
 		Log.debug("Loading " + toString() + "..");
 		super.onLoad();
-		if(action != null) {
-			Log.debug("Binding action [" + action + "] on [" + this + "]..");
-			action.bind(this);
-		}
+		// if(binding != null) binding.bind();
 		if(!drawn) {
 			draw();
 			drawn = true;
@@ -185,10 +218,6 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	protected void onDetach() {
 		Log.debug("Detatching " + toString() + "..");
 		super.onDetach();
-		if(action != null) {
-			Log.debug("Unbinding action [" + action + "] from [" + this + "]..");
-			action.unbind(this);
-		}
 		//Log.debug("Firing prop change 'detach' event for " + toString() + "..");
 		//changeSupport.firePropertyChange(PropertyChangeType.ATTACHED.prop(), true, false);
 	}

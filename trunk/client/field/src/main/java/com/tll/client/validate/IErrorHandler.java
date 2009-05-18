@@ -9,72 +9,32 @@ import com.tll.client.ui.IWidgetRef;
 public interface IErrorHandler {
 
 	/**
-	 * Attrib - Attributes that tells the handler "how" to handle the error.
-	 * @author jpk
+	 * @return The display type
 	 */
-	public static enum Attrib {
-		/**
-		 * Indicates that <em>no</em> errors should be displayed at all.
-		 */
-		NONE(0),
-		/**
-		 * Indicates errors should be displayed "globally".
-		 */
-		GLOBAL(1),
-		/**
-		 * Indicates errors should be displayed "locally".
-		 */
-		LOCAL(1 << 1);
+	ErrorDisplay getDisplayType();
 
-		private final int flag;
-
-		/**
-		 * Constructor
-		 * @param flag
-		 */
-		private Attrib(int flag) {
-			this.flag = flag;
-		}
-		
-		public int flag() {
-			return flag;
-		}
-
-		public static boolean isNone(int flags) {
-			return flags == 0;
-		}
-
-		public static boolean isGlobal(int flags) {
-			return ((flags & GLOBAL.flag) == flags);
-		}
-
-		public static boolean isLocal(int flags) {
-			return ((flags & LOCAL.flag) == flags);
-		}
-	}
-	
 	/**
-	 * Handles a validation error.
+	 * Handles an error.
 	 * @param source the error source
 	 * @param error the error
-	 * @param attribs bit flag with unioned {@link Attrib} flags indicating how to
-	 *        handle the error.
-	 *        <p>
-	 *        E.g.:
-	 *        <code>setHandlingAttribs(Attrib.LOCAL.flag & Attrib.GLOBAL.flag)</code>
-	 *        tells the handler to display error feedback both locally and
-	 *        globally.
 	 */
-	void handleError(IWidgetRef source, IError error, int attribs);
+	void handleError(IWidgetRef source, IError error);
 
 	/**
 	 * Resolves (clears) all validation errors for the given source.
-	 * @param source
+	 * @param source the field ref. May be <code>null</code>
+	 * @param classifier the classifier which may be <code>null</code>
 	 */
-	void resolveError(IWidgetRef source);
-	
+	void resolveError(IWidgetRef source, ErrorClassifier classifier);
+
 	/**
-	 * Life-cycle provision to clear out <em>all</em> errors and internal state.
+	 * Removes all errors found to be associated with the given classifier.
+	 * @param classifier
+	 */
+	void clear(ErrorClassifier classifier);
+
+	/**
+	 * Removes <em>all</em> errors and internal state.
 	 */
 	void clear();
 }

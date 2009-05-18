@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.Widget;
  * Br - HTML p tag in widget form.
  * @author jpk
  */
-public final class P extends Widget {
+public class P extends Widget {
 
 	public P() {
 		setElement(DOM.createElement("p"));

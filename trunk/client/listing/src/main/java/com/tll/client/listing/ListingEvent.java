@@ -6,7 +6,6 @@ package com.tll.client.listing;
 
 import com.google.gwt.event.shared.GwtEvent;
 import com.tll.common.data.ListingOp;
-import com.tll.common.data.ListingPayload;
 import com.tll.common.data.ListingPayload.ListingStatus;
 import com.tll.dao.Sorting;
 
@@ -19,8 +18,7 @@ import com.tll.dao.Sorting;
 public final class ListingEvent<R> extends GwtEvent<IListingHandler<R>> {
 
 	public static final Type<IListingHandler<?>> TYPE = new Type<IListingHandler<?>>();
-	
-	private final boolean success;
+
 	private final String listingName;
 	private final ListingOp listingOp;
 	private final ListingStatus listingStatus;
@@ -40,27 +38,6 @@ public final class ListingEvent<R> extends GwtEvent<IListingHandler<R>> {
 
 	/**
 	 * Constructor
-	 * @param listingOp
-	 * @param listingPayload
-	 * @param pageSize
-	 */
-	@SuppressWarnings("unchecked")
-	public ListingEvent(ListingOp listingOp, ListingPayload listingPayload, int pageSize) {
-		if(listingOp == null || listingPayload == null) throw new IllegalArgumentException();
-		this.success = !listingPayload.hasErrors();
-		this.listingOp = listingOp;
-		this.listingName = listingPayload.getListingName();
-		this.listingStatus = listingPayload.getListingStatus();
-		this.listSize = listingPayload.getListSize();
-		this.pageElements = (R[]) listingPayload.getPageElements();
-		this.offset = listingPayload.getOffset();
-		this.sorting = listingPayload.getSorting();
-		setCalculated(pageSize);
-	}
-
-	/**
-	 * Constructor
-	 * @param success
 	 * @param listingName
 	 * @param listingOp
 	 * @param listSize
@@ -69,9 +46,8 @@ public final class ListingEvent<R> extends GwtEvent<IListingHandler<R>> {
 	 * @param sorting
 	 * @param pageSize
 	 */
-	public ListingEvent(boolean success, String listingName, ListingOp listingOp, int listSize,
+	public ListingEvent(String listingName, ListingOp listingOp, int listSize,
 			R[] pageElements, int offset, Sorting sorting, int pageSize) {
-		this.success = success;
 		this.listingName = listingName;
 		this.listingOp = listingOp;
 		this.listingStatus = null;
@@ -96,10 +72,6 @@ public final class ListingEvent<R> extends GwtEvent<IListingHandler<R>> {
 	@Override
 	public Type<IListingHandler<R>> getAssociatedType() {
 		return (Type) TYPE;
-	}
-
-	public boolean isSuccess() {
-		return success;
 	}
 
 	public String getListingName() {

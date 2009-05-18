@@ -38,14 +38,49 @@
                 <ant antfile="${basedir}/../build-gwt.xml">
                   <target name="build-shell-exec-file" />
                   <target name="build-shell-debug-exec-file" />
-                  <target name="compile" />
+                  <!-- <target name="compile" /> -->
                 </ant>
               </tasks>
             </configuration>
           </execution>
         </executions>
       </plugin>
-      
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-gwt-war-dir</id>
+            <goals>
+              <goal>directory-single</goal>
+            </goals>
+            <phase>process-test-classes</phase>
+            <configuration>
+              <finalName>war</finalName>
+              <outputDirectory>target</outputDirectory>
+              <appendAssemblyId>false</appendAssemblyId>
+              <descriptors>
+                <descriptor>gwt-test-war-dir.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          <execution>
+            <id>server-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>client-server-jar.xml</descriptor>
+                <descriptor>test-assets.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
   
@@ -65,8 +100,29 @@
     </dependency>
     
     <dependency>
+      <groupId>com.google.code.gwt-log</groupId>
+      <artifactId>gwt-log</artifactId>
+    </dependency>
+    <!-- 
+    <dependency>
+      <groupId>com.google.code.gwt-incubator</groupId>
+      <artifactId>gwt-incubator</artifactId>
+    </dependency>
+    -->
+
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-config</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -76,39 +132,19 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-dao</artifactId>
-      <version>${project.version}</version>
-      <classifier>sources</classifier>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-service</artifactId>
+      <artifactId>tll-dao-api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-service</artifactId>
       <version>${project.version}</version>
-      <classifier>sources</classifier>
-    </dependency>
-    
-    <dependency>
-      <groupId>com.google.code.gwt-log</groupId>
-      <artifactId>gwt-log</artifactId>
-      <version>2.5.3</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.google.code.gwt-incubator</groupId>
-      <artifactId>gwt-incubator-glasspanel</artifactId>
-      <scope>provided</scope>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-servlet</artifactId>
+      <version>${project.version}</version>
     </dependency>
-
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>
@@ -123,12 +159,21 @@
       <groupId>com.tll</groupId>
       <artifactId>client-ui</artifactId>
       <version>${project.version}</version>
-      <classifier>client</classifier>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-model</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-persist</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.google.code.guice</groupId>
+      <artifactId>guice</artifactId>
     </dependency>
     
     <dependency>
@@ -153,41 +198,48 @@
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
       <version>${project.version}</version>
-      <classifier>tests</classifier>
+      <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao</artifactId>
+      <artifactId>tll-dao-mock</artifactId>
       <version>${project.version}</version>
-      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-api</artifactId>
+      <version>${project.version}</version>
+      <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>
       <version>${project.version}</version>
-      <classifier>tests</classifier>
+      <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-ui</artifactId>
       <version>${project.version}</version>
-      <classifier>tests</classifier>
+      <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-model</artifactId>
       <version>${project.version}</version>
-      <classifier>tests</classifier>
+      <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-servlet</artifactId>
+      <artifactId>client-persist</artifactId>
       <version>${project.version}</version>
+      <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>

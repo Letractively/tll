@@ -65,24 +65,29 @@
 		<java failonerror="true" fork="true" classname="com.google.gwt.dev.Compiler">
 			<classpath refid="gwt.compile.classpath" />
 			<jvmarg value="-Xms128m" />
-			<jvmarg value="-Xmx512m" />
+			<jvmarg value="-Xmx768m" />
+			<jvmarg value="-Xss1024k" />
 			<jvmarg value="-ea" />
 			<arg value="-war" />
 			<arg value="target/war" />
+			<arg value="-localWorkers" />
+			<arg value="2" />
 			<arg value="-style" />
 			<arg value="${gwt.compile.style}" />
 			<arg value="-logLevel" />
 			<arg value="INFO" />
+			<arg value="-workDir" />
+			<arg value="target/gwtc" />
 			<arg value="${gwt.compile.modules}" />
 		</java>
 	</target>
 	
 	<target name="build-shell-exec-file" description="Builds a batch file to invoke the gwt shell.">
-		<echo file="shell.bat" message="java -Xms128m -Xmx512m -ea -cp ${gwt.compile.classpath} com.google.gwt.dev.HostedMode -war target/war -style ${gwt.compile.style} -logLevel INFO -startupUrl ${gwt.shell.startupUrl} ${gwt.shell.entryModule}" />
+		<echo file="shell.bat" message="java -Xss1024k -Xms128m -Xmx512m -ea -cp ${gwt.compile.classpath} com.google.gwt.dev.HostedMode -war target/war -style ${gwt.compile.style} -logLevel INFO -startupUrl ${gwt.shell.startupUrl} ${gwt.shell.entryModule}" />
 	</target>
 
 	<target name="build-shell-debug-exec-file" description="Builds a batch file to invoke the gwt shell with a jvm debug hook at port 8000.">
-		<echo file="debug.bat" message="java -Xms128m -Xmx512m -ea -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000 -Djava.compiler=NONE -cp ${gwt.compile.classpath} com.google.gwt.dev.HostedMode -war target/war -style ${gwt.compile.style} -logLevel INFO -startupUrl ${gwt.shell.startupUrl} ${gwt.shell.entryModule}" />
+		<echo file="debug.bat" message="java -Xss1024k -Xms128m -Xmx512m -ea -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,address=8000 -Djava.compiler=NONE -cp ${gwt.compile.classpath} com.google.gwt.dev.HostedMode -war target/war -style ${gwt.compile.style} -logLevel INFO -startupUrl ${gwt.shell.startupUrl} ${gwt.shell.entryModule}" />
 	</target>
 
 </project>

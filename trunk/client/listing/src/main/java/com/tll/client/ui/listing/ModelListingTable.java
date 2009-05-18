@@ -47,24 +47,25 @@ public final class ModelListingTable extends ListingTable<Model> {
 	 *         given row key is present in the table.
 	 */
 	int getRowIndex(ModelKey rowKey) {
-		return rowKeys.indexOf(rowKey) + 1; // account for header row
+		final int i = rowKeys.indexOf(rowKey);
+		return i == -1 ? -1 : i + 1; // account for header row
 	}
 
 	@Override
 	protected void setRowData(int rowIndex, int rowNum, Model rowData, boolean overwriteOnNull) {
 		super.setRowData(rowIndex, rowNum, rowData, overwriteOnNull);
-		rowKeys.add(rowData.getRefKey());
+		rowKeys.add(rowData.getKey());
 	}
 
 	@Override
 	int addRow(Model rowData) {
-		rowKeys.add(rowData.getRefKey());
+		rowKeys.add(rowData.getKey());
 		return super.addRow(rowData);
 	}
 
 	@Override
 	void updateRow(int rowIndex, Model rowData) {
-		rowKeys.set(rowIndex - 1, rowData.getRefKey());
+		rowKeys.set(rowIndex - 1, rowData.getKey());
 		super.updateRow(rowIndex, rowData);
 	}
 

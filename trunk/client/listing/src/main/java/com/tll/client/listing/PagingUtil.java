@@ -28,7 +28,7 @@ public abstract class PagingUtil {
 	 * @return The calculated list index.
 	 */
 	public static int listIndexFromPageNum(int pageNum, int pageSize) {
-		return pageNum == 0 ? 0 : pageNum * pageSize - 1;
+		return pageNum == 0 ? 0 : pageNum * pageSize;
 	}
 
 	/**

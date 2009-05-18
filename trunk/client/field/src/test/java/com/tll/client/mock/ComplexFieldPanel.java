@@ -40,13 +40,13 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 		public IFieldRenderer<FlowPanel> getRenderer() {
 			return new IFieldRenderer<FlowPanel>() {
 
-				public void render(FlowPanel panel, FieldGroup fg) {
+				public void render(FlowPanel pnl, FieldGroup fg) {
 					final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
-					cmpsr.setCanvas(panel);
+					cmpsr.setCanvas(pnl);
 
 					// account address type/name row
 					cmpsr.addField(fg.getFieldWidgetByName("type"));
-					cmpsr.addField(fg.getFieldWidget(Model.NAME_PROPERTY));
+					cmpsr.addField(fg.getFieldWidgetByName("aa" + Model.NAME_PROPERTY));
 
 					// address row
 					cmpsr.newRow();
@@ -54,16 +54,16 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 					(new IFieldRenderer<FlowPanel>() {
 
 						@Override
-						public void render(FlowPanel widget, FieldGroup fg) {
-							final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
-							cmpsr.setCanvas(widget);
+						public void render(FlowPanel widget, FieldGroup fgroup) {
+							final FlowPanelFieldComposer c = new FlowPanelFieldComposer();
+							c.setCanvas(widget);
 
-							cmpsr.addField(fg.getFieldWidgetByName("adrsEmailAddress"));
+							c.addField(fgroup.getFieldWidgetByName("adrsEmailAddress"));
 
-							cmpsr.newRow();
-							cmpsr.addField(fg.getFieldWidgetByName("adrsFirstName"));
-							cmpsr.addField(fg.getFieldWidgetByName("adrsMi"));
-							cmpsr.addField(fg.getFieldWidgetByName("adrsLastName"));
+							c.newRow();
+							c.addField(fgroup.getFieldWidgetByName("adrsFirstName"));
+							c.addField(fgroup.getFieldWidgetByName("adrsMi"));
+							c.addField(fgroup.getFieldWidgetByName("adrsLastName"));
 
 							//cmpsr.newRow();
 							//cmpsr.addField(fg.getFieldWidgetByName("adrsAttn"));
@@ -75,17 +75,17 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 							//cmpsr.newRow();
 							//cmpsr.addField(fg.getFieldWidgetByName("adrsAddress2"));
 
-							cmpsr.newRow();
-							cmpsr.addField(fg.getFieldWidgetByName("adrsCity"));
-							cmpsr.addField(fg.getFieldWidgetByName("adrsProvince"));
+							c.newRow();
+							c.addField(fgroup.getFieldWidgetByName("adrsCity"));
+							c.addField(fgroup.getFieldWidgetByName("adrsProvince"));
 
-							cmpsr.newRow();
+							c.newRow();
 							//cmpsr.addField(fg.getFieldWidgetByName("adrsPostalCode"));
-							cmpsr.addField(fg.getFieldWidgetByName("adrsCountry"));
+							c.addField(fgroup.getFieldWidgetByName("adrsCountry"));
 
-							cmpsr.addField(fg.getFieldWidgetByName("adrsBoolean"));
-							cmpsr.addField(fg.getFieldWidgetByName("adrsFloat"));
-							cmpsr.addField(fg.getFieldWidgetByName("adrsDouble"));
+							c.addField(fgroup.getFieldWidgetByName("adrsBoolean"));
+							c.addField(fgroup.getFieldWidgetByName("adrsFloat"));
+							c.addField(fgroup.getFieldWidgetByName("adrsDouble"));
 						}
 					}).render(fp, (FieldGroup) fg.getFieldByName("address"));
 					cmpsr.addWidget(fp);
@@ -161,15 +161,15 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 				cmpsr.setCanvas(widget);
 
 				// first row
-				cmpsr.addField(fg.getFieldWidgetByName(Model.NAME_PROPERTY));
+				cmpsr.addField(fg.getFieldWidgetByName("acnt" + Model.NAME_PROPERTY));
 				cmpsr.addField(fg.getFieldWidgetByName("acntStatus"));
 				cmpsr.addField(fg.getFieldWidgetByName("acntDateCancelled"));
 				cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 				cmpsr.addField(fg.getFieldWidgetByName("acntParentName"));
 				cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-				cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_CREATED_PROPERTY));
+				cmpsr.addField(fg.getFieldWidgetByName("acnt" + Model.DATE_CREATED_PROPERTY));
 				cmpsr.stopFlow();
-				cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_MODIFIED_PROPERTY));
+				cmpsr.addField(fg.getFieldWidgetByName("acnt" + Model.DATE_MODIFIED_PROPERTY));
 
 				// second row (billing)
 				cmpsr.newRow();
@@ -203,10 +203,10 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 		final FieldGroup fg = (new IFieldGroupProvider() {
 
 			public FieldGroup getFieldGroup() {
-				final FieldGroup fg = (new MockFieldGroupProviders.AccountFieldsProvider()).getFieldGroup();
-				fg.addField("paymentInfo", (new MockFieldGroupProviders.PaymentInfoFieldsProvider()).getFieldGroup());
-				fg.addField("addresses", indexedPanel.getFieldGroup());
-				return fg;
+				final FieldGroup fgroup = (new MockFieldGroupProviders.AccountFieldsProvider()).getFieldGroup();
+				fgroup.addField("paymentInfo", (new MockFieldGroupProviders.PaymentInfoFieldsProvider()).getFieldGroup());
+				fgroup.addField("addresses", indexedPanel.getFieldGroup());
+				return fgroup;
 			}
 		}).getFieldGroup();
 
@@ -216,24 +216,24 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 		fg.getFieldWidget("parent.name").setReadOnly(true);
 
 		((IFieldWidget<AccountStatus>) fg.getFieldWidget("status"))
-				.addValueChangeHandler(new ValueChangeHandler<AccountStatus>() {
+		.addValueChangeHandler(new ValueChangeHandler<AccountStatus>() {
 
-					@Override
-					public void onValueChange(ValueChangeEvent<AccountStatus> event) {
-						final boolean closed = event.getValue() == AccountStatus.CLOSED;
-						final IFieldWidget<?> f = getFieldGroup().getFieldWidget("dateCancelled");
-						f.setVisible(closed);
-						f.setRequired(closed);
-					}
-				});
+			@Override
+			public void onValueChange(ValueChangeEvent<AccountStatus> event) {
+				final boolean closed = event.getValue() == AccountStatus.CLOSED;
+				final IFieldWidget<?> f = getFieldGroup().getFieldWidget("dateCancelled");
+				f.setVisible(closed);
+				f.setRequired(closed);
+			}
+		});
 
 		((IFieldWidget<Boolean>) fg.getFieldWidget("persistPymntInfo"))
-				.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+		.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
-					public void onValueChange(ValueChangeEvent<Boolean> event) {
-						indexedPanel.getFieldGroup().setEnabled(event.getValue());
-					}
-				});
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				indexedPanel.getFieldGroup().setEnabled(event.getValue());
+			}
+		});
 
 		return fg;
 	}

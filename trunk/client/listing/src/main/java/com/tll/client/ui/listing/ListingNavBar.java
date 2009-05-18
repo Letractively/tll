@@ -25,8 +25,8 @@ import com.tll.client.listing.IListingHandler;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ListingEvent;
 import com.tll.client.ui.Position;
-import com.tll.client.ui.Toolbar;
 import com.tll.client.ui.msg.Msgs;
+import com.tll.client.ui.toolbar.Toolbar;
 import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.util.StringUtil;
@@ -37,13 +37,13 @@ import com.tll.util.StringUtil;
  * @author jpk
  */
 public class ListingNavBar<R> extends Toolbar implements ClickHandler, KeyUpHandler, ChangeHandler,
-		IListingHandler<R> {
+IListingHandler<R> {
 
 	/**
 	 * The listing nav bar specific image bundle.
 	 */
 	private static final ListingNavBarImageBundle imageBundle =
-			(ListingNavBarImageBundle) GWT.create(ListingNavBarImageBundle.class);
+		(ListingNavBarImageBundle) GWT.create(ListingNavBarImageBundle.class);
 
 	/**
 	 * Styles - (tableview.css)
@@ -100,6 +100,7 @@ public class ListingNavBar<R> extends Toolbar implements ClickHandler, KeyUpHand
 	// summary text ("Displaying elements x of y")
 	private Label lblSmry;
 
+	private boolean hasRows;
 	private int firstIndex = -1;
 	private int lastIndex = -1;
 	private int totalSize = -1;
@@ -147,24 +148,18 @@ public class ListingNavBar<R> extends Toolbar implements ClickHandler, KeyUpHand
 			btnPageNext = new PushButton(imgPageNext, this);
 			btnPageLast = new PushButton(imgPageLast, this);
 
-			btnPageFirst.setTitle("Fist Page");
-			btnPagePrev.setTitle("Previous Page");
-			btnPageNext.setTitle("Next Page");
-			btnPageLast.setTitle("Last Page");
-			tbPage.setTitle("Current Page");
-
 			tbPage.addKeyUpHandler(this);
 			tbPage.addChangeHandler(this);
 			tbPage.setMaxLength(4);
 			tbPage.setStyleName(Styles.PAGE);
 
 			// prev buttons (divs)
-			add(btnPageFirst);
-			add(btnPagePrev);
+			addButton(btnPageFirst, "First Page");
+			addButton(btnPagePrev, "Previous Page");
 
 			// separator
 			split = imageBundle.split().createImage();
-			split.setStylePrimaryName(Toolbar.Styles.TOOLBAR_SEPARATOR);
+			split.setStylePrimaryName(Toolbar.Styles.SPLIT);
 			add(split);
 
 			// Page x of y
@@ -177,27 +172,26 @@ public class ListingNavBar<R> extends Toolbar implements ClickHandler, KeyUpHand
 
 			// separator
 			split = imageBundle.split().createImage();
-			split.setStylePrimaryName(Toolbar.Styles.TOOLBAR_SEPARATOR);
+			split.setStylePrimaryName(Toolbar.Styles.SPLIT);
 			add(split);
 
 			// next buttons (divs)
-			add(btnPageNext);
-			add(btnPageLast);
+			addButton(btnPageNext, "Next Page");
+			addButton(btnPageLast, "Last Page");
 		}
 
 		// show refresh button?
 		if(config.isShowRefreshBtn()) {
 			imgRefresh = imageBundle.refresh().createImage();
 			btnRefresh = new PushButton(imgRefresh, this);
-			btnRefresh.setTitle("Refresh");
 
 			if(pageSize > 0) {
 				// separator
 				split = imageBundle.split().createImage();
-				split.setStylePrimaryName(Toolbar.Styles.TOOLBAR_SEPARATOR);
+				split.setStylePrimaryName(Toolbar.Styles.SPLIT);
 				add(split);
 			}
-			add(btnRefresh);
+			addButton(btnRefresh, "Refresh");
 		}
 
 		// show add button?
@@ -205,14 +199,20 @@ public class ListingNavBar<R> extends Toolbar implements ClickHandler, KeyUpHand
 			// imgAdd = imageBundle.add().createImage();
 			final String title = "Add " + config.getListingElementName();
 			btnAdd = new PushButton(title, this);
-			btnAdd.setTitle(title);
 			if(pageSize > 0 || config.isShowRefreshBtn()) {
 				// separator
 				split = imageBundle.split().createImage();
-				split.setStylePrimaryName(Toolbar.Styles.TOOLBAR_SEPARATOR);
+				split.setStylePrimaryName(Toolbar.Styles.SPLIT);
 				add(split);
 			}
-			add(btnAdd);
+			addButton(btnAdd, title);
+		}
+
+		// separator
+		if(pageSize > 0 || config.isShowRefreshBtn() || config.getAddRowHandler() != null) {
+			split = imageBundle.split().createImage();
+			split.setStylePrimaryName(Toolbar.Styles.SPLIT);
+			add(split);
 		}
 
 		// Displaying {listing element name} x - y of TOTAL
@@ -325,8 +325,8 @@ public class ListingNavBar<R> extends Toolbar implements ClickHandler, KeyUpHand
 	private void draw() {
 		if(pageSize > 0) {
 			// first page btn
-			btnPageFirst.setEnabled(!isFirstPage);
-			if(isFirstPage) {
+			btnPageFirst.setEnabled(!isFirstPage && hasRows);
+			if(isFirstPage || !hasRows) {
 				imageBundle.page_first_disabled().applyTo(imgPageFirst);
 			}
 			else {
@@ -334,8 +334,8 @@ public class ListingNavBar<R> extends Toolbar implements ClickHandler, KeyUpHand
 			}
 
 			// last page btn
-			btnPageLast.setEnabled(!isLastPage);
-			if(isLastPage) {
+			btnPageLast.setEnabled(!isLastPage && hasRows);
+			if(isLastPage || !hasRows) {
 				imageBundle.page_last_disabled().applyTo(imgPageLast);
 			}
 			else {
@@ -343,8 +343,8 @@ public class ListingNavBar<R> extends Toolbar implements ClickHandler, KeyUpHand
 			}
 
 			// prev page btn
-			btnPagePrev.setEnabled(!isFirstPage);
-			if(isFirstPage) {
+			btnPagePrev.setEnabled(!isFirstPage && hasRows);
+			if(isFirstPage || !hasRows) {
 				imageBundle.page_prev_disabled().applyTo(imgPagePrev);
 			}
 			else {
@@ -352,17 +352,24 @@ public class ListingNavBar<R> extends Toolbar implements ClickHandler, KeyUpHand
 			}
 
 			// next page btn
-			btnPageNext.setEnabled(!isLastPage);
-			if(isLastPage) {
+			btnPageNext.setEnabled(!isLastPage && hasRows);
+			if(isLastPage || !hasRows) {
 				imageBundle.page_next_disabled().applyTo(imgPageNext);
 			}
 			else {
 				imageBundle.page_next().applyTo(imgPageNext);
 			}
 
-			tbPage.setText(Integer.toString(crntPage));
-			tbPage.setEnabled(numPages > 1);
-			lblPagePost.setText("of " + numPages);
+			tbPage.setEnabled(hasRows);
+			lblPagePost.setVisible(hasRows);
+			if(hasRows) {
+				tbPage.setText(Integer.toString(crntPage));
+				tbPage.setEnabled(numPages > 1);
+				lblPagePost.setText("of " + numPages);
+			}
+			else {
+				tbPage.setText("");
+			}
 		}
 
 		// summary caption
@@ -377,14 +384,22 @@ public class ListingNavBar<R> extends Toolbar implements ClickHandler, KeyUpHand
 	}
 
 	public void onListingEvent(ListingEvent<R> event) {
-		if(event.getListingOp().isQuery() && event.isSuccess()) {
-			this.firstIndex = event.getOffset();
-			this.lastIndex = firstIndex + event.getPageElements().length - 1;
-			this.totalSize = event.getListSize();
-			this.numPages = event.getNumPages();
-			this.crntPage = event.getPageNum() + 1;
-			this.isFirstPage = (crntPage == 1);
-			this.isLastPage = (crntPage == numPages);
+		if(event.getListingOp().isQuery()) {
+			hasRows = event.getPageElements() != null;
+			if(hasRows) {
+				firstIndex = event.getOffset();
+				lastIndex = firstIndex + event.getPageElements().length - 1;
+				totalSize = event.getListSize();
+				numPages = event.getNumPages();
+				crntPage = event.getPageNum() + 1;
+				isFirstPage = (crntPage == 1);
+				isLastPage = (crntPage == numPages);
+			}
+			else {
+				firstIndex = lastIndex = numPages = crntPage = -1;
+				totalSize = 0;
+				isFirstPage = isLastPage = false;
+			}
 			draw();
 		}
 	}

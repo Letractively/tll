@@ -24,7 +24,7 @@ public class FieldBindingGWTTest extends GWTTestCase {
 	public void testBind() {
 		final ComplexFieldPanel fieldPanel = new ComplexFieldPanel();
 		//fieldPanel.setAction(new SimpleBindingAction());
-		fieldPanel.setModel(MockModelStubber.stubAccount());
+		fieldPanel.setModel(MockModelStubber.stubAccount(true));
 		RootPanel.get().add(fieldPanel);
 	}
 }

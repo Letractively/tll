@@ -5,6 +5,7 @@
  */
 package com.tll.common.model.mock;
 
+import com.tll.IMarshalable;
 import com.tll.INameValueProvider;
 
 
@@ -12,7 +13,7 @@ import com.tll.INameValueProvider;
  * CreditCardType
  * @author jpk
  */
-public enum CreditCardType implements INameValueProvider<String> {
+public enum CreditCardType implements INameValueProvider<String>, IMarshalable {
 	VISA("Visa"),
 	MC("Master Card");
 

@@ -30,7 +30,7 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 	 * @author jpk
 	 */
 	public static abstract class UITestCase {
-		
+
 		/**
 		 * @return A descriptive name for the test.
 		 */
@@ -59,7 +59,7 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 		 */
 		public abstract void unload();
 	}
-	
+
 	/**
 	 * Stubs 2 panels horizontally where the first panel contains test buttons and
 	 * the second panel contains the test subject.
@@ -78,8 +78,8 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 		public DefaultTestLayout() {
 			super();
 			layout.getElement().getStyle().setProperty("margin", "1em");
-			layout.setSpacing(5);
-			layout.setBorderWidth(1);
+			// layout.setSpacing(5);
+			// layout.setBorderWidth(1);
 			layout.add(buttonPanel);
 			initWidget(layout);
 		}
@@ -111,7 +111,7 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 	 * @author jpk
 	 */
 	static abstract class DefaultUITestCase extends UITestCase {
-		
+
 		private final String name, desc;
 		private DefaultTestLayout layout;
 
@@ -135,7 +135,7 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 		public final String getDescription() {
 			return desc;
 		}
-		
+
 		/**
 		 * Provides the testing subject (context).
 		 * @return test context
@@ -144,10 +144,14 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 
 		/**
 		 * @return Array of {@link Button}s that when clicked, performs a test
-		 *         action on the context.
+		 *         action on the context. May return <code>null</code> in which case
+		 *         there will be no test buttons.
 		 */
-		protected abstract Button[] getTestActions();
-		
+		protected Button[] getTestActions() {
+			// base impl no test buttons
+			return null;
+		}
+
 		/**
 		 * Override to do specific test context initialization operations.
 		 */
@@ -182,7 +186,7 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 			layout = null;
 			teardown();
 		}
-		
+
 	} // DefaultUITestCase
 
 	/**
@@ -226,7 +230,7 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * @return The descriptive name for this UI test.
 	 */
@@ -267,7 +271,7 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 			testIndex++;
 		}
 		RootPanel.get().add(testList);
-		
+
 		backLink.getElement().getStyle().setProperty("padding", "1em");
 		backLink.setVisible(false);
 		RootPanel.get().add(backLink);
@@ -281,7 +285,7 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 	public final void onValueChange(final ValueChangeEvent<String> event) {
 		final String historyToken = event.getValue();
 		assert historyToken != null;
-		
+
 		DeferredCommand.addCommand(new Command() {
 
 			public void execute() {
@@ -297,7 +301,7 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 					toggleViewState(false);
 					return;
 				}
-				
+
 				for(final UITestCase test : tests) {
 					if(historyToken.equals(test.getHistoryToken())) {
 						if(current != test) {
@@ -311,7 +315,7 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 						return;
 					}
 				}
-				
+
 				// this is fallacious since we're depriving other history handlers from processing!
 				//throw new IllegalStateException("Unhandled history state: " + historyToken);
 			}

@@ -10,7 +10,7 @@ import com.tll.client.ui.IBindableWidget;
 import com.tll.client.ui.IHasHelpText;
 import com.tll.client.validate.IValidator;
 import com.tll.common.msg.Msg.MsgLevel;
-import com.tll.criteria.IPropertyNameProvider;
+import com.tll.model.schema.IPropertyNameProvider;
 
 /**
  * IFieldWidget - A physical non-group field capable of display in the ui.
@@ -18,7 +18,7 @@ import com.tll.criteria.IPropertyNameProvider;
  * @author jpk
  */
 public interface IFieldWidget<V> extends IField, IBindableWidget<V>, IPropertyNameProvider, HasText, IHasHelpText,
-		IValidator {
+IValidator {
 
 	/**
 	 * Styles - (field.css)
@@ -79,7 +79,7 @@ public interface IFieldWidget<V> extends IField, IBindableWidget<V>, IPropertyNa
 	 * @return The associated {@link FieldLabel} which may be <code>null</code>.
 	 */
 	FieldLabel getFieldLabel();
-	
+
 	/**
 	 * @return The label text.
 	 */
@@ -102,9 +102,4 @@ public interface IFieldWidget<V> extends IField, IBindableWidget<V>, IPropertyNa
 	 * @param fieldLabelContainer The desired ancestor {@link Widget}
 	 */
 	void setFieldLabelContainer(Widget fieldLabelContainer);
-
-	/**
-	 * @return the current validity state.
-	 */
-	boolean isValid();
 }

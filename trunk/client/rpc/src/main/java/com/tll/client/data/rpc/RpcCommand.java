@@ -4,6 +4,7 @@
  */
 package com.tll.client.data.rpc;
 
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -12,47 +13,37 @@ import com.tll.common.data.Status;
 import com.tll.common.msg.Msg.MsgLevel;
 
 /**
- * RpcCommand - Impl of {@link IRpcCommand} serving as a way to chain rpc calls
- * and to do app specific handling of rpc calls in a centralized manner.
+ * RpcCommand - Intended base class for all client-side RPC based requests.
  * <p>
- * ALL app RPC calls should be made via an extended {@link RpcCommand} instance
- * to monitor the number of calls made.
+ * Fires {@link RpcEvent}s on the source widget if non-<code>null</code>.
+ * <p>
+ * Fires {@link StatusEvent}s via the {@link StatusEventDispatcher} upon rpc
+ * return.
  * @author jpk
  * @param <P> payload type
  */
-public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P> {
+public abstract class RpcCommand<P extends Payload> implements AsyncCallback<P>, IRpcCommand {
 
 	/**
-	 * The optional widget that will serve as the rpc event source.
+	 * The sourcing widget which may be <code>null</code>.
 	 */
-	protected final Widget sourcingWidget;
+	protected Widget source;
 
 	/**
 	 * The declared ref is necessary in order to chain rpc commands.
 	 */
 	private AsyncCallback<P> callback = this;
 
-	/**
-	 * Constructor
-	 */
-	public RpcCommand() {
-		this(null);
-	}
-
-	/**
-	 * Constructor
-	 * @param sourcingWidget If non-<code>null</code>, {@link RpcEvent}s will fire
-	 *        on this widget.
-	 */
-	protected RpcCommand(Widget sourcingWidget) {
-		this.sourcingWidget = sourcingWidget;
+	@Override
+	public final void setSource(Widget source) {
+		this.source = source;
 	}
 
 	protected final AsyncCallback<P> getAsyncCallback() {
 		return callback;
 	}
 
-	public final void setAsyncCallback(AsyncCallback<P> callback) {
+	final void setAsyncCallback(AsyncCallback<P> callback) {
 		this.callback = callback;
 	}
 
@@ -61,28 +52,26 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P> {
 	 */
 	protected abstract void doExecute();
 
+	@Override
 	public final void execute() {
-		//rpc(true);
 		try {
 			doExecute();
 			// fire an RPC send event
-			if(sourcingWidget != null) sourcingWidget.fireEvent(new RpcEvent<P>());
+			if(source != null) source.fireEvent(new RpcEvent(RpcEvent.Type.SENT));
 		}
 		catch(final Throwable t) {
-			//rpc(false);
-			if(t instanceof RuntimeException) {
-				throw (RuntimeException) t;
-			}
+			if(source != null) source.fireEvent(new RpcEvent(RpcEvent.Type.SEND_ERROR));
+			throw new RuntimeException(t.getMessage(), t);
 		}
 	}
 
+	@Override
 	public final void onSuccess(P result) {
-		//rpc(false);
 		handleSuccess(result);
 	}
 
+	@Override
 	public final void onFailure(Throwable caught) {
-		//rpc(false);
 		handleFailure(caught);
 	}
 
@@ -91,12 +80,10 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P> {
 	 * @param result
 	 */
 	protected void handleSuccess(P result) {
-		if(sourcingWidget != null) {
-			// fire RPC event
-			sourcingWidget.fireEvent(new RpcEvent<P>(result));
-			// fire status event
-			StatusEventDispatcher.get().fireEvent(new StatusEvent(result.getStatus()));
-		}
+		// fire RPC event
+		if(source != null) source.fireEvent(new RpcEvent(RpcEvent.Type.RECEIVED));
+		// fire status event
+		StatusEventDispatcher.get().fireEvent(new StatusEvent(result.getStatus()));
 	}
 
 	/**
@@ -105,17 +92,14 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P> {
 	 */
 	protected void handleFailure(Throwable caught) {
 		GWT.log("Error in rpc payload retrieval", caught);
+		// fire RPC event
+		if(source != null) source.fireEvent(new RpcEvent(RpcEvent.Type.ERROR));
 
-		if(sourcingWidget != null) {
-			// fire RPC event
-			sourcingWidget.fireEvent(new RpcEvent<P>(caught));
-
-			// fire status event
-			String msg = caught.getMessage();
-			if(msg == null) msg = "An unknown RPC error occurred";
-			final Status status = new Status(msg, MsgLevel.ERROR);
-			StatusEventDispatcher.get().fireEvent(new StatusEvent(status));
-		}
+		// fire status event
+		String msg = caught.getMessage();
+		if(msg == null) msg = "An unknown RPC error occurred";
+		final Status status = new Status(msg, MsgLevel.ERROR);
+		StatusEventDispatcher.get().fireEvent(new StatusEvent(status));
 	}
 
 }

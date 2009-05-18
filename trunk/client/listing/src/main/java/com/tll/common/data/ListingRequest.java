@@ -4,8 +4,6 @@
  */
 package com.tll.common.data;
 
-import com.tll.IDescriptorProvider;
-import com.tll.IMarshalable;
 import com.tll.common.search.ISearch;
 import com.tll.dao.Sorting;
 
@@ -15,7 +13,7 @@ import com.tll.dao.Sorting;
  * @author jpk
  * @param <S>
  */
-public final class ListingRequest<S extends ISearch> implements IMarshalable, IDescriptorProvider {
+public final class ListingRequest<S extends ISearch> implements IModelRelatedRequest {
 
 	/**
 	 * The unique listing name.

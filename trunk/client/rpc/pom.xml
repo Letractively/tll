@@ -13,49 +13,55 @@
   <name>client-rpc</name>
   <version>${project.parent.version}</version>
   <description>Houses core RPC enabling classes for tll GWT based apps.</description>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>client-server-jar.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
   <dependencies>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context-support</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>aopalliance</groupId>
-          <artifactId>aopalliance</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-beans</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-context</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
     <dependency>
       <groupId>com.google.code.guice</groupId>
       <artifactId>guice</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-core</artifactId>
-      <version>${project.version}</version>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gwt-log</groupId>
+      <artifactId>gwt-log</artifactId>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-config</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-mail</artifactId>
+      <artifactId>tll-common</artifactId>
       <version>${project.version}</version>
     </dependency>
     
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-ui</artifactId>
       <version>${project.version}</version>
     </dependency>
 

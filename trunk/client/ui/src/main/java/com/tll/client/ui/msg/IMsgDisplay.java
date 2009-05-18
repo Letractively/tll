@@ -17,50 +17,63 @@ import com.tll.common.msg.Msg.MsgLevel;
 public interface IMsgDisplay {
 
 	/**
-	 * Add multiple sourced messages.
-	 * @param wref
-	 * @param msgs
-	 */
-	void add(IWidgetRef wref, Iterable<Msg> msgs);
-
-	/**
-	 * Add a single sourced message.
+	 * Add a single sourced message with an optional classifier id.
 	 * @param wref
 	 * @param msg
+	 * @param classifier classifier id which may be <code>null</code>.
 	 */
-	void add(IWidgetRef wref, Msg msg);
+	void add(IWidgetRef wref, Msg msg, Integer classifier);
 
 	/**
-	 * Add multiple of un-sourced messages.
+	 * Add multiple sourced messages with an optional classifier id.
+	 * @param wref
 	 * @param msgs
+	 * @param classifier classifier id which may be <code>null</code>.
 	 */
-	void add(Iterable<Msg> msgs);
+	void add(IWidgetRef wref, Iterable<Msg> msgs, Integer classifier);
 
 	/**
-	 * Add a single un-sourced message.
+	 * Add multiple of un-sourced messages with an optional classifier id.
+	 * @param msgs
+	 * @param classifier classifier id which may be <code>null</code>.
+	 */
+	void add(Iterable<Msg> msgs, Integer classifier);
+
+	/**
+	 * Add a single un-sourced message with an optional classifier id.
 	 * @param msg
+	 * @param classifier classifier id which may be <code>null</code>.
 	 */
-	void add(Msg msg);
+	void add(Msg msg, Integer classifier);
 
 	/**
-	 * Remove all posted messages that source to the given widget.
+	 * Remove all posted messages that source to the given widget with the
+	 * following optional classifier id.
 	 * @param wref the widget reference
+	 * @param classifier classifier id which may be <code>null</code>.
 	 */
-	void remove(IWidgetRef wref);
+	void remove(IWidgetRef wref, Integer classifier);
 
 	/**
 	 * Remove all posted un-sourced messages.
+	 * @param classifier classifier id which may be <code>null</code>.
 	 */
-	void removeUnsourced();
+	void removeUnsourced(Integer classifier);
 
 	/**
-	 * Clear all messages of the given level.
+	 * Removes all messages of the given level.
 	 * @param level
 	 */
-	void clear(MsgLevel level);
+	void remove(MsgLevel level);
 
 	/**
-	 * Remove <em>all</em> messages.
+	 * Removes all messages associated with the given classifier.
+	 * @param classifier the clasifier id
+	 */
+	void remove(int classifier);
+
+	/**
+	 * Remove <em>all</em> messages from this display.
 	 */
 	void clear();
 
@@ -74,5 +87,4 @@ public interface IMsgDisplay {
 	 * @return the total number of posted messages.
 	 */
 	int size();
-
 }

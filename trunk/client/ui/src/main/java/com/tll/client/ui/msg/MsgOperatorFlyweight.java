@@ -6,6 +6,7 @@ import java.util.Iterator;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.tll.client.ui.DragEvent;
 import com.tll.client.ui.Position;
+import com.tll.common.msg.Msg;
 
 /**
  * MsgOperatorFlyweight - A flyweight for a collection of {@link IMsgOperator}s.
@@ -33,6 +34,48 @@ final class MsgOperatorFlyweight implements IMsgOperator, Iterable<IMsgOperator>
 	@Override
 	public Iterator<IMsgOperator> iterator() {
 		return (Iterator<IMsgOperator>) operators.iterator();
+	}
+
+	@Override
+	public void addMsg(Msg msg, Integer classifier) {
+		for(final IMsgOperator o : operators) {
+			o.addMsg(msg, classifier);
+		}
+	}
+
+	@Override
+	public void addMsgs(Iterable<Msg> msgs, Integer classifier) {
+		for(final IMsgOperator o : operators) {
+			o.addMsgs(msgs, classifier);
+		}
+	}
+
+	@Override
+	public void removeMsg(Msg msg) {
+		for(final IMsgOperator o : operators) {
+			o.removeMsg(msg);
+		}
+	}
+
+	@Override
+	public void removeMsgs(int classifier) {
+		for(final IMsgOperator o : operators) {
+			o.removeMsgs(classifier);
+		}
+	}
+
+	@Override
+	public void removeMsgs(Iterable<Msg> msgs) {
+		for(final IMsgOperator o : operators) {
+			o.removeMsgs(msgs);
+		}
+	}
+
+	@Override
+	public void removeUnclassifiedMsgs() {
+		for(final IMsgOperator o : operators) {
+			o.removeUnclassifiedMsgs();
+		}
 	}
 
 	@Override

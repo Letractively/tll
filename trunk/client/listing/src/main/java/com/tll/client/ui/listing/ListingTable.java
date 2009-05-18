@@ -37,12 +37,12 @@ import com.tll.dao.Sorting;
  * @param <R>
  */
 public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandler, IListingHandler<R> {
-	
+
 	/**
 	 * The listing table specific image bundle.
 	 */
 	private static final ListingTableImageBundle imageBundle =
-			(ListingTableImageBundle) GWT.create(ListingTableImageBundle.class);
+		(ListingTableImageBundle) GWT.create(ListingTableImageBundle.class);
 
 	/**
 	 * Styles - (tableview.css)
@@ -147,9 +147,9 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		this.ignoreCaseWhenSorting = config.isIgnoreCaseWhenSorting();
 
 		int rn = -1;
-		final Column[] columns = config.getColumns();
-		for(int i = 0; i < columns.length; i++) {
-			if(Column.ROW_COUNT_COLUMN == columns[i]) {
+		final Column[] clmns = config.getColumns();
+		for(int i = 0; i < clmns.length; i++) {
+			if(Column.ROW_COUNT_COLUMN == clmns[i]) {
 				rn = i;
 				break;
 			}
@@ -157,7 +157,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		rowNumColIndex = rn;
 
 		if(config.isSortable()) {
-			sortlinks = new ListingTable.SortLink[columns.length];
+			sortlinks = new ListingTable.SortLink[clmns.length];
 		}
 
 		setStyleName(Styles.TABLE);
@@ -269,9 +269,9 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		public void onClick(ClickEvent event) {
 			if(event.getSource() == lnk) {
 				final SortColumn sc =
-						new SortColumn(column.getPropertyName(), column.getParentAlias(), direction == SortDir.ASC ? SortDir.DESC
-								: SortDir.ASC,
-								ignoreCaseWhenSorting);
+					new SortColumn(column.getPropertyName(), column.getParentAlias(), direction == SortDir.ASC ? SortDir.DESC
+							: SortDir.ASC,
+							ignoreCaseWhenSorting);
 				listingOperator.sort(new Sorting(sc));
 			}
 		}
@@ -323,8 +323,8 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 
 		for(int c = 0; c < columns.length; c++) {
 			if(Column.ROW_COUNT_COLUMN == columns[c]) {
+				getCellFormatter().addStyleName(rowIndex, c, Styles.COUNT_COL);
 				if(rowNum > -1) {
-					getCellFormatter().addStyleName(rowIndex, c, Styles.COUNT_COL);
 					setText(rowIndex, c, Integer.toString(rowNum));
 				}
 			}
@@ -356,14 +356,16 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 	}
 
 	public final void onListingEvent(ListingEvent<R> event) {
-		if(event.getListingOp().isQuery() && event.isSuccess()) {
+		if(event.getListingOp().isQuery()) {
 			removeBodyRows();
-			addBodyRows(event.getPageElements(), event.getOffset());
-			final Sorting sorting = event.getSorting();
-			if(sortlinks != null && sorting != null) applySorting(sorting);
-			crntPage = event.getPageNum() + 1;
-			numPages = event.getNumPages();
-			actvRowIndex = crntRowIndex = -1; // reset
+			if(event.getPageElements() != null) {
+				addBodyRows(event.getPageElements(), event.getOffset());
+				final Sorting sorting = event.getSorting();
+				if(sortlinks != null && sorting != null) applySorting(sorting);
+				crntPage = event.getPageNum() + 1;
+				numPages = event.getNumPages();
+				actvRowIndex = crntRowIndex = -1; // reset
+			}
 		}
 	}
 
@@ -506,6 +508,11 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 			getRowFormatter().removeStyleName(rowIndex, Styles.DELETED);
 	}
 
+	public boolean isRowMarkedDeleted(int rowIndex) {
+		final String sn = getRowFormatter().getStyleName(rowIndex);
+		return sn == null ? false : sn.indexOf(Styles.DELETED) >= 0;
+	}
+
 	private int getPageRowNum(int rowIndex) {
 		if(rowNumColIndex == -1) return -1;
 		return Integer.parseInt(getText(rowIndex, rowNumColIndex));
@@ -520,10 +527,10 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 	 *        <code>false</code>)?
 	 */
 	private void updateRowsBelow(int rowIndex, boolean add) {
-		final int numRows = getDOMRowCount();
+		final int nrows = getDOMRowCount();
 		int newPageRowNum = getPageRowNum(rowIndex) + (add ? +1 : -1);
-		if(rowIndex > 0 && rowIndex <= numRows - 1) {
-			for(int i = rowIndex; i < numRows; i++) {
+		if(rowIndex > 0 && rowIndex <= nrows - 1) {
+			for(int i = rowIndex; i < nrows; i++) {
 
 				// update the row num col text (if showing)
 				if(rowNumColIndex >= 0) {

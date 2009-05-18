@@ -1,0 +1,15 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="client-model-tests">
+  
+  <test name="tll-mentity-tests" annotations="JDK">
+    <groups>
+      <run>
+        <include name="client-mentity" />
+      </run>
+    </groups>
+    <packages>
+      <package name="com.tll.server.*" />
+    </packages>
+  </test>
+  
+</suite>

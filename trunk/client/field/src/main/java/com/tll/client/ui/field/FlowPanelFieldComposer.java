@@ -6,12 +6,12 @@
 package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.ui.Br;
 
 /**
  * FlowPanelFieldComposer - Lays out fields in a flow style having the following
@@ -23,7 +23,7 @@ import com.tll.client.ui.Br;
  * </ol>
  * @author jpk
  */
-public class FlowPanelFieldComposer implements IFieldComposer, HasAlignment {
+public class FlowPanelFieldComposer extends AbstractFieldComposer implements HasAlignment {
 
 	/**
 	 * Styles - (field.css)
@@ -35,7 +35,7 @@ public class FlowPanelFieldComposer implements IFieldComposer, HasAlignment {
 		 * Style for wrapping divs containing a field and label.
 		 */
 		public static final String FIELD_CONTAINER = "fldc";
-		
+
 		/**
 		 * Style applied to each row of fields.
 		 */
@@ -60,19 +60,15 @@ public class FlowPanelFieldComposer implements IFieldComposer, HasAlignment {
 		super();
 	}
 
+	@Override
 	public void setCanvas(Panel canvas) {
-		// reset state
-		if(vp == null) {
-			vp = new VerticalPanel();
-		}
-		else {
-			vp.clear();
-		}
+		if(this.canvas != null && this.canvas == canvas) return;
+		super.setCanvas(canvas);
+		vp = new VerticalPanel();
 		currentRow = null;
 		last = null;
 		atCurrent = false;
-
-		// bind the canvas
+		this.canvas = canvas;
 		canvas.add(vp);
 	}
 
@@ -85,7 +81,8 @@ public class FlowPanelFieldComposer implements IFieldComposer, HasAlignment {
 		return currentRow;
 	}
 
-	private void add(FieldLabel fldLbl, Widget w) {
+	@Override
+	public void add(FieldLabel fldLbl, Widget w) {
 		FlowPanel fp;
 		if(!atCurrent) {
 			fp = new FlowPanel();
@@ -95,41 +92,30 @@ public class FlowPanelFieldComposer implements IFieldComposer, HasAlignment {
 			if(last == null) throw new IllegalStateException("Empty row");
 			fp = (FlowPanel) last.getParent();
 		}
+
 		if(fldLbl != null) {
 			fp.add(fldLbl);
 		}
-		else {
-			fp.add(new Br()); // this is too much space
+		else if(!atCurrent) {
+			fp.add(new HTML("&nbsp;")); // for spacing
 		}
+
 		fp.add(w);
 		getCurrentRow().add(fp);
 		last = w;
 	}
 
-	/**
-	 * Adds a new.
-	 * @param w The non-field Widget to add
-	 */
+	@Override
 	public void addWidget(Widget w) {
 		add(null, w);
 	}
 
-	/**
-	 * Adds a field label and Widget to the canvas. If the label text is
-	 * <code>null</code>, no label is added. If the Widget is an IField
-	 * {@link #addField(IFieldWidget)} should be called instead.
-	 * @param label The label text
-	 * @param w The non-IField and non-FieldPanel Widget to add
-	 */
+	@Override
 	public void addWidget(String label, Widget w) {
 		add(label == null ? null : new FieldLabel(label), w);
 	}
 
-	/**
-	 * Adds a field to the canvas. The field label is extracted from the given
-	 * field and if non-<code>null</code>, is added as well.
-	 * @param field The field to add
-	 */
+	@Override
 	public void addField(IFieldWidget<?> field) {
 		add(field.getFieldLabel(), field.getWidget());
 		field.setFieldContainer(last.getParent());
@@ -177,6 +163,20 @@ public class FlowPanelFieldComposer implements IFieldComposer, HasAlignment {
 	public void reset() {
 		resetFlow();
 		resetAlignment();
+	}
+
+	/**
+	 * Adds the given style name to the associated field container widget that
+	 * contains it.
+	 * @param w
+	 * @param style
+	 */
+	public void addFieldContainerStyle(Widget w, String style) {
+		final Widget p = w.getParent();
+		if(p.getStyleName() == null || p.getStyleName().indexOf(Styles.FIELD_CONTAINER) < 0) {
+			throw new IllegalArgumentException("Not a field contained widget");
+		}
+		p.addStyleName(style);
 	}
 
 	public HorizontalAlignmentConstant getHorizontalAlignment() {

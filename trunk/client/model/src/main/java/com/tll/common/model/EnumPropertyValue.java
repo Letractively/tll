@@ -3,6 +3,7 @@
  */
 package com.tll.common.model;
 
+import com.tll.IMarshalable;
 import com.tll.INameValueProvider;
 import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
@@ -14,7 +15,15 @@ import com.tll.model.schema.PropertyType;
 @SuppressWarnings("unchecked")
 public class EnumPropertyValue extends AbstractPropertyValue implements ISelfFormattingPropertyValue {
 
-	private Enum<?> value;
+	/**
+	 * This is a in-direct type ref to an actual {@link Enum} instance. This
+	 * avoids the GWT compiler from seeking out <em>all</em> Enum types on the
+	 * classpath which is what it does and this is un-desireable.
+	 * <p>
+	 * Therfore, if we want to marshal an enum by way of {@link EnumPropertyValue}
+	 * s, it must implement the {@link IMarshalable} interface.
+	 */
+	private IMarshalable value;
 
 	/**
 	 * Constructor
@@ -39,7 +48,7 @@ public class EnumPropertyValue extends AbstractPropertyValue implements ISelfFor
 	 */
 	public EnumPropertyValue(String propertyName, PropertyMetadata metadata, Enum<?> value) {
 		super(propertyName, metadata);
-		this.value = value;
+		doSetValue(value);
 	}
 
 	public PropertyType getType() {
@@ -47,19 +56,20 @@ public class EnumPropertyValue extends AbstractPropertyValue implements ISelfFor
 	}
 
 	public IPropertyValue copy() {
-		return new EnumPropertyValue(propertyName, metadata, value);
+		return new EnumPropertyValue(propertyName, metadata, (Enum<?>) value);
 	}
 
 	public Enum<?> getEnum() {
-		return value;
+		return (Enum<?>) value;
 	}
 
 	@Override
-	protected void doSetValue(Object value) {
-		if(value != null && value instanceof Enum == false) {
-			throw new IllegalArgumentException("The value must be an Enum");
+	protected void doSetValue(Object val) {
+		if(val != null && (val instanceof Enum == false || val instanceof IMarshalable == false)) {
+			throw new IllegalArgumentException("The value must be both an Enum and implement IMarshalable ("
+					+ val.getClass().getName() + ")");
 		}
-		this.value = (Enum<?>) value;
+		this.value = (IMarshalable) val;
 	}
 
 	public Object getValue() {
@@ -70,6 +80,6 @@ public class EnumPropertyValue extends AbstractPropertyValue implements ISelfFor
 		if(value instanceof INameValueProvider) {
 			return ((INameValueProvider) value).getName();
 		}
-		return value == null ? null : value.name();
+		return value == null ? null : ((Enum<?>) value).name();
 	}
 }

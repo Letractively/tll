@@ -34,43 +34,22 @@ public final class ModelChangeEvent extends GwtEvent<IModelChangeHandler> {
 
 	private final ModelChangeOp change;
 	private final Model model;
-	private final ModelKey modelRef;
+	private final ModelKey modelKey;
 
 	private final Status status;
 
 	/**
-	 * Constructor - Use for add and update model change events.
+	 * Constructor
 	 * @param change
 	 * @param model
+	 * @param modelKey
 	 * @param status
 	 */
-	public ModelChangeEvent(ModelChangeOp change, Model model, Status status) {
+	public ModelChangeEvent(ModelChangeOp change, Model model, ModelKey modelKey, Status status) {
 		this.change = change;
 		this.model = model;
-		this.modelRef = null;
+		this.modelKey = modelKey;
 		this.status = status;
-	}
-
-	/**
-	 * Constructor - Use for delete model change events.
-	 * @param change
-	 * @param modelRef
-	 * @param status
-	 */
-	public ModelChangeEvent(ModelChangeOp change, ModelKey modelRef, Status status) {
-		this.change = change;
-		this.model = null;
-		this.modelRef = modelRef;
-		this.status = status;
-	}
-
-	/**
-	 * Constructor - Use for {@link ModelChangeOp#AUXDATA_READY} events.
-	 * @param change Expected to be a {@link ModelChangeOp#AUXDATA_READY} event
-	 */
-	public ModelChangeEvent(ModelChangeOp change) {
-		this(change, (Model) null, null);
-
 	}
 
 	public ModelChangeOp getChangeOp() {
@@ -81,8 +60,8 @@ public final class ModelChangeEvent extends GwtEvent<IModelChangeHandler> {
 		return model;
 	}
 
-	public ModelKey getModelRef() {
-		return modelRef == null ? (model == null ? null : model.getRefKey()) : modelRef;
+	public ModelKey getModelKey() {
+		return model == null ? modelKey : model.getKey();
 	}
 
 	public Status getStatus() {
@@ -102,7 +81,7 @@ public final class ModelChangeEvent extends GwtEvent<IModelChangeHandler> {
 	@Override
 	public String toString() {
 		String s = change.toString();
-		final ModelKey rk = getModelRef();
+		final ModelKey rk = getModelKey();
 		if(rk != null) {
 			s += " [ " + rk.toString() + " ]";
 		}

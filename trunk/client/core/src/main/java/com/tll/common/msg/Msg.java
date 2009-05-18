@@ -31,26 +31,18 @@ public final class Msg implements IMarshalable {
 
 	public static enum MsgAttr {
 		/**
-		 * Bit mask flag for indicating NO flags.
-		 */
-		NONE(0),
-		/**
 		 * Bit mask flag for indicating this message represents a status.
 		 */
 		STATUS(1),
 		/**
 		 * Bit mask flag for messages associated with UI fields.
 		 */
-		FIELD(2),
-		/**
-		 * Bit mask flag for indicating this message should not be displayed.
-		 */
-		NODISPLAY(4),
+		FIELD(1 << 1),
 		/**
 		 * Bit mask flag for indicating this message is associated with an exception
 		 * that occurred.
 		 */
-		EXCEPTION(8);
+		EXCEPTION(1 << 3);
 
 		public final int flag;
 
@@ -66,7 +58,7 @@ public final class Msg implements IMarshalable {
 	/**
 	 * Attribute flags
 	 */
-	private int attribs = MsgAttr.NONE.flag;
+	private int attribs = 0;
 
 	/**
 	 * Identifies a particular UI artifact to which this message is associated.
@@ -114,6 +106,10 @@ public final class Msg implements IMarshalable {
 
 	public MsgLevel getLevel() {
 		return level;
+	}
+
+	public int getAttributes() {
+		return attribs;
 	}
 
 	public boolean hasAttribute(final MsgAttr attr) {
@@ -181,9 +177,6 @@ public final class Msg implements IMarshalable {
 		}
 		if(hasAttribute(MsgAttr.FIELD)) {
 			flags += "|Field";
-		}
-		if(hasAttribute(MsgAttr.NODISPLAY)) {
-			flags += "|No Display";
 		}
 		if(flags.startsWith("|")) {
 			s += (" [" + flags.substring(1) + ']');

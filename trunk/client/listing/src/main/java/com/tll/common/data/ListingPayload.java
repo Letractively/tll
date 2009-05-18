@@ -53,11 +53,12 @@ public class ListingPayload<R extends IMarshalable> extends Payload {
 
 	/**
 	 * Constructor
+	 * @param status
 	 * @param listingName
 	 * @param listingStatus
 	 */
-	public ListingPayload(String listingName, ListingStatus listingStatus) {
-		super();
+	public ListingPayload(Status status, String listingName, ListingStatus listingStatus) {
+		super(status);
 		this.listingName = listingName;
 		this.listingStatus = listingStatus;
 	}

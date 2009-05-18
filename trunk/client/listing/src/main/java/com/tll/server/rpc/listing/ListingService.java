@@ -26,25 +26,22 @@ import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.EmptyListException;
 import com.tll.listhandler.IListHandler;
-import com.tll.listhandler.IListHandlerDataProvider;
+import com.tll.listhandler.IListingDataProvider;
 import com.tll.listhandler.ListHandlerException;
 import com.tll.listhandler.ListHandlerFactory;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.model.IEntity;
 import com.tll.server.rpc.RpcServlet;
-import com.tll.server.rpc.entity.EntityTypeUtil;
-import com.tll.server.rpc.entity.IMEntityServiceImpl;
-import com.tll.server.rpc.entity.MEntityContext;
-import com.tll.server.rpc.entity.MEntityServiceImplFactory;
+import com.tll.server.rpc.entity.PersistContext;
+import com.tll.server.rpc.entity.PersistServiceDelegate;
 
 /**
  * ListingService - Handles client listing requests.
- * @param <E> the entity type
  * @param <S> the search type
  * @author jpk
  */
-public final class ListingService<E extends IEntity, S extends ISearch> extends RpcServlet implements
-		IListingService<S, Model> {
+public final class ListingService<S extends ISearch> extends RpcServlet implements
+IListingService<S, Model> {
 
 	private static final long serialVersionUID = 7575667259462319956L;
 
@@ -53,24 +50,23 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 	 * @param listingRequest The listing command
 	 * @return Payload contains the table page and status.
 	 */
-	@SuppressWarnings("unchecked")
 	public ListingPayload<Model> process(final ListingRequest<S> listingRequest) {
 		final Status status = new Status();
 
 		ListingHandler<Model> handler = null;
 
 		if(listingRequest == null) {
-			status.addMsg("No listing command specified.", MsgLevel.ERROR);
+			status.addMsg("No listing command specified.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 		}
 
 		final String listingName = listingRequest == null ? null : listingRequest.getListingName();
 		if(listingName == null) {
-			status.addMsg("No listing name specified.", MsgLevel.ERROR);
+			status.addMsg("No listing name specified.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 		}
 
 		final ListingOp listingOp = listingRequest == null ? null : listingRequest.getListingOp();
 		if(listingOp == null) {
-			status.addMsg("No listing op specified.", MsgLevel.ERROR);
+			status.addMsg("No listing op specified.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 		}
 
 		ListingStatus listingStatus = null;
@@ -78,9 +74,15 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 		if(!status.hasErrors() && listingRequest != null) {
 
 			final HttpServletRequest request = getRequestContext().getRequest();
-			final MEntityContext context =
-					(MEntityContext) getServletContext().getAttribute(MEntityContext.SERVLET_CONTEXT_KEY);
-			assert request != null;
+			final PersistContext persistContext =
+				(PersistContext) getServletContext().getAttribute(PersistContext.KEY);
+			final PersistServiceDelegate persistDelegate =
+				(PersistServiceDelegate) getServletContext().getAttribute(PersistServiceDelegate.KEY);
+			final ListingContext listingContext = (ListingContext) getServletContext().getAttribute(ListingContext.KEY);
+			if(persistContext == null || persistDelegate == null || listingContext == null) {
+				throw new IllegalStateException(
+				"Unable to obtain the persist context and/or the persist service delegate and/or the listing context");
+			}
 
 			Integer offset = listingRequest.getOffset();
 			Sorting sorting = listingRequest.getSorting();
@@ -105,6 +107,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 
 			handler = ListingCache.getHandler(request, listingName);
 			listingStatus = (handler == null ? ListingStatus.NOT_CACHED : ListingStatus.CACHED);
+			if(log.isDebugEnabled()) log.debug("Listing status: " + listingStatus);
 
 			try {
 				// acquire the listing handler
@@ -119,16 +122,10 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 							throw new ListingException(listingName, "No search criteria specified.");
 						}
 
-						// resolve the entity class and corres. marshaling entity service
-						final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(search.getEntityType());
-						final IMEntityServiceImpl<E, S> mEntitySvc =
-								(IMEntityServiceImpl<E, S>) MEntityServiceImplFactory.instance(entityClass, context
-										.getServiceResolver());
-
 						// translate client side criteria to server side criteria
-						final ICriteria<E> criteria;
+						final ICriteria<? extends IEntity> criteria;
 						try {
-							criteria = mEntitySvc.translate(context, search);
+							criteria = persistDelegate.translate(listingRequest, search, status);
 						}
 						catch(final IllegalArgumentException iae) {
 							throw new ListingException(listingName, "Unable to translate listing command search criteria: "
@@ -136,8 +133,8 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 						}
 
 						// resolve the listing handler data provider
-						final IListHandlerDataProvider<E> dataProvider =
-								context.getEntityServiceFactory().instanceByEntityType(entityClass);
+						final IListingDataProvider dataProvider =
+							listingContext.getListingDataProviderResolver().resolve(getRequestContext(), listingRequest);
 
 						// resolve the list handler type
 						final ListHandlerType lht = listingDef.getListHandlerType();
@@ -149,7 +146,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 						if(sorting == null) {
 							throw new ListingException(listingName, "No sorting directive specified.");
 						}
-						IListHandler<SearchResult<E>> listHandler = null;
+						IListHandler<SearchResult<?>> listHandler = null;
 						try {
 							listHandler = ListHandlerFactory.create(criteria, sorting, lht, dataProvider);
 						}
@@ -158,7 +155,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 						}
 						catch(final EmptyListException e) {
 							// we proceed to allow client to still show the listing
-							status.addMsg(e.getMessage(), MsgLevel.WARN);
+							status.addMsg(e.getMessage(), MsgLevel.WARN, MsgAttr.STATUS.flag);
 						}
 						catch(final ListHandlerException e) {
 							// shouldn't happen
@@ -166,9 +163,10 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 						}
 
 						// transform to marshaling list handler
-						final MarshalingListHandler<E> marshalingListHandler =
-								new MarshalingListHandler<E>(listHandler, context.getMarshaler(),
-										mEntitySvc.getMarshalOptions(context), listingDef.getPropKeys());
+						final MarshalingListHandler marshalingListHandler =
+							new MarshalingListHandler(listHandler, persistContext.getMarshaler(), persistDelegate
+									.getMarshalOptions(
+											listingRequest, status), listingDef.getPropKeys());
 
 						// instantiate the handler
 						handler = new ListingHandler<Model>(marshalingListHandler, listingName, listingDef.getPageSize());
@@ -182,7 +180,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 					try {
 						handler.query(offset.intValue(), sorting, (listingOp == ListingOp.REFRESH));
 						status.addMsg(listingOp.getName() + " for '" + listingName + "' successful.", MsgLevel.INFO,
-								MsgAttr.NODISPLAY.flag);
+								MsgAttr.STATUS.flag);
 					}
 					catch(final EmptyListException e) {
 						throw new ListingException(listingName, "No matching rows exist.", e);
@@ -194,10 +192,11 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 				}
 			}
 			catch(final ListingException e) {
-				context.getExceptionHandler().handleException(status, e, null, false);
+				exceptionToStatus(e, status);
+				persistContext.getExceptionHandler().handleException(e);
 			}
 			catch(final RuntimeException re) {
-				context.getExceptionHandler().handleException(status, re, null, true);
+				persistContext.getExceptionHandler().handleException(re);
 				throw re;
 			}
 
@@ -210,6 +209,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 					ListingCache.clearState(request, listingName);
 				}
 				listingStatus = ListingStatus.NOT_CACHED;
+				status.addMsg("Cleared listing data for " + listingName, MsgLevel.INFO, MsgAttr.STATUS.flag);
 			}
 			else if(listingOp == ListingOp.CLEAR_ALL) {
 				// clear all
@@ -219,8 +219,9 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 					ListingCache.clearAll(request, listingRequest.getRetainStateOnClear());
 				}
 				listingStatus = ListingStatus.NOT_CACHED;
+				status.addMsg("Cleared ALL listing data", MsgLevel.INFO, MsgAttr.STATUS.flag);
 			}
-			else if(handler != null) {
+			else if(handler != null && !status.hasErrors()) {
 				// cache listing handler
 				if(log.isDebugEnabled()) log.debug("[Re-]Caching listing '" + listingName + "'...");
 				ListingCache.storeHandler(request, listingName, handler);
@@ -231,10 +232,11 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 			}
 		} // !status.hasErrors()
 
-		final ListingPayload<Model> p = new ListingPayload<Model>(listingName, listingStatus);
+		final ListingPayload<Model> p = new ListingPayload<Model>(status, listingName, listingStatus);
 
-		// only generate the table page when it is needed at the client
-		if(handler != null && (listingOp != null && !listingOp.isClear())) {
+		// only provide page data when it is needed at the client and there are no
+		// errors
+		if(handler != null && !status.hasErrors() && (listingOp != null && !listingOp.isClear())) {
 			if(log.isDebugEnabled()) log.debug("Sending page data for '" + listingName + "'...");
 			final List<Model> list = handler.getElements();
 			p.setPageData(handler.size(), list.toArray(new Model[list.size()]), handler.getOffset(), handler.getSorting());

@@ -45,17 +45,17 @@ public class MockFieldGroupProviders {
 				// set needed aux data cache
 				final List<Model> list = new ArrayList<Model>();
 				list.add(MockModelStubber.stubCurrency());
-				AuxDataCache.instance().cacheEntityList(MockEntityType.CURRENCY, list);
+				AuxDataCache.get().cacheEntityList(MockEntityType.CURRENCY, list);
 
 				final Map<String, String> cc = new HashMap<String, String>();
 				cc.put("us", "United States");
 				cc.put("br", "Brazil");
-				AuxDataCache.instance().cacheRefDataMap(RefDataType.ISO_COUNTRY_CODES, cc);
+				AuxDataCache.get().cacheRefDataMap(RefDataType.ISO_COUNTRY_CODES, cc);
 
 				final Map<String, String> st = new HashMap<String, String>();
 				st.put("MI", "Michigan");
 				st.put("CA", "California");
-				AuxDataCache.instance().cacheRefDataMap(RefDataType.US_STATES, st);
+				AuxDataCache.get().cacheRefDataMap(RefDataType.US_STATES, st);
 
 				auxDataInitialized = true;
 			}
@@ -139,7 +139,7 @@ public class MockFieldGroupProviders {
 
 		@Override
 		protected void populateFieldGroup(FieldGroup fg) {
-			addModelCommon(fg, true, true);
+			addModelCommon(fg, true, true, "aa");
 			fg.addField(fenumselect("type", "type", "Type", "Account Address Type", AddressType.class));
 			final FieldGroup fgAddress = (new AddressFieldsProvider()).getFieldGroup();
 			fgAddress.setName("address");
@@ -160,7 +160,7 @@ public class MockFieldGroupProviders {
 
 		@Override
 		public void populateFieldGroup(FieldGroup fg) {
-			addModelCommon(fg, true, true);
+			addModelCommon(fg, true, true, "acnt");
 			fg.addField(ftext("acntParentName", "parent.name", "Parent", "Parent Account", 15));
 			fg.addField(fenumselect("acntStatus", "status", "Status", "Status", AccountStatus.class));
 			fg.addField(fdate("acntDateCancelled", "dateCancelled", "Date Cancelled", "Date Cancelled"));
@@ -170,8 +170,8 @@ public class MockFieldGroupProviders {
 			fg.addField(fdate("acntDateLastCharged", "dateLastCharged", "Last Charged", "Last Charged"));
 			fg.addField(fdate("acntNextChargeDate", "nextChargeDate", "Next Charge", "Next Charge"));
 			fg
-					.addField(fcheckbox("acntPersistPymntInfo", "persistPymntInfo", "PersistPayment Info?",
-							"PersistPayment Info?"));
+			.addField(fcheckbox("acntPersistPymntInfo", "persistPymntInfo", "PersistPayment Info?",
+			"PersistPayment Info?"));
 		}
 	}
 }

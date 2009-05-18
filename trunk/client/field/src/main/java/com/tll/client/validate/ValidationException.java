@@ -30,7 +30,7 @@ public final class ValidationException extends Exception {
 	 * @param error the error message
 	 */
 	public ValidationException(final String error) {
-		this.error = new Error(error);
+		this.error = new Error(ErrorClassifier.CLIENT, error);
 	}
 
 	/**
