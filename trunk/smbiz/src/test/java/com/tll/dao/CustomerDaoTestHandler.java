@@ -1,5 +1,5 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.dao;
 
@@ -28,9 +28,9 @@ public class CustomerDaoTestHandler extends AbstractAccountDaoTestHandler<Custom
 
 	@Override
 	public IQueryParam[] getParamsForTestQuery(ISelectNamedQueryDef qdef) {
-		return new IQueryParam[] { new QueryParam("merchantId", PropertyType.INT, new Integer(1)) };
+		return new IQueryParam[] { new QueryParam("merchantId", PropertyType.INT, Integer.valueOf(1)) };
 	}
-	
+
 	@Override
 	public Sorting getSortingForTestQuery(ISelectNamedQueryDef qdef) {
 		return new Sorting("name");

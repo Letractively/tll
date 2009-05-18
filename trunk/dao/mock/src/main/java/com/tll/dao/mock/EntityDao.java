@@ -472,7 +472,7 @@ public class EntityDao implements IEntityDao {
 		// increment version
 		Integer version = entity.getVersion();
 		if(version == null) {
-			version = new Integer(0);
+			version = Integer.valueOf(0);
 		}
 		else {
 			version++;

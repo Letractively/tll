@@ -184,7 +184,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		rightNav.opsPanel.setOptions(OpsManager.getOptions(ac.getUserAccountType(), ac.getAccountType(), ac.getUserRole()));
 	}
 
-	private final class Header extends FlowPanel {
+	static final class Header extends FlowPanel {
 
 		public Header() {
 			super();
@@ -380,7 +380,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 	 * Center - A {@link SimplePanel} designed to contain the current pinned view.
 	 * @author jpk
 	 */
-	private final class Center extends FlowPanel implements IStatusHandler {
+	static final class Center extends FlowPanel implements IStatusHandler {
 
 		public Center() {
 			super();
@@ -410,7 +410,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		}
 	} // Center
 
-	private final class Footer extends FlowPanel {
+	static final class Footer extends FlowPanel {
 
 		public Footer() {
 			super();

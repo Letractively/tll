@@ -386,8 +386,9 @@ public final class Marshaler {
 		final Model model = new Model(etResolver.resolveEntityType(source.getRefType()));
 
 		final Map<String, Object> tupleMap = source.getTupleMap();
-		for(final String pname : tupleMap.keySet()) {
-			final Object obj = tupleMap.get(pname);
+		for(final Map.Entry<String, Object> e : tupleMap.entrySet()) {
+			final String pname = e.getKey();
+			final Object obj = e.getValue();
 			// NOTE: if we have a null tuple value, then default the type to String!
 			final Class<?> ptype = obj == null ? String.class : obj.getClass();
 			final IModelProperty prop = createValueProperty(ptype, pname, obj, null);
@@ -470,6 +471,7 @@ public final class Marshaler {
 
 				case FLOAT:
 					val = ((Double) pval).floatValue();
+					break;
 
 				case RELATED_ONE: {
 					final Model rltdOne = (Model) pval;

@@ -111,11 +111,11 @@ public final class Status implements IMarshalable {
 	@Override
 	public String toString() {
 		if(msgs == null || msgs.size() < 1) return "";
-		String msg = new String();
+		final StringBuilder msg = new StringBuilder();
 		for(final Msg sm : msgs) {
-			msg += sm.toString();
-			msg += "  ";
+			msg.append(sm.toString());
+			msg.append("  ");
 		}
-		return msg;
+		return msg.toString();
 	}
 }

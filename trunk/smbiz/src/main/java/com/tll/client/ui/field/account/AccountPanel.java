@@ -70,7 +70,7 @@ public class AccountPanel extends FlowFieldPanel {
 	 * AddressesPanel
 	 * @author jpk
 	 */
-	final class AddressesPanel extends TabbedIndexedFieldPanel<AccountAddressPanel> {
+	static final class AddressesPanel extends TabbedIndexedFieldPanel<AccountAddressPanel> {
 
 		/**
 		 * Constructor

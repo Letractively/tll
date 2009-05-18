@@ -77,6 +77,11 @@ public class Authority extends EntityBase implements INamedEntity, GrantedAuthor
 	}
 
 	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+
+	@Override
 	public int compareTo(Object o) {
 		if(o != null && o instanceof GrantedAuthority) {
 			final String rhsRole = ((GrantedAuthority) o).getAuthority();

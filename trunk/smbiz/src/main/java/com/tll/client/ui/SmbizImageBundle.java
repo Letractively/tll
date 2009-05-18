@@ -6,12 +6,13 @@
 package com.tll.client.ui;
 
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.user.client.ui.ImageBundle;
 
 /**
  * ImageBundle
  * @author jpk
  */
-public interface ImageBundle extends com.google.gwt.user.client.ui.ImageBundle {
+public interface SmbizImageBundle extends ImageBundle {
 
 	/**
 	 * arrow_sm_down

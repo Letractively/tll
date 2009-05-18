@@ -44,7 +44,7 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 
 		@Override
 		public V getValue() {
-			final int i = getSelectedIndex();
+			final int i = super.getSelectedIndex();
 			// NOTE: we ignore the first index since it is an empty placeholder
 			return i < 1 ? null : getDataValue(getValue(i));
 		}
@@ -55,7 +55,7 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 			if(value != null) {
 				// NOTE: we start from index of 1 since the first index is always
 				// stubbed as empty
-				for(int i = 1; i < getItemCount(); i++) {
+				for(int i = 1; i < super.getItemCount(); i++) {
 					final V dv = getDataValue(getValue(i));
 					if(value.equals(dv)) {
 						setSelectedIndex(i);
@@ -116,9 +116,9 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 		final V oldval = lb.getValue();
 		lb.clear();
 		lb.addItem(""); // ensure we have a null/empty option
-		for(final V val : data.keySet()) {
-			lb.addItem(data.get(val));
-			if(ObjectUtil.equals(val, oldval)) {
+		for(final Map.Entry<V, String> e : data.entrySet()) {
+			lb.addItem(e.getValue());
+			if(ObjectUtil.equals(e.getKey(), oldval)) {
 				lb.setItemSelected(lb.getItemCount() - 1, true);
 			}
 		}

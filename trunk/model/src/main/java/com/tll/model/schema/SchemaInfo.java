@@ -27,8 +27,8 @@ public final class SchemaInfo implements ISchemaInfo {
 
 	private static final Log log = LogFactory.getLog(SchemaInfo.class);
 
-	private static final int maxLenInt = (new Integer(Integer.MAX_VALUE).toString()).length();
-	private static final int maxLenLong = (new Long(Long.MAX_VALUE).toString()).length();
+	private static final int maxLenInt = Integer.valueOf(Integer.MAX_VALUE).toString().length();
+	private static final int maxLenLong = Long.valueOf(Long.MAX_VALUE).toString().length();
 
 	/**
 	 * key: entity class val: serviceMap of FieldData objects keyed by the field
@@ -186,7 +186,7 @@ public final class SchemaInfo implements ISchemaInfo {
 	 */
 	private boolean isRelational(final Method method) {
 		return "getParent".equals(method.getName()) || method.getAnnotation(ManyToOne.class) != null
-				|| method.getAnnotation(OneToMany.class) != null
+		|| method.getAnnotation(OneToMany.class) != null
 		|| method.getAnnotation(OneToOne.class) != null || method.getAnnotation(ManyToMany.class) != null;
 	}
 

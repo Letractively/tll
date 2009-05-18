@@ -40,7 +40,8 @@ public class StringMapPropertyValue extends AbstractPropertyValue {
 	}
 
 	public IPropertyValue copy() {
-		return new StringMapPropertyValue(propertyName, null, map == null ? null : new LinkedHashMap<String, String>(map));
+		return new StringMapPropertyValue(propertyName, metadata, map == null ? null : new LinkedHashMap<String, String>(
+				map));
 	}
 
 	public final Object getValue() {

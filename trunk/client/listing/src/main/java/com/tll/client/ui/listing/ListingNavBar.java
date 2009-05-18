@@ -294,7 +294,7 @@ IListingHandler<R> {
 			}
 			if(!valid) {
 				final String smsg = StringUtil.replaceVariables("Please enter a number between %1 and %2.", new Object[] {
-					new Integer(1), new Integer(numPages) });
+					Integer.valueOf(1), Integer.valueOf(numPages) });
 				Msgs.post(new Msg(smsg, MsgLevel.ERROR), tbPage, Position.BOTTOM, 3000, false);
 				tbPage.setText(Integer.toString(crntPage));
 				return;

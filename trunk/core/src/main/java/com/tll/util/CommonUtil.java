@@ -49,7 +49,7 @@ public abstract class CommonUtil {
 			return false;
 		}
 		if(o1 instanceof String && o2 instanceof String && !isCaseSensitive) {
-			((String) o1).equalsIgnoreCase((String) o2);
+			return ((String) o1).equalsIgnoreCase((String) o2);
 		}
 		return o1.equals(o2);
 	}
@@ -90,7 +90,7 @@ public abstract class CommonUtil {
 			return obj; // no need to clone enums since they are immutable
 		}
 		throw new IllegalArgumentException(
-				"Encountered a non-null obj of a type that is not supported for generic cloning.");
+		"Encountered a non-null obj of a type that is not supported for generic cloning.");
 	}
 
 	/**

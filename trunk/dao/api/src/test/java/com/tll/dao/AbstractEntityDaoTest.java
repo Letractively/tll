@@ -64,7 +64,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 	 * </ol>
 	 * @author jpk
 	 */
-	protected final class EntityDaoTestDecorator implements IEntityDao {
+	protected static final class EntityDaoTestDecorator implements IEntityDao {
 
 		private IEntityDao rawDao;
 
@@ -730,10 +730,10 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 		endTransaction();
 
 		startNewTransaction();
-		IEntity e2 = getTestEntity();
+		final IEntity e2 = getTestEntity();
 		ensureNonUnique(e, e2);
 		try {
-			e2 = dao.persist(e2);
+			dao.persist(e2);
 			setComplete();
 			endTransaction();
 			Assert.fail("A duplicate exception should have occurred for entity type: " + entityHandler.entityClass());
@@ -744,11 +744,11 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 	}
 
 	final void daoPurgeNewEntity() throws Exception {
-		IEntity e = getTestEntity();
+		final IEntity e = getTestEntity();
 		final PrimaryKey<IEntity> pk = new PrimaryKey<IEntity>(e);
 		dao.purge(e);
 		try {
-			e = dao.load(pk);
+			dao.load(pk);
 			Assert.fail("An EntityNotFoundException should have occurred (" + pk + ")");
 		}
 		catch(final EntityNotFoundException ex) {

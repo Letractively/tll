@@ -45,9 +45,9 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 
 		@Override
 		public Collection<V> getValue() {
-			final ArrayList<V> sel = new ArrayList<V>(); 
-			for(int i = 0; i < getItemCount(); i++) {
-				if(isItemSelected(i)) {
+			final ArrayList<V> sel = new ArrayList<V>();
+			for(int i = 0; i < super.getItemCount(); i++) {
+				if(super.isItemSelected(i)) {
 					sel.add(getDataValue(getValue(i)));
 				}
 			}
@@ -66,7 +66,7 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 		public void setValue(Collection<V> value) {
 			setSelectedIndex(-1);
 			if(value != null) {
-				for(int i = 0; i < getItemCount(); i++) {
+				for(int i = 0; i < super.getItemCount(); i++) {
 					for(final V val : value) {
 						final String rv = getRenderer().convert(val);
 						if(rv != null && rv.equals(getValue(i))) {
@@ -82,7 +82,7 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 			return addHandler(handler, ValueChangeEvent.getType());
 		}
 	}
-	
+
 	/**
 	 * The list box widget.
 	 */
@@ -112,9 +112,8 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 	public void setData(Map<V, String> data) {
 		super.setData(data);
 		lb.clear();
-		for(final V val : data.keySet()) {
-			final String key = data.get(val);
-			lb.addItem(key);
+		for(final Map.Entry<V, String> e : data.entrySet()) {
+			lb.addItem(e.getValue());
 		}
 	}
 

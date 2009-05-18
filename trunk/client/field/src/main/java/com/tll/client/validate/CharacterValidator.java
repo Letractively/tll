@@ -25,7 +25,7 @@ public class CharacterValidator implements IValidator {
 		if(s.length() != 1) {
 			throw new ValidationException("The value must be a single character.");
 		}
-		return new Character(s.charAt(0));
+		return Character.valueOf(s.charAt(0));
 	}
 
 }

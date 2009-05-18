@@ -33,7 +33,7 @@ public final class ListingCache {
 	 *         http session.
 	 */
 	private static Integer key(HttpServletRequest request, String listingName) {
-		return new Integer(request.getSession(false).getId().hashCode() + 37 * listingName.hashCode());
+		return Integer.valueOf(request.getSession(false).getId().hashCode() + 37 * listingName.hashCode());
 	}
 
 	private static Cache handlerCache() {

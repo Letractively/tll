@@ -29,7 +29,7 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 	 * IndexFieldPanel
 	 * @author jpk
 	 */
-	class IndexFieldPanel extends FlowFieldPanel {
+	static class IndexFieldPanel extends FlowFieldPanel {
 
 		@Override
 		protected FieldGroup generateFieldGroup() {
@@ -99,7 +99,7 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 	 * IndexedFieldPanel
 	 * @author jpk
 	 */
-	class IndexedFieldPanel extends TabbedIndexedFieldPanel<IndexFieldPanel> {
+	static class IndexedFieldPanel extends TabbedIndexedFieldPanel<IndexFieldPanel> {
 
 		/**
 		 * Constructor

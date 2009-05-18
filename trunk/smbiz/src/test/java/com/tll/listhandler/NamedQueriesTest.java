@@ -62,14 +62,14 @@ import com.tll.service.entity.IEntityServiceFactory;
 				case MERCHANT_LISTING: {
 					querySortBindings.put(nq, new SortColumn("dateCreated"));
 					final List<IQueryParam> list = new ArrayList<IQueryParam>();
-					list.add(new QueryParam("ispId", PropertyType.INT, new Integer(2)));
+					list.add(new QueryParam("ispId", PropertyType.INT, Integer.valueOf(2)));
 					queryParamsBindings.put(nq, list);
 					break;
 				}
 				case CUSTOMER_LISTING: {
 					querySortBindings.put(nq, new SortColumn("dateCreated", "c"));
 					final List<IQueryParam> list = new ArrayList<IQueryParam>();
-					list.add(new QueryParam("merchantId", PropertyType.INT, new Integer(2)));
+					list.add(new QueryParam("merchantId", PropertyType.INT, Integer.valueOf(2)));
 					queryParamsBindings.put(nq, list);
 					break;
 				}

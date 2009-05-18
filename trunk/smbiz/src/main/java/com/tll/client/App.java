@@ -6,7 +6,7 @@ package com.tll.client;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
-import com.tll.client.ui.ImageBundle;
+import com.tll.client.ui.SmbizImageBundle;
 import com.tll.client.ui.option.Option;
 
 /**
@@ -23,12 +23,12 @@ public abstract class App {
 	/**
 	 * The app wide image bundle.
 	 */
-	private static final ImageBundle imageBundle = (ImageBundle) GWT.create(ImageBundle.class);
+	private static final SmbizImageBundle imageBundle = (SmbizImageBundle) GWT.create(SmbizImageBundle.class);
 
 	/**
 	 * App wide constants (based on Constants.properties file).
 	 */
-	private static final Constants constants = (Constants) GWT.create(Constants.class);
+	private static final SmbizConstants constants = (SmbizConstants) GWT.create(SmbizConstants.class);
 
 	/**
 	 * The global set current account option.
@@ -38,14 +38,14 @@ public abstract class App {
 	/**
 	 * @return the app scoped image bundle instance.
 	 */
-	public static ImageBundle imgs() {
+	public static SmbizImageBundle imgs() {
 		return imageBundle;
 	}
 
 	/**
 	 * @return The app wide constants.
 	 */
-	public static Constants constants() {
+	public static SmbizConstants constants() {
 		return constants;
 	}
 

@@ -59,8 +59,11 @@ public final class ListingEvent<R> extends GwtEvent<IListingHandler<R>> {
 	}
 
 	private void setCalculated(int pageSize) {
-		pageNum = Math.round(offset / pageSize + 0.5f) - 1;
-		numPages = (listSize % pageSize == 0) ? (int) (listSize / pageSize) : Math.round(listSize / pageSize + 0.5f);
+		pageNum = ((int) Math.round(offset / (double) pageSize + 0.5d)) - 1;
+		numPages =
+			(listSize % pageSize == 0) ? (int) (listSize / (double) pageSize) : (int) Math
+					.round(listSize
+						/ (double) pageSize + 0.5d);
 	}
 
 	@Override

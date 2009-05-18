@@ -118,7 +118,7 @@ public class AccountInterfaceOptions extends FlowFieldPanel {
 	 * for a given interface option and account.
 	 * @author jpk
 	 */
-	class AccountInterfaceOption extends FlowFieldPanel {
+	static class AccountInterfaceOption extends FlowFieldPanel {
 
 		/**
 		 * OptionParameter - Represents an interface option parameter that handles

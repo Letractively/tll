@@ -1,5 +1,5 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.dao;
 
@@ -36,7 +36,7 @@ public class MerchantDaoTestHandler extends AbstractAccountDaoTestHandler<Mercha
 
 	@Override
 	public IQueryParam[] getParamsForTestQuery(ISelectNamedQueryDef qdef) {
-		return new IQueryParam[] { new QueryParam("ispId", PropertyType.INT, new Integer(1)) };
+		return new IQueryParam[] { new QueryParam("ispId", PropertyType.INT, Integer.valueOf(1)) };
 	}
 
 	@Override

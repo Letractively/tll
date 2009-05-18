@@ -82,16 +82,16 @@ public abstract class AuxDataCacheHelper {
 		// ref data maps
 		final Map<RefDataType, Map<String, String>> map = payload.getRefDataMaps();
 		if(map != null) {
-			for(final RefDataType key : map.keySet()) {
-				adc.cacheRefDataMap(key, map.get(key));
+			for(final Map.Entry<RefDataType, Map<String, String>> e : map.entrySet()) {
+				adc.cacheRefDataMap(e.getKey(), e.getValue());
 			}
 		}
 
 		// entity lists
 		final Map<IEntityType, List<Model>> egm = payload.getEntityGroupMap();
 		if(egm != null) {
-			for(final IEntityType et : egm.keySet()) {
-				adc.cacheEntityList(et, egm.get(et));
+			for(final Map.Entry<IEntityType, List<Model>> e : egm.entrySet()) {
+				adc.cacheEntityList(e.getKey(), e.getValue());
 			}
 		}
 

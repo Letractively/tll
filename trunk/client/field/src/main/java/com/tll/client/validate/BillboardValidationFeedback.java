@@ -107,8 +107,8 @@ public final class BillboardValidationFeedback implements IErrorHandler, IHasMsg
 			// sourced
 			final Map<IWidgetRef, List<IError>> map = ((Errors) error).getSourcedErrors();
 			if(map != null) {
-				for(final IWidgetRef wref : map.keySet()) {
-					post(wref, map.get(wref));
+				for(final Map.Entry<IWidgetRef, List<IError>> e : map.entrySet()) {
+					post(e.getKey(), e.getValue());
 				}
 			}
 		}

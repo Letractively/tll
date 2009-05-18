@@ -18,7 +18,7 @@ public abstract class PagingUtil {
 	 * @return The calculated page number
 	 */
 	public static int pageNumFromListIndex(int offset, int pageSize) {
-		return Math.round(offset / pageSize + 0.5f) - 1;
+		return ((int) Math.round(offset / (double) pageSize + 0.5d)) - 1;
 	}
 
 	/**
@@ -38,6 +38,8 @@ public abstract class PagingUtil {
 	 * @return The calculated number of pages.
 	 */
 	public static int numPages(int listSize, int pageSize) {
-		return (listSize % pageSize == 0) ? (int) (listSize / pageSize) : Math.round(listSize / pageSize + 0.5f);
+		return (listSize % pageSize == 0) ? (int) (listSize / (double) pageSize) : (int) Math.round(listSize
+				/ (double) pageSize
+				+ 0.5d);
 	}
 }

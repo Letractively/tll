@@ -60,7 +60,7 @@ public final class EntityOptions implements IMarshalable {
 	 * @param entityType
 	 * @return true/false
 	 */
-	public boolean isRelatedRequested(String entityType) {
+	public boolean isRelatedRequested(IEntityType entityType) {
 		return relatedRequests.contains(entityType);
 	}
 

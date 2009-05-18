@@ -42,7 +42,7 @@ public abstract class CurrencyAwareFieldGroupProvider extends AbstractFieldGroup
 	 * @return Map of the the system currency ids keyed by the data store currency
 	 *         id.
 	 */
-	protected static Map<Integer, String> getCurrencyDataMap() {
+	protected synchronized static Map<Integer, String> getCurrencyDataMap() {
 		if(currencyMap == null) {
 			final List<Model> currencies = AuxDataCache.get().getEntityList(SmbizEntityType.CURRENCY);
 			if(currencies == null) return null;

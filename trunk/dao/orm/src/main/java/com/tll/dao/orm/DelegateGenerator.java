@@ -23,56 +23,56 @@ import com.tll.model.IEntity;
  */
 public class DelegateGenerator implements IdentifierGenerator, Configurable {
 
-  /**
-   * The generator parameter specifies the underlying id generator to use when
-   * an identifier hasn't already been assigned.
-   */
-  public static final String DELEGATE = "delegate";
+	/**
+	 * The generator parameter specifies the underlying id generator to use when
+	 * an identifier hasn't already been assigned.
+	 */
+	public static final String DELEGATE = "delegate";
 
-  private IdentifierGenerator assignedGenerator;
+	private IdentifierGenerator assignedGenerator;
 
-  private IdentifierGenerator delegateGenerator;
+	private IdentifierGenerator delegateGenerator;
 
-  /**
-   * @param sessionImplementor
-   * @param object
-   * @return an id
-   * @throws HibernateException
-   */
-  public Serializable generate(SessionImplementor sessionImplementor, Object object) throws HibernateException {
+	/**
+	 * @param sessionImplementor
+	 * @param object
+	 * @return an id
+	 * @throws HibernateException
+	 */
+	public Serializable generate(SessionImplementor sessionImplementor, Object object) throws HibernateException {
 
-    if (object == null) {
-      // Use the underlying id generation strategy if no object is specified
-      // Note that this should *only* occur when using DAO generation
-      return delegateGenerator.generate(sessionImplementor, object);
-    }
+		if (object == null) {
+			// Use the underlying id generation strategy if no object is specified
+			// Note that this should *only* occur when using DAO generation
+			return delegateGenerator.generate(sessionImplementor, null);
+		}
 
-    if (object instanceof IEntity) {
-      if (((IEntity) object).isGenerated()) {
-        return assignedGenerator.generate(sessionImplementor, object);
-      }
-      return delegateGenerator.generate(sessionImplementor, object);
-    }
-    throw new IdentifierGenerationException(
-        "the delegate generator is only intended for use with implementors of IEntity");
-  }
+		if (object instanceof IEntity) {
+			if (((IEntity) object).isGenerated()) {
+				return assignedGenerator.generate(sessionImplementor, object);
+			}
+			return delegateGenerator.generate(sessionImplementor, object);
+		}
+		throw new IdentifierGenerationException(
+		"the delegate generator is only intended for use with implementors of IEntity");
+	}
 
-  /**
-   * @param type
-   * @param params
-   * @param d
-   * @throws MappingException
-   */
-  public void configure(Type type, Properties params, Dialect d) throws MappingException {
-    
-    String generatorName = params.getProperty(DELEGATE);
-    if (generatorName == null) {
-      throw new MappingException("param named " + DELEGATE + " is required for delegate generation strategy");
-    }
+	/**
+	 * @param type
+	 * @param params
+	 * @param d
+	 * @throws MappingException
+	 */
+	public void configure(Type type, Properties params, Dialect d) throws MappingException {
 
-    // Create the assigned and delegate id generators
-    assignedGenerator = IdentifierGeneratorFactory.create("assigned", type, params, d);
-    delegateGenerator = IdentifierGeneratorFactory.create(generatorName, type, params, d);
-  }
+		final String generatorName = params.getProperty(DELEGATE);
+		if (generatorName == null) {
+			throw new MappingException("param named " + DELEGATE + " is required for delegate generation strategy");
+		}
+
+		// Create the assigned and delegate id generators
+		assignedGenerator = IdentifierGeneratorFactory.create("assigned", type, params, d);
+		delegateGenerator = IdentifierGeneratorFactory.create(generatorName, type, params, d);
+	}
 
 }

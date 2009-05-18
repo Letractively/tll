@@ -436,10 +436,8 @@ public final class Binding {
 
 	@Override
 	public boolean equals(final Object obj) {
-		if(obj == null) {
-			return false;
-		}
-
+		if(obj == null) return false;
+		if(obj.getClass() != getClass()) return false;
 		final Binding other = (Binding) obj;
 		if(left != other.left && (left == null || !left.equals(other.left))) {
 			return false;

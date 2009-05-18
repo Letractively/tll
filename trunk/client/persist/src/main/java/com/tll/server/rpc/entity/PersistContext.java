@@ -4,8 +4,6 @@
  */
 package com.tll.server.rpc.entity;
 
-import java.io.Serializable;
-
 import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
 
@@ -23,15 +21,15 @@ import com.tll.service.entity.IEntityServiceFactory;
  * processing persist/model data related functionality.
  * @author jpk
  */
-public final class PersistContext implements Serializable {
+public final class PersistContext {
 
-	private static final long serialVersionUID = 7366163949288867262L;
+	private static final long key = 7366163949288867262L;
 
 	/**
 	 * The key identifying the {@link PersistContext} in the
 	 * {@link ServletContext}.
 	 */
-	public static final String KEY = Long.toString(serialVersionUID);
+	public static final String KEY = Long.toString(key);
 
 	private final RefData refData;
 	private final MailManager mailManager;

@@ -38,7 +38,8 @@ abstract class SearchResultTransformer implements ResultTransformer {
 
 		@Override
 		public boolean equals(Object other) {
-			Identity that = (Identity) other;
+			if(other == null || other.getClass() != getClass()) return false;
+			final Identity that = (Identity) other;
 			return entity == that.entity;
 		}
 
@@ -50,10 +51,10 @@ abstract class SearchResultTransformer implements ResultTransformer {
 
 	@SuppressWarnings("unchecked")
 	public final List<SearchResult<? extends IEntity>> transformList(List list) {
-		List<SearchResult<? extends IEntity>> result = new ArrayList<SearchResult<? extends IEntity>>(list.size());
-		Set<Identity> distinct = new HashSet<Identity>();
+		final List<SearchResult<? extends IEntity>> result = new ArrayList<SearchResult<? extends IEntity>>(list.size());
+		final Set<Identity> distinct = new HashSet<Identity>();
 		for(int i = 0; i < list.size(); i++) {
-			Object entity = list.get(i);
+			final Object entity = list.get(i);
 			if(distinct.add(new Identity(entity))) {
 				result.add(new SearchResult(entity));
 			}

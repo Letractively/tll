@@ -725,7 +725,7 @@ public final class UITests extends AbstractUITest {
 		/**
 		 * OptionEventIndicator - Indicates Option events visually as they occur.
 		 */
-		class OptionEventIndicator extends Composite implements IOptionHandler {
+		static class OptionEventIndicator extends Composite implements IOptionHandler {
 
 			FlowPanel fp = new FlowPanel();
 			VerticalPanel vp = new VerticalPanel();

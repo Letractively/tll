@@ -167,8 +167,8 @@ public abstract class PersistServiceImpl<E extends IEntity> implements IPersistS
 			payload.setModel(group);
 
 			// set any entity refs
-			for(final String propName : refs.keySet()) {
-				payload.setRelatedOneRef(propName, refs.get(propName));
+			for(final Map.Entry<String, ModelKey> en : refs.entrySet()) {
+				payload.setRelatedOneRef(en.getKey(), en.getValue());
 			}
 
 			payload.getStatus().addMsg(e.descriptor() + " loaded.", MsgLevel.INFO, MsgAttr.STATUS.flag);

@@ -1,5 +1,7 @@
 package com.tll.dao;
 
+import java.io.Serializable;
+
 import com.tll.IMarshalable;
 import com.tll.model.schema.IPropertyNameProvider;
 
@@ -7,7 +9,7 @@ import com.tll.model.schema.IPropertyNameProvider;
  * Represents a sort directive for a single "column".
  * @author jpk
  */
-public class SortColumn implements IMarshalable, IPropertyNameProvider {
+public class SortColumn implements Serializable, IMarshalable, IPropertyNameProvider {
 
 	private static final long serialVersionUID = -4966927388892147102L;
 
@@ -153,7 +155,7 @@ public class SortColumn implements IMarshalable, IPropertyNameProvider {
 	 * 	 from
 	 * 	   Interface intf
 	 * 	   join intf.options options
-	 * 	 group by intf.name 
+	 * 	 group by intf.name
 	 * 	 order by intf.name
 	 * </pre>
 	 * @return The parent alias name.

@@ -55,7 +55,7 @@ public final class RefData {
 	 */
 	public Map<RefDataType, Map<String, String>> getAllRefData() {
 		loadOrRefresh();
-		Map<RefDataType, Map<String, String>> singleMap = new HashMap<RefDataType, Map<String, String>>();
+		final Map<RefDataType, Map<String, String>> singleMap = new HashMap<RefDataType, Map<String, String>>();
 		singleMap.putAll(resourceData);
 		return singleMap;
 	}
@@ -71,7 +71,7 @@ public final class RefData {
 		if(!resourceData.containsKey(type)) {
 			return null;
 		}
-		Map<String, String> map = new HashMap<String, String>();
+		final Map<String, String> map = new HashMap<String, String>();
 		map.putAll(resourceData.get(type));
 		return map;
 	}
@@ -82,7 +82,7 @@ public final class RefData {
 		if(i >= 0) terse = terse.substring(i + APPREFDATA_FILEPREFIX.length());
 		i = terse.indexOf(".");
 		if(i >= 0) terse = terse.substring(0, i);
-		for(RefDataType rdt : RefDataType.values()) {
+		for(final RefDataType rdt : RefDataType.values()) {
 			if(rdt.getName().equals(terse)) {
 				return rdt;
 			}
@@ -100,31 +100,31 @@ public final class RefData {
 	}
 
 	private void refresh() {
-		List<File> toRmv = new ArrayList<File>();
+		final List<File> toRmv = new ArrayList<File>();
 
-		for(String resourceName : lastModifiedTimes.keySet()) {
+		for(final String resourceName : lastModifiedTimes.keySet()) {
 
 			// FileSystemResource resource = new FileSystemResource(resourceDir + "/"
 			// + resourceName);
-			File resource = new File(resourceName);
+			final File resource = new File(resourceName);
 
 			if(!resource.exists()) {
 				// resource removed
 				toRmv.add(resource);
 			}
 			else {
-				Long lmt = lastModifiedTimes.get(resourceName);
+				final Long lmt = lastModifiedTimes.get(resourceName);
 				try {
 					if(resource.lastModified() > lmt.longValue()) {
 						// re-load modified file-based resource
-						Map<String, String> rmap = load(resource);
+						final Map<String, String> rmap = load(resource);
 						if(rmap == null) continue;
 						log.info("re-loading stale app ref data from file: " + resourceName);
 						resourceData.put(refDataTypeFromFilename(resourceName), rmap);
-						lastModifiedTimes.put(resourceName, new Long(resource.lastModified()));
+						lastModifiedTimes.put(resourceName, Long.valueOf(resource.lastModified()));
 					}
 				}
-				catch(Exception e) {
+				catch(final Exception e) {
 					log.warn("unexpected error occurred occurred re-loading stale app ref data: '" + e.getMessage()
 							+ "'.  Continuing.", e);
 				}
@@ -132,26 +132,26 @@ public final class RefData {
 
 		}
 
-		for(Object element : toRmv) {
-			String resourceName = (String) element;
+		for(final File f : toRmv) {
+			final String resourceName = f.getName();
 			log.info("removing app ref data '" + resourceName + "' (resource no longer exists)...");
 			resourceData.remove(refDataTypeFromFilename(resourceName));
 			lastModifiedTimes.remove(resourceName);
 		}
 
 		// check for new resources
-		File[] rFiles = getAppRefDataFiles();
-		for(File resource : rFiles) {
-			RefDataType rdt = refDataTypeFromFilename(resource.getName());
+		final File[] rFiles = getAppRefDataFiles();
+		for(final File resource : rFiles) {
+			final RefDataType rdt = refDataTypeFromFilename(resource.getName());
 			if(!resourceData.containsKey(rdt)) {
 				try {
-					Map<String, String> rmap = load(resource);
+					final Map<String, String> rmap = load(resource);
 					if(rmap == null) continue;
 					log.info("adding newly found app ref data from file: " + resource.getName());
 					resourceData.put(rdt, rmap);
-					lastModifiedTimes.put(resource.getAbsolutePath(), new Long(resource.lastModified()));
+					lastModifiedTimes.put(resource.getAbsolutePath(), Long.valueOf(resource.lastModified()));
 				}
-				catch(Exception e) {
+				catch(final Exception e) {
 					log.warn("Unable to add new app ref data from file: " + e.getMessage(), e);
 				}
 			}
@@ -178,14 +178,14 @@ public final class RefData {
 		String sres = StringUtils.trim(FileUtils.readFileToString(resource, null));
 
 		sres = StringUtils.trim(sres);
-		String[] rows = StringUtils.split(sres, "\r\n");
+		final String[] rows = StringUtils.split(sres, "\r\n");
 		if(rows.length < 1) {
 			log.warn("No rows found in app ref data resource: " + resource.getName());
 			return null;
 		}
 
 		// use LinkedHashMap to maintain order of declaration
-		Map<String, String> rezMap = new LinkedHashMap<String, String>();
+		final Map<String, String> rezMap = new LinkedHashMap<String, String>();
 
 		int num = 0;
 		for(int i = 0; i < rows.length; i++) {
@@ -208,7 +208,7 @@ public final class RefData {
 
 	private File[] getAppRefDataFiles() {
 
-		ClassLoader cld = Thread.currentThread().getContextClassLoader();
+		final ClassLoader cld = Thread.currentThread().getContextClassLoader();
 		if(cld == null) {
 			throw new IllegalStateException("Can't get class loader.");
 		}
@@ -218,24 +218,24 @@ public final class RefData {
 				throw new IllegalStateException("Unable to obtain root classpath resources.");
 			}
 		}
-		catch(IOException e) {
+		catch(final IOException e) {
 			throw new IllegalStateException("Unable to obtain root classpath resource: " + e.getMessage(), e);
 		}
 
-		List<File> files = new ArrayList<File>();
+		final List<File> files = new ArrayList<File>();
 
 		while(resources.hasMoreElements()) {
-			URL resource = resources.nextElement();
+			final URL resource = resources.nextElement();
 			try {
-				URI uri = resource.toURI();
-				File classPathRoot = new File(uri.getPath());
+				final URI uri = resource.toURI();
+				final File classPathRoot = new File(uri.getPath());
 				files.addAll(Arrays.asList(classPathRoot.listFiles(filter)));
 			}
-			catch(URISyntaxException se) {
+			catch(final URISyntaxException se) {
 				throw new IllegalArgumentException("Unable to obtain app ref data files under the root classpath dir");
 			}
 		}
-		
+
 		return files.toArray(new File[files.size()]);
 	}
 
@@ -243,19 +243,19 @@ public final class RefData {
 		log.info("Setting resource application ref data...");
 		resourceData.clear();
 
-		File[] rFiles = getAppRefDataFiles();
-		for(File element : rFiles) {
+		final File[] rFiles = getAppRefDataFiles();
+		for(final File element : rFiles) {
 			Map<String, String> rmap;
 			try {
 				if((rmap = load(element)) == null) continue;
 			}
-			catch(Exception e) {
+			catch(final Exception e) {
 				log.error("Unable to load app ref data from file '" + element.getName() + "': " + e.getMessage());
 				continue;
 			}
 			resourceData.put(refDataTypeFromFilename(element.getName()), rmap);
 
-			lastModifiedTimes.put(element.getAbsolutePath(), new Long(element.lastModified()));
+			lastModifiedTimes.put(element.getAbsolutePath(), Long.valueOf(element.lastModified()));
 		}
 
 		resourcesLoaded = true;
