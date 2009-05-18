@@ -87,6 +87,7 @@ The following _Preferences -> Run/Debug -> *String Substitutions*_ are required:
 || TestNG || [http://beust.com/eclipse http://beust.com/eclipse] || ||
 || Groovy || [http://dist.groovy.codehaus.org/distributions/updateDev_1.6/ http://dist.groovy.codehaus.org/distributions/updateDev_1.6/] || ||
 || Aptana || [http://update.aptana.com/update/studio/3.4 http://update.aptana.com/update/studio/3.4] || Only select the HTML and CSS editor plugin options - we don't want the aptana dogma along for the ride - it's very large.||
+|| FindBugs || [http://findbugs.cs.umd.edu/eclipse/ http://findbugs.cs.umd.edu/eclipse/] || ||
 
 ==Preferences==
 Import the tll eclipse preferences files.  These files are located under:  [http://tll.googlecode.com/svn/eclipse eclipse].
