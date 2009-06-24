@@ -4,14 +4,14 @@ Lists the necessary local environment and IDE settings for building and deployin
 =Required Software=
 The following software is required:
 || *Name* || *Version* || *Notes* ||
-|| [http://java.sun.com/javase/downloads/index.jsp jdk] || 1.6.0_11+ || ||
-|| [http://www.eclipse.org/ eclipse] || 3.4.2+|| *NOT the JEE version but the Java version!!* ||
+|| [http://java.sun.com/javase/downloads/index.jsp jdk] || 1.6.0_14+ || ||
+|| [http://www.eclipse.org/ eclipse] || 3.5.0+|| JEE version ||
 || [http://maven.apache.org/ maven] || 2.1.0+|| ||
 || [http://ant.apache.org/ ant] || 1.7.1+ || Not strictly necessary as maven maintains its own instance. ||
 || [http://groovy.codehaus.org/ groovy] || 1.6+ || Use the windows installer download is possible. ||
 || [http://subversion.tigris.org/ subversion client] || 1.6.0+ || Preferred windows client: [http://www.sliksvn.com/en/download silksvn] ||
 || [http://www.eclipse.org/aspectj/downloads.php AspectJ] || 1.6.3+ || ||
-|| [http://code.google.com/p/google-web-toolkit/ GWT] || 1.6 RC2+ || ||
+|| [http://code.google.com/p/google-web-toolkit/ GWT] || 1.6.4+ || ||
 
 =environment=
 Ensure the following environment variables exist:
@@ -63,7 +63,7 @@ mvn install
 The following steps cover the necessary [http://www.eclipse.org/ eclipse] IDE workspace settings.
 
 ==bootstrap==
-Specify the -vm option in the eclipse.ini:
+Specify the -vm option in the eclipse.ini or at the command line:
  {{{
 -vm {JAVA_HOME}/bin/javaw.exe
 }}}
@@ -85,8 +85,7 @@ The following _Preferences -> Run/Debug -> *String Substitutions*_ are required:
 || subclipse || [http://subclipse.tigris.org/update_1.6.x http://subclipse.tigris.org/update_1.6.x] || ||
 || m2eclipse || [http://m2eclipse.sonatype.org/update/ http://m2eclipse.sonatype.org/update/] || ||
 || TestNG || [http://beust.com/eclipse http://beust.com/eclipse] || ||
-|| Groovy || [http://dist.groovy.codehaus.org/distributions/updateDev_1.6/ http://dist.groovy.codehaus.org/distributions/updateDev_1.6/] || ||
-|| Aptana || [http://update.aptana.com/update/studio/3.4 http://update.aptana.com/update/studio/3.4] || Only select the HTML and CSS editor plugin options - we don't want the aptana dogma along for the ride - it's very large.||
+|| Groovy || [http://dist.groovy.codehaus.org/distributions/updateDev/ http://dist.groovy.codehaus.org/distributions/updateDev_1.6/] || ||
 || FindBugs || [http://findbugs.cs.umd.edu/eclipse/ http://findbugs.cs.umd.edu/eclipse/] || ||
 
 ==Preferences==
