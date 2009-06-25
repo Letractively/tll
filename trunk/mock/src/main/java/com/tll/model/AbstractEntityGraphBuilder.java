@@ -10,8 +10,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.math.RandomUtils;
 
-import com.tll.model.IEntity;
-import com.tll.model.ITimeStampEntity;
 import com.tll.model.key.NonUniqueBusinessKeyException;
 
 
@@ -26,11 +24,11 @@ public abstract class AbstractEntityGraphBuilder implements IEntityGraphBuilder 
 	 * to addition to the entity graph.
 	 */
 	private final MockEntityFactory mockEntityFactory;
-	
+
 	/**
 	 * The entity graph.
 	 */
-	private final EntityGraph graph = new EntityGraph(); 
+	private final EntityGraph graph = new EntityGraph();
 
 	/**
 	 * Constructor
@@ -52,15 +50,16 @@ public abstract class AbstractEntityGraphBuilder implements IEntityGraphBuilder 
 		}
 		return graph;
 	}
-	
+
 	/**
 	 * Stubs the entity graph.
 	 * <p>
 	 * <em><b>NOTE:</b> All entities added to the graph will have their version set to
 	 * <code>0</code></em>.
+	 * @throws IllegalStateException when an error occurs.
 	 */
-	protected abstract void stub();
-	
+	protected abstract void stub() throws IllegalStateException;
+
 	/**
 	 * Generates a fresh entity that is <em>not</em> added to the graph.
 	 * @param <E>
@@ -188,7 +187,7 @@ public abstract class AbstractEntityGraphBuilder implements IEntityGraphBuilder 
 		}
 		return getNthEntity(entityType, RandomUtils.nextInt(set.size()) + 1);
 	}
-	
+
 	/**
 	 * Makes the given entity unique by its defined business keys.
 	 * @param <E>

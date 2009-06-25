@@ -40,7 +40,7 @@ public final class EnumUtil {
 	public static <E extends Enum<?>> E fromString(Class<E> enumType, String text) throws IllegalArgumentException {
 
 		for(final E e : enumType.getEnumConstants()) {
-			if(e instanceof INameValueProvider && ((INameValueProvider<?>) e).getValue().equals(text)) {
+			if(e instanceof INameValueProvider<?> && ((INameValueProvider<?>) e).getValue().equals(text)) {
 				return e;
 			}
 			else if(e.toString().equals(text)) {
@@ -58,7 +58,7 @@ public final class EnumUtil {
 	 * @return a string representation for the given enum.
 	 */
 	public static String toString(Enum<?> enm) {
-		if(enm instanceof INameValueProvider) {
+		if(enm instanceof INameValueProvider<?>) {
 			final Object ov = ((INameValueProvider<?>) enm).getValue();
 			return ov == null ? null : ov.toString();
 		}
@@ -72,7 +72,7 @@ public final class EnumUtil {
 	 * @return a string representation for the given enum.
 	 */
 	public static String name(Enum<?> enm) {
-		if(enm instanceof INameValueProvider) {
+		if(enm instanceof INameValueProvider<?>) {
 			return ((INameValueProvider<?>) enm).getName();
 		}
 		return enm.toString();

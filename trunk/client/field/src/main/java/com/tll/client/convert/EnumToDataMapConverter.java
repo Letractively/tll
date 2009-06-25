@@ -17,7 +17,7 @@ import com.tll.INameValueProvider;
  * @author jpk
  */
 public class EnumToDataMapConverter<E extends Enum<E>> implements IConverter<Map<E, String>, Class<E>> {
-	
+
 	@SuppressWarnings("unchecked")
 	public static final EnumToDataMapConverter INSTANCE = new EnumToDataMapConverter();
 
@@ -32,7 +32,7 @@ public class EnumToDataMapConverter<E extends Enum<E>> implements IConverter<Map
 	public Map<E, String> convert(Class<E> enmType) throws IllegalArgumentException {
 		final HashMap<E, String> map = new LinkedHashMap<E, String>();
 		for(final E enm : enmType.getEnumConstants()) {
-			if(enm instanceof INameValueProvider) {
+			if(enm instanceof INameValueProvider<?>) {
 				final INameValueProvider<?> nvp = (INameValueProvider<?>) enm;
 				map.put(enm, nvp.getName());
 			}

@@ -32,7 +32,6 @@ import com.tll.criteria.Comparator;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.CriterionGroup;
 import com.tll.criteria.IComparatorTranslator;
-import com.tll.criteria.ICriteria;
 import com.tll.criteria.ICriterion;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.ISelectNamedQueryDef;
@@ -246,7 +245,7 @@ public class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> List<E> findEntities(ICriteria<E> criteria, Sorting sorting)
+	public <E extends IEntity> List<E> findEntities(com.tll.criteria.Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
@@ -258,7 +257,7 @@ public class EntityDao extends HibernateJpaSupport implements IEntityDao {
 				CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 	}
 
-	public <E extends IEntity> E findEntity(ICriteria<E> criteria) throws InvalidCriteriaException {
+	public <E extends IEntity> E findEntity(com.tll.criteria.Criteria<E> criteria) throws InvalidCriteriaException {
 		final List<E> list = findEntities(criteria, null);
 		if(list == null || list.size() < 1) {
 			throw new EntityNotFoundException("No matching entity found.");
@@ -271,7 +270,7 @@ public class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> List<SearchResult<?>> find(ICriteria<E> criteria, Sorting sorting)
+	public <E extends IEntity> List<SearchResult<?>> find(com.tll.criteria.Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
@@ -298,7 +297,8 @@ public class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	 * @throws InvalidCriteriaException When the criteria type is invalid or
 	 *         otherwise.
 	 */
-	private <E extends IEntity> List<?> processCriteria(ICriteria<E> criteria, Sorting sorting, boolean applySorting,
+	private <E extends IEntity> List<?> processCriteria(com.tll.criteria.Criteria<E> criteria, Sorting sorting,
+			boolean applySorting,
 			ResultTransformer resultTransformer) throws InvalidCriteriaException {
 		assert criteria != null && resultTransformer != null;
 		if(criteria.getCriteriaType().isQuery()) {
@@ -383,7 +383,7 @@ public class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	 * method takes a <code>DetachedCriteria</code> implementation simply because
 	 * there is no common interface for <code>DetachedCriteria</code> and
 	 * <code>Criteria</code>. This method may be overridden by subclasses and thus
-	 * is not called from processUniqueCriteria(ICriteria).
+	 * is not called from processUniqueCriteria(Criteria).
 	 * @param <E>
 	 * @param dc the hibernate criteria object
 	 * @param criteria Criteria object
@@ -391,7 +391,8 @@ public class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	 * @param applySorting Apply the sorting?
 	 * @throws InvalidCriteriaException
 	 */
-	private <E extends IEntity> void applyCriteria(DetachedCriteria dc, ICriteria<E> criteria, Sorting sorting,
+	private <E extends IEntity> void applyCriteria(DetachedCriteria dc, com.tll.criteria.Criteria<E> criteria,
+			Sorting sorting,
 			boolean applySorting) throws InvalidCriteriaException {
 		if(criteria.isSet()) {
 			final CriterionGroup pg = criteria.getPrimaryGroup();
@@ -409,7 +410,8 @@ public class EntityDao extends HibernateJpaSupport implements IEntityDao {
 		}
 	}
 
-	private <E extends IEntity> void applyCriterion(DetachedCriteria dc, ICriterion ctn, ICriteria<E> criteria,
+	private <E extends IEntity> void applyCriterion(DetachedCriteria dc, ICriterion ctn,
+			com.tll.criteria.Criteria<E> criteria,
 			Sorting sorting, Junction junction) throws InvalidCriteriaException {
 		if(!ctn.isSet()) {
 			return;
@@ -498,7 +500,7 @@ public class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> List<Integer> getIds(ICriteria<E> criteria, Sorting sorting)
+	public <E extends IEntity> List<Integer> getIds(com.tll.criteria.Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
 		if(criteria.getCriteriaType().isQuery()) {
 			throw new InvalidCriteriaException("Ids are not supplied for direct queries!");
@@ -530,7 +532,8 @@ public class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> IPageResult<SearchResult<?>> getPage(ICriteria<E> criteria, Sorting sorting, int offset,
+	public <E extends IEntity> IPageResult<SearchResult<?>> getPage(com.tll.criteria.Criteria<E> criteria,
+			Sorting sorting, int offset,
 			int pageSize) throws InvalidCriteriaException {
 		assert criteria != null && criteria.getCriteriaType() != null;
 		List<SearchResult<E>> rlist = null;

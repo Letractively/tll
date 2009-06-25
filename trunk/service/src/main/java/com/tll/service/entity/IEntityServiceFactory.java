@@ -9,8 +9,9 @@ public interface IEntityServiceFactory {
 	 * @param <S> The entity service type
 	 * @param type The entity service type
 	 * @return the associated entity service
+	 * @throws IllegalArgumentException When the service can't be resolved
 	 */
-	<S extends IEntityService<? extends IEntity>> S instance(Class<S> type);
+	<S extends IEntityService<? extends IEntity>> S instance(Class<S> type) throws IllegalArgumentException;
 
 	/**
 	 * Get the entity service by its supported entity type.
@@ -21,7 +22,8 @@ public interface IEntityServiceFactory {
 	 * @param <E> The entity type
 	 * @param entityType The entity type
 	 * @return the entity service
+	 * @throws IllegalArgumentException When the service can't be resolved
 	 */
-	<E extends IEntity> IEntityService<E> instanceByEntityType(Class<E> entityType);
+	<E extends IEntity> IEntityService<E> instanceByEntityType(Class<E> entityType) throws IllegalArgumentException;
 
 }

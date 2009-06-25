@@ -15,7 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.tll.criteria.ICriteria;
+import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.IPageResult;
@@ -143,7 +143,7 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	}
 
 	@Transactional(readOnly = true)
-	public List<E> findEntities(ICriteria<E> criteria, Sorting sorting) throws InvalidCriteriaException {
+	public List<E> findEntities(Criteria<E> criteria, Sorting sorting) throws InvalidCriteriaException {
 		return dao.findEntities(criteria, sorting);
 	}
 
@@ -155,7 +155,7 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	}
 
 	@Transactional(readOnly = true)
-	public List<SearchResult<?>> find(ICriteria<? extends IEntity> criteria, Sorting sorting)
+	public List<SearchResult<?>> find(Criteria<? extends IEntity> criteria, Sorting sorting)
 			throws InvalidCriteriaException {
 		return dao.find(criteria, sorting);
 	}
@@ -167,12 +167,12 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	}
 
 	@Transactional(readOnly = true)
-	public List<Integer> getIds(ICriteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException {
+	public List<Integer> getIds(Criteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException {
 		return dao.getIds(criteria, sorting);
 	}
 
 	@Transactional(readOnly = true)
-	public IPageResult<SearchResult<?>> getPage(ICriteria<? extends IEntity> criteria, Sorting sorting, int offset,
+	public IPageResult<SearchResult<?>> getPage(Criteria<? extends IEntity> criteria, Sorting sorting, int offset,
 			int pageSize)
 	throws InvalidCriteriaException {
 		return dao.getPage(criteria, sorting, offset, pageSize);

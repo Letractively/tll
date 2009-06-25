@@ -664,7 +664,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 		// apply the model change to the currently cached views
 		for(final Iterator<CView> itr = cache.queueIterator(); itr.hasNext();) {
 			final IView<?> view = itr.next().vc.getView();
-			if(view instanceof IModelAwareView) {
+			if(view instanceof IModelAwareView<?>) {
 				((IModelAwareView<?>) view).onModelChangeEvent(event);
 			}
 		}

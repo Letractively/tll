@@ -8,7 +8,6 @@ import com.tll.client.mvc.view.EditView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.field.account.AccountPanel;
 import com.tll.common.data.AuxDataRequest;
-import com.tll.common.data.EntityOptions;
 import com.tll.common.model.SmbizEntityType;
 import com.tll.refdata.RefDataType;
 
@@ -37,19 +36,11 @@ public class AccountEditView extends EditView {
 
 	}
 
-	private static final EntityOptions entityOptions = new EntityOptions();
-
-	static {
-		entityOptions.requestRelated(SmbizEntityType.PAYMENT_INFO);
-		entityOptions.requestRelated(SmbizEntityType.ACCOUNT_ADDRESS);
-		entityOptions.requestRelatedRef(SmbizEntityType.ACCOUNT);
-	}
-
 	/**
 	 * Constructor
 	 */
 	public AccountEditView() {
-		super(new AccountPanel(), entityOptions);
+		super(new AccountPanel());
 	}
 
 	@Override

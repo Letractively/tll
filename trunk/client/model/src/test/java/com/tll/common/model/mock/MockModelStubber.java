@@ -77,7 +77,7 @@ public class MockModelStubber {
 	 * @return the stubbed model
 	 */
 	private static Model stubModel(MockEntityType type, String name, boolean timestamping) {
-		final Model m = new Model(type);
+		final Model m = new Model(type, true);
 		m.set(new IntPropertyValue(Model.ID_PROPERTY, new PropertyMetadata(PropertyType.INT, false, true, -1),
 				++nextUniqueId));
 		if(name != null) {

@@ -41,11 +41,17 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 		super.addModules(modules);
 		modules.add(new ValidationModule());
 		modules.add(new ModelModule());
-		modules.add(new MockEntityFactoryModule(getConfig()));
+		modules.add(new MockEntityFactoryModule());
 		modules.add(new DbDialectModule(getConfig()));
 		modules.add(new OrmDaoModule(getConfig()));
 		modules.add(new TransactionModule(getConfig()));
-		modules.add(new EntityAssemblerModule(getConfig()));
+		modules.add(new EntityAssemblerModule() {
+
+			@Override
+			protected void bindEntityAssembler() {
+				// TODO
+			}
+		});
 		modules.add(new EntityServiceFactoryModule());
 	}
 

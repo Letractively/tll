@@ -23,11 +23,12 @@
         <exclude>**/SimpleEntityDaoTest*</exclude><!-- hack -->
       </excludes>
       <includes>
+        <include>**/mock/**</include>
+        <include>**/test/**</include>
         <include>**/I*</include><!-- include interfaces -->
         <include>**/Abstract*Test*</include>
         <include>**/*Util*</include>
         <include>**/*Support*</include>
-        <include>**/mock/**</include><!-- TODO: maybe change this dir to testassets to avoid unwanted test assets under mock dirs -->
         <include>**/TestEntityDaoTestHandler*</include><!-- hack -->
       </includes>
       <outputDirectory>/</outputDirectory>

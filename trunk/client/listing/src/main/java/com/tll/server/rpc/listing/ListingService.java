@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.tll.SystemError;
 import com.tll.common.data.ListingOp;
 import com.tll.common.data.ListingPayload;
 import com.tll.common.data.ListingRequest;
@@ -19,8 +18,10 @@ import com.tll.common.data.rpc.IListingService;
 import com.tll.common.model.Model;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
-import com.tll.common.search.ISearch;
-import com.tll.criteria.ICriteria;
+import com.tll.common.search.IListingSearch;
+import com.tll.common.search.INamedQuerySearch;
+import com.tll.criteria.Criteria;
+import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
@@ -31,16 +32,15 @@ import com.tll.listhandler.ListHandlerException;
 import com.tll.listhandler.ListHandlerFactory;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.model.IEntity;
+import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.rpc.RpcServlet;
-import com.tll.server.rpc.entity.PersistContext;
-import com.tll.server.rpc.entity.PersistServiceDelegate;
 
 /**
  * ListingService - Handles client listing requests.
  * @param <S> the search type
  * @author jpk
  */
-public final class ListingService<S extends ISearch> extends RpcServlet implements
+public final class ListingService<S extends IListingSearch> extends RpcServlet implements
 IListingService<S, Model> {
 
 	private static final long serialVersionUID = 7575667259462319956L;
@@ -74,15 +74,8 @@ IListingService<S, Model> {
 		if(!status.hasErrors() && listingRequest != null) {
 
 			final HttpServletRequest request = getRequestContext().getRequest();
-			final PersistContext persistContext =
-				(PersistContext) getServletContext().getAttribute(PersistContext.KEY);
-			final PersistServiceDelegate persistDelegate =
-				(PersistServiceDelegate) getServletContext().getAttribute(PersistServiceDelegate.KEY);
 			final ListingContext listingContext = (ListingContext) getServletContext().getAttribute(ListingContext.KEY);
-			if(persistContext == null || persistDelegate == null || listingContext == null) {
-				throw new IllegalStateException(
-				"Unable to obtain the persist context and/or the persist service delegate and/or the listing context");
-			}
+			if(listingContext == null) throw new IllegalStateException("Unable to obtain the listing context");
 
 			Integer offset = listingRequest.getOffset();
 			Sorting sorting = listingRequest.getSorting();
@@ -123,9 +116,22 @@ IListingService<S, Model> {
 						}
 
 						// translate client side criteria to server side criteria
-						final ICriteria<? extends IEntity> criteria;
+						final Criteria<? extends IEntity> criteria;
 						try {
-							criteria = persistDelegate.translate(listingRequest, search, status);
+							// named query?
+							if(search instanceof INamedQuerySearch) {
+								final INamedQuerySearch nqs = (INamedQuerySearch) search;
+								final ISelectNamedQueryDef queryDef =
+									listingContext.getNamedQueryResolver().resolveNamedQuery(nqs.getQueryName());
+								if(queryDef == null) {
+									throw new IllegalArgumentException("Unable to resolve named query: " + nqs.getQueryName());
+								}
+								criteria = new Criteria<IEntity>(queryDef, nqs.getQueryParams());
+							}
+							else {
+								// delegate
+								criteria = listingContext.getSearchTranslator().translateListingSearchCriteria(search);
+							}
 						}
 						catch(final IllegalArgumentException iae) {
 							throw new ListingException(listingName, "Unable to translate listing command search criteria: "
@@ -159,14 +165,20 @@ IListingService<S, Model> {
 						}
 						catch(final ListHandlerException e) {
 							// shouldn't happen
-							throw new SystemError("Unable to instantiate the list handler: " + e.getMessage(), e);
+							throw new IllegalStateException("Unable to instantiate the list handler: " + e.getMessage(), e);
 						}
 
 						// transform to marshaling list handler
+						MarshalOptions mo;
+						try {
+							mo = listingContext.getMarshalOptionsResolver().resolve(search.getEntityType());
+						}
+						catch(final IllegalArgumentException e) {
+							mo = MarshalOptions.NO_REFERENCES;
+						}
 						final MarshalingListHandler marshalingListHandler =
-							new MarshalingListHandler(listHandler, persistContext.getMarshaler(), persistDelegate
-									.getMarshalOptions(
-											listingRequest, status), listingDef.getPropKeys());
+							new MarshalingListHandler(listHandler, listingContext.getMarshaler(), mo, listingDef.getPropKeys(),
+									!criteria.getCriteriaType().isScalar());
 
 						// instantiate the handler
 						handler = new ListingHandler<Model>(marshalingListHandler, listingName, listingDef.getPageSize());
@@ -193,10 +205,10 @@ IListingService<S, Model> {
 			}
 			catch(final ListingException e) {
 				exceptionToStatus(e, status);
-				persistContext.getExceptionHandler().handleException(e);
+				listingContext.getExceptionHandler().handleException(e);
 			}
 			catch(final RuntimeException re) {
-				persistContext.getExceptionHandler().handleException(re);
+				listingContext.getExceptionHandler().handleException(re);
 				throw re;
 			}
 

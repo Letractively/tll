@@ -7,7 +7,7 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
 
-import com.tll.criteria.ICriteria;
+import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.IListingDataProvider;
@@ -104,5 +104,5 @@ public interface IEntityService<E extends IEntity> extends IListingDataProvider,
 	 *         (Never <code>null</code>).
 	 * @throws InvalidCriteriaException Upon malformed or invlaid criteria.
 	 */
-	List<E> findEntities(ICriteria<E> criteria, Sorting sorting) throws InvalidCriteriaException;
+	List<E> findEntities(Criteria<E> criteria, Sorting sorting) throws InvalidCriteriaException;
 }

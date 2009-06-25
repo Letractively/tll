@@ -36,7 +36,7 @@ public abstract class CollectionUtil {
 		if(c.size() < 1) {
 			return new ArrayList<T>(0);
 		}
-		return (c instanceof List) ? (List<T>) c : new ArrayList<T>(c);
+		return (c instanceof List<?>) ? (List<T>) c : new ArrayList<T>(c);
 	}
 
 }

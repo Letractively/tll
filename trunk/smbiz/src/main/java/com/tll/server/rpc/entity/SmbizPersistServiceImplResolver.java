@@ -8,8 +8,11 @@ package com.tll.server.rpc.entity;
 import com.google.inject.Inject;
 import com.tll.common.data.IModelRelatedRequest;
 import com.tll.common.data.ListingRequest;
+import com.tll.common.data.LoadRequest;
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.IEntityTypeProvider;
+import com.tll.common.search.AccountInterfaceDataSearch;
+import com.tll.common.search.ISearch;
 import com.tll.model.Account;
 import com.tll.model.AccountAddress;
 import com.tll.model.Address;
@@ -39,15 +42,19 @@ public class SmbizPersistServiceImplResolver implements IPersistServiceImplResol
 	}
 
 	@Override
-	public Class<? extends IPersistServiceImpl<? extends IEntity>> resolve(IModelRelatedRequest request)
-			throws IllegalArgumentException {
+	public Class<? extends IPersistServiceImpl> resolve(IModelRelatedRequest request)
+	throws IllegalArgumentException {
 
 		if(request instanceof IEntityTypeProvider) {
 			return resolve(((IEntityTypeProvider) request).getEntityType());
 		}
 
+		if(request instanceof LoadRequest<?>) {
+			return resolve(((LoadRequest<?>) request).getSearch());
+		}
+
 		// listing request?
-		if(request instanceof ListingRequest) {
+		if(request instanceof ListingRequest<?>) {
 			try {
 				return resolve(((ListingRequest<?>) request).getListingDef().getSearchCriteria().getEntityType());
 			}
@@ -60,9 +67,20 @@ public class SmbizPersistServiceImplResolver implements IPersistServiceImplResol
 		throw new IllegalArgumentException("Unhandled request: " + request.descriptor());
 	}
 
+	private Class<? extends IPersistServiceImpl> resolve(ISearch search)
+	throws IllegalArgumentException {
+
+		if(search instanceof AccountInterfaceDataSearch) {
+			return AccountInterfaceOptionsService.class;
+		}
+
+		throw new IllegalArgumentException("Unhandled search type: " + search);
+
+	}
+
 	@SuppressWarnings("unchecked")
-	private Class<? extends IPersistServiceImpl<? extends IEntity>> resolve(IEntityType etype)
-			throws IllegalArgumentException {
+	private Class<? extends IPersistServiceImpl> resolve(IEntityType etype)
+	throws IllegalArgumentException {
 		final Class<? extends IEntity> entityClass = (Class<? extends IEntity>) etResolver.resolveEntityClass(etype);
 		final Class<? extends IEntity> rootEntityClass = EntityUtil.getRootEntityClass(entityClass);
 
@@ -85,7 +103,7 @@ public class SmbizPersistServiceImplResolver implements IPersistServiceImplResol
 			return InterfaceService.class;
 		}
 		else if(InterfaceOptionAccount.class.isAssignableFrom(rootEntityClass)) {
-			return InterfaceOptionAccountService.class;
+			return AccountInterfaceOptionsService.class;
 		}
 		throw new IllegalArgumentException("Unhandled entity type: " + etype);
 	}

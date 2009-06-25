@@ -6,7 +6,6 @@ import javax.validation.ValidatorFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
-import com.tll.SystemError;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IEntityDao;
@@ -44,7 +43,7 @@ public class CurrencyService extends NamedEntityService<Currency> implements ICu
 			return dao.findEntity(criteria);
 		}
 		catch(final InvalidCriteriaException e) {
-			throw new SystemError("Unexpected invalid criteria exception occurred");
+			throw new IllegalArgumentException("Unexpected invalid criteria exception occurred");
 		}
 	}
 

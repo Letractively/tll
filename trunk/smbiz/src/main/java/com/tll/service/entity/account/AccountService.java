@@ -10,7 +10,7 @@ import javax.validation.ValidatorFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
-import com.tll.criteria.ICriteria;
+import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.IPageResult;
@@ -51,11 +51,13 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 			this.dao = dao;
 		}
 
+		/*
 		public List<AccountHistory> loadByIds(List<Integer> ids, Sorting sorting) {
 			return dao.findByIds(AccountHistory.class, ids, sorting);
 		}
+		 */
 
-		public List<SearchResult<?>> find(ICriteria<? extends IEntity> criteria, Sorting sorting)
+		public List<SearchResult<?>> find(Criteria<? extends IEntity> criteria, Sorting sorting)
 		throws InvalidCriteriaException {
 			return dao.find(criteria, sorting);
 		}
@@ -65,11 +67,11 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 			return dao.getEntitiesFromIds(entityClass, ids, sorting);
 		}
 
-		public List<Integer> getIds(ICriteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException {
+		public List<Integer> getIds(Criteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException {
 			return dao.getIds(criteria, sorting);
 		}
 
-		public IPageResult<SearchResult<?>> getPage(ICriteria<? extends IEntity> criteria, Sorting sorting,
+		public IPageResult<SearchResult<?>> getPage(Criteria<? extends IEntity> criteria, Sorting sorting,
 				int offset, int pageSize) throws InvalidCriteriaException {
 			return dao.getPage(criteria, sorting, offset, pageSize);
 		}

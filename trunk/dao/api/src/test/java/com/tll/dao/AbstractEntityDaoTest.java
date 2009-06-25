@@ -27,7 +27,6 @@ import com.tll.AbstractInjectedTest;
 import com.tll.config.Config;
 import com.tll.criteria.Comparator;
 import com.tll.criteria.Criteria;
-import com.tll.criteria.ICriteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.InvalidCriteriaException;
@@ -112,13 +111,13 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 		}
 
 		@Override
-		public <R extends IEntity> List<R> findEntities(ICriteria<R> criteria, Sorting sorting)
+		public <R extends IEntity> List<R> findEntities(Criteria<R> criteria, Sorting sorting)
 		throws InvalidCriteriaException {
 			return rawDao.findEntities(criteria, sorting);
 		}
 
 		@Override
-		public <R extends IEntity> R findEntity(ICriteria<R> criteria) throws InvalidCriteriaException {
+		public <R extends IEntity> R findEntity(Criteria<R> criteria) throws InvalidCriteriaException {
 			return rawDao.findEntity(criteria);
 		}
 
@@ -128,7 +127,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 		}
 
 		@Override
-		public <R extends IEntity> List<Integer> getIds(ICriteria<R> criteria, Sorting sorting)
+		public <R extends IEntity> List<Integer> getIds(Criteria<R> criteria, Sorting sorting)
 		throws InvalidCriteriaException {
 			return rawDao.getIds(criteria, sorting);
 		}
@@ -139,13 +138,13 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 		}
 
 		@Override
-		public <R extends IEntity> List<SearchResult<?>> find(ICriteria<R> criteria, Sorting sorting)
+		public <R extends IEntity> List<SearchResult<?>> find(Criteria<R> criteria, Sorting sorting)
 		throws InvalidCriteriaException {
 			return rawDao.find(criteria, sorting);
 		}
 
 		@Override
-		public <R extends IEntity> IPageResult<SearchResult<?>> getPage(ICriteria<R> criteria, Sorting sorting, int offset,
+		public <R extends IEntity> IPageResult<SearchResult<?>> getPage(Criteria<R> criteria, Sorting sorting, int offset,
 				int pageSize) throws InvalidCriteriaException {
 			return rawDao.getPage(criteria, sorting, offset, pageSize);
 		}
@@ -260,7 +259,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		modules.add(new ModelModule());
-		modules.add(new MockEntityFactoryModule(config));
+		modules.add(new MockEntityFactoryModule());
 	}
 
 	@BeforeClass(alwaysRun = true)

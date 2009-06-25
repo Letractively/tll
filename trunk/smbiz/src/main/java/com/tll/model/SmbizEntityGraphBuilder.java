@@ -7,7 +7,6 @@ package com.tll.model;
 import java.util.Set;
 
 import com.google.inject.Inject;
-import com.tll.SystemError;
 import com.tll.util.EnumUtil;
 
 /**
@@ -41,7 +40,7 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphBuilder {
 			stubUsers();
 		}
 		catch(final Exception e) {
-			throw new SystemError("Unable to stub entity graph: " + e.getMessage());
+			throw new IllegalStateException("Unable to stub entity graph: " + e.getMessage());
 		}
 	}
 

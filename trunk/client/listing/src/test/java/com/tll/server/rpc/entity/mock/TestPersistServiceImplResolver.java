@@ -35,15 +35,15 @@ public class TestPersistServiceImplResolver implements IPersistServiceImplResolv
 	}
 
 	@Override
-	public Class<? extends IPersistServiceImpl<? extends IEntity>> resolve(IModelRelatedRequest request)
-			throws IllegalArgumentException {
+	public Class<? extends IPersistServiceImpl> resolve(IModelRelatedRequest request)
+	throws IllegalArgumentException {
 
 		if(request instanceof IEntityTypeProvider) {
 			return resolve(((IEntityTypeProvider) request).getEntityType());
 		}
 
 		// listing request?
-		if(request instanceof ListingRequest) {
+		if(request instanceof ListingRequest<?>) {
 			try {
 				return resolve(((ListingRequest<?>) request).getListingDef().getSearchCriteria().getEntityType());
 			}
@@ -57,8 +57,8 @@ public class TestPersistServiceImplResolver implements IPersistServiceImplResolv
 	}
 
 	@SuppressWarnings("unchecked")
-	private Class<? extends IPersistServiceImpl<? extends IEntity>> resolve(IEntityType etype)
-			throws IllegalArgumentException {
+	private Class<? extends IPersistServiceImpl> resolve(IEntityType etype)
+	throws IllegalArgumentException {
 		final Class<? extends IEntity> entityClass = (Class<? extends IEntity>) etResolver.resolveEntityClass(etype);
 		final Class<? extends IEntity> rootEntityClass = EntityUtil.getRootEntityClass(entityClass);
 

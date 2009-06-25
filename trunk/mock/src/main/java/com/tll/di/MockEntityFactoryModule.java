@@ -11,9 +11,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
-import com.tll.config.Config;
-import com.tll.config.IConfigAware;
-import com.tll.config.IConfigKey;
 import com.tll.model.MockEntityFactory;
 import com.tll.model.MockEntityFactory.MockEntityBeanFactory;
 
@@ -22,75 +19,45 @@ import com.tll.model.MockEntityFactory.MockEntityBeanFactory;
  * instance based on Spring compatable bean xml definition file.
  * @author jpk
  */
-public class MockEntityFactoryModule extends AbstractModule implements IConfigAware {
+public class MockEntityFactoryModule extends AbstractModule {
+
+	public static final String DEFAULT_FILENAME = "mock-entities.xml";
 
 	private static final Log log = LogFactory.getLog(MockEntityFactoryModule.class);
 
 	/**
-	 * ConfigKeys - Defines the necessary config keys for this module.
-	 * @author jpk
+	 * The name of the file containing the entity definitions expected to be at
+	 * the root of the classpath.
 	 */
-	public static enum ConfigKeys implements IConfigKey {
-
-		/**
-		 * The xml file containing the entity prototype definitions.
-		 */
-		MOCK_ENTITIES_FILENAME("model.mockEntities.filename"),
-
-		/**
-		 * The complimenting entity object graph builder.
-		 */
-		ENTITY_GRAPH_BUILDER_CLASSNAME("model.entityGraphBuilder.classname");
-
-		private final String key;
-
-		/**
-		 * Constructor
-		 * @param key
-		 */
-		private ConfigKeys(String key) {
-			this.key = key;
-		}
-
-		public String getKey() {
-			return key;
-		}
-	}
-
-	Config config;
+	private final String filename;
 
 	/**
 	 * Constructor
 	 */
 	public MockEntityFactoryModule() {
-		super();
+		this(DEFAULT_FILENAME);
 	}
 
 	/**
 	 * Constructor
-	 * @param config
+	 * @param filename
 	 */
-	public MockEntityFactoryModule(Config config) {
+	public MockEntityFactoryModule(String filename) {
 		super();
-		setConfig(config);
-	}
-
-	@Override
-	public void setConfig(Config config) {
-		this.config = config;
+		if(filename == null) throw new IllegalArgumentException("Null filename");
+		this.filename = filename;
 	}
 
 	@Override
 	protected void configure() {
-		if(config == null) throw new IllegalStateException("No config instance specified.");
 		log.info("Employing mock entity factory module.");
 		bind(ListableBeanFactory.class).annotatedWith(MockEntityBeanFactory.class).toProvider(
 				new Provider<ListableBeanFactory>() {
 
+					@SuppressWarnings("synthetic-access")
 					@Override
 					public ListableBeanFactory get() {
-						final String mef = config.getString(ConfigKeys.MOCK_ENTITIES_FILENAME.getKey());
-						return new ClassPathXmlApplicationContext(mef);
+						return new ClassPathXmlApplicationContext(filename);
 					}
 				});
 		bind(MockEntityFactory.class).in(Scopes.SINGLETON);

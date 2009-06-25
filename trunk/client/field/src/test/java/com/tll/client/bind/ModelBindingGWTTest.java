@@ -127,10 +127,10 @@ public class ModelBindingGWTTest extends GWTTestCase {
 			// expected
 		}
 		val = left.getProperty("addresses");
-		Assert.assertTrue(val instanceof List && ((List<?>) val).size() == 1);
+		Assert.assertTrue(val instanceof List<?> && ((List<?>) val).size() == 1);
 
 		val = right.getProperty("addresses");
-		Assert.assertTrue(val instanceof List && ((List<?>) val).size() == 1);
+		Assert.assertTrue(val instanceof List<?> && ((List<?>) val).size() == 1);
 
 		// add an indexed property on the right
 		final Model aa = MockModelStubber.stubAccountAddress(right, MockModelStubber.stubAddress(2), 2);
@@ -138,7 +138,7 @@ public class ModelBindingGWTTest extends GWTTestCase {
 
 		// verify
 		val = right.getProperty("addresses");
-		Assert.assertTrue(val instanceof List && ((List<?>) val).size() == 2);
+		Assert.assertTrue(val instanceof List<?> && ((List<?>) val).size() == 2);
 
 		binding.unbind();
 	}

@@ -6,12 +6,12 @@ import java.util.List;
 import com.tll.model.IEntity;
 
 /**
- * Intitial implementation of default primaryGroup object. Currently, this class
- * is fairly simple and only supports AND criterions.
+ * Criteria - Holds fairly versatile criterion for querying entity data through
+ * the dao api.
  * @author jpk
- * @param <E>
+ * @param <E> the entity type
  */
-public final class Criteria<E extends IEntity> implements ICriteria<E> {
+public final class Criteria<E extends IEntity> {
 
 	private static final long serialVersionUID = 4274638102260498756L;
 
@@ -53,7 +53,7 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 	public Criteria(ISelectNamedQueryDef namedQueryDefinition, List<IQueryParam> queryParams) {
 		super();
 		this.criteriaType =
-				namedQueryDefinition.isScalar() ? CriteriaType.SCALAR_NAMED_QUERY : CriteriaType.ENTITY_NAMED_QUERY;
+			namedQueryDefinition.isScalar() ? CriteriaType.SCALAR_NAMED_QUERY : CriteriaType.ENTITY_NAMED_QUERY;
 		this.entityClass = (Class<E>) namedQueryDefinition.getEntityType();
 		this.namedQueryDefinition = namedQueryDefinition;
 		this.queryParams = queryParams;

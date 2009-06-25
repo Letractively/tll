@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public final class Scalar implements IScalar {
 
-	private final Class<? extends IEntity> refType;
+	private final Class<?> refType;
 	private final Map<String, Object> map;
 
 	/**
@@ -53,7 +53,7 @@ public final class Scalar implements IScalar {
 		}
 	}
 
-	public Class<? extends IEntity> getRefType() {
+	public Class<?> getRefType() {
 		return refType;
 	}
 
@@ -67,7 +67,7 @@ public final class Scalar implements IScalar {
 		// so the property name should be stripped of any prefixing property
 		// path
 		assert propertyName != null;
-		String[] props = propertyName.split("\\.");
+		final String[] props = propertyName.split("\\.");
 		return "tupleMap[" + props[props.length - 1] + ']';
 	}
 

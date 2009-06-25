@@ -24,7 +24,6 @@ import org.springframework.security.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
-import com.tll.SystemError;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.criteria.QueryParam;
@@ -164,7 +163,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 			user = dao.findEntity(criteria);
 		}
 		catch(final InvalidCriteriaException e) {
-			throw new SystemError("Unexpected invalid criteria exception occurred");
+			throw new IllegalArgumentException("Unexpected invalid criteria exception occurred");
 		}
 		if(user == null) {
 			throw new EntityNotFoundException("User with username: " + emailAddress + " was not found.");
@@ -243,7 +242,8 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 			updateSecurityContextIfNecessary(user.getUsername(), newUsername, newRawPassword, false);
 		}
 		catch(final InvalidCriteriaException e) {
-			throw new SystemError("Unable to chnage user credentials due to an unexpected invalid criteria exception: "
+			throw new IllegalArgumentException(
+					"Unable to chnage user credentials due to an unexpected invalid criteria exception: "
 					+ e.getMessage(), e);
 		}
 		catch(final EntityNotFoundException nfe) {

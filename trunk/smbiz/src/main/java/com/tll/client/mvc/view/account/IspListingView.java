@@ -22,8 +22,7 @@ import com.tll.client.ui.option.Option;
 import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.Model;
 import com.tll.common.model.SmbizEntityType;
-import com.tll.common.search.AccountSearch;
-import com.tll.criteria.CriteriaType;
+import com.tll.common.search.NamedQuerySearch;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
@@ -65,8 +64,7 @@ public final class IspListingView extends ListingView<StaticViewInitializer> {
 	@Override
 	protected void doInitialization(StaticViewInitializer init) {
 
-		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.ISP);
-		criteria.setNamedQuery("account.ispList");
+		final NamedQuerySearch criteria = new NamedQuerySearch(SmbizEntityType.ISP, "account.ispList", true);
 
 		final AccountListingConfig config = new AccountListingConfig() {
 

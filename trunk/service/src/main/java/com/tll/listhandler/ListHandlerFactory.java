@@ -2,8 +2,7 @@ package com.tll.listhandler;
 
 import java.util.Collection;
 
-import com.tll.SystemError;
-import com.tll.criteria.ICriteria;
+import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
@@ -54,10 +53,12 @@ public abstract class ListHandlerFactory {
 	 * @throws ListHandlerException When the list handler type is
 	 *         {@link ListHandlerType#COLLECTION} and the sorting directive is
 	 *         specified but mal-formed.
+	 * @throws IllegalStateException when the list handler type is un-supported.
 	 */
-	public static <E extends IEntity> IListHandler<SearchResult<?>> create(ICriteria<E> criteria, Sorting sorting,
+	public static <E extends IEntity> IListHandler<SearchResult<?>> create(Criteria<E> criteria, Sorting sorting,
 			ListHandlerType type, IListingDataProvider dataProvider) throws InvalidCriteriaException,
-			EmptyListException, ListHandlerException {
+			EmptyListException,
+			ListHandlerException, IllegalStateException {
 
 		SearchListHandler<E> slh = null;
 
@@ -78,7 +79,7 @@ public abstract class ListHandlerFactory {
 				break;
 
 			default:
-				throw new SystemError("Unhandled list handler type: " + type);
+				throw new IllegalStateException("Unhandled list handler type: " + type);
 		}
 
 		return slh;

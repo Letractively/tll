@@ -19,12 +19,12 @@ import com.tll.client.ui.edit.IEditHandler;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.common.data.AuxDataRequest;
-import com.tll.common.data.EntityOptions;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
+import com.tll.common.search.PrimaryKeySearch;
 
 /**
  * EditView - Dedicated base class for AbstractView impls whose sole purpose is
@@ -45,11 +45,6 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 	private Model model;
 
 	/**
-	 * Optional entity options when performing model change ops.
-	 */
-	private final EntityOptions entityOptions;
-
-	/**
 	 * The dedicated global msg display for this view.
 	 */
 	private final GlobalMsgPanel gmp;
@@ -62,15 +57,12 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 	/**
 	 * Constructor
 	 * @param fieldPanel The required field panel
-	 * @param entityOptions Optional entity options
 	 */
-	public EditView(FieldPanel<?> fieldPanel, final EntityOptions entityOptions) {
+	public EditView(FieldPanel<?> fieldPanel) {
 		super();
 		gmp = new GlobalMsgPanel();
 		editPanel = new EditPanel(gmp, fieldPanel, true, false);
 		editPanel.addEditHandler(this);
-
-		this.entityOptions = entityOptions;
 
 		addWidget(gmp);
 		addWidget(editPanel);
@@ -132,7 +124,7 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 		if(model == null) {
 			// we need to fetch the model first
 			// NOTE: needed aux data will be fetched with this rpc call
-			cmd = CrudCommand.loadModel(this, modelKey, entityOptions, getNeededAuxData());
+			cmd = CrudCommand.loadModel(this, new PrimaryKeySearch(modelKey), getNeededAuxData());
 		}
 		else {
 			cmd = AuxDataCommand.fetchAuxData(this, getNeededAuxData());
@@ -159,7 +151,7 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 				break;
 			case ADD:
 			case UPDATE:
-				cmd = CrudCommand.persistModel(this, model, entityOptions);
+				cmd = CrudCommand.persistModel(this, model);
 				break;
 			case DELETE:
 				if(!model.isNew()) {

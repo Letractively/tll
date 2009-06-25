@@ -10,7 +10,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.tll.IMarshalable;
 import com.tll.common.data.ListingPayload;
 import com.tll.common.data.ListingRequest;
-import com.tll.common.search.ISearch;
+import com.tll.common.search.IListingSearch;
 
 /**
  * IListingService - Handles {@link ListingRequest}s.
@@ -19,7 +19,7 @@ import com.tll.common.search.ISearch;
  * @author jpk
  */
 @RemoteServiceRelativePath(value = "rpc/listing")
-public interface IListingService<S extends ISearch, R extends IMarshalable> extends RemoteService {
+public interface IListingService<S extends IListingSearch, R extends IMarshalable> extends RemoteService {
 
 	/**
 	 * Processes a listing request.

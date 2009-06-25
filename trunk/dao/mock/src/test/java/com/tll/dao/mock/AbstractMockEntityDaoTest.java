@@ -6,9 +6,12 @@ import java.util.List;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
+import com.google.inject.Scopes;
 import com.tll.dao.AbstractEntityDaoTest;
 import com.tll.di.MockDaoModule;
 import com.tll.model.IEntity;
+import com.tll.model.IEntityGraphBuilder;
+import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
 import com.tll.model.key.PrimaryKey;
 
 /**
@@ -29,7 +32,13 @@ import com.tll.model.key.PrimaryKey;
 	@Override
 	protected final void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new MockDaoModule(config));
+		modules.add(new MockDaoModule() {
+
+			@Override
+			protected void bindEntityGraphBuilder() {
+				bind(IEntityGraphBuilder.class).to(TestPersistenceUnitEntityGraphBuilder.class).in(Scopes.SINGLETON);
+			}
+		});
 	}
 
 	@Override

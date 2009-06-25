@@ -90,7 +90,7 @@ public final class FieldGroup implements IField, Iterable<IField> {
 
 		// first go through the non-group child fields
 		for(final IField fld : group) {
-			if(fld instanceof IFieldWidget) {
+			if(fld instanceof IFieldWidget<?>) {
 				if(((IFieldWidget<?>) fld).getPropertyName().equals(propertyName)) {
 					return (IFieldWidget<?>) fld;
 				}
@@ -120,7 +120,7 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	private static void findFieldWidgets(final String propPath, FieldGroup group, Set<IFieldWidget<?>> set) {
 		Set<FieldGroup> gset = null;
 		for(final IField fld : group) {
-			if(fld instanceof IFieldWidget) {
+			if(fld instanceof IFieldWidget<?>) {
 				if(propPath == null || ((IFieldWidget<?>) fld).getPropertyName().matches(propPath)) {
 					set.add((IFieldWidget<?>) fld);
 				}
@@ -150,7 +150,7 @@ public final class FieldGroup implements IField, Iterable<IField> {
 			}
 		}
 		else {
-			assert field instanceof IFieldWidget;
+			assert field instanceof IFieldWidget<?>;
 			((IFieldWidget<?>) field).setPropertyName(PropertyPath.getPropertyPath(parentPropPath, ((IFieldWidget<?>) field)
 					.getPropertyName()));
 		}
@@ -170,7 +170,7 @@ public final class FieldGroup implements IField, Iterable<IField> {
 			}
 		}
 		else {
-			assert field instanceof IFieldWidget;
+			assert field instanceof IFieldWidget<?>;
 			final IFieldWidget<?> fw = ((IFieldWidget<?>) field);
 			final String pname = fw.getPropertyName();
 			final PropertyPath p = new PropertyPath(pname);
@@ -193,12 +193,12 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	private static void verifyAddField(final IField f, FieldGroup group) throws IllegalArgumentException {
 		assert group != null;
 		if(f == null) throw new IllegalArgumentException("No field specified.");
-		final boolean isWidget = (f instanceof IFieldWidget);
+		final boolean isWidget = (f instanceof IFieldWidget<?>);
 		for(final IField ef : group) {
 			if(f.getName().equals(ef.getName())) {
 				throw new IllegalArgumentException("Field name: '" + f.getName() + "' already exists.");
 			}
-			if(isWidget && (ef instanceof IFieldWidget)) {
+			if(isWidget && (ef instanceof IFieldWidget<?>)) {
 				if(((IFieldWidget<?>) f).getPropertyName().equals(((IFieldWidget<?>) ef).getPropertyName())) {
 					throw new IllegalArgumentException("Field property name: '" + ((IFieldWidget<?>) f).getPropertyName()
 							+ "' already exists.");
@@ -398,7 +398,7 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	 */
 	public IFieldWidget<?> getFieldWidgetByName(String nme) {
 		final IField f = findByName(nme, this);
-		return f instanceof IFieldWidget ? (IFieldWidget<?>) f : null;
+		return f instanceof IFieldWidget<?> ? (IFieldWidget<?>) f : null;
 	}
 
 	/**

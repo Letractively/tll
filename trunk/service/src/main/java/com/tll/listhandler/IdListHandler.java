@@ -3,7 +3,7 @@ package com.tll.listhandler;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.tll.criteria.ICriteria;
+import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
@@ -28,7 +28,7 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 	 * @param criteria The criteria used to generate the underlying list
 	 * @param sorting
 	 */
-	IdListHandler(IListingDataProvider dataProvider, ICriteria<E> criteria, Sorting sorting) {
+	IdListHandler(IListingDataProvider dataProvider, Criteria<E> criteria, Sorting sorting) {
 		super(dataProvider, criteria, sorting);
 	}
 

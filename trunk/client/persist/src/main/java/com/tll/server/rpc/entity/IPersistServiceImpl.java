@@ -1,61 +1,46 @@
 package com.tll.server.rpc.entity;
 
-import com.tll.common.data.EntityLoadRequest;
 import com.tll.common.data.ModelPayload;
-import com.tll.common.data.PersistRequest;
-import com.tll.common.data.PurgeRequest;
+import com.tll.common.model.Model;
+import com.tll.common.model.ModelKey;
 import com.tll.common.search.ISearch;
-import com.tll.criteria.ICriteria;
-import com.tll.model.IEntity;
-import com.tll.server.marshal.MarshalOptions;
 
 /**
- * IPersistServiceImpl - Server side entity crud support.
+ * IPersistServiceImpl - Server side model data crud support that is not
+ * necessarily conforming to entity boundaries but is rather implementation
+ * specific.
  * @author jpk
- * @param <E> The "root" entity type
  */
-public interface IPersistServiceImpl<E extends IEntity> {
+public interface IPersistServiceImpl {
 
 	/**
-	 * Loads an entity.
-	 * @param context Guaranteed non-<code>null</code>
-	 * @param request The guaranteed non-<code>null</code>
-	 *        {@link EntityLoadRequest}
-	 * @param payload The {@link ModelPayload} that is filled
+	 * Implementation specific load routine. A {@link Model} instance is expected
+	 * to be put into the given payload.
+	 * @param search the search criteria
+	 * @param payload the payload that is filled
 	 */
-	void load(PersistContext context, EntityLoadRequest request, ModelPayload payload);
+	void load(ISearch search, ModelPayload payload);
 
 	/**
-	 * Persists an entity.
-	 * @param context Guaranteed non-<code>null</code>
-	 * @param request The guaranteed non-<code>null</code>
-	 *        {@link PersistRequest}
-	 * @param payload The {@link ModelPayload} that is filled
+	 * Implementation specific persist routine. A {@link Model} instance
+	 * reflecting the newly persisted data is expected to be put into the given
+	 * payload.
+	 * @param model the model data to persist
+	 * @param payload the payload that is filled
 	 */
-	void persist(PersistContext context, PersistRequest request, ModelPayload payload);
+	void persist(Model model, ModelPayload payload);
 
 	/**
-	 * Purges an entity.
-	 * @param context Guaranteed non-<code>null</code>
-	 * @param request The guaranteed non-<code>null</code>
-	 *        {@link PurgeRequest}
-	 * @param payload The {@link ModelPayload} that is filled
+	 * Implementation specific purge routine given a model instance.
+	 * @param model the model data to purge
+	 * @param payload the payload that is filled
 	 */
-	void purge(PersistContext context, PurgeRequest request, ModelPayload payload);
+	void purge(Model model, ModelPayload payload);
 
 	/**
-	 * Translate client-side search to server-side serach.
-	 * @param context Guaranteed non-<code>null</code>
-	 * @param search The client side {@link ISearch} instance
-	 * @return Translated search {@link ICriteria}.
-	 * @throws IllegalArgumentException
+	 * Implementation specific purge routine given a model key.
+	 * @param ref the model ref indicating what to purge
+	 * @param payload the payload that is filled
 	 */
-	ICriteria<E> translate(PersistContext context, ISearch search) throws IllegalArgumentException;
-
-	/**
-	 * Gets the entity type specific marshaling options.
-	 * @param context Guaranteed non-<code>null</code>
-	 * @return The {@link MarshalOptions}
-	 */
-	MarshalOptions getMarshalOptions(PersistContext context);
+	void purge(ModelKey ref, ModelPayload payload);
 }

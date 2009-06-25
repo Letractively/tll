@@ -23,7 +23,7 @@ public class TestUtils {
 	 */
 	public static void validateEmpty(Object obj) throws Exception {
 		if(obj == null) return;
-		if(obj instanceof Collection) {
+		if(obj instanceof Collection<?>) {
 			if(((Collection<?>) obj).size() > 0) {
 				throw new Exception("Non-empty collection");
 			}

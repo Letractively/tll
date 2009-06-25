@@ -86,7 +86,7 @@ public class IntfOptAccView extends AbstractRpcAndModelAwareView<IntfOptAccViewI
 				@Override
 				public IRpcCommand load(ModelKey intfKey, AuxDataRequest adr) {
 					final CrudCommand c = new CrudCommand();
-					c.loadBySearch(null/*TODO*/);
+								c.load(null, null/*TODO*/);
 					return c;
 				}
 			}, new CrudCommand());

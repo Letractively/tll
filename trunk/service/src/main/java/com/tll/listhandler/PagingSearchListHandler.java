@@ -2,7 +2,7 @@ package com.tll.listhandler;
 
 import java.util.List;
 
-import com.tll.criteria.ICriteria;
+import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
@@ -28,7 +28,7 @@ public final class PagingSearchListHandler<E extends IEntity> extends SearchList
 	 * @param criteria The criteria used to generate the underlying list
 	 * @param sorting The required sorting directive.
 	 */
-	PagingSearchListHandler(IListingDataProvider dataProvider, ICriteria<E> criteria, Sorting sorting) {
+	PagingSearchListHandler(IListingDataProvider dataProvider, Criteria<E> criteria, Sorting sorting) {
 		super(dataProvider, criteria, sorting);
 	}
 

@@ -29,7 +29,7 @@ public class EnumValidator implements IValidator {
 		if(value == null) return null;
 		final String sval = value.toString();
 		for(final Enum<?> e : enumType.getEnumConstants()) {
-			if(e instanceof INameValueProvider && ((INameValueProvider<?>) e).getValue().equals(sval)) {
+			if(e instanceof INameValueProvider<?> && ((INameValueProvider<?>) e).getValue().equals(sval)) {
 				return e;
 			}
 			else if(e.toString().equals(sval)) {

@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.tll.SystemError;
 import com.tll.common.data.AuxDataPayload;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.model.IEntityType;
@@ -37,18 +36,18 @@ public abstract class AuxDataHandler {
 	 * <p>
 	 * NOTE: we provide a <code>null</code> status instance since the error is
 	 * spurious since we have a fallback marshal options instance.
-	 * @param delegate
+	 * @param context the persist context
 	 * @param entityType
 	 * @param fallback Used when no persist svc is resolved from the given entity
 	 *        type
 	 * @return Never-<code>null</code> instance.
 	 */
-	private static MarshalOptions getMarshalOptions(PersistServiceDelegate delegate, IEntityType entityType,
+	private static MarshalOptions getMarshalOptions(PersistContext context, IEntityType entityType,
 			MarshalOptions fallback) {
 		try {
-			return delegate.getMarshalOptions(new EntityTypeRequest(entityType, "Marshal Options request"), null);
+			return context.getMarshalOptionsResolver().resolve(entityType);
 		}
-		catch(final SystemError e) {
+		catch(final RuntimeException e) {
 			return fallback;
 		}
 	}
@@ -56,13 +55,11 @@ public abstract class AuxDataHandler {
 	/**
 	 * Provides auxiliary data.
 	 * @param context
-	 * @param delegate
 	 * @param auxDataRequest
 	 * @param payload
 	 */
 	@SuppressWarnings("unchecked")
-	public static void getAuxData(PersistContext context, PersistServiceDelegate delegate,
-			final AuxDataRequest auxDataRequest,
+	public static void getAuxData(PersistContext context, final AuxDataRequest auxDataRequest,
 			final AuxDataPayload payload) {
 
 		Map<RefDataType, Map<String, String>> appRefDataMap = null;
@@ -101,7 +98,7 @@ public abstract class AuxDataHandler {
 							MsgLevel.ERROR, MsgAttr.STATUS.flag);
 				}
 				else {
-					final MarshalOptions mo = getMarshalOptions(delegate, et, MarshalOptions.NO_REFERENCES);
+					final MarshalOptions mo = getMarshalOptions(context, et, MarshalOptions.NO_REFERENCES);
 					final List<Model> elist = new ArrayList<Model>(list.size());
 					for(final IEntity e : list) {
 						final Model group = context.getMarshaler().marshalEntity(e, mo);
@@ -122,7 +119,7 @@ public abstract class AuxDataHandler {
 			final IEntity e =
 				context.getEntityAssembler().assembleEntity(
 						(Class<IEntity>) context.getEntityTypeResolver().resolveEntityClass(et), null, false);
-			final MarshalOptions mo = getMarshalOptions(delegate, et, MarshalOptions.NO_REFERENCES);
+			final MarshalOptions mo = getMarshalOptions(context, et, MarshalOptions.NO_REFERENCES);
 			final Model model = context.getMarshaler().marshalEntity(e, mo);
 			if(entityPrototypes == null) {
 				entityPrototypes = new HashSet<Model>();

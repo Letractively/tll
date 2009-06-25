@@ -4,7 +4,7 @@
  */
 package com.tll.common.data;
 
-import com.tll.common.search.ISearch;
+import com.tll.common.search.IListingSearch;
 import com.tll.dao.Sorting;
 
 /**
@@ -13,7 +13,7 @@ import com.tll.dao.Sorting;
  * @author jpk
  * @param <S>
  */
-public final class ListingRequest<S extends ISearch> implements IModelRelatedRequest {
+public final class ListingRequest<S extends IListingSearch> implements IModelRelatedRequest {
 
 	/**
 	 * The unique listing name.

@@ -22,6 +22,7 @@ public final class MarshalingListHandler extends DecoratedListHandler<SearchResu
 	private final Marshaler marshaler;
 	private final MarshalOptions marshalOptions;
 	private final String[] propKeys;
+	private final boolean entity;
 
 	/**
 	 * Constructor
@@ -29,13 +30,16 @@ public final class MarshalingListHandler extends DecoratedListHandler<SearchResu
 	 * @param marshaler
 	 * @param marshalOptions
 	 * @param propKeys
+	 * @param entity are the listing elements entities or just arbitrary model
+	 *        data?
 	 */
 	public MarshalingListHandler(IListHandler<SearchResult<?>> listHandler, Marshaler marshaler,
-			MarshalOptions marshalOptions, String[] propKeys) {
+			MarshalOptions marshalOptions, String[] propKeys, boolean entity) {
 		super(listHandler);
 		this.marshaler = marshaler;
 		this.marshalOptions = marshalOptions;
 		this.propKeys = propKeys;
+		this.entity = entity;
 	}
 
 	/**
@@ -51,7 +55,7 @@ public final class MarshalingListHandler extends DecoratedListHandler<SearchResu
 			return model;
 		}
 		final int numCols = propKeys.length;
-		final Model xgrp = new Model(model.getEntityType());
+		final Model xgrp = new Model(model.getEntityType(), entity);
 		for(int i = 0; i < numCols; i++) {
 			try {
 				xgrp.set(model.getModelProperty(propKeys[i]));

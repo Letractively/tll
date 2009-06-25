@@ -10,15 +10,13 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.model.ModelChangeEvent.ModelChangeOp;
 import com.tll.common.data.AuxDataRequest;
-import com.tll.common.data.EntityLoadRequest;
-import com.tll.common.data.EntityOptions;
+import com.tll.common.data.LoadRequest;
 import com.tll.common.data.ModelPayload;
 import com.tll.common.data.ModelRequest;
 import com.tll.common.data.PersistRequest;
 import com.tll.common.data.PurgeRequest;
 import com.tll.common.data.rpc.ICrudService;
 import com.tll.common.data.rpc.ICrudServiceAsync;
-import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 import com.tll.common.search.ISearch;
@@ -39,48 +37,46 @@ public class CrudCommand extends RpcCommand<ModelPayload> {
 	}
 
 	/**
-	 * Handles the fetching of a model given a model ref. A subsequent model
-	 * change event is anticipated.
-	 * @param source The sourcing widget on which the {@link ModelChangeEvent} is
-	 *        fired
-	 * @param key The key identifying the model
-	 * @param entityOptions
-	 * @param adr
-	 * @return the rpc command ready for execution
+	 * Loads model data.
+	 * @param source The sourcing widget on which a subsequent
+	 *        {@link ModelChangeEvent} is fired upon rpc return if it is non-
+	 *        <code>null</code>.
+	 * @param search the required search criteria
+	 * @param adr optional aux data request
+	 * @return new rpc command ready for execution
 	 */
-	public static Command loadModel(Widget source, ModelKey key, EntityOptions entityOptions, AuxDataRequest adr) {
+	public static Command loadModel(Widget source, ISearch search, AuxDataRequest adr) {
 		final CrudCommand cmd = new CrudCommand();
 		cmd.setSource(source);
-		cmd.loadByPrimaryKey(key, entityOptions, AuxDataCacheHelper.filterRequest(adr));
+		cmd.load(search, AuxDataCacheHelper.filterRequest(adr));
 		return cmd;
 	}
 
 	/**
-	 * Handles model persisting (adding and updating) firing an appropriate model
-	 * change event. A subsequent model change event is anticipated.
-	 * @param source The sourcing widget on which the {@link ModelChangeEvent} is
-	 *        fired
+	 * Persists model data.
+	 * @param source The sourcing widget on which a subsequent
+	 *        {@link ModelChangeEvent} is fired upon rpc return if it is non-
+	 *        <code>null</code>.
 	 * @param model The model to persist
-	 * @param entityOptions
 	 * @return the rpc command ready for execution
 	 */
-	public static Command persistModel(Widget source, Model model, EntityOptions entityOptions) {
+	public static Command persistModel(Widget source, Model model) {
 		final CrudCommand cmd = new CrudCommand();
 		cmd.setSource(source);
 		if(model.isNew()) {
-			cmd.add(model, entityOptions);
+			cmd.add(model);
 		}
 		else {
-			cmd.update(model, entityOptions);
+			cmd.update(model);
 		}
 		return cmd;
 	}
 
 	/**
-	 * Commits a model delete firing a model change event to subscribed listeners
-	 * upon a successful delete.
-	 * @param source The sourcing widget on which the {@link ModelChangeEvent} is
-	 *        fired
+	 * Deletes model data.
+	 * @param source The sourcing widget on which a subsequent
+	 *        {@link ModelChangeEvent} is fired upon rpc return if it is non-
+	 *        <code>null</code>.
 	 * @param key The key identifying the model
 	 * @return the rpc command ready for execution
 	 */
@@ -101,86 +97,55 @@ public class CrudCommand extends RpcCommand<ModelPayload> {
 
 	/**
 	 * Sets the state of this command for loading an entity by primary key.
-	 * @param entityRef
-	 * @param eoptions optional entity options
+	 * @param search the criteria by which the model data is loaded
 	 * @param auxDataRequest optional aux data request
 	 */
-	public void loadByPrimaryKey(ModelKey entityRef, EntityOptions eoptions, AuxDataRequest auxDataRequest) {
-		if(entityRef == null || !entityRef.isSet()) {
-			throw new IllegalArgumentException("A set entity reference must be specified.");
+	public void load(ISearch search, AuxDataRequest auxDataRequest) {
+		if(search == null || !search.isSet()) {
+			throw new IllegalArgumentException("Null or un-set search criteria");
 		}
-		final EntityLoadRequest elr = new EntityLoadRequest(entityRef);
-		elr.setAuxDataRequest(auxDataRequest);
-		elr.setEntityOptions(eoptions);
+		final LoadRequest<ISearch> elr = new LoadRequest<ISearch>(search);
+		elr.setAuxDataRequest(AuxDataCacheHelper.filterRequest(auxDataRequest));
 		this.modelRequest = elr;
 		crudOp = CrudOp.LOAD;
 	}
 
 	/**
-	 * Sets the state of this command for loading a named entity by name.
-	 * @param entityType The entity type
-	 * @param name The name of the named entity
-	 */
-	public void loadByName(IEntityType entityType, String name) {
-		if(entityType == null || name == null) {
-			throw new IllegalArgumentException("An entity type and name must be specified.");
-		}
-		modelRequest = new EntityLoadRequest(entityType, name);
-		crudOp = CrudOp.LOAD;
-	}
-
-	/**
-	 * Sets the state of this command for loading model data by the given search
-	 * param.
-	 * @param search a generic search instance
-	 */
-	public void loadBySearch(ISearch search) {
-		if(search == null) {
-			throw new IllegalArgumentException("Null search");
-		}
-		modelRequest = new EntityLoadRequest(search);
-		crudOp = CrudOp.LOAD;
-	}
-
-	/**
 	 * Sets the state of this command for adding an entity.
-	 * @param entity The entity to add.
-	 * @param eoptions optional entity options
+	 * @param model The model data to add.
 	 */
-	public final void add(Model entity, EntityOptions eoptions) {
-		if(entity == null || !entity.isNew()) {
+	public final void add(Model model) {
+		if(model == null || !model.isNew()) {
 			throw new IllegalArgumentException("A non-null and new entity must be specified.");
 		}
-		final PersistRequest pr = new PersistRequest(entity);
-		pr.setEntityOptions(eoptions);
+		final PersistRequest pr = new PersistRequest(model);
 		modelRequest = pr;
 		crudOp = CrudOp.ADD;
 	}
 
 	/**
 	 * Sets the state of this command for updating an entity.
-	 * @param entity The entity to update.
-	 * @param eoptions optional entity options
+	 * @param model The model data to update.
 	 */
-	public final void update(Model entity, EntityOptions eoptions) {
-		if(entity == null || entity.isNew()) {
+	public final void update(Model model) {
+		if(model == null || model.isNew()) {
 			throw new IllegalArgumentException("A non-null and non-new entity must be specified.");
 		}
-		final PersistRequest pr = new PersistRequest(entity);
-		pr.setEntityOptions(eoptions);
+		final PersistRequest pr = new PersistRequest(model);
 		modelRequest = pr;
 		crudOp = CrudOp.UPDATE;
 	}
 
 	/**
 	 * Sets the state of this command for purging an entity.
-	 * @param entityRef The ref of the entity to be purged.
+	 * @param pk The primary key of the entity to purge expressed as a
+	 *        {@link ModelKey}.
 	 */
-	public final void purge(ModelKey entityRef) {
-		if(entityRef == null || !entityRef.isSet()) {
+	public final void purge(ModelKey pk) {
+		if(pk == null || !pk.isSet()) {
 			throw new IllegalArgumentException("A set entity reference must be specified.");
 		}
-		modelRequest = new PurgeRequest(entityRef);
+		modelRequest = new PurgeRequest(pk);
 		crudOp = CrudOp.PURGE;
 	}
 
@@ -188,7 +153,7 @@ public class CrudCommand extends RpcCommand<ModelPayload> {
 	protected void doExecute() {
 		switch(crudOp) {
 			case LOAD:
-				svc.load((EntityLoadRequest) modelRequest, getAsyncCallback());
+				svc.load((LoadRequest<?>) modelRequest, getAsyncCallback());
 				break;
 
 			case ADD:
@@ -229,7 +194,7 @@ public class CrudCommand extends RpcCommand<ModelPayload> {
 				default:
 					throw new IllegalStateException("Unhandled crud op: " + crudOp);
 			}
-			source.fireEvent(new ModelChangeEvent(mop, result.getEntity(), result.getRef(), result.getStatus()));
+			source.fireEvent(new ModelChangeEvent(mop, result.getModel(), result.getRef(), result.getStatus()));
 		}
 	}
 }

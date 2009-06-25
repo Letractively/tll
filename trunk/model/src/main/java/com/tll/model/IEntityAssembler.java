@@ -20,7 +20,9 @@ public interface IEntityAssembler {
 	 *        assembled entity. May be <code>null</code>.
 	 * @param generate Generate an id?
 	 * @return The assembled IEntity of the specified type.
+	 * @throws IllegalArgumentException when the entity type is not supported
 	 */
-	<E extends IEntity> E assembleEntity(Class<E> entityType, IEntityProvider entityProvider, boolean generate);
+	<E extends IEntity> E assembleEntity(Class<E> entityType, IEntityProvider entityProvider, boolean generate)
+			throws IllegalArgumentException;
 
 }

@@ -7,7 +7,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceException;
 
-import com.tll.criteria.ICriteria;
+import com.tll.criteria.Criteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.model.IEntity;
@@ -115,7 +115,7 @@ public interface IEntityDao extends IDao {
 	 * @throws NonUniqueResultException When more than one entity satisfies the
 	 *         given criteria
 	 */
-	<E extends IEntity> E findEntity(ICriteria<E> criteria) throws InvalidCriteriaException, EntityNotFoundException,
+	<E extends IEntity> E findEntity(Criteria<E> criteria) throws InvalidCriteriaException, EntityNotFoundException,
 	NonUniqueResultException;
 
 	/**
@@ -127,7 +127,7 @@ public interface IEntityDao extends IDao {
 	 * @throws InvalidCriteriaException When the criteria is <code>null</code> or
 	 *         found to be invalid.
 	 */
-	<E extends IEntity> List<E> findEntities(ICriteria<E> criteria, Sorting sorting) throws InvalidCriteriaException;
+	<E extends IEntity> List<E> findEntities(Criteria<E> criteria, Sorting sorting) throws InvalidCriteriaException;
 
 	/**
 	 * Generic criteria driven search method.
@@ -142,7 +142,7 @@ public interface IEntityDao extends IDao {
 	 * @throws InvalidCriteriaException When the criteria is <code>null</code> or
 	 *         found to be invalid.
 	 */
-	<E extends IEntity> List<SearchResult<?>> find(ICriteria<E> criteria, Sorting sorting)
+	<E extends IEntity> List<SearchResult<?>> find(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException;
 
 	/**
@@ -167,7 +167,7 @@ public interface IEntityDao extends IDao {
 	 * @throws InvalidCriteriaException When the criteria is <code>null</code> or
 	 *         found to be invalid.
 	 */
-	<E extends IEntity> List<Integer> getIds(ICriteria<E> criteria, Sorting sorting)
+	<E extends IEntity> List<Integer> getIds(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException;
 
 	/**
@@ -197,7 +197,7 @@ public interface IEntityDao extends IDao {
 	 *         found to be invalid or when the sorting directive is
 	 *         <code>null</code>.
 	 */
-	<E extends IEntity> IPageResult<SearchResult<?>> getPage(ICriteria<E> criteria, Sorting sorting,
+	<E extends IEntity> IPageResult<SearchResult<?>> getPage(Criteria<E> criteria, Sorting sorting,
 			int offset, int pageSize)
 			throws InvalidCriteriaException;
 

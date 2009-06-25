@@ -31,8 +31,7 @@ import com.tll.common.model.SmbizEntityType;
 import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
-import com.tll.common.search.InterfaceSearch;
-import com.tll.criteria.CriteriaType;
+import com.tll.common.search.NamedQuerySearch;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
 
@@ -128,10 +127,10 @@ class InterfaceStack extends StackPanel implements IHasRpcHandlers, IListingHand
 		public void onEdit(EditEvent event) {
 			switch(event.getOp()) {
 				case ADD:
-					crud.add(getModel(), null);
+					crud.add(getModel());
 					break;
 				case UPDATE:
-					crud.update(getModel(), null);
+					crud.update(getModel());
 					break;
 				case DELETE:
 					crud.purge(getModel().getKey());
@@ -223,8 +222,7 @@ class InterfaceStack extends StackPanel implements IHasRpcHandlers, IListingHand
 		this.auxDataRequest = auxDataRequest;
 		this.fldPnlResolver = fldPnlResolver;
 		final String listingName = SmbizEntityType.INTERFACE.name();
-		final InterfaceSearch criteria = new InterfaceSearch(CriteriaType.SCALAR_NAMED_QUERY);
-		criteria.setNamedQuery("interface.summaryList");
+		final NamedQuerySearch criteria = new NamedQuerySearch(SmbizEntityType.INTERFACE, "interface.summaryList", true);
 		final Sorting defaultSorting = new Sorting("name");
 		listHandler =
 			ListingFactory

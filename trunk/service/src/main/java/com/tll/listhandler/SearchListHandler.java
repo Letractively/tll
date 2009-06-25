@@ -3,7 +3,7 @@ package com.tll.listhandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.tll.criteria.ICriteria;
+import com.tll.criteria.Criteria;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
 import com.tll.model.IEntity;
@@ -26,7 +26,7 @@ public abstract class SearchListHandler<E extends IEntity> extends AbstractListH
 	/**
 	 * The search criteria.
 	 */
-	protected ICriteria<E> criteria;
+	protected Criteria<E> criteria;
 
 	/**
 	 * Constructor
@@ -37,7 +37,7 @@ public abstract class SearchListHandler<E extends IEntity> extends AbstractListH
 	 * @throws IllegalArgumentException When one or more required args are not
 	 *         specifeid
 	 */
-	public SearchListHandler(IListingDataProvider dataProvider, ICriteria<E> criteria, Sorting sorting)
+	public SearchListHandler(IListingDataProvider dataProvider, Criteria<E> criteria, Sorting sorting)
 	throws IllegalArgumentException {
 		super();
 		if(dataProvider == null) {

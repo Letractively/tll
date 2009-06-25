@@ -26,7 +26,7 @@ public interface IScalar {
 	 *         <strong>NOTE: </strong>This is used in the UI layer for generating
 	 *         ref keys which is critical for MVC view resolution.
 	 */
-	Class<? extends IEntity> getRefType();
+	Class<?> getRefType();
 
 	/**
 	 * @return The scalar results in map form whose keys are the query alias names

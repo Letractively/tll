@@ -27,7 +27,7 @@ import com.tll.util.StringUtil;
  * @author jpk
  */
 public final class Model implements IMarshalable, IBindable, IPropertyMetadataProvider,
- IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
+IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 
 	/**
 	 * Entity id property name
@@ -64,7 +64,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	private /*final*/Set<IModelProperty> props = new HashSet<IModelProperty>();
 
 	/**
-	 * The entity type.
+	 * The bound entity type.
 	 */
 	private IEntityType entityType;
 
@@ -81,6 +81,13 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	private RelatedOneProperty selfRef;
 
 	/**
+	 * Flag indicating that this instance is a marshaled entity. A model instance
+	 * doesn't necessarily have to reflect an entity and may simply serve to hold
+	 * "model data".
+	 */
+	private boolean entity;
+
+	/**
 	 * Constructor
 	 */
 	public Model() {
@@ -90,8 +97,10 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	/**
 	 * Constructor
 	 * @param entityType
+	 * @param entity is this instance a marshaled entity? Or is is just "scalar"
+	 *        model data.
 	 */
-	public Model(IEntityType entityType) {
+	public Model(IEntityType entityType, boolean entity) {
 		super();
 		this.entityType = entityType;
 	}
@@ -101,6 +110,10 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 */
 	public IEntityType getEntityType() {
 		return entityType;
+	}
+
+	public boolean isEntity() {
+		return entity;
 	}
 
 	/**
@@ -515,13 +528,6 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 
 		/**
 		 * Constructor
-		 */
-		PropBinding() {
-			super();
-		}
-
-		/**
-		 * Constructor
 		 * @param model
 		 */
 		PropBinding(Model model) {
@@ -615,7 +621,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		final CopyBinding binding = (CopyBinding) visited.find(source);
 		if(binding != null) return binding.target;
 
-		final Model copy = new Model(source.entityType);
+		final Model copy = new Model(source.entityType, source.entity);
 
 		visited.add(new CopyBinding(source, copy));
 

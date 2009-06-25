@@ -5,9 +5,6 @@
  */
 package com.tll.common.data;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 
@@ -23,11 +20,6 @@ public final class ModelPayload extends AuxDataPayload {
 	private Model model;
 
 	private ModelKey ref;
-
-	/**
-	 * Map of related one entity refs keyed by property name.
-	 */
-	private Map<String, ModelKey> relatedOneRefs;
 
 	/**
 	 * Constructor
@@ -47,14 +39,14 @@ public final class ModelPayload extends AuxDataPayload {
 	/**
 	 * Constructor
 	 * @param status
-	 * @param entity
+	 * @param model
 	 */
-	public ModelPayload(Status status, Model entity) {
+	public ModelPayload(Status status, Model model) {
 		super(status);
-		this.model = entity;
+		this.model = model;
 	}
 
-	public Model getEntity() {
+	public Model getModel() {
 		return model;
 	}
 
@@ -69,16 +61,4 @@ public final class ModelPayload extends AuxDataPayload {
 	public void setRef(ModelKey ref) {
 		this.ref = ref;
 	}
-
-	public void setRelatedOneRef(String propName, ModelKey ref) {
-		if(relatedOneRefs == null) {
-			relatedOneRefs = new HashMap<String, ModelKey>();
-		}
-		relatedOneRefs.put(propName, ref);
-	}
-
-	public ModelKey getRelatedOneRef(String propName) {
-		return relatedOneRefs == null ? null : (ModelKey) relatedOneRefs.get(propName);
-	}
-
 }

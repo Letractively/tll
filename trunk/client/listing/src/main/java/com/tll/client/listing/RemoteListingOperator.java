@@ -18,7 +18,7 @@ import com.tll.common.data.ListingPayload.ListingStatus;
 import com.tll.common.data.rpc.IListingService;
 import com.tll.common.data.rpc.IListingServiceAsync;
 import com.tll.common.model.Model;
-import com.tll.common.search.ISearch;
+import com.tll.common.search.IListingSearch;
 import com.tll.dao.Sorting;
 
 /**
@@ -27,9 +27,9 @@ import com.tll.dao.Sorting;
  * @param <S> the search type
  */
 @SuppressWarnings("unchecked")
-public final class RemoteListingOperator<S extends ISearch> extends AbstractListingOperator<Model> {
+public final class RemoteListingOperator<S extends IListingSearch> extends AbstractListingOperator<Model> {
 
-	private static final IListingServiceAsync<ISearch, IMarshalable> svc;
+	private static final IListingServiceAsync<IListingSearch, IMarshalable> svc;
 	static {
 		svc = (IListingServiceAsync) GWT.create(IListingService.class);
 	}

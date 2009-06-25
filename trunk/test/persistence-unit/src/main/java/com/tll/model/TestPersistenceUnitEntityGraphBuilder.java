@@ -9,7 +9,6 @@ import java.util.Set;
 import org.apache.commons.lang.math.RandomUtils;
 
 import com.google.inject.Inject;
-import com.tll.SystemError;
 
 /**
  * TestPersistenceUnitEntityGraphBuilder
@@ -29,13 +28,13 @@ public final class TestPersistenceUnitEntityGraphBuilder extends AbstractEntityG
 	}
 
 	@Override
-	protected void stub() {
+	protected void stub() throws IllegalStateException {
 		try {
 			stubRudimentaryEntities();
 			stubAccounts();
 		}
 		catch(final Exception e) {
-			throw new SystemError("Unable to stub entity graph: " + e.getMessage(), e);
+			throw new IllegalStateException("Unable to stub entity graph: " + e.getMessage(), e);
 		}
 	}
 

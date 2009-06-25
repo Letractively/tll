@@ -42,6 +42,7 @@ import com.tll.common.data.AuxDataRequest;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 import com.tll.common.model.SmbizEntityType;
+import com.tll.common.search.PrimaryKeySearch;
 
 /**
  * InterfacesView - AbstractView for managing Interfaces and the sub-entities.
@@ -195,7 +196,7 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 
 				@Override
 				public FieldPanel<?> resolveFieldPanel(SmbizEntityType type) {
-								switch(type) {
+					switch(type) {
 						case INTERFACE_SWITCH:
 							return new SwitchInterfacePanel();
 						case INTERFACE_SINGLE:
@@ -210,7 +211,7 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 				@Override
 				public IRpcCommand load(ModelKey intfKey, AuxDataRequest adr) {
 					final CrudCommand c = new CrudCommand();
-					c.loadByPrimaryKey(intfKey, null, adr);
+								c.load(new PrimaryKeySearch(intfKey), adr);
 					return c;
 				}
 			}, new CrudCommand());

@@ -22,8 +22,7 @@ import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 import com.tll.common.model.SmbizEntityType;
-import com.tll.common.search.AccountSearch;
-import com.tll.criteria.CriteriaType;
+import com.tll.common.search.NamedQuerySearch;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
@@ -76,9 +75,8 @@ public final class CustomerListingView extends ListingView<CustomerListingViewIn
 		}
 		mercListingLink.setVisible(r.getMerchantParentRef() != null);
 
-		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.CUSTOMER);
-		criteria.setNamedQuery("account.customerList");
-		criteria.setQueryParam(new IntPropertyValue("merchantId", mercRef.getId()));
+		final NamedQuerySearch criteria = new NamedQuerySearch(SmbizEntityType.CUSTOMER, "account.customerList", true);
+		criteria.addParam(new IntPropertyValue("merchantId", mercRef.getId()));
 
 		final AccountListingConfig config = new AccountListingConfig() {
 

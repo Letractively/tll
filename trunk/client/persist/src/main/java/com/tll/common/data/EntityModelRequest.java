@@ -1,7 +1,7 @@
 /**
  * The Logic Lab
  * @author jpk
- * @since May 15, 2009
+ * @since May 19, 2009
  */
 package com.tll.common.data;
 

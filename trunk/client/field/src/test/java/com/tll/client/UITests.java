@@ -116,7 +116,7 @@ public final class UITests extends AbstractUITest {
 			private String getRowString(ValueChangeEvent<?> event) {
 				final IFieldWidget<?> source = (IFieldWidget<?>) event.getSource();
 				String val;
-				if(event.getValue() instanceof Collection) {
+				if(event.getValue() instanceof Collection<?>) {
 					final Collection<?> clc = (Collection<?>) event.getValue();
 					final StringBuilder sb = new StringBuilder();
 					for(final Object e : clc) {

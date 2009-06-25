@@ -26,6 +26,7 @@
     <module>rpc</module>
     <module>model</module>
     <module>field</module>
+    <module>marshal</module>
     <module>persist</module>
     <module>listing</module>
     <module>login</module>

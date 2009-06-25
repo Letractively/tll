@@ -3,7 +3,7 @@ package com.tll.listhandler;
 import java.util.Collection;
 import java.util.List;
 
-import com.tll.criteria.ICriteria;
+import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
@@ -26,7 +26,7 @@ public interface IListingDataProvider {
 	 * @return list of result elements or an empty list if no matches are found.
 	 * @throws InvalidCriteriaException
 	 */
-	List<SearchResult<?>> find(ICriteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException;
+	List<SearchResult<?>> find(Criteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException;
 
 	/**
 	 * Retrieves the ids of the entities that match the given criteria.
@@ -36,7 +36,7 @@ public interface IListingDataProvider {
 	 *         results are found.
 	 * @throws InvalidCriteriaException
 	 */
-	List<Integer> getIds(ICriteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException;
+	List<Integer> getIds(Criteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException;
 
 	/**
 	 * Retrieves entities from a collection of ids.
@@ -58,6 +58,6 @@ public interface IListingDataProvider {
 	 * @return the page result
 	 * @throws InvalidCriteriaException
 	 */
-	IPageResult<SearchResult<?>> getPage(ICriteria<? extends IEntity> criteria, Sorting sorting, int offset, int pageSize)
+	IPageResult<SearchResult<?>> getPage(Criteria<? extends IEntity> criteria, Sorting sorting, int offset, int pageSize)
 	throws InvalidCriteriaException;
 }

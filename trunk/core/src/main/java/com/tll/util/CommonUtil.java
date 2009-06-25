@@ -86,7 +86,7 @@ public abstract class CommonUtil {
 		else if(obj instanceof Date) {
 			return ((Date) obj).clone();
 		}
-		else if(obj instanceof Enum) {
+		else if(obj instanceof Enum<?>) {
 			return obj; // no need to clone enums since they are immutable
 		}
 		throw new IllegalArgumentException(

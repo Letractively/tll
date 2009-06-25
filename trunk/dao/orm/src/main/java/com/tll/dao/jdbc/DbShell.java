@@ -21,7 +21,6 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import com.google.inject.Inject;
-import com.tll.SystemError;
 import com.tll.dao.IDbDialectHandler;
 
 /**
@@ -65,9 +64,9 @@ public final class DbShell {
 			s = IOUtils.toString(url.openStream());
 		}
 		catch(final IOException e) {
-			throw new SystemError("Unable to read sql/ddl resource: " + e.getMessage(), e);
+			throw new IllegalStateException("Unable to read sql/ddl resource: " + e.getMessage(), e);
 		}
-	
+
 		// remove comments
 		final String[] lines = s.split(NL);
 		final StringBuffer sb = new StringBuffer();
@@ -78,7 +77,7 @@ public final class DbShell {
 				sb.append(' ');
 			}
 		}
-	
+
 		if(log.isDebugEnabled()) {
 			log.debug("Executing SQL/DDL commands: " + url.getPath() + "...");
 		}

@@ -22,9 +22,9 @@ import org.springframework.util.StringUtils;
 
 import com.google.inject.Inject;
 import com.tll.criteria.Comparator;
+import com.tll.criteria.Criteria;
 import com.tll.criteria.CriterionGroup;
 import com.tll.criteria.DBType;
-import com.tll.criteria.ICriteria;
 import com.tll.criteria.ICriterion;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
@@ -178,7 +178,7 @@ public class EntityDao implements IEntityDao {
 				if(criterionValue.getClass().isArray()) {
 					return ObjectUtils.containsElement((Object[]) criterionValue, checkValue);
 				}
-				else if(criterionValue instanceof Collection) {
+				else if(criterionValue instanceof Collection<?>) {
 					return ((Collection<?>) criterionValue).contains(checkValue);
 				}
 				else if(criterionValue instanceof String) {
@@ -233,12 +233,12 @@ public class EntityDao implements IEntityDao {
 	 * @param criteria
 	 * @return List of entities that best satisfies the query ref
 	 */
-	private <E extends IEntity> List<E> processQuery(final ICriteria<E> criteria) {
+	private <E extends IEntity> List<E> processQuery(final Criteria<E> criteria) {
 		// base impl: return all
 		return loadAll(criteria.getEntityClass());
 	}
 
-	public <E extends IEntity> List<E> findEntities(final ICriteria<E> criteria, Sorting sorting)
+	public <E extends IEntity> List<E> findEntities(final Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
@@ -298,7 +298,7 @@ public class EntityDao implements IEntityDao {
 		return list;
 	}
 
-	public <E extends IEntity> List<SearchResult<?>> find(final ICriteria<E> criteria, Sorting sorting)
+	public <E extends IEntity> List<SearchResult<?>> find(final Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
@@ -356,7 +356,7 @@ public class EntityDao implements IEntityDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> E findEntity(final ICriteria<E> criteria) throws InvalidCriteriaException {
+	public <E extends IEntity> E findEntity(final Criteria<E> criteria) throws InvalidCriteriaException {
 		final List<SearchResult<?>> list = find(criteria, null);
 		if(list == null || list.size() < 1) {
 			throw new EntityNotFoundException("No matching entity found.");
@@ -520,7 +520,7 @@ public class EntityDao implements IEntityDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> List<Integer> getIds(final ICriteria<E> criteria, Sorting sorting)
+	public <E extends IEntity> List<Integer> getIds(final Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
 		final List<SearchResult<?>> list = find(criteria, sorting);
 		if(list == null) {
@@ -533,7 +533,7 @@ public class EntityDao implements IEntityDao {
 		return idlist;
 	}
 
-	public <E extends IEntity> IPageResult<SearchResult<?>> getPage(final ICriteria<E> criteria, Sorting sorting,
+	public <E extends IEntity> IPageResult<SearchResult<?>> getPage(final Criteria<E> criteria, Sorting sorting,
 			final int offset, final int pageSize) throws InvalidCriteriaException {
 		List<SearchResult<?>> elist = find(criteria, sorting);
 		if(elist == null) {

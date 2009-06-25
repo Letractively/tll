@@ -66,6 +66,12 @@
 
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>tll-core</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>
       <version>${project.version}</version>
       <classifier>testassets</classifier>

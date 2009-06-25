@@ -10,8 +10,6 @@ import com.tll.client.SmbizAdmin;
 import com.tll.client.ui.HtmlListPanel;
 import com.tll.common.model.ModelKey;
 import com.tll.common.model.SmbizEntityType;
-import com.tll.common.search.AccountSearch;
-import com.tll.criteria.CriteriaType;
 
 /**
  * IspMain - ISP root view.
@@ -45,10 +43,6 @@ public class IspMain extends MainView {
 		assert ac != null;
 		final ModelKey userAccountRef = ac.getUserAccount().getKey();
 		assert userAccountRef != null && userAccountRef.isSet();
-
-		final AccountSearch as = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.MERCHANT);
-		as.setParentAccountRef(userAccountRef);
-
 		addWidget(links);
 	}
 

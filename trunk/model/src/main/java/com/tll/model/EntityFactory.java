@@ -1,8 +1,8 @@
 package com.tll.model;
 
 import com.google.inject.Inject;
-import com.tll.SystemError;
 import com.tll.model.key.IPrimaryKeyGenerator;
+import com.tll.util.StringUtil;
 
 /**
  * The entity factory. This class generates the ids for the entities that are
@@ -31,11 +31,13 @@ public final class EntityFactory implements IEntityFactory {
 		try {
 			entity = entityClass.newInstance();
 		}
-		catch(IllegalAccessException iae) {
-			throw new SystemError("Could not access %1 constructor -- make sure it is public", entityClass.getName(), iae);
+		catch(final IllegalAccessException iae) {
+			throw new IllegalStateException(StringUtil.replaceVariables(
+					"Could not access %1 constructor -- make sure it is public", entityClass.getName()), iae);
 		}
-		catch(InstantiationException ie) {
-			throw new SystemError("Unable to instantiate the entity: %1", entityClass.getName(), ie);
+		catch(final InstantiationException ie) {
+			throw new IllegalStateException(StringUtil.replaceVariables("Unable to instantiate the entity: %1", entityClass
+					.getName()), ie);
 		}
 		if(generate) setGenerated(entity);
 		return entity;

@@ -6,7 +6,7 @@
 package com.tll.common.data;
 
 import com.tll.IMarshalable;
-import com.tll.common.search.ISearch;
+import com.tll.common.search.IListingSearch;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
 
@@ -16,7 +16,7 @@ import com.tll.listhandler.ListHandlerType;
  * @author jpk
  * @param <S> The search type
  */
-public final class RemoteListingDefinition<S extends ISearch> implements IMarshalable {
+public final class RemoteListingDefinition<S extends IListingSearch> implements IMarshalable {
 
 	private ListHandlerType listHandlerType;
 	private S searchCriteria;

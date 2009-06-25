@@ -8,7 +8,7 @@ package com.tll.server.rpc.listing.mock;
 import com.google.inject.Inject;
 import com.tll.common.data.ListingRequest;
 import com.tll.common.model.IEntityType;
-import com.tll.common.search.ISearch;
+import com.tll.common.search.IListingSearch;
 import com.tll.listhandler.IListingDataProvider;
 import com.tll.model.IEntity;
 import com.tll.server.RequestContext;
@@ -37,7 +37,7 @@ public class TestListingDataProviderResolver implements IListingDataProviderReso
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public IListingDataProvider resolve(RequestContext requestContext, ListingRequest<? extends ISearch> request)
+	public IListingDataProvider resolve(RequestContext requestContext, ListingRequest<? extends IListingSearch> request)
 	throws IllegalArgumentException {
 		try {
 			final PersistContext mc = (PersistContext) requestContext.getServletContext().getAttribute(PersistContext.KEY);

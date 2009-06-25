@@ -60,7 +60,7 @@ public final class SearchResult<T> {
 	/**
 	 * @return The type of this search result. May be <code>null</code>.
 	 */
-	Class<? extends IEntity> getRefType() {
+	Class<?> getRefType() {
 		if(element instanceof IEntity) {
 			// entity
 			return ((IEntity) element).entityClass();

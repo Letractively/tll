@@ -18,7 +18,6 @@ import com.google.inject.Module;
 import com.tll.AbstractInjectedTest;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
-import com.tll.config.Config;
 import com.tll.di.MockDaoModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
@@ -38,25 +37,23 @@ import com.tll.util.CommonUtil;
 
 	protected static final Map<String, Object> tupleMap = new HashMap<String, Object>();
 
-	private Config config;
-
 	@BeforeClass(alwaysRun = true)
 	public final void onBeforeClass() {
 		beforeClass();
 	}
 
 	@Override
-	protected void beforeClass() {
-		config = Config.load();
-		super.beforeClass();
-	}
-
-	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
 		modules.add(new ModelModule());
-		modules.add(new MockEntityFactoryModule(config));
-		modules.add(new MockDaoModule(config));
+		modules.add(new MockEntityFactoryModule());
+		modules.add(new MockDaoModule() {
+
+			@Override
+			protected void bindEntityGraphBuilder() {
+				// TODO
+			}
+		});
 		modules.add(new Module() {
 
 			@Override

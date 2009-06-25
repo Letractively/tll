@@ -41,6 +41,7 @@ import com.tll.di.ValidationModule;
 import com.tll.model.Address;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.MockEntityFactory;
+import com.tll.model.TestPersistenceUnitEntityAssembler;
 import com.tll.service.entity.EntityService;
 import com.tll.service.entity.IEntityService;
 
@@ -129,12 +130,18 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 	protected void addModules(List<Module> modules) {
 		modules.add(new ValidationModule());
 		modules.add(new ModelModule());
-		modules.add(new MockEntityFactoryModule(config));
+		modules.add(new MockEntityFactoryModule());
 		super.addModules(modules);
 		modules.add(new DbDialectModule(config));
 		modules.add(new OrmDaoModule(config));
 		modules.add(new TransactionModule(config));
-		modules.add(new EntityAssemblerModule(config));
+		modules.add(new EntityAssemblerModule() {
+
+			@Override
+			protected void bindEntityAssembler() {
+				bind(IEntityAssembler.class).to(TestPersistenceUnitEntityAssembler.class).in(Scopes.SINGLETON);
+			}
+		});
 		modules.add(new Module() {
 
 			@Override

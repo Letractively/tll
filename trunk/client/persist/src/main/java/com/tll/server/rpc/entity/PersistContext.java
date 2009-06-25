@@ -35,13 +35,12 @@ public final class PersistContext {
 	private final MailManager mailManager;
 	private final ISchemaInfo schemaInfo;
 	private final Marshaler marshaler;
+	private final IMarshalOptionsResolver marshalOptionsResolver;
 	private final EntityManagerFactory entityManagerFactory;
 	private final IEntityTypeResolver entityTypeResolver;
 	private final IEntityAssembler entityAssembler;
 	private final IEntityServiceFactory entityServiceFactory;
-	private final INamedQueryResolver namedQueryResolver;
 	private final IExceptionHandler exceptionHandler;
-
 
 	/**
 	 * Constructor
@@ -49,28 +48,29 @@ public final class PersistContext {
 	 * @param mailManager
 	 * @param schemaInfo
 	 * @param marshaler
+	 * @param marshalOptionsResolver
 	 * @param entityManagerFactory
 	 * @param entityTypeResolver
 	 * @param entityAssembler
 	 * @param entityServiceFactory
-	 * @param namedQueryResolver
 	 * @param exceptionHandler
 	 */
 	@Inject
 	public PersistContext(RefData refData, MailManager mailManager, ISchemaInfo schemaInfo, Marshaler marshaler,
-			EntityManagerFactory entityManagerFactory, IEntityTypeResolver entityTypeResolver,
+			IMarshalOptionsResolver marshalOptionsResolver, EntityManagerFactory entityManagerFactory,
+			IEntityTypeResolver entityTypeResolver,
 			IEntityAssembler entityAssembler, IEntityServiceFactory entityServiceFactory,
-			INamedQueryResolver namedQueryResolver, IExceptionHandler exceptionHandler) {
+			IExceptionHandler exceptionHandler) {
 		super();
 		this.refData = refData;
 		this.mailManager = mailManager;
 		this.schemaInfo = schemaInfo;
 		this.marshaler = marshaler;
+		this.marshalOptionsResolver = marshalOptionsResolver;
 		this.entityManagerFactory = entityManagerFactory;
 		this.entityTypeResolver = entityTypeResolver;
 		this.entityAssembler = entityAssembler;
 		this.entityServiceFactory = entityServiceFactory;
-		this.namedQueryResolver = namedQueryResolver;
 		this.exceptionHandler = exceptionHandler;
 	}
 
@@ -102,10 +102,6 @@ public final class PersistContext {
 		return marshaler;
 	}
 
-	public INamedQueryResolver getQueryResolver() {
-		return namedQueryResolver;
-	}
-
 	public IExceptionHandler getExceptionHandler() {
 		return exceptionHandler;
 	}
@@ -114,4 +110,7 @@ public final class PersistContext {
 		return entityTypeResolver;
 	}
 
+	public IMarshalOptionsResolver getMarshalOptionsResolver() {
+		return marshalOptionsResolver;
+	}
 }

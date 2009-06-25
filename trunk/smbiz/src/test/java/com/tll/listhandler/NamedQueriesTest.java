@@ -18,7 +18,6 @@ import org.testng.annotations.Test;
 import com.google.inject.Module;
 import com.tll.AbstractDbAwareTest;
 import com.tll.criteria.Criteria;
-import com.tll.criteria.ICriteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.criteria.QueryParam;
@@ -109,14 +108,26 @@ import com.tll.service.entity.IEntityServiceFactory;
 		modules.add(new ValidationModule());
 		modules.add(new ModelModule());
 		if(mock) {
-			modules.add(new MockEntityFactoryModule(getConfig()));
-			modules.add(new MockDaoModule(getConfig()));
+			modules.add(new MockEntityFactoryModule());
+			modules.add(new MockDaoModule() {
+
+				@Override
+				protected void bindEntityGraphBuilder() {
+					// TODO
+				}
+			});
 		}
 		else {
 			modules.add(new DbDialectModule(getConfig()));
 			modules.add(new OrmDaoModule(getConfig()));
 		}
-		modules.add(new EntityAssemblerModule(getConfig()));
+		modules.add(new EntityAssemblerModule() {
+
+			@Override
+			protected void bindEntityAssembler() {
+				// TODO
+			}
+		});
 		modules.add(new EntityServiceFactoryModule());
 	}
 
@@ -146,7 +157,7 @@ import com.tll.service.entity.IEntityServiceFactory;
 	public void test() throws Exception {
 
 		IListingDataProvider dataProvider;
-		ICriteria<IEntity> criteria;
+		Criteria<IEntity> criteria;
 
 		// iterator through all defined select named queries
 		for(final SelectNamedQueries nq : querySortBindings.keySet()) {

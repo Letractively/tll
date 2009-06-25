@@ -45,7 +45,7 @@ public class UserEditView extends EditView {
 	 * Constructor
 	 */
 	public UserEditView() {
-		super(new UserPanel(), null);
+		super(new UserPanel());
 	}
 
 	@Override

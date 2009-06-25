@@ -6,7 +6,6 @@
 package com.tll.server.rpc.entity;
 
 import com.tll.common.data.IModelRelatedRequest;
-import com.tll.model.IEntity;
 
 /**
  * IPersistServiceImplResolver
@@ -22,7 +21,7 @@ public interface IPersistServiceImplResolver {
 	 * @throws IllegalArgumentException When the model related requesst class
 	 *         can't be resolved to a service impl type
 	 */
-	Class<? extends IPersistServiceImpl<? extends IEntity>> resolve(
+	Class<? extends IPersistServiceImpl> resolve(
 			IModelRelatedRequest request)
 			throws IllegalArgumentException;
 }

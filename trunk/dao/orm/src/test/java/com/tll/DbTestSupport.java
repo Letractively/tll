@@ -19,7 +19,6 @@ import com.atomikos.icatch.jta.UserTransactionManager;
 import com.google.inject.Guice;
 import com.tll.config.Config;
 import com.tll.criteria.Criteria;
-import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.SearchResult;
@@ -62,7 +61,7 @@ public final class DbTestSupport {
 	 * @param criteria
 	 * @return List of search results
 	 */
-	public static final <E extends IEntity> List<SearchResult<?>> getEntitiesFromDb(IEntityDao dao, ICriteria<E> criteria) {
+	public static final <E extends IEntity> List<SearchResult<?>> getEntitiesFromDb(IEntityDao dao, Criteria<E> criteria) {
 		try {
 			return dao.find(criteria, null);
 		}

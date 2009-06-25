@@ -1,11 +1,6 @@
 package com.tll.model;
 
 import com.google.inject.Inject;
-import com.tll.SystemError;
-import com.tll.model.IEntity;
-import com.tll.model.IEntityAssembler;
-import com.tll.model.IEntityFactory;
-import com.tll.model.IEntityProvider;
 
 /**
  * TestPersistenceUnitEntityAssembler - Decorator around the {@link IEntityFactory} with additional
@@ -69,7 +64,7 @@ public final class TestPersistenceUnitEntityAssembler implements IEntityFactory,
 		}
 
 		else
-			throw new SystemError("Unsupported entity type '" + entityType + "' for assembly");
+			throw new IllegalArgumentException("Unsupported entity type '" + entityType + "' for assembly");
 		return e;
 	}
 }

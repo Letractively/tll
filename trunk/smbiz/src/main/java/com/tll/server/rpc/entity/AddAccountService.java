@@ -8,12 +8,12 @@ package com.tll.server.rpc.entity;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.tll.SystemError;
 import com.tll.common.data.AddAccountRequest;
 import com.tll.common.data.ModelPayload;
 import com.tll.common.data.Status;
 import com.tll.common.data.rpc.IAddAccountService;
 import com.tll.common.model.Model;
+import com.tll.common.model.SmbizEntityType;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.model.Account;
@@ -43,13 +43,13 @@ public class AddAccountService extends RpcServlet implements IAddAccountService 
 		final AppContext ac = (AppContext) getServletContext().getAttribute(AppContext.KEY);
 		assert ac != null;
 		final com.tll.service.entity.account.AddAccountService svc = ac.getAddAccountService();
-		final PersistContext mc = (PersistContext) getServletContext().getAttribute(PersistContext.KEY);
-		assert svc != null && mc != null;
-		final Marshaler mlr = mc.getMarshaler();
+		final PersistContext pc = (PersistContext) getServletContext().getAttribute(PersistContext.KEY);
+		assert svc != null && pc != null;
+		final Marshaler mlr = pc.getMarshaler();
 
 		Class<? extends Account> accountClass;
 		try {
-			accountClass = (Class<? extends Account>) mc.getEntityTypeResolver().resolveEntityClass(request.getEntityType());
+			accountClass = (Class<? extends Account>) pc.getEntityTypeResolver().resolveEntityClass(request.getEntityType());
 		}
 		catch(final ClassCastException e) {
 			s.addMsg("Invalid account type.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
@@ -101,19 +101,14 @@ public class AddAccountService extends RpcServlet implements IAddAccountService 
 			}
 
 			// marshal the added account
-			maccount = mlr.marshalEntity(account, AccountService.MARSHAL_OPTIONS);
+			maccount = mlr.marshalEntity(account, pc.getMarshalOptionsResolver().resolve(SmbizEntityType.ACCOUNT));
 			p.setModel(maccount);
 
 			return p;
 		}
-		catch(final SystemError e) {
-			RpcServlet.exceptionToStatus(e, s);
-			mc.getExceptionHandler().handleException(e);
-			throw e;
-		}
 		catch(final RuntimeException e) {
 			RpcServlet.exceptionToStatus(e, s);
-			mc.getExceptionHandler().handleException(e);
+			pc.getExceptionHandler().handleException(e);
 			throw e;
 		}
 	}

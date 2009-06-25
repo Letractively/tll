@@ -7,8 +7,6 @@ package com.tll.client.mvc.view;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.common.model.SmbizEntityType;
-import com.tll.common.search.AccountSearch;
-import com.tll.criteria.CriteriaType;
 
 /**
  * AspMain - ASP root view.
@@ -37,10 +35,6 @@ public class AspMain extends MainView {
 	 */
 	public AspMain() {
 		super();
-
-		final AccountSearch as = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.ISP);
-		as.setNamedQuery("account.ispList");
-
 		lbl = new Label("This is the ASP main view.");
 		addWidget(lbl);
 	}

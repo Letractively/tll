@@ -17,8 +17,8 @@ public class NotEmptyValidator implements IValidator {
 	}
 
 	public Object validate(Object value) throws ValidationException {
-		if(value instanceof Collection) {
-			Collection<?> clc = (Collection<?>) value;
+		if(value instanceof Collection<?>) {
+			final Collection<?> clc = (Collection<?>) value;
 			if(clc.size() < 1) {
 				throw new ValidationException("At least one item must be selected.");
 			}

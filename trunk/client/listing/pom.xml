@@ -167,6 +167,11 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>client-marshal</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>client-persist</artifactId>
       <version>${project.version}</version>
     </dependency>
