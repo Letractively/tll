@@ -16,6 +16,7 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
+import com.google.inject.Scopes;
 import com.tll.AbstractDbAwareTest;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.IQueryParam;
@@ -34,6 +35,10 @@ import com.tll.di.ModelModule;
 import com.tll.di.OrmDaoModule;
 import com.tll.di.ValidationModule;
 import com.tll.model.IEntity;
+import com.tll.model.IEntityAssembler;
+import com.tll.model.IEntityGraphBuilder;
+import com.tll.model.SmbizEntityAssembler;
+import com.tll.model.SmbizEntityGraphBuilder;
 import com.tll.model.schema.PropertyType;
 import com.tll.service.entity.IEntityServiceFactory;
 
@@ -113,7 +118,7 @@ import com.tll.service.entity.IEntityServiceFactory;
 
 				@Override
 				protected void bindEntityGraphBuilder() {
-					// TODO
+					bind(IEntityGraphBuilder.class).to(SmbizEntityGraphBuilder.class).in(Scopes.SINGLETON);
 				}
 			});
 		}
@@ -125,7 +130,7 @@ import com.tll.service.entity.IEntityServiceFactory;
 
 			@Override
 			protected void bindEntityAssembler() {
-				// TODO
+				bind(IEntityAssembler.class).to(SmbizEntityAssembler.class).in(Scopes.SINGLETON);
 			}
 		});
 		modules.add(new EntityServiceFactoryModule());

@@ -559,6 +559,11 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>tll-mail</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>tll-model</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
@@ -610,12 +615,17 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>client-rpc</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>client-model</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>client-rpc</artifactId>
+      <artifactId>client-marshal</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>

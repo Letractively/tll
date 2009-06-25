@@ -10,6 +10,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
+import com.google.inject.Scopes;
 import com.tll.AbstractDbAwareTest;
 import com.tll.dao.IEntityDao;
 import com.tll.di.DbDialectModule;
@@ -20,7 +21,9 @@ import com.tll.di.ModelModule;
 import com.tll.di.OrmDaoModule;
 import com.tll.di.TransactionModule;
 import com.tll.di.ValidationModule;
+import com.tll.model.IEntityAssembler;
 import com.tll.model.MockEntityFactory;
+import com.tll.model.SmbizEntityAssembler;
 
 /**
  * AbstractEntityServiceTest - Base class for all entity service related testing
@@ -49,7 +52,7 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 
 			@Override
 			protected void bindEntityAssembler() {
-				// TODO
+				bind(IEntityAssembler.class).to(SmbizEntityAssembler.class).in(Scopes.SINGLETON);
 			}
 		});
 		modules.add(new EntityServiceFactoryModule());

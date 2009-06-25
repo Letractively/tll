@@ -39,10 +39,6 @@
       <groupId>com.google.code.gwt-log</groupId>
       <artifactId>gwt-log</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.google.code.gwt-incubator</groupId>
-      <artifactId>gwt-incubator</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>commons-logging</groupId>
@@ -52,11 +48,6 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-config</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

@@ -15,6 +15,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import com.google.inject.Scopes;
 import com.tll.AbstractInjectedTest;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
@@ -22,7 +23,9 @@ import com.tll.di.MockDaoModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
 import com.tll.model.IEntity;
+import com.tll.model.IEntityGraphBuilder;
 import com.tll.model.MockEntityFactory;
+import com.tll.model.SmbizEntityGraphBuilder;
 import com.tll.server.rpc.entity.IEntityTypeResolver;
 import com.tll.server.rpc.entity.SmbizEntityTypeResolver;
 import com.tll.util.CommonUtil;
@@ -51,7 +54,7 @@ import com.tll.util.CommonUtil;
 
 			@Override
 			protected void bindEntityGraphBuilder() {
-				// TODO
+				bind(IEntityGraphBuilder.class).to(SmbizEntityGraphBuilder.class).in(Scopes.SINGLETON);
 			}
 		});
 		modules.add(new Module() {

@@ -19,9 +19,7 @@ import com.tll.common.model.Model;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.common.search.IListingSearch;
-import com.tll.common.search.INamedQuerySearch;
 import com.tll.criteria.Criteria;
-import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
@@ -118,23 +116,11 @@ IListingService<S, Model> {
 						// translate client side criteria to server side criteria
 						final Criteria<? extends IEntity> criteria;
 						try {
-							// named query?
-							if(search instanceof INamedQuerySearch) {
-								final INamedQuerySearch nqs = (INamedQuerySearch) search;
-								final ISelectNamedQueryDef queryDef =
-									listingContext.getNamedQueryResolver().resolveNamedQuery(nqs.getQueryName());
-								if(queryDef == null) {
-									throw new IllegalArgumentException("Unable to resolve named query: " + nqs.getQueryName());
-								}
-								criteria = new Criteria<IEntity>(queryDef, nqs.getQueryParams());
-							}
-							else {
-								// delegate
-								criteria = listingContext.getSearchTranslator().translateListingSearchCriteria(search);
-							}
+							// delegate
+							criteria = listingContext.getSearchTranslator().translateListingSearchCriteria(listingContext, search);
 						}
 						catch(final IllegalArgumentException iae) {
-							throw new ListingException(listingName, "Unable to translate listing command search criteria: "
+							throw new ListingException(listingName, "Unable to translate listing search criteria: "
 									+ listingRequest.descriptor(), iae);
 						}
 

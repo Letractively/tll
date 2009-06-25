@@ -18,9 +18,9 @@ import com.tll.client.ui.listing.ModelListingWidget;
  */
 public abstract class ListingView<I extends IViewInitializer> extends AbstractModelAwareView<I> {
 
-	protected static final ViewOptions VIEW_OPTIONS = new ViewOptions(true, false, true, false, false);
-
 	protected static abstract class AbstractListingViewClass extends ViewClass {
+
+		private static final ViewOptions VIEW_OPTIONS = new ViewOptions(true, false, true, false, false);
 
 		@Override
 		public ViewOptions getViewOptions() {

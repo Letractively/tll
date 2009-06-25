@@ -16,19 +16,17 @@
       com.tll.di.ValidationModule
       com.tll.di.ModelModule
       com.tll.di.MockEntityFactoryModule
-      com.tll.di.MockDaoModule
-      com.tll.di.EntityAssemblerModule
+      com.tll.di.TestMockDaoModule
+      com.tll.di.TestEntityAssemblerModule
       com.tll.di.EntityServiceFactoryModule
       com.tll.di.LogExceptionHandlerModule
-      com.tll.di.ClientPersistModule
-      com.tll.di.ListingModule
+      com.tll.di.TestListingModule
     </param-value>
   </context-param>
   
   <context-param>
     <param-name>di.handlers</param-name>
     <param-value> 
-      com.tll.server.rpc.entity.PersistContextBootstrapper
       com.tll.server.rpc.listing.ListingContextBootstrapper
     </param-value>
   </context-param>
@@ -76,15 +74,5 @@
     <servlet-name>ListingService</servlet-name>
     <url-pattern>/uitests/rpc/listing</url-pattern>
   </servlet-mapping>
-  
-  <servlet>
-    <servlet-name>CrudAuxDataService</servlet-name>
-    <servlet-class>com.tll.server.rpc.entity.CrudAuxDataService</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>CrudAuxDataService</servlet-name>
-    <url-pattern>/uitests/rpc/crud</url-pattern>
-    <url-pattern>/uitests/rpc/aux</url-pattern>
-  </servlet-mapping>
-  
+
 </web-app>

@@ -13,8 +13,8 @@ import com.tll.listhandler.IListingDataProvider;
 import com.tll.model.IEntity;
 import com.tll.server.RequestContext;
 import com.tll.server.rpc.entity.IEntityTypeResolver;
-import com.tll.server.rpc.entity.PersistContext;
 import com.tll.server.rpc.listing.IListingDataProviderResolver;
+import com.tll.service.entity.IEntityServiceFactory;
 
 
 /**
@@ -25,14 +25,19 @@ public class TestListingDataProviderResolver implements IListingDataProviderReso
 
 	private final IEntityTypeResolver etResolver;
 
+	private final IEntityServiceFactory entityServiceFactory;
+
 	/**
 	 * Constructor
 	 * @param etResolver
+	 * @param entityServiceFactory
 	 */
 	@Inject
-	public TestListingDataProviderResolver(IEntityTypeResolver etResolver) {
+	public TestListingDataProviderResolver(IEntityTypeResolver etResolver, IEntityServiceFactory entityServiceFactory) {
 		super();
+		assert etResolver != null && entityServiceFactory != null;
 		this.etResolver = etResolver;
+		this.entityServiceFactory = entityServiceFactory;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -40,9 +45,8 @@ public class TestListingDataProviderResolver implements IListingDataProviderReso
 	public IListingDataProvider resolve(RequestContext requestContext, ListingRequest<? extends IListingSearch> request)
 	throws IllegalArgumentException {
 		try {
-			final PersistContext mc = (PersistContext) requestContext.getServletContext().getAttribute(PersistContext.KEY);
 			final IEntityType et = request.getListingDef().getSearchCriteria().getEntityType();
-			return mc.getEntityServiceFactory().instanceByEntityType((Class<IEntity>) etResolver.resolveEntityClass(et));
+			return entityServiceFactory.instanceByEntityType((Class<IEntity>) etResolver.resolveEntityClass(et));
 		}
 		catch(final Exception e) {
 			// fall through
