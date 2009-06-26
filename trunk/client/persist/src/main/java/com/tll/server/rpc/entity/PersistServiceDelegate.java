@@ -22,6 +22,7 @@ import com.tll.common.data.PurgeRequest;
 import com.tll.common.data.Status;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
+import com.tll.common.search.ISearch;
 import com.tll.server.rpc.RpcServlet;
 
 /**
@@ -63,7 +64,7 @@ public final class PersistServiceDelegate {
 	 * @param request
 	 * @return the resultant payload
 	 */
-	public ModelPayload load(final LoadRequest<?> request) {
+	public ModelPayload load(final LoadRequest<? extends ISearch> request) {
 		final ModelPayload payload = new ModelPayload();
 		if(validateEntityRequest(request, payload)) {
 			resolveImpl(request, payload.getStatus()).load(request.getSearch(), payload);
@@ -151,7 +152,7 @@ public final class PersistServiceDelegate {
 				Constructor<?> c;
 				try {
 					c = svcType.getConstructor(PersistContext.class);
-					c.newInstance(context);
+					svc = (IPersistServiceImpl) c.newInstance(context);
 				}
 				catch(final Throwable e) {
 					throw new RuntimeException("Unable to instantiate Persist implementation instance: " + request.descriptor(),

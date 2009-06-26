@@ -3,7 +3,7 @@
  * @author jpk
  * Feb 21, 2008
  */
-package com.tll.server.rpc.entity.mock;
+package com.tll.server.rpc.entity.test;
 
 import com.tll.server.rpc.entity.AbstractPersistServiceImpl;
 import com.tll.server.rpc.entity.PersistContext;

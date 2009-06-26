@@ -5,7 +5,7 @@
 
   <!--
   Creates a jar containing test assets for the project this assembly 
-  is applied to allowing dependent projects to extend them. 
+  is applied to allowing dependent projects to use them. 
   -->
 
   <id>testassets</id>
@@ -23,8 +23,8 @@
         <exclude>**/SimpleEntityDaoTest*</exclude><!-- hack -->
       </excludes>
       <includes>
-        <include>**/mock/**</include>
         <include>**/test/**</include>
+        <include>**/mock/**</include>
         <include>**/I*</include><!-- include interfaces -->
         <include>**/Abstract*Test*</include>
         <include>**/*Util*</include>

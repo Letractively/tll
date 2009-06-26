@@ -1,29 +1,27 @@
 /**
  * The Logic Lab
- * @author jpk
- * @since May 15, 2009
+ * @author jpk Feb 12, 2009
  */
-package com.tll.common.model.mock;
+package com.tll.common.model.test;
 
 import com.tll.INameValueProvider;
 import com.tll.common.model.IEntityType;
 
-
 /**
- * TestEntityType - Corres. to the entities held in the test-persistence-unit
- * project.
+ * MockEntityType
  * @author jpk
  */
-public enum TestEntityType implements IEntityType, INameValueProvider<String> {
+public enum MockEntityType implements IEntityType, INameValueProvider<String> {
+
 	ACCOUNT("Account"),
 	ACCOUNT_ADDRESS("Account Address"),
 	ADDRESS("Address"),
-	CURRENCY("Currency"),
-	NESTED_ENTITY("Nested Entity");
+	PAYMENT_INFO("Payment Info"),
+	CURRENCY("Currency");
 
 	private String name;
 
-	private TestEntityType(String name) {
+	private MockEntityType(String name) {
 		this.name = name;
 	}
 

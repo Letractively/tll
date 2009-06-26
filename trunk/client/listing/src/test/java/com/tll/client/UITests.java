@@ -14,8 +14,8 @@ import com.tll.client.listing.PropertyBoundColumn;
 import com.tll.client.ui.listing.ListingWidget;
 import com.tll.client.ui.listing.ModelListingWidget;
 import com.tll.common.model.Model;
-import com.tll.common.model.mock.MockModelStubber;
-import com.tll.common.search.mock.TestAddressSearch;
+import com.tll.common.model.test.MockModelStubber;
+import com.tll.common.search.test.TestAddressSearch;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
 

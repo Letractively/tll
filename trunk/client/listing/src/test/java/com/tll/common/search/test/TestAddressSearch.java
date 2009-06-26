@@ -1,7 +1,7 @@
-package com.tll.common.search.mock;
+package com.tll.common.search.test;
 
 import com.tll.common.model.IEntityType;
-import com.tll.common.model.mock.TestEntityType;
+import com.tll.common.model.test.TestEntityType;
 import com.tll.common.search.IListingSearch;
 import com.tll.criteria.CriteriaType;
 

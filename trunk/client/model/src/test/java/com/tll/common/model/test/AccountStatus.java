@@ -3,24 +3,26 @@
  * @author jpk
  * Feb 12, 2009
  */
-package com.tll.common.model.mock;
+package com.tll.common.model.test;
 
 import com.tll.IMarshalable;
 import com.tll.INameValueProvider;
 
 
 /**
- * AddressType
+ * AccountStatus
  * @author jpk
  */
-public enum AddressType implements INameValueProvider<String>, IMarshalable {
-	HOME("Home"),
-	WORK("Work"),
-	CONTACT("Contact");
+public enum AccountStatus implements INameValueProvider<String>, IMarshalable {
+	NEW("New"),
+	OPEN("Open"),
+	PROBATION("Probation"),
+	CLOSED("Closed"),
+	DELETED("Deleted");
 
 	private final String name;
 
-	private AddressType(String name) {
+	private AccountStatus(final String name) {
 		this.name = name;
 	}
 
@@ -29,7 +31,7 @@ public enum AddressType implements INameValueProvider<String>, IMarshalable {
 	}
 
 	public String getValue() {
-		return name();
+		return toString();
 	}
 
 }

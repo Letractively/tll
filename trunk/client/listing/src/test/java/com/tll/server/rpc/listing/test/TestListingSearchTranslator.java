@@ -3,10 +3,10 @@
  * @author jpk
  * @since Jun 25, 2009
  */
-package com.tll.server.rpc.listing.mock;
+package com.tll.server.rpc.listing.test;
 
 import com.tll.common.search.IListingSearch;
-import com.tll.common.search.mock.TestAddressSearch;
+import com.tll.common.search.test.TestAddressSearch;
 import com.tll.criteria.Criteria;
 import com.tll.model.Address;
 import com.tll.model.IEntity;

@@ -8,7 +8,7 @@ package com.tll.common.data;
 import com.tll.common.model.Model;
 
 /**
- * PersistRequest
+ * PersistRequest - Model data transport for add/update crud ops.
  * @author jpk
  */
 public class PersistRequest extends ModelRequest {

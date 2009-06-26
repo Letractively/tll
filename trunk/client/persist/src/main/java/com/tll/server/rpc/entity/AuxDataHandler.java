@@ -128,7 +128,7 @@ public abstract class AuxDataHandler {
 		}
 
 		payload.setRefDataMaps(appRefDataMap);
-		payload.setEntityGroupMap(entityMap);
+		payload.setEntityMap(entityMap);
 		payload.setEntityPrototypes(entityPrototypes);
 	}
 }

@@ -1,4 +1,4 @@
-package com.tll.client.mock;
+package com.tll.client.test;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -14,9 +14,9 @@ import com.tll.client.ui.field.IIndexedFieldBoundWidget;
 import com.tll.client.ui.field.TabbedIndexedFieldPanel;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
-import com.tll.common.model.mock.AccountStatus;
-import com.tll.common.model.mock.AddressType;
-import com.tll.common.model.mock.MockModelStubber;
+import com.tll.common.model.test.AccountStatus;
+import com.tll.common.model.test.AddressType;
+import com.tll.common.model.test.MockModelStubber;
 
 /**
  * ComplexFieldPanel - Contains a simple field panel mocking a related one

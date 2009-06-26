@@ -3,26 +3,23 @@
  * @author jpk
  * Feb 12, 2009
  */
-package com.tll.common.model.mock;
+package com.tll.common.model.test;
 
 import com.tll.IMarshalable;
 import com.tll.INameValueProvider;
 
 
 /**
- * AccountStatus
+ * CreditCardType
  * @author jpk
  */
-public enum AccountStatus implements INameValueProvider<String>, IMarshalable {
-	NEW("New"),
-	OPEN("Open"),
-	PROBATION("Probation"),
-	CLOSED("Closed"),
-	DELETED("Deleted");
+public enum CreditCardType implements INameValueProvider<String>, IMarshalable {
+	VISA("Visa"),
+	MC("Master Card");
 
 	private final String name;
 
-	private AccountStatus(final String name) {
+	private CreditCardType(final String name) {
 		this.name = name;
 	}
 
@@ -31,7 +28,7 @@ public enum AccountStatus implements INameValueProvider<String>, IMarshalable {
 	}
 
 	public String getValue() {
-		return toString();
+		return name();
 	}
 
 }

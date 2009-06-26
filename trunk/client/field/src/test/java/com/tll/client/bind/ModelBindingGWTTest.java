@@ -17,7 +17,7 @@ import com.tll.common.model.IModelProperty;
 import com.tll.common.model.IndexOutOfRangeInPropPathException;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelTestUtils;
-import com.tll.common.model.mock.MockModelStubber;
+import com.tll.common.model.test.MockModelStubber;
 
 /**
  * ModelBindingGWTTest - Test that verifies client side data binding using

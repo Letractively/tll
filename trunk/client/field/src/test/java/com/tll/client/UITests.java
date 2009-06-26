@@ -19,7 +19,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.mock.ComplexFieldPanel;
+import com.tll.client.test.ComplexFieldPanel;
 import com.tll.client.ui.GridRenderer;
 import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
@@ -30,13 +30,13 @@ import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.GridFieldComposer;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.RadioGroupField.GridStyles;
-import com.tll.client.ui.mock.ModelViewer;
 import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.client.ui.msg.MsgPopupRegistry;
+import com.tll.client.ui.test.ModelViewer;
 import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
-import com.tll.common.model.mock.MockModelStubber;
+import com.tll.common.model.test.MockModelStubber;
 
 /**
  * UI Tests - GWT module for the sole purpose of verifying the DOM/Style of

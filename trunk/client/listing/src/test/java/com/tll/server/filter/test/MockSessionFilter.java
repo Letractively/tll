@@ -3,7 +3,7 @@
  * @author jpk
  * @since Mar 18, 2009
  */
-package com.tll.server.filter.mock;
+package com.tll.server.filter.test;
 
 import java.io.IOException;
 

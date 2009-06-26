@@ -41,7 +41,7 @@
   
   <filter>
     <filter-name>MockSessionFilter</filter-name>
-    <filter-class>com.tll.server.filter.mock.MockSessionFilter</filter-class>
+    <filter-class>com.tll.server.filter.test.MockSessionFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>MockSessionFilter</filter-name>

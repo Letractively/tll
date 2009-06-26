@@ -33,7 +33,7 @@ import com.tll.model.MockEntityFactory;
 import com.tll.model.NestedEntity;
 import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
 import com.tll.server.rpc.entity.IEntityTypeResolver;
-import com.tll.server.rpc.entity.mock.TestEntityTypeResolver;
+import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 
 /**
  * MarshallerTest

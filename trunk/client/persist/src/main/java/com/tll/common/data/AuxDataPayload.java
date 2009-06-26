@@ -41,9 +41,9 @@ public class AuxDataPayload extends Payload {
 	protected Map<RefDataType, Map<String, String>> refDataMaps;
 
 	/**
-	 * Map of entity lists keyed by the entity class name.
+	 * Map of entity lists keyed by the entity type.
 	 */
-	protected Map<IEntityType, List<Model>> entityGroupMap;
+	protected Map<IEntityType, List<Model>> entityMap;
 
 	/**
 	 * Set of entity prototypes
@@ -58,12 +58,12 @@ public class AuxDataPayload extends Payload {
 		this.refDataMaps = refDataMaps;
 	}
 
-	public Map<IEntityType, List<Model>> getEntityGroupMap() {
-		return entityGroupMap;
+	public Map<IEntityType, List<Model>> getEntityMap() {
+		return entityMap;
 	}
 
-	public void setEntityGroupMap(Map<IEntityType, List<Model>> entityMap) {
-		this.entityGroupMap = entityMap;
+	public void setEntityMap(Map<IEntityType, List<Model>> entityMap) {
+		this.entityMap = entityMap;
 	}
 
 	public Set<Model> getEntityPrototypes() {

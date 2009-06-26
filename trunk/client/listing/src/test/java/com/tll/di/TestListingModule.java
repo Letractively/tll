@@ -11,13 +11,13 @@ import com.tll.common.model.IEntityType;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.rpc.entity.IEntityTypeResolver;
 import com.tll.server.rpc.entity.IMarshalOptionsResolver;
-import com.tll.server.rpc.entity.mock.TestEntityTypeResolver;
+import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 import com.tll.server.rpc.listing.IListingDataProviderResolver;
 import com.tll.server.rpc.listing.IListingSearchTranslator;
 import com.tll.server.rpc.listing.INamedQueryResolver;
-import com.tll.server.rpc.listing.mock.TestListingDataProviderResolver;
-import com.tll.server.rpc.listing.mock.TestListingSearchTranslator;
-import com.tll.server.rpc.listing.mock.TestNamedQueryResolver;
+import com.tll.server.rpc.listing.test.TestListingDataProviderResolver;
+import com.tll.server.rpc.listing.test.TestListingSearchTranslator;
+import com.tll.server.rpc.listing.test.TestNamedQueryResolver;
 
 
 /**

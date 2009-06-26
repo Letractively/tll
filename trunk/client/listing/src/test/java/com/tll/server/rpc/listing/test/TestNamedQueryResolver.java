@@ -3,7 +3,7 @@
  * @author jpk
  * Feb 10, 2009
  */
-package com.tll.server.rpc.listing.mock;
+package com.tll.server.rpc.listing.test;
 
 import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.test.TestSelectNamedQueries;

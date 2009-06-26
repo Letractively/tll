@@ -3,7 +3,7 @@
  * @author jpk
  * Feb 12, 2009
  */
-package com.tll.common.model.mock;
+package com.tll.common.model.test;
 
 import java.util.Date;
 import java.util.LinkedHashSet;

@@ -3,7 +3,7 @@
  * @author jpk
  * @since May 15, 2009
  */
-package com.tll.server.rpc.listing.mock;
+package com.tll.server.rpc.listing.test;
 
 import com.google.inject.Inject;
 import com.tll.common.data.ListingRequest;

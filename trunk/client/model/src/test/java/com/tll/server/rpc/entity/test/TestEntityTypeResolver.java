@@ -3,10 +3,10 @@
  * @author jpk
  * @since May 15, 2009
  */
-package com.tll.server.rpc.entity.mock;
+package com.tll.server.rpc.entity.test;
 
 import com.tll.common.model.IEntityType;
-import com.tll.common.model.mock.TestEntityType;
+import com.tll.common.model.test.TestEntityType;
 import com.tll.server.rpc.entity.IEntityTypeResolver;
 import com.tll.util.EnumUtil;
 import com.tll.util.StringUtil;

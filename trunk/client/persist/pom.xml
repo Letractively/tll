@@ -26,6 +26,7 @@
           </suiteXmlFiles>
         </configuration>
       </plugin>
+      -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -37,14 +38,13 @@
             </goals>
             <configuration>
               <descriptors>
-                <descriptor>client-server-jar.xml</descriptor>
+                <!-- <descriptor>client-server-jar.xml</descriptor> -->
                 <descriptor>test-assets.xml</descriptor>
               </descriptors>
             </configuration>
           </execution>
         </executions>
       </plugin>
-      -->
     </plugins>
   </build>
 
@@ -189,6 +189,19 @@
       <groupId>com.tll</groupId>
       <artifactId>test-persistence-unit</artifactId>
       <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>test-service-layer</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-model</artifactId>
+      <version>${project.version}</version>
+      <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>

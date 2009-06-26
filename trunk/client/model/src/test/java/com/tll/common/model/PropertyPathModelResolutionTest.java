@@ -6,8 +6,8 @@ package com.tll.common.model;
 
 import org.testng.annotations.Test;
 
-import com.tll.common.model.mock.MockModelStubber;
-import com.tll.common.model.mock.MockModelStubber.ModelType;
+import com.tll.common.model.test.MockModelStubber;
+import com.tll.common.model.test.MockModelStubber.ModelType;
 
 /**
  * PropertyPathModelResolutionTest

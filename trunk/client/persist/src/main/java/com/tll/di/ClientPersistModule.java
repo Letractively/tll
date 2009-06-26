@@ -49,6 +49,11 @@ public abstract class ClientPersistModule extends AbstractModule {
 	protected abstract void bindEntityTypeResolver();
 
 	/**
+	 * Responsible for binding the {@link IMarshalOptionsResolver} implementation.
+	 */
+	protected abstract void bindMarshalOptionsResolver();
+
+	/**
 	 * Responsible for binding the needed {@link IPersistServiceImplResolver}
 	 * implementation.
 	 */
@@ -60,6 +65,9 @@ public abstract class ClientPersistModule extends AbstractModule {
 
 		// IEntityTypeResolver
 		bindEntityTypeResolver();
+
+		// IMarshalOptionsResolver
+		bindMarshalOptionsResolver();
 
 		// IPersistServiceImplResolver
 		bindPersistServiceImplResolver();

@@ -236,6 +236,13 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-persist</artifactId>
+      <version>${project.version}</version>
+      <classifier>testassets</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
       <version>5.8</version>

@@ -88,7 +88,7 @@ public abstract class AuxDataCacheHelper {
 		}
 
 		// entity lists
-		final Map<IEntityType, List<Model>> egm = payload.getEntityGroupMap();
+		final Map<IEntityType, List<Model>> egm = payload.getEntityMap();
 		if(egm != null) {
 			for(final Map.Entry<IEntityType, List<Model>> e : egm.entrySet()) {
 				adc.cacheEntityList(e.getKey(), e.getValue());

@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Feb 12, 2009
  */
-package com.tll.client.mock;
+package com.tll.client.test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,11 +15,11 @@ import com.tll.client.ui.field.AbstractFieldGroupProvider;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.RadioGroupField.GridStyles;
 import com.tll.common.model.Model;
-import com.tll.common.model.mock.AccountStatus;
-import com.tll.common.model.mock.AddressType;
-import com.tll.common.model.mock.CreditCardType;
-import com.tll.common.model.mock.MockEntityType;
-import com.tll.common.model.mock.MockModelStubber;
+import com.tll.common.model.test.AccountStatus;
+import com.tll.common.model.test.AddressType;
+import com.tll.common.model.test.CreditCardType;
+import com.tll.common.model.test.MockEntityType;
+import com.tll.common.model.test.MockModelStubber;
 import com.tll.refdata.RefDataType;
 
 /**

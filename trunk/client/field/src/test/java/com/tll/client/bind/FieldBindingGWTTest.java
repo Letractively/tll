@@ -2,8 +2,8 @@ package com.tll.client.bind;
 
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.tll.client.mock.ComplexFieldPanel;
-import com.tll.common.model.mock.MockModelStubber;
+import com.tll.client.test.ComplexFieldPanel;
+import com.tll.common.model.test.MockModelStubber;
 
 /**
  * GWT JUnit tests must extend GWTTestCase.

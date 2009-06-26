@@ -3,7 +3,7 @@
  * @author jpk
  * Feb 24, 2009
  */
-package com.tll.client.ui.mock;
+package com.tll.client.ui.test;
 
 import java.util.ArrayList;
 
