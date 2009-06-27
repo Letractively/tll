@@ -1,8 +1,0 @@
-<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="client-listing">
-  <test verbose="2" name="com.tll.server.rpc.listing.ListingProcessorTest" annotations="JDK">
-    <classes>
-      <class name="com.tll.server.rpc.listing.ListingProcessorTest"/>
-    </classes>
-  </test>
-</suite>

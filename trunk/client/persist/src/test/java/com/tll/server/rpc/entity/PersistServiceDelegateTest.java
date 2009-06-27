@@ -54,7 +54,8 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
  * PersistServiceDelegateTest
  * @author jpk
  */
-@Test(groups = "server")
+@Test(groups = {
+	"server", "client-persist" })
 public class PersistServiceDelegateTest extends AbstractInjectedTest {
 
 	@Override
