@@ -1,0 +1,120 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>tll-client</artifactId>
+    <groupId>com.tll</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+
+  <groupId>com.tll</groupId>
+  <artifactId>client-view</artifactId>
+  <name>client-view</name>
+  <version>${project.parent.version}</version>
+  <description>Client side view management and caching.</description>
+  
+  <build>
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>gwt-processing</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <property name="gwt.compile.style" value="PRETTY" />
+                <property name="gwt.compile.classpath" refid="maven.test.classpath" />
+                <property name="gwt.compile.modules" value="com.tll.UITests" />
+                <property name="gwt.shell.entryModule" value="com.tll.UITests" />
+                <property name="gwt.shell.startupUrl" value="UITests.html" />
+                <echo message="test classpath: ${gwt.compile.classpath}" />
+                <ant antfile="${basedir}/../build-gwt.xml">
+                  <target name="build-shell-exec-file" />
+                  <target name="build-shell-debug-exec-file" />
+                  <!-- <target name="compile" /> -->
+                </ant>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+
+        <executions>
+
+          <!-- generate the gwt war dir for testing -->
+          <execution>
+            <id>generate-gwt-war-dir</id>
+            <goals>
+              <goal>directory-single</goal>
+            </goals>
+            <phase>process-test-classes</phase>
+            <configuration>
+              <finalName>war</finalName>
+              <outputDirectory>target</outputDirectory>
+              <appendAssemblyId>false</appendAssemblyId>
+              <descriptors>
+                <descriptor>gwt-test-war-dir.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+
+        </executions>
+      </plugin>
+
+    </plugins>
+  </build>
+
+  <dependencies>
+    <!-- 
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    -->
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-ui</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-model</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.code.gwt-log</groupId>
+      <artifactId>gwt-log</artifactId>
+    </dependency>
+    <!--
+    <dependency>
+      <groupId>com.google.code.gwt-incubator</groupId>
+      <artifactId>gwt-incubator</artifactId>
+    </dependency>
+    -->
+
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-ui</artifactId>
+      <version>${project.version}</version>
+      <classifier>testassets</classifier>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
