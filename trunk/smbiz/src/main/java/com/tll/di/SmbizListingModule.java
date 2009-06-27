@@ -21,13 +21,6 @@ import com.tll.server.rpc.listing.SmbizNamedQueryResolver;
 public class SmbizListingModule extends ListingModule {
 
 	@Override
-	protected void bindEntityTypeResolver() {
-		// we declare this in SmbizClientPersistModule and guice doesn't allow
-		// redundant binding decls
-		// bind(IEntityTypeResolver.class).to(SmbizEntityTypeResolver.class).in(Scopes.SINGLETON);
-	}
-
-	@Override
 	protected void bindListingDataProviderResolver() {
 		bind(IListingDataProviderResolver.class).to(SmbizListingDataProviderResolver.class).in(Scopes.SINGLETON);
 	}
@@ -38,15 +31,7 @@ public class SmbizListingModule extends ListingModule {
 	}
 
 	@Override
-	protected void bindMarshalOptionsResolver() {
-		// we declare this in SmbizClientPersistModule and guice doesn't allow
-		// redundant binding decls
-		// bind(IMarshalOptionsResolver.class).to(SmbizMarshalOptionsResolver.class).in(Scopes.SINGLETON);
-	}
-
-	@Override
 	protected void bindNamedQueryResolver() {
 		bind(INamedQueryResolver.class).to(SmbizNamedQueryResolver.class).in(Scopes.SINGLETON);
 	}
-
 }

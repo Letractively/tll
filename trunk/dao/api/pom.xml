@@ -122,6 +122,13 @@
       <artifactId>guice</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- for guice 2.0 -->
+    <dependency>
+      <groupId>aopalliance</groupId>
+      <artifactId>aopalliance</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
     <!-- for mocked entities (in memory object graph) -->
     <dependency>
       <groupId>com.tll</groupId>

@@ -43,17 +43,6 @@ public abstract class ClientPersistModule extends AbstractModule {
 	}
 
 	/**
-	 * Responsible for binding the needed {@link IEntityTypeResolver}
-	 * implementation.
-	 */
-	protected abstract void bindEntityTypeResolver();
-
-	/**
-	 * Responsible for binding the {@link IMarshalOptionsResolver} implementation.
-	 */
-	protected abstract void bindMarshalOptionsResolver();
-
-	/**
 	 * Responsible for binding the needed {@link IPersistServiceImplResolver}
 	 * implementation.
 	 */
@@ -62,12 +51,6 @@ public abstract class ClientPersistModule extends AbstractModule {
 	@Override
 	protected final void configure() {
 		log.info("Employing Client Persistence module");
-
-		// IEntityTypeResolver
-		bindEntityTypeResolver();
-
-		// IMarshalOptionsResolver
-		bindMarshalOptionsResolver();
 
 		// IPersistServiceImplResolver
 		bindPersistServiceImplResolver();

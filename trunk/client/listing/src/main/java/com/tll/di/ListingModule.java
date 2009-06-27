@@ -9,8 +9,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.google.inject.AbstractModule;
-import com.tll.server.rpc.entity.IEntityTypeResolver;
-import com.tll.server.rpc.entity.IMarshalOptionsResolver;
 import com.tll.server.rpc.listing.IListingDataProviderResolver;
 import com.tll.server.rpc.listing.IListingSearchTranslator;
 import com.tll.server.rpc.listing.INamedQueryResolver;
@@ -40,25 +38,9 @@ public abstract class ListingModule extends AbstractModule {
 	 */
 	protected abstract void bindListingSearchTranslator();
 
-	/**
-	 * Responsible for binding an {@link IMarshalOptionsResolver} implementation.
-	 */
-	protected abstract void bindMarshalOptionsResolver();
-
-	/**
-	 * Responsible for binding an {@link IEntityTypeResolver} implementation.
-	 */
-	protected abstract void bindEntityTypeResolver();
-
 	@Override
 	protected final void configure() {
 		log.info("Employing Listing module");
-
-		// IEntityTypeResolver
-		bindEntityTypeResolver();
-
-		// IMarshalOptionsResolver
-		bindMarshalOptionsResolver();
 
 		// IListingDataProviderResolver
 		bindListingDataProviderResolver();

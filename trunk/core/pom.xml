@@ -75,6 +75,13 @@
       <artifactId>guice</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- for guice 2.0 -->
+    <dependency>
+      <groupId>aopalliance</groupId>
+      <artifactId>aopalliance</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>

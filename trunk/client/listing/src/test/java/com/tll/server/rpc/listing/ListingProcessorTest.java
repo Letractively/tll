@@ -29,6 +29,7 @@ import com.tll.di.EntityServiceFactoryModule;
 import com.tll.di.ListingModule;
 import com.tll.di.LogExceptionHandlerModule;
 import com.tll.di.MailModule;
+import com.tll.di.MarshalModule;
 import com.tll.di.MockDaoModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
@@ -90,12 +91,7 @@ import com.tll.server.rpc.listing.test.TestNamedQueryResolver;
 		});
 		modules.add(new EntityServiceFactoryModule());
 		modules.add(new LogExceptionHandlerModule());
-		modules.add(new ListingModule() {
-
-			@Override
-			protected void bindNamedQueryResolver() {
-				bind(INamedQueryResolver.class).to(TestNamedQueryResolver.class).in(Scopes.SINGLETON);
-			}
+		modules.add(new MarshalModule() {
 
 			@Override
 			protected void bindMarshalOptionsResolver() {
@@ -115,6 +111,18 @@ import com.tll.server.rpc.listing.test.TestNamedQueryResolver;
 			}
 
 			@Override
+			protected void bindEntityTypeResolver() {
+				bind(IEntityTypeResolver.class).to(TestEntityTypeResolver.class).in(Scopes.SINGLETON);
+			}
+		});
+		modules.add(new ListingModule() {
+
+			@Override
+			protected void bindNamedQueryResolver() {
+				bind(INamedQueryResolver.class).to(TestNamedQueryResolver.class).in(Scopes.SINGLETON);
+			}
+
+			@Override
 			protected void bindListingSearchTranslator() {
 				bind(IListingSearchTranslator.class).to(TestListingSearchTranslator.class).in(Scopes.SINGLETON);
 			}
@@ -122,11 +130,6 @@ import com.tll.server.rpc.listing.test.TestNamedQueryResolver;
 			@Override
 			protected void bindListingDataProviderResolver() {
 				bind(IListingDataProviderResolver.class).to(TestListingDataProviderResolver.class).in(Scopes.SINGLETON);
-			}
-
-			@Override
-			protected void bindEntityTypeResolver() {
-				bind(IEntityTypeResolver.class).to(TestEntityTypeResolver.class).in(Scopes.SINGLETON);
 			}
 		});
 	}

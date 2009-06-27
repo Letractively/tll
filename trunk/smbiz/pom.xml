@@ -540,7 +540,6 @@
     <dependency>
       <groupId>aopalliance</groupId>
       <artifactId>aopalliance</artifactId>
-      <version>1.0</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -660,6 +659,14 @@
       <version>${project.parent.version}</version>
     </dependency>
 
+    <!-- for guice 2.0 -->
+    <dependency>
+      <groupId>aopalliance</groupId>
+      <artifactId>aopalliance</artifactId>
+      <version>1.0</version>
+      <scope>runtime</scope>
+    </dependency>
+    
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>

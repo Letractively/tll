@@ -36,6 +36,7 @@ import com.tll.di.EntityAssemblerModule;
 import com.tll.di.EntityServiceFactoryModule;
 import com.tll.di.LogExceptionHandlerModule;
 import com.tll.di.MailModule;
+import com.tll.di.MarshalModule;
 import com.tll.di.MockDaoModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
@@ -56,7 +57,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
  */
 @Test(groups = {
 	"server", "client-persist" })
-public class PersistServiceDelegateTest extends AbstractInjectedTest {
+	public class PersistServiceDelegateTest extends AbstractInjectedTest {
 
 	@Override
 	protected void addModules(List<Module> modules) {
@@ -85,7 +86,7 @@ public class PersistServiceDelegateTest extends AbstractInjectedTest {
 		});
 		modules.add(new EntityServiceFactoryModule());
 		modules.add(new LogExceptionHandlerModule());
-		modules.add(new ClientPersistModule() {
+		modules.add(new MarshalModule() {
 
 			@Override
 			protected void bindMarshalOptionsResolver() {
@@ -105,6 +106,13 @@ public class PersistServiceDelegateTest extends AbstractInjectedTest {
 			}
 
 			@Override
+			protected void bindEntityTypeResolver() {
+				bind(IEntityTypeResolver.class).to(TestEntityTypeResolver.class).in(Scopes.SINGLETON);
+			}
+		});
+		modules.add(new ClientPersistModule() {
+
+			@Override
 			protected void bindPersistServiceImplResolver() {
 				bind(IPersistServiceImplResolver.class).toProvider(new Provider<IPersistServiceImplResolver>() {
 
@@ -120,11 +128,6 @@ public class PersistServiceDelegateTest extends AbstractInjectedTest {
 						};
 					}
 				}).in(Scopes.SINGLETON);
-			}
-
-			@Override
-			protected void bindEntityTypeResolver() {
-				bind(IEntityTypeResolver.class).to(TestEntityTypeResolver.class).in(Scopes.SINGLETON);
 			}
 		});
 	}

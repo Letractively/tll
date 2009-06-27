@@ -78,7 +78,7 @@
     <module>servlet</module>
     <module>security</module>
     <module>client</module> 
-    <module>smbiz</module> 
+    <module>smbiz</module>
   </modules>
 
   <build>

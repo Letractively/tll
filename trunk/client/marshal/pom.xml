@@ -68,6 +68,13 @@
       <version>${project.version}</version>
     </dependency>
 
+    <!-- for guice 2.0 -->
+    <dependency>
+      <groupId>aopalliance</groupId>
+      <artifactId>aopalliance</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
