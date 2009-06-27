@@ -61,7 +61,7 @@ IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 	 * The set of model properties. <br>
 	 * NOTE: can't mark as final for GWT RPC compatibility
 	 */
-	private /*final*/Set<IModelProperty> props = new HashSet<IModelProperty>();
+	private final /*final*/Set<IModelProperty> props = new HashSet<IModelProperty>();
 
 	/**
 	 * The bound entity type.
@@ -103,6 +103,7 @@ IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 	public Model(IEntityType entityType, boolean entity) {
 		super();
 		this.entityType = entityType;
+		this.entity = entity;
 	}
 
 	/**

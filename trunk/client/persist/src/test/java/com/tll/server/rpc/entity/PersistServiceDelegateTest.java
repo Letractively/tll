@@ -183,7 +183,7 @@ public class PersistServiceDelegateTest extends AbstractInjectedTest {
 		m.set(new StringPropertyValue("lastName", "Last"));
 		m.set(new CharacterPropertyValue("mi", 'm'));
 		m.set(new StringPropertyValue("phone", "1112223333"));
-		m.set(new StringPropertyValue("postalCode", "66YCB"));
+		m.set(new StringPropertyValue("postalCode", "48104"));
 		m.set(new StringPropertyValue("province", "MI"));
 
 		final ModelPayload p = delegate.persist(new PersistRequest(m));
@@ -193,7 +193,7 @@ public class PersistServiceDelegateTest extends AbstractInjectedTest {
 		assert m.getId() != null && m.getId().equals(10000) && m.getEntityType() != null
 		&& m.getEntityType().equals(TestEntityType.ADDRESS);
 		final Object ov = m.getProperty("version");
-		assert ov != null && ov.equals("1");
+		assert ov != null && ov.equals(0);
 	}
 
 	/**
@@ -207,7 +207,7 @@ public class PersistServiceDelegateTest extends AbstractInjectedTest {
 		final PersistServiceDelegate delegate = getDelegate();
 
 		Model m = new Model(TestEntityType.ADDRESS, true);
-		m.set(new IntPropertyValue(Model.VERSION_PROPERTY, 1));
+		m.set(new IntPropertyValue(Model.VERSION_PROPERTY, 0));
 		m.set(new IntPropertyValue(Model.ID_PROPERTY, 10000));
 		m.set(new StringPropertyValue("address1", "1 tee street"));
 		m.set(new StringPropertyValue("address2", "2 bee"));
@@ -219,17 +219,17 @@ public class PersistServiceDelegateTest extends AbstractInjectedTest {
 		m.set(new StringPropertyValue("lastName", "Last"));
 		m.set(new CharacterPropertyValue("mi", 'm'));
 		m.set(new StringPropertyValue("phone", "1112223333"));
-		m.set(new StringPropertyValue("postalCode", "66YCB"));
+		m.set(new StringPropertyValue("postalCode", "48104"));
 		m.set(new StringPropertyValue("province", "MI"));
 
 		final ModelPayload p = delegate.persist(new PersistRequest(m));
 		assert p != null;
 		m = p.getModel();
 		assert m != null;
-		assert m.getId() != null && m.getId().equals(1) && m.getEntityType() != null
+		assert m.getId() != null && m.getId().equals(10000) && m.getEntityType() != null
 		&& m.getEntityType().equals(TestEntityType.ADDRESS);
 		final Object ov = m.getProperty("version");
-		assert ov != null && ov.equals("2");
+		assert ov != null && ov.equals(1);
 	}
 
 	/**
