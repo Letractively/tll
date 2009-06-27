@@ -8,12 +8,10 @@ package com.tll.server.rpc.listing;
 import com.google.inject.Inject;
 import com.tll.common.data.ListingRequest;
 import com.tll.common.model.IEntityType;
-import com.tll.common.search.IListingSearch;
 import com.tll.listhandler.IListingDataProvider;
 import com.tll.model.IEntity;
-import com.tll.server.RequestContext;
 import com.tll.server.rpc.entity.IEntityTypeResolver;
-import com.tll.server.rpc.entity.PersistContext;
+import com.tll.service.entity.IEntityServiceFactory;
 
 /**
  * SmbizListingDataProviderResolver
@@ -22,25 +20,26 @@ import com.tll.server.rpc.entity.PersistContext;
 public class SmbizListingDataProviderResolver implements IListingDataProviderResolver {
 
 	private final IEntityTypeResolver etResolver;
+	private final IEntityServiceFactory svcFactory;
 
 	/**
 	 * Constructor
 	 * @param etResolver
+	 * @param svcFactory
 	 */
 	@Inject
-	public SmbizListingDataProviderResolver(IEntityTypeResolver etResolver) {
+	public SmbizListingDataProviderResolver(IEntityTypeResolver etResolver, IEntityServiceFactory svcFactory) {
 		super();
 		this.etResolver = etResolver;
+		this.svcFactory = svcFactory;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public IListingDataProvider resolve(RequestContext requestContext, ListingRequest<? extends IListingSearch> request)
-	throws IllegalArgumentException {
+	public IListingDataProvider resolve(ListingRequest request) throws IllegalArgumentException {
 		try {
-			final PersistContext mc = (PersistContext) requestContext.getServletContext().getAttribute(PersistContext.KEY);
 			final IEntityType et = request.getListingDef().getSearchCriteria().getEntityType();
-			return mc.getEntityServiceFactory().instanceByEntityType((Class<IEntity>) etResolver.resolveEntityClass(et));
+			return svcFactory.instanceByEntityType((Class<IEntity>) etResolver.resolveEntityClass(et));
 		}
 		catch(final Exception e) {
 			// fall through

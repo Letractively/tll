@@ -11,9 +11,8 @@ import com.tll.dao.Sorting;
  * ListingRequest - Request data for performing server-side listing operations
  * against a particular listing.
  * @author jpk
- * @param <S>
  */
-public final class ListingRequest<S extends IListingSearch> implements IModelRelatedRequest {
+public final class ListingRequest implements IModelRelatedRequest {
 
 	/**
 	 * The unique listing name.
@@ -23,7 +22,7 @@ public final class ListingRequest<S extends IListingSearch> implements IModelRel
 	/**
 	 * The listing definition used to generate or refresh a listing.
 	 */
-	private RemoteListingDefinition<S> listingDef;
+	private RemoteListingDefinition<? extends IListingSearch> listingDef;
 
 	private ListingOp listingOp;
 	private Integer offset;
@@ -46,7 +45,8 @@ public final class ListingRequest<S extends IListingSearch> implements IModelRel
 	 * @param offset The listing index offset
 	 * @param sorting The sorting directive
 	 */
-	public ListingRequest(String listingName, RemoteListingDefinition<S> listingDef, ListingOp listingOp, Integer offset,
+	public ListingRequest(String listingName, RemoteListingDefinition<? extends IListingSearch> listingDef,
+			ListingOp listingOp, Integer offset,
 			Sorting sorting) {
 		super();
 		this.listingName = listingName;
@@ -101,7 +101,7 @@ public final class ListingRequest<S extends IListingSearch> implements IModelRel
 	 * @return The listing definition used when generating or refreshing a
 	 *         listing.
 	 */
-	public RemoteListingDefinition<S> getListingDef() {
+	public RemoteListingDefinition<? extends IListingSearch> getListingDef() {
 		return listingDef;
 	}
 

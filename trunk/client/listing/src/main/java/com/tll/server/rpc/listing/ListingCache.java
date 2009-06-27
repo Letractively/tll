@@ -7,8 +7,6 @@ package com.tll.server.rpc.listing;
 
 import java.io.Serializable;
 
-import javax.servlet.http.HttpServletRequest;
-
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
@@ -27,13 +25,14 @@ public final class ListingCache {
 
 	/**
 	 * Generates the hash that is http session and listing name dependent.
-	 * @param request
+	 * @param sessionId the required user session id (normally gotten from the
+	 *        http request instance)
 	 * @param listingName
 	 * @return the corresponding hash key for the given listing name in the given
 	 *         http session.
 	 */
-	private static Integer key(HttpServletRequest request, String listingName) {
-		return Integer.valueOf(request.getSession(false).getId().hashCode() + 37 * listingName.hashCode());
+	private static Integer key(String sessionId, String listingName) {
+		return Integer.valueOf(sessionId.hashCode() + 37 * listingName.hashCode());
 	}
 
 	private static Cache handlerCache() {
@@ -44,41 +43,40 @@ public final class ListingCache {
 		return CacheManager.getInstance().getCache(LISTING_STATE_CACHE_NAME);
 	}
 
-
 	/**
 	 * Retrieves the cached handler by table view name.
 	 * @param <T>
-	 * @param request
+	 * @param sessionId
 	 * @param listingName
 	 * @return listing handler
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> ListingHandler<T> getHandler(HttpServletRequest request, String listingName) {
-		final Element e = handlerCache().get(key(request, listingName));
+	public static <T> ListingHandler<T> getHandler(String sessionId, String listingName) {
+		final Element e = handlerCache().get(key(sessionId, listingName));
 		return e == null ? null : (ListingHandler) e.getObjectValue();
 	}
 
 	/**
 	 * Caches the handler by table view name.
 	 * @param <T>
-	 * @param request
+	 * @param sessionId
 	 * @param listingName
 	 * @param handler
 	 */
-	public static <T> void storeHandler(HttpServletRequest request, String listingName, ListingHandler<T> handler) {
-		handlerCache().put(new Element(key(request, listingName), handler));
+	public static <T> void storeHandler(String sessionId, String listingName, ListingHandler<T> handler) {
+		handlerCache().put(new Element(key(sessionId, listingName), handler));
 	}
 
 	/**
 	 * Clears the cached handler by table view name.
 	 * @param <T>
-	 * @param request
+	 * @param sessionId
 	 * @param listingName
 	 * @return the cleared handler. May be <code>null</code>.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> ListingHandler<T> clearHandler(HttpServletRequest request, String listingName) {
-		final Serializable key = key(request, listingName);
+	public static <T> ListingHandler<T> clearHandler(String sessionId, String listingName) {
+		final Serializable key = key(sessionId, listingName);
 		final Cache c = handlerCache();
 		final Element e = c.get(key);
 		final ListingHandler<T> handler = e == null ? null : (ListingHandler<T>) e.getObjectValue();
@@ -90,34 +88,34 @@ public final class ListingCache {
 
 	/**
 	 * Retrieves the cached listing state by table view name.
-	 * @param request
+	 * @param sessionId
 	 * @param listingName name of the table view for which state is retrieved.
 	 * @return the cached listing state or null if not found.
 	 */
-	public static ListingState getState(HttpServletRequest request, String listingName) {
-		final Element e = stateCache().get(key(request, listingName));
+	public static ListingState getState(String sessionId, String listingName) {
+		final Element e = stateCache().get(key(sessionId, listingName));
 		return e == null ? null : (ListingState) e.getObjectValue();
 	}
 
 	/**
 	 * Caches the state of the table for the duration of the request session.
-	 * @param request
+	 * @param sessionId
 	 * @param listingName
 	 * @param state
 	 */
-	public static void storeState(HttpServletRequest request, String listingName, ListingState state) {
-		stateCache().put(new Element(key(request, listingName), state));
+	public static void storeState(String sessionId, String listingName, ListingState state) {
+		stateCache().put(new Element(key(sessionId, listingName), state));
 	}
 
 	/**
 	 * Clears the listing state cached under the given table view name by table
 	 * view name.
-	 * @param request
+	 * @param sessionId
 	 * @param listingName
 	 * @return the cleared table mode state. May be <code>null</code>.
 	 */
-	public static ListingState clearState(HttpServletRequest request, String listingName) {
-		final Serializable key = key(request, listingName);
+	public static ListingState clearState(String sessionId, String listingName) {
+		final Serializable key = key(sessionId, listingName);
 		final Cache c = stateCache();
 		final Element e = c.get(key);
 		final ListingState state = e == null ? null : (ListingState) e.getObjectValue();
@@ -130,10 +128,9 @@ public final class ListingCache {
 	/**
 	 * Clears out all listing cachings with the option to retian listing state
 	 * caches.
-	 * @param request
 	 * @param retainState
 	 */
-	public static void clearAll(HttpServletRequest request, boolean retainState) {
+	public static void clearAll(boolean retainState) {
 		handlerCache().removeAll();
 		if(!retainState) {
 			stateCache().removeAll();

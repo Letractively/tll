@@ -8,10 +8,8 @@ package com.tll.server.rpc.listing.test;
 import com.google.inject.Inject;
 import com.tll.common.data.ListingRequest;
 import com.tll.common.model.IEntityType;
-import com.tll.common.search.IListingSearch;
 import com.tll.listhandler.IListingDataProvider;
 import com.tll.model.IEntity;
-import com.tll.server.RequestContext;
 import com.tll.server.rpc.entity.IEntityTypeResolver;
 import com.tll.server.rpc.listing.IListingDataProviderResolver;
 import com.tll.service.entity.IEntityServiceFactory;
@@ -42,7 +40,7 @@ public class TestListingDataProviderResolver implements IListingDataProviderReso
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public IListingDataProvider resolve(RequestContext requestContext, ListingRequest<? extends IListingSearch> request)
+	public IListingDataProvider resolve(ListingRequest request)
 	throws IllegalArgumentException {
 		try {
 			final IEntityType et = request.getListingDef().getSearchCriteria().getEntityType();

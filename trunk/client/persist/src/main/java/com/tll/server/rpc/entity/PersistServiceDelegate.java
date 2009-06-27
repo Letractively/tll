@@ -60,7 +60,7 @@ public final class PersistServiceDelegate {
 	}
 
 	/**
-	 * Loads an entity
+	 * Loads model data.
 	 * @param request
 	 * @return the resultant payload
 	 */
@@ -77,7 +77,7 @@ public final class PersistServiceDelegate {
 	}
 
 	/**
-	 * Persists model data.
+	 * Persists (adds or updates) model data.
 	 * @param request
 	 * @return the resultant payload
 	 */
@@ -128,7 +128,7 @@ public final class PersistServiceDelegate {
 
 	/**
 	 * Resolves the appropriate {@link IPersistServiceImpl} implementation
-	 * instance for the given entity type.
+	 * instance for the given model related request.
 	 * @param request the model request
 	 * @param status The status object that is filled with the generated erroro
 	 *        msg(s)

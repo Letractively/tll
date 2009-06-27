@@ -49,7 +49,7 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 			if(sourcingWidget == null) {
 				throw new IllegalStateException("Null sourcing widget");
 			}
-			svc.process((ListingRequest) listingRequest, (AsyncCallback) getAsyncCallback());
+			svc.process(listingRequest, (AsyncCallback) getAsyncCallback());
 		}
 
 		@Override
@@ -94,7 +94,7 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 	 */
 	private final RemoteListingDefinition<S> listingDef;
 
-	private transient ListingRequest<S> listingRequest;
+	private transient ListingRequest listingRequest;
 
 	/**
 	 * Constructor
@@ -128,7 +128,7 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 	 */
 	private void fetch(int ofst, Sorting srtg, boolean refresh) {
 		this.listingRequest =
-			new ListingRequest<S>(listingName, listingDef, refresh ? ListingOp.REFRESH : ListingOp.FETCH, ofst, srtg);
+			new ListingRequest(listingName, listingDef, refresh ? ListingOp.REFRESH : ListingOp.FETCH, ofst, srtg);
 		execute();
 	}
 
@@ -144,7 +144,7 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 	 */
 	@Override
 	protected void doFetch(int ofst, Sorting srtg) {
-		listingRequest = new ListingRequest<S>(listingName, ofst, srtg);
+		listingRequest = new ListingRequest(listingName, ofst, srtg);
 		execute();
 	}
 
@@ -153,7 +153,7 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 	 * @param retainListingState Retain the listing state on the server?
 	 */
 	private void clear(boolean retainListingState) {
-		listingRequest = new ListingRequest<S>(listingName, retainListingState);
+		listingRequest = new ListingRequest(listingName, retainListingState);
 		execute();
 	}
 

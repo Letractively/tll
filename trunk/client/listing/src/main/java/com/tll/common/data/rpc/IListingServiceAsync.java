@@ -17,5 +17,5 @@ import com.tll.common.search.IListingSearch;
  */
 public interface IListingServiceAsync<S extends IListingSearch, R extends IMarshalable> {
 
-	void process(ListingRequest<S> listingCommand, AsyncCallback<ListingPayload<R>> callback);
+	void process(ListingRequest listingCommand, AsyncCallback<ListingPayload<R>> callback);
 }

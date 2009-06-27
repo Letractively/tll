@@ -54,9 +54,9 @@ public class SmbizPersistServiceImplResolver implements IPersistServiceImplResol
 		}
 
 		// listing request?
-		if(request instanceof ListingRequest<?>) {
+		if(request instanceof ListingRequest) {
 			try {
-				return resolve(((ListingRequest<?>) request).getListingDef().getSearchCriteria().getEntityType());
+				return resolve(((ListingRequest) request).getListingDef().getSearchCriteria().getEntityType());
 			}
 			catch(final NullPointerException e) {
 				// fall through
