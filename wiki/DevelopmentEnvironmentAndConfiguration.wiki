@@ -5,7 +5,7 @@ Lists the necessary local environment and IDE settings for building and deployin
 The following software is required:
 || *Name* || *Version* || *Notes* ||
 || [http://java.sun.com/javase/downloads/index.jsp jdk] || 1.6.0_14+ || ||
-|| [http://www.eclipse.org/ eclipse] || 3.5.0+|| JEE version ||
+|| [http://www.eclipse.org/ eclipse] || 3.4.0+|| JEE version ||
 || [http://maven.apache.org/ maven] || 2.1.0+|| ||
 || [http://ant.apache.org/ ant] || 1.7.1+ || Not strictly necessary as maven maintains its own instance. ||
 || [http://groovy.codehaus.org/ groovy] || 1.6+ || Use the windows installer download is possible. ||
@@ -85,8 +85,9 @@ The following _Preferences -> Run/Debug -> *String Substitutions*_ are required:
 || subclipse || [http://subclipse.tigris.org/update_1.6.x http://subclipse.tigris.org/update_1.6.x] || ||
 || m2eclipse || [http://m2eclipse.sonatype.org/update/ http://m2eclipse.sonatype.org/update/] || ||
 || TestNG || [http://beust.com/eclipse http://beust.com/eclipse] || ||
-|| Groovy || [http://dist.groovy.codehaus.org/distributions/updateDev/ http://dist.groovy.codehaus.org/distributions/updateDev_1.6/] || ||
+|| Groovy || [http://dist.groovy.codehaus.org/distributions/updateDev/ http://dist.groovy.codehaus.org/distributions/updateDev/] || ||
 || FindBugs || [http://findbugs.cs.umd.edu/eclipse/ http://findbugs.cs.umd.edu/eclipse/] || ||
+|| google eclipse plugin || http://dl.google.com/eclipse/plugin/3.4 || Does not work for eclipse v3.5 ||
 
 ==Preferences==
 Import the tll eclipse preferences files.  These files are located under:  [http://tll.googlecode.com/svn/eclipse eclipse].
