@@ -17,7 +17,7 @@ import com.tll.dao.IEntityDao;
 import com.tll.model.EntityGraph;
 import com.tll.model.IEntityGraphBuilder;
 import com.tll.model.key.IPrimaryKeyGenerator;
-import com.tll.model.key.MockPrimaryKeyGenerator;
+import com.tll.model.key.SimplePrimaryKeyGenerator;
 
 /**
  * MockDaoModule - MOCK dao impl module.
@@ -61,7 +61,7 @@ public abstract class MockDaoModule extends AbstractModule {
 		}).in(Scopes.SINGLETON);
 
 		// IPrimaryKeyGenerator
-		bind(IPrimaryKeyGenerator.class).to(MockPrimaryKeyGenerator.class).in(Scopes.SINGLETON);
+		bind(IPrimaryKeyGenerator.class).to(SimplePrimaryKeyGenerator.class).in(Scopes.SINGLETON);
 
 		// IEntityDao
 		bind(IEntityDao.class).to(com.tll.dao.mock.EntityDao.class).in(Scopes.SINGLETON);

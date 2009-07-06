@@ -17,7 +17,7 @@
 
   <modules>
     <module>api</module>
-    <module>orm</module>
+    <module>jdo</module>
     <module>mock</module>
   </modules>
 

@@ -9,11 +9,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceException;
-
 import org.apache.commons.lang.math.NumberRange;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -26,10 +21,13 @@ import com.tll.criteria.Criteria;
 import com.tll.criteria.CriterionGroup;
 import com.tll.criteria.DBType;
 import com.tll.criteria.ICriterion;
-import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
+import com.tll.dao.EntityExistsException;
+import com.tll.dao.EntityNotFoundException;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.IPageResult;
+import com.tll.dao.NonUniqueResultException;
+import com.tll.dao.PersistenceException;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumnBeanComparator;
 import com.tll.dao.Sorting;
@@ -218,12 +216,6 @@ public class EntityDao implements IEntityDao {
 	 */
 	public EntityGraph getEntityGraph() {
 		return entityGraph;
-	}
-
-	@Override
-	public int executeQuery(String queryName, IQueryParam[] params) {
-		// TODO impl ?
-		return 0;
 	}
 
 	/**
@@ -440,9 +432,11 @@ public class EntityDao implements IEntityDao {
 
 		// validate the version
 		if(!entityGraph.contains(new PrimaryKey<E>(entity))) {
+			/*
 			if(entity.getVersion() != null) {
 				throw new PersistenceException("Attempt to add non-existant yet versioned entity");
 			}
+			 */
 		}
 		else {
 			// remove old
@@ -457,7 +451,7 @@ public class EntityDao implements IEntityDao {
 			throw new EntityExistsException(entity.descriptor() + " already exists.");
 		}
 		catch(final NonUniqueBusinessKeyException e) {
-			throw new EntityExistsException("Non-unique entity " + entity.descriptor() + ": " + e.getMessage(), e);
+			throw new EntityExistsException("Non-unique entity " + entity.descriptor() + ": " + e.getMessage());
 		}
 
 		// set date created/modified
@@ -469,6 +463,7 @@ public class EntityDao implements IEntityDao {
 			((ITimeStampEntity) entity).setDateModified(now);
 		}
 
+		/*
 		// increment version
 		Integer version = entity.getVersion();
 		if(version == null) {
@@ -478,6 +473,7 @@ public class EntityDao implements IEntityDao {
 			version++;
 		}
 		entity.setVersion(version);
+		 */
 
 		return entity;
 	}

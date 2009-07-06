@@ -11,9 +11,9 @@ import org.testng.Assert;
 
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.ISelectNamedQueryDef;
+import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
-import com.tll.model.MockEntityFactory;
 
 /**
  * AbstractEntityDaoTestHandler
@@ -23,36 +23,36 @@ import com.tll.model.MockEntityFactory;
 public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements IEntityDaoTestHandler<E> {
 
 	private IEntityDao entityDao;
-	private MockEntityFactory mockEntityFactory;
+	private EntityBeanFactory entityBeanFactory;
 
 	@Override
 	@SuppressWarnings("hiding")
-	public void init(IEntityDao entityDao, MockEntityFactory mockEntityFactory) {
+	public void init(IEntityDao entityDao, EntityBeanFactory entityBeanFactory) {
 		this.entityDao = entityDao;
-		this.mockEntityFactory = mockEntityFactory;
+		this.entityBeanFactory = entityBeanFactory;
 	}
 
 	/**
 	 * Provides a fresh entity copy of a desired type.
 	 * <p>
-	 * Shortcut to {@link MockEntityFactory#getEntityCopy(Class, boolean)}.
+	 * Shortcut to {@link EntityBeanFactory#getEntityCopy(Class, boolean)}.
 	 * @param <D>
 	 * @param entityType
 	 * @param makeUnique
 	 * @return New entity copy
 	 */
 	protected final <D extends IEntity> D create(Class<D> entityType, boolean makeUnique) {
-		return mockEntityFactory.getEntityCopy(entityType, makeUnique);
+		return entityBeanFactory.getEntityCopy(entityType, makeUnique);
 	}
 
 	/**
-	 * Shortcut to {@link MockEntityFactory#getAllEntityCopies(Class)}.
+	 * Shortcut to {@link EntityBeanFactory#getAllEntityCopies(Class)}.
 	 * @param <D>
 	 * @param entityType
 	 * @return set of entities
 	 */
 	protected final <D extends IEntity> Set<D> getAll(Class<D> entityType) {
-		return mockEntityFactory.getAllEntityCopies(entityType);
+		return entityBeanFactory.getAllEntityCopies(entityType);
 	}
 
 	/**
@@ -83,7 +83,7 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	 * @return The created and persisted entity
 	 */
 	protected final <D extends IEntity> D createAndPersist(Class<D> entityType, boolean makeUnique) {
-		return entityDao.persist(mockEntityFactory.getEntityCopy(entityType, makeUnique));
+		return entityDao.persist(entityBeanFactory.getEntityCopy(entityType, makeUnique));
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 
 	@Override
 	public void makeUnique(E e) {
-		MockEntityFactory.makeBusinessKeyUnique(e);
+		EntityBeanFactory.makeBusinessKeyUnique(e);
 	}
 
 	@Override

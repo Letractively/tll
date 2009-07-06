@@ -3,12 +3,7 @@ package com.tll.dao;
 import java.util.Collection;
 import java.util.List;
 
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceException;
-
 import com.tll.criteria.Criteria;
-import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
@@ -116,7 +111,7 @@ public interface IEntityDao extends IDao {
 	 *         given criteria
 	 */
 	<E extends IEntity> E findEntity(Criteria<E> criteria) throws InvalidCriteriaException, EntityNotFoundException,
-	NonUniqueResultException;
+			NonUniqueResultException;
 
 	/**
 	 * Finds matching entities given criteria.
@@ -200,12 +195,4 @@ public interface IEntityDao extends IDao {
 	<E extends IEntity> IPageResult<SearchResult<?>> getPage(Criteria<E> criteria, Sorting sorting,
 			int offset, int pageSize)
 			throws InvalidCriteriaException;
-
-	/**
-	 * Executes a non-select named query.
-	 * @param queryName
-	 * @param params
-	 * @return The number of affected entities.
-	 */
-	int executeQuery(String queryName, IQueryParam[] params);
 }

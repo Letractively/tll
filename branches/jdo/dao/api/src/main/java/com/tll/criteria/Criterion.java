@@ -127,4 +127,9 @@ public class Criterion implements ICriterion {
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
 	}
+
+	@Override
+	public String toString() {
+		return "Fld:" + field + "|Val:" + value + "|Cmp:" + comparator + "|CaseSens:" + caseSensitive;
+	}
 }

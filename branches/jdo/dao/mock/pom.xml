@@ -75,12 +75,6 @@
       <scope>runtime</scope>
     </dependency>
     
-
-    <dependency>
-      <groupId>javax.persistence</groupId>
-      <artifactId>persistence-api</artifactId>
-    </dependency>
-    
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-common</artifactId>
@@ -95,17 +89,11 @@
       <groupId>com.tll</groupId>
       <artifactId>tll-model</artifactId>
       <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-core</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <!-- for mocked entities (in memory object graph) -->
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-mock</artifactId>
+      <artifactId>tll-egraph</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

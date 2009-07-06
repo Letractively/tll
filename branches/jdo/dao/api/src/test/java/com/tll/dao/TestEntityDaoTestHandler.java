@@ -13,7 +13,7 @@ import com.tll.model.Account;
 import com.tll.model.AccountAddress;
 import com.tll.model.Address;
 import com.tll.model.Currency;
-import com.tll.model.MockEntityFactory;
+import com.tll.model.EntityBeanFactory;
 import com.tll.model.NestedEntity;
 
 
@@ -22,12 +22,12 @@ import com.tll.model.NestedEntity;
  * @author jpk
  */
 public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Account> {
-	
+
 	// dependent entities
 	NestedEntity nestedEntity;
 	Currency currency;
 	Account parent;
-	
+
 
 	@Override
 	public Class<Account> entityClass() {
@@ -70,7 +70,7 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 
 		final Address address1 = create(Address.class, true);
 		final Address address2 = create(Address.class, true);
-		
+
 		final AccountAddress aa1 = create(AccountAddress.class, true);
 		final AccountAddress aa2 = create(AccountAddress.class, true);
 		aa1.setAddress(address1);
@@ -84,8 +84,8 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 		super.makeUnique(e);
 		if(e.getAddresses() != null) {
 			for(final AccountAddress aa : e.getAddresses()) {
-				MockEntityFactory.makeBusinessKeyUnique(aa);
-				MockEntityFactory.makeBusinessKeyUnique(aa.getAddress());
+				EntityBeanFactory.makeBusinessKeyUnique(aa);
+				EntityBeanFactory.makeBusinessKeyUnique(aa.getAddress());
 			}
 		}
 	}
@@ -97,7 +97,7 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 		Assert.assertNotNull(e.getCurrency(), "No account currency loaded");
 		Assert.assertNotNull(e.getNestedEntity(), "No account nested entity loaded");
 		Assert.assertTrue(e.getAddresses() != null && e.getAddresses().size() == 2,
-				"No account address collection loaded or invalid number of them");
+		"No account address collection loaded or invalid number of them");
 	}
 
 	@Override

@@ -7,8 +7,8 @@ package com.tll.dao;
 
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.ISelectNamedQueryDef;
+import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
-import com.tll.model.MockEntityFactory;
 
 /**
  * IEntityDaoTestHandler - Encapsulates entity lifecycle behavior for testing
@@ -21,9 +21,9 @@ public interface IEntityDaoTestHandler<E extends IEntity> {
 	/**
 	 * Manual injection of dependencies.
 	 * @param entityDao
-	 * @param mockEntityFactory
+	 * @param entityBeanFactory
 	 */
-	void init(IEntityDao entityDao, MockEntityFactory mockEntityFactory);
+	void init(IEntityDao entityDao, EntityBeanFactory entityBeanFactory);
 
 	/**
 	 * @return The entity type this handler supports.
@@ -74,7 +74,7 @@ public interface IEntityDaoTestHandler<E extends IEntity> {
 	 * @throws Exception When the loaded state is not valid
 	 */
 	void verifyLoadedEntityState(E e) throws Exception;
-	
+
 	/**
 	 * Alters the test entity such that
 	 * @param e
@@ -88,7 +88,7 @@ public interface IEntityDaoTestHandler<E extends IEntity> {
 	 * @throws Exception if alteration(s) don't remain
 	 */
 	void verifyEntityAlteration(E e) throws Exception;
-	
+
 	/**
 	 * @return An array of select named query definitions to test.
 	 */
@@ -97,9 +97,8 @@ public interface IEntityDaoTestHandler<E extends IEntity> {
 	/**
 	 * Provides query params for a particular named select query to test.
 	 * @param qdef the particular named query under testing
-	 * @return the needed query params to pass to the
-	 *         {@link javax.persistence.Query} instance or <code>null</code> which
-	 *         indicates the given query requires no parameters.
+	 * @return the needed query params or <code>null</code> which indicates the
+	 *         given query requires no parameters.
 	 */
 	IQueryParam[] getParamsForTestQuery(ISelectNamedQueryDef qdef);
 

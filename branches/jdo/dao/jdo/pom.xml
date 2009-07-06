@@ -3,39 +3,29 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.tll</groupId>
     <artifactId>tll-dao</artifactId>
+    <groupId>com.tll</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
   <groupId>com.tll</groupId>
-  <artifactId>tll-dao-api</artifactId>
-  <name>tll-dao-api</name>
+  <artifactId>tll-dao-jdo</artifactId>
+  <name>tll-dao-jdo</name>
   <version>0.0.1-SNAPSHOT</version>
-  <description>DAO API</description>
-  
+  <description>JDO tll-dao api impl.</description>
+  <packaging>jar</packaging>
+
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <!-- tweak to include additional dao test specific test assets -->
-          <execution>
-            <id>test-assets</id>
-            <configuration>
-              <includes>
-                <include>**/Abstract*Test*</include>
-                <include>**/*Test*Util*</include>
-                <include>**/mock/**</include>
-                <include>**/IEntityDaoTestHandler*</include>
-                <include>**/Test*Handler*</include>
-              </includes>
-            </configuration>
-          </execution>
-        </executions>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <suiteXmlFiles>
+            <suiteXmlFile>${pom.basedir}/src/test/resources/testng.xml</suiteXmlFile>
+          </suiteXmlFiles>
+        </configuration>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -53,19 +43,31 @@
           </execution>
         </executions>
       </plugin>
-
     </plugins>
   </build>
 
   <dependencies>
     <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
+    <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
     </dependency>
-    
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+    
+    <!-- jdo -->
+    <dependency>
+      <groupId>javax.jdo</groupId>
+      <artifactId>jdo2-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-core</artifactId>
     </dependency>
 
     <dependency>
@@ -73,57 +75,73 @@
       <artifactId>tll-common</artifactId>
       <version>${project.version}</version>
     </dependency>
-  	<dependency>
-  		<groupId>com.tll</groupId>
-  		<artifactId>tll-model</artifactId>
-  		<version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>oro</groupId>
-          <artifactId>oro</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-lang</groupId>
-          <artifactId>commons-lang</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.google.code.guice</groupId>
-          <artifactId>guice</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-annotations</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-validator</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.tll</groupId>
-          <artifactId>tll-config</artifactId>
-        </exclusion>
-      </exclusions>
-  	</dependency>
-
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-config</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-model</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dbshell</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>com.google.code.guice</groupId>
       <artifactId>guice</artifactId>
-      <scope>test</scope>
     </dependency>
     <!-- for guice 2.0 -->
     <dependency>
       <groupId>aopalliance</groupId>
       <artifactId>aopalliance</artifactId>
-      <scope>test</scope>
+      <scope>runtime</scope>
     </dependency>
     
-    <!-- for mocked entities (in memory object graph) -->
+    <dependency>
+      <groupId>antlr</groupId>
+      <artifactId>antlr</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>javassist</groupId>
+      <artifactId>javassist</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>db4o</groupId>
+      <artifactId>db4o</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-db4o</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
@@ -131,6 +149,14 @@
       <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-api</artifactId>
+      <version>${project.version}</version>
+      <classifier>testassets</classifier>
+      <scope>test</scope>
+    </dependency>
+    <!-- for mocked entities (in memory object graph) -->
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-egraph</artifactId>
