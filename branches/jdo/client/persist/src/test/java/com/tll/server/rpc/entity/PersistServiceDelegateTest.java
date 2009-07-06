@@ -33,12 +33,12 @@ import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.di.ClientPersistModule;
 import com.tll.di.EntityAssemblerModule;
+import com.tll.di.EntityBeanFactoryModule;
 import com.tll.di.EntityServiceFactoryModule;
 import com.tll.di.LogExceptionHandlerModule;
 import com.tll.di.MailModule;
 import com.tll.di.MarshalModule;
 import com.tll.di.MockDaoModule;
-import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
 import com.tll.di.RefDataModule;
 import com.tll.di.ValidationModule;
@@ -76,7 +76,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 		});
 		modules.add(new ModelModule());
 		modules.add(new ValidationModule());
-		modules.add(new MockEntityFactoryModule());
+		modules.add(new EntityBeanFactoryModule());
 		modules.add(new MockDaoModule() {
 
 			@Override

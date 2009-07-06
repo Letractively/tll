@@ -20,8 +20,8 @@ import com.google.inject.Scopes;
 import com.tll.AbstractInjectedTest;
 import com.tll.common.model.IModelProperty;
 import com.tll.common.model.Model;
+import com.tll.di.EntityBeanFactoryModule;
 import com.tll.di.MockDaoModule;
-import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
 import com.tll.model.Account;
 import com.tll.model.EntityBeanFactory;
@@ -63,7 +63,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
 		modules.add(new ModelModule());
-		modules.add(new MockEntityFactoryModule());
+		modules.add(new EntityBeanFactoryModule());
 		modules.add(new MockDaoModule() {
 
 			@Override

@@ -97,8 +97,12 @@ public class EntityDao implements IEntityDao {
 		this.comparatorTranslator = new JdoQueryComparatorTranslator();
 	}
 
+	protected final PersistenceManager getPersistenceManager() {
+		return getPersistenceManager();
+	}
+
 	public <E extends IEntity> E load(PrimaryKey<E> key) {
-		final PersistenceManager pm = pmf.getPersistenceManager();
+		final PersistenceManager pm = getPersistenceManager();
 		final E e = pm.getObjectById(key.getType(), key.getId());
 		return e;
 	}
@@ -125,7 +129,7 @@ public class EntityDao implements IEntityDao {
 
 	@SuppressWarnings("unchecked")
 	public <E extends IEntity> List<E> loadAll(Class<E> entityType) {
-		final PersistenceManager pm = pmf.getPersistenceManager();
+		final PersistenceManager pm = getPersistenceManager();
 		final Query q = pm.newQuery(entityType);
 		try {
 			final List<E> list = (List<E>) q.execute();
@@ -145,13 +149,13 @@ public class EntityDao implements IEntityDao {
 	}
 
 	public <E extends IEntity> E persist(E entity) {
-		final PersistenceManager pm = pmf.getPersistenceManager();
+		final PersistenceManager pm = getPersistenceManager();
 		return persistInternal(entity, true, pm);
 	}
 
 	public <E extends IEntity> Collection<E> persistAll(Collection<E> entities) {
 		if(entities == null) return null;
-		final PersistenceManager pm = pmf.getPersistenceManager();
+		final PersistenceManager pm = getPersistenceManager();
 		final Collection<E> merged = new HashSet<E>(entities.size());
 		for(final E e : entities) {
 			merged.add(persistInternal(e, false, pm));
@@ -172,13 +176,13 @@ public class EntityDao implements IEntityDao {
 	}
 
 	public <E extends IEntity> void purge(E entity) {
-		final PersistenceManager pm = pmf.getPersistenceManager();
+		final PersistenceManager pm = getPersistenceManager();
 		purgeInternal(entity, true, pm);
 	}
 
 	public <E extends IEntity> void purgeAll(Collection<E> entities) {
 		if(!CollectionUtil.isEmpty(entities)) {
-			final PersistenceManager pm = pmf.getPersistenceManager();
+			final PersistenceManager pm = getPersistenceManager();
 			for(final E e : entities) {
 				purgeInternal(e, false, pm);
 			}
@@ -247,7 +251,7 @@ public class EntityDao implements IEntityDao {
 	private <E extends IEntity> List<?> processCriteria(com.tll.criteria.Criteria<E> criteria, Sorting sorting,
 			boolean applySorting) throws InvalidCriteriaException {
 		assert criteria != null;
-		final PersistenceManager pm = pmf.getPersistenceManager();
+		final PersistenceManager pm = getPersistenceManager();
 		if(criteria.getCriteriaType().isQuery()) {
 			// presume named query ref
 			final ISelectNamedQueryDef nq = criteria.getNamedQueryDefinition();
@@ -382,7 +386,7 @@ public class EntityDao implements IEntityDao {
 	public <E extends IEntity> List<E> findByIds(Class<E> entityType, List<Integer> ids, Sorting sorting) {
 		final com.tll.criteria.Criteria<E> nativeCriteria = new com.tll.criteria.Criteria<E>(entityType);
 		nativeCriteria.getPrimaryGroup().addCriterion(IEntity.PK_FIELDNAME, ids, Comparator.IN, false);
-		final PersistenceManager pm = pmf.getPersistenceManager();
+		final PersistenceManager pm = getPersistenceManager();
 		final Query q = pm.newQuery();
 		try {
 			applyCriteria(q, nativeCriteria, sorting, true);
@@ -405,7 +409,7 @@ public class EntityDao implements IEntityDao {
 		if(criteria.getCriteriaType().isQuery()) {
 			throw new InvalidCriteriaException("Ids are not supplied for direct queries!");
 		}
-		final PersistenceManager pm = pmf.getPersistenceManager();
+		final PersistenceManager pm = getPersistenceManager();
 		final Query q = pm.newQuery();
 		applyCriteria(q, criteria, sorting, true);
 
@@ -423,7 +427,7 @@ public class EntityDao implements IEntityDao {
 		if(CollectionUtil.isEmpty(ids)) {
 			return new ArrayList<E>();
 		}
-		final PersistenceManager pm = pmf.getPersistenceManager();
+		final PersistenceManager pm = getPersistenceManager();
 		final Query q = pm.newQuery(entityClass);
 		final StringBuilder sb = new StringBuilder();
 		for(final Integer id : ids) {
@@ -453,7 +457,7 @@ public class EntityDao implements IEntityDao {
 		assert criteria != null && criteria.getCriteriaType() != null;
 		List<SearchResult<E>> rlist = null;
 		int totalCount = -1;
-		final PersistenceManager pm = pmf.getPersistenceManager();
+		final PersistenceManager pm = getPersistenceManager();
 
 		switch(criteria.getCriteriaType()) {
 

@@ -141,7 +141,7 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-mock</artifactId>
+      <artifactId>tll-egraph</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

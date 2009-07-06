@@ -10,7 +10,7 @@ import com.tll.model.AccountAddress;
 import com.tll.model.Address;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
-import com.tll.model.MockEntityFactory;
+import com.tll.model.EntityBeanFactory;
 import com.tll.model.PaymentInfo;
 
 /**
@@ -52,7 +52,7 @@ public abstract class AbstractAccountDaoTestHandler<A extends Account> extends A
 
 		final Address address1 = create(Address.class, true);
 		final Address address2 = create(Address.class, true);
-		
+
 		final AccountAddress aa1 = create(AccountAddress.class, true);
 		final AccountAddress aa2 = create(AccountAddress.class, true);
 		aa1.setAddress(address1);
@@ -66,8 +66,8 @@ public abstract class AbstractAccountDaoTestHandler<A extends Account> extends A
 		super.makeUnique(e);
 		if(e.getAddresses() != null) {
 			for(final AccountAddress aa : e.getAddresses()) {
-				MockEntityFactory.makeBusinessKeyUnique(aa);
-				MockEntityFactory.makeBusinessKeyUnique(aa.getAddress());
+				EntityBeanFactory.makeBusinessKeyUnique(aa);
+				EntityBeanFactory.makeBusinessKeyUnique(aa.getAddress());
 			}
 		}
 	}
@@ -79,7 +79,7 @@ public abstract class AbstractAccountDaoTestHandler<A extends Account> extends A
 		Assert.assertNotNull(e.getCurrency(), "No account currency loaded");
 		Assert.assertNotNull(e.getPaymentInfo(), "No account payment info loaded");
 		Assert.assertTrue(e.getAddresses() != null && e.getAddresses().size() == 2,
-				"No account address collection loaded or invalid number of them");
+		"No account address collection loaded or invalid number of them");
 	}
 
 }

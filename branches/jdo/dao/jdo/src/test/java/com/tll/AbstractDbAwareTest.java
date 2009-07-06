@@ -17,17 +17,8 @@ import com.tll.config.Config;
 public abstract class AbstractDbAwareTest extends AbstractInjectedTest {
 
 	private Config config;
-	private final PersistenceManager pm;
+	private PersistenceManager pm;
 	private DbTestSupport dbSupport;
-
-	/**
-	 * Constructor
-	 * @param pm
-	 */
-	public AbstractDbAwareTest(PersistenceManager pm) {
-		super();
-		this.pm = pm;
-	}
 
 	/**
 	 * @return the config instance.
@@ -47,5 +38,15 @@ public abstract class AbstractDbAwareTest extends AbstractInjectedTest {
 			dbSupport = new DbTestSupport(getConfig(), pm);
 		}
 		return dbSupport;
+	}
+
+	/**
+	 * @return A fresh {@link PersistenceManager} instance.
+	 */
+	protected final PersistenceManager getPersistenceManager() {
+		if(pm == null) {
+			pm = injector.getInstance(PersistenceManager.class);
+		}
+		return pm;
 	}
 }

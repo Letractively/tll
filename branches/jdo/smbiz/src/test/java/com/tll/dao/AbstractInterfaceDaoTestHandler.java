@@ -1,5 +1,5 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.dao;
 
@@ -10,10 +10,10 @@ import org.testng.Assert;
 
 import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.SelectNamedQueries;
+import com.tll.model.EntityBeanFactory;
 import com.tll.model.Interface;
 import com.tll.model.InterfaceOption;
 import com.tll.model.InterfaceOptionParameterDefinition;
-import com.tll.model.MockEntityFactory;
 
 /**
  * AbstractInterfaceDaoTestHandler
@@ -38,7 +38,7 @@ public abstract class AbstractInterfaceDaoTestHandler<I extends Interface> exten
 
 		final InterfaceOption o1 = create(InterfaceOption.class, false);
 		Set<InterfaceOptionParameterDefinition> params =
-				getAll(InterfaceOptionParameterDefinition.class);
+			getAll(InterfaceOptionParameterDefinition.class);
 		o1.addParameters(params);
 		e.addOption(o1);
 
@@ -52,9 +52,9 @@ public abstract class AbstractInterfaceDaoTestHandler<I extends Interface> exten
 	public void makeUnique(I e) {
 		super.makeUnique(e);
 		for(final InterfaceOption o : e.getOptions()) {
-			MockEntityFactory.makeBusinessKeyUnique(o);
+			EntityBeanFactory.makeBusinessKeyUnique(o);
 			for(final InterfaceOptionParameterDefinition param : o.getParameters()) {
-				MockEntityFactory.makeBusinessKeyUnique(param);
+				EntityBeanFactory.makeBusinessKeyUnique(param);
 			}
 		}
 	}

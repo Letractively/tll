@@ -1,5 +1,5 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.dao;
 
@@ -8,7 +8,7 @@ import org.testng.Assert;
 import com.tll.model.Account;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
-import com.tll.model.MockEntityFactory;
+import com.tll.model.EntityBeanFactory;
 import com.tll.model.ProductGeneral;
 import com.tll.model.ProductInventory;
 
@@ -51,7 +51,7 @@ public class ProductInventoryDaoTestHandler extends AbstractEntityDaoTestHandler
 	@Override
 	public void makeUnique(ProductInventory e) {
 		super.makeUnique(e);
-		MockEntityFactory.makeBusinessKeyUnique(e.getProductGeneral());
+		EntityBeanFactory.makeBusinessKeyUnique(e.getProductGeneral());
 	}
 
 	@Override

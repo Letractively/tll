@@ -13,8 +13,8 @@ import com.google.inject.Module;
 import com.tll.config.Config;
 import com.tll.dao.IEntityDao;
 import com.tll.di.DbDialectModule;
-import com.tll.di.OrmDaoModule;
-import com.tll.model.MockEntityFactory;
+import com.tll.di.JdoDaoModule;
+import com.tll.model.EntityBeanFactory;
 import com.tll.model.PaymentInfo;
 
 /**
@@ -37,14 +37,14 @@ public class PaymentInfoStubber extends AbstractInjectedTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		modules.add(new DbDialectModule(config));
-		modules.add(new OrmDaoModule(config));
+		modules.add(new JdoDaoModule(config));
 	}
 
 	@Test
 	public void stub() throws Exception {
-		final DbTestSupport dbSupport = new DbTestSupport(config);
+		final DbTestSupport dbSupport = new DbTestSupport(config, null/*TODO*/);
 		dbSupport.startNewTransaction();
-		final MockEntityFactory mep = injector.getInstance(MockEntityFactory.class);
+		final EntityBeanFactory mep = injector.getInstance(EntityBeanFactory.class);
 		final PaymentInfo e = mep.getEntityCopy(PaymentInfo.class, false);
 		final IEntityDao dao = injector.getInstance(IEntityDao.class);
 		dao.persist(e);

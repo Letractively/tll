@@ -19,12 +19,12 @@ import com.google.inject.Scopes;
 import com.tll.AbstractInjectedTest;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
+import com.tll.di.EntityBeanFactoryModule;
 import com.tll.di.MockDaoModule;
-import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
+import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityGraphBuilder;
-import com.tll.model.MockEntityFactory;
 import com.tll.model.SmbizEntityGraphBuilder;
 import com.tll.server.rpc.entity.IEntityTypeResolver;
 import com.tll.server.rpc.entity.SmbizEntityTypeResolver;
@@ -49,7 +49,7 @@ import com.tll.util.CommonUtil;
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
 		modules.add(new ModelModule());
-		modules.add(new MockEntityFactoryModule());
+		modules.add(new EntityBeanFactoryModule());
 		modules.add(new MockDaoModule() {
 
 			@Override
@@ -70,8 +70,8 @@ import com.tll.util.CommonUtil;
 		return injector.getInstance(Marshaler.class);
 	}
 
-	private MockEntityFactory getMockEntityFactory() {
-		return injector.getInstance(MockEntityFactory.class);
+	private EntityBeanFactory getEntityBeanFactory() {
+		return injector.getInstance(EntityBeanFactory.class);
 	}
 
 	/**
@@ -93,7 +93,7 @@ import com.tll.util.CommonUtil;
 				}
 			});
 		for(final Class<? extends IEntity> entityClass : entityClasses) {
-			final IEntity e = getMockEntityFactory().getEntityCopy(entityClass, false);
+			final IEntity e = getEntityBeanFactory().getEntityCopy(entityClass, false);
 			Assert.assertNotNull(e);
 			final Model model = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
 

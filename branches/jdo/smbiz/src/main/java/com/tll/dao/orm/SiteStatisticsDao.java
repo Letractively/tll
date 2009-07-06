@@ -1,12 +1,12 @@
 package com.tll.dao.orm;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import javax.jdo.PersistenceManagerFactory;
+import javax.jdo.Query;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.ISiteStatisticsDao;
+import com.tll.dao.jdo.EntityDao;
+import com.tll.db.IDbDialectHandler;
 
 /**
  * @author jpk
@@ -15,71 +15,71 @@ public class SiteStatisticsDao extends EntityDao implements ISiteStatisticsDao {
 
 	/**
 	 * Constructor
-	 * @param emPrvdr
+	 * @param pmf
 	 * @param dbDialectHandler
 	 */
 	@Inject
-	public SiteStatisticsDao(Provider<EntityManager> emPrvdr, IDbDialectHandler dbDialectHandler) {
-		super(emPrvdr, dbDialectHandler);
+	public SiteStatisticsDao(PersistenceManagerFactory pmf, IDbDialectHandler dbDialectHandler) {
+		super(pmf, dbDialectHandler);
 	}
 
 	public int numIsps() {
-		final Query q = getEntityManager().createNamedQuery("numISPs");
-		final Integer i = (Integer) q.getResultList().get(0);
+		final Query q = getPersistenceManager().newQuery("numISPs");
+		final Integer i = (Integer) q.execute();
 		return i == null ? 0 : i.intValue();
 	}
 
 	public int numMerchants() {
-		final Query q = getEntityManager().createNamedQuery("numMerchants");
-		final Integer i = (Integer) q.getResultList().get(0);
+		final Query q = getPersistenceManager().newQuery("numMerchants");
+		final Integer i = (Integer) q.execute();
 		return i == null ? 0 : i.intValue();
 	}
 
 	public int numCustomers() {
-		final Query q = getEntityManager().createNamedQuery("numCustomers");
-		final Integer i = (Integer) q.getResultList().get(0);
+		final Query q = getPersistenceManager().newQuery("numCustomers");
+		final Integer i = (Integer) q.execute();
 		return i == null ? 0 : i.intValue();
 	}
 
 	public int numShoppers() {
-		final Query q = getEntityManager().createNamedQuery("numShoppers");
-		final Integer i = (Integer) q.getResultList().get(0);
+		final Query q = getPersistenceManager().newQuery("numShoppers");
+		final Integer i = (Integer) q.execute();
 		return i == null ? 0 : i.intValue();
 	}
 
 	public int numAddresses() {
-		final Query q = getEntityManager().createNamedQuery("numAddresses");
-		final Integer i = (Integer) q.getResultList().get(0);
+		final Query q = getPersistenceManager().newQuery("numAddresses");
+		final Integer i = (Integer) q.execute();
 		return i == null ? 0 : i.intValue();
 	}
 
 	public int numUsers() {
-		final Query q = getEntityManager().createNamedQuery("numUsers");
-		final Integer i = (Integer) q.getResultList().get(0);
+		final Query q = getPersistenceManager().newQuery("numUsers");
+		final Integer i = (Integer) q.execute();
 		return i == null ? 0 : i.intValue();
 	}
 
 	public int numOrders() {
-		final Query q = getEntityManager().createNamedQuery("numOrders");
-		final Integer i = (Integer) q.getResultList().get(0);
+		final Query q = getPersistenceManager().newQuery("numOrders");
+		final Integer i = (Integer) q.execute();
 		return i == null ? 0 : i.intValue();
 	}
 
 	public int numProducts() {
-		final Query q = getEntityManager().createNamedQuery("numProducts");
-		final Integer i = (Integer) q.getResultList().get(0);
+		final Query q = getPersistenceManager().newQuery("numProducts");
+		final Integer i = (Integer) q.execute();
 		return i == null ? 0 : i.intValue();
 	}
 
 	public int numProductCategories() {
-		final Query q = getEntityManager().createNamedQuery("numProductCategories");
-		final Integer i = (Integer) q.getResultList().get(0);
+		final Query q = getPersistenceManager().newQuery("numProductCategories");
+		final Integer i = (Integer) q.execute();
 		return i == null ? 0 : i.intValue();
 	}
 
 	public int numInterfaces() {
-		final Query q = getEntityManager().createNamedQuery("numInterfaces");
-		final Integer i = (Integer) q.getResultList().get(0);
+		final Query q = getPersistenceManager().newQuery("numInterfaces");
+		final Integer i = (Integer) q.execute();
 		return i == null ? 0 : i.intValue();
 	}
 

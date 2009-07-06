@@ -15,13 +15,13 @@ import com.tll.AbstractDbAwareTest;
 import com.tll.dao.IEntityDao;
 import com.tll.di.DbDialectModule;
 import com.tll.di.EntityAssemblerModule;
+import com.tll.di.EntityBeanFactoryModule;
 import com.tll.di.EntityServiceFactoryModule;
-import com.tll.di.MockEntityFactoryModule;
+import com.tll.di.JdoDaoModule;
 import com.tll.di.ModelModule;
-import com.tll.di.OrmDaoModule;
 import com.tll.di.ValidationModule;
+import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntityAssembler;
-import com.tll.model.MockEntityFactory;
 import com.tll.model.SmbizEntityAssembler;
 
 /**
@@ -43,9 +43,9 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 		super.addModules(modules);
 		modules.add(new ValidationModule());
 		modules.add(new ModelModule());
-		modules.add(new MockEntityFactoryModule());
+		modules.add(new EntityBeanFactoryModule());
 		modules.add(new DbDialectModule(getConfig()));
-		modules.add(new OrmDaoModule(getConfig()));
+		modules.add(new JdoDaoModule(getConfig()));
 		// modules.add(new TransactionModule(getConfig()));
 		modules.add(new EntityAssemblerModule() {
 
@@ -84,8 +84,8 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 		return injector.getInstance(IEntityDao.class);
 	}
 
-	protected final MockEntityFactory getMockEntityFactory() {
-		return injector.getInstance(MockEntityFactory.class);
+	protected final EntityBeanFactory getMockEntityFactory() {
+		return injector.getInstance(EntityBeanFactory.class);
 	}
 
 	protected final IEntityServiceFactory getEntityServiceFactory() {

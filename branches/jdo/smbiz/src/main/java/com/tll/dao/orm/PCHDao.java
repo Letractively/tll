@@ -6,12 +6,12 @@ package com.tll.dao.orm;
 import java.util.Collection;
 import java.util.List;
 
-import javax.persistence.EntityManager;
+import javax.jdo.PersistenceManagerFactory;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.IPCHDao;
+import com.tll.dao.jdo.EntityDao;
+import com.tll.db.IDbDialectHandler;
 
 /**
  * PCHDao
@@ -21,12 +21,12 @@ public class PCHDao extends EntityDao implements IPCHDao {
 
 	/**
 	 * Constructor
-	 * @param emPrvdr
+	 * @param pmf
 	 * @param dbDialectHandler
 	 */
 	@Inject
-	public PCHDao(Provider<EntityManager> emPrvdr, IDbDialectHandler dbDialectHandler) {
-		super(emPrvdr, dbDialectHandler);
+	public PCHDao(PersistenceManagerFactory pmf, IDbDialectHandler dbDialectHandler) {
+		super(pmf, dbDialectHandler);
 	}
 
 	public List<Integer> getPath(int categoryId) {

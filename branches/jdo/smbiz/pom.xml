@@ -168,7 +168,7 @@
                 </element>
                 <element>
                   <groupId>com.tll</groupId>
-                  <artifactId>tll-dao-orm</artifactId>
+                  <artifactId>tll-dao-jro</artifactId>
                   <version>${project.parent.version}</version>
                 </element>
                 <element>
@@ -377,11 +377,11 @@
       </build>
     </profile>
     
-    <!-- dao mode (orm/mock) profiles -->
+    <!-- dao mode (jdo/mock) profiles -->
     <profile>
-      <id>orm</id>
+      <id>jdo</id>
       <properties>
-        <daoMode>orm</daoMode>
+        <daoMode>jdo</daoMode>
       </properties>
     </profile>
     <profile>
@@ -563,7 +563,7 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao-orm</artifactId>
+      <artifactId>tll-dao-jdo</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
@@ -655,6 +655,12 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>tll-dbshell</artifactId>
+      <version>${project.parent.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>tll-dao-api</artifactId>
       <classifier>testassets</classifier>
       <version>${project.parent.version}</version>
@@ -662,7 +668,7 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao-orm</artifactId>
+      <artifactId>tll-dao-jdo</artifactId>
       <classifier>testassets</classifier>
       <version>${project.parent.version}</version>
       <scope>test</scope>

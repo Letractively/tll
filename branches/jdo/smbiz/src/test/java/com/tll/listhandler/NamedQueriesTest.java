@@ -28,11 +28,11 @@ import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.di.DbDialectModule;
 import com.tll.di.EntityAssemblerModule;
+import com.tll.di.EntityBeanFactoryModule;
 import com.tll.di.EntityServiceFactoryModule;
+import com.tll.di.JdoDaoModule;
 import com.tll.di.MockDaoModule;
-import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
-import com.tll.di.OrmDaoModule;
 import com.tll.di.ValidationModule;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityAssembler;
@@ -113,7 +113,7 @@ import com.tll.service.entity.IEntityServiceFactory;
 		modules.add(new ValidationModule());
 		modules.add(new ModelModule());
 		if(mock) {
-			modules.add(new MockEntityFactoryModule());
+			modules.add(new EntityBeanFactoryModule());
 			modules.add(new MockDaoModule() {
 
 				@Override
@@ -124,7 +124,7 @@ import com.tll.service.entity.IEntityServiceFactory;
 		}
 		else {
 			modules.add(new DbDialectModule(getConfig()));
-			modules.add(new OrmDaoModule(getConfig()));
+			modules.add(new JdoDaoModule(getConfig()));
 		}
 		modules.add(new EntityAssemblerModule() {
 
