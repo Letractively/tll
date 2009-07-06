@@ -5,7 +5,7 @@
 		}
 )
 
-@GenericGenerator(name = "entity", strategy = "com.tll.dao.orm.DelegateGenerator",
+@GenericGenerator(name = "entity", strategy = "com.tll.dao.jdo.DelegateGenerator",
 		parameters = {
 	@Parameter(name="delegate", value="hilo")
 }
@@ -18,7 +18,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
-import com.tll.dao.orm.EncryptedObjectType;
+import com.tll.dao.jdo.EncryptedObjectType;
  */
 
 package com.tll.model;

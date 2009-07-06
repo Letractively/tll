@@ -1,4 +1,4 @@
-package com.tll.dao.orm;
+package com.tll.dao.jdo;
 
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;

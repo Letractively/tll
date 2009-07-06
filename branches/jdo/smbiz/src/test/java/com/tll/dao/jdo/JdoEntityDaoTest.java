@@ -3,7 +3,7 @@
  * @author jpk
  * Jan 28, 2009
  */
-package com.tll.dao.orm;
+package com.tll.dao.jdo;
 
 import javax.jdo.PersistenceManager;
 
@@ -18,13 +18,13 @@ import com.tll.dao.jdo.AbstractJdoEntityDaoTest;
  * @author jpk
  */
 @Test(groups = "dao")
-public class OrmEntityDaoTest extends AbstractJdoEntityDaoTest {
+public class JdoEntityDaoTest extends AbstractJdoEntityDaoTest {
 
 	/**
 	 * Constructor
 	 * @param pm
 	 */
-	public OrmEntityDaoTest(PersistenceManager pm) {
+	public JdoEntityDaoTest(PersistenceManager pm) {
 		super(pm);
 	}
 
