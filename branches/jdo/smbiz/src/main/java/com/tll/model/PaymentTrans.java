@@ -2,11 +2,8 @@ package com.tll.model;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
@@ -19,8 +16,7 @@ import com.tll.model.schema.BusinessObject;
  * payment transaction entity
  * @author jpk
  */
-@Entity
-@Table(name = "payment_trans")
+@PersistenceCapable
 @BusinessObject(businessKeys = {
 	@BusinessKeyDef(name = "Pay Trans Date, Payment Op and Pay Type",
 			properties = { "payTransDate", "payOp", "payType" }),
@@ -34,24 +30,34 @@ public class PaymentTrans extends TimeStampEntity {
 	public static final int MAXLEN_RESPONSE = 32;
 	public static final int MAXLEN_RESPONSE_MSG = 128;
 
+	@Persistent
 	private Date payTransDate;
 
+	@Persistent
 	private PaymentOp payOp;
 
+	@Persistent
 	private PaymentType payType;
 
+	@Persistent
 	private float amount = 0f;
 
+	@Persistent
 	private PaymentProcessor paymentProcessor;
 
+	@Persistent
 	private String authNum;
 
+	@Persistent
 	private String refNum;
 
+	@Persistent
 	private String response;
 
+	@Persistent
 	private String responseMsg;
 
+	@Persistent
 	private String notes;
 
 	public Class<? extends IEntity> entityClass() {
@@ -61,7 +67,6 @@ public class PaymentTrans extends TimeStampEntity {
 	/**
 	 * @return Returns the amount.
 	 */
-	@Column(precision = 7, scale = 2)
 	// @Size(min = 0, max = 999999)
 	public float getAmount() {
 		return amount;
@@ -77,7 +82,6 @@ public class PaymentTrans extends TimeStampEntity {
 	/**
 	 * @return Returns the authNum.
 	 */
-	@Column(name = "auth_num")
 	@Length(max = MAXLEN_AUTH_NUM)
 	public String getAuthNum() {
 		return authNum;
@@ -93,7 +97,6 @@ public class PaymentTrans extends TimeStampEntity {
 	/**
 	 * @return Returns the notes.
 	 */
-	@Column
 	public String getNotes() {
 		return notes;
 	}
@@ -108,7 +111,6 @@ public class PaymentTrans extends TimeStampEntity {
 	/**
 	 * @return Returns the paymentProcessor.
 	 */
-	@Column(name = "payment_processor")
 	public PaymentProcessor getPaymentProcessor() {
 		return paymentProcessor;
 	}
@@ -123,7 +125,6 @@ public class PaymentTrans extends TimeStampEntity {
 	/**
 	 * @return Returns the payOp.
 	 */
-	@Column(name = "pay_op")
 	@NotNull
 	public PaymentOp getPayOp() {
 		return payOp;
@@ -139,8 +140,6 @@ public class PaymentTrans extends TimeStampEntity {
 	/**
 	 * @return Returns the payTransDate.
 	 */
-	@Column(name = "pay_trans_date")
-	@Temporal(value = TemporalType.TIMESTAMP)
 	@NotNull
 	public Date getPayTransDate() {
 		return payTransDate;
@@ -156,7 +155,6 @@ public class PaymentTrans extends TimeStampEntity {
 	/**
 	 * @return Returns the payType.
 	 */
-	@Column(name = "pay_type")
 	@NotNull
 	public PaymentType getPayType() {
 		return payType;
@@ -172,7 +170,6 @@ public class PaymentTrans extends TimeStampEntity {
 	/**
 	 * @return Returns the refNum.
 	 */
-	@Column(name = "ref_num", unique = true)
 	@NotEmpty
 	@Length(max = MAXLEN_REF_NUM)
 	public String getRefNum() {
@@ -189,7 +186,6 @@ public class PaymentTrans extends TimeStampEntity {
 	/**
 	 * @return Returns the response.
 	 */
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_RESPONSE)
 	public String getResponse() {
@@ -206,7 +202,6 @@ public class PaymentTrans extends TimeStampEntity {
 	/**
 	 * @return Returns the responseMsg.
 	 */
-	@Column(name = "response_msg")
 	@NotEmpty
 	@Length(max = MAXLEN_RESPONSE_MSG)
 	public String getResponseMsg() {

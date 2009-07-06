@@ -87,10 +87,6 @@
     </dependency>
 
     <dependency>
-    	<groupId>org.hibernate</groupId>
-    	<artifactId>ejb3-persistence</artifactId>
-    </dependency>
-    <dependency>
     	<groupId>com.google.code.guice</groupId>
     	<artifactId>guice</artifactId>
     </dependency>

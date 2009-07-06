@@ -11,19 +11,18 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
-import com.tll.model.MockEntityFactory;
-import com.tll.model.MockEntityFactory.MockEntityBeanFactory;
+import com.tll.model.EntityBeanFactory;
+import com.tll.model.EntityBeanFactory.EntityBeanFactoryParam;
 
 /**
- * MockEntityFactoryModule - Use for providing a {@link MockEntityFactory}
- * instance based on Spring compatable bean xml definition file.
+ * EntityBeanFactoryModule - Provides {@link EntityBeanFactory} instance.
  * @author jpk
  */
-public class MockEntityFactoryModule extends AbstractModule {
+public class EntityBeanFactoryModule extends AbstractModule {
 
 	public static final String DEFAULT_FILENAME = "mock-entities.xml";
 
-	private static final Log log = LogFactory.getLog(MockEntityFactoryModule.class);
+	private static final Log log = LogFactory.getLog(EntityBeanFactoryModule.class);
 
 	/**
 	 * The name of the file containing the entity definitions expected to be at
@@ -34,7 +33,7 @@ public class MockEntityFactoryModule extends AbstractModule {
 	/**
 	 * Constructor
 	 */
-	public MockEntityFactoryModule() {
+	public EntityBeanFactoryModule() {
 		this(DEFAULT_FILENAME);
 	}
 
@@ -42,7 +41,7 @@ public class MockEntityFactoryModule extends AbstractModule {
 	 * Constructor
 	 * @param filename
 	 */
-	public MockEntityFactoryModule(String filename) {
+	public EntityBeanFactoryModule(String filename) {
 		super();
 		if(filename == null) throw new IllegalArgumentException("Null filename");
 		this.filename = filename;
@@ -51,7 +50,7 @@ public class MockEntityFactoryModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		log.info("Employing mock entity factory module.");
-		bind(ListableBeanFactory.class).annotatedWith(MockEntityBeanFactory.class).toProvider(
+		bind(ListableBeanFactory.class).annotatedWith(EntityBeanFactoryParam.class).toProvider(
 				new Provider<ListableBeanFactory>() {
 
 					@SuppressWarnings("synthetic-access")
@@ -60,7 +59,7 @@ public class MockEntityFactoryModule extends AbstractModule {
 						return new ClassPathXmlApplicationContext(filename);
 					}
 				});
-		bind(MockEntityFactory.class).in(Scopes.SINGLETON);
+		bind(EntityBeanFactory.class).in(Scopes.SINGLETON);
 	}
 
 }

@@ -1,13 +1,7 @@
 package com.tll.model;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -22,8 +16,7 @@ import com.tll.model.schema.BusinessObject;
  * Product inventory entity
  * @author jpk
  */
-@Entity
-@Table(name = "product_inventory")
+@PersistenceCapable
 @BusinessObject(businessKeys =
 	@BusinessKeyDef(name = "Account Id and SKU", properties = { "account.id", "sku" }))
 	public class ProductInventory extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
@@ -33,28 +26,40 @@ import com.tll.model.schema.BusinessObject;
 	public static final int MAXLEN_SKU = 64;
 	public static final int MAXLEN_AUX_DESCRIPTOR = 255;
 
+	@Persistent
 	private String sku;
 
+	@Persistent
 	private ProductStatus status;
 
+	@Persistent
 	private float retailPrice = 0f;
 
+	@Persistent
 	private float salesPrice = 0f;
 
+	@Persistent
 	private float weight = 0f;
 
+	@Persistent
 	private boolean onSale;
 
+	@Persistent
 	private String auxDescriptor;
 
+	@Persistent
 	private int invInStock = 0;
 
+	@Persistent
 	private int invCommitted = 0;
 
+	@Persistent
 	private int invReorderLevel = 0;
 
+	@Persistent
 	private Account account;
 
+	@Persistent
 	private ProductGeneral productGeneral;
 
 	public Class<? extends IEntity> entityClass() {
@@ -64,8 +69,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the account.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "aid")
 	@NotNull
 	public Account getAccount() {
 		return account;
@@ -81,7 +84,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the auxDescriptor.
 	 */
-	@Column(name = "aux_descriptor")
 	@Length(max = MAXLEN_AUX_DESCRIPTOR)
 	public String getAuxDescriptor() {
 		return auxDescriptor;
@@ -97,7 +99,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the invCommitted.
 	 */
-	@Column(name = "inv_committed")
 	@NotNull
 	@Min(value = 0)
 	@Max(value = 999999)
@@ -115,7 +116,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the invInStock.
 	 */
-	@Column(name = "inv_in_stock")
 	@NotNull
 	@Min(value = 0)
 	@Max(value = 999999)
@@ -133,7 +133,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the invReorderLevel.
 	 */
-	@Column(name = "inv_reorder_level")
 	@NotNull
 	@Min(value = 0)
 	@Max(value = 999999)
@@ -151,7 +150,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the onSale.
 	 */
-	@Column(name = "on_sale")
 	@NotNull
 	public boolean isOnSale() {
 		return onSale;
@@ -167,8 +165,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the productGeneral.
 	 */
-	@ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
-	@JoinColumn(name = "pg_id")
 	@NotNull
 	@Valid
 	public ProductGeneral getProductGeneral() {
@@ -185,7 +181,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the retailPrice.
 	 */
-	@Column(name = "retail_price", precision = 7, scale = 2)
 	@NotNull
 	// @Size(min = 0, max = 999999)
 	public float getRetailPrice() {
@@ -202,7 +197,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the salesPrice.
 	 */
-	@Column(name = "sales_price", precision = 7, scale = 2)
 	@NotNull
 	// @Size(min = 0, max = 999999)
 	public float getSalesPrice() {
@@ -219,7 +213,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the sku.
 	 */
-	@Column
 	@NotNull
 	@Length(max = MAXLEN_SKU)
 	public String getSku() {
@@ -236,7 +229,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the status.
 	 */
-	@Column
 	@NotNull
 	public ProductStatus getStatus() {
 		return status;
@@ -252,7 +244,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the weight.
 	 */
-	@Column(precision = 7, scale = 3)
 	@NotNull
 	// @Size(min = 0, max = 999999)
 	public float getWeight() {
@@ -266,7 +257,6 @@ import com.tll.model.schema.BusinessObject;
 		this.weight = weight;
 	}
 
-	@Transient
 	public Account getParent() {
 		return getAccount();
 	}

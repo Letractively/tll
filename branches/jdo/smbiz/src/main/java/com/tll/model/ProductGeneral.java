@@ -1,8 +1,7 @@
 package com.tll.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
@@ -14,8 +13,7 @@ import com.tll.model.schema.BusinessObject;
  * General product entity
  * @author jpk
  */
-@Entity
-@Table(name = "product_general")
+@PersistenceCapable
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Titles", properties = { "d1", "d2" }))
 public class ProductGeneral extends EntityBase {
 
@@ -27,14 +25,19 @@ public class ProductGeneral extends EntityBase {
 	public static final int MAXLEN_IMAGE1 = 64;
 	public static final int MAXLEN_IMAGE2 = 64;
 
+	@Persistent
 	private String d1;
 
+	@Persistent
 	private String d2;
 
+	@Persistent
 	private String d3;
 
+	@Persistent
 	private String image1;
 
+	@Persistent
 	private String image2;
 
 	public Class<? extends IEntity> entityClass() {
@@ -44,7 +47,6 @@ public class ProductGeneral extends EntityBase {
 	/**
 	 * @return Returns the d1.
 	 */
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_D1)
 	public String getD1() {
@@ -61,7 +63,6 @@ public class ProductGeneral extends EntityBase {
 	/**
 	 * @return Returns the d2.
 	 */
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_D2)
 	public String getD2() {
@@ -78,7 +79,6 @@ public class ProductGeneral extends EntityBase {
 	/**
 	 * @return Returns the d3.
 	 */
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_D3)
 	public String getD3() {
@@ -95,7 +95,6 @@ public class ProductGeneral extends EntityBase {
 	/**
 	 * @return Returns the image1.
 	 */
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_IMAGE1)
 	public String getImage1() {
@@ -112,7 +111,6 @@ public class ProductGeneral extends EntityBase {
 	/**
 	 * @return Returns the image2.
 	 */
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_IMAGE2)
 	public String getImage2() {

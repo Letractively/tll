@@ -2,11 +2,9 @@ package com.tll.model;
 
 /**
  * Indicates an entities' ability to exist in a collection owned by a parent
- * entity.
- * <P>
- * the parent entity
+ * entity. the parent entity
  * @author jpk
- * @param <P>
+ * @param <P> the parent entity type
  */
 public interface IChildEntity<P extends IEntity> extends IEntity {
 

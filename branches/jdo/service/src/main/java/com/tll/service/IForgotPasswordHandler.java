@@ -5,8 +5,7 @@
  */
 package com.tll.service;
 
-import javax.persistence.EntityNotFoundException;
-
+import com.tll.dao.EntityNotFoundException;
 import com.tll.model.IUserRef;
 
 /**
@@ -23,7 +22,7 @@ public interface IForgotPasswordHandler {
 	 * @throws EntityNotFoundException When the user can't be found.
 	 */
 	IUserRef getUserRef(String username) throws EntityNotFoundException;
-	
+
 	/**
 	 * Resets a user's password given the identifying username.
 	 * @param userId The user id

@@ -5,21 +5,13 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
+import javax.jdo.annotations.Inheritance;
+import javax.jdo.annotations.InheritanceStrategy;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -31,8 +23,8 @@ import com.tll.model.schema.BusinessObject;
 import com.tll.model.validate.AtLeastOne;
 import com.tll.model.validate.BusinessKeyUniqueness;
 
-@Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@PersistenceCapable
+@Inheritance(strategy = InheritanceStrategy.SUPERCLASS_TABLE)
 @DiscriminatorColumn(name = "account_type", discriminatorType = DiscriminatorType.INTEGER)
 @Table(name = "account")
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Name", properties = INamedEntity.NAME))
@@ -53,26 +45,37 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	public static final int MAXLEN_BILLING_MODEL = 32;
 	public static final int MAXLEN_BILLING_CYCLE = 32;
 
+	@Persistent
 	protected Account parent;
 
+	@Persistent
 	protected AccountStatus status;
 
-	protected boolean persistPymntInfo = false;
+	@Persistent
+	protected boolean persistPymntInfo;
 
+	@Persistent
 	protected String billingModel;
 
+	@Persistent
 	protected String billingCycle;
 
+	@Persistent
 	protected Date dateLastCharged;
 
+	@Persistent
 	protected Date nextChargeDate;
 
+	@Persistent
 	protected Date dateCancelled;
 
+	@Persistent
 	protected PaymentInfo paymentInfo;
 
+	@Persistent
 	protected Currency currency;
 
+	@Persistent
 	protected Set<AccountAddress> addresses = new LinkedHashSet<AccountAddress>(3);
 
 	/**
@@ -82,15 +85,13 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 		super();
 	}
 
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_NAME)
+	@Override
 	public String getName() {
 		return name;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "parent_aid")
 	public Account getParent() {
 		return parent;
 	}
@@ -102,7 +103,6 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	/**
 	 * @return Returns the persistPymntInfo.
 	 */
-	@Column(name = "persist_pymnt_info")
 	public boolean getPersistPymntInfo() {
 		return persistPymntInfo;
 	}
@@ -117,7 +117,6 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	/**
 	 * @return Returns the billingCycle.
 	 */
-	@Column(name = "billing_cycle")
 	@NotNull
 	@Length(max = MAXLEN_BILLING_CYCLE)
 	public String getBillingCycle() {
@@ -134,7 +133,6 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	/**
 	 * @return Returns the billingModel.
 	 */
-	@Column(name = "billing_model")
 	@NotNull
 	@Length(max = MAXLEN_BILLING_MODEL)
 	public String getBillingModel() {
@@ -151,8 +149,6 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	/**
 	 * @return Returns the currency.
 	 */
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "cur_id")
 	@NotNull
 	public Currency getCurrency() {
 		return currency;
@@ -168,8 +164,6 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	/**
 	 * @return Returns the dateCancelled.
 	 */
-	@Column(name = "date_cancelled")
-	@Temporal(TemporalType.TIMESTAMP)
 	public Date getDateCancelled() {
 		return dateCancelled;
 	}
@@ -184,8 +178,6 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	/**
 	 * @return Returns the dateLastCharged.
 	 */
-	@Column(name = "date_last_charged")
-	@Temporal(TemporalType.TIMESTAMP)
 	public Date getDateLastCharged() {
 		return dateLastCharged;
 	}
@@ -200,8 +192,6 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	/**
 	 * @return Returns the nextChargeDate.
 	 */
-	@Column(name = "next_charge_date")
-	@Temporal(TemporalType.TIMESTAMP)
 	public Date getNextChargeDate() {
 		return nextChargeDate;
 	}
@@ -216,8 +206,6 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	/**
 	 * @return Returns the paymentInfo.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "pi_id")
 	@Valid
 	public PaymentInfo getPaymentInfo() {
 		return paymentInfo;
@@ -233,7 +221,6 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	/**
 	 * @return Returns the status.
 	 */
-	@Column(nullable = false)
 	@NotNull
 	public AccountStatus getStatus() {
 		return status;
@@ -249,8 +236,6 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	/**
 	 * @return Returns the addresses.
 	 */
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "account")
-	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	@AtLeastOne(type = "account address")
 	@BusinessKeyUniqueness(type = "account address")
 	@Valid
@@ -265,37 +250,30 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 		this.addresses = addresses;
 	}
 
-	@Transient
 	public AccountAddress getAccountAddress(int id) {
 		return findEntityInCollection(this.addresses, id);
 	}
 
-	@Transient
 	public AccountAddress getAccountAddress(String nme) {
 		return findNamedEntityInCollection(this.addresses, nme);
 	}
 
-	@Transient
 	public void addAccountAddress(AccountAddress e) {
 		addEntityToCollection(addresses, e);
 	}
 
-	@Transient
 	public void addAccountAddresses(Collection<AccountAddress> clctn) {
 		addEntitiesToCollection(clctn, addresses);
 	}
 
-	@Transient
 	public void removeAccountAddresses() {
 		clearEntityCollection(addresses);
 	}
 
-	@Transient
 	public void removeAccountAddress(AccountAddress e) {
 		removeEntityFromCollection(addresses, e);
 	}
 
-	@Transient
 	public int getNumAccountAddresses() {
 		return getCollectionSize(addresses);
 	}

@@ -1,12 +1,7 @@
 package com.tll.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
@@ -19,8 +14,7 @@ import com.tll.model.schema.BusinessObject;
  * Product category entity
  * @author jpk
  */
-@Entity
-@Table(name = "product_category")
+@PersistenceCapable
 @BusinessObject(businessKeys =
 	@BusinessKeyDef(name = "Account Id and Name", properties = { "account.id", INamedEntity.NAME }))
 	public class ProductCategory extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
@@ -31,19 +25,22 @@ import com.tll.model.schema.BusinessObject;
 	public static final int MAXLEN_DESCRIPTION = 255;
 	public static final int MAXLEN_IMAGE = 64;
 
+	@Persistent
 	private Account account;
 
+	@Persistent
 	private String description;
 
+	@Persistent
 	private String image;
 
 	public Class<? extends IEntity> entityClass() {
 		return ProductCategory.class;
 	}
 
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_NAME)
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -51,7 +48,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the description.
 	 */
-	@Column
 	@Length(max = MAXLEN_DESCRIPTION)
 	public String getDescription() {
 		return description;
@@ -67,7 +63,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the image.
 	 */
-	@Column
 	@Length(max = MAXLEN_IMAGE)
 	public String getImage() {
 		return image;
@@ -83,8 +78,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the account.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "aid")
 	@NotNull
 	public Account getAccount() {
 		return account;
@@ -97,7 +90,6 @@ import com.tll.model.schema.BusinessObject;
 		this.account = account;
 	}
 
-	@Transient
 	public Account getParent() {
 		return getAccount();
 	}

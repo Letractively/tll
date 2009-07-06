@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidatorFactory;
@@ -17,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
+import com.tll.dao.EntityExistsException;
+import com.tll.dao.EntityNotFoundException;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
@@ -156,7 +156,7 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 
 	@Transactional(readOnly = true)
 	public List<SearchResult<?>> find(Criteria<? extends IEntity> criteria, Sorting sorting)
-			throws InvalidCriteriaException {
+	throws InvalidCriteriaException {
 		return dao.find(criteria, sorting);
 	}
 
@@ -174,7 +174,7 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	@Transactional(readOnly = true)
 	public IPageResult<SearchResult<?>> getPage(Criteria<? extends IEntity> criteria, Sorting sorting, int offset,
 			int pageSize)
-	throws InvalidCriteriaException {
+			throws InvalidCriteriaException {
 		return dao.getPage(criteria, sorting, offset, pageSize);
 	}
 }

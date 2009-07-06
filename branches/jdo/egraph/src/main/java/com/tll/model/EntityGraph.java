@@ -6,14 +6,11 @@
 package com.tll.model;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
-import com.tll.model.EntityUtil;
-import com.tll.model.IEntity;
-import com.tll.model.IEntityProvider;
 import com.tll.model.key.BusinessKeyPropertyException;
 import com.tll.model.key.BusinessKeyUtil;
 import com.tll.model.key.NonUniqueBusinessKeyException;
@@ -28,21 +25,37 @@ public final class EntityGraph implements IEntityProvider {
 	/**
 	 * The "graph" of entities held in a map keyed by entity type.
 	 */
-	private final Map<Class<? extends IEntity>, Set<? extends IEntity>> graph;
+	private final LinkedHashMap<Class<? extends IEntity>, LinkedHashSet<? extends IEntity>> graph;
 
 	/**
 	 * Constructor
 	 */
 	public EntityGraph() {
 		super();
-		this.graph = new HashMap<Class<? extends IEntity>, Set<? extends IEntity>>();
+		this.graph = new LinkedHashMap<Class<? extends IEntity>, LinkedHashSet<? extends IEntity>>();
 	}
-	
+
 	/**
 	 * Removes all entity from the graph.
 	 */
 	public void clear() {
 		graph.clear();
+	}
+
+	/**
+	 * @return Iterator of all held entity types in the graph ordered in the way
+	 *         it was populated.
+	 */
+	public Iterator<Class<? extends IEntity>> getEntityTypes() {
+		return graph.keySet().iterator();
+	}
+
+	/**
+	 * @param etype the entity type
+	 * @return The total number of entities of the given type.
+	 */
+	public int size(Class<? extends IEntity> etype) {
+		return graph.containsKey(etype) ? 0 : graph.get(etype).size();
 	}
 
 	/**
@@ -78,7 +91,7 @@ public final class EntityGraph implements IEntityProvider {
 	 */
 	Set<? extends IEntity> getNonNullEntitySet(Class<? extends IEntity> entityType) {
 		final Class<? extends IEntity> rootType = EntityUtil.getRootEntityClass(entityType);
-		Set<? extends IEntity> set = graph.get(rootType);
+		LinkedHashSet<? extends IEntity> set = graph.get(rootType);
 		if(set == null) {
 			set = new LinkedHashSet<IEntity>();
 			graph.put(rootType, set);
@@ -180,7 +193,7 @@ public final class EntityGraph implements IEntityProvider {
 	 */
 	@SuppressWarnings("unchecked")
 	public <E extends IEntity> void setEntities(Collection<E> entities) throws IllegalStateException,
-			NonUniqueBusinessKeyException {
+	NonUniqueBusinessKeyException {
 		if(entities != null && entities.size() > 0) {
 			final Class<E> entityType = (Class<E>) entities.iterator().next().entityClass();
 			final Set<E> set = (Set<E>) getNonNullEntitySet(entityType);

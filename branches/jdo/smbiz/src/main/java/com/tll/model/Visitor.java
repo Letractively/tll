@@ -1,12 +1,7 @@
 package com.tll.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
@@ -19,8 +14,7 @@ import com.tll.model.schema.BusinessObject;
  * The visitor entity (those people who visit a storefront site).
  * @author jpk
  */
-@Entity
-@Table(name = "visitor")
+@PersistenceCapable
 @BusinessObject(businessKeys =
 	@BusinessKeyDef(name = "Account Id, Date Created, Remote Host",
 			properties = { "account.id", "dateCreated", "remoteHost" }))
@@ -33,14 +27,19 @@ import com.tll.model.schema.BusinessObject;
 	public static final int MAXLEN_REMOTE_USER = 64;
 	public static final int MAXLEN_MC = 16;
 
+	@Persistent
 	private String remoteHost;
 
+	@Persistent
 	private String remoteAddr;
 
+	@Persistent
 	private String remoteUser;
 
+	@Persistent
 	private String mc;
 
+	@Persistent
 	private Account account;
 
 	public Class<? extends IEntity> entityClass() {
@@ -50,8 +49,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the account.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "aid")
 	@NotNull
 	public Account getAccount() {
 		return account;
@@ -67,7 +64,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the mc.
 	 */
-	@Column
 	@Length(max = MAXLEN_MC)
 	public String getMc() {
 		return mc;
@@ -83,7 +79,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the remoteAddr.
 	 */
-	@Column(name = "remote_addr")
 	@Length(max = MAXLEN_REMOTE_ADDR)
 	public String getRemoteAddr() {
 		return remoteAddr;
@@ -99,7 +94,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the remoteHost.
 	 */
-	@Column(name = "remote_host")
 	@NotEmpty
 	@Length(max = MAXLEN_REMOTE_HOST)
 	public String getRemoteHost() {
@@ -116,7 +110,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the remoteUser.
 	 */
-	@Column(name = "remote_user")
 	@NotEmpty
 	@Length(max = MAXLEN_REMOTE_USER)
 	public String getRemoteUser() {
@@ -130,7 +123,6 @@ import com.tll.model.schema.BusinessObject;
 		this.remoteUser = remoteUser;
 	}
 
-	@Transient
 	public Account getParent() {
 		return getAccount();
 	}

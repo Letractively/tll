@@ -1,9 +1,8 @@
 package com.tll.model;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import javax.jdo.annotations.Discriminator;
+import javax.jdo.annotations.PersistenceCapable;
 
-import com.tll.model.IEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 
@@ -11,8 +10,8 @@ import com.tll.model.schema.BusinessObject;
  * Interface option parameter definition entity
  * @author jpk
  */
-@Entity
-@DiscriminatorValue("paramdef")
+@PersistenceCapable
+@Discriminator(value = "paramdef")
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Code", properties = { "code" }))
 public class InterfaceOptionParameterDefinition extends InterfaceOptionBase {
 

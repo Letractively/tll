@@ -1,8 +1,7 @@
 package com.tll.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
@@ -15,8 +14,7 @@ import com.tll.model.schema.BusinessObject;
  * @author jpk TODO should we eliminate this and just put in config.properties
  *         file???
  */
-@Entity
-@Table(name = "app_property")
+@PersistenceCapable
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Name", properties = { "name" }))
 public class AppProperty extends NamedEntity {
 
@@ -25,20 +23,19 @@ public class AppProperty extends NamedEntity {
 	public static final int MAXLEN_NAME = 128;
 	public static final int MAXLEN_VALUE = 255;
 
+	@Persistent
 	private String value;
 
 	public Class<? extends IEntity> entityClass() {
 		return AppProperty.class;
 	}
 
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_NAME)
 	public String getName() {
 		return name;
 	}
 
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_VALUE)
 	public String getValue() {

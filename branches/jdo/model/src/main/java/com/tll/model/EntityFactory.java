@@ -16,10 +16,6 @@ public final class EntityFactory implements IEntityFactory {
 	 */
 	private final IPrimaryKeyGenerator keyGenerator;
 
-	/**
-	 * Constructor
-	 * @param keyGenerator
-	 */
 	@Inject
 	public EntityFactory(IPrimaryKeyGenerator keyGenerator) {
 		super();

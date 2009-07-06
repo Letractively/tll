@@ -3,18 +3,10 @@ package com.tll.model;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import org.hibernate.annotations.CollectionOfElements;
 
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
@@ -23,8 +15,7 @@ import com.tll.model.schema.BusinessObject;
  * Binder entity between interface options and an account
  * @author jpk
  */
-@Entity
-@Table(name = "ioa")
+@PersistenceCapable
 @BusinessObject(businessKeys =
 	@BusinessKeyDef(name = "Option Id and Account Id", properties = { "option.id", "account.id" }))
 	public class InterfaceOptionAccount extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
@@ -34,18 +25,25 @@ import com.tll.model.schema.BusinessObject;
 	public static final int MAXLEN_PARAM_NAME = 50;
 	public static final int MAXLEN_PARAM_VALUE = 255;
 
+	@Persistent
 	protected InterfaceOption option;
 
+	@Persistent
 	protected Account account;
 
+	@Persistent
 	protected InterfaceStatus status;
 
+	@Persistent
 	protected float setUpPrice = 0f;
 
+	@Persistent
 	protected float monthlyPrice = 0f;
 
+	@Persistent
 	protected float annualPrice = 0f;
 
+	@Persistent
 	protected Map<String, String> parameters = new LinkedHashMap<String, String>();
 
 	public Class<? extends IEntity> entityClass() {
@@ -55,8 +53,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the option.
 	 */
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "option_id")
 	@NotNull
 	public InterfaceOption getOption() {
 		return option;
@@ -72,8 +68,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the account.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "aid")
 	@NotNull
 	public Account getAccount() {
 		return account;
@@ -89,7 +83,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the status.
 	 */
-	@Column
 	@NotNull
 	public InterfaceStatus getStatus() {
 		return status;
@@ -105,7 +98,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the setUpPrice.
 	 */
-	@Column(name = "set_up_price", precision = 8, scale = 2)
 	@NotNull
 	// @Size(min = 1, max = 999999)
 	public float getSetUpPrice() {
@@ -122,7 +114,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the monthlyPrice.
 	 */
-	@Column(name = "monthly_price", precision = 8, scale = 2)
 	@NotNull
 	// @Size(min = 1, max = 999999)
 	public float getMonthlyPrice() {
@@ -139,7 +130,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the annualPrice.
 	 */
-	@Column(name = "annual_price", precision = 8, scale = 2)
 	@NotNull
 	// @Size(min = 1, max = 999999)
 	public float getAnnualPrice() {
@@ -156,10 +146,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the parameters.
 	 */
-	@CollectionOfElements(fetch = FetchType.EAGER)
-	@JoinTable(name = "ioap", joinColumns = @JoinColumn(name = "ioaid"))
-	@Column(name = "value")
-	@org.hibernate.annotations.MapKey(columns = { @Column(name = "name") })
 	@Valid
 	public Map<String, String> getParameters() {
 		return parameters;
@@ -172,33 +158,28 @@ import com.tll.model.schema.BusinessObject;
 		this.parameters = parameters;
 	}
 
-	@Transient
 	public void setParameter(String name, String value) {
 		if(name != null && value != null) {
 			parameters.put(name, value);
 		}
 	}
 
-	@Transient
 	public void removeParameter(String name) {
 		if(name != null && parameters != null) {
 			parameters.remove(name);
 		}
 	}
 
-	@Transient
 	public void clearParameters() {
 		if(parameters != null) {
 			parameters.clear();
 		}
 	}
 
-	@Transient
 	public int getNumParameters() {
 		return parameters == null ? 0 : parameters.size();
 	}
 
-	@Transient
 	public Account getParent() {
 		return getAccount();
 	}

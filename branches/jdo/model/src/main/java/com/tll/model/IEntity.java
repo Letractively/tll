@@ -6,7 +6,7 @@ import com.tll.IDescriptorProvider;
  * Base interface for all entities.
  * @author jpk
  */
-public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvider {
+public interface IEntity extends IPersistable, /*IVersionSupport, */IDescriptorProvider {
 
 	/**
 	 * The name of the id primary key field

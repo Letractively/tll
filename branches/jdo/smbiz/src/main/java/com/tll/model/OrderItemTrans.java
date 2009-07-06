@@ -1,12 +1,7 @@
 package com.tll.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.validation.constraints.NotNull;
 
 import com.tll.model.schema.BusinessKeyDef;
@@ -16,20 +11,23 @@ import com.tll.model.schema.BusinessObject;
  * Order item transaction entity
  * @author jpk
  */
-@Entity
-@Table(name = "order_item_trans")
+@PersistenceCapable
 @BusinessObject(businessKeys =
 	@BusinessKeyDef(name = "Order Item Id and Order Trans Id", properties = { "orderItem.id", "orderTrans.id" }))
 	public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTrans>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -2106851598169919247L;
 
+	@Persistent
 	private OrderItem orderItem;
 
+	@Persistent
 	private OrderTrans orderTrans;
 
+	@Persistent
 	private OrderItemTransOp orderItemTransOp;
 
+	@Persistent
 	private float amount = 0f;
 
 	public Class<? extends IEntity> entityClass() {
@@ -39,7 +37,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the orderItemTransOp.
 	 */
-	@Column(name = "order_item_trans_op")
 	@NotNull
 	public OrderItemTransOp getOrderItemTransOp() {
 		return orderItemTransOp;
@@ -55,7 +52,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the amount.
 	 */
-	@Column(precision = 7, scale = 2)
 	// @Size(min = 0, max = 99999)
 	public float getAmount() {
 		return amount;
@@ -71,8 +67,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the orderItem.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "oi_id")
 	@NotNull
 	public OrderItem getOrderItem() {
 		return orderItem;
@@ -88,8 +82,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the orderTrans.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ot_id")
 	@NotNull
 	public OrderTrans getOrderTrans() {
 		return orderTrans;
@@ -102,7 +94,6 @@ import com.tll.model.schema.BusinessObject;
 		this.orderTrans = orderTrans;
 	}
 
-	@Transient
 	public OrderTrans getParent() {
 		return getOrderTrans();
 	}

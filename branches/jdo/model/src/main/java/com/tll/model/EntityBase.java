@@ -2,35 +2,44 @@ package com.tll.model;
 
 import java.util.Collection;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
-import javax.persistence.Version;
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.NotPersistent;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
+import javax.jdo.annotations.Version;
+import javax.jdo.annotations.VersionStrategy;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.tll.model.schema.Managed;
 import com.tll.util.StringUtil;
 
 /**
- * Base class for all entities.
+ * EntityBase - Base class for all entities.
  * @author jpk
  */
-@MappedSuperclass
-@SuppressWarnings("unchecked")
+@PersistenceCapable(identityType = IdentityType.APPLICATION)
+@Version(strategy = VersionStrategy.VERSION_NUMBER, column = "version")
 public abstract class EntityBase implements IEntity {
 
 	private static final long serialVersionUID = -4641847785797486723L;
 
 	protected static final Log LOG = LogFactory.getLog(EntityBase.class);
 
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Integer id;
+
 	private boolean generated;
-	private Integer version;
+
+	/**
+	 * Manually driven flag to indicate entity newness.
+	 */
+	@NotPersistent
+	private boolean _new;
 
 	/**
 	 * finds an entity of the given id in the set or null if not found. If the
@@ -78,7 +87,7 @@ public abstract class EntityBase implements IEntity {
 	 * @param clc the collection to which the entity is being added
 	 * @param e the entity to be added
 	 */
-	@Transient
+	@SuppressWarnings("unchecked")
 	protected final <E extends IEntity> void addEntityToCollection(Collection<E> clc, E e) {
 		if(e == null) {
 			return;
@@ -98,7 +107,6 @@ public abstract class EntityBase implements IEntity {
 	 * @param toAdd
 	 * @param clc the collection to which the entities are added
 	 */
-	@Transient
 	protected final <E extends IEntity> void addEntitiesToCollection(Collection<E> toAdd, Collection<E> clc) {
 		if(toAdd != null) {
 			if(clc == null) {
@@ -116,6 +124,7 @@ public abstract class EntityBase implements IEntity {
 	 * @param clc
 	 * @param e
 	 */
+	@SuppressWarnings("unchecked")
 	protected final static <E extends IEntity> void removeEntityFromCollection(Collection<E> clc, E e) {
 		if(clc != null && clc.remove(e)) {
 			if(e instanceof IChildEntity) {
@@ -128,6 +137,7 @@ public abstract class EntityBase implements IEntity {
 	 * @param <E>
 	 * @param clc of entities (which may be child entities)
 	 */
+	@SuppressWarnings("unchecked")
 	protected final static <E extends IEntity> void clearEntityCollection(Collection<E> clc) {
 		if(clc == null || clc.size() < 1) {
 			return;
@@ -174,10 +184,10 @@ public abstract class EntityBase implements IEntity {
 		return StringUtil.camelCaseToPresentation(entityClass().getSimpleName());
 	}
 
-	@Id
+	// @Id
+	// @Column(name = IEntity.PK_FIELDNAME)
+	// @GeneratedValue(generator = "entity")
 	@NotNull
-	@Column(name = IEntity.PK_FIELDNAME)
-	@GeneratedValue(generator = "entity")
 	public Integer getId() {
 		return id;
 	}
@@ -186,7 +196,10 @@ public abstract class EntityBase implements IEntity {
 		this.id = id;
 	}
 
+	/*
 	@Transient
+	@Persistent(persistenceModifier = PersistenceModifier.NONE)
+	 */
 	public boolean isGenerated() {
 		return generated;
 	}
@@ -204,8 +217,9 @@ public abstract class EntityBase implements IEntity {
 	/**
 	 * @return the version
 	 */
-	@Version
-	@Column(name = "version")
+	/*
+	// @Version
+	// @Column(name = "version")
 	@Managed
 	public Integer getVersion() {
 		return version;
@@ -214,6 +228,7 @@ public abstract class EntityBase implements IEntity {
 	public void setVersion(Integer version) {
 		this.version = version;
 	}
+	 */
 
 	@Override
 	public boolean equals(Object obj) {
@@ -238,18 +253,21 @@ public abstract class EntityBase implements IEntity {
 
 	@Override
 	public final String toString() {
-		return typeName() + ", id: " + getId() + ", version: " + getVersion();
+		return typeName() + ", id: " + getId()/* + ", version: " + getVersion()*/;
 	}
 
-	@Transient
 	public final boolean isNew() {
-		return (getVersion() == null);
+		return _new;
+	}
+
+	public final void setNew(boolean b) {
+		this._new = b;
 	}
 
 	/*
 	 * May be overridden by sub-classes for a better descriptor.
 	 */
-	@Transient
+	// @Transient
 	public String descriptor() {
 		return typeName() + " (Id: " + getId() + ")";
 	}

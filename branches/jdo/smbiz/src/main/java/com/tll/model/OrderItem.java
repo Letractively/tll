@@ -4,15 +4,8 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
@@ -25,8 +18,7 @@ import com.tll.model.schema.BusinessObject;
  * Order item entity
  * @author jpk
  */
-@Entity
-@Table(name = "order_item")
+@PersistenceCapable
 @BusinessObject(businessKeys =
 	@BusinessKeyDef(name = "Order Id and SKU", properties = { "order.id", "sku" }))
 	public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Order>, IAccountRelatedEntity {
@@ -38,33 +30,43 @@ import com.tll.model.schema.BusinessObject;
 	public static final int MAXLEN_DESCRIPTION = 255;
 	public static final int MAXLEN_IMAGE = 32;
 
+	@Persistent
 	private Order order;
 
+	@Persistent
 	private String sku;
 
+	@Persistent
 	private OrderItemStatus itemStatus;
 
+	@Persistent
 	private PaymentItemStatus payStatus;
 
+	@Persistent
 	private int qty = 0;
 
+	@Persistent
 	private float price = 0f;
 
+	@Persistent
 	private float weight = 0f;
 
+	@Persistent
 	private String description;
 
+	@Persistent
 	private String image;
 
+	@Persistent
 	private Set<OrderItemTrans> transactions = new LinkedHashSet<OrderItemTrans>();
 
 	public Class<? extends IEntity> entityClass() {
 		return OrderItem.class;
 	}
 
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_NAME)
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -72,7 +74,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the description.
 	 */
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_DESCRIPTION)
 	public String getDescription() {
@@ -89,7 +90,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the image.
 	 */
-	@Column
 	@Length(max = MAXLEN_IMAGE)
 	public String getImage() {
 		return image;
@@ -105,7 +105,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the itemStatus.
 	 */
-	@Column(name = "item_status")
 	@NotNull
 	public OrderItemStatus getItemStatus() {
 		return itemStatus;
@@ -121,8 +120,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the order.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "o_id")
 	@NotNull
 	public Order getOrder() {
 		return order;
@@ -138,7 +135,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the payStatus.
 	 */
-	@Column(name = "pay_status")
 	@NotNull
 	public PaymentItemStatus getPayStatus() {
 		return payStatus;
@@ -154,7 +150,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the price.
 	 */
-	@Column(precision = 7, scale = 2)
 	// @Size(min = 0, max = 99999)
 	public float getPrice() {
 		return price;
@@ -170,7 +165,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the qty.
 	 */
-	@Column
 	// @Size(min = 0, max = 999999)
 	public int getQty() {
 		return qty;
@@ -186,7 +180,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the sku.
 	 */
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_SKU)
 	public String getSku() {
@@ -203,7 +196,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the weight.
 	 */
-	@Column(precision = 8, scale = 3)
 	// @Size(min = 0, max = 999999)
 	public float getWeight() {
 		return weight;
@@ -219,8 +211,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the transactions.
 	 */
-	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "orderItem")
-	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	public Set<OrderItemTrans> getTransactions() {
 		return transactions;
 	}
@@ -232,37 +222,30 @@ import com.tll.model.schema.BusinessObject;
 		this.transactions = transactions;
 	}
 
-	@Transient
 	public OrderItemTrans getItemTransaction(int id) {
 		return findEntityInCollection(transactions, id);
 	}
 
-	@Transient
 	public void addItemTransaction(OrderItemTrans e) {
 		addEntityToCollection(transactions, e);
 	}
 
-	@Transient
 	public void addItemTransactions(Collection<OrderItemTrans> clc) {
 		addEntitiesToCollection(clc, transactions);
 	}
 
-	@Transient
 	public void removeTransaction(OrderItemTrans e) {
 		removeEntityFromCollection(transactions, e);
 	}
 
-	@Transient
 	public void clearTransactions() {
 		clearEntityCollection(transactions);
 	}
 
-	@Transient
 	public int getNumTransactions() {
 		return getCollectionSize(transactions);
 	}
 
-	@Transient
 	public Order getParent() {
 		return getOrder();
 	}

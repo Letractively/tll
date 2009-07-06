@@ -1,12 +1,7 @@
 package com.tll.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -17,22 +12,26 @@ import com.tll.model.schema.BusinessObject;
  * The customer account entity
  * @author jpk
  */
-@Entity
-@Table(name = "customer_account")
+@PersistenceCapable
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Customer Id and Account Id", properties = {
 	"customer.id", "account.id" }))
 	public class CustomerAccount extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 7262902363821073379L;
 
+	@Persistent
 	private Customer customer;
 
+	@Persistent
 	private Account account;
 
+	@Persistent
 	private AccountSource source;
 
+	@Persistent
 	private AccountStatus status;
 
+	@Persistent
 	private Visitor initialVisitorRecord;
 
 	public Class<? extends IEntity> entityClass() {
@@ -42,8 +41,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the customer.
 	 */
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "customer_id", updatable = false)
 	@NotNull
 	@Valid
 	public Customer getCustomer() {
@@ -60,8 +57,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the account.
 	 */
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "aid", updatable = false)
 	@NotNull
 	public Account getAccount() {
 		return account;
@@ -77,7 +72,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the source.
 	 */
-	@Column
 	@NotNull
 	public AccountSource getSource() {
 		return source;
@@ -93,7 +87,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the status.
 	 */
-	@Column
 	@NotNull
 	public AccountStatus getStatus() {
 		return status;
@@ -109,8 +102,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the initialVisitorRecord.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "visitor_id")
 	public Visitor getInitialVisitorRecord() {
 		return initialVisitorRecord;
 	}
@@ -122,7 +113,6 @@ import com.tll.model.schema.BusinessObject;
 		this.initialVisitorRecord = initialVisitorRecord;
 	}
 
-	@Transient
 	public Account getParent() {
 		return getAccount();
 	}

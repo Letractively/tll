@@ -19,7 +19,6 @@ import com.tll.di.EntityServiceFactoryModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
 import com.tll.di.OrmDaoModule;
-import com.tll.di.TransactionModule;
 import com.tll.di.ValidationModule;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.MockEntityFactory;
@@ -47,7 +46,7 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 		modules.add(new MockEntityFactoryModule());
 		modules.add(new DbDialectModule(getConfig()));
 		modules.add(new OrmDaoModule(getConfig()));
-		modules.add(new TransactionModule(getConfig()));
+		// modules.add(new TransactionModule(getConfig()));
 		modules.add(new EntityAssemblerModule() {
 
 			@Override

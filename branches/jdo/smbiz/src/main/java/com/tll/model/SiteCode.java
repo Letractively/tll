@@ -2,15 +2,8 @@ package com.tll.model;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
@@ -22,8 +15,7 @@ import com.tll.model.schema.BusinessObject;
  * Defines site codes (online "coupons")
  * @author jpk
  */
-@Entity
-@Table(name = "site_code")
+@PersistenceCapable
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Code", properties = { "code" }))
 public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
@@ -32,19 +24,22 @@ public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Accou
 	public static final int MAXLEN_CODE = 16;
 	public static final int MAXLEN_NAME = 64;
 
+	@Persistent
 	private String code; // unique
 
+	@Persistent
 	private Date expirationDate;
 
+	@Persistent
 	private Account account;
 
 	public Class<? extends IEntity> entityClass() {
 		return SiteCode.class;
 	}
 
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_NAME)
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -52,8 +47,6 @@ public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Accou
 	/**
 	 * @return Returns the account.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "aid")
 	public Account getAccount() {
 		return account;
 	}
@@ -68,7 +61,6 @@ public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Accou
 	/**
 	 * @return Returns the code.
 	 */
-	@Column(length = 16, nullable = false, unique = true)
 	public String getCode() {
 		return code;
 	}
@@ -83,8 +75,6 @@ public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Accou
 	/**
 	 * @return Returns the expirationDate.
 	 */
-	@Column(name = "expiration_date", nullable = false)
-	@Temporal(TemporalType.TIMESTAMP)
 	public Date getExpirationDate() {
 		return expirationDate;
 	}
@@ -96,7 +86,6 @@ public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Accou
 		this.expirationDate = expirationDate;
 	}
 
-	@Transient
 	public Account getParent() {
 		return getAccount();
 	}

@@ -1,12 +1,10 @@
 package com.tll.model;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
+import javax.jdo.annotations.Discriminator;
+import javax.jdo.annotations.DiscriminatorStrategy;
+import javax.jdo.annotations.Inheritance;
+import javax.jdo.annotations.InheritanceStrategy;
+import javax.jdo.annotations.PersistenceCapable;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
@@ -16,10 +14,9 @@ import org.hibernate.validation.constraints.NotEmpty;
  * classes.
  * @author jpk
  */
-@Entity
-@Table(name = "iopd")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "record_type", discriminatorType = DiscriminatorType.STRING)
+@PersistenceCapable
+@Inheritance(strategy = InheritanceStrategy.SUPERCLASS_TABLE)
+@Discriminator(column = "record_type", strategy = DiscriminatorStrategy.VALUE_MAP)
 public abstract class InterfaceOptionBase extends NamedTimeStampEntity {
 
 	private static final long serialVersionUID = 342581007482865798L;
@@ -31,9 +28,9 @@ public abstract class InterfaceOptionBase extends NamedTimeStampEntity {
 	protected String code;
 	protected String description;
 
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_NAME)
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -41,7 +38,6 @@ public abstract class InterfaceOptionBase extends NamedTimeStampEntity {
 	/**
 	 * @return Returns the code.
 	 */
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_CODE)
 	public String getCode() {
@@ -58,7 +54,6 @@ public abstract class InterfaceOptionBase extends NamedTimeStampEntity {
 	/**
 	 * @return Returns the description.
 	 */
-	@Column
 	@Length(max = MAXLEN_DESCRIPTION)
 	public String getDescription() {
 		return description;

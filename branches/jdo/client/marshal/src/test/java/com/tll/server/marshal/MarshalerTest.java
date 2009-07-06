@@ -24,12 +24,12 @@ import com.tll.di.MockDaoModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
 import com.tll.model.Account;
+import com.tll.model.EntityBeanFactory;
 import com.tll.model.EntityGraph;
 import com.tll.model.FieldEnum;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityGraphBuilder;
 import com.tll.model.IScalar;
-import com.tll.model.MockEntityFactory;
 import com.tll.model.NestedEntity;
 import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
 import com.tll.server.rpc.entity.IEntityTypeResolver;
@@ -84,8 +84,8 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 		return injector.getInstance(Marshaler.class);
 	}
 
-	private MockEntityFactory getMockEntityFactory() {
-		return injector.getInstance(MockEntityFactory.class);
+	private EntityBeanFactory getEntityBeanFactory() {
+		return injector.getInstance(EntityBeanFactory.class);
 	}
 
 	/**
@@ -94,7 +94,8 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 	 */
 	@Test
 	public void testCircularEntity() throws Exception {
-		final TestPersistenceUnitEntityGraphBuilder entityGraphBuilder = new TestPersistenceUnitEntityGraphBuilder(getMockEntityFactory());
+		final TestPersistenceUnitEntityGraphBuilder entityGraphBuilder =
+			new TestPersistenceUnitEntityGraphBuilder(getEntityBeanFactory());
 		final EntityGraph entityGraph = entityGraphBuilder.buildEntityGraph();
 		final Marshaler marshaler = getMarshaler();
 
@@ -120,7 +121,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 	public void testNestedEntity() throws Exception {
 		final Marshaler marshaler = getMarshaler();
 		assert marshaler != null;
-		final IEntity e = getMockEntityFactory().getEntityCopy(NestedEntity.class, false);
+		final IEntity e = getEntityBeanFactory().getEntityCopy(NestedEntity.class, false);
 		Assert.assertNotNull(e);
 
 		final Model model = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
@@ -175,7 +176,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 	public void testEmptyRelatedMany() throws Exception {
 		final Marshaler marshaler = getMarshaler();
 		assert marshaler != null;
-		final Account e = getMockEntityFactory().getEntityCopy(Account.class, false);
+		final Account e = getEntityBeanFactory().getEntityCopy(Account.class, false);
 		assert e != null;
 		e.setAddresses(null);
 		final Model m = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);

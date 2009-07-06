@@ -10,10 +10,11 @@ import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 
 /**
- * MockPrimaryKeyGenerator
+ * SimplePrimaryKeyGenerator - In memory map of integers classified by entity
+ * class that are incremented as primary keys are requested.
  * @author jpk
  */
-public class MockPrimaryKeyGenerator implements IPrimaryKeyGenerator {
+public class SimplePrimaryKeyGenerator implements IPrimaryKeyGenerator {
 
 	private static final Map<Class<? extends IEntity>, Integer> idMap = new HashMap<Class<? extends IEntity>, Integer>();
 

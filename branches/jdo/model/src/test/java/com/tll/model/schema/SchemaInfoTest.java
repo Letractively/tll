@@ -9,12 +9,10 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.jdo.annotations.Embedded;
+import javax.jdo.annotations.PersistenceAware;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -34,6 +32,7 @@ import com.tll.model.validate.BusinessKeyUniqueness;
  * @author jpk
  */
 @Test(groups = "model.schema")
+@PersistenceAware
 public class SchemaInfoTest {
 
 	enum TestEnum {
@@ -120,10 +119,12 @@ public class SchemaInfoTest {
 		}
 	}
 
+	@PersistenceCapable
 	static class TestEntityA extends EntityBase {
 
 		private static final long serialVersionUID = 3324870910518294253L;
 
+		@Persistent
 		private String aProp;
 
 		@Override
@@ -131,7 +132,7 @@ public class SchemaInfoTest {
 			return TestEntityA.class;
 		}
 
-		@Column
+		@Persistent
 		public String getAProp() {
 			return aProp;
 		}
@@ -142,10 +143,12 @@ public class SchemaInfoTest {
 
 	}
 
+	@PersistenceCapable
 	static class TestEntityB extends EntityBase {
 
 		private static final long serialVersionUID = -5868841032847881791L;
 
+		@Persistent
 		private TestEntityA entityA;
 
 		@Override
@@ -153,7 +156,6 @@ public class SchemaInfoTest {
 			return TestEntityB.class;
 		}
 
-		@ManyToOne
 		public TestEntityA getEntityA() {
 			return entityA;
 		}
@@ -167,22 +169,37 @@ public class SchemaInfoTest {
 	 * TestEntity
 	 * @author jpk
 	 */
+	@PersistenceCapable
 	static class TestEntity extends NamedTimeStampEntity {
 
 		private static final long serialVersionUID = -8237732782824087760L;
 		public static final int MAXLEN_NAME = 64;
 
+		@Persistent
 		private TestEnum enm;
+		@Persistent
 		private String string;
+		@Persistent
 		private int integer;
+		@Persistent
 		private double dbl;
+		@Persistent
 		private float flot;
+		@Persistent
 		private char character;
+		@Persistent
 		private long lng;
+		@Persistent
 		private Date date;
+		@Persistent
 		private TestEntityB relatedOne;
+		@Persistent
 		private Set<TestEntity> relatedMany = new LinkedHashSet<TestEntity>();
+		@Persistent
+		@Nested
 		private transient AllTypesData nested;
+		@Persistent(embedded = "true")
+		@Embedded()
 		private Map<String, String> smap;
 
 		public Class<? extends IEntity> entityClass() {
@@ -194,14 +211,13 @@ public class SchemaInfoTest {
 			return "Test Entity";
 		}
 
-		@Column
+		@Override
 		@NotEmpty
 		@Length(max = MAXLEN_NAME)
 		public String getName() {
 			return name;
 		}
 
-		@Column
 		public TestEnum getEnm() {
 			return enm;
 		}
@@ -210,7 +226,6 @@ public class SchemaInfoTest {
 			this.enm = enm;
 		}
 
-		@Column
 		public String getString() {
 			return string;
 		}
@@ -219,7 +234,6 @@ public class SchemaInfoTest {
 			this.string = string;
 		}
 
-		@Column
 		public int getInteger() {
 			return integer;
 		}
@@ -228,7 +242,6 @@ public class SchemaInfoTest {
 			this.integer = integer;
 		}
 
-		@Column
 		public double getDbl() {
 			return dbl;
 		}
@@ -237,7 +250,6 @@ public class SchemaInfoTest {
 			this.dbl = dbl;
 		}
 
-		@Column
 		public float getFlot() {
 			return flot;
 		}
@@ -246,7 +258,6 @@ public class SchemaInfoTest {
 			this.flot = flot;
 		}
 
-		@Column
 		public char getCharacter() {
 			return character;
 		}
@@ -255,7 +266,6 @@ public class SchemaInfoTest {
 			this.character = character;
 		}
 
-		@Column
 		public long getLng() {
 			return lng;
 		}
@@ -264,7 +274,6 @@ public class SchemaInfoTest {
 			this.lng = lng;
 		}
 
-		@Column
 		public Date getDate() {
 			return date;
 		}
@@ -273,9 +282,7 @@ public class SchemaInfoTest {
 			this.date = date;
 		}
 
-		@Column(name = "data")
 		@NotNull
-		@Nested
 		public AllTypesData getNested() {
 			return nested;
 		}
@@ -284,8 +291,6 @@ public class SchemaInfoTest {
 			this.nested = testData;
 		}
 
-		@ManyToOne(fetch = FetchType.LAZY)
-		@JoinColumn(name = "related_one")
 		public TestEntityB getRelatedOne() {
 			return relatedOne;
 		}
@@ -294,8 +299,6 @@ public class SchemaInfoTest {
 			this.relatedOne = relatedOne;
 		}
 
-		@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "account")
-		@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 		@AtLeastOne(type = "relatedMany")
 		@BusinessKeyUniqueness(type = "relatedMany")
 		@Valid

@@ -1,9 +1,7 @@
 package com.tll.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -18,12 +16,13 @@ import com.tll.model.schema.Nested;
  * @see NestedData For the actual field list.
  * @author jpk
  */
-@Entity
-@Table(name = "nested_entity")
+@PersistenceCapable
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Name", properties = { INamedEntity.NAME }))
 public class NestedEntity extends NamedEntity {
 	private static final long serialVersionUID = -4655882279629798747L;
 
+	@Persistent
+	@Nested
 	private transient NestedData nestedData;
 
 	public Class<? extends IEntity> entityClass() {
@@ -38,17 +37,13 @@ public class NestedEntity extends NamedEntity {
 		nestedData = new NestedData();
 	}
 
-	@Column
 	@NotEmpty
 	public String getName() {
 		return name;
 	}
 
-	@Column(name = "data")
-	// @Type(type = "encobj")
 	@NotNull
 	@Valid
-	@Nested
 	public NestedData getNestedData() {
 		return nestedData;
 	}
@@ -57,7 +52,6 @@ public class NestedEntity extends NamedEntity {
 		this.nestedData = paymentData;
 	}
 
-	@Transient
 	public void clearPaymentData() {
 		this.nestedData = null;
 	}

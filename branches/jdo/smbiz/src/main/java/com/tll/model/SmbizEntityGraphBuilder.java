@@ -21,11 +21,11 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphBuilder {
 
 	/**
 	 * Constructor
-	 * @param mep
+	 * @param ebf the required entity bean factory
 	 */
 	@Inject
-	public SmbizEntityGraphBuilder(MockEntityFactory mep) {
-		super(mep);
+	public SmbizEntityGraphBuilder(EntityBeanFactory ebf) {
+		super(ebf);
 	}
 
 	@Override

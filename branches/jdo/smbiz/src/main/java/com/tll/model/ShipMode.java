@@ -1,12 +1,7 @@
 package com.tll.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
@@ -19,8 +14,7 @@ import com.tll.model.schema.BusinessObject;
  * The ship mode entity
  * @author jpk
  */
-@Entity
-@Table(name = "ship_mode")
+@PersistenceCapable
 @BusinessObject(businessKeys =
 	@BusinessKeyDef(name = "Account Id and Name", properties = { "account.id", INamedEntity.NAME }))
 	public class ShipMode extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
@@ -30,21 +24,25 @@ import com.tll.model.schema.BusinessObject;
 	public static final int MAXLEN_NAME = 32;
 	public static final int MAXLEN_SRC_ZIP = 16;
 
+	@Persistent
 	private ShipModeType type;
 
+	@Persistent
 	private float surcharge = 0f;
 
+	@Persistent
 	private String srcZip;
 
+	@Persistent
 	private Account account;
 
 	public Class<? extends IEntity> entityClass() {
 		return ShipMode.class;
 	}
 
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_NAME)
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -52,8 +50,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the account.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "aid")
 	@NotNull
 	public Account getAccount() {
 		return account;
@@ -69,7 +65,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the srcZip.
 	 */
-	@Column(name = "src_zip")
 	@Length(max = MAXLEN_SRC_ZIP)
 	public String getSrcZip() {
 		return srcZip;
@@ -85,7 +80,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the surcharge.
 	 */
-	@Column(precision = 8, scale = 2)
 	// @Size(min = 0, max = 999999)
 	public float getSurcharge() {
 		return surcharge;
@@ -101,7 +95,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the type.
 	 */
-	@Column
 	@NotNull
 	public ShipModeType getType() {
 		return type;
@@ -114,7 +107,6 @@ import com.tll.model.schema.BusinessObject;
 		this.type = type;
 	}
 
-	@Transient
 	public Account getParent() {
 		return getAccount();
 	}

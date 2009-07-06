@@ -23,7 +23,7 @@ public final class TestPersistenceUnitEntityGraphBuilder extends AbstractEntityG
 	 * @param mep
 	 */
 	@Inject
-	public TestPersistenceUnitEntityGraphBuilder(MockEntityFactory mep) {
+	public TestPersistenceUnitEntityGraphBuilder(EntityBeanFactory mep) {
 		super(mep);
 	}
 

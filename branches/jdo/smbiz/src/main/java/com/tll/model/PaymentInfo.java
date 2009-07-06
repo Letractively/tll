@@ -1,13 +1,11 @@
 package com.tll.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Type;
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
 
@@ -22,14 +20,15 @@ import com.tll.model.schema.Nested;
  * @see PaymentType For the list of app supported payment types.
  * @author jpk
  */
-@Entity
-@Table(name = "payment_info")
+@PersistenceCapable
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Name", properties = { INamedEntity.NAME }))
 public class PaymentInfo extends NamedEntity {
 
 	private static final long serialVersionUID = -8237732782824087760L;
 	public static final int MAXLEN_NAME = 64;
 
+	@Persistent
+	@Nested
 	private transient PaymentData paymentData;
 
 	public Class<? extends IEntity> entityClass() {
@@ -44,18 +43,15 @@ public class PaymentInfo extends NamedEntity {
 		paymentData = new PaymentData();
 	}
 
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_NAME)
 	public String getName() {
 		return name;
 	}
 
-	@Column(name = "data")
-	@Type(type = "encobj")
+	// @Type(type = "encobj")
 	@NotNull
 	@Valid
-	@Nested
 	public PaymentData getPaymentData() {
 		return paymentData;
 	}

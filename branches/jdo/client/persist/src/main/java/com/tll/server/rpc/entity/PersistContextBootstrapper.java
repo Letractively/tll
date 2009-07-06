@@ -5,7 +5,7 @@
  */
 package com.tll.server.rpc.entity;
 
-import javax.persistence.EntityManagerFactory;
+import javax.jdo.PersistenceManagerFactory;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
@@ -42,7 +42,7 @@ public class PersistContextBootstrapper implements IBootstrapHandler {
 		final PersistContext c =
 			(PersistContext) servletContext.getAttribute(PersistContext.KEY);
 		if(c != null) {
-			final EntityManagerFactory emf = c.getEntityManagerFactory();
+			final PersistenceManagerFactory emf = c.getPersistenceManagerFactory();
 			if(emf != null) {
 				log.debug("Closing EntityManagerFactory ...");
 				emf.close();

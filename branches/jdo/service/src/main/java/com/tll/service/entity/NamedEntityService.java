@@ -5,9 +5,9 @@
  */
 package com.tll.service.entity;
 
-import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidatorFactory;
 
+import com.tll.dao.EntityNotFoundException;
 import com.tll.dao.IEntityDao;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.INamedEntity;

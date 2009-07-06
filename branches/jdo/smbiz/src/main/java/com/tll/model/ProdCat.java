@@ -1,12 +1,7 @@
 package com.tll.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.validation.constraints.NotNull;
 
 import com.tll.model.schema.BusinessKeyDef;
@@ -16,18 +11,20 @@ import com.tll.model.schema.BusinessObject;
  * product cateory binder entity
  * @author jpk
  */
-@Entity
-@Table(name = "prod_cat")
+@PersistenceCapable
 @BusinessObject(businessKeys =
 	@BusinessKeyDef(name = "Product Id and Category Id", properties = { "product.id", "category.id" }))
 	public class ProdCat extends EntityBase implements IChildEntity<ProductInventory>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -8353863817821839414L;
 
+	@Persistent
 	private boolean isFeaturedProduct = false;
 
+	@Persistent
 	private ProductInventory product;
 
+	@Persistent
 	private ProductCategory category;
 
 	public Class<? extends IEntity> entityClass() {
@@ -37,7 +34,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the bIsFeaturedProduct.
 	 */
-	@Column(name = "is_featured_product")
 	@NotNull
 	public boolean getIsFeaturedProduct() {
 		return isFeaturedProduct;
@@ -53,8 +49,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the category.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "prodcat_id")
 	@NotNull
 	public ProductCategory getCategory() {
 		return category;
@@ -70,8 +64,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the product.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "prodinv_id")
 	@NotNull
 	public ProductInventory getProduct() {
 		return product;
@@ -84,7 +76,6 @@ import com.tll.model.schema.BusinessObject;
 		this.product = product;
 	}
 
-	@Transient
 	public ProductInventory getParent() {
 		return getProduct();
 	}

@@ -1,16 +1,14 @@
 package com.tll.model;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-
-import com.tll.model.IEntity;
+import javax.jdo.annotations.Discriminator;
+import javax.jdo.annotations.PersistenceCapable;
 
 /**
  * Single interface entity
  * @author jpk
  */
-@Entity
-@DiscriminatorValue(Interface.SINGLE_VALUE)
+@PersistenceCapable
+@Discriminator(value = Interface.SINGLE_VALUE)
 public class InterfaceSingle extends Interface {
 
 	private static final long serialVersionUID = -6871345929021882937L;

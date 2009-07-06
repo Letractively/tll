@@ -1,34 +1,87 @@
 package com.tll.model.schema;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Transient;
+import javax.jdo.annotations.NotPersistent;
+import javax.jdo.annotations.PersistenceCapable;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.validation.constraints.Length;
-import org.hibernate.validation.constraints.NotEmpty;
 
 import com.tll.util.PropertyPath;
 
 public final class SchemaInfo implements ISchemaInfo {
 
+	/**
+	 * PersistProperty - Encapsulates persistence info for a particular entity
+	 * property deemed persist related.
+	 * @author jpk
+	 */
+	static final class PersistProperty {
+
+		/**
+		 * The accessor method.
+		 */
+		final Method method;
+
+		/**
+		 * The associated property name.
+		 */
+		final Field field;
+
+		/**
+		 * Constructor
+		 * @param accessorMethod the required accessor method ref
+		 * @param fld the corresponding field ref to the persist related property
+		 */
+		public PersistProperty(Method accessorMethod, Field fld) {
+			super();
+			if(accessorMethod == null) throw new IllegalArgumentException();
+			this.method = accessorMethod;
+			this.field = fld;
+		}
+
+		@Override
+		public String toString() {
+			return field.getName();
+		}
+
+	} // FieldInfo
+
 	private static final Log log = LogFactory.getLog(SchemaInfo.class);
 
 	private static final int maxLenInt = Integer.valueOf(Integer.MAX_VALUE).toString().length();
 	private static final int maxLenLong = Long.valueOf(Long.MAX_VALUE).toString().length();
+
+	/**
+	 * Determines the property name given a method name presumed to be in standard
+	 * java bean accessor format. (E.g.: getProperty -> property)
+	 * @param methodName
+	 * @return The associated property name
+	 */
+	static String getPropertyNameFromAccessorMethodName(final String methodName) {
+		String s;
+		if(methodName.startsWith("get")) {
+			s = methodName.substring(3);
+		}
+		else if(methodName.startsWith("is")) {
+			s = methodName.substring(2);
+		}
+		else {
+			throw new SchemaInfoException("Invalid accessor method name: " + methodName);
+		}
+		return (Character.toLowerCase(s.charAt(0)) + s.substring(1));
+	}
 
 	/**
 	 * key: entity class val: serviceMap of FieldData objects keyed by the field
@@ -50,8 +103,7 @@ public final class SchemaInfo implements ISchemaInfo {
 	}
 
 	@Override
-	public RelationInfo getRelationInfo(final Class<?> entityClass, final String propertyName)
-	throws SchemaInfoException {
+	public RelationInfo getRelationInfo(final Class<?> entityClass, final String propertyName) throws SchemaInfoException {
 		final ISchemaProperty sp = getSchemaProperty(entityClass, propertyName);
 		if(!sp.getPropertyType().isRelational()) {
 			throw new SchemaInfoException(propertyName + " for entity type " + entityClass.getName() + " is not relational.");
@@ -60,8 +112,7 @@ public final class SchemaInfo implements ISchemaInfo {
 	}
 
 	@Override
-	public NestedInfo getNestedInfo(final Class<?> entityClass, final String propertyName)
-	throws SchemaInfoException {
+	public NestedInfo getNestedInfo(final Class<?> entityClass, final String propertyName) throws SchemaInfoException {
 		final ISchemaProperty sp = getSchemaProperty(entityClass, propertyName);
 		if(!sp.getPropertyType().isNested()) {
 			throw new SchemaInfoException(propertyName + " for entity type " + entityClass.getName() + " is not nested.");
@@ -116,32 +167,44 @@ public final class SchemaInfo implements ISchemaInfo {
 		Map<String, ISchemaProperty> classMap;
 		log.debug("Loading schema info for entity: '" + entityClass.getSimpleName() + "'...");
 		classMap = new HashMap<String, ISchemaProperty>();
-		iterateMethods(null, entityClass, classMap);
+		iterateEntity(null, entityClass, classMap);
 		schemaMap.put(entityClass, classMap);
 		log.info("Schema information loaded for entity: '" + entityClass.getSimpleName() + "'");
 	}
 
 	/**
-	 * Iterates the methods for the given type populating the given schema map
-	 * along the way.
+	 * @param method the method to test
+	 * @return <code>true</code> if the given method is a persiste related
+	 *         accessor (getter) method.
+	 */
+	private boolean isPersistRelatedAccessor(final Method method) {
+		final String mn = method.getName();
+		return (method.getAnnotation(NotPersistent.class) == null && (mn.startsWith("get") || mn.startsWith("is")));
+	}
+
+	/**
+	 * Iterates the public methods for the given entity type populating the given
+	 * schema map along the way.
 	 * @param parentPropName
 	 * @param type The type to iterate
 	 * @param map The schema map
 	 */
-	private void iterateMethods(String parentPropName, Class<?> type, Map<String, ISchemaProperty> map) {
+	private void iterateEntity(String parentPropName, Class<?> type, Map<String, ISchemaProperty> map) {
 		String propName, fullPropName;
-		for(final Method method : type.getMethods()) {
-			if(isSchemaRelated(method)) {
-
+		final Method[] mthds = type.getMethods();
+		for(final Method method : mthds) {
+			if(isPersistRelatedAccessor(method)) {
 				propName = getPropertyNameFromAccessorMethodName(method.getName());
-				fullPropName = parentPropName == null ? propName : parentPropName + '.' + propName;
-
-				final ISchemaProperty sp = toSchemaProperty(propName, method);
-				if(sp != null) {
-					map.put(fullPropName, sp);
-					// handle nested
-					if(sp.getPropertyType().isNested()) {
-						iterateMethods(propName, method.getReturnType(), map);
+				final PersistProperty fi = getFieldInfo(propName, type, method);
+				if(fi != null) {
+					final ISchemaProperty sp = toSchemaProperty(fi);
+					if(sp != null) {
+						fullPropName = parentPropName == null ? propName : parentPropName + '.' + propName;
+						map.put(fullPropName, sp);
+						// handle nested
+						if(sp.getPropertyType().isNested()) {
+							iterateEntity(propName, method.getReturnType(), map);
+						}
 					}
 				}
 			}
@@ -149,112 +212,126 @@ public final class SchemaInfo implements ISchemaInfo {
 	}
 
 	/**
-	 * Determines the property name given a method name presumed to be in standard
-	 * java bean accessor format. (E.g.: getProperty -> property)
-	 * @param methodName
-	 * @return The associated property name
+	 * Creates a new {@link PersistProperty} instance for the given entity
+	 * property that is presumed to be persistence related (non-transient).
+	 * @param propName the local property name
+	 * @param entityClass the entity type
+	 * @param accessorMethod the entity accessor method ref
+	 * @return New {@link PersistProperty} instance or <code>null</code>.
 	 */
-	private String getPropertyNameFromAccessorMethodName(final String methodName) {
-		String s;
-		if(methodName.startsWith("get")) {
-			s = methodName.substring(3);
-		}
-		else if(methodName.startsWith("is")) {
-			s = methodName.substring(2);
-		}
-		else {
-			throw new SchemaInfoException("Invalid accessor method name: " + methodName);
-		}
-		return (Character.toLowerCase(s.charAt(0)) + s.substring(1));
+	private PersistProperty getFieldInfo(final String propName, final Class<?> entityClass, final Method accessorMethod)
+	throws IllegalStateException {
+		Class<?> ec = entityClass;
+		Field fld;
+		do {
+			fld = null;
+			final Field[] flds = ec.getDeclaredFields();
+			for(final Field f : flds) {
+				if(propName.equals(f.getName())) {
+					fld = f;
+					break;
+				}
+			}
+			if(fld != null) {
+				return new PersistProperty(accessorMethod, fld);
+			}
+			ec = ec.getSuperclass();
+		} while(ec != null);
+
+		// presume not persist related
+		return null;
 	}
 
 	/**
-	 * Is this method schema related?
-	 * @param method
+	 * Is the given class type an entity (persist capable)?
+	 * @param type
 	 * @return true/false
 	 */
-	private boolean isSchemaRelated(final Method method) {
-		final String mn = method.getName();
-		return (method.getAnnotation(Transient.class) == null && (mn.startsWith("get") || mn.startsWith("is")) && !mn
-				.equals("getVersion"));
+	private boolean isEntityType(Class<?> type) {
+		return type.getAnnotation(PersistenceCapable.class) != null;
 	}
 
 	/**
-	 * Is the method relational?
-	 * @param method
+	 * Is the persist property relational?
+	 * @param pprop the persist prop ref
 	 * @return true/false
 	 */
-	private boolean isRelational(final Method method) {
-		return "getParent".equals(method.getName()) || method.getAnnotation(ManyToOne.class) != null
-		|| method.getAnnotation(OneToMany.class) != null
-		|| method.getAnnotation(OneToOne.class) != null || method.getAnnotation(ManyToMany.class) != null;
+	private boolean isRelational(final PersistProperty pprop) {
+		if("getParent".equals(pprop.method.getName())) return true;
+		final Class<?> rt = pprop.method.getReturnType();
+		if(Collection.class.isAssignableFrom(rt)) {
+			try {
+				final Class<?> rmec =
+					(Class<?>) ((ParameterizedType) pprop.method.getGenericReturnType()).getActualTypeArguments()[0];
+				return isEntityType(rmec);
+			}
+			catch(final Throwable t) {
+				return false;
+			}
+		}
+		return isEntityType(rt);
 	}
 
 	/**
 	 * Creates an {@link ISchemaProperty} instance given a schema related method
 	 * by interrogating the bound annotations and stuff.
-	 * @param propName
-	 * @param m The method
+	 * @param pprop
 	 * @return New {@link ISchemaProperty} impl instance.
 	 */
 	@SuppressWarnings("unchecked")
-	private ISchemaProperty toSchemaProperty(final String propName, final Method m) {
-		assert m != null;
-
+	private ISchemaProperty toSchemaProperty(final PersistProperty pprop) {
+		final Method m = pprop.method;
+		final Field f = pprop.field;
 		final Class<?> rt = m.getReturnType();
 		assert rt != null : "The return type is null";
 
-		final boolean nested = (m.getAnnotation(Nested.class) != null);
-
 		// nested
-		if(nested) {
+		if(f.getAnnotation(Nested.class) != null) {
 			return new NestedInfo((Class<? extends Serializable>) rt);
 		}
 
-		// relational
-		else if(isRelational(m)) {
-			// relational...
-			CascadeType[] cascades = null;
-
-			// many to one?
-			final ManyToOne mto = m.getAnnotation(ManyToOne.class);
-			if(mto != null) {
-				cascades = mto.cascade();
-				return new RelationInfo(rt, PropertyType.RELATED_ONE, (cascades == null || cascades.length == 0));
+		if(isRelational(pprop)) {
+			// relational
+			final boolean reference = pprop.field.getAnnotation(Reference.class) != null;
+			if(isEntityType(rt)) {
+				// related one
+				return new RelationInfo(rt, PropertyType.RELATED_ONE, reference);
 			}
-
-			// one to many?
-			final OneToMany otm = m.getAnnotation(OneToMany.class);
-			if(otm != null) {
+			else if(Collection.class.isAssignableFrom(rt)) {
+				// related many
 				final Class<?> rmec = (Class<?>) ((ParameterizedType) m.getGenericReturnType()).getActualTypeArguments()[0];
-				cascades = otm.cascade();
-				return new RelationInfo(rmec, PropertyType.RELATED_MANY, (cascades == null || cascades.length == 0));
-			}
-
-			if("parent".equals(propName)) {
-				// NOTE: we can't determine the return type at runtime since, in the
-				// IChildEntity.getParent() case, the return type is generic
-				// so we are forced to pass null for the related type
-				return new RelationInfo(/*EntityUtil.entityTypeFromClass((Class<?>) rt)*/null,
-						PropertyType.RELATED_ONE, true);
+				return new RelationInfo(rmec, PropertyType.RELATED_MANY, reference);
 			}
 
 			// un-handled relational type (many2many for example)
+			log.warn("Unhandled relational type: " + pprop + " (Skipping).");
 			return null;
 		}
 
 		PropertyMetadata fd = null;
 
-		final Column c = m.getAnnotation(Column.class);
+		final boolean managed = f.getAnnotation(Managed.class) != null;
 
-		final boolean managed = (m.getAnnotation(Managed.class) != null);
+		// determine requiredness
+		boolean required = false;
+		final NotNull aN = f.getAnnotation(NotNull.class);
+		if(aN != null) {
+			required = true;
+		}
 
-		final boolean required =
-			m.getAnnotation(NotNull.class) != null || m.getAnnotation(NotEmpty.class) != null
-			|| (c == null ? false : !c.nullable());
-
+		// determine max length
+		int maxlen = -1;
 		final Length aLength = m.getAnnotation(Length.class);
-		int maxlen = aLength != null ? aLength.max() : -1;
+		if(aLength != null) {
+			maxlen = aLength.max();
+		}
+		else {
+			// try Size anno
+			final Size aSize = m.getAnnotation(Size.class);
+			if(aSize != null) {
+				maxlen = aSize.max();
+			}
+		}
 
 		if(rt == String.class) {
 			maxlen = maxlen == -1 ? 255 : maxlen;

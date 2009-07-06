@@ -23,7 +23,7 @@ public abstract class AbstractEntityGraphBuilder implements IEntityGraphBuilder 
 	 * Responsible for generating prototypical entity instances that are subject
 	 * to addition to the entity graph.
 	 */
-	private final MockEntityFactory mockEntityFactory;
+	private final EntityBeanFactory entityBeanFactory;
 
 	/**
 	 * The entity graph.
@@ -32,11 +32,11 @@ public abstract class AbstractEntityGraphBuilder implements IEntityGraphBuilder 
 
 	/**
 	 * Constructor
-	 * @param mockEntityFactory The mock entity factory
+	 * @param entityBeanFactory The mock entity factory
 	 */
-	public AbstractEntityGraphBuilder(MockEntityFactory mockEntityFactory) {
+	public AbstractEntityGraphBuilder(EntityBeanFactory entityBeanFactory) {
 		super();
-		this.mockEntityFactory = mockEntityFactory;
+		this.entityBeanFactory = entityBeanFactory;
 	}
 
 	public final EntityGraph buildEntityGraph() throws IllegalStateException {
@@ -68,7 +68,7 @@ public abstract class AbstractEntityGraphBuilder implements IEntityGraphBuilder 
 	 * @return The generated entity.
 	 */
 	protected final <E extends IEntity> E generateEntity(Class<E> entityType, boolean makeUnique) {
-		return mockEntityFactory.getEntityCopy(entityType, makeUnique);
+		return entityBeanFactory.getEntityCopy(entityType, makeUnique);
 	}
 
 	/**
@@ -94,7 +94,7 @@ public abstract class AbstractEntityGraphBuilder implements IEntityGraphBuilder 
 			throw new IllegalStateException("Unable to add entity to the graph: " + e);
 		}
 		// since we are now in the graph, mimic persistence behavior:
-		e.setVersion(0);
+		// e.setVersion(0);
 		if(e instanceof ITimeStampEntity) {
 			final Date now = new Date();
 			((ITimeStampEntity) e).setDateCreated(now);
@@ -126,7 +126,7 @@ public abstract class AbstractEntityGraphBuilder implements IEntityGraphBuilder 
 	 * @return The generated entity set that was added to the graph.
 	 */
 	protected final <E extends IEntity> Set<E> addN(Class<E> entityType, boolean makeUnique, int n) {
-		final Set<E> set = mockEntityFactory.getNEntityCopies(entityType, n, makeUnique);
+		final Set<E> set = entityBeanFactory.getNEntityCopies(entityType, n, makeUnique);
 		for(final E e : set) {
 			addEntity(e);
 		}
@@ -134,14 +134,14 @@ public abstract class AbstractEntityGraphBuilder implements IEntityGraphBuilder 
 	}
 
 	/**
-	 * Grabs <em>all</em> entity instances held in the {@link MockEntityFactory}
+	 * Grabs <em>all</em> entity instances held in the {@link EntityBeanFactory}
 	 * of the given type then adds them to the graph.
 	 * @param <E>
 	 * @param entityType
 	 * @return The generated entity set that was added to the graph.
 	 */
 	protected final <E extends IEntity> Set<E> addAll(Class<E> entityType) {
-		final Set<E> set = mockEntityFactory.getAllEntityCopies(entityType);
+		final Set<E> set = entityBeanFactory.getAllEntityCopies(entityType);
 		for(final E e : set) {
 			addEntity(e);
 		}
@@ -194,7 +194,7 @@ public abstract class AbstractEntityGraphBuilder implements IEntityGraphBuilder 
 	 * @param e
 	 */
 	protected final <E extends IEntity> void makeUnique(E e) {
-		MockEntityFactory.makeBusinessKeyUnique(e);
+		EntityBeanFactory.makeBusinessKeyUnique(e);
 	}
 
 	/**

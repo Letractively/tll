@@ -1,14 +1,7 @@
 package com.tll.model;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.Valid;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
@@ -22,8 +15,7 @@ import com.tll.model.schema.BusinessObject;
  * address.
  * @author jpk
  */
-@Entity
-@Table(name = "account_address")
+@PersistenceCapable
 @BusinessObject(businessKeys = {
 	@BusinessKeyDef(name = "Account Id and Address Id", properties = { "account.id", "address.id" }),
 	@BusinessKeyDef(name = "Account Id and Name", properties = { "account.id", INamedEntity.NAME })
@@ -33,15 +25,17 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 
 	public static final int MAXLEN_NAME = 32;
 
+	@Persistent
 	private Account account;
 
+	@Persistent
 	private Address address;
 
 	public Class<? extends IEntity> entityClass() {
 		return AccountAddress.class;
 	}
 
-	@Column
+	@Override
 	@NotEmpty
 	@Length(max = MAXLEN_NAME)
 	public String getName() {
@@ -51,8 +45,6 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 	/**
 	 * @return Returns the account.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "aid")
 	@NotNull
 	public Account getAccount() {
 		return account;
@@ -65,15 +57,7 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 		this.account = account;
 	}
 
-	/**
-	 * @return Returns the address.
-	 */
-	@ManyToOne(fetch = FetchType.EAGER, cascade = {
-		CascadeType.MERGE, CascadeType.PERSIST })
-		@JoinColumn(name = "address_id")
-		@NotNull
-		@Valid
-		public Address getAddress() {
+	public Address getAddress() {
 		return address;
 	}
 
@@ -84,7 +68,6 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 		this.address = address;
 	}
 
-	@Transient
 	public Account getParent() {
 		return getAccount();
 	}

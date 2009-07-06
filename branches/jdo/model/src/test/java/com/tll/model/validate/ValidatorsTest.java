@@ -6,9 +6,6 @@ package com.tll.model.validate;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
 import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
 import javax.validation.Validation;
@@ -98,8 +95,6 @@ public class ValidatorsTest {
 			this.postalCode = postalCode;
 		}
 
-		@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "account")
-		@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 		@AtLeastOne(type = "test entity")
 		@BusinessKeyUniqueness(type = "test entity")
 		@Valid
@@ -131,6 +126,9 @@ public class ValidatorsTest {
 	 * Tests entity validation.
 	 * @throws Exception
 	 */
+	// NOTE: this test is currently OFF due to an apparent api bug that occurs
+	// when
+	// trying to obtain a ValidatorFactory instance
 	@Test
 	public final void testEntityValidation() throws Exception {
 		final TestEntity e = getTestEntity();

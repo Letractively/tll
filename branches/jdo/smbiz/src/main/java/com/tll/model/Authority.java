@@ -1,12 +1,8 @@
 package com.tll.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
 import org.springframework.security.GrantedAuthority;
@@ -19,12 +15,7 @@ import com.tll.model.schema.BusinessObject;
  * {@link org.springframework.security.GrantedAuthority} interface.
  * @author jpk
  */
-@Entity
-@Table(name = "authority")
-// NOTE: we can't test when the caching is read only!
-// TODO fix this to allow for testing yet have read only caching
-// @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@PersistenceCapable(table = "authority")
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Authority", properties = { Authority.FIELDNAME_AUTHORITY }))
 public class Authority extends EntityBase implements INamedEntity, GrantedAuthority {
 
@@ -34,13 +25,13 @@ public class Authority extends EntityBase implements INamedEntity, GrantedAuthor
 
 	public static final int MAXLEN_AUTHORITY = 50;
 
+	@Persistent
 	private String role;
 
 	public Class<? extends IEntity> entityClass() {
 		return Authority.class;
 	}
 
-	@Column(name = FIELDNAME_AUTHORITY)
 	@NotEmpty
 	@Length(max = MAXLEN_AUTHORITY)
 	public String getAuthority() {
@@ -51,7 +42,6 @@ public class Authority extends EntityBase implements INamedEntity, GrantedAuthor
 		this.role = authority;
 	}
 
-	@Transient
 	public String getName() {
 		return getAuthority();
 	}

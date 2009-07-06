@@ -1,13 +1,8 @@
 package com.tll.model;
 
-import javax.persistence.CascadeType;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -22,8 +17,7 @@ import com.tll.model.schema.BusinessObject;
  * address.
  * @author jpk
  */
-@Entity
-@Table(name = "account_address")
+@PersistenceCapable
 @BusinessObject(businessKeys = {
 	@BusinessKeyDef(name = "Account Id and Address Id", properties = { "account.id", "address.id" }),
 	@BusinessKeyDef(name = "Account Id and Name", properties = { "account.id", INamedEntity.NAME })
@@ -34,10 +28,13 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 
 	public static final int MAXLEN_NAME = 32;
 
+	@Persistent
 	private Account account;
 
+	@Persistent
 	private Address address;
 
+	@Persistent
 	private AddressType type;
 
 	public Class<? extends IEntity> entityClass() {
@@ -47,6 +44,7 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_NAME)
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -54,8 +52,6 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 	/**
 	 * @return Returns the account.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "aid")
 	@NotNull
 	public Account getAccount() {
 		return account;
@@ -71,12 +67,9 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 	/**
 	 * @return Returns the address.
 	 */
-	@ManyToOne(fetch = FetchType.EAGER, cascade = {
-		CascadeType.MERGE, CascadeType.PERSIST })
-		@JoinColumn(name = "address_id")
-		@NotNull
-		@Valid
-		public Address getAddress() {
+	@NotNull
+	@Valid
+	public Address getAddress() {
 		return address;
 	}
 
@@ -90,7 +83,6 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 	/**
 	 * @return the type
 	 */
-	@Column(name = "type")
 	@NotNull
 	public AddressType getType() {
 		return type;
@@ -100,7 +92,6 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 		this.type = type;
 	}
 
-	@Transient
 	public Account getParent() {
 		return getAccount();
 	}

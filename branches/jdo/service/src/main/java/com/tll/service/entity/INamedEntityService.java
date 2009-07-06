@@ -1,7 +1,6 @@
 package com.tll.service.entity;
 
-import javax.persistence.EntityNotFoundException;
-
+import com.tll.dao.EntityNotFoundException;
 import com.tll.model.INamedEntity;
 import com.tll.model.key.NameKey;
 

@@ -2,15 +2,8 @@ package com.tll.model;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.validation.constraints.NotNull;
 
 import com.tll.model.schema.BusinessKeyDef;
@@ -20,25 +13,26 @@ import com.tll.model.schema.BusinessObject;
  * The account history entity
  * @author jpk
  */
-@Entity
-@Table(name = "account_history")
-// TODO re-instate immutable (hibernate 3.3.1 seems to break this!)
-// http://opensource.atlassian.com/projects/hibernate/browse/HHH-3662
-// @Immutable
+@PersistenceCapable
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Account Id, Transaction Date and Status", properties = {
 	"account.id", "transDate", "status" }))
 	public class AccountHistory extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 5543822993709686604L;
 
+	@Persistent
 	private Account account;
 
+	@Persistent
 	private Date transDate = new Date();
 
+	@Persistent
 	private AccountStatus status;
 
+	@Persistent
 	private String notes;
 
+	@Persistent
 	private PaymentTrans pymntTrans;
 
 	public Class<? extends IEntity> entityClass() {
@@ -48,8 +42,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the account.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "aid")
 	@NotNull
 	public Account getAccount() {
 		return account;
@@ -65,7 +57,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the notes.
 	 */
-	@Column(name = "notes")
 	public String getNotes() {
 		return notes;
 	}
@@ -80,8 +71,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the pymntTrans.
 	 */
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "pt_id")
 	public PaymentTrans getPymntTrans() {
 		return pymntTrans;
 	}
@@ -96,7 +85,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the status.
 	 */
-	@Column(name = "status")
 	@NotNull
 	public AccountStatus getStatus() {
 		return status;
@@ -112,9 +100,7 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the transDate.
 	 */
-	@Column(name = "trans_date")
 	@NotNull
-	@Temporal(TemporalType.TIMESTAMP)
 	public Date getTransDate() {
 		return transDate;
 	}
@@ -126,7 +112,6 @@ import com.tll.model.schema.BusinessObject;
 		this.transDate = transDate;
 	}
 
-	@Transient
 	public Account getParent() {
 		return getAccount();
 	}

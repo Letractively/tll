@@ -4,15 +4,8 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -22,8 +15,7 @@ import org.hibernate.validation.constraints.Length;
  * The order entity
  * @author jpk
  */
-@Entity
-@Table(name = "orders")
+@PersistenceCapable
 // We can't guarantee this with enough certainity! So we won't have any bks for
 // orders then.
 /*
@@ -40,26 +32,37 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 
 	private OrderStatus status;
 
+	@Persistent
 	private String notes;
 
+	@Persistent
 	private String siteCode;
 
+	@Persistent
 	private Account account;
 
+	@Persistent
 	private Visitor visitor;
 
+	@Persistent
 	private Customer customer;
 
+	@Persistent
 	private Currency currency;
 
+	@Persistent
 	private PaymentInfo paymentInfo;
 
+	@Persistent
 	private Address billToAddress;
 
+	@Persistent
 	private Address shipToAddress;
 
+	@Persistent
 	private Set<OrderItem> orderItems = new LinkedHashSet<OrderItem>();
 
+	@Persistent
 	private Set<OrderTrans> transactions = new LinkedHashSet<OrderTrans>();
 
 	public Class<? extends IEntity> entityClass() {
@@ -69,8 +72,6 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @return Returns the account.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "aid")
 	@NotNull
 	public Account getAccount() {
 		return account;
@@ -86,8 +87,6 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @return Returns the billToAddress.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "billto_adr_id")
 	@Valid
 	public Address getBillToAddress() {
 		return billToAddress;
@@ -103,8 +102,6 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @return Returns the currency.
 	 */
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "crncy_id")
 	@NotNull
 	public Currency getCurrency() {
 		return currency;
@@ -120,8 +117,6 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @return Returns the customer.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cust_id")
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -136,7 +131,6 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @return Returns the notes.
 	 */
-	@Column
 	@Length(max = MAXLEN_NOTES)
 	public String getNotes() {
 		return notes;
@@ -152,8 +146,6 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @return Returns the paymentInfo.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "pymntinfo_id")
 	@Valid
 	public PaymentInfo getPaymentInfo() {
 		return paymentInfo;
@@ -169,8 +161,6 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @return Returns the shipToAddress.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "shipto_adr_id")
 	@Valid
 	public Address getShipToAddress() {
 		return shipToAddress;
@@ -186,8 +176,6 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @return Returns the visitor.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "visitor_id")
 	public Visitor getVisitor() {
 		return visitor;
 	}
@@ -202,7 +190,6 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @return Returns the siteCode.
 	 */
-	@Column(name = "site_code")
 	@Length(max = MAXLEN_SITE_CODE)
 	public String getSiteCode() {
 		return siteCode;
@@ -218,7 +205,6 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @return Returns the status.
 	 */
-	@Column
 	@NotNull
 	public OrderStatus getStatus() {
 		return status;
@@ -234,10 +220,6 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @return Returns the transactions.
 	 */
-	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "order")
-	// @org.hibernate.annotations.Cascade(value =
-	// org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-	// we don't want to delete order transactions once they've been created
 	public Set<OrderTrans> getTransactions() {
 		return transactions;
 	}
@@ -249,32 +231,26 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 		this.transactions = transactions;
 	}
 
-	@Transient
 	public OrderTrans getTransaction(int id) {
 		return findEntityInCollection(transactions, id);
 	}
 
-	@Transient
 	public void addTransaction(OrderTrans e) {
 		addEntityToCollection(transactions, e);
 	}
 
-	@Transient
 	public void addTransactions(Collection<OrderTrans> clc) {
 		addEntitiesToCollection(clc, transactions);
 	}
 
-	@Transient
 	public void removeTransaction(OrderTrans e) {
 		removeEntityFromCollection(transactions, e);
 	}
 
-	@Transient
 	public void clearTransactions() {
 		clearEntityCollection(transactions);
 	}
 
-	@Transient
 	public int getNumTransactions() {
 		return getCollectionSize(transactions);
 	}
@@ -282,8 +258,6 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @return Returns the orderItems.
 	 */
-	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "order")
-	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	@Valid
 	public Set<OrderItem> getOrderItems() {
 		return orderItems;
@@ -296,37 +270,30 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 		this.orderItems = orderItems;
 	}
 
-	@Transient
 	public OrderItem getOrderItem(int id) {
 		return findEntityInCollection(orderItems, id);
 	}
 
-	@Transient
 	public void addOrderItem(OrderItem e) {
 		addEntityToCollection(orderItems, e);
 	}
 
-	@Transient
 	public void addOrderItems(Collection<OrderItem> clc) {
 		addEntitiesToCollection(clc, orderItems);
 	}
 
-	@Transient
 	public void removeOrderItem(OrderItem e) {
 		removeEntityFromCollection(orderItems, e);
 	}
 
-	@Transient
 	public int getNumOrderItems() {
 		return getCollectionSize(orderItems);
 	}
 
-	@Transient
 	public void clearOrderItems() {
 		clearEntityCollection(orderItems);
 	}
 
-	@Transient
 	public Account getParent() {
 		return getAccount();
 	}

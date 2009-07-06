@@ -9,10 +9,10 @@
   </parent>
 
   <groupId>com.tll</groupId>
-  <artifactId>tll-mock</artifactId>
-  <name>tll-mock</name>
+  <artifactId>tll-egraph</artifactId>
+  <name>tll-egraph</name>
   <version>${project.parent.version}</version>
-  <description>Contains mock constructs to aid in testing or otherwise.</description>
+  <description>Provides the ability to constitute entities from an xml descriptor file.</description>
   
   <dependencies>
     <dependency>

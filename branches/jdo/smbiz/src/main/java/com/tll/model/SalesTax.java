@@ -1,12 +1,7 @@
 package com.tll.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
@@ -19,8 +14,7 @@ import com.tll.model.schema.BusinessObject;
  * Sales tax entity
  * @author jpk
  */
-@Entity
-@Table(name = "sales_tax")
+@PersistenceCapable
 @BusinessObject(businessKeys =
 	@BusinessKeyDef(name = "Account Id, Province, Country and Postal Code",
 			properties = { "account.id", "province", "county", "postalCode" }))
@@ -32,14 +26,19 @@ import com.tll.model.schema.BusinessObject;
 	public static final int MAXLEN_COUNTY = 64;
 	public static final int MAXLEN_POSTAL_CODE = 16;
 
+	@Persistent
 	private String province;
 
+	@Persistent
 	private String county;
 
+	@Persistent
 	private String postalCode;
 
+	@Persistent
 	private float tax;
 
+	@Persistent
 	private Account account;
 
 	public Class<? extends IEntity> entityClass() {
@@ -49,8 +48,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the account.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "aid")
 	@NotNull
 	public Account getAccount() {
 		return account;
@@ -66,7 +63,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the county.
 	 */
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_COUNTY)
 	public String getCounty() {
@@ -83,7 +79,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the province.
 	 */
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_PROVINCE)
 	public String getProvince() {
@@ -100,7 +95,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the tax.
 	 */
-	@Column(precision = 7, scale = 3)
 	@NotNull
 	// @Size(min = 0, max = 1)
 	public float getTax() {
@@ -117,7 +111,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the postalCode.
 	 */
-	@Column(name = "postal_code")
 	@NotEmpty
 	@Length(max = MAXLEN_POSTAL_CODE)
 	public String getPostalCode() {
@@ -131,7 +124,6 @@ import com.tll.model.schema.BusinessObject;
 		this.postalCode = zip;
 	}
 
-	@Transient
 	public Account getParent() {
 		return getAccount();
 	}

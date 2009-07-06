@@ -3,15 +3,9 @@ package com.tll.model;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
@@ -24,8 +18,7 @@ import com.tll.model.schema.BusinessObject;
  * Order trans entity
  * @author jpk
  */
-@Entity
-@Table(name = "order_trans")
+@PersistenceCapable
 @BusinessObject(businessKeys =
 	@BusinessKeyDef(name = "Order Id, Date Created and Username",
 			properties = { "order.id", "dateCreated", "username" }))
@@ -37,42 +30,55 @@ import com.tll.model.schema.BusinessObject;
 	public static final int MAXLEN_SHIP_MODE_NAME = 64;
 	public static final int MAXLEN_SHIP_ROUTING_NUM = 64;
 
+	@Persistent
 	private Order order;
 
+	@Persistent
 	private String username; // author of this transaction
 
+	@Persistent
 	private OrderTransOp orderTransOp;
 
+	@Persistent
 	private OrderTransOpResult orderTransResult;
 
+	@Persistent
 	private String shipModeName;
 
+	@Persistent
 	private String shipRoutingNum;
 
+	@Persistent
 	private float itemTotal = 0f;
 
+	@Persistent
 	private float salesTax = 0f;
 
+	@Persistent
 	private float shipCost = 0f;
 
+	@Persistent
 	private float total = 0f;
 
+	@Persistent
 	private Address billToAddress;
 
+	@Persistent
 	private Address shipToAddress;
 
+	@Persistent
 	private PaymentInfo pymntInfo;
 
+	@Persistent
 	private PaymentTrans pymntTrans;
 
+	@Persistent
 	private Set<OrderItemTrans> itemTransactions = new LinkedHashSet<OrderItemTrans>();
 
 	public Class<? extends IEntity> entityClass() {
 		return OrderTrans.class;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "bta_id")
 	public Address getBillToAddress() {
 		return billToAddress;
 	}
@@ -81,7 +87,6 @@ import com.tll.model.schema.BusinessObject;
 		this.billToAddress = billToAddress;
 	}
 
-	@Column(name = "item_total", precision = 7, scale = 2)
 	// @Size(min = 0, max = 99999)
 	public float getItemTotal() {
 		return itemTotal;
@@ -91,8 +96,6 @@ import com.tll.model.schema.BusinessObject;
 		this.itemTotal = itemTotal;
 	}
 
-	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "orderTrans")
-	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	public Set<OrderItemTrans> getItemTransactions() {
 		return itemTransactions;
 	}
@@ -101,8 +104,6 @@ import com.tll.model.schema.BusinessObject;
 		this.itemTransactions = itemTransactions;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "o_id")
 	@NotNull
 	public Order getOrder() {
 		return order;
@@ -112,7 +113,6 @@ import com.tll.model.schema.BusinessObject;
 		this.order = order;
 	}
 
-	@Column(name = "order_trans_op")
 	@NotNull
 	public OrderTransOp getOrderTransOp() {
 		return orderTransOp;
@@ -122,7 +122,6 @@ import com.tll.model.schema.BusinessObject;
 		this.orderTransOp = orderTransOp;
 	}
 
-	@Column(name = "order_trans_result")
 	@NotNull
 	public OrderTransOpResult getOrderTransResult() {
 		return orderTransResult;
@@ -132,8 +131,6 @@ import com.tll.model.schema.BusinessObject;
 		this.orderTransResult = orderTransResult;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "pi_id")
 	public PaymentInfo getPymntInfo() {
 		return pymntInfo;
 	}
@@ -142,8 +139,6 @@ import com.tll.model.schema.BusinessObject;
 		this.pymntInfo = pymntInfo;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "pt_id")
 	public PaymentTrans getPymntTrans() {
 		return pymntTrans;
 	}
@@ -152,7 +147,6 @@ import com.tll.model.schema.BusinessObject;
 		this.pymntTrans = pymntTrans;
 	}
 
-	@Column(name = "sales_tax", precision = 7, scale = 2)
 	// @Size(min = 0, max = 999999)
 	public float getSalesTax() {
 		return salesTax;
@@ -172,7 +166,6 @@ import com.tll.model.schema.BusinessObject;
 		this.shipCost = shipCost;
 	}
 
-	@Column(name = "ship_mode_name")
 	@Length(max = MAXLEN_SHIP_MODE_NAME)
 	public String getShipModeName() {
 		return shipModeName;
@@ -182,7 +175,6 @@ import com.tll.model.schema.BusinessObject;
 		this.shipModeName = shipModeName;
 	}
 
-	@Column(name = "ship_routing_num")
 	@Length(max = MAXLEN_SHIP_ROUTING_NUM)
 	public String getShipRoutingNum() {
 		return shipRoutingNum;
@@ -192,8 +184,6 @@ import com.tll.model.schema.BusinessObject;
 		this.shipRoutingNum = shipRoutingNum;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "sta_id")
 	public Address getShipToAddress() {
 		return shipToAddress;
 	}
@@ -202,7 +192,6 @@ import com.tll.model.schema.BusinessObject;
 		this.shipToAddress = shipToAddress;
 	}
 
-	@Column(precision = 7, scale = 2)
 	// @Size(min = 0, max = 9999999)
 	public float getTotal() {
 		return total;
@@ -212,7 +201,6 @@ import com.tll.model.schema.BusinessObject;
 		this.total = total;
 	}
 
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_USERNAME)
 	public String getUsername() {
@@ -223,32 +211,26 @@ import com.tll.model.schema.BusinessObject;
 		this.username = username;
 	}
 
-	@Transient
 	public OrderItemTrans getOrderItemTrans(int id) {
 		return findEntityInCollection(itemTransactions, id);
 	}
 
-	@Transient
 	public void addOrderItemTrans(OrderItemTrans e) {
 		addEntityToCollection(itemTransactions, e);
 	}
 
-	@Transient
 	public void removeOrderItemTrans(OrderItemTrans e) {
 		removeEntityFromCollection(itemTransactions, e);
 	}
 
-	@Transient
 	public void clearOrderItemTransactions() {
 		clearEntityCollection(itemTransactions);
 	}
 
-	@Transient
 	public int getNumItemTransactions() {
 		return getCollectionSize(itemTransactions);
 	}
 
-	@Transient
 	public Order getParent() {
 		return getOrder();
 	}

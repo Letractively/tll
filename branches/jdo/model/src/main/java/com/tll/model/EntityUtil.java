@@ -5,8 +5,8 @@
  */
 package com.tll.model;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Inheritance;
+import javax.jdo.annotations.Discriminator;
+import javax.jdo.annotations.Inheritance;
 
 
 /**
@@ -29,7 +29,7 @@ public class EntityUtil {
 	 */
 	@SuppressWarnings("unchecked")
 	public static Class<? extends IEntity> getRootEntityClass(Class<? extends IEntity> entityClass) {
-		if(entityClass.getAnnotation(DiscriminatorValue.class) != null) {
+		if(entityClass.getAnnotation(Discriminator.class) != null) {
 			Class<? extends IEntity> ec = entityClass;
 			do {
 				ec = (Class<? extends IEntity>) ec.getSuperclass();

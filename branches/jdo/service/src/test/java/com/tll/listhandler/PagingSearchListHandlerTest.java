@@ -7,6 +7,7 @@ package com.tll.listhandler;
 import java.util.List;
 import java.util.Set;
 
+import javax.jdo.PersistenceManager;
 import javax.validation.ValidatorFactory;
 
 import org.testng.annotations.AfterClass;
@@ -29,18 +30,17 @@ import com.tll.dao.IEntityDao;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
-import com.tll.dao.jdbc.DbShell;
+import com.tll.db.IDbShell;
 import com.tll.di.DbDialectModule;
 import com.tll.di.DbShellModule;
 import com.tll.di.EntityAssemblerModule;
-import com.tll.di.MockEntityFactoryModule;
+import com.tll.di.EntityBeanFactoryModule;
+import com.tll.di.JdoDaoModule;
 import com.tll.di.ModelModule;
-import com.tll.di.OrmDaoModule;
-import com.tll.di.TransactionModule;
 import com.tll.di.ValidationModule;
 import com.tll.model.Address;
+import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntityAssembler;
-import com.tll.model.MockEntityFactory;
 import com.tll.model.TestPersistenceUnitEntityAssembler;
 import com.tll.service.entity.EntityService;
 import com.tll.service.entity.IEntityService;
@@ -82,9 +82,9 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 
 	private final Config config;
 
-	private final DbTestSupport dbSupport;
+	private DbTestSupport dbSupport;
 
-	private DbShell db;
+	private IDbShell db;
 
 	/**
 	 * Constructor
@@ -92,7 +92,7 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 	public PagingSearchListHandlerTest() {
 		super();
 		config = Config.load();
-		dbSupport = new DbTestSupport(config);
+		// dbSupport = new DbTestSupport(config);
 	}
 
 	@BeforeClass(alwaysRun = true)
@@ -110,7 +110,8 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 		// create the db
 		db =
 			Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(config), new DbShellModule(config))
-			.getInstance(DbShell.class);
+			.getInstance(
+						IDbShell.class);
 		db.create();
 		db.clear();
 
@@ -130,11 +131,11 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 	protected void addModules(List<Module> modules) {
 		modules.add(new ValidationModule());
 		modules.add(new ModelModule());
-		modules.add(new MockEntityFactoryModule());
+		modules.add(new EntityBeanFactoryModule());
 		super.addModules(modules);
 		modules.add(new DbDialectModule(config));
-		modules.add(new OrmDaoModule(config));
-		modules.add(new TransactionModule(config));
+		modules.add(new JdoDaoModule(config));
+		// modules.add(new TransactionModule(config));
 		modules.add(new EntityAssemblerModule() {
 
 			@Override
@@ -159,14 +160,22 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 		return injector.getInstance(Key.get(new TypeLiteral<IEntityService<Address>>() {}));
 	}
 
-	protected final MockEntityFactory getMockEntityFactory() {
-		return injector.getInstance(MockEntityFactory.class);
+	protected final EntityBeanFactory getEntityBeanFactory() {
+		return injector.getInstance(EntityBeanFactory.class);
+	}
+
+	protected final DbTestSupport getDbSupport() {
+		if(dbSupport == null) {
+			final PersistenceManager pm = injector.getInstance(PersistenceManager.class);
+			dbSupport = new DbTestSupport(config, pm);
+		}
+		return dbSupport;
 	}
 
 	protected final void stubListElements() {
 		// stub the list elements
 		dbSupport.startNewTransaction();
-		final Set<Address> elements = getMockEntityFactory().getNEntityCopies(Address.class, NUM_LIST_ELEMENTS, true);
+		final Set<Address> elements = getEntityBeanFactory().getNEntityCopies(Address.class, NUM_LIST_ELEMENTS, true);
 		getEntityDao().persistAll(elements);
 		dbSupport.setComplete();
 		dbSupport.endTransaction();

@@ -1,3 +1,4 @@
+/*
 @TypeDefs(
 		{
 			@TypeDef(name="encobj", typeClass = EncryptedObjectType.class)
@@ -18,4 +19,7 @@ import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
 import com.tll.dao.orm.EncryptedObjectType;
+ */
+
+package com.tll.model;
 

@@ -1,8 +1,7 @@
 package com.tll.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
@@ -16,14 +15,12 @@ import com.tll.model.validate.PostalCode;
 /**
  * @author jpk
  */
-@Entity
-@Table(name = "address")
+@PersistenceCapable
 @PhoneNumbers(value = {
-	@PhoneNumber(phonePropertyName = "phone"),
-	@PhoneNumber(phonePropertyName = "fax") })
+	@PhoneNumber(phonePropertyName = "phone"), @PhoneNumber(phonePropertyName = "fax") })
 	@PostalCode()
-	@BusinessObject(businessKeys =
-		@BusinessKeyDef(name = "Address 1 and Postal Code", properties = {"address1", "postalCode" }))
+	@BusinessObject(businessKeys = @BusinessKeyDef(name = "Address 1 and Postal Code", properties = {
+	"address1", "postalCode" }))
 		public class Address extends EntityBase {
 
 	private static final long serialVersionUID = 69385466934038047L;
@@ -42,19 +39,33 @@ import com.tll.model.validate.PostalCode;
 	public static final int MAXLEN_FAX = 15;
 	public static final int MAXLEN_EMAIL_ADDRESS = 128;
 
+	@Persistent
 	private String firstName;
+	@Persistent
 	private String lastName;
+	@Persistent
 	private Character mi;
+	@Persistent
 	private String company;
+	@Persistent
 	private String attn;
+	@Persistent
 	private String address1;
+	@Persistent
 	private String address2;
+	@Persistent
 	private String city;
+	@Persistent
 	private String province;
+	@Persistent
 	private String postalCode;
+	@Persistent
 	private String country;
+	@Persistent
 	private String phone;
+	@Persistent
 	private String fax;
+	@Persistent
 	private String emailAddress;
 
 	public Class<? extends IEntity> entityClass() {
@@ -64,7 +75,6 @@ import com.tll.model.validate.PostalCode;
 	/**
 	 * @return Returns the address1.
 	 */
-	@Column(name = "address_1")
 	@NotEmpty
 	@Length(max = MAXLEN_ADDRESS1)
 	public String getAddress1() {
@@ -81,7 +91,6 @@ import com.tll.model.validate.PostalCode;
 	/**
 	 * @return Returns the address2.
 	 */
-	@Column(name = "address_2")
 	@Length(max = MAXLEN_ADDRESS2)
 	public String getAddress2() {
 		return address2;
@@ -97,7 +106,6 @@ import com.tll.model.validate.PostalCode;
 	/**
 	 * @return Returns the attn.
 	 */
-	@Column(name = "attn")
 	@Length(max = MAXLEN_ATTN)
 	public String getAttn() {
 		return attn;
@@ -113,7 +121,6 @@ import com.tll.model.validate.PostalCode;
 	/**
 	 * @return Returns the city.
 	 */
-	@Column(name = "city")
 	@NotEmpty
 	@Length(max = MAXLEN_CITY)
 	public String getCity() {
@@ -130,7 +137,6 @@ import com.tll.model.validate.PostalCode;
 	/**
 	 * @return Returns the company.
 	 */
-	@Column(name = "company")
 	@Length(max = MAXLEN_COMPANY)
 	public String getCompany() {
 		return company;
@@ -146,7 +152,6 @@ import com.tll.model.validate.PostalCode;
 	/**
 	 * @return Returns the country.
 	 */
-	@Column(name = "country")
 	@NotEmpty
 	@Length(max = MAXLEN_COUNTRY)
 	public String getCountry() {
@@ -163,7 +168,6 @@ import com.tll.model.validate.PostalCode;
 	/**
 	 * @return Returns the emailAddress.
 	 */
-	@Column(name = "email_address")
 	@NotEmpty
 	// @Email
 	@Length(max = MAXLEN_EMAIL_ADDRESS)
@@ -181,7 +185,6 @@ import com.tll.model.validate.PostalCode;
 	/**
 	 * @return Returns the fax.
 	 */
-	@Column(name = "fax")
 	@Length(max = MAXLEN_FAX)
 	public String getFax() {
 		return fax;
@@ -197,7 +200,6 @@ import com.tll.model.validate.PostalCode;
 	/**
 	 * @return Returns the firstName.
 	 */
-	@Column(name = "first_name")
 	@Length(max = MAXLEN_FIRST_NAME)
 	public String getFirstName() {
 		return firstName;
@@ -213,7 +215,6 @@ import com.tll.model.validate.PostalCode;
 	/**
 	 * @return Returns the lastName.
 	 */
-	@Column(name = "last_name")
 	@Length(max = MAXLEN_LAST_NAME)
 	public String getLastName() {
 		return lastName;
@@ -229,7 +230,6 @@ import com.tll.model.validate.PostalCode;
 	/**
 	 * @return Returns the mi.
 	 */
-	@Column(name = "mi")
 	public Character getMi() {
 		return mi;
 	}
@@ -244,7 +244,6 @@ import com.tll.model.validate.PostalCode;
 	/**
 	 * @return Returns the phone.
 	 */
-	@Column(name = "phone")
 	@Length(max = MAXLEN_PHONE)
 	public String getPhone() {
 		return phone;
@@ -260,7 +259,6 @@ import com.tll.model.validate.PostalCode;
 	/**
 	 * @return Returns the province.
 	 */
-	@Column(name = "province")
 	@NotEmpty
 	@Length(max = MAXLEN_PROVINCE)
 	public String getProvince() {
@@ -277,7 +275,6 @@ import com.tll.model.validate.PostalCode;
 	/**
 	 * @return Returns the postalCode.
 	 */
-	@Column(name = "postal_code")
 	@NotEmpty
 	@Length(max = MAXLEN_POSTAL_CODE)
 	public String getPostalCode() {

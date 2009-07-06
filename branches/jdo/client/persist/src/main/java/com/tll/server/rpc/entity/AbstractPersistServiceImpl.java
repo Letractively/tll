@@ -5,8 +5,6 @@
  */
 package com.tll.server.rpc.entity;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -22,6 +20,8 @@ import com.tll.common.search.IBusinessKeySearch;
 import com.tll.common.search.IEntityNameSearch;
 import com.tll.common.search.IPrimaryKeySearch;
 import com.tll.common.search.ISearch;
+import com.tll.dao.EntityExistsException;
+import com.tll.dao.EntityNotFoundException;
 import com.tll.model.IEntity;
 import com.tll.model.key.BusinessKeyFactory;
 import com.tll.model.key.BusinessKeyNotDefinedException;

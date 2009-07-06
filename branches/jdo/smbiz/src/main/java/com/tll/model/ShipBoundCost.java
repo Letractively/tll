@@ -1,12 +1,7 @@
 package com.tll.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.validation.constraints.NotNull;
 
 import com.tll.model.schema.BusinessKeyDef;
@@ -17,8 +12,7 @@ import com.tll.model.schema.BusinessObject;
  * "weight"
  * @author jpk
  */
-@Entity
-@Table(name = "ship_bound_cost")
+@PersistenceCapable
 @BusinessObject(businessKeys =
 	@BusinessKeyDef(name = "Ship Mode Id, Lower Bound and Upper Bound",
 			properties = { "shipMode.id", "lbound", "ubound" }))
@@ -26,12 +20,16 @@ import com.tll.model.schema.BusinessObject;
 
 	private static final long serialVersionUID = -5074831489410804639L;
 
+	@Persistent
 	private float lbound = 0f;
 
+	@Persistent
 	private float ubound = 0f;
 
+	@Persistent
 	private float cost = 0f;
 
+	@Persistent
 	private ShipMode shipMode;
 
 	public Class<? extends IEntity> entityClass() {
@@ -41,8 +39,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the shipMode.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "sm_id")
 	@NotNull
 	public ShipMode getShipMode() {
 		return shipMode;
@@ -58,7 +54,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the cost.
 	 */
-	@Column(precision = 7, scale = 2)
 	// @Size(min = 0, max = 999999)
 	public float getCost() {
 		return cost;
@@ -74,7 +69,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the lBound.
 	 */
-	@Column(name = "l_bound", precision = 6, scale = 0)
 	// @Size(min = 0, max = 999999)
 	public float getLbound() {
 		return lbound;
@@ -90,7 +84,6 @@ import com.tll.model.schema.BusinessObject;
 	/**
 	 * @return Returns the uBound.
 	 */
-	@Column(name = "u_bound", precision = 6, scale = 0)
 	// @Size(min = 0, max = 999999)
 	public float getUbound() {
 		return ubound;
@@ -103,7 +96,6 @@ import com.tll.model.schema.BusinessObject;
 		ubound = bound;
 	}
 
-	@Transient
 	public ShipMode getParent() {
 		return getShipMode();
 	}

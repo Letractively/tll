@@ -4,18 +4,12 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.jdo.annotations.Discriminator;
+import javax.jdo.annotations.DiscriminatorStrategy;
+import javax.jdo.annotations.Inheritance;
+import javax.jdo.annotations.InheritanceStrategy;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -30,10 +24,9 @@ import com.tll.model.validate.BusinessKeyUniqueness;
  * The Interface entity
  * @author jpk
  */
-@Entity
-@Table(name = "interface")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.INTEGER)
+@PersistenceCapable
+@Inheritance(strategy = InheritanceStrategy.SUPERCLASS_TABLE)
+@Discriminator(strategy = DiscriminatorStrategy.CLASS_NAME)
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Code", properties = { "code" }))
 public abstract class Interface extends NamedTimeStampEntity {
 
@@ -55,24 +48,35 @@ public abstract class Interface extends NamedTimeStampEntity {
 	public static final String CODE_PAYMENT_METHOD = "pymntmethod";
 	public static final String CODE_CROSS_SELL = "crosssell";
 
+	@Persistent
 	protected String code;
+	@Persistent
 	protected String description;
 
+	@Persistent
 	protected boolean isAvailableAsp = false;
+	@Persistent
 	protected boolean isAvailableIsp = false;
+	@Persistent
 	protected boolean isAvailableMerchant = false;
+	@Persistent
 	protected boolean isAvailableCustomer = false;
 
+	@Persistent
 	protected boolean isRequiredAsp = false;
+	@Persistent
 	protected boolean isRequiredIsp = false;
+	@Persistent
 	protected boolean isRequiredMerchant = false;
+	@Persistent
 	protected boolean isRequiredCustomer = false;
 
+	@Persistent
 	protected Set<InterfaceOption> options = new LinkedHashSet<InterfaceOption>();
 
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_NAME)
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -80,7 +84,6 @@ public abstract class Interface extends NamedTimeStampEntity {
 	/**
 	 * @return Returns the code.
 	 */
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_CODE)
 	public String getCode() {
@@ -97,7 +100,6 @@ public abstract class Interface extends NamedTimeStampEntity {
 	/**
 	 * @return Returns the description.
 	 */
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_DESCRIPTION)
 	public String getDescription() {
@@ -114,7 +116,6 @@ public abstract class Interface extends NamedTimeStampEntity {
 	/**
 	 * @return Returns the isAvailableAsp.
 	 */
-	@Column(name = "is_available_asp")
 	@NotNull
 	public boolean getIsAvailableAsp() {
 		return isAvailableAsp;
@@ -130,7 +131,6 @@ public abstract class Interface extends NamedTimeStampEntity {
 	/**
 	 * @return Returns the isAvailableCustomer.
 	 */
-	@Column(name = "is_available_customer")
 	@NotNull
 	public boolean getIsAvailableCustomer() {
 		return isAvailableCustomer;
@@ -146,7 +146,6 @@ public abstract class Interface extends NamedTimeStampEntity {
 	/**
 	 * @return Returns the isAvailableIsp.
 	 */
-	@Column(name = "is_available_isp")
 	@NotNull
 	public boolean getIsAvailableIsp() {
 		return isAvailableIsp;
@@ -162,7 +161,6 @@ public abstract class Interface extends NamedTimeStampEntity {
 	/**
 	 * @return Returns the isAvailableMerchant.
 	 */
-	@Column(name = "is_available_merchant")
 	@NotNull
 	public boolean getIsAvailableMerchant() {
 		return isAvailableMerchant;
@@ -178,7 +176,6 @@ public abstract class Interface extends NamedTimeStampEntity {
 	/**
 	 * @return Returns the isRequiredAsp.
 	 */
-	@Column(name = "is_required_asp")
 	@NotNull
 	public boolean getIsRequiredAsp() {
 		return isRequiredAsp;
@@ -194,7 +191,6 @@ public abstract class Interface extends NamedTimeStampEntity {
 	/**
 	 * @return Returns the isRequiredCustomer.
 	 */
-	@Column(name = "is_required_customer")
 	@NotNull
 	public boolean getIsRequiredCustomer() {
 		return isRequiredCustomer;
@@ -210,7 +206,6 @@ public abstract class Interface extends NamedTimeStampEntity {
 	/**
 	 * @return Returns the isRequiredIsp.
 	 */
-	@Column(name = "is_required_isp")
 	@NotNull
 	public boolean getIsRequiredIsp() {
 		return isRequiredIsp;
@@ -226,7 +221,6 @@ public abstract class Interface extends NamedTimeStampEntity {
 	/**
 	 * @return Returns the isRequiredMerchant.
 	 */
-	@Column(name = "is_required_merchant")
 	@NotNull
 	public boolean getIsRequiredMerchant() {
 		return isRequiredMerchant;
@@ -242,9 +236,6 @@ public abstract class Interface extends NamedTimeStampEntity {
 	/**
 	 * @return Returns the options.
 	 */
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name = "interface_id", nullable = false)
-	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	@BusinessKeyUniqueness(type = "option")
 	@Valid
 	public Set<InterfaceOption> getOptions() {
@@ -258,37 +249,30 @@ public abstract class Interface extends NamedTimeStampEntity {
 		this.options = options;
 	}
 
-	@Transient
 	public InterfaceOption getOption(int id) {
 		return findEntityInCollection(options, id);
 	}
 
-	@Transient
 	public InterfaceOption getOption(String nme) {
 		return findNamedEntityInCollection(options, nme);
 	}
 
-	@Transient
 	public void addOption(InterfaceOption e) {
 		addEntityToCollection(options, e);
 	}
 
-	@Transient
 	public void addOptions(Collection<InterfaceOption> clc) {
 		addEntitiesToCollection(clc, options);
 	}
 
-	@Transient
 	public void removeOption(InterfaceOption e) {
 		removeEntityFromCollection(options, e);
 	}
 
-	@Transient
 	public void clearOptions() {
 		clearEntityCollection(options);
 	}
 
-	@Transient
 	public int getNumOptions() {
 		return getCollectionSize(options);
 	}

@@ -29,17 +29,33 @@
     <developerConnection>scm:svn:https://jopaki@tll.googlecode.com/svn/trunk</developerConnection>
     <url>http://tll.googlecode.com</url>
   </scm>
-  
-  <!-- 
+
   <repositories>
-    for hibernate validator
+    <!-- for hibernate validator -->
     <repository>
       <id>jboss</id>
       <url>http://repository.jboss.com/maven2/</url>
     </repository>
+
+    <!-- data nucleus -->
+    <!--
+      <repository> <id>DataNucleus_Repos</id> <name>DataNucleus Repository</name>
+      <url>http://www.datanucleus.org/downloads/maven</url> <layout>legacy</layout> </repository> <repository>
+      <id>DataNucleus_Repos2</id> <name>DataNucleus Repository</name>
+      <url>http://www.datanucleus.org/downloads/maven2</url> </repository> <repository> Required for transaction-api
+      transitive dep <id>Java_Net_LEGACY</id> <name>Java.Net legacy</name> <url>http://download.java.net/maven/1/</url>
+      <layout>legacy</layout> </repository>
+    -->
   </repositories>
-  -->
-  
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>DataNucleus_2</id>
+      <url>http://www.datanucleus.org/downloads/maven2/</url>
+      <layout>legacy</layout>
+    </pluginRepository>
+  </pluginRepositories>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -48,21 +64,19 @@
     <atomikos.version>3.5.1</atomikos.version>
     <mysqlConnectorVersion>5.1.6</mysqlConnectorVersion>
     <slfVersion>1.5.2</slfVersion>
-    
+
     <gwtVersion>1.6.4</gwtVersion>
     <gwtIncubatorVersion>1.6</gwtIncubatorVersion>
     <gwtLogVersion>2.5.3</gwtLogVersion>
-    
+
     <junitVersion>4.5</junitVersion>
     <testNGVersion>5.8</testNGVersion>
   </properties>
 
   <modules>
     <!--
-      Modules:
-       - build-tools 
-      must be installed separately and before hand 
-      since they are referenced as dependencies in this root build file 
+      Modules: - build-tools must be installed separately and before hand since they are referenced as dependencies in
+      this root build file
     -->
     <module>common</module>
     <module>core</module>
@@ -77,12 +91,12 @@
     <module>test/service-layer</module>
     <module>servlet</module>
     <module>security</module>
-    <module>client</module> 
+    <module>client</module>
     <module>smbiz</module>
   </modules>
 
   <build>
-    
+
     <pluginManagement>
       <plugins>
         <plugin>
@@ -142,6 +156,23 @@
           <artifactId>maven-pmd-plugin</artifactId>
           <version>2.4</version>
         </plugin>
+        <plugin>
+          <groupId>org.datanucleus</groupId>
+          <artifactId>maven-datanucleus-plugin</artifactId>
+          <version>1.1.3</version>
+          <configuration>
+            <verbose>true</verbose>
+            <mappingIncludes>**/*.jdo,**/model/**.class</mappingIncludes>
+            <enhancerName>ASM</enhancerName>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>asm</groupId>
+              <artifactId>asm</artifactId>
+              <version>3.1</version>
+            </dependency>
+          </dependencies>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -154,7 +185,7 @@
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -163,18 +194,17 @@
           <target>1.6</target>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <archive>
             <addMavenDescriptor>false</addMavenDescriptor>
-            <!-- doesn't work for some reason
-            <mainfest>
+            <!--
+              doesn't work for some reason <mainfest>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-              <classpathMavenRepositoryLayout>true</classpathMavenRepositoryLayout>
-            </mainfest>
+              <classpathMavenRepositoryLayout>true</classpathMavenRepositoryLayout> </mainfest>
             -->
             <manifestEntries>
               <mode>${mode}</mode>
@@ -186,7 +216,7 @@
           </excludes>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
@@ -204,7 +234,7 @@
           </execution>
         </executions>
       </plugin>
-      
+
       <!-- create the sources jar for installs -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -228,36 +258,17 @@
         (this is a replacement for the old "automatic" mode - useful if you don't have GWT installed already, or you
         just want a maven way to handle gwt deps)
       -->
-      
-      <!-- TODO temp debug commentout 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>unpack</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>com.google.gwt</groupId>
-                  <artifactId>gwt-dev</artifactId>
-                  <version>${gwtVersion}</version>
-                  <classifier>${platform}-libs</classifier>
-                  <type>zip</type>
-                  <overWrite>false</overWrite>
-                  <outputDirectory>${settings.localRepository}/com/google/gwt/gwt-dev/${gwtVersion}</outputDirectory>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+
+      <!--
+        TODO temp debug commentout <plugin> <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId> <executions> <execution> <id>unpack</id> <phase>compile</phase>
+        <goals> <goal>unpack</goal> </goals> <configuration> <artifactItems> <artifactItem>
+        <groupId>com.google.gwt</groupId> <artifactId>gwt-dev</artifactId> <version>${gwtVersion}</version>
+        <classifier>${platform}-libs</classifier> <type>zip</type> <overWrite>false</overWrite>
+        <outputDirectory>${settings.localRepository}/com/google/gwt/gwt-dev/${gwtVersion}</outputDirectory>
+        </artifactItem> </artifactItems> </configuration> </execution> </executions> </plugin>
       -->
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
@@ -269,6 +280,15 @@
           </dependency>
         </dependencies>
       </plugin>
+
+      <!--
+        <plugin> <groupId>org.datanucleus</groupId> <artifactId>maven-datanucleus-plugin</artifactId>
+        <version>1.1.3</version> <configuration> <mappingIncludes>**/*.jdo, **/*.class</mappingIncludes>
+        <log4jConfiguration>${basedir}/log4j.properties</log4jConfiguration> <verbose>true</verbose>
+        <enhancerName>ASM</enhancerName> <props>${basedir}/datanucleus.properties</props> </configuration> <executions>
+        <execution> <phase>process-classes</phase> <goals> <goal>enhance</goal> </goals> </execution> </executions>
+        </plugin>
+      -->
 
     </plugins>
 
@@ -296,14 +316,9 @@
           <sourceEncoding>utf-8</sourceEncoding>
           <minimumTokens>100</minimumTokens>
           <targetJdk>1.6</targetJdk>
-          <!-- 
-          <excludes>
-            <exclude>**/*Bean.java</exclude>
-            <exclude>**/generated/*.java</exclude>
-          </excludes>
-          <excludeRoots>
-            <excludeRoot>target/generated-sources/stubs</excludeRoot>
-          </excludeRoots>
+          <!--
+            <excludes> <exclude>**/*Bean.java</exclude> <exclude>**/generated/*.java</exclude> </excludes>
+            <excludeRoots> <excludeRoot>target/generated-sources/stubs</excludeRoot> </excludeRoots>
           -->
         </configuration>
       </plugin>
@@ -398,6 +413,17 @@
         <version>1.3.1</version>
       </dependency>
       <dependency>
+        <groupId>commons-dbcp</groupId>
+        <artifactId>commons-dbcp</artifactId>
+        <version>1.2.1</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-pool</groupId>
+        <artifactId>commons-pool</artifactId>
+        <version>1.2</version>
+      </dependency>
+
+      <dependency>
         <groupId>oro</groupId>
         <artifactId>oro</artifactId>
         <version>2.0.8</version>
@@ -428,7 +454,7 @@
         <artifactId>c3p0</artifactId>
         <version>0.9.1</version>
       </dependency>
-      
+
       <dependency>
         <groupId>org.aspectj</groupId>
         <artifactId>aspectjrt</artifactId>
@@ -466,14 +492,9 @@
         <version>[1.1,)</version>
       </dependency>
       <dependency>
-        <groupId>javax.persistence</groupId>
-        <artifactId>persistence-api</artifactId>
-        <version>1.0</version>
-      </dependency>
-      <dependency>
-        <groupId>javax.transaction</groupId>
-        <artifactId>jta</artifactId>
-        <version>1.1</version>
+        <groupId>javax.jdo</groupId>
+        <artifactId>jdo2-api</artifactId>
+        <version>2.3-ea</version>
       </dependency>
 
       <dependency>
@@ -500,7 +521,45 @@
         <version>${mysqlConnectorVersion}</version>
       </dependency>
 
+      <!-- data nucleus -->
+      <dependency>
+        <groupId>org.datanucleus</groupId>
+        <artifactId>datanucleus-cache</artifactId>
+        <version>1.1.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.datanucleus</groupId>
+        <artifactId>datanucleus-connectionpool</artifactId>
+        <version>1.0.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.datanucleus</groupId>
+        <artifactId>datanucleus-core</artifactId>
+        <version>1.1.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.datanucleus</groupId>
+        <artifactId>datanucleus-enhancer</artifactId>
+        <version>1.1.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.datanucleus</groupId>
+        <artifactId>datanucleus-management</artifactId>
+        <version>1.0.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.datanucleus</groupId>
+        <artifactId>datanucleus-db4o</artifactId>
+        <version>1.1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>db4o</groupId>
+        <artifactId>db4o</artifactId>
+        <version>7.4.88.12908</version>
+      </dependency>
+
       <!-- hibernate -->
+      <!-- 
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-core</artifactId>
@@ -521,15 +580,17 @@
         <artifactId>hibernate-entitymanager</artifactId>
         <version>3.4.0.GA</version>
       </dependency>
+      -->
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-annotations</artifactId>
         <version>3.4.0.GA</version>
       </dependency>
+
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-validator</artifactId>
-        <version>4.0.0.Alpha3</version>
+        <version>4.0.0.Beta1</version>
       </dependency>
 
       <!-- spring -->
@@ -641,7 +702,7 @@
 
     </dependencies>
   </dependencyManagement>
-  
+
   <dependencies>
     <dependency>
       <groupId>log4j</groupId>

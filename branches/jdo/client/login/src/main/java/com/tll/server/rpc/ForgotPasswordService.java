@@ -8,8 +8,6 @@ package com.tll.server.rpc;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.springframework.mail.MailSendException;
 
 import com.tll.common.data.Payload;
@@ -17,6 +15,7 @@ import com.tll.common.data.Status;
 import com.tll.common.data.rpc.IForgotPasswordService;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
+import com.tll.dao.EntityNotFoundException;
 import com.tll.mail.IMailContext;
 import com.tll.mail.MailManager;
 import com.tll.mail.MailRouting;

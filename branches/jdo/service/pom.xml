@@ -55,60 +55,6 @@
       <groupId>javax.validation</groupId>
       <artifactId>validation-api</artifactId>
     </dependency>
-    <dependency>
-      <groupId>javax.transaction</groupId>
-      <artifactId>jta</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions-jta</artifactId>
-      <version>${atomikos.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>ejb3-persistence</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.aspectj</groupId>
-      <artifactId>aspectjweaver</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-tx</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-context</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-beans</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-aspects</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-beans</artifactId>
-        </exclusion>
-        <!-- needed for aspectj compile time weave 
-        <exclusion>
-          <groupId>org.aspectj</groupId>
-          <artifactId>aspectjrt</artifactId>
-        </exclusion>
-        -->
-      </exclusions>
-    </dependency>
 
     <dependency>
       <groupId>com.google.code.guice</groupId>
@@ -152,10 +98,6 @@
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-annotations</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>org.springframework</groupId>
           <artifactId>spring-beans</artifactId>
         </exclusion>
@@ -167,52 +109,9 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!-- 
-      atomikos embedded jta impl deps needed at runtime 
-    -->
-    <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>atomikos-util</artifactId>
-      <version>${atomikos.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions-api</artifactId>
-      <version>${atomikos.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions</artifactId>
-      <version>${atomikos.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions-hibernate3</artifactId>
-      <version>${atomikos.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-c3p0</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -224,7 +123,7 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-mock</artifactId>
+      <artifactId>tll-egraph</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
@@ -243,13 +142,13 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao-orm</artifactId>
+      <artifactId>tll-dao-jdo</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao-orm</artifactId>
+      <artifactId>tll-dao-jdo</artifactId>
       <version>${project.version}</version>
       <classifier>testassets</classifier>
       <scope>test</scope>

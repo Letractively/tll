@@ -4,14 +4,9 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
+import javax.jdo.annotations.Discriminator;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 import javax.validation.Valid;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
@@ -24,27 +19,35 @@ import com.tll.model.schema.BusinessObject;
  * The interface option entity
  * @author jpk
  */
-@Entity
-@DiscriminatorValue("option")
+@PersistenceCapable
+@Discriminator(value = "option")
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Code", properties = { "code" }))
 public class InterfaceOption extends InterfaceOptionBase {
 
 	private static final long serialVersionUID = -3858516767622503827L;
 
+	@Persistent
 	protected boolean isDefault = false;
 
+	@Persistent
 	protected float setUpCost = 0f;
 
+	@Persistent
 	protected float monthlyCost = 0f;
 
+	@Persistent
 	protected float annualCost = 0f;
 
+	@Persistent
 	protected float baseSetupPrice = 0f;
 
+	@Persistent
 	protected float baseMonthlyPrice = 0f;
 
+	@Persistent
 	protected float baseAnnualPrice = 0f;
 
+	@Persistent
 	protected Set<InterfaceOptionParameterDefinition> parameters =
 		new LinkedHashSet<InterfaceOptionParameterDefinition>();
 
@@ -55,7 +58,7 @@ public class InterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @return Returns the isDefault.
 	 */
-	@Column(name = "is_default", nullable = false)
+	@NotNull
 	public boolean isDefault() {
 		return isDefault;
 	}
@@ -70,7 +73,6 @@ public class InterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @return Returns the setUpCost.
 	 */
-	@Column(name = "set_up_cost", nullable = false, precision = 8, scale = 2)
 	@Digits(integer = 6, fraction = 2)
 	@NotNull
 	@Min(value = 0)
@@ -88,7 +90,6 @@ public class InterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @return Returns the monthlyCost.
 	 */
-	@Column(name = "monthly_cost", nullable = false, precision = 8, scale = 2)
 	@Digits(integer = 6, fraction = 2)
 	@NotNull
 	@Min(value = 0)
@@ -106,7 +107,6 @@ public class InterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @return Returns the annualCost.
 	 */
-	@Column(name = "annual_cost", nullable = false, precision = 8, scale = 2)
 	@Digits(integer = 6, fraction = 2)
 	@NotNull
 	@Min(value = 0)
@@ -124,7 +124,6 @@ public class InterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @return Returns the baseAnnualPrice.
 	 */
-	@Column(name = "base_annual_price", nullable = false, precision = 8, scale = 2)
 	@Digits(integer = 6, fraction = 2)
 	@NotNull
 	@Min(value = 0)
@@ -142,7 +141,6 @@ public class InterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @return Returns the baseMonthlyPrice.
 	 */
-	@Column(name = "base_monthly_price", nullable = false, precision = 8, scale = 2)
 	@Digits(integer = 6, fraction = 2)
 	@NotNull
 	@Min(value = 0)
@@ -160,7 +158,6 @@ public class InterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @return Returns the baseSetupPrice.
 	 */
-	@Column(name = "base_setup_price", nullable = false, precision = 8, scale = 2)
 	@Digits(integer = 6, fraction = 2)
 	@NotNull
 	@Min(value = 0)
@@ -178,9 +175,6 @@ public class InterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @return Returns the parameters.
 	 */
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name = "option_id")
-	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	@Valid
 	public Set<InterfaceOptionParameterDefinition> getParameters() {
 		return parameters;
@@ -193,37 +187,30 @@ public class InterfaceOption extends InterfaceOptionBase {
 		this.parameters = parameters;
 	}
 
-	@Transient
 	public InterfaceOptionParameterDefinition getParameter(int id) {
 		return findEntityInCollection(parameters, id);
 	}
 
-	@Transient
 	public InterfaceOptionParameterDefinition getParameter(String nme) {
 		return findNamedEntityInCollection(parameters, nme);
 	}
 
-	@Transient
 	public void addParameter(InterfaceOptionParameterDefinition e) {
 		addEntityToCollection(parameters, e);
 	}
 
-	@Transient
 	public void addParameters(Collection<InterfaceOptionParameterDefinition> clc) {
 		addEntitiesToCollection(clc, parameters);
 	}
 
-	@Transient
 	public void removeParameter(InterfaceOptionParameterDefinition e) {
 		removeEntityFromCollection(parameters, e);
 	}
 
-	@Transient
 	public void removeParameters() {
 		clearEntityCollection(parameters);
 	}
 
-	@Transient
 	public int getNumParameters() {
 		return getCollectionSize(parameters);
 	}
