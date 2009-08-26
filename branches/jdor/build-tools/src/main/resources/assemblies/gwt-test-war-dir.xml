@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 
+  http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+
+  <!--
+  Creates a GWT 1.6+ war dir intended for GWT shell testing. 
+  -->
+
+  <id>gwt-test-war-dir</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
+
+  <fileSets>
+    <fileSet>
+      <directory>target/test-classes</directory>
+      <includes>
+        <include>*.html</include>
+      </includes>
+      <outputDirectory>/</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>target/test-classes</directory>
+      <includes>
+        <include>web.xml</include>
+      </includes>
+      <outputDirectory>/WEB-INF</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>target/test-classes</directory>
+      <includes>
+        <include>*.properties</include>
+        <include>ehcache.xml</include>
+      </includes>
+      <outputDirectory>/WEB-INF/classes</outputDirectory>
+    </fileSet>
+  </fileSets>
+
+  <!-- groupId:artifactId:type:classifier -->
+  <dependencySets>
+    
+    <dependencySet>
+      <scope>runtime</scope>
+      <outputDirectory>/WEB-INF/lib</outputDirectory>
+      <useProjectArtifact>false</useProjectArtifact>
+      <useTransitiveDependencies>true</useTransitiveDependencies>
+      <useTransitiveFiltering>true</useTransitiveFiltering>
+      <includes>
+        <include>com.google.gwt:gwt-servlet</include>
+        <include>org.hibernate:hibernate-validator</include>
+        <include>org.slf4j:slf4j-api</include>
+        <include>org.slf4j:slf4j-log4j12</include>
+      </includes>
+    </dependencySet>
+    
+  </dependencySets>
+
+</assembly>
