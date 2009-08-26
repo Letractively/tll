@@ -67,6 +67,14 @@
       <artifactId>jdo2-api</artifactId>
     </dependency>
 
+    <!-- google's appengine api (for entity primary key generation) -->
+    <!-- 
+    <dependency>
+      <groupId>com.google.code.appengine</groupId>
+      <artifactId>appengine</artifactId>
+    </dependency>
+    -->
+    
     <dependency>
       <groupId>com.google.code.guice</groupId>
       <artifactId>guice</artifactId>
@@ -108,7 +116,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>5.8</version>
+      <version>${testNGVersion}</version>
       <classifier>jdk15</classifier>
       <scope>test</scope>
     </dependency>

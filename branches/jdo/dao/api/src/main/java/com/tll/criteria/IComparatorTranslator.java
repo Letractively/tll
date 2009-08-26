@@ -6,14 +6,14 @@ package com.tll.criteria;
 /**
  * IComparatorTranslator
  * @author jpk
- * @param <T> the dao impl type to which native criteria is translated
+ * @param <T> the target type to which the given criteria is translated.
  */
 public interface IComparatorTranslator<T> {
 
 	/**
-	 * Translates a native criterion instance to a dao impl specific construct.
+	 * Translates a native criterion instance to a target type.
 	 * @param ctn the native criterion
-	 * @return the translated dao impl specific type
+	 * @return A translated type instance.
 	 */
-	T translate(ICriterion ctn);
+	T translate(Criterion ctn);
 }

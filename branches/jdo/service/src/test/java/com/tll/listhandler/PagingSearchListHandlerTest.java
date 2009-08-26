@@ -7,7 +7,6 @@ package com.tll.listhandler;
 import java.util.List;
 import java.util.Set;
 
-import javax.jdo.PersistenceManager;
 import javax.validation.ValidatorFactory;
 
 import org.testng.annotations.AfterClass;
@@ -19,10 +18,11 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.google.inject.Stage;
 import com.google.inject.TypeLiteral;
-import com.tll.AbstractInjectedTest;
+import com.tll.AbstractDbAwareTest;
 import com.tll.DbTestSupport;
 import com.tll.config.Config;
 import com.tll.criteria.Criteria;
@@ -30,18 +30,18 @@ import com.tll.dao.IEntityDao;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
+import com.tll.db.DbShellBuilder;
 import com.tll.db.IDbShell;
-import com.tll.di.DbDialectModule;
-import com.tll.di.DbShellModule;
-import com.tll.di.EntityAssemblerModule;
-import com.tll.di.EntityBeanFactoryModule;
+import com.tll.di.EGraphModule;
 import com.tll.di.JdoDaoModule;
 import com.tll.di.ModelModule;
-import com.tll.di.ValidationModule;
 import com.tll.model.Address;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntityAssembler;
+import com.tll.model.IEntityGraphBuilder;
 import com.tll.model.TestPersistenceUnitEntityAssembler;
+import com.tll.model.key.IPrimaryKeyGenerator;
+import com.tll.model.key.SimplePrimaryKeyGenerator;
 import com.tll.service.entity.EntityService;
 import com.tll.service.entity.IEntityService;
 
@@ -50,7 +50,7 @@ import com.tll.service.entity.IEntityService;
  * @author jpk
  */
 @Test(groups = "listhandler")
-public class PagingSearchListHandlerTest extends AbstractInjectedTest {
+public class PagingSearchListHandlerTest extends AbstractDbAwareTest {
 
 	/**
 	 * TestEntityService
@@ -109,9 +109,28 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 	protected void beforeClass() {
 		// create the db
 		db =
-			Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(config), new DbShellModule(config))
-			.getInstance(
-						IDbShell.class);
+			Guice.createInjector(Stage.DEVELOPMENT, new Module() {
+
+				@Override
+				public void configure(Binder b) {
+					b.bind(IDbShell.class).toProvider(new Provider<IDbShell>() {
+
+						@Inject
+						IEntityGraphBuilder egb;
+
+						@SuppressWarnings("synthetic-access")
+						@Override
+						public IDbShell get() {
+							try {
+								return DbShellBuilder.getDbShell(config, egb);
+							}
+							catch(final Exception e) {
+								throw new RuntimeException(e);
+							}
+						}
+					}).in(Scopes.SINGLETON);
+				}
+			}).getInstance(IDbShell.class);
 		db.create();
 		db.clear();
 
@@ -129,20 +148,26 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 
 	@Override
 	protected void addModules(List<Module> modules) {
-		modules.add(new ValidationModule());
-		modules.add(new ModelModule());
-		modules.add(new EntityBeanFactoryModule());
-		super.addModules(modules);
-		modules.add(new DbDialectModule(config));
-		modules.add(new JdoDaoModule(config));
-		// modules.add(new TransactionModule(config));
-		modules.add(new EntityAssemblerModule() {
+		modules.add(new ModelModule() {
+
+			@Override
+			protected void bindPrimaryKeyGenerator() {
+				bind(IPrimaryKeyGenerator.class).to(SimplePrimaryKeyGenerator.class).in(Scopes.SINGLETON);
+			}
 
 			@Override
 			protected void bindEntityAssembler() {
 				bind(IEntityAssembler.class).to(TestPersistenceUnitEntityAssembler.class).in(Scopes.SINGLETON);
 			}
 		});
+		modules.add(new EGraphModule() {
+
+			@Override
+			protected void bindEntityGraphBuilder() {
+			}
+		});
+		super.addModules(modules);
+		modules.add(new JdoDaoModule(config));
 		modules.add(new Module() {
 
 			@Override
@@ -162,14 +187,6 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 
 	protected final EntityBeanFactory getEntityBeanFactory() {
 		return injector.getInstance(EntityBeanFactory.class);
-	}
-
-	protected final DbTestSupport getDbSupport() {
-		if(dbSupport == null) {
-			final PersistenceManager pm = injector.getInstance(PersistenceManager.class);
-			dbSupport = new DbTestSupport(config, pm);
-		}
-		return dbSupport;
 	}
 
 	protected final void stubListElements() {

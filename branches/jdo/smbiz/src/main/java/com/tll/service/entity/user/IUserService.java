@@ -38,7 +38,7 @@ public interface IUserService extends INamedEntityService<User>, UserDetailsServ
 	 * @param newRawPassword
 	 * @throws ChangeUserCredentialsFailedException
 	 */
-	public void setCredentialsById(Integer userId, String newUsername, String newRawPassword)
+	public void setCredentialsById(String userId, String newUsername, String newRawPassword)
 	throws ChangeUserCredentialsFailedException;
 
 	/**

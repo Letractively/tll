@@ -3,6 +3,10 @@ package com.tll.dao;
 import java.util.Collection;
 import java.util.List;
 
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.orm.ObjectRetrievalFailureException;
+
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.model.IEntity;
@@ -14,9 +18,8 @@ import com.tll.model.key.PrimaryKey;
 /**
  * IEntityDao - DAO definition for {@link IEntity}s.
  * <p>
- * <b>NOTE:</b> All dao methods are subject to throwing unchecked exceptions.
- * These exceptions <em>should</em> (but hasn't been verified) all derive from
- * {@link PersistenceException}.
+ * <b>NOTE:</b> All dao methods are subject to throwing a
+ * {@link DataAccessException}.
  * @author jpk
  */
 public interface IEntityDao extends IDao {
@@ -26,18 +29,18 @@ public interface IEntityDao extends IDao {
 	 * @param <E> The entity type
 	 * @param key the primary key
 	 * @return the entity
-	 * @throws EntityNotFoundException
+	 * @throws ObjectRetrievalFailureException
 	 */
-	<E extends IEntity> E load(PrimaryKey<E> key) throws EntityNotFoundException;
+	<E extends IEntity> E load(PrimaryKey<E> key) throws ObjectRetrievalFailureException;
 
 	/**
 	 * Loads a single entity specified by a business key.
 	 * @param <E> The entity type
 	 * @param key the primary key
 	 * @return the entity
-	 * @throws EntityNotFoundException
+	 * @throws ObjectRetrievalFailureException
 	 */
-	<E extends IEntity> E load(IBusinessKey<E> key) throws EntityNotFoundException;
+	<E extends IEntity> E load(IBusinessKey<E> key) throws ObjectRetrievalFailureException;
 
 	/**
 	 * Loads the named entity by a given name.
@@ -45,11 +48,13 @@ public interface IEntityDao extends IDao {
 	 * @param nameKey the name key
 	 * @return the never <code>null</code> named entity (unless an exception is
 	 *         thrown).
-	 * @throws EntityNotFoundException When no entities satisfy the name key.
-	 * @throws NonUniqueResultException When more than one entity satisfies the
-	 *         given name key.
+	 * @throws ObjectRetrievalFailureException When no entities satisfy the name
+	 *         key.
+	 * @throws IncorrectResultSizeDataAccessException When more than one entity
+	 *         satisfies the given name key.
 	 */
-	<N extends INamedEntity> N load(NameKey<N> nameKey) throws EntityNotFoundException, NonUniqueResultException;
+	<N extends INamedEntity> N load(NameKey<N> nameKey) throws ObjectRetrievalFailureException,
+	IncorrectResultSizeDataAccessException;
 
 	/**
 	 * Returns all the entities managed by this DAO. This method will only include
@@ -106,12 +111,13 @@ public interface IEntityDao extends IDao {
 	 * @return The non-<code>null</code> found entity.
 	 * @throws InvalidCriteriaException When the criteria is <code>null</code> or
 	 *         invalid.
-	 * @throws EntityNotFoundException When no entities satisfy the given criteria
-	 * @throws NonUniqueResultException When more than one entity satisfies the
-	 *         given criteria
+	 * @throws ObjectRetrievalFailureException When no entities satisfy the given
+	 *         criteria
+	 * @throws IncorrectResultSizeDataAccessException When more than one entity
+	 *         satisfies the given criteria
 	 */
-	<E extends IEntity> E findEntity(Criteria<E> criteria) throws InvalidCriteriaException, EntityNotFoundException,
-			NonUniqueResultException;
+	<E extends IEntity> E findEntity(Criteria<E> criteria) throws InvalidCriteriaException,
+	ObjectRetrievalFailureException, IncorrectResultSizeDataAccessException;
 
 	/**
 	 * Finds matching entities given criteria.
@@ -149,7 +155,7 @@ public interface IEntityDao extends IDao {
 	 * @param sorting
 	 * @return List of entities or empty list if none found
 	 */
-	<E extends IEntity> List<E> findByIds(Class<E> entityType, List<Integer> ids, Sorting sorting);
+	<E extends IEntity> List<E> findByIds(Class<E> entityType, Collection<String> ids, Sorting sorting);
 
 	/**
 	 * Retrieves the ids of the entities that match the given criteria. Used for
@@ -162,7 +168,7 @@ public interface IEntityDao extends IDao {
 	 * @throws InvalidCriteriaException When the criteria is <code>null</code> or
 	 *         found to be invalid.
 	 */
-	<E extends IEntity> List<Integer> getIds(Criteria<E> criteria, Sorting sorting)
+	<E extends IEntity> List<String> getIds(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException;
 
 	/**
@@ -175,8 +181,9 @@ public interface IEntityDao extends IDao {
 	 *        of the results is "undefined".
 	 * @return list of matching entities.
 	 */
-	<E extends IEntity> List<E> getEntitiesFromIds(Class<E> entityClass, Collection<Integer> ids,
-			Sorting sorting);
+	// <E extends IEntity> List<E> getEntitiesFromIds(Class<E> entityClass,
+	// Collection<String> ids,
+	// Sorting sorting);
 
 	/**
 	 * Returns a sub-set of results using record set paging.

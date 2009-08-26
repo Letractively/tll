@@ -2,22 +2,21 @@ package com.tll.model;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.Unique;
+import javax.jdo.annotations.Uniques;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
-
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
 
 /**
  * The ship mode entity
  * @author jpk
  */
 @PersistenceCapable
-@BusinessObject(businessKeys =
-	@BusinessKeyDef(name = "Account Id and Name", properties = { "account.id", INamedEntity.NAME }))
-	public class ShipMode extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
+@Uniques(value =
+	@Unique(name = "Account Id and Name", members = { "account.id", INamedEntity.NAME }))
+public class ShipMode extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -8602635055012335230L;
 
@@ -115,7 +114,7 @@ import com.tll.model.schema.BusinessObject;
 		setAccount(e);
 	}
 
-	public Integer accountId() {
+	public String accountId() {
 		try {
 			return getAccount().getId();
 		}

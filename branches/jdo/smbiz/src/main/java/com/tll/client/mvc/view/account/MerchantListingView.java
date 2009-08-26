@@ -21,10 +21,10 @@ import com.tll.client.ui.listing.AccountListingConfig;
 import com.tll.client.ui.option.Option;
 import com.tll.client.ui.view.ViewLink;
 import com.tll.client.util.GlobalFormat;
-import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 import com.tll.common.model.SmbizEntityType;
+import com.tll.common.model.StringPropertyValue;
 import com.tll.common.search.NamedQuerySearch;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
@@ -79,7 +79,7 @@ public final class MerchantListingView extends ListingView<MerchantListingViewIn
 		ispListingLink.setText(ispRef.getName());
 
 		final NamedQuerySearch criteria = new NamedQuerySearch(SmbizEntityType.MERCHANT, "account.merchantList", true);
-		criteria.addParam(new IntPropertyValue("ispId", ispRef.getId()));
+		criteria.addParam(new StringPropertyValue("ispId", ispRef.getId()));
 
 		final AccountListingConfig config = new AccountListingConfig() {
 

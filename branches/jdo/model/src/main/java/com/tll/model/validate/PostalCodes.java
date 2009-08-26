@@ -14,7 +14,8 @@ import java.lang.annotation.Target;
  * PostalCodes - Provides the ability to group one or more {@link PostalCode}s.
  * @author jpk
  */
-@Target(ElementType.TYPE)
+@Target(value = {
+	ElementType.TYPE, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface PostalCodes {

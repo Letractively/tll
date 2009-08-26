@@ -1,5 +1,7 @@
 package com.tll.model;
 
+import javax.jdo.annotations.PersistenceAware;
+
 import com.google.inject.Inject;
 
 /**
@@ -7,6 +9,7 @@ import com.google.inject.Inject;
  * build functionality specific to the entity type.
  * @author jpk
  */
+@PersistenceAware
 public final class TestPersistenceUnitEntityAssembler implements IEntityFactory, IEntityAssembler {
 
 	/**
@@ -37,9 +40,11 @@ public final class TestPersistenceUnitEntityAssembler implements IEntityFactory,
 		E e = null;
 		if(AccountAddress.class.equals(entityType)) {
 			final AccountAddress ae = createEntity(AccountAddress.class, generate);
+			/*
 			if(entityProvider != null) {
 				ae.setAccount(entityProvider.getEntityByType(Account.class));
 			}
+			 */
 			Address a = entityProvider == null ? null : entityProvider.getEntityByType(Address.class);
 			if(a == null) {
 				a = createEntity(Address.class, generate);

@@ -11,12 +11,12 @@ import javax.validation.ValidatorFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.ObjectRetrievalFailureException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
-import com.tll.dao.EntityExistsException;
-import com.tll.dao.EntityNotFoundException;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
@@ -75,11 +75,10 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 		return validationFactory.getValidator().validate(e);
 	}
 
-	@SuppressWarnings("unchecked")
 	protected final void validate(E e) throws ConstraintViolationException {
 		final Set<ConstraintViolation<E>> invalids = validateNoException(e);
 		if(invalids != null && invalids.size() > 0) {
-			final HashSet<ConstraintViolation> bunk = new HashSet<ConstraintViolation>(invalids.size());
+			final HashSet<ConstraintViolation<?>> bunk = new HashSet<ConstraintViolation<?>>(invalids.size());
 			bunk.addAll(invalids);
 			throw new ConstraintViolationException(bunk);
 		}
@@ -91,10 +90,9 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	 * @throws ConstraintViolationException When one or more entities are found to
 	 *         be invalid in the collection.
 	 */
-	@SuppressWarnings("unchecked")
 	protected final void validateAll(Collection<E> entities) throws ConstraintViolationException {
 		if(entities != null && entities.size() > 0) {
-			final HashSet<ConstraintViolation> all = new HashSet<ConstraintViolation>();
+			final HashSet<ConstraintViolation<?>> all = new HashSet<ConstraintViolation<?>>();
 			for(final E e : entities) {
 				if(e != null) {
 					final Set<ConstraintViolation<E>> invalids = validateNoException(e);
@@ -111,7 +109,12 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 
 	public E persist(E entity) throws EntityExistsException, ConstraintViolationException {
 		validate(entity);
-		return dao.persist(entity);
+		try {
+			return dao.persist(entity);
+		}
+		catch(final DataIntegrityViolationException e) {
+			throw new EntityExistsException(e.getMessage(), e);
+		}
 	}
 
 	public Collection<E> persistAll(Collection<E> entities) throws ConstraintViolationException {
@@ -129,12 +132,22 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 
 	@Transactional(readOnly = true)
 	public E load(PrimaryKey<E> key) throws EntityNotFoundException {
-		return dao.load(key);
+		try {
+			return dao.load(key);
+		}
+		catch(final ObjectRetrievalFailureException e) {
+			throw new EntityNotFoundException(e.getMessage(), e);
+		}
 	}
 
 	@Transactional(readOnly = true)
 	public E load(IBusinessKey<E> key) throws EntityNotFoundException {
-		return dao.load(key);
+		try {
+			return dao.load(key);
+		}
+		catch(final ObjectRetrievalFailureException e) {
+			throw new EntityNotFoundException(e.getMessage(), e);
+		}
 	}
 
 	@Transactional(readOnly = true)
@@ -150,24 +163,18 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	// IListHandlerDataProvider impl:
 
 	@Transactional(readOnly = true)
-	public List<E> loadByIds(List<Integer> ids, Sorting sorting) {
-		return dao.findByIds(getEntityClass(), ids, sorting);
-	}
-
-	@Transactional(readOnly = true)
 	public List<SearchResult<?>> find(Criteria<? extends IEntity> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
 		return dao.find(criteria, sorting);
 	}
 
 	@Transactional(readOnly = true)
-	public <ET extends IEntity> List<ET> getEntitiesFromIds(Class<ET> entityClass, Collection<Integer> ids,
-			Sorting sorting) {
-		return dao.getEntitiesFromIds(entityClass, ids, sorting);
+	public <ET extends IEntity> List<ET> getEntitiesFromIds(Class<ET> entityClass, Collection<String> ids, Sorting sorting) {
+		return dao.findByIds(entityClass, ids, sorting);
 	}
 
 	@Transactional(readOnly = true)
-	public List<Integer> getIds(Criteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException {
+	public List<String> getIds(Criteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException {
 		return dao.getIds(criteria, sorting);
 	}
 

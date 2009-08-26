@@ -11,7 +11,7 @@ public final class PrimaryKey<E extends IEntity> extends AbstractEntityKey<E> {
 
 	private static final long serialVersionUID = 6971947122659535069L;
 
-	private Integer id;
+	private String id;
 
 	/**
 	 * Constructor
@@ -35,16 +35,16 @@ public final class PrimaryKey<E extends IEntity> extends AbstractEntityKey<E> {
 	 * @param entityClass
 	 * @param id
 	 */
-	public PrimaryKey(Class<E> entityClass, Integer id) {
+	public PrimaryKey(Class<E> entityClass, String id) {
 		super(entityClass);
 		setId(id);
 	}
 
-	public void setId(Integer id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
-	public Integer getId() {
+	public String getId() {
 		return id;
 	}
 

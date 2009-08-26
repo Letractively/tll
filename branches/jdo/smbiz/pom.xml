@@ -168,7 +168,7 @@
                 </element>
                 <element>
                   <groupId>com.tll</groupId>
-                  <artifactId>tll-dao-jro</artifactId>
+                  <artifactId>tll-dao-jdo</artifactId>
                   <version>${project.parent.version}</version>
                 </element>
                 <element>
@@ -250,7 +250,7 @@
                 log4j,commons-logging,org.slf4j,com.tll,com.google.gwt,com.google.code.gwt-incubator,com.google.code.gwt-log
               </includeGroupIds>
               <excludeArtifactIds>
-                gwt-servlet,tll-config,tll-core,tll-dao-api,tll-dao-orm,tll-dao-mock,tll-mail,tll-egraph,tll-model,tll-refdata,tll-security,tll-service,tll-servlet
+                gwt-servlet,tll-config,tll-core,tll-dao-api,tll-dao-jdo,tll-dao-mock,tll-mail,tll-egraph,tll-model,tll-refdata,tll-security,tll-service,tll-servlet
               </excludeArtifactIds>
               <excludeTypes>zip</excludeTypes>
               <outputFile>target/gwt-cp.txt</outputFile>
@@ -478,10 +478,6 @@
       <artifactId>validation-api</artifactId>
     </dependency>
     
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-annotations</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>

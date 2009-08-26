@@ -17,7 +17,8 @@ import javax.validation.Constraint;
  * @author jpk
  */
 @Constraint(validatedBy = PhoneNumberValidator.class)
-@Target(ElementType.TYPE)
+@Target(value = {
+	ElementType.TYPE, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface PhoneNumber {

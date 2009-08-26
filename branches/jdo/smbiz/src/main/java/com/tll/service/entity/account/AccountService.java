@@ -3,7 +3,6 @@ package com.tll.service.entity.account;
 import java.util.Collection;
 import java.util.List;
 
-import javax.persistence.EntityExistsException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidatorFactory;
 
@@ -23,6 +22,7 @@ import com.tll.model.AccountStatus;
 import com.tll.model.EntityCache;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityAssembler;
+import com.tll.service.entity.EntityExistsException;
 import com.tll.service.entity.NamedEntityService;
 import com.tll.service.entity.account.AccountHistoryContext.AccountHistoryOp;
 
@@ -62,12 +62,12 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 			return dao.find(criteria, sorting);
 		}
 
-		public <E extends IEntity> List<E> getEntitiesFromIds(Class<E> entityClass, Collection<Integer> ids,
+		public <E extends IEntity> List<E> getEntitiesFromIds(Class<E> entityClass, Collection<String> ids,
 				Sorting sorting) {
-			return dao.getEntitiesFromIds(entityClass, ids, sorting);
+			return dao.findByIds(entityClass, ids, sorting);
 		}
 
-		public List<Integer> getIds(Criteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException {
+		public List<String> getIds(Criteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException {
 			return dao.getIds(criteria, sorting);
 		}
 

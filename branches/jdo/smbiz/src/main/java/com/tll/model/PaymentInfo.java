@@ -2,15 +2,14 @@ package com.tll.model;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
-import javax.persistence.Transient;
+import javax.jdo.annotations.Unique;
+import javax.jdo.annotations.Uniques;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
 
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
 import com.tll.model.schema.Nested;
 
 /**
@@ -21,7 +20,7 @@ import com.tll.model.schema.Nested;
  * @author jpk
  */
 @PersistenceCapable
-@BusinessObject(businessKeys = @BusinessKeyDef(name = "Name", properties = { INamedEntity.NAME }))
+@Uniques(value = @Unique(name = "Name", members = { INamedEntity.NAME }))
 public class PaymentInfo extends NamedEntity {
 
 	private static final long serialVersionUID = -8237732782824087760L;
@@ -60,7 +59,6 @@ public class PaymentInfo extends NamedEntity {
 		this.paymentData = paymentData;
 	}
 
-	@Transient
 	public void clearPaymentData() {
 		this.paymentData = null;
 	}

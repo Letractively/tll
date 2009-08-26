@@ -85,7 +85,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>5.8</version> <!-- TODO: figure out how to keep this defined in the parent pom -->
+      <version>${testNGVersion}</version>
       <classifier>jdk15</classifier>
       <scope>test</scope>
     </dependency>

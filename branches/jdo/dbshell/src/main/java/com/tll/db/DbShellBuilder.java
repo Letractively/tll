@@ -5,7 +5,7 @@
 
 package com.tll.db;
 
-import java.net.URI;
+import java.io.File;
 import java.net.URL;
 
 import com.tll.config.Config;
@@ -36,8 +36,7 @@ public final class DbShellBuilder {
 
 		DB_RESOURCE_SCHEMA("db.resource.schema"),
 		DB_RESOURCE_STUB("db.resource.stub"),
-		DB_RESOURCE_DELETE("db.resource.delete"),
-		DB_ENTITYGRAPH_BUILDER_CLASSNAME("db.entitygraphbuilder.classname");
+		DB_RESOURCE_DELETE("db.resource.delete");
 
 		private final String key;
 
@@ -61,10 +60,11 @@ public final class DbShellBuilder {
 	 * Any sql/ddl resources specified in the config are considered as classpath
 	 * resources and are loaded as such.
 	 * @param config The configuration
+	 * @param egb the entity graph builder (required for db4o only).
 	 * @return A new {@link IDbShell}.
 	 * @throws Exception Upon error during build
 	 */
-	public static IDbShell getDbShell(Config config) throws Exception {
+	public static IDbShell getDbShell(Config config, IEntityGraphBuilder egb) throws Exception {
 		final ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		final String dbType = config.getString(ConfigKeys.DB_TYPE.getKey());
 
@@ -95,14 +95,9 @@ public final class DbShellBuilder {
 					DbDialectHandlerBuilder.getDbDialectHandler(config));
 		}
 		else if(IDbShell.DB_TYPE_DB4O.equals(dbType)) {
+			if(egb == null) throw new IllegalStateException("Null entity graph builder");
 			final String dbName = config.getString(ConfigKeys.DB_NAME.getKey());
-			final URI uri = new URI(dbName);
-			// constitute the entity graph builder
-			final String egbcn = config.getString(ConfigKeys.DB_ENTITYGRAPH_BUILDER_CLASSNAME.getKey());
-			IEntityGraphBuilder egb = null;
-			final Class<?> c = Class.forName(egbcn);
-			egb = (IEntityGraphBuilder) c.newInstance();
-			return new Db4oDbShell(uri, egb);
+			return new Db4oDbShell(new File(dbName), egb);
 		}
 
 		throw new Exception("Unhandled db type: " + dbType);

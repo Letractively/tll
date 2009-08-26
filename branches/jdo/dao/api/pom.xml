@@ -67,6 +67,14 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-orm</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>com.tll</groupId>
@@ -123,6 +131,12 @@
       <scope>test</scope>
     </dependency>
     
+    <dependency>
+      <groupId>javax.jdo</groupId>
+      <artifactId>jdo2-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
     <!-- for mocked entities (in memory object graph) -->
     <dependency>
       <groupId>com.tll</groupId>
@@ -146,7 +160,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>5.8</version>
+      <version>${testNGVersion}</version>
       <classifier>jdk15</classifier>
       <scope>test</scope>
     </dependency>

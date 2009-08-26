@@ -15,7 +15,8 @@ import java.lang.annotation.Target;
  * s.
  * @author jpk
  */
-@Target(ElementType.TYPE)
+@Target(value = {
+	ElementType.TYPE, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface PhoneNumbers {

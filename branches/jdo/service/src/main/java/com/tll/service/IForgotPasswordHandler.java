@@ -5,8 +5,8 @@
  */
 package com.tll.service;
 
-import com.tll.dao.EntityNotFoundException;
 import com.tll.model.IUserRef;
+import com.tll.service.entity.EntityNotFoundException;
 
 /**
  * IForgotPasswordService - Contract for resetting and providing a user's
@@ -29,5 +29,5 @@ public interface IForgotPasswordHandler {
 	 * @return the new reset password
 	 * @throws ChangeUserCredentialsFailedException When the operation fails
 	 */
-	String resetPassword(Integer userId) throws ChangeUserCredentialsFailedException;
+	String resetPassword(String userId) throws ChangeUserCredentialsFailedException;
 }

@@ -8,11 +8,15 @@ import org.testng.annotations.Test;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.tll.dao.AbstractEntityDaoTest;
+import com.tll.di.EGraphModule;
 import com.tll.di.MockDaoModule;
+import com.tll.di.ModelModule;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityGraphBuilder;
 import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
+import com.tll.model.key.IPrimaryKeyGenerator;
 import com.tll.model.key.PrimaryKey;
+import com.tll.model.key.SimplePrimaryKeyGenerator;
 
 /**
  * AbstractMockEntityDaoTest
@@ -32,13 +36,26 @@ import com.tll.model.key.PrimaryKey;
 	@Override
 	protected final void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new MockDaoModule() {
+		modules.add(new ModelModule() {
+
+			@Override
+			protected void bindPrimaryKeyGenerator() {
+				bind(IPrimaryKeyGenerator.class).to(SimplePrimaryKeyGenerator.class).in(Scopes.SINGLETON);
+			}
+
+			@Override
+			protected void bindEntityAssembler() {
+				// not-needed
+			}
+		});
+		modules.add(new EGraphModule() {
 
 			@Override
 			protected void bindEntityGraphBuilder() {
 				bind(IEntityGraphBuilder.class).to(TestPersistenceUnitEntityGraphBuilder.class).in(Scopes.SINGLETON);
 			}
 		});
+		modules.add(new MockDaoModule());
 	}
 
 	@Override

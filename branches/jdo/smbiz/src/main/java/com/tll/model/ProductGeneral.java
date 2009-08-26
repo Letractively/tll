@@ -2,19 +2,18 @@ package com.tll.model;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.Unique;
+import javax.jdo.annotations.Uniques;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
-
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
 
 /**
  * General product entity
  * @author jpk
  */
 @PersistenceCapable
-@BusinessObject(businessKeys = @BusinessKeyDef(name = "Titles", properties = { "d1", "d2" }))
+@Uniques(value = @Unique(name = "Titles", members = { "d1", "d2" }))
 public class ProductGeneral extends EntityBase {
 
 	private static final long serialVersionUID = 459067490839802092L;

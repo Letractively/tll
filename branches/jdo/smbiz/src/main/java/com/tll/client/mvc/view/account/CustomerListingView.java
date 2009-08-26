@@ -18,10 +18,10 @@ import com.tll.client.ui.listing.AccountListingConfig;
 import com.tll.client.ui.option.Option;
 import com.tll.client.ui.view.ViewLink;
 import com.tll.client.util.GlobalFormat;
-import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 import com.tll.common.model.SmbizEntityType;
+import com.tll.common.model.StringPropertyValue;
 import com.tll.common.search.NamedQuerySearch;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
@@ -76,7 +76,7 @@ public final class CustomerListingView extends ListingView<CustomerListingViewIn
 		mercListingLink.setVisible(r.getMerchantParentRef() != null);
 
 		final NamedQuerySearch criteria = new NamedQuerySearch(SmbizEntityType.CUSTOMER, "account.customerList", true);
-		criteria.addParam(new IntPropertyValue("merchantId", mercRef.getId()));
+		criteria.addParam(new StringPropertyValue("merchantId", mercRef.getId()));
 
 		final AccountListingConfig config = new AccountListingConfig() {
 

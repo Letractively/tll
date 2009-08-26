@@ -2,19 +2,18 @@ package com.tll.model;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.Unique;
+import javax.jdo.annotations.Uniques;
 import javax.validation.constraints.NotNull;
-
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
 
 /**
  * Order item transaction entity
  * @author jpk
  */
 @PersistenceCapable
-@BusinessObject(businessKeys =
-	@BusinessKeyDef(name = "Order Item Id and Order Trans Id", properties = { "orderItem.id", "orderTrans.id" }))
-	public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTrans>, IAccountRelatedEntity {
+@Uniques(value =
+	@Unique(name = "Order Item Id and Order Trans Id", members = { "orderItem.id", "orderTrans.id" }))
+public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTrans>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -2106851598169919247L;
 
@@ -102,7 +101,7 @@ import com.tll.model.schema.BusinessObject;
 		setOrderTrans(e);
 	}
 
-	public Integer accountId() {
+	public String accountId() {
 		try {
 			return getOrderItem().getOrder().getAccount().getId();
 		}
@@ -112,7 +111,7 @@ import com.tll.model.schema.BusinessObject;
 		}
 	}
 
-	public Integer orderItemId() {
+	public String orderItemId() {
 		try {
 			return getOrderItem().getId();
 		}
@@ -121,7 +120,7 @@ import com.tll.model.schema.BusinessObject;
 		}
 	}
 
-	public Integer orderTransId() {
+	public String orderTransId() {
 		try {
 			return getOrderTrans().getId();
 		}

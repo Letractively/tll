@@ -18,7 +18,8 @@ import javax.validation.Constraint;
  * @author jpk
  */
 @Constraint(validatedBy = AtLeastOneValidator.class)
-@Target(ElementType.METHOD)
+@Target(value = {
+	ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface AtLeastOne {

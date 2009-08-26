@@ -26,18 +26,13 @@ import com.tll.criteria.SelectNamedQueries;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
-import com.tll.di.DbDialectModule;
-import com.tll.di.EntityAssemblerModule;
-import com.tll.di.EntityBeanFactoryModule;
+import com.tll.di.EGraphModule;
 import com.tll.di.EntityServiceFactoryModule;
 import com.tll.di.JdoDaoModule;
 import com.tll.di.MockDaoModule;
 import com.tll.di.ModelModule;
-import com.tll.di.ValidationModule;
 import com.tll.model.IEntity;
-import com.tll.model.IEntityAssembler;
 import com.tll.model.IEntityGraphBuilder;
-import com.tll.model.SmbizEntityAssembler;
 import com.tll.model.SmbizEntityGraphBuilder;
 import com.tll.model.schema.PropertyType;
 import com.tll.service.entity.IEntityServiceFactory;
@@ -110,29 +105,29 @@ import com.tll.service.entity.IEntityServiceFactory;
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new ValidationModule());
-		modules.add(new ModelModule());
+		modules.add(new ModelModule() {
+
+			@Override
+			protected void bindPrimaryKeyGenerator() {
+			}
+
+			@Override
+			protected void bindEntityAssembler() {
+			}
+		});
 		if(mock) {
-			modules.add(new EntityBeanFactoryModule());
-			modules.add(new MockDaoModule() {
+			modules.add(new EGraphModule() {
 
 				@Override
 				protected void bindEntityGraphBuilder() {
 					bind(IEntityGraphBuilder.class).to(SmbizEntityGraphBuilder.class).in(Scopes.SINGLETON);
 				}
 			});
+			modules.add(new MockDaoModule());
 		}
 		else {
-			modules.add(new DbDialectModule(getConfig()));
 			modules.add(new JdoDaoModule(getConfig()));
 		}
-		modules.add(new EntityAssemblerModule() {
-
-			@Override
-			protected void bindEntityAssembler() {
-				bind(IEntityAssembler.class).to(SmbizEntityAssembler.class).in(Scopes.SINGLETON);
-			}
-		});
 		modules.add(new EntityServiceFactoryModule());
 	}
 

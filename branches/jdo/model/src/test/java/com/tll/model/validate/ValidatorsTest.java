@@ -114,7 +114,7 @@ public class ValidatorsTest {
 
 	TestEntity getTestEntity() {
 		final TestEntity e = new TestEntity();
-		e.setId(1);
+		e.setId("1");
 		e.setName("name");
 		e.setPhoneNumber("x");
 		e.setPostalCode("y");
@@ -126,10 +126,8 @@ public class ValidatorsTest {
 	 * Tests entity validation.
 	 * @throws Exception
 	 */
-	// NOTE: this test is currently OFF due to an apparent api bug that occurs
-	// when
-	// trying to obtain a ValidatorFactory instance
-	@Test
+	// TODO fix
+	@Test(enabled = false)
 	public final void testEntityValidation() throws Exception {
 		final TestEntity e = getTestEntity();
 		final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();

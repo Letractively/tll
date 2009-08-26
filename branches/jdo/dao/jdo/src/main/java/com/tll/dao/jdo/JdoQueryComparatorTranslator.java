@@ -7,9 +7,8 @@ package com.tll.dao.jdo;
 
 import org.apache.commons.lang.math.NumberRange;
 
+import com.tll.criteria.Criterion;
 import com.tll.criteria.IComparatorTranslator;
-import com.tll.criteria.ICriterion;
-import com.tll.util.DateRange;
 
 /**
  * JdoQueryComparatorTranslator - Creates a JDO-compliant query sub-string.
@@ -18,7 +17,7 @@ import com.tll.util.DateRange;
 public class JdoQueryComparatorTranslator implements IComparatorTranslator<String> {
 
 	@Override
-	public String translate(ICriterion ctn) {
+	public String translate(Criterion ctn) {
 		final String name = ctn.getField();
 		final Object value = ctn.getValue();
 		final StringBuilder sb = new StringBuilder();
@@ -31,60 +30,54 @@ public class JdoQueryComparatorTranslator implements IComparatorTranslator<Strin
 					value1 = range.getMinimumNumber();
 					value2 = range.getMaximumNumber();
 				}
-				else if(value instanceof DateRange) {
-					final DateRange range = (DateRange) value;
-					value1 = range.start();
-					value2 = range.end();
-				}
-				else {
-					// we will assume that the value is an array
-					final Object[] valueArr = (Object[]) value;
-					value1 = valueArr[0];
-					value2 = valueArr[1];
-				}
-				if(ctn.isCaseSensitive() && value1 instanceof String) {
+				if(value1 != null && value2 != null) {
 					sb.append(name);
-					sb.append(">=");
+					sb.append(" >= ");
 					sb.append(value1);
 					sb.append(" && ");
 					sb.append(name);
-					sb.append("<=");
+					sb.append(" <= ");
 					sb.append(value2);
-				}
-				else {
-					sb.append(name);
-					sb.append(".toLowerCase() >= '");
-					sb.append(((String) value1).toLowerCase());
-					sb.append("' && ");
-					sb.append(name);
-					sb.append(".toLowerCase() <= '");
-					sb.append(((String) value2).toLowerCase());
-					sb.append("'");
 				}
 				break;
 			}
 			case CONTAINS:
 				if(value instanceof String) {
 					sb.append(name);
-					if(ctn.isCaseSensitive()) sb.append(".toLowerCase()");
-					sb.append(".indexOf(");
-					sb.append(ctn.isCaseSensitive() ? ((String) value).toLowerCase() : value);
-					sb.append(") >= 0");
+					// if(!ctn.isCaseSensitive()) sb.append(".toLowerCase()");
+					sb.append(".indexOf('");
+					// sb.append(!ctn.isCaseSensitive() ? ((String) value).toLowerCase()
+					// : value);
+					sb.append(value);
+					sb.append("') >= 0");
 				}
 				break;
 			case ENDS_WITH:
 				if(value instanceof String) {
 					sb.append(name);
-					if(ctn.isCaseSensitive()) sb.append(".toLowerCase()");
-					sb.append(".endsWith(");
-					sb.append(ctn.isCaseSensitive() ? ((String) value).toLowerCase() : value);
+					// if(!ctn.isCaseSensitive()) sb.append(".toLowerCase()");
+					sb.append(".endsWith('");
+					// sb.append(!ctn.isCaseSensitive() ? ((String) value).toLowerCase()
+					// : value);
+					sb.append(value);
+					sb.append("')");
 				}
 				break;
 			case EQUALS:
-				sb.append(name);
-				if(ctn.isCaseSensitive()) sb.append(".toLowerCase()");
-				sb.append(" == ");
-				sb.append(ctn.isCaseSensitive() ? ((String) value).toLowerCase() : value);
+				if(value instanceof String) {
+					sb.append(name);
+					// if(!ctn.isCaseSensitive()) sb.append(".toLowerCase()");
+					sb.append(" == '");
+					// sb.append(!ctn.isCaseSensitive() ? ((String) value).toLowerCase()
+					// : value);
+					sb.append(value);
+					sb.append("'");
+				}
+				else {
+					sb.append(name);
+					sb.append(" == ");
+					sb.append(value);
+				}
 				break;
 			case GREATER_THAN:
 				sb.append(name);
@@ -116,17 +109,30 @@ public class JdoQueryComparatorTranslator implements IComparatorTranslator<Strin
 				// not supported
 				break;
 			case NOT_EQUALS:
-				sb.append(name);
-				if(ctn.isCaseSensitive()) sb.append(".toLowerCase()");
-				sb.append(" != ");
-				sb.append(ctn.isCaseSensitive() ? ((String) value).toLowerCase() : value);
+				if(value instanceof String) {
+					sb.append(name);
+					// if(!ctn.isCaseSensitive()) sb.append(".toLowerCase()");
+					sb.append(" != '");
+					// sb.append(!ctn.isCaseSensitive() ? ((String) value).toLowerCase()
+					// : value);
+					sb.append(value);
+					sb.append("'");
+				}
+				else {
+					sb.append(name);
+					sb.append(" == ");
+					sb.append(value);
+				}
 				break;
 			case STARTS_WITH:
 				if(value instanceof String) {
 					sb.append(name);
-					if(ctn.isCaseSensitive()) sb.append(".toLowerCase()");
-					sb.append(".endsWith(");
-					sb.append(ctn.isCaseSensitive() ? ((String) value).toLowerCase() : value);
+					// if(!ctn.isCaseSensitive()) sb.append(".toLowerCase()");
+					sb.append(".startsWith('");
+					// sb.append(!ctn.isCaseSensitive() ? ((String) value).toLowerCase()
+					// : value);
+					sb.append(value);
+					sb.append("'");
 				}
 				break;
 		}

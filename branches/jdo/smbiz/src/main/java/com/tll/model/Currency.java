@@ -2,24 +2,23 @@ package com.tll.model;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.Unique;
+import javax.jdo.annotations.Uniques;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
-
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
 
 /**
  * The currency entity
  * @author jpk
  */
 @PersistenceCapable
-@BusinessObject(businessKeys = {
-	@BusinessKeyDef(name = "Name", properties = { INamedEntity.NAME }),
-	@BusinessKeyDef(name = "Symbol", properties = { "symbol" }),
-	@BusinessKeyDef(name = "ISO4217", properties = { "iso4217" }) })
-	public class Currency extends NamedEntity {
+@Uniques(value = {
+	@Unique(name = "Name", members = { INamedEntity.NAME }),
+	@Unique(name = "Symbol", members = { "symbol" }),
+	@Unique(name = "ISO4217", members = { "iso4217" }) })
+public class Currency extends NamedEntity {
 
 	private static final long serialVersionUID = -1627972414433764825L;
 

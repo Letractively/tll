@@ -1,8 +1,8 @@
 package com.tll.model;
 
 /**
- * Indicates an entities' ability to exist in a collection owned by a parent
- * entity. the parent entity
+ * IChildEntity - Indicates an entities' ability to exist in a collection owned
+ * by a parent entity.
  * @author jpk
  * @param <P> the parent entity type
  */

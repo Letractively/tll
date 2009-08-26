@@ -10,8 +10,8 @@ import java.util.Set;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.jdo.annotations.Unique;
+import javax.jdo.annotations.Uniques;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -20,15 +20,12 @@ import org.hibernate.validation.constraints.NotEmpty;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.userdetails.UserDetails;
 
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
-
 /**
  * The account user entity
  * @author jpk
  */
 @PersistenceCapable
-@BusinessObject(businessKeys = @BusinessKeyDef(name = "Email Address", properties = { "emailAddress" }))
+@Uniques(value = @Unique(name = "Email Address", members = { "emailAddress" }))
 public class User extends NamedTimeStampEntity implements UserDetails, IChildEntity<Account>, IAccountRelatedEntity,
 IUserRef {
 
@@ -104,7 +101,6 @@ IUserRef {
 	/**
 	 * @return the expires
 	 */
-	@Temporal(TemporalType.TIMESTAMP)
 	@NotNull
 	public Date getExpires() {
 		return expires;
@@ -226,7 +222,7 @@ IUserRef {
 		setAccount(e);
 	}
 
-	public Integer accountId() {
+	public String accountId() {
 		try {
 			return getAccount().getId();
 		}

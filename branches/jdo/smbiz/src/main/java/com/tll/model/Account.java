@@ -9,29 +9,26 @@ import javax.jdo.annotations.Inheritance;
 import javax.jdo.annotations.InheritanceStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Table;
+import javax.jdo.annotations.Unique;
+import javax.jdo.annotations.Uniques;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
 
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
 import com.tll.model.validate.AtLeastOne;
 import com.tll.model.validate.BusinessKeyUniqueness;
 
-@PersistenceCapable
-@Inheritance(strategy = InheritanceStrategy.SUPERCLASS_TABLE)
-@DiscriminatorColumn(name = "account_type", discriminatorType = DiscriminatorType.INTEGER)
-@Table(name = "account")
-@BusinessObject(businessKeys = @BusinessKeyDef(name = "Name", properties = INamedEntity.NAME))
 /**
  * Account - Base class for account type entities.
  * @author jpk
  */
+@PersistenceCapable
+@Inheritance(strategy = InheritanceStrategy.SUPERCLASS_TABLE)
+// @DiscriminatorColumn(name = "account_type", discriminatorType =
+// DiscriminatorType.INTEGER)
+@Uniques(value = @Unique(name = "Name", members = INamedEntity.NAME))
 public abstract class Account extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -684966689440840694L;
@@ -278,7 +275,7 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 		return getCollectionSize(addresses);
 	}
 
-	public Integer accountId() {
+	public String accountId() {
 		return super.getId();
 	}
 }

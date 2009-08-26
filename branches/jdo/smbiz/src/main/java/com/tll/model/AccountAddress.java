@@ -2,15 +2,13 @@ package com.tll.model;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
-import javax.persistence.Column;
+import javax.jdo.annotations.Unique;
+import javax.jdo.annotations.Uniques;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
-
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
 
 /**
  * The account address entity holding a refs to a single account and single
@@ -18,9 +16,9 @@ import com.tll.model.schema.BusinessObject;
  * @author jpk
  */
 @PersistenceCapable
-@BusinessObject(businessKeys = {
-	@BusinessKeyDef(name = "Account Id and Address Id", properties = { "account.id", "address.id" }),
-	@BusinessKeyDef(name = "Account Id and Name", properties = { "account.id", INamedEntity.NAME })
+@Uniques(value = {
+	@Unique(name = "Account Id and Address Id", members = { "account.id", "address.id" }),
+	@Unique(name = "Account Id and Name", members = { "account.id", INamedEntity.NAME })
 })
 public class AccountAddress extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
@@ -41,7 +39,6 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 		return AccountAddress.class;
 	}
 
-	@Column
 	@NotEmpty
 	@Length(max = MAXLEN_NAME)
 	@Override
@@ -100,7 +97,7 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 		setAccount(e);
 	}
 
-	public Integer accountId() {
+	public String accountId() {
 		try {
 			return getAccount().getId();
 		}
@@ -110,7 +107,7 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 		}
 	}
 
-	public Integer addressId() {
+	public String addressId() {
 		try {
 			return getAddress().getId();
 		}

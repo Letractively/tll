@@ -61,7 +61,7 @@ IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 	 * The set of model properties. <br>
 	 * NOTE: can't mark as final for GWT RPC compatibility
 	 */
-	private /*final*/Set<IModelProperty> props = new HashSet<IModelProperty>();
+	private final /*final*/Set<IModelProperty> props = new HashSet<IModelProperty>();
 
 	/**
 	 * The bound entity type.
@@ -130,9 +130,9 @@ IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 	 * Retrieves the id property
 	 * @return The entity id
 	 */
-	public Integer getId() {
-		final IntPropertyValue prop = (IntPropertyValue) get(ID_PROPERTY);
-		return prop == null ? null : prop.getInteger();
+	public String getId() {
+		final StringPropertyValue prop = (StringPropertyValue) get(ID_PROPERTY);
+		return prop == null ? null : prop.getString();
 	}
 
 	/**

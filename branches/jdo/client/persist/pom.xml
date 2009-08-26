@@ -213,7 +213,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>5.8</version>
+      <version>${testNGVersion}</version>
       <classifier>jdk15</classifier>
       <scope>test</scope>
     </dependency>

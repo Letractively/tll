@@ -1,14 +1,17 @@
 package com.tll.model;
 
+import javax.jdo.annotations.PersistenceAware;
+
 import com.google.inject.Inject;
 import com.tll.model.key.IPrimaryKeyGenerator;
 import com.tll.util.StringUtil;
 
 /**
- * The entity factory. This class generates the ids for the entities that are
+ * EntityFactory - This class generates the ids for the entities that are
  * created for insert into the persistence store.
  * @author jpk
  */
+@PersistenceAware
 public final class EntityFactory implements IEntityFactory {
 
 	/**

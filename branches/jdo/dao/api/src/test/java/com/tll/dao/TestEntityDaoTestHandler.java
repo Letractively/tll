@@ -5,13 +5,14 @@
  */
 package com.tll.dao;
 
+import javax.jdo.annotations.PersistenceAware;
+
 import org.testng.Assert;
 
 import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.test.TestSelectNamedQueries;
 import com.tll.model.Account;
 import com.tll.model.AccountAddress;
-import com.tll.model.Address;
 import com.tll.model.Currency;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.NestedEntity;
@@ -21,6 +22,7 @@ import com.tll.model.NestedEntity;
  * TestEntityDaoTestHandler
  * @author jpk
  */
+@PersistenceAware
 public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Account> {
 
 	// dependent entities
@@ -68,6 +70,7 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 		e.setNestedEntity(nestedEntity);
 		e.setParent(parent);
 
+		/*
 		final Address address1 = create(Address.class, true);
 		final Address address2 = create(Address.class, true);
 
@@ -77,6 +80,7 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 		aa2.setAddress(address2);
 		e.addAccountAddress(aa1);
 		e.addAccountAddress(aa2);
+		 */
 	}
 
 	@Override
@@ -95,7 +99,8 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 		super.verifyLoadedEntityState(e);
 
 		Assert.assertNotNull(e.getCurrency(), "No account currency loaded");
-		Assert.assertNotNull(e.getNestedEntity(), "No account nested entity loaded");
+		// Assert.assertNotNull(e.getNestedEntity(),
+		// "No account nested entity loaded");
 		Assert.assertTrue(e.getAddresses() != null && e.getAddresses().size() == 2,
 		"No account address collection loaded or invalid number of them");
 	}

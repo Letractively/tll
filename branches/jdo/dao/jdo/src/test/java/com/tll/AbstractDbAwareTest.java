@@ -35,7 +35,7 @@ public abstract class AbstractDbAwareTest extends AbstractInjectedTest {
 	 */
 	protected final DbTestSupport getDbSupport() {
 		if(dbSupport == null) {
-			dbSupport = new DbTestSupport(getConfig(), pm);
+			dbSupport = injector.getInstance(DbTestSupport.class);
 		}
 		return dbSupport;
 	}

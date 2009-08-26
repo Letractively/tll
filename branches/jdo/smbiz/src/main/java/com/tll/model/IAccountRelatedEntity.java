@@ -8,8 +8,8 @@ package com.tll.model;
  */
 public interface IAccountRelatedEntity {
 
-  /**
-   * @return The id of the account to which this entity is related.
-   */
-  Integer accountId();
+	/**
+	 * @return The id of the account to which this entity is related.
+	 */
+	String accountId();
 }

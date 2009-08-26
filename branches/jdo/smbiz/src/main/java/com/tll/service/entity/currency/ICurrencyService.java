@@ -3,9 +3,8 @@
  */
 package com.tll.service.entity.currency;
 
-import javax.persistence.EntityNotFoundException;
-
 import com.tll.model.Currency;
+import com.tll.service.entity.EntityNotFoundException;
 import com.tll.service.entity.INamedEntityService;
 
 /**

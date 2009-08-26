@@ -62,6 +62,22 @@
           <finalName>${project.name}</finalName>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.datanucleus</groupId>
+        <artifactId>maven-datanucleus-plugin</artifactId>
+        <configuration>
+          <!-- <log4jConfiguration>${basedir}/src/test/resources/log4j.properties</log4jConfiguration> -->
+          <verbose>true</verbose>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>enhance</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
@@ -87,19 +103,7 @@
       <groupId>javax.jdo</groupId>
       <artifactId>jdo2-api</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.datanucleus</groupId>
-      <artifactId>datanucleus-cache</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.datanucleus</groupId>
-      <artifactId>datanucleus-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.datanucleus</groupId>
-      <artifactId>datanucleus-enhancer</artifactId>
-    </dependency>
-    
+
     <dependency>
       <groupId>com.google.code.guice</groupId>
       <artifactId>guice</artifactId>

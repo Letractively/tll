@@ -7,7 +7,8 @@ package com.tll.service.entity;
 
 import javax.validation.ValidatorFactory;
 
-import com.tll.dao.EntityNotFoundException;
+import org.springframework.orm.ObjectRetrievalFailureException;
+
 import com.tll.dao.IEntityDao;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.INamedEntity;
@@ -32,7 +33,12 @@ INamedEntityService<N> {
 	}
 
 	public N load(NameKey<N> key) throws EntityNotFoundException {
-		return dao.load(key);
+		try {
+			return dao.load(key);
+		}
+		catch(final ObjectRetrievalFailureException e) {
+			throw new EntityNotFoundException(e.getMessage(), e);
+		}
 	}
 
 }

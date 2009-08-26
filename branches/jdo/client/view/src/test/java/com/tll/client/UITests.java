@@ -128,7 +128,7 @@ public final class UITests extends AbstractUITest {
 
 			ViewManager.initialize(viewContainer, 3);
 
-			mk = new ModelKey(TestEntityType.TYPE_A, 77, "Model Name");
+			mk = new ModelKey(TestEntityType.TYPE_A, "77", "Model Name");
 		}
 
 		@Override

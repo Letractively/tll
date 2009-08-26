@@ -20,8 +20,6 @@ import com.tll.common.search.IBusinessKeySearch;
 import com.tll.common.search.IEntityNameSearch;
 import com.tll.common.search.IPrimaryKeySearch;
 import com.tll.common.search.ISearch;
-import com.tll.dao.EntityExistsException;
-import com.tll.dao.EntityNotFoundException;
 import com.tll.model.IEntity;
 import com.tll.model.key.BusinessKeyFactory;
 import com.tll.model.key.BusinessKeyNotDefinedException;
@@ -32,6 +30,8 @@ import com.tll.model.schema.ISchemaInfo;
 import com.tll.model.schema.ISchemaProperty;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.rpc.RpcServlet;
+import com.tll.service.entity.EntityExistsException;
+import com.tll.service.entity.EntityNotFoundException;
 import com.tll.service.entity.IEntityService;
 import com.tll.service.entity.INamedEntityService;
 import com.tll.util.PropertyPath;
@@ -334,7 +334,7 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 		catch(final ConstraintViolationException ise) {
 			for(final ConstraintViolation iv : ise.getConstraintViolations()) {
 				payload.getStatus().addMsg(iv.getMessage(), MsgLevel.ERROR, MsgAttr.FIELD.flag,
-						clientizePropertyPath(context.getSchemaInfo(), entityClass, iv.getPropertyPath()));
+						clientizePropertyPath(context.getSchemaInfo(), entityClass, iv.getPropertyPath().toString()));
 			}
 		}
 		catch(final RuntimeException e) {

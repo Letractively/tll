@@ -36,6 +36,12 @@ public class Criterion implements ICriterion {
 		return false;
 	}
 
+	/**
+	 * Returns true if this criterion is case sensitive. False otherwise. Certain
+	 * subclasses will never be case sensitive, such as a boolean criterion and
+	 * can override this method to always return false.
+	 * @return true if this criterion is case sensitive, false otherwise.
+	 */
 	public boolean isCaseSensitive() {
 		return caseSensitive;
 	}
@@ -44,6 +50,11 @@ public class Criterion implements ICriterion {
 		this.caseSensitive = caseSensitive;
 	}
 
+	/**
+	 * Returns the comparator that should be used in the query as the relationship
+	 * between the field and the value.
+	 * @return the comparator enum
+	 */
 	public Comparator getComparator() {
 		return comparator;
 	}
@@ -52,6 +63,11 @@ public class Criterion implements ICriterion {
 		this.comparator = comparator;
 	}
 
+	/**
+	 * Returns the name of the field used by the persistence framework.
+	 * @return the name of the field
+	 * @see #getPropertyName()
+	 */
 	public String getField() {
 		return field;
 	}
@@ -60,10 +76,21 @@ public class Criterion implements ICriterion {
 		this.field = field;
 	}
 
+	/**
+	 * Returns the property name used by the UI for this criterion. In most cases,
+	 * the property name will be equivalent to the field name. However, in the
+	 * case of foreign key fields, the field value will include the ".id" whereas
+	 * the property name will be only the reference entity name.
+	 * @return the property name
+	 */
 	public String getPropertyName() {
 		return this.field;
 	}
 
+	/**
+	 * Returns the value for the field that should be applied to the query.
+	 * @return the value to used in the query
+	 */
 	public Object getValue() {
 		return value;
 	}

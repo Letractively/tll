@@ -5,21 +5,21 @@ package com.tll;
 
 import java.util.List;
 
-import javax.jdo.PersistenceManager;
-import javax.jdo.Transaction;
+import javax.jdo.PersistenceManagerFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.orm.jdo.JdoTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.google.inject.Guice;
-import com.google.inject.Inject;
 import com.tll.config.Config;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.SearchResult;
-import com.tll.db.IDbShell;
-import com.tll.di.DbShellModule;
 import com.tll.model.IEntity;
 import com.tll.model.key.PrimaryKey;
 
@@ -29,11 +29,12 @@ import com.tll.model.key.PrimaryKey;
  */
 public final class DbTestSupport {
 
+	private static final Log log = LogFactory.getLog(DbTestSupport.class);
+
 	/**
 	 * Retrieves the entity from the db given a {@link PrimaryKey}.
 	 * <p>
-	 * <Strong>IMPT NOTE: </strong> we use the dao find methodology as this
-	 * ensures a db hit.
+	 * <b>NOTE:</b> we use the dao find methodology as this ensures a db hit.
 	 * @param dao
 	 * @param <E>
 	 * @param key the primary key
@@ -66,64 +67,86 @@ public final class DbTestSupport {
 		}
 	}
 
-	private static final Log log = LogFactory.getLog(DbTestSupport.class);
+	private static final Log logger = LogFactory.getLog(DbTestSupport.class);
+
+	/**
+	 * The default transaction timeout in miliseconds.
+	 */
+	private static final int DEFAULT_TRANS_TIMEOUT_MILIS = 30000;
 
 	/**
 	 * The config instance to employ.
 	 */
 	private final Config config;
 
-	/**
-	 * The persistence manager that generates and manages the (local)
-	 * transactions.
-	 */
-	private final PersistenceManager pm;
+	private final PersistenceManagerFactory pmf;
 
 	/**
-	 * The current transaction.
+	 * The *current* persistence manager from which transactions are generated and
+	 * managed.
 	 */
-	private Transaction t;
+	private PlatformTransactionManager tm;
 
 	/**
-	 * The {@link IDbShell}.
+	 * Used to check if a transaction is in progress only when using Spring
+	 * transaction management.
 	 */
-	private IDbShell dbShell;
+	private TransactionStatus transStatus;
 
 	/**
-	 * Manually managed flag to indicates a transaction is in progress.
+	 * Flag used in place of {@link #transStatus} when Spring transaction
+	 * management is NOT employed.
 	 */
 	private boolean transStarted = false;
 
 	/**
-	 * Home-baked support for committing a transaction so as to mimmic
-	 * transactions when testing mock dao api for example.
+	 * Home-baked support for committing a transaction analagous to Spring's
+	 * setComplete() test related method.
 	 */
 	private boolean transCompleteFlag = false;
 
 	/**
 	 * Constructor
 	 * @param config
-	 * @param pm if specified, jdo transactions will be employed. If
-	 *        <code>null</code>, transacations will be nothing more than semantic
-	 *        demarcations in the code.
+	 * @param pmf the required {@link PersistenceManagerFactory} instance
 	 */
-	@Inject
-	public DbTestSupport(Config config, PersistenceManager pm) {
+	public DbTestSupport(Config config, PersistenceManagerFactory pmf) {
 		super();
-		if(config == null) throw new IllegalArgumentException("Null config.");
+		if(config == null) throw new IllegalArgumentException("Null config");
 		this.config = config;
-		this.pm = pm;
+		if(pmf == null) throw new IllegalArgumentException("Null pmf");
+		this.pmf = pmf;
 	}
 
 	/**
-	 * Lazily provides a db shell.
-	 * @return The {@link IDbShell} instance.
+	 * @return The lazily instantiated db level trans manager.
 	 */
-	public IDbShell getDbShell() {
-		if(dbShell == null) {
-			dbShell = Guice.createInjector(new DbShellModule(config)).getInstance(IDbShell.class);
+	private PlatformTransactionManager getTransMgr() {
+		if(tm == null) {
+			final JdoTransactionManager jdoTm = new JdoTransactionManager();
+
+			// get the trans timeout val from the config
+			final int timeout = config.getInt("db.transaction.timeout", DEFAULT_TRANS_TIMEOUT_MILIS);
+			if(timeout <= 0) {
+				throw new IllegalStateException("Invalid trans timeout: " + timeout);
+			}
+
+			try {
+				jdoTm.setAutodetectDataSource(false);
+				jdoTm.setPersistenceManagerFactory(pmf);
+				jdoTm.setDefaultTimeout(timeout);
+				logger.info("Set default JDO transaction timeout to: " + timeout);
+			}
+			catch(final Exception e) {
+				throw new IllegalArgumentException(e.getMessage());
+			}
+
+			// ensure all is well
+			jdoTm.afterPropertiesSet();
+
+			this.tm = jdoTm;
 		}
-		return dbShell;
+		return tm;
 	}
 
 	/**
@@ -134,10 +157,9 @@ public final class DbTestSupport {
 		if(isTransStarted()) {
 			throw new IllegalStateException("Transaction already started.");
 		}
-		if(pm != null) {
-			t = pm.currentTransaction();
-			t.begin();
-		}
+		final DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+		transStatus = getTransMgr().getTransaction(def);
 		transStarted = true;
 		log.debug("New transaction created");
 	}
@@ -166,23 +188,14 @@ public final class DbTestSupport {
 			throw new IllegalStateException("No transaction in progress");
 		}
 		if(transCompleteFlag) {
-			if(pm != null) {
-				assert t != null && t.isActive();
-				t.commit();
-				t = null;
-			}
+			getTransMgr().commit(transStatus);
 			transCompleteFlag = false;
 			log.debug("Transaction committed");
 		}
 		else {
-			if(pm != null) {
-				assert t != null && t.isActive();
-				t.rollback();
-				t = null;
-			}
-			log.debug("Transaction undone");
+			getTransMgr().rollback(transStatus);
 		}
 		transStarted = false;
-		t = null;
+		transStatus = null;
 	}
 }

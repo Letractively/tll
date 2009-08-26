@@ -18,7 +18,7 @@ import javax.validation.Constraint;
  * @author jpk
  */
 @Constraint(validatedBy = SSNValidator.class)
-@Target(ElementType.METHOD)
+@Target(value={ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface SSN {

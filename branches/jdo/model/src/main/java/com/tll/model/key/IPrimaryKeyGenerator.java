@@ -15,5 +15,5 @@ public interface IPrimaryKeyGenerator {
 	 * @param entityClass the entity class
 	 * @return unique primary key
 	 */
-	Integer generateIdentifier(Class<? extends IEntity> entityClass);
+	String generateIdentifier(Class<? extends IEntity> entityClass);
 }

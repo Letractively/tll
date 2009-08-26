@@ -6,7 +6,7 @@ package com.tll.model;
  */
 public interface IUserRef {
 
-	Integer getId();
+	String getId();
 
 	String getUsername();
 

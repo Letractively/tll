@@ -66,7 +66,7 @@ public final class TestPersistenceUnitEntityGraphBuilder extends AbstractEntityG
 			int ai = 0;
 			final Set<AccountAddress> set = addN(AccountAddress.class, true, numAddresses);
 			for(final AccountAddress aa : set) {
-				aa.setAccount(a);
+				// aa.setAccount(a);
 				aa.setAddress(getNthEntity(Address.class, ++ai));
 			}
 		}

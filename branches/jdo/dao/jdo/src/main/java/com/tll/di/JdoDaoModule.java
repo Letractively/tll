@@ -3,23 +3,22 @@ package com.tll.di;
 import java.util.Properties;
 
 import javax.jdo.JDOHelper;
-import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.config.Config;
 import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
 import com.tll.dao.IEntityDao;
+import com.tll.model.JdoEntityListener;
 
 /**
- * JdoDaoModule - ORM dao module.
+ * JdoDaoModule
  * @author jpk
  */
 public class JdoDaoModule extends AbstractModule implements IConfigAware {
@@ -86,22 +85,12 @@ public class JdoDaoModule extends AbstractModule implements IConfigAware {
 
 			@Override
 			public PersistenceManagerFactory get() {
-				final Properties props = config.asProperties("javax.jdo");
+				final Properties props = config.asProperties(null);
 				final PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory(props);
+				pmf.addInstanceLifecycleListener(new JdoEntityListener(), null);
 				return pmf;
 			}
 		}).asEagerSingleton();
-
-		// PersistenceManager
-		bind(PersistenceManager.class).toProvider(new Provider<PersistenceManager>() {
-
-			@Inject
-			private PersistenceManagerFactory pmf;
-
-			public PersistenceManager get() {
-				return pmf.getPersistenceManager();
-			}
-		});
 
 		// IEntityDao
 		bind(IEntityDao.class).to(com.tll.dao.jdo.EntityDao.class).in(Scopes.SINGLETON);

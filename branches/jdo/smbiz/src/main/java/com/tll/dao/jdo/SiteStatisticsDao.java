@@ -5,8 +5,6 @@ import javax.jdo.Query;
 
 import com.google.inject.Inject;
 import com.tll.dao.ISiteStatisticsDao;
-import com.tll.dao.jdo.EntityDao;
-import com.tll.db.IDbDialectHandler;
 
 /**
  * @author jpk
@@ -16,11 +14,10 @@ public class SiteStatisticsDao extends EntityDao implements ISiteStatisticsDao {
 	/**
 	 * Constructor
 	 * @param pmf
-	 * @param dbDialectHandler
 	 */
 	@Inject
-	public SiteStatisticsDao(PersistenceManagerFactory pmf, IDbDialectHandler dbDialectHandler) {
-		super(pmf, dbDialectHandler);
+	public SiteStatisticsDao(PersistenceManagerFactory pmf) {
+		super(pmf);
 	}
 
 	public int numIsps() {

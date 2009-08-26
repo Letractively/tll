@@ -4,8 +4,9 @@
 package com.tll.db;
 
 /**
- * Handles dialect specific db ops mainly translating dialect-specific db
- * exceptions attempting to add detail to the unchecked exception.
+ * IDbDialectHandler - Handles dialect specific db ops mainly translating
+ * dialect-specific db exceptions attempting to add detail to the unchecked
+ * exception.
  * @author jpk
  */
 public interface IDbDialectHandler {
@@ -33,12 +34,4 @@ public interface IDbDialectHandler {
 	 * @return true/false
 	 */
 	boolean isDropNonExistant(RuntimeException re);
-
-	/**
-	 * Translates from dialect specific db exceptions to application specific
-	 * exceptions.
-	 * @param re The unchecked exception
-	 * @return The translated exception
-	 */
-	RuntimeException translate(RuntimeException re);
 }

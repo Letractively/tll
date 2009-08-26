@@ -22,7 +22,7 @@ public class ModelKey implements IKey<Model>, IEntityTypeProvider {
 	/**
 	 * The entity id.
 	 */
-	private Integer id;
+	private String id;
 
 	/**
 	 * The entity name.
@@ -42,7 +42,7 @@ public class ModelKey implements IKey<Model>, IEntityTypeProvider {
 	 * @param id the entity id
 	 * @param name the optional entity name
 	 */
-	public ModelKey(IEntityType type, Integer id, String name) {
+	public ModelKey(IEntityType type, String id, String name) {
 		setEntityType(type);
 		setId(id);
 		setName(name);
@@ -64,11 +64,11 @@ public class ModelKey implements IKey<Model>, IEntityTypeProvider {
 		this.type = type;
 	}
 
-	public Integer getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

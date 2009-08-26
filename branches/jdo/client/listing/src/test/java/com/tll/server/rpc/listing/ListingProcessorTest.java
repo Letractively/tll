@@ -24,8 +24,7 @@ import com.tll.common.search.test.TestAddressSearch;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.dao.Sorting;
-import com.tll.di.EntityAssemblerModule;
-import com.tll.di.EntityBeanFactoryModule;
+import com.tll.di.EGraphModule;
 import com.tll.di.EntityServiceFactoryModule;
 import com.tll.di.ListingModule;
 import com.tll.di.LogExceptionHandlerModule;
@@ -34,7 +33,6 @@ import com.tll.di.MarshalModule;
 import com.tll.di.MockDaoModule;
 import com.tll.di.ModelModule;
 import com.tll.di.RefDataModule;
-import com.tll.di.ValidationModule;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.IEntityGraphBuilder;
@@ -72,23 +70,26 @@ import com.tll.server.rpc.listing.test.TestNamedQueryResolver;
 		// as it implicitly binds at the MailModule constrctor
 		modules.add(new MailModule(Config.load(new ConfigRef("config-mail.properties"))));
 
-		modules.add(new EntityAssemblerModule() {
+		modules.add(new ModelModule() {
+
+			@Override
+			protected void bindPrimaryKeyGenerator() {
+				// TODO
+			}
 
 			@Override
 			protected void bindEntityAssembler() {
 				bind(IEntityAssembler.class).to(TestPersistenceUnitEntityAssembler.class).in(Scopes.SINGLETON);
 			}
 		});
-		modules.add(new ModelModule());
-		modules.add(new ValidationModule());
-		modules.add(new EntityBeanFactoryModule());
-		modules.add(new MockDaoModule() {
+		modules.add(new EGraphModule() {
 
 			@Override
 			protected void bindEntityGraphBuilder() {
 				bind(IEntityGraphBuilder.class).to(TestPersistenceUnitEntityGraphBuilder.class).in(Scopes.SINGLETON);
 			}
 		});
+		modules.add(new MockDaoModule());
 		modules.add(new EntityServiceFactoryModule());
 		modules.add(new LogExceptionHandlerModule());
 		modules.add(new MarshalModule() {

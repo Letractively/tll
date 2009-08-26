@@ -4,23 +4,22 @@ import java.util.Date;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.Unique;
+import javax.jdo.annotations.Uniques;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
-
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
 
 /**
  * payment transaction entity
  * @author jpk
  */
 @PersistenceCapable
-@BusinessObject(businessKeys = {
-	@BusinessKeyDef(name = "Pay Trans Date, Payment Op and Pay Type",
-			properties = { "payTransDate", "payOp", "payType" }),
-			@BusinessKeyDef(name = "Refnum", properties = { "refNum" })
+@Uniques(value = {
+	@Unique(name = "Pay Trans Date, Payment Op and Pay Type",
+			members = { "payTransDate", "payOp", "payType" }),
+	@Unique(name = "Refnum", members = { "refNum" })
 })
 public class PaymentTrans extends TimeStampEntity {
 

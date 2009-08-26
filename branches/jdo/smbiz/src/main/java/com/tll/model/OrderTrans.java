@@ -5,23 +5,21 @@ import java.util.Set;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
-import javax.persistence.Column;
+import javax.jdo.annotations.Unique;
+import javax.jdo.annotations.Uniques;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
-
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
 
 /**
  * Order trans entity
  * @author jpk
  */
 @PersistenceCapable
-@BusinessObject(businessKeys =
-	@BusinessKeyDef(name = "Order Id, Date Created and Username",
-			properties = { "order.id", "dateCreated", "username" }))
+@Uniques(value =
+	@Unique(name = "Order Id, Date Created and Username",
+			members = { "order.id", "dateCreated", "username" }))
 			public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 8026809773722347843L;
@@ -156,7 +154,7 @@ import com.tll.model.schema.BusinessObject;
 		this.salesTax = salesTax;
 	}
 
-	@Column(name = "ship_cost", precision = 7, scale = 2)
+	// @Column(name = "ship_cost", precision = 7, scale = 2)
 	// @Size(min = 0, max = 999999)
 	public float getShipCost() {
 		return shipCost;
@@ -239,7 +237,7 @@ import com.tll.model.schema.BusinessObject;
 		setOrder(e);
 	}
 
-	public Integer accountId() {
+	public String accountId() {
 		try {
 			return getOrder().getAccount().getId();
 		}
@@ -249,7 +247,7 @@ import com.tll.model.schema.BusinessObject;
 		}
 	}
 
-	public Integer orderId() {
+	public String orderId() {
 		try {
 			return getOrder().getId();
 		}

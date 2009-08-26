@@ -19,9 +19,9 @@ import org.hibernate.validation.constraints.Length;
 // We can't guarantee this with enough certainity! So we won't have any bks for
 // orders then.
 /*
-@BusinessObject(businessKeys =
-	@BusinessKeyDef(name = "Date Created, Account Id and Customer Id",
-			properties = { "dateCreated", "account.id", "customer.id" }))
+@Uniques(value =
+	@Unique(name = "Date Created, Account Id and Customer Id",
+			members = { "dateCreated", "account.id", "customer.id" }))
  */
 public class Order extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
@@ -302,7 +302,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 		setAccount(e);
 	}
 
-	public Integer accountId() {
+	public String accountId() {
 		try {
 			return getAccount().getId();
 		}
@@ -312,7 +312,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 		}
 	}
 
-	public Integer customerId() {
+	public String customerId() {
 		try {
 			return getCustomer().getId();
 		}

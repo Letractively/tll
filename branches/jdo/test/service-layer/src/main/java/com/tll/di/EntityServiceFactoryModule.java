@@ -28,7 +28,7 @@ import com.tll.service.entity.IEntityServiceFactory;
  */
 public class EntityServiceFactoryModule extends AbstractModule {
 
-	private static final Log log = LogFactory.getLog(EntityAssemblerModule.class);
+	private static final Log log = LogFactory.getLog(EntityServiceFactoryModule.class);
 
 	@Override
 	protected void configure() {

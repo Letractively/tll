@@ -10,14 +10,14 @@ import javax.jdo.annotations.Inheritance;
 import javax.jdo.annotations.InheritanceStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.Unique;
+import javax.jdo.annotations.Uniques;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
 
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
 import com.tll.model.validate.BusinessKeyUniqueness;
 
 /**
@@ -27,7 +27,7 @@ import com.tll.model.validate.BusinessKeyUniqueness;
 @PersistenceCapable
 @Inheritance(strategy = InheritanceStrategy.SUPERCLASS_TABLE)
 @Discriminator(strategy = DiscriminatorStrategy.CLASS_NAME)
-@BusinessObject(businessKeys = @BusinessKeyDef(name = "Code", properties = { "code" }))
+@Uniques(value = @Unique(name = "Code", members = { "code" }))
 public abstract class Interface extends NamedTimeStampEntity {
 
 	private static final long serialVersionUID = 5959712644331302508L;

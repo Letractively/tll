@@ -13,12 +13,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
 
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.orm.ObjectRetrievalFailureException;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.inject.Module;
 import com.tll.AbstractInjectedTest;
 import com.tll.config.Config;
 import com.tll.criteria.Comparator;
@@ -26,8 +28,6 @@ import com.tll.criteria.Criteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.InvalidCriteriaException;
-import com.tll.di.EntityBeanFactoryModule;
-import com.tll.di.ModelModule;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
@@ -118,19 +118,14 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 		}
 
 		@Override
-		public <R extends IEntity> List<R> findByIds(Class<R> entityType, List<Integer> ids, Sorting sorting) {
+		public <R extends IEntity> List<R> findByIds(Class<R> entityType, Collection<String> ids, Sorting sorting) {
 			return rawDao.findByIds(entityType, ids, sorting);
 		}
 
 		@Override
-		public <R extends IEntity> List<Integer> getIds(Criteria<R> criteria, Sorting sorting)
+		public <R extends IEntity> List<String> getIds(Criteria<R> criteria, Sorting sorting)
 		throws InvalidCriteriaException {
 			return rawDao.getIds(criteria, sorting);
-		}
-
-		@Override
-		public <R extends IEntity> List<R> getEntitiesFromIds(Class<R> entityClass, Collection<Integer> ids, Sorting sorting) {
-			return rawDao.getEntitiesFromIds(entityClass, ids, sorting);
 		}
 
 		@Override
@@ -159,7 +154,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 	 * @param entities
 	 * @return true/false
 	 */
-	protected static final <E extends IEntity> boolean entitiesAndIdsEquals(Collection<Integer> ids,
+	protected static final <E extends IEntity> boolean entitiesAndIdsEquals(Collection<String> ids,
 			Collection<E> entities) {
 		if(ids == null || entities == null) {
 			return false;
@@ -169,7 +164,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 		}
 		for(final E e : entities) {
 			boolean found = false;
-			for(final Integer id : ids) {
+			for(final String id : ids) {
 				if(id.equals(e.getId())) {
 					found = true;
 					break;
@@ -247,12 +242,6 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 	 */
 	protected abstract IEntityDaoTestHandler<?>[] getDaoTestHandlers();
 
-	@Override
-	protected void addModules(List<Module> modules) {
-		modules.add(new ModelModule());
-		modules.add(new EntityBeanFactoryModule());
-	}
-
 	@BeforeClass(alwaysRun = true)
 	public final void onBeforeClass() {
 		beforeClass();
@@ -274,11 +263,11 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 			throw new IllegalStateException("No entity dao handlers specified");
 		}
 
-		doBeforeClass();
-
 		// build the injector
 		buildInjector();
 		assert injector != null;
+
+		doBeforeClass();
 
 		dao.setRawDao(injector.getInstance(IEntityDao.class));
 	}
@@ -364,7 +353,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 					entityHandler.teardownTestEntity(dao.load(pk));
 					setComplete();
 				}
-				catch(final EntityNotFoundException e) {
+				catch(final DataRetrievalFailureException e) {
 					// ok
 				}
 				finally {
@@ -388,7 +377,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 	 * {@link #addModules(List)}.
 	 * @return The injected {@link EntityBeanFactory}
 	 */
-	protected final EntityBeanFactory getMockEntityFactory() {
+	protected final EntityBeanFactory getEntityBeanFactory() {
 		return injector.getInstance(EntityBeanFactory.class);
 	}
 
@@ -401,7 +390,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 	@SuppressWarnings("unchecked")
 	<E extends IEntity> E getTestEntity() throws Exception {
 		// logger.debug("Creating test entity..");
-		final E e = (E) getMockEntityFactory().getEntityCopy(entityHandler.entityClass(), false);
+		final E e = (E) getEntityBeanFactory().getEntityCopy(entityHandler.entityClass(), false);
 		entityHandler.assembleTestEntity(e);
 		if(BusinessKeyFactory.hasBusinessKeys(entityHandler.entityClass())) {
 			entityHandler.makeUnique(e);
@@ -444,7 +433,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 	public final void test() throws Exception {
 
 		for(final IEntityDaoTestHandler<?> handler : entityHandlers) {
-			handler.init(dao, getMockEntityFactory());
+			handler.init(dao, getEntityBeanFactory());
 			entityHandler = (IEntityDaoTestHandler<IEntity>) handler;
 
 			logger.debug("Testing entity dao for entity type: " + handler.entityClass() + "...");
@@ -489,15 +478,17 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 						+ entityHandler.entityClass());
 				entityHandler.verifyLoadedEntityState(e);
 			}
-			catch(final NonUniqueResultException ex) {
+			catch(final DataIntegrityViolationException ex) {
 				// ok
 			}
-			catch(final/*QueryException*/Exception ex) {
+			/*
+			catch(final QueryException ex) {
 				// ok - this means the INamedEntity doesn't have the getName() method
 				// mapped to "name" which is possible in some cases where we impl
 				// INamedEntity but map INamedEntity.getName() to another ORM property
 				// and declare annotatively INamedEntity.getName() as @Transient
 			}
+			 */
 			endTransaction();
 		}
 		else {
@@ -511,10 +502,9 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 	 */
 	final void daoCRUDAndFind() throws Exception {
 		IEntity e = getTestEntity();
-		// Assert.assertTrue(e.isNew(),
-		// "The created test entity is not new and should be");
+		Assert.assertTrue(e.isNew(), "The created test entity is not new and should be");
 
-		Integer persistentId = null;
+		String persistentId = null;
 
 		// create
 		e = dao.persist(e);
@@ -522,8 +512,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 		endTransaction();
 		persistentId = e.getId();
 		Assert.assertNotNull(e.getId(), "The created entities' id is null");
-		// Assert.assertTrue(!e.isNew(),
-		// "The created entity is new and shouldn't be");
+		Assert.assertTrue(!e.isNew(), "The created entity is new and shouldn't be");
 
 		if(e instanceof ITimeStampEntity) {
 			// verify time stamp
@@ -574,7 +563,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 			e = getEntityFromDb(new PrimaryKey<IEntity>(e));
 			Assert.assertNull(e, "The entity was not purged");
 		}
-		catch(final EntityNotFoundException ex) {
+		catch(final ObjectRetrievalFailureException ex) {
 			// expected
 		}
 		endTransaction();
@@ -622,7 +611,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 
 		startNewTransaction();
 		Assert.assertNotNull(e, "Null generated test entity");
-		final List<Integer> ids = new ArrayList<Integer>(1);
+		final List<String> ids = new ArrayList<String>(1);
 		ids.add(e.getId());
 		final List<IEntity> list = dao.findByIds(entityHandler.entityClass(), ids, null);
 		endTransaction();
@@ -640,7 +629,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 		}
 
 		final List<IEntity> entityList = getNUniqueTestEntities(entityHandler.entityClass(), 5);
-		final List<Integer> idList = new ArrayList<Integer>(5);
+		final List<String> idList = new ArrayList<String>(5);
 		for(IEntity e : entityList) {
 			e = dao.persist(e);
 			idList.add(e.getId());
@@ -652,13 +641,13 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 
 		// get ids
 		startNewTransaction();
-		final List<Integer> dbIdList = dao.getIds(criteria, simpleIdSorting);
+		final List<String> dbIdList = dao.getIds(criteria, simpleIdSorting);
 		Assert.assertTrue(entitiesAndIdsEquals(dbIdList, entityList), "getIds list is empty or has incorrect ids");
 		endTransaction();
 
 		// get entities
 		startNewTransaction();
-		final List<IEntity> dbEntityList = dao.getEntitiesFromIds(entityHandler.entityClass(), idList, null);
+		final List<IEntity> dbEntityList = dao.findByIds(entityHandler.entityClass(), idList, null);
 		Assert.assertNotNull(idList, "getEntities list is null");
 		Assert.assertTrue(entitiesAndIdsEquals(idList, dbEntityList), "getEntities list is empty or has incorrect ids");
 		endTransaction();
@@ -675,7 +664,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 		}
 
 		final List<IEntity> entityList = getNUniqueTestEntities(entityHandler.entityClass(), 5);
-		final List<Integer> idList = new ArrayList<Integer>(5);
+		final List<String> idList = new ArrayList<String>(5);
 		for(IEntity e : entityList) {
 			e = dao.persist(e);
 			idList.add(e.getId());
@@ -706,7 +695,8 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 	}
 
 	/**
-	 * Tests for the proper throwing of {@link EntityExistsException} in the dao.
+	 * Tests for the proper throwing of {@link DataIntegrityViolationException} in
+	 * the dao.
 	 * @throws Exception
 	 */
 	final void daoDuplicationException() throws Exception {
@@ -730,7 +720,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 			endTransaction();
 			Assert.fail("A duplicate exception should have occurred for entity type: " + entityHandler.entityClass());
 		}
-		catch(final EntityExistsException de) {
+		catch(final DataIntegrityViolationException de) {
 			// expected
 		}
 	}
@@ -743,7 +733,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 			dao.load(pk);
 			Assert.fail("An EntityNotFoundException should have occurred (" + pk + ")");
 		}
-		catch(final EntityNotFoundException ex) {
+		catch(final DataIntegrityViolationException ex) {
 			// expected
 		}
 	}

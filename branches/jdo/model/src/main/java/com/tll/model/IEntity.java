@@ -6,7 +6,7 @@ import com.tll.IDescriptorProvider;
  * Base interface for all entities.
  * @author jpk
  */
-public interface IEntity extends IPersistable, /*IVersionSupport, */IDescriptorProvider {
+public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvider {
 
 	/**
 	 * The name of the id primary key field
@@ -15,7 +15,7 @@ public interface IEntity extends IPersistable, /*IVersionSupport, */IDescriptorP
 
 	/**
 	 * @return The <code>Class</code> of this entity. This method is preferred to
-	 *         {@link Object#getClass()} method as the DAO layer employs proxy
+	 *         {@link Object#getClass()} method as the DAO layer may employ proxy
 	 *         entity objects.
 	 */
 	Class<? extends IEntity> entityClass();
@@ -23,7 +23,7 @@ public interface IEntity extends IPersistable, /*IVersionSupport, */IDescriptorP
 	/**
 	 * @return The id of the entity
 	 */
-	Integer getId();
+	String getId();
 
 	/**
 	 * True if the identifier for this object was assigned at creation.<br>

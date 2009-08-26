@@ -2,12 +2,12 @@ package com.tll.model;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.Unique;
+import javax.jdo.annotations.Uniques;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
 
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
 import com.tll.model.validate.PhoneNumber;
 import com.tll.model.validate.PhoneNumbers;
 import com.tll.model.validate.PostalCode;
@@ -15,13 +15,13 @@ import com.tll.model.validate.PostalCode;
 /**
  * @author jpk
  */
-@PersistenceCapable
+@PersistenceCapable(detachable = "true")
 @PhoneNumbers(value = {
 	@PhoneNumber(phonePropertyName = "phone"), @PhoneNumber(phonePropertyName = "fax") })
 	@PostalCode()
-	@BusinessObject(businessKeys = @BusinessKeyDef(name = "Address 1 and Postal Code", properties = {
+	@Uniques(value = @Unique(name = "Address 1 and Postal Code", members = {
 		"address1", "postalCode" }))
-		public class Address extends EntityBase {
+public class Address extends EntityBase {
 
 	private static final long serialVersionUID = 69385466934038047L;
 

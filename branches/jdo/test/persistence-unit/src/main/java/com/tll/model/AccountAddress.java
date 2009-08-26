@@ -2,33 +2,33 @@ package com.tll.model;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.Unique;
+import javax.jdo.annotations.Uniques;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
-
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
 
 /**
  * The account address entity holding a refs to a single account and single
  * address.
  * @author jpk
  */
-@PersistenceCapable
-@BusinessObject(businessKeys = {
-	@BusinessKeyDef(name = "Account Id and Address Id", properties = { "account.id", "address.id" }),
-	@BusinessKeyDef(name = "Account Id and Name", properties = { "account.id", INamedEntity.NAME })
+@PersistenceCapable(detachable = "true")
+@Uniques(value = {
+	@Unique(name = "Account Id and Address Id", members = { "account.id", "address.id" }), 
+	@Unique(name = "Account Id and Name", members = { "account.id", INamedEntity.NAME }) 
 })
 public class AccountAddress extends NamedTimeStampEntity implements IChildEntity<Account> {
+
 	private static final long serialVersionUID = -6901864365658192141L;
 
 	public static final int MAXLEN_NAME = 32;
 
-	@Persistent
+	@Persistent(defaultFetchGroup = "true")
 	private Account account;
 
-	@Persistent
+	@Persistent(defaultFetchGroup = "true")
 	private Address address;
 
 	public Class<? extends IEntity> entityClass() {
@@ -42,21 +42,7 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 		return name;
 	}
 
-	/**
-	 * @return Returns the account.
-	 */
 	@NotNull
-	public Account getAccount() {
-		return account;
-	}
-
-	/**
-	 * @param account The account to set.
-	 */
-	public void setAccount(Account account) {
-		this.account = account;
-	}
-
 	public Address getAddress() {
 		return address;
 	}
@@ -66,6 +52,20 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 	 */
 	public void setAddress(Address address) {
 		this.address = address;
+	}
+
+	/**
+	 * @return the account
+	 */
+	public Account getAccount() {
+		return account;
+	}
+
+	/**
+	 * @param account the account to set
+	 */
+	public void setAccount(Account account) {
+		this.account = account;
 	}
 
 	public Account getParent() {

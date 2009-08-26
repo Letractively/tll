@@ -11,6 +11,23 @@
   <url>http://tll.googlecode.com</url>
   <inceptionYear>2005</inceptionYear>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <aspectjVersion>1.6.3</aspectjVersion>
+    <springVersion>2.5.6.SEC01</springVersion>
+    <datanucleus.version>2.0.0.m1</datanucleus.version>
+    <mysqlConnectorVersion>5.1.6</mysqlConnectorVersion>
+    <slfVersion>1.5.6</slfVersion>
+
+    <gwtVersion>1.7.0</gwtVersion>
+    <gwtIncubatorVersion>1.6</gwtIncubatorVersion>
+    <gwtLogVersion>2.6.2</gwtLogVersion>
+
+    <junitVersion>4.5</junitVersion>
+    <testNGVersion>5.10</testNGVersion>
+  </properties>
+
   <developers>
     <developer>
       <id>jpk</id>
@@ -38,14 +55,23 @@
     </repository>
 
     <!-- data nucleus -->
-    <!--
-      <repository> <id>DataNucleus_Repos</id> <name>DataNucleus Repository</name>
-      <url>http://www.datanucleus.org/downloads/maven</url> <layout>legacy</layout> </repository> <repository>
-      <id>DataNucleus_Repos2</id> <name>DataNucleus Repository</name>
-      <url>http://www.datanucleus.org/downloads/maven2</url> </repository> <repository> Required for transaction-api
-      transitive dep <id>Java_Net_LEGACY</id> <name>Java.Net legacy</name> <url>http://download.java.net/maven/1/</url>
-      <layout>legacy</layout> </repository>
-    -->
+    <repository>
+      <id>DataNucleus_Repos</id>
+      <name>DataNucleus Repository</name>
+      <url>http://www.datanucleus.org/downloads/maven</url>
+      <layout>legacy</layout>
+    </repository>
+    <repository>
+      <id>DataNucleus_Repos2</id>
+      <name>DataNucleus Repository</name>
+      <url>http://www.datanucleus.org/downloads/maven2</url>
+    </repository>
+    <repository>
+      <id>Java_Net_LEGACY</id>
+      <name>Java.Net legacy</name>
+      <url>http://download.java.net/maven/1/</url>
+      <layout>legacy</layout>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -55,23 +81,6 @@
       <layout>legacy</layout>
     </pluginRepository>
   </pluginRepositories>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-    <aspectjVersion>1.6.3</aspectjVersion>
-    <springVersion>2.5.6</springVersion>
-    <atomikos.version>3.5.1</atomikos.version>
-    <mysqlConnectorVersion>5.1.6</mysqlConnectorVersion>
-    <slfVersion>1.5.2</slfVersion>
-
-    <gwtVersion>1.6.4</gwtVersion>
-    <gwtIncubatorVersion>1.6</gwtIncubatorVersion>
-    <gwtLogVersion>2.5.3</gwtLogVersion>
-
-    <junitVersion>4.5</junitVersion>
-    <testNGVersion>5.8</testNGVersion>
-  </properties>
 
   <modules>
     <!--
@@ -84,8 +93,9 @@
     <module>mail</module>
     <module>refdata</module>
     <module>model</module>
-    <module>mock</module>
+    <module>egraph</module>
     <module>test/persistence-unit</module>
+    <module>dbshell</module>
     <module>dao</module>
     <module>service</module>
     <module>test/service-layer</module>
@@ -159,17 +169,49 @@
         <plugin>
           <groupId>org.datanucleus</groupId>
           <artifactId>maven-datanucleus-plugin</artifactId>
-          <version>1.1.3</version>
+          <version>${datanucleus.version}</version>
           <configuration>
-            <verbose>true</verbose>
             <mappingIncludes>**/*.jdo,**/model/**.class</mappingIncludes>
+            <verbose>true</verbose>
             <enhancerName>ASM</enhancerName>
+            <api>JDO</api>
+            <!-- <props>${basedir}/src/main/resources/config.properties</props> -->
           </configuration>
           <dependencies>
+            <dependency>
+              <groupId>log4j</groupId>
+              <artifactId>log4j</artifactId>
+              <version>1.2.14</version>
+            </dependency>
             <dependency>
               <groupId>asm</groupId>
               <artifactId>asm</artifactId>
               <version>3.1</version>
+            </dependency>
+            <dependency>
+              <groupId>javax.jdo</groupId>
+              <artifactId>jdo2-api</artifactId>
+              <version>2.3-eb</version>
+            </dependency>
+            <dependency>
+              <groupId>org.datanucleus</groupId>
+              <artifactId>datanucleus-core</artifactId>
+              <version>${datanucleus.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.datanucleus</groupId>
+              <artifactId>datanucleus-enhancer</artifactId>
+              <version>${datanucleus.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.datanucleus</groupId>
+              <artifactId>datanucleus-rdbms</artifactId>
+              <version>${datanucleus.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.datanucleus</groupId>
+              <artifactId>datanucleus-jpa</artifactId>
+              <version>${datanucleus.version}</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -280,16 +322,6 @@
           </dependency>
         </dependencies>
       </plugin>
-
-      <!--
-        <plugin> <groupId>org.datanucleus</groupId> <artifactId>maven-datanucleus-plugin</artifactId>
-        <version>1.1.3</version> <configuration> <mappingIncludes>**/*.jdo, **/*.class</mappingIncludes>
-        <log4jConfiguration>${basedir}/log4j.properties</log4jConfiguration> <verbose>true</verbose>
-        <enhancerName>ASM</enhancerName> <props>${basedir}/datanucleus.properties</props> </configuration> <executions>
-        <execution> <phase>process-classes</phase> <goals> <goal>enhance</goal> </goals> </execution> </executions>
-        </plugin>
-      -->
-
     </plugins>
 
   </build>
@@ -474,7 +506,7 @@
       <dependency>
         <groupId>javax.validation</groupId>
         <artifactId>validation-api</artifactId>
-        <version>1.0.CR1</version>
+        <version>1.0.CR3</version>
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>
@@ -494,7 +526,7 @@
       <dependency>
         <groupId>javax.jdo</groupId>
         <artifactId>jdo2-api</artifactId>
-        <version>2.3-ea</version>
+        <version>2.3-eb</version>
       </dependency>
 
       <dependency>
@@ -525,33 +557,45 @@
       <dependency>
         <groupId>org.datanucleus</groupId>
         <artifactId>datanucleus-cache</artifactId>
-        <version>1.1.1</version>
+        <version>${datanucleus.version}</version>
       </dependency>
       <dependency>
         <groupId>org.datanucleus</groupId>
         <artifactId>datanucleus-connectionpool</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
       </dependency>
       <dependency>
         <groupId>org.datanucleus</groupId>
         <artifactId>datanucleus-core</artifactId>
-        <version>1.1.4</version>
+        <version>${datanucleus.version}</version>
       </dependency>
       <dependency>
         <groupId>org.datanucleus</groupId>
         <artifactId>datanucleus-enhancer</artifactId>
-        <version>1.1.4</version>
+        <version>${datanucleus.version}</version>
       </dependency>
       <dependency>
         <groupId>org.datanucleus</groupId>
         <artifactId>datanucleus-management</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
       </dependency>
       <dependency>
         <groupId>org.datanucleus</groupId>
         <artifactId>datanucleus-db4o</artifactId>
-        <version>1.1.0</version>
+        <version>${datanucleus.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.datanucleus</groupId>
+        <artifactId>datanucleus-rdbms</artifactId>
+        <version>${datanucleus.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.datanucleus</groupId>
+        <artifactId>datanucleus-jpa</artifactId>
+        <version>${datanucleus.version}</version>
+      </dependency>
+      
+      <!-- db4o -->
       <dependency>
         <groupId>db4o</groupId>
         <artifactId>db4o</artifactId>
@@ -580,17 +624,17 @@
         <artifactId>hibernate-entitymanager</artifactId>
         <version>3.4.0.GA</version>
       </dependency>
-      -->
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-annotations</artifactId>
         <version>3.4.0.GA</version>
       </dependency>
+      -->
 
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-validator</artifactId>
-        <version>4.0.0.Beta1</version>
+        <version>4.0.0.Beta2</version>
       </dependency>
 
       <!-- spring -->
@@ -666,6 +710,13 @@
         <version>2.0</version>
       </dependency>
 
+      <!-- google app engine -->
+      <dependency>
+        <groupId>com.google.code.appengine</groupId>
+        <artifactId>appengine</artifactId>
+        <version>1.2.2</version>
+      </dependency>
+      
       <!-- GWT -->
       <dependency>
         <groupId>com.google.gwt</groupId>

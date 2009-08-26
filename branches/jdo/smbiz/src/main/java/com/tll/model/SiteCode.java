@@ -4,19 +4,18 @@ import java.util.Date;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.Unique;
+import javax.jdo.annotations.Uniques;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
-
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
 
 /**
  * Defines site codes (online "coupons")
  * @author jpk
  */
 @PersistenceCapable
-@BusinessObject(businessKeys = @BusinessKeyDef(name = "Code", properties = { "code" }))
+@Uniques(value = @Unique(name = "Code", members = { "code" }))
 public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 9132511822830985704L;
@@ -94,7 +93,7 @@ public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Accou
 		setAccount(e);
 	}
 
-	public Integer accountId() {
+	public String accountId() {
 		try {
 			return getAccount().getId();
 		}

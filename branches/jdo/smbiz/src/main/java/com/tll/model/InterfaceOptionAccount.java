@@ -5,20 +5,20 @@ import java.util.Map;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.Unique;
+import javax.jdo.annotations.Uniques;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
 
 /**
  * Binder entity between interface options and an account
  * @author jpk
  */
 @PersistenceCapable
-@BusinessObject(businessKeys =
-	@BusinessKeyDef(name = "Option Id and Account Id", properties = { "option.id", "account.id" }))
-	public class InterfaceOptionAccount extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
+@Uniques(value =
+	@Unique(name = "Option Id and Account Id", members = {
+		"option.id", "account.id" }))
+public class InterfaceOptionAccount extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 1185305612828685906L;
 
@@ -188,7 +188,7 @@ import com.tll.model.schema.BusinessObject;
 		setAccount(e);
 	}
 
-	public Integer accountId() {
+	public String accountId() {
 		try {
 			return getAccount().getId();
 		}
@@ -198,7 +198,7 @@ import com.tll.model.schema.BusinessObject;
 		}
 	}
 
-	public Integer optionId() {
+	public String optionId() {
 		try {
 			return getOption().getId();
 		}

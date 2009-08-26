@@ -6,7 +6,6 @@
 package com.tll.db;
 
 import java.io.File;
-import java.net.URI;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -20,16 +19,16 @@ import com.tll.model.EntityGraph;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityGraphBuilder;
 
-
 /**
- * Db4oDbShell
+ * Db4oDbShell - Interfaces w/ a local (file based) db4o db using the
+ * <em>native db40 api</em>.
  * @author jpk
  */
 public class Db4oDbShell implements IDbShell {
 
 	private static final Log log = LogFactory.getLog(Db4oDbShell.class);
 
-	private final URI dbFile;
+	private final File dbFile;
 	private final IEntityGraphBuilder egb;
 
 	/**
@@ -39,25 +38,16 @@ public class Db4oDbShell implements IDbShell {
 	 *        content.
 	 */
 	@Inject
-	public Db4oDbShell(URI dbFile, IEntityGraphBuilder egb) {
+	public Db4oDbShell(File dbFile, IEntityGraphBuilder egb) {
 		super();
 		this.dbFile = dbFile;
 		this.egb = egb;
 	}
 
-	/**
-	 * @return A {@link File} ref to the db file on the file system irregardless
-	 *         of whether or not it actually exists.
-	 */
-	private File getHandle() {
-		return new File(dbFile);
-	}
-
 	@Override
 	public boolean clear() {
-		final File f = getHandle();
-		if(f.exists()) {
-			f.delete();
+		if(dbFile.exists()) {
+			dbFile.delete();
 			create();
 			return true;
 		}
@@ -66,9 +56,7 @@ public class Db4oDbShell implements IDbShell {
 
 	@Override
 	public boolean create() {
-		File f = getHandle();
-		if(f.exists()) return false;
-		f = null;
+		if(dbFile.exists()) return false;
 		final ObjectContainer db = Db4o.openFile(dbFile.getPath());
 		db.close();
 		return true;
@@ -76,16 +64,14 @@ public class Db4oDbShell implements IDbShell {
 
 	@Override
 	public boolean delete() {
-		final File f = getHandle();
-		if(!f.exists()) return false;
-		f.delete();
+		if(!dbFile.exists()) return false;
+		dbFile.delete();
 		return true;
 	}
 
 	@Override
 	public void restub() {
-		final File f = getHandle();
-		if(f.exists()) {
+		if(dbFile.exists()) {
 			delete();
 		}
 		create();

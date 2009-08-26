@@ -2,18 +2,17 @@ package com.tll.model;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.Unique;
+import javax.jdo.annotations.Uniques;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
 
 /**
  * The customer account entity
  * @author jpk
  */
 @PersistenceCapable
-@BusinessObject(businessKeys = @BusinessKeyDef(name = "Customer Id and Account Id", properties = {
+@Uniques(value = @Unique(name = "Customer Id and Account Id", members = {
 	"customer.id", "account.id" }))
 	public class CustomerAccount extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
@@ -121,7 +120,7 @@ import com.tll.model.schema.BusinessObject;
 		setAccount(e);
 	}
 
-	public Integer accountId() {
+	public String accountId() {
 		try {
 			return getAccount().getId();
 		}
@@ -131,7 +130,7 @@ import com.tll.model.schema.BusinessObject;
 		}
 	}
 
-	public Integer customerId() {
+	public String customerId() {
 		try {
 			return getCustomer().getId();
 		}

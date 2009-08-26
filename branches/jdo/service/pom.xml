@@ -135,6 +135,12 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>tll-dbshell</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>tll-dao-api</artifactId>
       <version>${project.version}</version>
       <classifier>testassets</classifier>
@@ -156,7 +162,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>5.8</version>
+      <version>${testNGVersion}</version>
       <classifier>jdk15</classifier>
       <scope>test</scope>
     </dependency>

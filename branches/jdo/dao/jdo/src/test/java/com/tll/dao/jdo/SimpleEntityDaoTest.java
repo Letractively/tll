@@ -5,10 +5,17 @@
  */
 package com.tll.dao.jdo;
 
-import javax.jdo.PersistenceManager;
+import java.util.List;
 
+import org.testng.annotations.Test;
+
+import com.google.inject.Module;
+import com.google.inject.Scopes;
 import com.tll.dao.IEntityDaoTestHandler;
 import com.tll.dao.TestEntityDaoTestHandler;
+import com.tll.di.EGraphModule;
+import com.tll.model.IEntityGraphBuilder;
+import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
 
 
 
@@ -16,18 +23,24 @@ import com.tll.dao.TestEntityDaoTestHandler;
  * SimpleEntityDaoTest
  * @author jpk
  */
+@Test(groups = { "dao", "orm" })
 public class SimpleEntityDaoTest extends AbstractJdoEntityDaoTest {
-
-	/**
-	 * Constructor
-	 * @param pm
-	 */
-	public SimpleEntityDaoTest(PersistenceManager pm) {
-		super(pm);
-	}
 
 	@Override
 	protected IEntityDaoTestHandler<?>[] getDaoTestHandlers() {
 		return new IEntityDaoTestHandler[] { new TestEntityDaoTestHandler() };
 	}
+
+	@Override
+	protected void addModules(List<Module> modules) {
+		modules.add(new EGraphModule() {
+
+			@Override
+			protected void bindEntityGraphBuilder() {
+				bind(IEntityGraphBuilder.class).to(TestPersistenceUnitEntityGraphBuilder.class).in(Scopes.SINGLETON);
+			}
+		});
+		super.addModules(modules);
+	}
+
 }

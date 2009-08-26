@@ -7,8 +7,6 @@ import javax.validation.ConstraintViolationException;
 
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
-import com.tll.dao.EntityExistsException;
-import com.tll.dao.EntityNotFoundException;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.IListingDataProvider;
 import com.tll.model.IEntity;
@@ -50,14 +48,6 @@ public interface IEntityService<E extends IEntity> extends IListingDataProvider,
 	 * @return all of the entities
 	 */
 	List<E> loadAll();
-
-	/**
-	 * Returns a list of entities based on a list of ids.
-	 * @param ids the ids of the entities to retrieve
-	 * @param sorting
-	 * @return List of entities
-	 */
-	List<E> loadByIds(List<Integer> ids, Sorting sorting);
 
 	/**
 	 * Updates an instance of this entity. The input entity should have a valid

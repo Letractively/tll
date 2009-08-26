@@ -4,19 +4,18 @@ import java.util.Date;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.Unique;
+import javax.jdo.annotations.Uniques;
 import javax.validation.constraints.NotNull;
-
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
 
 /**
  * The account history entity
  * @author jpk
  */
 @PersistenceCapable
-@BusinessObject(businessKeys = @BusinessKeyDef(name = "Account Id, Transaction Date and Status", properties = {
+@Uniques(value = @Unique(name = "Account Id, Transaction Date and Status", members = {
 	"account.id", "transDate", "status" }))
-	public class AccountHistory extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
+public class AccountHistory extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 5543822993709686604L;
 
@@ -120,7 +119,7 @@ import com.tll.model.schema.BusinessObject;
 		setAccount(e);
 	}
 
-	public Integer accountId() {
+	public String accountId() {
 		try {
 			return getAccount().getId();
 		}

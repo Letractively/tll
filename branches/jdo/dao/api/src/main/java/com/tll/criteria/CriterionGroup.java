@@ -226,26 +226,6 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 		return true;
 	}
 
-	public Comparator getComparator() {
-		throw new UnsupportedOperationException("CriterionGroup does not support comparators.");
-	}
-
-	public String getField() {
-		throw new UnsupportedOperationException("CriterionGroup does not provide field names.");
-	}
-
-	public String getPropertyName() {
-		throw new UnsupportedOperationException("CriterionGroup does not provide property names.");
-	}
-
-	public Object getValue() {
-		throw new UnsupportedOperationException("CriterionGroup does not provide field values.");
-	}
-
-	public boolean isCaseSensitive() {
-		throw new UnsupportedOperationException("CriterionGroup does not support case sensitive property.");
-	}
-
 	public int size() {
 		return group == null ? 0 : group.size();
 	}

@@ -8,50 +8,99 @@ package com.tll.dao.jdo;
 
 import java.util.List;
 
-import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
+import javax.jdo.annotations.PersistenceAware;
 
 import org.testng.annotations.Test;
 
+import com.google.inject.Binder;
+import com.google.inject.Inject;
 import com.google.inject.Module;
+import com.google.inject.Provider;
+import com.google.inject.Scopes;
 import com.tll.DbTestSupport;
 import com.tll.dao.AbstractEntityDaoTest;
+import com.tll.db.DbShellBuilder;
 import com.tll.db.IDbShell;
-import com.tll.di.DbDialectModule;
 import com.tll.di.JdoDaoModule;
+import com.tll.di.ModelModule;
 import com.tll.model.IEntity;
+import com.tll.model.IEntityGraphBuilder;
+import com.tll.model.key.IPrimaryKeyGenerator;
+import com.tll.model.key.JdoPrimaryKeyGenerator;
 import com.tll.model.key.PrimaryKey;
 
 /**
  * AbstractJdoEntityDaoTest
  * @author jpk
  */
-@Test(groups = {
-	"dao", "orm" })
-	public abstract class AbstractJdoEntityDaoTest extends AbstractEntityDaoTest {
-
-	private final DbTestSupport dbSupport;
-
-	/**
-	 * Constructor
-	 * @param pm the required persistence manager to facilitate local transactions
-	 */
-	public AbstractJdoEntityDaoTest(PersistenceManager pm) {
-		super();
-		assert this.config != null;
-		dbSupport = new DbTestSupport(config, pm);
-	}
+@Test(groups = { "dao", "jdo" })
+@PersistenceAware
+public abstract class AbstractJdoEntityDaoTest extends AbstractEntityDaoTest {
 
 	@Override
-	protected final void addModules(List<Module> modules) {
+	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new DbDialectModule(config));
+		modules.add(new ModelModule() {
+
+			@Override
+			protected void bindPrimaryKeyGenerator() {
+				bind(IPrimaryKeyGenerator.class).to(JdoPrimaryKeyGenerator.class).in(Scopes.SINGLETON);
+			}
+
+			@Override
+			protected void bindEntityAssembler() {
+				// not needed
+			}
+		});
 		modules.add(new JdoDaoModule(config));
+		modules.add(new Module() {
+
+			@Override
+			public void configure(Binder b) {
+				b.bind(IDbShell.class).toProvider(new Provider<IDbShell>() {
+
+					@Inject
+					IEntityGraphBuilder egb;
+
+					@SuppressWarnings("synthetic-access")
+					@Override
+					public IDbShell get() {
+						try {
+							return DbShellBuilder.getDbShell(config, egb);
+						}
+						catch(final Exception e) {
+							throw new RuntimeException(e);
+						}
+					}
+				}).in(Scopes.SINGLETON);
+				b.bind(DbTestSupport.class).toProvider(new Provider<DbTestSupport>() {
+
+					@Inject
+					PersistenceManagerFactory pmf;
+
+					@SuppressWarnings("synthetic-access")
+					@Override
+					public DbTestSupport get() {
+						return new DbTestSupport(config, pmf);
+					}
+				}).in(Scopes.SINGLETON);
+			}
+		});
+	}
+
+	protected final IDbShell getDbShell() {
+		return injector.getInstance(IDbShell.class);
+	}
+
+	protected final DbTestSupport getDbSupport() {
+		return injector.getInstance(DbTestSupport.class);
 	}
 
 	@Override
 	protected final void doBeforeClass() {
 		// create a db shell to ensure db exists and stubbed
-		final IDbShell dbShell = dbSupport.getDbShell();
+		final IDbShell dbShell = getDbShell();
 		dbShell.create();
 		dbShell.clear();
 	}
@@ -63,21 +112,21 @@ import com.tll.model.key.PrimaryKey;
 
 	@Override
 	protected final void endTransaction() {
-		dbSupport.endTransaction();
+		getDbSupport().endTransaction();
 	}
 
 	@Override
 	protected final boolean isTransStarted() {
-		return dbSupport.isTransStarted();
+		return getDbSupport().isTransStarted();
 	}
 
 	@Override
 	protected final void setComplete() {
-		dbSupport.setComplete();
+		getDbSupport().setComplete();
 	}
 
 	@Override
 	protected final void startNewTransaction() {
-		dbSupport.startNewTransaction();
+		getDbSupport().startNewTransaction();
 	}
 }

@@ -7,13 +7,12 @@ import java.util.Set;
 import javax.jdo.annotations.Discriminator;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.Unique;
+import javax.jdo.annotations.Uniques;
 import javax.validation.Valid;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
 
 /**
  * The interface option entity
@@ -21,7 +20,7 @@ import com.tll.model.schema.BusinessObject;
  */
 @PersistenceCapable
 @Discriminator(value = "option")
-@BusinessObject(businessKeys = @BusinessKeyDef(name = "Code", properties = { "code" }))
+@Uniques(value = @Unique(name = "Code", members = { "code" }))
 public class InterfaceOption extends InterfaceOptionBase {
 
 	private static final long serialVersionUID = -3858516767622503827L;

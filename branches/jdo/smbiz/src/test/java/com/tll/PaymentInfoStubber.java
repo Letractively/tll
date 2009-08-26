@@ -12,7 +12,6 @@ import org.testng.annotations.Test;
 import com.google.inject.Module;
 import com.tll.config.Config;
 import com.tll.dao.IEntityDao;
-import com.tll.di.DbDialectModule;
 import com.tll.di.JdoDaoModule;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.PaymentInfo;
@@ -22,7 +21,7 @@ import com.tll.model.PaymentInfo;
  * @author jpk
  */
 @Test
-public class PaymentInfoStubber extends AbstractInjectedTest {
+public class PaymentInfoStubber extends AbstractDbAwareTest {
 
 	private final Config config;
 
@@ -36,13 +35,12 @@ public class PaymentInfoStubber extends AbstractInjectedTest {
 
 	@Override
 	protected void addModules(List<Module> modules) {
-		modules.add(new DbDialectModule(config));
 		modules.add(new JdoDaoModule(config));
 	}
 
 	@Test
 	public void stub() throws Exception {
-		final DbTestSupport dbSupport = new DbTestSupport(config, null/*TODO*/);
+		final DbTestSupport dbSupport = getDbSupport();
 		dbSupport.startNewTransaction();
 		final EntityBeanFactory mep = injector.getInstance(EntityBeanFactory.class);
 		final PaymentInfo e = mep.getEntityCopy(PaymentInfo.class, false);

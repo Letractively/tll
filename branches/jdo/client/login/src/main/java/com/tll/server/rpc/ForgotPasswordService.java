@@ -15,13 +15,13 @@ import com.tll.common.data.Status;
 import com.tll.common.data.rpc.IForgotPasswordService;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
-import com.tll.dao.EntityNotFoundException;
 import com.tll.mail.IMailContext;
 import com.tll.mail.MailManager;
 import com.tll.mail.MailRouting;
 import com.tll.model.IUserRef;
 import com.tll.service.ChangeUserCredentialsFailedException;
 import com.tll.service.IForgotPasswordHandler;
+import com.tll.service.entity.EntityNotFoundException;
 import com.tll.util.StringUtil;
 
 /**

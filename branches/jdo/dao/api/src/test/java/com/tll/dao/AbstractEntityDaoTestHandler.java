@@ -7,6 +7,8 @@ package com.tll.dao;
 
 import java.util.Set;
 
+import javax.jdo.annotations.PersistenceAware;
+
 import org.testng.Assert;
 
 import com.tll.criteria.IQueryParam;
@@ -20,6 +22,7 @@ import com.tll.model.INamedEntity;
  * @param <E> The entity type
  * @author jpk
  */
+@PersistenceAware
 public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements IEntityDaoTestHandler<E> {
 
 	private IEntityDao entityDao;

@@ -32,8 +32,7 @@ import com.tll.common.search.PrimaryKeySearch;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.di.ClientPersistModule;
-import com.tll.di.EntityAssemblerModule;
-import com.tll.di.EntityBeanFactoryModule;
+import com.tll.di.EGraphModule;
 import com.tll.di.EntityServiceFactoryModule;
 import com.tll.di.LogExceptionHandlerModule;
 import com.tll.di.MailModule;
@@ -41,11 +40,12 @@ import com.tll.di.MarshalModule;
 import com.tll.di.MockDaoModule;
 import com.tll.di.ModelModule;
 import com.tll.di.RefDataModule;
-import com.tll.di.ValidationModule;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.IEntityGraphBuilder;
 import com.tll.model.TestPersistenceUnitEntityAssembler;
 import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
+import com.tll.model.key.IPrimaryKeyGenerator;
+import com.tll.model.key.SimplePrimaryKeyGenerator;
 import com.tll.refdata.RefDataType;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.rpc.entity.test.TestAddressService;
@@ -67,23 +67,26 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 		// as it implicitly binds at the MailModule constrctor
 		modules.add(new MailModule(Config.load(new ConfigRef("config-mail.properties"))));
 
-		modules.add(new EntityAssemblerModule() {
+		modules.add(new ModelModule() {
+
+			@Override
+			protected void bindPrimaryKeyGenerator() {
+				bind(IPrimaryKeyGenerator.class).to(SimplePrimaryKeyGenerator.class);
+			}
 
 			@Override
 			protected void bindEntityAssembler() {
 				bind(IEntityAssembler.class).to(TestPersistenceUnitEntityAssembler.class).in(Scopes.SINGLETON);
 			}
 		});
-		modules.add(new ModelModule());
-		modules.add(new ValidationModule());
-		modules.add(new EntityBeanFactoryModule());
-		modules.add(new MockDaoModule() {
+		modules.add(new EGraphModule() {
 
 			@Override
 			protected void bindEntityGraphBuilder() {
 				bind(IEntityGraphBuilder.class).to(TestPersistenceUnitEntityGraphBuilder.class).in(Scopes.SINGLETON);
 			}
 		});
+		modules.add(new MockDaoModule());
 		modules.add(new EntityServiceFactoryModule());
 		modules.add(new LogExceptionHandlerModule());
 		modules.add(new MarshalModule() {
@@ -154,7 +157,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 	public void testLoad() throws Exception {
 		final PersistServiceDelegate delegate = getDelegate();
 
-		final PrimaryKeySearch search = new PrimaryKeySearch(new ModelKey(TestEntityType.ADDRESS, 1, null));
+		final PrimaryKeySearch search = new PrimaryKeySearch(new ModelKey(TestEntityType.ADDRESS, "1", null));
 		final LoadRequest<PrimaryKeySearch> request = new LoadRequest<PrimaryKeySearch>(search);
 		final ModelPayload p = delegate.load(request);
 
@@ -246,7 +249,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 	public void testDelete() throws Exception {
 		final PersistServiceDelegate delegate = getDelegate();
 
-		final ModelKey origMk = new ModelKey(TestEntityType.ADDRESS, 2, null);
+		final ModelKey origMk = new ModelKey(TestEntityType.ADDRESS, "2", null);
 		final ModelPayload p = delegate.purge(new PurgeRequest(origMk));
 		assert p != null;
 		final ModelKey mk = p.getRef();

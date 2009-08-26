@@ -10,27 +10,31 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.math.NumberRange;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.orm.ObjectRetrievalFailureException;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import com.google.inject.Inject;
 import com.tll.criteria.Comparator;
 import com.tll.criteria.Criteria;
+import com.tll.criteria.Criterion;
 import com.tll.criteria.CriterionGroup;
 import com.tll.criteria.DBType;
 import com.tll.criteria.ICriterion;
 import com.tll.criteria.InvalidCriteriaException;
-import com.tll.dao.EntityExistsException;
-import com.tll.dao.EntityNotFoundException;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.IPageResult;
-import com.tll.dao.NonUniqueResultException;
-import com.tll.dao.PersistenceException;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumnBeanComparator;
 import com.tll.dao.Sorting;
+import com.tll.model.EntityBase;
 import com.tll.model.EntityGraph;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
@@ -51,7 +55,7 @@ import com.tll.util.DateRange;
  */
 public class EntityDao implements IEntityDao {
 
-	// private static final Log log = LogFactory.getLog(EntityDao.class);
+	private static final Log log = LogFactory.getLog(EntityDao.class);
 
 	private static enum CompareResult {
 		GT,
@@ -261,8 +265,9 @@ public class EntityDao implements IEntityDao {
 						if(ctn.isSet()) {
 							final Collection<E> clc = entityGraph.getEntitiesByType(criteria.getEntityClass());
 							if(clc != null) {
+								final Criterion cimpl = (Criterion) ctn;
 								for(final E e : clc) {
-									final String pn = ctn.getPropertyName();
+									final String pn = cimpl.getPropertyName();
 									Object pv = null;
 									final BeanWrapper bw = new BeanWrapperImpl(e);
 
@@ -272,7 +277,7 @@ public class EntityDao implements IEntityDao {
 									catch(final RuntimeException re) {
 										throw new InvalidCriteriaException("Invalid " + criteria.getEntityClass() + " property: " + pn);
 									}
-									if(compare(ctn.getValue(), pv, ctn.getComparator(), ctn.isCaseSensitive())) {
+									if(compare(cimpl.getValue(), pv, cimpl.getComparator(), cimpl.isCaseSensitive())) {
 										list.add(e);
 									}
 								}
@@ -329,12 +334,12 @@ public class EntityDao implements IEntityDao {
 		return slist;
 	}
 
-	public <E extends IEntity> List<E> findByIds(Class<E> entityType, final List<Integer> ids, Sorting sorting) {
+	public <E extends IEntity> List<E> findByIds(Class<E> entityType, final Collection<String> ids, Sorting sorting) {
 		final List<E> list = new ArrayList<E>();
 		final Collection<E> clc = entityGraph.getEntitiesByType(entityType);
 		if(clc != null) {
 			for(final E e : clc) {
-				for(final Integer id : ids) {
+				for(final String id : ids) {
 					if(id.equals(e.getId())) {
 						list.add(e);
 					}
@@ -351,15 +356,16 @@ public class EntityDao implements IEntityDao {
 	public <E extends IEntity> E findEntity(final Criteria<E> criteria) throws InvalidCriteriaException {
 		final List<SearchResult<?>> list = find(criteria, null);
 		if(list == null || list.size() < 1) {
-			throw new EntityNotFoundException("No matching entity found.");
+			throw new ObjectRetrievalFailureException(criteria.getEntityClass(), criteria);
 		}
 		else if(list.size() > 1) {
-			throw new NonUniqueResultException("More than one matching entity found.");
+			throw new IncorrectResultSizeDataAccessException(1, list.size());
 		}
 		assert list.size() == 1;
 		return (E) list.get(0).getElement();
 	}
 
+	@SuppressWarnings("serial")
 	public <E extends IEntity> E load(final IBusinessKey<E> key) {
 		if(key == null || !key.isSet()) {
 			throw new IllegalArgumentException("Empty or unset business key");
@@ -373,17 +379,17 @@ public class EntityDao implements IEntityDao {
 					}
 				}
 				catch(final RuntimeException e1) {
-					throw new PersistenceException(e1.getMessage(), e1);
+					throw new DataAccessException(e1.getMessage()) {};
 				}
 			}
 		}
-		throw new EntityNotFoundException(key.descriptor() + " not found.");
+		throw new ObjectRetrievalFailureException(key.getType(), key);
 	}
 
 	public <E extends IEntity> E load(final PrimaryKey<E> key) {
 		final E e = entityGraph.getEntity(key);
 		if(e == null) {
-			throw new EntityNotFoundException(key.descriptor() + " not found.");
+			throw new ObjectRetrievalFailureException(key.getType(), key);
 		}
 		return e;
 	}
@@ -410,13 +416,13 @@ public class EntityDao implements IEntityDao {
 						rslt = e;
 					}
 					else {
-						throw new NonUniqueResultException("More than one matching entity found.");
+						throw new IncorrectResultSizeDataAccessException(1);
 					}
 				}
 			}
 		}
 		if(rslt == null) {
-			throw new EntityNotFoundException(key.descriptor() + " not found.");
+			throw new ObjectRetrievalFailureException(key.getType(), key);
 		}
 		return rslt;
 	}
@@ -428,15 +434,14 @@ public class EntityDao implements IEntityDao {
 		return list;
 	}
 
+	@SuppressWarnings("serial")
 	public <E extends IEntity> E persist(final E entity) {
 
 		// validate the version
 		if(!entityGraph.contains(new PrimaryKey<E>(entity))) {
-			/*
 			if(entity.getVersion() != null) {
-				throw new PersistenceException("Attempt to add non-existant yet versioned entity");
+				throw new DataAccessException("Attempt to add non-existant yet versioned entity") {};
 			}
-			 */
 		}
 		else {
 			// remove old
@@ -448,10 +453,11 @@ public class EntityDao implements IEntityDao {
 			entityGraph.setEntity(entity);
 		}
 		catch(final IllegalStateException e) {
-			throw new EntityExistsException(entity.descriptor() + " already exists.");
+			throw new DataIntegrityViolationException(entity.descriptor() + " already exists.");
 		}
 		catch(final NonUniqueBusinessKeyException e) {
-			throw new EntityExistsException("Non-unique entity " + entity.descriptor() + ": " + e.getMessage());
+			throw new IncorrectResultSizeDataAccessException("Non-unique entity " + entity.descriptor() + ": "
+					+ e.getMessage(), 1);
 		}
 
 		// set date created/modified
@@ -463,7 +469,6 @@ public class EntityDao implements IEntityDao {
 			((ITimeStampEntity) entity).setDateModified(now);
 		}
 
-		/*
 		// increment version
 		Integer version = entity.getVersion();
 		if(version == null) {
@@ -473,7 +478,13 @@ public class EntityDao implements IEntityDao {
 			version++;
 		}
 		entity.setVersion(version);
-		 */
+
+		// handle newness
+		if(entity instanceof EntityBase) {
+			((EntityBase) entity).setNew(false);
+		}
+
+		log.debug("Entity: " + entity + " persisted.");
 
 		return entity;
 	}
@@ -496,13 +507,13 @@ public class EntityDao implements IEntityDao {
 		}
 	}
 
-	public <E extends IEntity> List<E> getEntitiesFromIds(final Class<E> entityClass, final Collection<Integer> ids,
+	public <E extends IEntity> List<E> getEntitiesFromIds(final Class<E> entityClass, final Collection<String> ids,
 			final Sorting sorting) {
 		final List<E> list = new ArrayList<E>();
 		final Collection<E> clc = entityGraph.getEntitiesByType(entityClass);
 		if(clc != null) {
 			for(final E e : clc) {
-				for(final Integer id : ids) {
+				for(final String id : ids) {
 					if(e.getId().equals(id)) {
 						list.add(e);
 					}
@@ -516,13 +527,13 @@ public class EntityDao implements IEntityDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> List<Integer> getIds(final Criteria<E> criteria, Sorting sorting)
+	public <E extends IEntity> List<String> getIds(final Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
 		final List<SearchResult<?>> list = find(criteria, sorting);
 		if(list == null) {
 			return null;
 		}
-		final List<Integer> idlist = new ArrayList<Integer>();
+		final List<String> idlist = new ArrayList<String>();
 		for(final SearchResult<?> e : list) {
 			idlist.add(((E) e.getElement()).getId());
 		}

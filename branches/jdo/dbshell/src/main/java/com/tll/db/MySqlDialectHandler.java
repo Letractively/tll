@@ -95,35 +95,4 @@ public class MySqlDialectHandler implements IDbDialectHandler {
 		return null;
 	}
 	 */
-
-	public RuntimeException translate(RuntimeException re) {
-		/*
-		if(re instanceof PersistenceException) {
-			// HACK: check for ConstraintViolationException since hibernate 3.3.1
-			// doesn't
-			// seem to be translating ConstraintViolationExceptions to
-			// EntityExistsViolations in
-			// AbstractEntityManager.throwPersistenceException(HibernateException)
-			// anymore!!
-			String dem = getDuplicateEntryMessage(extractJdbcException(re));
-			if(dem != null) {
-				return new EntityExistsException(dem);
-			}
-			// END HACK
-			return re;
-		}
-		if(re instanceof JDBCException) {
-			JDBCException je = (JDBCException) re;
-			String dem = getDuplicateEntryMessage(je);
-			if(dem != null) {
-				return new EntityExistsException(dem);
-			}
-		}
-		else if(re instanceof HibernateException) {
-			// TODO any special handling for HibernateException s?
-		}
-		 */
-		// no translation made so return original exception
-		return re;
-	}
 }

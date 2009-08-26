@@ -20,7 +20,7 @@ import com.google.inject.Scopes;
 import com.tll.AbstractInjectedTest;
 import com.tll.common.model.IModelProperty;
 import com.tll.common.model.Model;
-import com.tll.di.EntityBeanFactoryModule;
+import com.tll.di.EGraphModule;
 import com.tll.di.MockDaoModule;
 import com.tll.di.ModelModule;
 import com.tll.model.Account;
@@ -62,15 +62,26 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new ModelModule());
-		modules.add(new EntityBeanFactoryModule());
-		modules.add(new MockDaoModule() {
+		modules.add(new ModelModule() {
+
+			@Override
+			protected void bindPrimaryKeyGenerator() {
+				// TODO
+			}
+
+			@Override
+			protected void bindEntityAssembler() {
+				// TODO
+			}
+		});
+		modules.add(new EGraphModule() {
 
 			@Override
 			protected void bindEntityGraphBuilder() {
 				bind(IEntityGraphBuilder.class).to(TestPersistenceUnitEntityGraphBuilder.class).in(Scopes.SINGLETON);
 			}
 		});
+		modules.add(new MockDaoModule());
 		modules.add(new Module() {
 
 			@Override

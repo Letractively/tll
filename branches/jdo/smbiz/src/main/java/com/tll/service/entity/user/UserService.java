@@ -183,7 +183,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 		updateSecurityContextIfNecessary(user.getUsername(), null, null, true);
 	}
 
-	private User getUserById(Integer userId) throws EntityNotFoundException {
+	private User getUserById(String userId) throws EntityNotFoundException {
 		final User user = dao.load(new PrimaryKey<User>(User.class, userId));
 		if(user == null) throw new EntityNotFoundException("User of id '" + userId + "' not found");
 		return user;
@@ -191,7 +191,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 
 	@Transactional(rollbackFor = {
 		ChangeUserCredentialsFailedException.class, RuntimeException.class })
-		public void setCredentialsById(Integer userId, String newUsername, String newRawPassword)
+		public void setCredentialsById(String userId, String newUsername, String newRawPassword)
 	throws ChangeUserCredentialsFailedException {
 
 		try {
@@ -212,7 +212,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 		}
 	}
 
-	private void setCredentials(Integer userId, String newUsername, String encNewPassword) {
+	private void setCredentials(String userId, String newUsername, String encNewPassword) {
 		/*
 		dao.executeQuery("user.setCredentials", new QueryParam[] {
 			new QueryParam(IEntity.PK_FIELDNAME, PropertyType.INT, userId.intValue()),
@@ -255,7 +255,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 
 	@Transactional(rollbackFor = {
 		ChangeUserCredentialsFailedException.class, RuntimeException.class })
-		public String resetPassword(Integer userId) throws ChangeUserCredentialsFailedException {
+		public String resetPassword(String userId) throws ChangeUserCredentialsFailedException {
 
 		try {
 			// get the user

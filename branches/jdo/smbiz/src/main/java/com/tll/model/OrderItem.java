@@ -6,22 +6,21 @@ import java.util.Set;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.Unique;
+import javax.jdo.annotations.Uniques;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
-
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
 
 /**
  * Order item entity
  * @author jpk
  */
 @PersistenceCapable
-@BusinessObject(businessKeys =
-	@BusinessKeyDef(name = "Order Id and SKU", properties = { "order.id", "sku" }))
-	public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Order>, IAccountRelatedEntity {
+@Uniques(value =
+	@Unique(name = "Order Id and SKU", members = { "order.id", "sku" }))
+public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Order>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 5728694308136658158L;
 
@@ -254,7 +253,7 @@ import com.tll.model.schema.BusinessObject;
 		setOrder(e);
 	}
 
-	public Integer accountId() {
+	public String accountId() {
 		try {
 			return getOrder().getAccount().getId();
 		}
@@ -264,7 +263,7 @@ import com.tll.model.schema.BusinessObject;
 		}
 	}
 
-	public Integer orderId() {
+	public String orderId() {
 		try {
 			return getOrder().getId();
 		}

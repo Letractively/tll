@@ -52,9 +52,12 @@ public class DbDialectHandlerBuilder {
 		if(IDbShell.DB_TYPE_MYSQL.equals(dbType)) {
 			return MySqlDialectHandler.class;
 		}
+		// NOTE: db4o doesn't required a db shell
+		/*
 		else if(IDbShell.DB_TYPE_DB4O.equals(dbType)) {
 
 		}
+		 */
 		throw new IllegalStateException("Unhandled db type: " + dbType);
 	}
 

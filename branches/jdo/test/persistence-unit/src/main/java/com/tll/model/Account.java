@@ -7,30 +7,25 @@ import java.util.Set;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.Unique;
+import javax.jdo.annotations.Uniques;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
 
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
 import com.tll.model.validate.AtLeastOne;
 import com.tll.model.validate.BusinessKeyUniqueness;
 
-@PersistenceCapable
-@BusinessObject(businessKeys = @BusinessKeyDef(name = "Name", properties = INamedEntity.NAME))
 /**
  * Account - Base class for account type entities.
  * @author jpk
  */
+@PersistenceCapable(detachable = "true")
+@Uniques(value = @Unique(name = "Name", members = INamedEntity.NAME))
 public class Account extends NamedTimeStampEntity implements IChildEntity<Account> {
 	private static final long serialVersionUID = 9049425291965389270L;
-
-	static final String ASP_VALUE = "0";
-	static final String ISP_VALUE = "1";
-	static final String MERCHANT_VALUE = "2";
-	static final String CUSTOMER_VALUE = "3";
 
 	public static final int MAXLEN_NAME = 32;
 	public static final int MAXLEN_BILLING_MODEL = 32;
@@ -48,13 +43,13 @@ public class Account extends NamedTimeStampEntity implements IChildEntity<Accoun
 	@Persistent
 	protected Date dateLastCharged;
 
-	@Persistent
+	@Persistent(defaultFetchGroup = "true")
 	protected NestedEntity nestedEntity;
 
-	@Persistent
+	@Persistent(defaultFetchGroup = "true")
 	protected Currency currency;
 
-	@Persistent(mappedBy = "account")
+	@Persistent(mappedBy = "account", defaultFetchGroup = "true")
 	protected Set<AccountAddress> addresses = new LinkedHashSet<AccountAddress>(3);
 
 	/**
@@ -76,9 +71,6 @@ public class Account extends NamedTimeStampEntity implements IChildEntity<Accoun
 		return name;
 	}
 
-	// @ManyToOne(fetch = FetchType.LAZY)
-	// @JoinColumn(name = "parent_aid")
-	@Persistent
 	public Account getParent() {
 		return parent;
 	}

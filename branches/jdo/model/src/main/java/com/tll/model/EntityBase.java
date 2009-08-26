@@ -8,13 +8,12 @@ import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
-import javax.jdo.annotations.Version;
-import javax.jdo.annotations.VersionStrategy;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.tll.model.schema.Managed;
 import com.tll.util.StringUtil;
 
 /**
@@ -22,7 +21,9 @@ import com.tll.util.StringUtil;
  * @author jpk
  */
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
-@Version(strategy = VersionStrategy.VERSION_NUMBER, column = "version")
+// @Version(strategy = VersionStrategy.VERSION_NUMBER, column = "VERSION",
+// extensions = { @Extension(vendorName = "datanucleus", key = "field-name",
+// value = "version") })
 public abstract class EntityBase implements IEntity {
 
 	private static final long serialVersionUID = -4641847785797486723L;
@@ -30,16 +31,22 @@ public abstract class EntityBase implements IEntity {
 	protected static final Log LOG = LogFactory.getLog(EntityBase.class);
 
 	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Integer id;
+	@Persistent(valueStrategy = IdGeneratorStrategy.UUIDSTRING)
+	// @Extension(vendorName = "datanucleus", key = "gae.encoded-pk", value =
+	// "true")
+	private String id;
 
+	@NotPersistent
 	private boolean generated;
 
 	/**
 	 * Manually driven flag to indicate entity newness.
 	 */
 	@NotPersistent
-	private boolean _new;
+	private boolean _new = true;
+
+	@Managed
+	private long version = -1;
 
 	/**
 	 * finds an entity of the given id in the set or null if not found. If the
@@ -174,7 +181,7 @@ public abstract class EntityBase implements IEntity {
 	 * Constructor
 	 * @param id
 	 */
-	public EntityBase(Integer id) {
+	public EntityBase(String id) {
 		this();
 		setId(id);
 	}
@@ -184,22 +191,15 @@ public abstract class EntityBase implements IEntity {
 		return StringUtil.camelCaseToPresentation(entityClass().getSimpleName());
 	}
 
-	// @Id
-	// @Column(name = IEntity.PK_FIELDNAME)
-	// @GeneratedValue(generator = "entity")
 	@NotNull
-	public Integer getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
-	/*
-	@Transient
-	@Persistent(persistenceModifier = PersistenceModifier.NONE)
-	 */
 	public boolean isGenerated() {
 		return generated;
 	}
@@ -209,7 +209,7 @@ public abstract class EntityBase implements IEntity {
 	 * id is generated. It will set the id and set the generated flag to true.
 	 * @param id the id to set
 	 */
-	public void setGenerated(Integer id) {
+	public void setGenerated(String id) {
 		setId(id);
 		generated = true;
 	}
@@ -217,18 +217,13 @@ public abstract class EntityBase implements IEntity {
 	/**
 	 * @return the version
 	 */
-	/*
-	// @Version
-	// @Column(name = "version")
-	@Managed
 	public Integer getVersion() {
-		return version;
+		return Integer.valueOf((int) version);
 	}
 
 	public void setVersion(Integer version) {
-		this.version = version;
+		this.version = version == null ? -1 : version.longValue();
 	}
-	 */
 
 	@Override
 	public boolean equals(Object obj) {
@@ -236,9 +231,10 @@ public abstract class EntityBase implements IEntity {
 		if(obj == null) return false;
 		if(getClass() != obj.getClass()) return false;
 		final EntityBase other = (EntityBase) obj;
-		if(other.entityClass() != entityClass()) return false;
-		assert this.id != null && other.id != null;
-		if(!id.equals(other.id)) return false;
+		if(id == null) {
+			if(other.id != null) return false;
+		}
+		else if(!id.equals(other.id)) return false;
 		return true;
 	}
 
@@ -246,14 +242,13 @@ public abstract class EntityBase implements IEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + entityClass().toString().hashCode();
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
 	@Override
 	public final String toString() {
-		return typeName() + ", id: " + getId()/* + ", version: " + getVersion()*/;
+		return typeName() + ", id: " + getId() + ", version: " + getVersion();
 	}
 
 	public final boolean isNew() {
@@ -267,7 +262,6 @@ public abstract class EntityBase implements IEntity {
 	/*
 	 * May be overridden by sub-classes for a better descriptor.
 	 */
-	// @Transient
 	public String descriptor() {
 		return typeName() + " (Id: " + getId() + ")";
 	}

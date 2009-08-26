@@ -8,6 +8,9 @@ package com.tll.model;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.jdo.annotations.Unique;
+import javax.jdo.annotations.Uniques;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -15,8 +18,6 @@ import com.tll.model.key.BusinessKeyFactory;
 import com.tll.model.key.BusinessKeyUtil;
 import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.NonUniqueBusinessKeyException;
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
 
 /**
  * BusinessKeyFactoryTest
@@ -25,19 +26,19 @@ import com.tll.model.schema.BusinessObject;
 @Test(groups = "model")
 public class BusinessKeyFactoryTest {
 
-	@BusinessObject(businessKeys = {
-		@BusinessKeyDef(name = TestEntity.BK_NAME, properties = { "name" }),
-		@BusinessKeyDef(name = TestEntity.BK_CODE, properties = { "code" }),
-		@BusinessKeyDef(name = TestEntity.BK_AR, properties = {
+	@Uniques(value = {
+		@Unique(name = TestEntity.BK_NAME, members = { "name" }),
+		@Unique(name = TestEntity.BK_CODE, members = { "code" }),
+		@Unique(name = TestEntity.BK_AR, members = {
 			"authNum", "refNum" })
 	})
 	static class TestEntity extends EntityBase {
 		private static final long serialVersionUID = 1L;
-		
+
 		public static final String BK_NAME = "Name";
 		public static final String BK_CODE = "Code";
 		public static final String BK_AR = "Auth Num & Ref Num";
-		
+
 		private String name;
 		private int code;
 		private String authNum;
@@ -81,10 +82,10 @@ public class BusinessKeyFactoryTest {
 		}
 
 	}
-	
+
 	private TestEntity stubTestEntity() {
-		TestEntity e = new TestEntity();
-		e.setId(1);
+		final TestEntity e = new TestEntity();
+		e.setId("1");
 		e.setName("name");
 		e.setCode(1);
 		e.setAuthNum("authNum");
@@ -93,15 +94,15 @@ public class BusinessKeyFactoryTest {
 	}
 
 	public void testBusinessKeyFactoryCreateFromClass() throws Exception {
-		IBusinessKey<TestEntity>[] bks = BusinessKeyFactory.create(TestEntity.class);
+		final IBusinessKey<TestEntity>[] bks = BusinessKeyFactory.create(TestEntity.class);
 		assert bks != null && bks.length == 3 : "Incorrect number of created business keys.";
 	}
 
 	public void testBusinessKeyFactoryCreateFromInstance() throws Exception {
-		TestEntity e = stubTestEntity();
-		IBusinessKey<TestEntity>[] bks = BusinessKeyFactory.create(e);
+		final TestEntity e = stubTestEntity();
+		final IBusinessKey<TestEntity>[] bks = BusinessKeyFactory.create(e);
 		assert bks != null && bks.length == 3 : "Incorrect number of created business keys.";
-		for(IBusinessKey<TestEntity> bk : bks) {
+		for(final IBusinessKey<TestEntity> bk : bks) {
 			if(TestEntity.BK_NAME.equals(bk.getBusinessKeyName())) {
 				assert bk.getPropertyNames() != null && bk.getPropertyNames().length == 1;
 			}
@@ -114,22 +115,22 @@ public class BusinessKeyFactoryTest {
 			else {
 				Assert.fail("Unknown business key name");
 			}
-			for(String pn : bk.getPropertyNames()) {
+			for(final String pn : bk.getPropertyNames()) {
 				assert bk.getPropertyValue(pn) != null;
 			}
 		}
 	}
 
 	public void testBusinessKeyFactoryIsBusinessKeyUnique() throws Exception {
-		TestEntity[] arr = new TestEntity[] {
+		final TestEntity[] arr = new TestEntity[] {
 			stubTestEntity(), stubTestEntity()
 		};
-		List<TestEntity> list = Arrays.asList(arr);
+		final List<TestEntity> list = Arrays.asList(arr);
 		try {
 			BusinessKeyUtil.isBusinessKeyUnique(list);
 			Assert.fail("Business key unique check failed.");
 		}
-		catch(NonUniqueBusinessKeyException e) {
+		catch(final NonUniqueBusinessKeyException e) {
 			// expected
 		}
 	}
