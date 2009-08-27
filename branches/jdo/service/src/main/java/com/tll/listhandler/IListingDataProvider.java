@@ -14,6 +14,9 @@ import com.tll.model.IEntity;
  * IListHandlerDataProvider - Definition for providing data to
  * {@link IListHandler}s. This definition supports in memory collection paging,
  * result set paging and id list based paging.
+ * <p>
+ * <b>NOTE: </b>All methods are subject to throwing a
+ * <code>org.springframework.dao.DataAccessException</code>
  * @see ListHandlerType
  * @author jpk
  */

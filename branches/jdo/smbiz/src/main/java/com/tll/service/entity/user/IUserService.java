@@ -3,11 +3,11 @@
  */
 package com.tll.service.entity.user;
 
-import javax.persistence.EntityExistsException;
 import javax.validation.ValidationException;
 
 import org.springframework.security.userdetails.UserDetailsService;
 
+import com.tll.dao.EntityExistsException;
 import com.tll.model.Account;
 import com.tll.model.User;
 import com.tll.service.ChangeUserCredentialsFailedException;

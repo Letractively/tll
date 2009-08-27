@@ -11,12 +11,12 @@ import javax.validation.ValidatorFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.orm.ObjectRetrievalFailureException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
+import com.tll.dao.EntityExistsException;
+import com.tll.dao.EntityNotFoundException;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
@@ -109,12 +109,7 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 
 	public E persist(E entity) throws EntityExistsException, ConstraintViolationException {
 		validate(entity);
-		try {
-			return dao.persist(entity);
-		}
-		catch(final DataIntegrityViolationException e) {
-			throw new EntityExistsException(e.getMessage(), e);
-		}
+		return dao.persist(entity);
 	}
 
 	public Collection<E> persistAll(Collection<E> entities) throws ConstraintViolationException {
@@ -132,22 +127,12 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 
 	@Transactional(readOnly = true)
 	public E load(PrimaryKey<E> key) throws EntityNotFoundException {
-		try {
-			return dao.load(key);
-		}
-		catch(final ObjectRetrievalFailureException e) {
-			throw new EntityNotFoundException(e.getMessage(), e);
-		}
+		return dao.load(key);
 	}
 
 	@Transactional(readOnly = true)
 	public E load(IBusinessKey<E> key) throws EntityNotFoundException {
-		try {
-			return dao.load(key);
-		}
-		catch(final ObjectRetrievalFailureException e) {
-			throw new EntityNotFoundException(e.getMessage(), e);
-		}
+		return dao.load(key);
 	}
 
 	@Transactional(readOnly = true)

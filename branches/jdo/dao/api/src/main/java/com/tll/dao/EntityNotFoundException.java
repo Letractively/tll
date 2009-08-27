@@ -1,17 +1,18 @@
 /**
  * The Logic Lab
  * @author jpk
- * @since Aug 14, 2009
+ * @since Aug 27, 2009
  */
-package com.tll.service.entity;
+package com.tll.dao;
+
 
 /**
  * EntityNotFoundException
  * @author jpk
  */
-public class EntityNotFoundException extends Exception {
+public class EntityNotFoundException extends RuntimeException {
 
-	private static final long serialVersionUID = -5413016803346743016L;
+	private static final long serialVersionUID = -7233687566073361502L;
 
 	/**
 	 * Constructor

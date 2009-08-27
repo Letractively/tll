@@ -2,12 +2,12 @@ package com.tll.service.entity.account;
 
 import java.util.Collection;
 
-import javax.persistence.EntityExistsException;
 import javax.validation.ConstraintViolationException;
 
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
+import com.tll.dao.EntityExistsException;
 import com.tll.model.Account;
 import com.tll.model.Customer;
 import com.tll.model.InterfaceOptionAccount;

@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.orm.ObjectRetrievalFailureException;
@@ -72,79 +73,87 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 		}
 
 		@Override
-		public <R extends IEntity> R persist(R entity) {
-			return rawDao.persist(entity);
+		public int executeQuery(String queryName, IQueryParam[] params) {
+			return rawDao.executeQuery(queryName, params);
 		}
 
 		@Override
-		public <R extends IEntity> R load(PrimaryKey<R> key) {
-			return rawDao.load(key);
-		}
-
-		@Override
-		public <R extends IEntity> R load(IBusinessKey<R> key) {
-			return rawDao.load(key);
-		}
-
-		@Override
-		public <R extends IEntity> void purge(R entity) {
-			rawDao.purge(entity);
-		}
-
-		@Override
-		public <R extends IEntity> List<R> loadAll(Class<R> entityType) {
-			return rawDao.loadAll(entityType);
-		}
-
-		@Override
-		public <R extends IEntity> void purgeAll(Collection<R> entities) {
-			rawDao.purgeAll(entities);
-		}
-
-		@Override
-		public <R extends IEntity> Collection<R> persistAll(Collection<R> entities) {
-			return rawDao.persistAll(entities);
-		}
-
-		@Override
-		public <R extends IEntity> List<R> findEntities(Criteria<R> criteria, Sorting sorting)
-		throws InvalidCriteriaException {
-			return rawDao.findEntities(criteria, sorting);
-		}
-
-		@Override
-		public <R extends IEntity> R findEntity(Criteria<R> criteria) throws InvalidCriteriaException {
-			return rawDao.findEntity(criteria);
-		}
-
-		@Override
-		public <R extends IEntity> List<R> findByIds(Class<R> entityType, Collection<String> ids, Sorting sorting) {
-			return rawDao.findByIds(entityType, ids, sorting);
-		}
-
-		@Override
-		public <R extends IEntity> List<String> getIds(Criteria<R> criteria, Sorting sorting)
-		throws InvalidCriteriaException {
-			return rawDao.getIds(criteria, sorting);
-		}
-
-		@Override
-		public <R extends IEntity> List<SearchResult<?>> find(Criteria<R> criteria, Sorting sorting)
+		public <E extends IEntity> List<SearchResult<?>> find(Criteria<E> criteria, Sorting sorting)
 		throws InvalidCriteriaException {
 			return rawDao.find(criteria, sorting);
 		}
 
 		@Override
-		public <R extends IEntity> IPageResult<SearchResult<?>> getPage(Criteria<R> criteria, Sorting sorting, int offset,
+		public <E extends IEntity> List<E> findByIds(Class<E> entityType, Collection<String> ids, Sorting sorting) {
+			return rawDao.findByIds(entityType, ids, sorting);
+		}
+
+		@Override
+		public <E extends IEntity> List<E> findEntities(Criteria<E> criteria, Sorting sorting)
+		throws InvalidCriteriaException {
+			return rawDao.findEntities(criteria, sorting);
+		}
+
+		@Override
+		public <E extends IEntity> E findEntity(Criteria<E> criteria) throws InvalidCriteriaException,
+		EntityNotFoundException, NonUniqueResultException, DataAccessException {
+			return rawDao.findEntity(criteria);
+		}
+
+		@Override
+		public <E extends IEntity> List<String> getIds(Criteria<E> criteria, Sorting sorting)
+		throws InvalidCriteriaException {
+			return rawDao.getIds(criteria, sorting);
+		}
+
+		@Override
+		public <E extends IEntity> IPageResult<SearchResult<?>> getPage(Criteria<E> criteria, Sorting sorting, int offset,
 				int pageSize) throws InvalidCriteriaException {
 			return rawDao.getPage(criteria, sorting, offset, pageSize);
 		}
 
 		@Override
-		public <N extends INamedEntity> N load(NameKey<N> nameKey) {
+		public <E extends IEntity> E load(IBusinessKey<E> key) throws EntityNotFoundException, DataAccessException {
+			return rawDao.load(key);
+		}
+
+		@Override
+		public <N extends INamedEntity> N load(NameKey<N> nameKey) throws EntityNotFoundException,
+		NonUniqueResultException, DataAccessException {
 			return rawDao.load(nameKey);
 		}
-	}
+
+		@Override
+		public <E extends IEntity> E load(PrimaryKey<E> key) throws EntityNotFoundException, DataAccessException {
+			return rawDao.load(key);
+		}
+
+		@Override
+		public <E extends IEntity> List<E> loadAll(Class<E> entityType) throws DataAccessException {
+			return rawDao.loadAll(entityType);
+		}
+
+		@Override
+		public <E extends IEntity> E persist(E entity) throws DataAccessException {
+			return rawDao.persist(entity);
+		}
+
+		@Override
+		public <E extends IEntity> Collection<E> persistAll(Collection<E> entities) throws DataAccessException {
+			return rawDao.persistAll(entities);
+		}
+
+		@Override
+		public <E extends IEntity> void purge(E entity) throws DataAccessException {
+			rawDao.purge(entity);
+		}
+
+		@Override
+		public <E extends IEntity> void purgeAll(Collection<E> entities) throws DataAccessException {
+			rawDao.purgeAll(entities);
+		}
+
+	} // EntityDaoTestDecorator
 
 	/**
 	 * Compare a clc of entity ids and entites ensuring the id list is referenced

@@ -7,6 +7,8 @@ import javax.validation.ConstraintViolationException;
 
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
+import com.tll.dao.EntityExistsException;
+import com.tll.dao.EntityNotFoundException;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.IListingDataProvider;
 import com.tll.model.IEntity;
@@ -15,9 +17,12 @@ import com.tll.model.key.PrimaryKey;
 import com.tll.service.IService;
 
 /**
- * Base entity interface.
+ * IEntityService - Entity service definition.
+ * <p>
+ * <b>NOTE: </b>All methods are subject to throwing a
+ * <code>org.springframework.dao.DataAccessException</code>
  * @author jpk
- * @param <E>
+ * @param <E> the entity type
  */
 public interface IEntityService<E extends IEntity> extends IListingDataProvider, IService {
 
@@ -76,8 +81,9 @@ public interface IEntityService<E extends IEntity> extends IListingDataProvider,
 	 * Removes the specified entity from the system. The input entity should have
 	 * a valid id.
 	 * @param entity the entity to purge
+	 * @throws EntityNotFoundException
 	 */
-	void purge(E entity);
+	void purge(E entity) throws EntityNotFoundException;
 
 	/**
 	 * Removes the collection of entities from the system. If an entity does not

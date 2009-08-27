@@ -3,8 +3,6 @@ package com.tll.service.entity.user;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
 import javax.validation.ValidatorFactory;
 
@@ -26,16 +24,21 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.inject.Inject;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
+import com.tll.criteria.QueryParam;
+import com.tll.dao.EntityExistsException;
+import com.tll.dao.EntityNotFoundException;
 import com.tll.dao.IEntityDao;
 import com.tll.model.Account;
 import com.tll.model.Authority;
 import com.tll.model.AuthorityRoles;
 import com.tll.model.EntityCache;
+import com.tll.model.IEntity;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.IUserRef;
 import com.tll.model.User;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
+import com.tll.model.schema.PropertyType;
 import com.tll.service.ChangeUserCredentialsFailedException;
 import com.tll.service.entity.NamedEntityService;
 
@@ -213,14 +216,10 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 	}
 
 	private void setCredentials(String userId, String newUsername, String encNewPassword) {
-		/*
 		dao.executeQuery("user.setCredentials", new QueryParam[] {
-			new QueryParam(IEntity.PK_FIELDNAME, PropertyType.INT, userId.intValue()),
+			new QueryParam(IEntity.PK_FIELDNAME, PropertyType.STRING, userId),
 			new QueryParam("username", PropertyType.STRING, newUsername),
 			new QueryParam("password", PropertyType.STRING, encNewPassword) });
-		 */
-		// TODO re-impl
-		throw new UnsupportedOperationException();
 	}
 
 	@Transactional(rollbackFor = {

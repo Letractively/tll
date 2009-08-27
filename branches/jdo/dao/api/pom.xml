@@ -95,14 +95,6 @@
           <artifactId>commons-lang</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>com.google.code.guice</groupId>
-          <artifactId>guice</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-annotations</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>org.hibernate</groupId>
           <artifactId>hibernate-validator</artifactId>
         </exclusion>

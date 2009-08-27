@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.inject.Inject;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
+import com.tll.dao.EntityExistsException;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
@@ -22,7 +23,6 @@ import com.tll.model.AccountStatus;
 import com.tll.model.EntityCache;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityAssembler;
-import com.tll.service.entity.EntityExistsException;
 import com.tll.service.entity.NamedEntityService;
 import com.tll.service.entity.account.AccountHistoryContext.AccountHistoryOp;
 

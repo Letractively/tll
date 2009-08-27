@@ -98,7 +98,7 @@ import com.tll.service.entity.IEntityServiceFactory;
 	protected void beforeClass() {
 		super.beforeClass();
 		if(!mock) {
-			getDbSupport().getDbShell().restub();
+			getDbShell().restub();
 		}
 	}
 

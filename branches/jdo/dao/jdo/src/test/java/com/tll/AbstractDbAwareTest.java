@@ -8,6 +8,8 @@ package com.tll;
 import javax.jdo.PersistenceManager;
 
 import com.tll.config.Config;
+import com.tll.db.DbShellBuilder;
+import com.tll.db.IDbShell;
 
 /**
  * AbstractDbAwareTest - Provides extended classes with a {@link DbTestSupport}
@@ -19,6 +21,7 @@ public abstract class AbstractDbAwareTest extends AbstractInjectedTest {
 	private Config config;
 	private PersistenceManager pm;
 	private DbTestSupport dbSupport;
+	private IDbShell dbShell;
 
 	/**
 	 * @return the config instance.
@@ -38,6 +41,18 @@ public abstract class AbstractDbAwareTest extends AbstractInjectedTest {
 			dbSupport = injector.getInstance(DbTestSupport.class);
 		}
 		return dbSupport;
+	}
+
+	protected IDbShell getDbShell() {
+		if(dbShell == null) {
+			try {
+				dbShell = DbShellBuilder.getDbShell(getConfig(), null);
+			}
+			catch(final Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return dbShell;
 	}
 
 	/**

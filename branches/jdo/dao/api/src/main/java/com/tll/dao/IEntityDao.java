@@ -4,10 +4,9 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.orm.ObjectRetrievalFailureException;
 
 import com.tll.criteria.Criteria;
+import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
@@ -29,18 +28,20 @@ public interface IEntityDao extends IDao {
 	 * @param <E> The entity type
 	 * @param key the primary key
 	 * @return the entity
-	 * @throws ObjectRetrievalFailureException
+	 * @throws EntityNotFoundException
+	 * @throws DataAccessException
 	 */
-	<E extends IEntity> E load(PrimaryKey<E> key) throws ObjectRetrievalFailureException;
+	<E extends IEntity> E load(PrimaryKey<E> key) throws EntityNotFoundException, DataAccessException;
 
 	/**
 	 * Loads a single entity specified by a business key.
 	 * @param <E> The entity type
 	 * @param key the primary key
 	 * @return the entity
-	 * @throws ObjectRetrievalFailureException
+	 * @throws EntityNotFoundException
+	 * @throws DataAccessException
 	 */
-	<E extends IEntity> E load(IBusinessKey<E> key) throws ObjectRetrievalFailureException;
+	<E extends IEntity> E load(IBusinessKey<E> key) throws EntityNotFoundException, DataAccessException;
 
 	/**
 	 * Loads the named entity by a given name.
@@ -48,13 +49,13 @@ public interface IEntityDao extends IDao {
 	 * @param nameKey the name key
 	 * @return the never <code>null</code> named entity (unless an exception is
 	 *         thrown).
-	 * @throws ObjectRetrievalFailureException When no entities satisfy the name
-	 *         key.
-	 * @throws IncorrectResultSizeDataAccessException When more than one entity
-	 *         satisfies the given name key.
+	 * @throws EntityNotFoundException When no entities satisfy the name key.
+	 * @throws NonUniqueResultException When more than one entity satisfies the
+	 *         given name key.
+	 * @throws DataAccessException
 	 */
-	<N extends INamedEntity> N load(NameKey<N> nameKey) throws ObjectRetrievalFailureException,
-	IncorrectResultSizeDataAccessException;
+	<N extends INamedEntity> N load(NameKey<N> nameKey) throws EntityNotFoundException, NonUniqueResultException,
+	DataAccessException;
 
 	/**
 	 * Returns all the entities managed by this DAO. This method will only include
@@ -63,8 +64,9 @@ public interface IEntityDao extends IDao {
 	 * @param entityType Then entity class
 	 * @return Never <code>null</code> list of all found entities of the given
 	 *         type which may be empty.
+	 * @throws DataAccessException
 	 */
-	<E extends IEntity> List<E> loadAll(Class<E> entityType);
+	<E extends IEntity> List<E> loadAll(Class<E> entityType) throws DataAccessException;
 
 	/**
 	 * Creates or updates the specified entity in the persistence store.
@@ -74,8 +76,10 @@ public interface IEntityDao extends IDao {
 	 * @param <E> The entity type
 	 * @param entity the entity to persist
 	 * @return the merged persistence context instance of the entity.
+	 * @throws EntityExistsException
+	 * @throws DataAccessException
 	 */
-	<E extends IEntity> E persist(E entity);
+	<E extends IEntity> E persist(E entity) throws EntityExistsException, DataAccessException;
 
 	/**
 	 * Updates all the entities specifed in the input. This method should be used
@@ -85,24 +89,28 @@ public interface IEntityDao extends IDao {
 	 * @param entities Collection of entities to be updated
 	 * @return separate collection of the resultant merged entities or
 	 *         <code>null</code> if the entities argument is <code>null</code>.
+	 * @throws DataAccessException
 	 */
-	<E extends IEntity> Collection<E> persistAll(Collection<E> entities);
+	<E extends IEntity> Collection<E> persistAll(Collection<E> entities) throws DataAccessException;
 
 	/**
 	 * Physical deletion of the specified entity. Use this method with caution as
 	 * the entity will be deleted forever!
 	 * @param <E> The entity type
 	 * @param entity the entity to be deleted
+	 * @throws EntityNotFoundException
+	 * @throws DataAccessException
 	 */
-	<E extends IEntity> void purge(E entity);
+	<E extends IEntity> void purge(E entity) throws EntityNotFoundException, DataAccessException;
 
 	/**
 	 * Physical deletion of all entities specified in the input. Use this method
 	 * with caution as the entities will be deleted forever!
 	 * @param <E> The entity type
 	 * @param entities Collection of entities to be purged
+	 * @throws DataAccessException
 	 */
-	<E extends IEntity> void purgeAll(Collection<E> entities);
+	<E extends IEntity> void purgeAll(Collection<E> entities) throws DataAccessException;
 
 	/**
 	 * Use when the expected result is a single entity.
@@ -111,13 +119,13 @@ public interface IEntityDao extends IDao {
 	 * @return The non-<code>null</code> found entity.
 	 * @throws InvalidCriteriaException When the criteria is <code>null</code> or
 	 *         invalid.
-	 * @throws ObjectRetrievalFailureException When no entities satisfy the given
-	 *         criteria
-	 * @throws IncorrectResultSizeDataAccessException When more than one entity
-	 *         satisfies the given criteria
+	 * @throws EntityNotFoundException When no entities satisfy the given criteria
+	 * @throws NonUniqueResultException When more than one entity satisfies the
+	 *         given criteria
+	 * @throws DataAccessException
 	 */
-	<E extends IEntity> E findEntity(Criteria<E> criteria) throws InvalidCriteriaException,
-	ObjectRetrievalFailureException, IncorrectResultSizeDataAccessException;
+	<E extends IEntity> E findEntity(Criteria<E> criteria) throws InvalidCriteriaException, EntityNotFoundException,
+	NonUniqueResultException, DataAccessException;
 
 	/**
 	 * Finds matching entities given criteria.
@@ -127,8 +135,10 @@ public interface IEntityDao extends IDao {
 	 * @return List of entities or empty list if none found
 	 * @throws InvalidCriteriaException When the criteria is <code>null</code> or
 	 *         found to be invalid.
+	 * @throws DataAccessException
 	 */
-	<E extends IEntity> List<E> findEntities(Criteria<E> criteria, Sorting sorting) throws InvalidCriteriaException;
+	<E extends IEntity> List<E> findEntities(Criteria<E> criteria, Sorting sorting) throws InvalidCriteriaException,
+	DataAccessException;
 
 	/**
 	 * Generic criteria driven search method.
@@ -142,9 +152,10 @@ public interface IEntityDao extends IDao {
 	 *         be empty if no matching results are found.
 	 * @throws InvalidCriteriaException When the criteria is <code>null</code> or
 	 *         found to be invalid.
+	 * @throws DataAccessException
 	 */
 	<E extends IEntity> List<SearchResult<?>> find(Criteria<E> criteria, Sorting sorting)
-	throws InvalidCriteriaException;
+	throws InvalidCriteriaException, DataAccessException;
 
 	/**
 	 * Returns a list of entities that satisfy the given id list. This method will
@@ -154,8 +165,10 @@ public interface IEntityDao extends IDao {
 	 * @param ids the list id entity ids
 	 * @param sorting
 	 * @return List of entities or empty list if none found
+	 * @throws DataAccessException
 	 */
-	<E extends IEntity> List<E> findByIds(Class<E> entityType, Collection<String> ids, Sorting sorting);
+	<E extends IEntity> List<E> findByIds(Class<E> entityType, Collection<String> ids, Sorting sorting)
+	throws DataAccessException;
 
 	/**
 	 * Retrieves the ids of the entities that match the given criteria. Used for
@@ -167,23 +180,11 @@ public interface IEntityDao extends IDao {
 	 *         entities are found.
 	 * @throws InvalidCriteriaException When the criteria is <code>null</code> or
 	 *         found to be invalid.
+	 * @throws DataAccessException
 	 */
 	<E extends IEntity> List<String> getIds(Criteria<E> criteria, Sorting sorting)
-	throws InvalidCriteriaException;
-
-	/**
-	 * Retrieves entities from a collection of ids. Used for id based list
-	 * handling.
-	 * @param <E> The entity type
-	 * @param entityClass The entity class the ids represent.
-	 * @param ids List of ids of the entities to retrieve.
-	 * @param sorting the sorting directive May be null in which case the sorting
-	 *        of the results is "undefined".
-	 * @return list of matching entities.
-	 */
-	// <E extends IEntity> List<E> getEntitiesFromIds(Class<E> entityClass,
-	// Collection<String> ids,
-	// Sorting sorting);
+	throws InvalidCriteriaException,
+	DataAccessException;
 
 	/**
 	 * Returns a sub-set of results using record set paging.
@@ -198,8 +199,18 @@ public interface IEntityDao extends IDao {
 	 * @throws InvalidCriteriaException When the criteria is <code>null</code> or
 	 *         found to be invalid or when the sorting directive is
 	 *         <code>null</code>.
+	 * @throws DataAccessException
 	 */
 	<E extends IEntity> IPageResult<SearchResult<?>> getPage(Criteria<E> criteria, Sorting sorting,
 			int offset, int pageSize)
-			throws InvalidCriteriaException;
+			throws InvalidCriteriaException, DataAccessException;
+
+	/**
+	 * Executes a non-select named query.
+	 * @param queryName
+	 * @param params
+	 * @return The number of affected entities.
+	 * @throws DataAccessException
+	 */
+	int executeQuery(String queryName, IQueryParam[] params) throws DataAccessException;
 }

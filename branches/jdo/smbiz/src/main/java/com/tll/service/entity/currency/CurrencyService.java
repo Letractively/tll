@@ -7,10 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.inject.Inject;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
+import com.tll.dao.EntityNotFoundException;
 import com.tll.dao.IEntityDao;
 import com.tll.model.Currency;
 import com.tll.model.IEntityAssembler;
-import com.tll.service.entity.EntityNotFoundException;
 import com.tll.service.entity.NamedEntityService;
 
 /**

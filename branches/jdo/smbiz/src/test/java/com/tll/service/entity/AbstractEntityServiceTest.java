@@ -69,13 +69,13 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 	protected void beforeClass() {
 		super.beforeClass();
 		// ensure test db is created and cleared
-		getDbSupport().getDbShell().create();
+		getDbShell().create();
 	}
 
 	@Override
 	protected void beforeMethod() {
 		super.beforeMethod();
-		getDbSupport().getDbShell().clear(); // reset
+		getDbShell().clear(); // reset
 	}
 
 	protected final IEntityDao getEntityDao() {

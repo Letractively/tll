@@ -5,8 +5,8 @@
  */
 package com.tll.service;
 
+import com.tll.dao.EntityNotFoundException;
 import com.tll.model.IUserRef;
-import com.tll.service.entity.EntityNotFoundException;
 
 /**
  * IForgotPasswordService - Contract for resetting and providing a user's

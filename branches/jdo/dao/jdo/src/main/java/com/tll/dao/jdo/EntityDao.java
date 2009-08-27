@@ -13,7 +13,6 @@ import javax.jdo.Query;
 import javax.jdo.annotations.PersistenceAware;
 
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.orm.ObjectRetrievalFailureException;
 import org.springframework.orm.jdo.JdoCallback;
 import org.springframework.orm.jdo.support.JdoDaoSupport;
@@ -27,8 +26,10 @@ import com.tll.criteria.ICriterion;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.InvalidCriteriaException;
+import com.tll.dao.EntityNotFoundException;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.IPageResult;
+import com.tll.dao.NonUniqueResultException;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
 import com.tll.model.IEntity;
@@ -149,13 +150,14 @@ public class EntityDao extends JdoDaoSupport implements IEntityDao {
 		return (List<E>) processCriteria(criteria, sorting);
 	}
 
-	public <E extends IEntity> E findEntity(Criteria<E> criteria) throws InvalidCriteriaException {
+	public <E extends IEntity> E findEntity(Criteria<E> criteria) throws InvalidCriteriaException,
+			EntityNotFoundException, NonUniqueResultException {
 		final List<E> list = findEntities(criteria, null);
 		if(list == null || list.size() < 1) {
-			throw new ObjectRetrievalFailureException("No matching entity found.", null);
+			throw new EntityNotFoundException("No matching entity found.", null);
 		}
 		else if(list.size() > 1) {
-			throw new IncorrectResultSizeDataAccessException("More than one matching entity found.", 1);
+			throw new NonUniqueResultException("More than one matching entity found.");
 		}
 		assert list.size() == 1;
 		return list.get(0);
@@ -494,5 +496,10 @@ public class EntityDao extends JdoDaoSupport implements IEntityDao {
 			}
 
 		};
+	}
+
+	@Override
+	public int executeQuery(String queryName, IQueryParam[] params) throws DataAccessException {
+		return 0;
 	}
 }
