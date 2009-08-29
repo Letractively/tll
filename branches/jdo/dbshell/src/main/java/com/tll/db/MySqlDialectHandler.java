@@ -4,6 +4,7 @@
 package com.tll.db;
 
 
+
 /**
  * MySql implementation of {@link IDbDialectHandler}
  * @author jpk
@@ -52,47 +53,4 @@ public class MySqlDialectHandler implements IDbDialectHandler {
 		final String msg = re.getMessage();
 		return msg != null && (msg.indexOf(Integer.toString(ER_DB_DROP_EXISTS)) >= 0);
 	}
-
-	/**
-	 * Interrogates the given {@link JDBCException} returning either the
-	 * appropriate duplicate error message or <code>null</code> if the given
-	 * {@link JDBCException} does not stem from a dupliate entry violation.
-	 * @param je The {@link JDBCException} to interrogate
-	 * @return The appropriate duplicate error message or <code>null</code>
-	 */
-	/*
-	private String getDuplicateEntryMessage(JDBCException je) {
-		final SQLException sqle = (je == null ? null : je.getSQLException());
-		if(sqle != null) {
-			final int ec = sqle.getErrorCode();
-			if(ec == ER_DUP_ENTRY || ec == ER_DUP_ENTRY_AUTOINCREMENT_CASE || ec == ER_DUP_ENTRY_WITH_KEY_NAME) {
-				final String msg = sqle.getMessage();
-				if(msg.indexOf(PK_PREFIX) != -1) {
-					return "Duplicate primary key";
-				}
-				if(msg.startsWith("Duplicate entry '")) {
-					return WordUtils.capitalize(msg.substring(17, msg.lastIndexOf('\'')));
-				}
-				return "Duplicate database record"; // fallback
-			}
-		}
-		return null;
-	}
-	 */
-
-	/**
-	 * Extracts a JDBCException from a Throwble.
-	 * @return The found JDBCException or <code>null</code> if not found
-	 */
-	/*
-	private JDBCException extractJdbcException(Throwable t) {
-		if(t instanceof JDBCException) return (JDBCException) t;
-		do {
-			if((t = ExceptionUtils.getCause(t)) instanceof JDBCException) {
-				return (JDBCException) t;
-			}
-		} while(t != null);
-		return null;
-	}
-	 */
 }

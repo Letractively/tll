@@ -25,6 +25,6 @@ public class SimplePrimaryKeyGenerator implements IPrimaryKeyGenerator {
 			nextId = Integer.valueOf(0);
 		}
 		idMap.put(rootEntityClass, ++nextId);
-		return rootEntityClass.toString().hashCode() + "-" + nextId.toString();
+		return nextId.toString();
 	}
 }

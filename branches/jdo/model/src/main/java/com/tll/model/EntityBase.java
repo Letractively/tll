@@ -46,7 +46,7 @@ public abstract class EntityBase implements IEntity {
 	private boolean _new = true;
 
 	@Managed
-	private long version = -1;
+	private Integer version;
 
 	/**
 	 * finds an entity of the given id in the set or null if not found. If the
@@ -218,11 +218,11 @@ public abstract class EntityBase implements IEntity {
 	 * @return the version
 	 */
 	public Integer getVersion() {
-		return Integer.valueOf((int) version);
+		return version;
 	}
 
 	public void setVersion(Integer version) {
-		this.version = version == null ? -1 : version.longValue();
+		this.version = version;
 	}
 
 	@Override

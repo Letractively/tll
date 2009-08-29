@@ -23,18 +23,6 @@ import com.tll.model.EntityBeanFactory.EntityBeanFactoryParam;
  */
 public abstract class EGraphModule extends AbstractModule {
 
-	/**
-	 * EntityGraphType annotation
-	 */
-	/*
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target( {
-		ElementType.FIELD, ElementType.PARAMETER })
-	@BindingAnnotation
-	public @interface EntityGraphType {
-	}
-	 */
-
 	public static final String DEFAULT_FILENAME = "mock-entities.xml";
 
 	private static final Log log = LogFactory.getLog(EGraphModule.class);

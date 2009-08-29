@@ -556,7 +556,7 @@ public class EntityDao implements IEntityDao {
 	}
 
 	@Override
-	public int executeQuery(String queryName, IQueryParam[] params) throws DataAccessException {
+	public int executeQuery(String queryName, IQueryParam[] params) {
 		throw new UnsupportedOperationException();
 	}
 

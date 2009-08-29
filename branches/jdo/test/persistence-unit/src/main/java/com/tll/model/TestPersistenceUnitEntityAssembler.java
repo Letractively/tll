@@ -40,11 +40,9 @@ public final class TestPersistenceUnitEntityAssembler implements IEntityFactory,
 		E e = null;
 		if(AccountAddress.class.equals(entityType)) {
 			final AccountAddress ae = createEntity(AccountAddress.class, generate);
-			/*
 			if(entityProvider != null) {
 				ae.setAccount(entityProvider.getEntityByType(Account.class));
 			}
-			 */
 			Address a = entityProvider == null ? null : entityProvider.getEntityByType(Address.class);
 			if(a == null) {
 				a = createEntity(Address.class, generate);

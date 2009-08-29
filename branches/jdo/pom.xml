@@ -49,12 +49,15 @@
 
   <repositories>
     <!-- for hibernate validator -->
+    <!-- 
     <repository>
       <id>jboss</id>
       <url>http://repository.jboss.com/maven2/</url>
     </repository>
+    -->
 
     <!-- data nucleus -->
+    <!-- 
     <repository>
       <id>DataNucleus_Repos</id>
       <name>DataNucleus Repository</name>
@@ -72,14 +75,17 @@
       <url>http://download.java.net/maven/1/</url>
       <layout>legacy</layout>
     </repository>
+    -->
   </repositories>
 
   <pluginRepositories>
+    <!-- 
     <pluginRepository>
       <id>DataNucleus_2</id>
       <url>http://www.datanucleus.org/downloads/maven2/</url>
       <layout>legacy</layout>
     </pluginRepository>
+    -->
   </pluginRepositories>
 
   <modules>

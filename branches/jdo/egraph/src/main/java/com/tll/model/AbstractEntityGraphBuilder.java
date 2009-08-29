@@ -94,7 +94,7 @@ public abstract class AbstractEntityGraphBuilder implements IEntityGraphBuilder 
 			throw new IllegalStateException("Unable to add entity to the graph: " + e);
 		}
 		// since we are now in the graph, mimic persistence behavior:
-		// e.setVersion(0);
+		e.setVersion(0);
 		if(e instanceof ITimeStampEntity) {
 			final Date now = new Date();
 			((ITimeStampEntity) e).setDateCreated(now);

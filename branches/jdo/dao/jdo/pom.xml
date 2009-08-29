@@ -21,6 +21,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <skip>true</skip><!-- temporarily turn off jdo dao -->
           <suiteXmlFiles>
             <suiteXmlFile>${pom.basedir}/src/test/resources/testng.xml</suiteXmlFile>
           </suiteXmlFiles>
@@ -55,10 +56,12 @@
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
     </dependency>
+    <!-- 
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
     </dependency>
+    -->
     
     <!-- jdo -->
     <dependency>
@@ -70,7 +73,6 @@
       <artifactId>datanucleus-core</artifactId>
     </dependency>
     
-    <!-- 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
@@ -79,7 +81,6 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-orm</artifactId>
     </dependency>
-    -->
 
     <dependency>
       <groupId>com.tll</groupId>
@@ -144,10 +145,12 @@
       <scope>runtime</scope>
     </dependency>
     
+    <!-- 
     <dependency>
       <groupId>db4o</groupId>
       <artifactId>db4o</artifactId>
     </dependency>
+    -->
     <dependency>
       <groupId>org.datanucleus</groupId>
       <artifactId>datanucleus-db4o</artifactId>

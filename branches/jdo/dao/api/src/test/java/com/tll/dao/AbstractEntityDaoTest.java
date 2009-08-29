@@ -14,9 +14,6 @@ import java.util.List;
 import java.util.Stack;
 
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DataRetrievalFailureException;
-import org.springframework.orm.ObjectRetrievalFailureException;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -362,7 +359,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 					entityHandler.teardownTestEntity(dao.load(pk));
 					setComplete();
 				}
-				catch(final DataRetrievalFailureException e) {
+				catch(final EntityNotFoundException e) {
 					// ok
 				}
 				finally {
@@ -487,17 +484,15 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 						+ entityHandler.entityClass());
 				entityHandler.verifyLoadedEntityState(e);
 			}
-			catch(final DataIntegrityViolationException ex) {
+			catch(final NonUniqueResultException ex) {
 				// ok
 			}
-			/*
-			catch(final QueryException ex) {
+			catch(final/*QueryException*/Exception ex) {
 				// ok - this means the INamedEntity doesn't have the getName() method
 				// mapped to "name" which is possible in some cases where we impl
 				// INamedEntity but map INamedEntity.getName() to another ORM property
 				// and declare annotatively INamedEntity.getName() as @Transient
 			}
-			 */
 			endTransaction();
 		}
 		else {
@@ -572,7 +567,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 			e = getEntityFromDb(new PrimaryKey<IEntity>(e));
 			Assert.assertNull(e, "The entity was not purged");
 		}
-		catch(final ObjectRetrievalFailureException ex) {
+		catch(final EntityNotFoundException ex) {
 			// expected
 		}
 		endTransaction();
@@ -704,8 +699,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 	}
 
 	/**
-	 * Tests for the proper throwing of {@link DataIntegrityViolationException} in
-	 * the dao.
+	 * Tests for the proper throwing of {@link EntityExistsException} in the dao.
 	 * @throws Exception
 	 */
 	final void daoDuplicationException() throws Exception {
@@ -729,7 +723,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 			endTransaction();
 			Assert.fail("A duplicate exception should have occurred for entity type: " + entityHandler.entityClass());
 		}
-		catch(final DataIntegrityViolationException de) {
+		catch(final EntityExistsException de) {
 			// expected
 		}
 	}
@@ -737,12 +731,11 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 	final void daoPurgeNewEntity() throws Exception {
 		final IEntity e = getTestEntity();
 		final PrimaryKey<IEntity> pk = new PrimaryKey<IEntity>(e);
-		dao.purge(e);
 		try {
-			dao.load(pk);
+			dao.purge(e);
 			Assert.fail("An EntityNotFoundException should have occurred (" + pk + ")");
 		}
-		catch(final DataIntegrityViolationException ex) {
+		catch(final EntityNotFoundException ex) {
 			// expected
 		}
 	}
