@@ -36,7 +36,7 @@ public final class EntityGraph implements IEntityProvider {
 	}
 
 	/**
-	 * Removes all entity from the graph.
+	 * Removes all entities from the graph.
 	 */
 	public void clear() {
 		graph.clear();

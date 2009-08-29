@@ -14,13 +14,10 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.inject.Binder;
-import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.Provider;
 import com.google.inject.Scopes;
-import com.google.inject.Stage;
 import com.google.inject.TypeLiteral;
 import com.tll.AbstractDbAwareTest;
 import com.tll.DbTestSupport;
@@ -30,15 +27,12 @@ import com.tll.dao.IEntityDao;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
-import com.tll.db.DbShellBuilder;
-import com.tll.db.IDbShell;
 import com.tll.di.EGraphModule;
 import com.tll.di.JdoDaoModule;
 import com.tll.di.ModelModule;
 import com.tll.model.Address;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntityAssembler;
-import com.tll.model.IEntityGraphBuilder;
 import com.tll.model.TestPersistenceUnitEntityAssembler;
 import com.tll.model.key.IPrimaryKeyGenerator;
 import com.tll.model.key.SimplePrimaryKeyGenerator;
@@ -84,8 +78,6 @@ public class PagingSearchListHandlerTest extends AbstractDbAwareTest {
 
 	private DbTestSupport dbSupport;
 
-	private IDbShell db;
-
 	/**
 	 * Constructor
 	 */
@@ -107,43 +99,19 @@ public class PagingSearchListHandlerTest extends AbstractDbAwareTest {
 
 	@Override
 	protected void beforeClass() {
-		// create the db
-		db =
-			Guice.createInjector(Stage.DEVELOPMENT, new Module() {
-
-				@Override
-				public void configure(Binder b) {
-					b.bind(IDbShell.class).toProvider(new Provider<IDbShell>() {
-
-						@Inject
-						IEntityGraphBuilder egb;
-
-						@SuppressWarnings("synthetic-access")
-						@Override
-						public IDbShell get() {
-							try {
-								return DbShellBuilder.getDbShell(config, egb);
-							}
-							catch(final Exception e) {
-								throw new RuntimeException(e);
-							}
-						}
-					}).in(Scopes.SINGLETON);
-				}
-			}).getInstance(IDbShell.class);
-		db.create();
-		db.clear();
-
 		super.beforeClass();
+
+		// create the db
+		getDbShell().create();
+		getDbShell().clear();
+
 	}
 
 	@Override
 	protected void afterClass() {
 		super.afterClass();
-
 		// drop the db
-		db.delete();
-		db = null;
+		getDbShell().delete();
 	}
 
 	@Override

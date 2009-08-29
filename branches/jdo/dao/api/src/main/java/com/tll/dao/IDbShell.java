@@ -3,7 +3,7 @@
  * @author jpk
  * @since Jul 2, 2009
  */
-package com.tll.db;
+package com.tll.dao;
 
 /**
  * IDbShell - Definition for handling stubbing ops for a db based on a defined

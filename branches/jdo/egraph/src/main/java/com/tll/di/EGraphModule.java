@@ -14,7 +14,7 @@ import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.EntityGraph;
-import com.tll.model.IEntityGraphBuilder;
+import com.tll.model.IEntityGraphPopulator;
 import com.tll.model.EntityBeanFactory.EntityBeanFactoryParam;
 
 /**
@@ -43,7 +43,7 @@ public abstract class EGraphModule extends AbstractModule {
 	}
 
 	/**
-	 * Binds an {@link IEntityGraphBuilder} impl.
+	 * Binds an {@link IEntityGraphPopulator} impl.
 	 */
 	protected abstract void bindEntityGraphBuilder();
 
@@ -61,18 +61,21 @@ public abstract class EGraphModule extends AbstractModule {
 				});
 		bind(EntityBeanFactory.class).in(Scopes.SINGLETON);
 
-		// IEntityGraphBuilder
+		// IEntityGraphPopulator
 		bindEntityGraphBuilder();
 
 		// EntityGraph
 		bind(EntityGraph.class).toProvider(new Provider<EntityGraph>() {
 
 			@Inject
-			IEntityGraphBuilder builder;
+			IEntityGraphPopulator builder;
 
 			@Override
 			public EntityGraph get() {
-				return builder.buildEntityGraph();
+				final EntityGraph graph = new EntityGraph();
+				builder.setEntityGraph(graph);
+				builder.populateEntityGraph();
+				return graph;
 			}
 		}).in(Scopes.SINGLETON);
 

@@ -3,7 +3,7 @@
  * @author jpk
  * Feb 9, 2008
  */
-package com.tll.db;
+package com.tll.dao.jdo;
 
 import java.io.IOException;
 import java.net.URI;
@@ -21,6 +21,7 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import com.google.inject.Inject;
+import com.tll.dao.IDbShell;
 
 /**
  * JdbcDbShell - Simple JDBC based way to communicate with a data store.

@@ -14,7 +14,7 @@ import com.google.inject.Scopes;
 import com.tll.dao.IEntityDaoTestHandler;
 import com.tll.dao.TestEntityDaoTestHandler;
 import com.tll.di.EGraphModule;
-import com.tll.model.IEntityGraphBuilder;
+import com.tll.model.IEntityGraphPopulator;
 import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
 
 
@@ -37,7 +37,7 @@ public class SimpleEntityDaoTest extends AbstractJdoEntityDaoTest {
 
 			@Override
 			protected void bindEntityGraphBuilder() {
-				bind(IEntityGraphBuilder.class).to(TestPersistenceUnitEntityGraphBuilder.class).in(Scopes.SINGLETON);
+				bind(IEntityGraphPopulator.class).to(TestPersistenceUnitEntityGraphBuilder.class).in(Scopes.SINGLETON);
 			}
 		});
 		super.addModules(modules);

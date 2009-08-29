@@ -35,7 +35,7 @@ import com.tll.di.ModelModule;
 import com.tll.di.RefDataModule;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.model.IEntityAssembler;
-import com.tll.model.IEntityGraphBuilder;
+import com.tll.model.IEntityGraphPopulator;
 import com.tll.model.TestPersistenceUnitEntityAssembler;
 import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
 import com.tll.server.marshal.MarshalOptions;
@@ -86,7 +86,7 @@ import com.tll.server.rpc.listing.test.TestNamedQueryResolver;
 
 			@Override
 			protected void bindEntityGraphBuilder() {
-				bind(IEntityGraphBuilder.class).to(TestPersistenceUnitEntityGraphBuilder.class).in(Scopes.SINGLETON);
+				bind(IEntityGraphPopulator.class).to(TestPersistenceUnitEntityGraphBuilder.class).in(Scopes.SINGLETON);
 			}
 		});
 		modules.add(new MockDaoModule());

@@ -12,7 +12,7 @@ import com.tll.di.EGraphModule;
 import com.tll.di.MockDaoModule;
 import com.tll.di.ModelModule;
 import com.tll.model.IEntity;
-import com.tll.model.IEntityGraphBuilder;
+import com.tll.model.IEntityGraphPopulator;
 import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
 import com.tll.model.key.IPrimaryKeyGenerator;
 import com.tll.model.key.PrimaryKey;
@@ -52,7 +52,7 @@ import com.tll.model.key.SimplePrimaryKeyGenerator;
 
 			@Override
 			protected void bindEntityGraphBuilder() {
-				bind(IEntityGraphBuilder.class).to(TestPersistenceUnitEntityGraphBuilder.class).in(Scopes.SINGLETON);
+				bind(IEntityGraphPopulator.class).to(TestPersistenceUnitEntityGraphBuilder.class).in(Scopes.SINGLETON);
 			}
 		});
 		modules.add(new MockDaoModule());

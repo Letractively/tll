@@ -17,7 +17,7 @@ import com.tll.model.key.NonUniqueBusinessKeyException;
  * EntityGraphBuilderHelper
  * @author jpk
  */
-public abstract class AbstractEntityGraphBuilder implements IEntityGraphBuilder {
+public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopulator {
 
 	/**
 	 * Responsible for generating prototypical entity instances that are subject
@@ -28,18 +28,28 @@ public abstract class AbstractEntityGraphBuilder implements IEntityGraphBuilder 
 	/**
 	 * The entity graph.
 	 */
-	private final EntityGraph graph = new EntityGraph();
+	private EntityGraph graph;
 
 	/**
 	 * Constructor
 	 * @param entityBeanFactory The mock entity factory
 	 */
-	public AbstractEntityGraphBuilder(EntityBeanFactory entityBeanFactory) {
-		super();
+	public AbstractEntityGraphPopulator(EntityBeanFactory entityBeanFactory) {
 		this.entityBeanFactory = entityBeanFactory;
 	}
 
-	public final EntityGraph buildEntityGraph() throws IllegalStateException {
+	@Override
+	public final EntityGraph getEntityGraph() {
+		return graph;
+	}
+
+	@Override
+	public final void setEntityGraph(EntityGraph graph) {
+		this.graph = graph;
+	}
+
+	@Override
+	public final void populateEntityGraph() throws IllegalStateException {
 		graph.clear();
 		stub();
 		try {
@@ -48,7 +58,6 @@ public abstract class AbstractEntityGraphBuilder implements IEntityGraphBuilder 
 		catch(final NonUniqueBusinessKeyException e) {
 			throw new IllegalStateException("Non-business key unique entity graph", e);
 		}
-		return graph;
 	}
 
 	/**

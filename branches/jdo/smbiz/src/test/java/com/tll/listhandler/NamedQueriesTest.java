@@ -32,7 +32,7 @@ import com.tll.di.JdoDaoModule;
 import com.tll.di.MockDaoModule;
 import com.tll.di.ModelModule;
 import com.tll.model.IEntity;
-import com.tll.model.IEntityGraphBuilder;
+import com.tll.model.IEntityGraphPopulator;
 import com.tll.model.SmbizEntityGraphBuilder;
 import com.tll.model.schema.PropertyType;
 import com.tll.service.entity.IEntityServiceFactory;
@@ -120,7 +120,7 @@ import com.tll.service.entity.IEntityServiceFactory;
 
 				@Override
 				protected void bindEntityGraphBuilder() {
-					bind(IEntityGraphBuilder.class).to(SmbizEntityGraphBuilder.class).in(Scopes.SINGLETON);
+					bind(IEntityGraphPopulator.class).to(SmbizEntityGraphBuilder.class).in(Scopes.SINGLETON);
 				}
 			});
 			modules.add(new MockDaoModule());

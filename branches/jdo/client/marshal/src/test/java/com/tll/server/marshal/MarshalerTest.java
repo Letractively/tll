@@ -28,7 +28,7 @@ import com.tll.model.EntityBeanFactory;
 import com.tll.model.EntityGraph;
 import com.tll.model.FieldEnum;
 import com.tll.model.IEntity;
-import com.tll.model.IEntityGraphBuilder;
+import com.tll.model.IEntityGraphPopulator;
 import com.tll.model.IScalar;
 import com.tll.model.NestedEntity;
 import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
@@ -78,7 +78,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 
 			@Override
 			protected void bindEntityGraphBuilder() {
-				bind(IEntityGraphBuilder.class).to(TestPersistenceUnitEntityGraphBuilder.class).in(Scopes.SINGLETON);
+				bind(IEntityGraphPopulator.class).to(TestPersistenceUnitEntityGraphBuilder.class).in(Scopes.SINGLETON);
 			}
 		});
 		modules.add(new MockDaoModule());
@@ -107,7 +107,9 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 	public void testCircularEntity() throws Exception {
 		final TestPersistenceUnitEntityGraphBuilder entityGraphBuilder =
 			new TestPersistenceUnitEntityGraphBuilder(getEntityBeanFactory());
-		final EntityGraph entityGraph = entityGraphBuilder.buildEntityGraph();
+		final EntityGraph entityGraph = new EntityGraph();
+		entityGraphBuilder.setEntityGraph(entityGraph);
+		entityGraphBuilder.populateEntityGraph();
 		final Marshaler marshaler = getMarshaler();
 
 		// wire up a circular entity

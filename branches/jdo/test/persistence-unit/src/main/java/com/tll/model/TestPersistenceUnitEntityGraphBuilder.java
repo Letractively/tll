@@ -14,7 +14,7 @@ import com.google.inject.Inject;
  * TestPersistenceUnitEntityGraphBuilder
  * @author jpk
  */
-public final class TestPersistenceUnitEntityGraphBuilder extends AbstractEntityGraphBuilder {
+public final class TestPersistenceUnitEntityGraphBuilder extends AbstractEntityGraphPopulator {
 
 	private static final int numAccounts = 3;
 

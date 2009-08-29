@@ -5,21 +5,17 @@
  */
 package com.tll;
 
-import javax.jdo.PersistenceManager;
-
 import com.tll.config.Config;
-import com.tll.db.DbShellBuilder;
-import com.tll.db.IDbShell;
+import com.tll.dao.IDbShell;
 
 /**
- * AbstractDbAwareTest - Provides extended classes with a {@link DbTestSupport}
- * ref.
+ * AbstractDbAwareTest - Provides {@link IDbShell} and db trans support to test
+ * classes.
  * @author jpk
  */
 public abstract class AbstractDbAwareTest extends AbstractInjectedTest {
 
 	private Config config;
-	private PersistenceManager pm;
 	private DbTestSupport dbSupport;
 	private IDbShell dbShell;
 
@@ -43,25 +39,10 @@ public abstract class AbstractDbAwareTest extends AbstractInjectedTest {
 		return dbSupport;
 	}
 
-	protected IDbShell getDbShell() {
+	protected final IDbShell getDbShell() {
 		if(dbShell == null) {
-			try {
-				dbShell = DbShellBuilder.getDbShell(getConfig(), null);
-			}
-			catch(final Exception e) {
-				throw new RuntimeException(e);
-			}
+			dbShell = injector.getInstance(IDbShell.class);
 		}
 		return dbShell;
-	}
-
-	/**
-	 * @return A fresh {@link PersistenceManager} instance.
-	 */
-	protected final PersistenceManager getPersistenceManager() {
-		if(pm == null) {
-			pm = injector.getInstance(PersistenceManager.class);
-		}
-		return pm;
 	}
 }

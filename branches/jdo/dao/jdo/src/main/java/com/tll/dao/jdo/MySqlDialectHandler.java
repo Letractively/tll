@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.tll.db;
+package com.tll.dao.jdo;
 
 
 

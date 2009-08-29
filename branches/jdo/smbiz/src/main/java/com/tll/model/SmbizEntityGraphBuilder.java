@@ -13,7 +13,7 @@ import com.tll.util.EnumUtil;
  * SmbizEntityGraphBuilder - Builds an {@link SmbizEntityGraphBuilder} instance.
  * @author jpk
  */
-public final class SmbizEntityGraphBuilder extends AbstractEntityGraphBuilder {
+public final class SmbizEntityGraphBuilder extends AbstractEntityGraphPopulator {
 
 	private static final int numIsps = 3;
 	private static final int numMerchants = numIsps * numIsps;

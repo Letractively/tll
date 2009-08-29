@@ -20,12 +20,10 @@ import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.DbTestSupport;
 import com.tll.dao.AbstractEntityDaoTest;
-import com.tll.db.DbShellBuilder;
-import com.tll.db.IDbShell;
+import com.tll.dao.IDbShell;
 import com.tll.di.JdoDaoModule;
 import com.tll.di.ModelModule;
 import com.tll.model.IEntity;
-import com.tll.model.IEntityGraphBuilder;
 import com.tll.model.key.IPrimaryKeyGenerator;
 import com.tll.model.key.JdoPrimaryKeyGenerator;
 import com.tll.model.key.PrimaryKey;
@@ -58,22 +56,6 @@ public abstract class AbstractJdoEntityDaoTest extends AbstractEntityDaoTest {
 
 			@Override
 			public void configure(Binder b) {
-				b.bind(IDbShell.class).toProvider(new Provider<IDbShell>() {
-
-					@Inject
-					IEntityGraphBuilder egb;
-
-					@SuppressWarnings("synthetic-access")
-					@Override
-					public IDbShell get() {
-						try {
-							return DbShellBuilder.getDbShell(config, egb);
-						}
-						catch(final Exception e) {
-							throw new RuntimeException(e);
-						}
-					}
-				}).in(Scopes.SINGLETON);
 				b.bind(DbTestSupport.class).toProvider(new Provider<DbTestSupport>() {
 
 					@Inject
