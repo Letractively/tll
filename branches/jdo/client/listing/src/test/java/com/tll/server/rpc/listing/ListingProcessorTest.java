@@ -11,40 +11,26 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
-import com.google.inject.Provider;
-import com.google.inject.Scopes;
 import com.tll.AbstractInjectedTest;
 import com.tll.common.data.ListingOp;
 import com.tll.common.data.ListingPayload;
 import com.tll.common.data.ListingRequest;
 import com.tll.common.data.RemoteListingDefinition;
-import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
 import com.tll.common.search.test.TestAddressSearch;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.dao.Sorting;
-import com.tll.di.EGraphModule;
 import com.tll.di.EntityServiceFactoryModule;
-import com.tll.di.ListingModule;
 import com.tll.di.LogExceptionHandlerModule;
 import com.tll.di.MailModule;
-import com.tll.di.MarshalModule;
 import com.tll.di.MockDaoModule;
-import com.tll.di.ModelModule;
 import com.tll.di.RefDataModule;
+import com.tll.di.TestEGraphModule;
+import com.tll.di.TestListingModule;
+import com.tll.di.TestMarshalModule;
+import com.tll.di.TestModelModule;
 import com.tll.listhandler.ListHandlerType;
-import com.tll.model.IEntityAssembler;
-import com.tll.model.IEntityGraphPopulator;
-import com.tll.model.TestPersistenceUnitEntityAssembler;
-import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
-import com.tll.server.marshal.MarshalOptions;
-import com.tll.server.rpc.entity.IEntityTypeResolver;
-import com.tll.server.rpc.entity.IMarshalOptionsResolver;
-import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
-import com.tll.server.rpc.listing.test.TestListingDataProviderResolver;
-import com.tll.server.rpc.listing.test.TestListingSearchTranslator;
-import com.tll.server.rpc.listing.test.TestNamedQueryResolver;
 
 /**
  * ListingProcessorTest - Tests the {@link ListingProcessor}.
@@ -70,69 +56,13 @@ import com.tll.server.rpc.listing.test.TestNamedQueryResolver;
 		// as it implicitly binds at the MailModule constrctor
 		modules.add(new MailModule(Config.load(new ConfigRef("config-mail.properties"))));
 
-		modules.add(new ModelModule() {
-
-			@Override
-			protected void bindPrimaryKeyGenerator() {
-				// TODO
-			}
-
-			@Override
-			protected void bindEntityAssembler() {
-				bind(IEntityAssembler.class).to(TestPersistenceUnitEntityAssembler.class).in(Scopes.SINGLETON);
-			}
-		});
-		modules.add(new EGraphModule() {
-
-			@Override
-			protected void bindEntityGraphBuilder() {
-				bind(IEntityGraphPopulator.class).to(TestPersistenceUnitEntityGraphBuilder.class).in(Scopes.SINGLETON);
-			}
-		});
+		modules.add(new TestModelModule());
+		modules.add(new TestEGraphModule());
 		modules.add(new MockDaoModule());
 		modules.add(new EntityServiceFactoryModule());
 		modules.add(new LogExceptionHandlerModule());
-		modules.add(new MarshalModule() {
-
-			@Override
-			protected void bindMarshalOptionsResolver() {
-				bind(IMarshalOptionsResolver.class).toProvider(new Provider<IMarshalOptionsResolver>() {
-
-					@Override
-					public IMarshalOptionsResolver get() {
-						return new IMarshalOptionsResolver() {
-
-							@Override
-							public MarshalOptions resolve(IEntityType entityType) throws IllegalArgumentException {
-								return MarshalOptions.NO_REFERENCES;
-							}
-						};
-					}
-				}).in(Scopes.SINGLETON);
-			}
-
-			@Override
-			protected void bindEntityTypeResolver() {
-				bind(IEntityTypeResolver.class).to(TestEntityTypeResolver.class).in(Scopes.SINGLETON);
-			}
-		});
-		modules.add(new ListingModule() {
-
-			@Override
-			protected void bindNamedQueryResolver() {
-				bind(INamedQueryResolver.class).to(TestNamedQueryResolver.class).in(Scopes.SINGLETON);
-			}
-
-			@Override
-			protected void bindListingSearchTranslator() {
-				bind(IListingSearchTranslator.class).to(TestListingSearchTranslator.class).in(Scopes.SINGLETON);
-			}
-
-			@Override
-			protected void bindListingDataProviderResolver() {
-				bind(IListingDataProviderResolver.class).to(TestListingDataProviderResolver.class).in(Scopes.SINGLETON);
-			}
-		});
+		modules.add(new TestMarshalModule());
+		modules.add(new TestListingModule());
 	}
 
 	@Override

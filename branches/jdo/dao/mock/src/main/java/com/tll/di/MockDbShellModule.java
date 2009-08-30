@@ -10,10 +10,14 @@ import org.apache.commons.logging.LogFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
+import com.google.inject.Scopes;
 import com.tll.config.Config;
 import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
 import com.tll.dao.IDbShell;
+import com.tll.dao.mock.MockDbShell;
+import com.tll.model.EntityGraph;
+import com.tll.model.IEntityGraphPopulator;
 
 /**
  * MockDbShellModule
@@ -29,18 +33,7 @@ public class MockDbShellModule extends AbstractModule implements IConfigAware {
 	 */
 	public static enum ConfigKeys implements IConfigKey {
 
-		DB_TYPE("db.type"),
-		DB_NAME("db.name"),
-
-		DB_NAME_ROOT("db.name.root"),
-		DB_URL("db.url"),
-		DB_URL_PREFIX("db.urlprefix"),
-		DB_USERNAME("db.username"),
-		DB_PASSWORD("db.password"),
-
-		DB_RESOURCE_SCHEMA("db.resource.schema"),
-		DB_RESOURCE_STUB("db.resource.stub"),
-		DB_RESOURCE_DELETE("db.resource.delete");
+		EGRAPH_POPULATOR_CLASSNAME("egraph.populator.classname");
 
 		private final String key;
 
@@ -87,12 +80,31 @@ public class MockDbShellModule extends AbstractModule implements IConfigAware {
 
 		bind(IDbShell.class).toProvider(new Provider<IDbShell>() {
 
+			@SuppressWarnings("unchecked")
 			@Override
 			public IDbShell get() {
-				return null;
+				final String cn = config.getString(ConfigKeys.EGRAPH_POPULATOR_CLASSNAME.getKey());
+				Class<? extends IEntityGraphPopulator> clz;
+				try {
+					clz = (Class<? extends IEntityGraphPopulator>) Class.forName(cn);
+				}
+				catch(final ClassNotFoundException e1) {
+					throw new IllegalStateException(e1);
+				}
+				IEntityGraphPopulator r;
+				try {
+					r = clz.newInstance();
+				}
+				catch(final InstantiationException e) {
+					throw new IllegalStateException(e);
+				}
+				catch(final IllegalAccessException e) {
+					throw new IllegalStateException(e);
+				}
+				return new MockDbShell(new EntityGraph(), r);
 			}
 
-		});
+		}).in(Scopes.SINGLETON);
 	}
 
 }

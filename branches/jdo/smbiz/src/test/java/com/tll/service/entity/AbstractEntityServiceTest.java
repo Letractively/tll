@@ -38,10 +38,6 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 		modules.add(new ModelModule() {
 
 			@Override
-			protected void bindPrimaryKeyGenerator() {
-			}
-
-			@Override
 			protected void bindEntityAssembler() {
 			}
 		});

@@ -34,8 +34,6 @@ import com.tll.model.Address;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.TestPersistenceUnitEntityAssembler;
-import com.tll.model.key.IPrimaryKeyGenerator;
-import com.tll.model.key.SimplePrimaryKeyGenerator;
 import com.tll.service.entity.EntityService;
 import com.tll.service.entity.IEntityService;
 
@@ -117,11 +115,6 @@ public class PagingSearchListHandlerTest extends AbstractDbAwareTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		modules.add(new ModelModule() {
-
-			@Override
-			protected void bindPrimaryKeyGenerator() {
-				bind(IPrimaryKeyGenerator.class).to(SimplePrimaryKeyGenerator.class).in(Scopes.SINGLETON);
-			}
 
 			@Override
 			protected void bindEntityAssembler() {

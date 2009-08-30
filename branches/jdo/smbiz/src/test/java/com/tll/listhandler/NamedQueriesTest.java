@@ -108,10 +108,6 @@ import com.tll.service.entity.IEntityServiceFactory;
 		modules.add(new ModelModule() {
 
 			@Override
-			protected void bindPrimaryKeyGenerator() {
-			}
-
-			@Override
 			protected void bindEntityAssembler() {
 			}
 		});

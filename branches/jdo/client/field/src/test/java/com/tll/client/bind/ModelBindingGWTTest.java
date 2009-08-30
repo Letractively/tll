@@ -87,7 +87,7 @@ public class ModelBindingGWTTest extends GWTTestCase {
 		verifyInSync(left, right);
 
 		// set bound properties on the left..
-		left.setProperty(Model.ID_PROPERTY, 33);
+		left.setProperty(Model.ID_PROPERTY, Integer.toString(33));
 		left.setProperty(Model.NAME_PROPERTY, "new name");
 		left.setProperty(Model.DATE_CREATED_PROPERTY, new Date());
 		left.setProperty(Model.DATE_MODIFIED_PROPERTY, new Date());

@@ -14,7 +14,6 @@ import com.google.inject.Scopes;
 import com.tll.model.EntityFactory;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.IEntityFactory;
-import com.tll.model.key.IPrimaryKeyGenerator;
 import com.tll.model.schema.ISchemaInfo;
 import com.tll.model.schema.SchemaInfo;
 
@@ -25,20 +24,12 @@ import com.tll.model.schema.SchemaInfo;
 public abstract class ModelModule extends AbstractModule {
 
 	/**
-	 * Binds an {@link IPrimaryKeyGenerator} impl
-	 */
-	protected abstract void bindPrimaryKeyGenerator();
-
-	/**
 	 * Responsible for binding an {@link IEntityAssembler} implmementation.
 	 */
 	protected abstract void bindEntityAssembler();
 
 	@Override
 	protected void configure() {
-		// IPrimaryKeyGenerator
-		bindPrimaryKeyGenerator();
-
 		// IEntityFactory
 		bind(IEntityFactory.class).to(EntityFactory.class).in(Scopes.SINGLETON);
 

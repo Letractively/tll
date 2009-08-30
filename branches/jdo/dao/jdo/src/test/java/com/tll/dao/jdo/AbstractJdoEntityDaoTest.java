@@ -24,8 +24,6 @@ import com.tll.dao.IDbShell;
 import com.tll.di.JdoDaoModule;
 import com.tll.di.ModelModule;
 import com.tll.model.IEntity;
-import com.tll.model.key.IPrimaryKeyGenerator;
-import com.tll.model.key.JdoPrimaryKeyGenerator;
 import com.tll.model.key.PrimaryKey;
 
 /**
@@ -40,11 +38,6 @@ public abstract class AbstractJdoEntityDaoTest extends AbstractEntityDaoTest {
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
 		modules.add(new ModelModule() {
-
-			@Override
-			protected void bindPrimaryKeyGenerator() {
-				bind(IPrimaryKeyGenerator.class).to(JdoPrimaryKeyGenerator.class).in(Scopes.SINGLETON);
-			}
 
 			@Override
 			protected void bindEntityAssembler() {

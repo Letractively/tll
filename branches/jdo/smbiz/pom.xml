@@ -78,7 +78,7 @@
     <plugins>
 
       <!-- 
-        Compile Time Weave @Transactional aspects irregardless of mock/orm profile
+        Compile Time Weave @Transactional aspects irregardless of mock/jdo profile
         as we are profile agnostic and build jars for both.
         NOTE: this weaving doesn't adversly affect debugging when in mock mode.
               We are still able to do line level debugging.
@@ -187,7 +187,7 @@
                 b.generateGwtConstantsFile();
                 b.generateWebXml();
                 b.copyWebappResources();
-                b.stubDbIfNecessary()
+                //b.stubDbIfNecessary()
                 //println 'temp disabled'
               ]]></source>
             </configuration>
@@ -646,12 +646,6 @@
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
       <classifier>testassets</classifier>
-      <version>${project.parent.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-dbshell</artifactId>
       <version>${project.parent.version}</version>
       <scope>test</scope>
     </dependency>

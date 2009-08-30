@@ -13,12 +13,11 @@
     <param-value>
       com.tll.di.RefDataModule
       com.tll.di.MailModule
-      com.tll.di.ValidationModule
-      com.tll.di.ModelModule
-      com.tll.di.MockEntityFactoryModule
-      com.tll.di.TestMockDaoModule
-      com.tll.di.TestEntityAssemblerModule
+      com.tll.di.TestModelModule
+      com.tll.di.TestEGraphModule
+      com.tll.di.MockDaoModule
       com.tll.di.EntityServiceFactoryModule
+      com.tll.di.TestMarshalModule
       com.tll.di.LogExceptionHandlerModule
       com.tll.di.TestListingModule
     </param-value>

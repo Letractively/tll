@@ -542,13 +542,10 @@ public final class Marshaler {
 
 		if(e.getId() == null) {
 			// assume new and set generated id
-			// TODO verify
-			/*
 			if(e.getVersion() != null) {
 				throw new RuntimeException("Encountered an entity (" + e.descriptor()
 						+ ") w/o an id having a non-null version.");
 			}
-			 */
 			entityFactory.setGenerated(e);
 		}
 

@@ -56,7 +56,7 @@ public final class SchemaInfo implements ISchemaInfo {
 			return field.getName();
 		}
 
-	} // FieldInfo
+	} // PersistProperty
 
 	private static final Log log = LogFactory.getLog(SchemaInfo.class);
 

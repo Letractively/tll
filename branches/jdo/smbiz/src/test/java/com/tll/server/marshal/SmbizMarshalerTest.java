@@ -51,10 +51,6 @@ import com.tll.util.CommonUtil;
 		modules.add(new ModelModule() {
 
 			@Override
-			protected void bindPrimaryKeyGenerator() {
-			}
-
-			@Override
 			protected void bindEntityAssembler() {
 			}
 		});

@@ -8,20 +8,16 @@ import javax.jdo.annotations.Uniques;
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
 
-import com.tll.model.validate.PhoneNumber;
-import com.tll.model.validate.PhoneNumbers;
-import com.tll.model.validate.PostalCode;
-
 /**
  * @author jpk
  */
 @PersistenceCapable
-@PhoneNumbers(value = {
-	@PhoneNumber(phonePropertyName = "phone"), @PhoneNumber(phonePropertyName = "fax") })
-	@PostalCode()
-	@Uniques(value = @Unique(name = "Address 1 and Postal Code", members = {
-		"address1", "postalCode" }))
-	public class Address extends EntityBase {
+//@PhoneNumbers(value = {
+//	@PhoneNumber(phonePropertyName = "phone"), @PhoneNumber(phonePropertyName = "fax") })
+//@PostalCode() temp disable
+@Uniques(value = @Unique(name = "Address 1 and Postal Code", members = {
+	"address1", "postalCode" }))
+public class Address extends EntityBase {
 
 	private static final long serialVersionUID = 69385466934038047L;
 

@@ -24,7 +24,7 @@
       <useTransitiveDependencies>true</useTransitiveDependencies>
       <useTransitiveFiltering>true</useTransitiveFiltering>
       <excludes>
-        <exclude>com.tll:tll-dao-orm</exclude>
+        <exclude>com.tll:tll-dao-jdo</exclude>
       </excludes>
       <includes>
         <include>com.tll:*</include>

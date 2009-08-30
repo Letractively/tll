@@ -16,6 +16,8 @@ import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
 import com.tll.dao.IEntityDao;
 import com.tll.model.JdoEntityListener;
+import com.tll.model.key.IPrimaryKeyGenerator;
+import com.tll.model.key.JdoPrimaryKeyGenerator;
 
 /**
  * JdoDaoModule
@@ -79,6 +81,8 @@ public class JdoDaoModule extends AbstractModule implements IConfigAware {
 	protected void configure() {
 		if(config == null) throw new IllegalStateException("No config instance specified.");
 		log.info("Employing JDO dao module.");
+
+		bind(IPrimaryKeyGenerator.class).to(JdoPrimaryKeyGenerator.class).in(Scopes.SINGLETON);
 
 		// PersistenceManagerFactory
 		bind(PersistenceManagerFactory.class).toProvider(new Provider<PersistenceManagerFactory>() {

@@ -182,7 +182,7 @@
   </servlet-mapping>
   <!-- END SECURITY ACEGI -->
   
-  <!-- START DB ORM -->
+  <!-- START DB JDO -->
   <filter>
     <filter-name>OpenEntityManagerInViewFilter</filter-name>
     <filter-class>com.tll.server.filter.OpenEntityManagerInViewFilter</filter-class>
@@ -192,7 +192,7 @@
     <url-pattern>/*</url-pattern>
     <url-pattern>/adminLogin/*</url-pattern>
   </filter-mapping>
-  <!-- END DB ORM -->
+  <!-- END DB JDO -->
   
   <!-- START DB MOCK -->
   <!-- END DB MOCK -->

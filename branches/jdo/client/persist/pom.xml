@@ -57,6 +57,7 @@
       <artifactId>validation-api</artifactId>
     </dependency>
 
+    <!-- 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
@@ -97,12 +98,17 @@
         </exclusion>
       </exclusions>
     </dependency>
-
+    -->
+    
     <dependency>
       <groupId>com.google.code.guice</groupId>
       <artifactId>guice</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>javax.jdo</groupId>
+      <artifactId>jdo2-api</artifactId>
+    </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
@@ -132,6 +138,11 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-model</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

@@ -78,8 +78,8 @@ public class MockModelStubber {
 	 */
 	private static Model stubModel(MockEntityType type, String name, boolean timestamping) {
 		final Model m = new Model(type, true);
-		m.set(new IntPropertyValue(Model.ID_PROPERTY, new PropertyMetadata(PropertyType.INT, false, true, -1),
-				++nextUniqueId));
+		m.set(new StringPropertyValue(Model.ID_PROPERTY, new PropertyMetadata(PropertyType.STRING, false, true, 10),
+				Integer.toString(++nextUniqueId)));
 		if(name != null) {
 			m.set(new StringPropertyValue(Model.NAME_PROPERTY, new PropertyMetadata(PropertyType.STRING, false, true, 32),
 					name));

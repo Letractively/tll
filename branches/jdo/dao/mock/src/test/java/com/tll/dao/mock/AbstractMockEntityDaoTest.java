@@ -14,9 +14,7 @@ import com.tll.di.ModelModule;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityGraphPopulator;
 import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
-import com.tll.model.key.IPrimaryKeyGenerator;
 import com.tll.model.key.PrimaryKey;
-import com.tll.model.key.SimplePrimaryKeyGenerator;
 
 /**
  * AbstractMockEntityDaoTest
@@ -37,11 +35,6 @@ import com.tll.model.key.SimplePrimaryKeyGenerator;
 	protected final void addModules(List<Module> modules) {
 		super.addModules(modules);
 		modules.add(new ModelModule() {
-
-			@Override
-			protected void bindPrimaryKeyGenerator() {
-				bind(IPrimaryKeyGenerator.class).to(SimplePrimaryKeyGenerator.class).in(Scopes.SINGLETON);
-			}
 
 			@Override
 			protected void bindEntityAssembler() {

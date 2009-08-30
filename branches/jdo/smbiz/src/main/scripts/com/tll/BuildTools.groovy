@@ -9,7 +9,6 @@ package com.tll;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.ConfigProcessor;
-import com.tll.dao.jdbc.DbShellBuilder;
 
 /**
  * BuildTools - Utility class for project building.
@@ -18,7 +17,7 @@ import com.tll.dao.jdbc.DbShellBuilder;
 public final class BuildTools {
 	 
 	static final int FLAG_ALL = 0;
-	static final int FLAG_ORM = 1;
+	static final int FLAG_JDO = 1;
 	static final int FLAG_MOCK = 1 << 1;
 	static final int FLAG_SECURITY_ACEGI = 1 << 2;
 	static final int FLAG_SECURITY_NONE = 1 << 3;
@@ -27,7 +26,7 @@ public final class BuildTools {
 
 	static final def regex_security_none = /(?s)<!-- START NO SECURITY -->(.*)<!-- END NO SECURITY -->/
 	static final def regex_security_acegi = /(?s)<!-- START SECURITY ACEGI -->(.*)<!-- END SECURITY ACEGI -->/
-	static final def regex_db_orm = /(?s)<!-- START DB ORM -->(.*)<!-- END DB ORM -->/
+	static final def regex_db_orm = /(?s)<!-- START DB JDO -->(.*)<!-- END DB JDO -->/
 	static final def regex_db_mock = /(?s)<!-- START DB MOCK -->(.*)<!-- END DB MOCK -->/
 	
 	// all di module ref arrays of format: [name, flags]
@@ -35,18 +34,14 @@ public final class BuildTools {
 	// target web.xml based on the loaded config state 
 	static final def DI_MODULES_ALL = [
 	                              ['com.tll.di.VelocityModule', FLAG_ALL],
-	                              ['com.tll.di.ValidationModule', FLAG_ALL],
 	                              ['com.tll.di.MailModule', FLAG_ALL],
 	                              ['com.tll.di.RefDataModule', FLAG_ALL],
-	                              ['com.tll.di.EmailExceptionHandlerModule', FLAG_ORM],
+	                              ['com.tll.di.EmailExceptionHandlerModule', FLAG_JDO],
 	                              ['com.tll.di.LogExceptionHandlerModule', FLAG_MOCK],
-	                              ['com.tll.di.ModelModule', FLAG_ALL],
-	                              ['com.tll.di.MockEntityFactoryModule', FLAG_MOCK],
-	                              ['com.tll.di.SmbizEntityAssemblerModule', FLAG_ALL],
-	                              ['com.tll.di.DbDialectModule', FLAG_ORM],
-	                              ['com.tll.di.OrmDaoModule', FLAG_ORM],
-	                              ['com.tll.di.SmbizMockDaoModule', FLAG_MOCK],
-	                              ['com.tll.di.TransactionModule', FLAG_ORM],
+	                              ['com.tll.di.SmbizModelModule', FLAG_ALL],
+	                              ['com.tll.di.SmbizEGraphModule', FLAG_MOCK],
+	                              ['com.tll.di.JdoDaoModule', FLAG_JDO],
+	                              ['com.tll.di.MockDaoModule', FLAG_MOCK],
 	                              ['com.tll.di.EntityServiceFactoryModule', FLAG_ALL],
 	                              ['com.tll.di.SmbizMarshalModule', FLAG_ALL],
 	                              ['com.tll.di.SmbizClientPersistModule', FLAG_ALL],
@@ -176,7 +171,7 @@ public final class BuildTools {
 		
 		// add the di props
 		int flags = 0;
-		flags = flags | (isMock? FLAG_MOCK : FLAG_ORM);
+		flags = flags | (isMock? FLAG_MOCK : FLAG_JDO);
 		flags = flags | (isSecurity? FLAG_SECURITY_ACEGI : FLAG_SECURITY_NONE);
 		def sb = new StringBuilder(1024)
 		DI_MODULES_ALL.each { elm ->
@@ -232,7 +227,7 @@ public final class BuildTools {
 		else {
 			// remove orm
 			s = s.replaceAll(regex_db_orm, '')
-			println 'ORM DAO section filtered out'
+			println 'JDO DAO section filtered out'
 		}
 		
 		s = s.replaceFirst(/(?s)<web-app>\s+/, '<web-app>' + NL + '\t')
@@ -281,6 +276,8 @@ public final class BuildTools {
 	/**
 	 * Stubs the app db if it doesn't exist.
 	 */
+	 // TODO fix
+	/*
 	private void stubDbIfNecessary() {
 		if(!isMock) {
 			String tgtDir = project.build.outputDirectory.toString()
@@ -296,4 +293,5 @@ public final class BuildTools {
 			}
 		}
     }
+    */
 }

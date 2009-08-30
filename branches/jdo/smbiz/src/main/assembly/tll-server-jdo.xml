@@ -4,10 +4,10 @@
   http://maven.apache.org/xsd/assembly-1.1.0.xsd">
 
   <!--
-    Aggregates all orm tll server-side deps into a single jar. 
+    Aggregates all jdo tll server-side deps into a single jar. 
   -->
 
-  <id>tll-server-aggregate-orm</id>
+  <id>tll-server-aggregate-jdo</id>
   <includeBaseDirectory>false</includeBaseDirectory>
   <formats>
     <format>jar</format>

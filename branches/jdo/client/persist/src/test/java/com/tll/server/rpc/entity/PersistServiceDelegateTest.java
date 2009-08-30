@@ -44,8 +44,6 @@ import com.tll.model.IEntityAssembler;
 import com.tll.model.IEntityGraphPopulator;
 import com.tll.model.TestPersistenceUnitEntityAssembler;
 import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
-import com.tll.model.key.IPrimaryKeyGenerator;
-import com.tll.model.key.SimplePrimaryKeyGenerator;
 import com.tll.refdata.RefDataType;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.rpc.entity.test.TestAddressService;
@@ -68,11 +66,6 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 		modules.add(new MailModule(Config.load(new ConfigRef("config-mail.properties"))));
 
 		modules.add(new ModelModule() {
-
-			@Override
-			protected void bindPrimaryKeyGenerator() {
-				bind(IPrimaryKeyGenerator.class).to(SimplePrimaryKeyGenerator.class);
-			}
 
 			@Override
 			protected void bindEntityAssembler() {
@@ -164,7 +157,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 		assert p != null;
 		final Model m = p.getModel();
 		assert m != null;
-		assert m.getId() != null && m.getId().equals(1) && m.getEntityType() != null
+		assert m.getId() != null && m.getId().equals("1") && m.getEntityType() != null
 		&& m.getEntityType().equals(TestEntityType.ADDRESS);
 	}
 
@@ -179,7 +172,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 		final PersistServiceDelegate delegate = getDelegate();
 
 		Model m = new Model(TestEntityType.ADDRESS, true);
-		m.set(new IntPropertyValue(Model.ID_PROPERTY, 10000));
+		m.set(new StringPropertyValue(Model.ID_PROPERTY, "10000"));
 		m.set(new StringPropertyValue("address1", "1 tee street"));
 		m.set(new StringPropertyValue("address2", "2 bee"));
 		m.set(new StringPropertyValue("city", "the city"));
@@ -197,7 +190,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 		assert p != null;
 		m = p.getModel();
 		assert m != null;
-		assert m.getId() != null && m.getId().equals(10000) && m.getEntityType() != null
+		assert m.getId() != null && m.getId().equals("10000") && m.getEntityType() != null
 		&& m.getEntityType().equals(TestEntityType.ADDRESS);
 		final Object ov = m.getProperty("version");
 		assert ov != null && ov.equals(0);
@@ -215,7 +208,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 
 		Model m = new Model(TestEntityType.ADDRESS, true);
 		m.set(new IntPropertyValue(Model.VERSION_PROPERTY, 0));
-		m.set(new IntPropertyValue(Model.ID_PROPERTY, 10000));
+		m.set(new StringPropertyValue(Model.ID_PROPERTY, "10000"));
 		m.set(new StringPropertyValue("address1", "1 tee street"));
 		m.set(new StringPropertyValue("address2", "2 bee"));
 		m.set(new StringPropertyValue("city", "the city"));
@@ -233,7 +226,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 		assert p != null;
 		m = p.getModel();
 		assert m != null;
-		assert m.getId() != null && m.getId().equals(10000) && m.getEntityType() != null
+		assert m.getId() != null && m.getId().equals("10000") && m.getEntityType() != null
 		&& m.getEntityType().equals(TestEntityType.ADDRESS);
 		final Object ov = m.getProperty("version");
 		assert ov != null && ov.equals(1);

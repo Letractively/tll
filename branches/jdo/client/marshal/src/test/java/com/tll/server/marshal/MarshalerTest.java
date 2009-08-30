@@ -65,13 +65,8 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 		modules.add(new ModelModule() {
 
 			@Override
-			protected void bindPrimaryKeyGenerator() {
-				// TODO
-			}
-
-			@Override
 			protected void bindEntityAssembler() {
-				// TODO
+				// not needed
 			}
 		});
 		modules.add(new EGraphModule() {
