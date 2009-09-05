@@ -26,7 +26,7 @@ public final class BuildTools {
 
 	static final def regex_security_none = /(?s)<!-- START NO SECURITY -->(.*)<!-- END NO SECURITY -->/
 	static final def regex_security_acegi = /(?s)<!-- START SECURITY ACEGI -->(.*)<!-- END SECURITY ACEGI -->/
-	static final def regex_db_orm = /(?s)<!-- START DB JDO -->(.*)<!-- END DB JDO -->/
+	static final def regex_db_jdo = /(?s)<!-- START DB JDO -->(.*)<!-- END DB JDO -->/
 	static final def regex_db_mock = /(?s)<!-- START DB MOCK -->(.*)<!-- END DB MOCK -->/
 	
 	// all di module ref arrays of format: [name, flags]
@@ -225,8 +225,8 @@ public final class BuildTools {
 			println 'MOCK DAO section filtered out'
 		}
 		else {
-			// remove orm
-			s = s.replaceAll(regex_db_orm, '')
+			// remove jdo
+			s = s.replaceAll(regex_db_jdo, '')
 			println 'JDO DAO section filtered out'
 		}
 		

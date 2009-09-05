@@ -14,7 +14,6 @@ import com.tll.di.ModelModule;
 import com.tll.di.test.MockDbTestModule;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityGraphPopulator;
-import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
 import com.tll.model.key.PrimaryKey;
 
 /**
@@ -45,7 +44,7 @@ public abstract class AbstractMockEntityDaoTest extends AbstractEntityDaoTest {
 
 			@Override
 			protected void bindEntityGraphBuilder() {
-				bind(IEntityGraphPopulator.class).to(TestPersistenceUnitEntityGraphBuilder.class).in(Scopes.SINGLETON);
+				bind(IEntityGraphPopulator.class).to(getEntityGraphPopulator()).in(Scopes.SINGLETON);
 			}
 		});
 		modules.add(new MockDaoModule());
@@ -61,4 +60,9 @@ public abstract class AbstractMockEntityDaoTest extends AbstractEntityDaoTest {
 	protected final IEntity getEntityFromDb(PrimaryKey<IEntity> key) {
 		return dao.load(key);
 	}
+	
+	/**
+	 * @return The desired {@link IEntityGraphPopulator} type.
+	 */
+	protected abstract Class<? extends IEntityGraphPopulator> getEntityGraphPopulator();
 }

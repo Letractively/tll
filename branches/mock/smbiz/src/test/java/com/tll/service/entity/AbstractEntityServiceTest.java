@@ -12,9 +12,11 @@ import org.testng.annotations.Test;
 import com.google.inject.Module;
 import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.IEntityDao;
-import com.tll.di.EGraphModule;
 import com.tll.di.EntityServiceFactoryModule;
-import com.tll.di.ModelModule;
+import com.tll.di.MockDaoModule;
+import com.tll.di.SmbizEGraphModule;
+import com.tll.di.SmbizModelModule;
+import com.tll.di.test.MockDbTestModule;
 import com.tll.model.EntityBeanFactory;
 
 /**
@@ -34,18 +36,10 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new ModelModule() {
-
-			@Override
-			protected void bindEntityAssembler() {
-			}
-		});
-		modules.add(new EGraphModule() {
-
-			@Override
-			protected void bindEntityGraphBuilder() {
-			}
-		});
+		modules.add(new SmbizModelModule());
+		modules.add(new SmbizEGraphModule());
+		modules.add(new MockDaoModule());
+		modules.add(new MockDbTestModule());
 		modules.add(new EntityServiceFactoryModule());
 	}
 

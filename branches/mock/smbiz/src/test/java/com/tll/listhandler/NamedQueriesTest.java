@@ -32,7 +32,9 @@ import com.tll.di.MockDaoModule;
 import com.tll.di.MockDbShellModule;
 import com.tll.di.ModelModule;
 import com.tll.model.IEntity;
+import com.tll.model.IEntityAssembler;
 import com.tll.model.IEntityGraphPopulator;
+import com.tll.model.SmbizEntityAssembler;
 import com.tll.model.SmbizEntityGraphBuilder;
 import com.tll.model.schema.PropertyType;
 import com.tll.service.entity.IEntityServiceFactory;
@@ -115,6 +117,7 @@ import com.tll.service.entity.IEntityServiceFactory;
 
 			@Override
 			protected void bindEntityAssembler() {
+				bind(IEntityAssembler.class).to(SmbizEntityAssembler.class).in(Scopes.SINGLETON);
 			}
 		});
 		modules.add(new EGraphModule() {

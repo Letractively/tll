@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.mock.web.MockServletContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
@@ -20,9 +21,7 @@ import com.tll.server.rpc.entity.PersistContext;
  * BootstrapperTest
  * @author jpk
  */
-@Test(groups = {
-	"server",
-"bootstrap" })
+@Test(groups = { "server", "bootstrap" })
 public class BootstrapperTest {
 
 	private static final Log log = LogFactory.getLog(BootstrapperTest.class);
@@ -31,37 +30,34 @@ public class BootstrapperTest {
 	private boolean employSecurity;
 
 	@BeforeTest(alwaysRun = true)
-	@Parameters(value = {
-		"daoMode", "employSecurity" })
-		public void beforeTest(String daoModeStr, String useSecurity) {
+	@Parameters(value = {"daoMode", "employSecurity" })
+		public void beforeTest(@Optional String daoModeStr, @Optional String useSecurity) {
 
 		// handle the dao mode
-		this.daoMode = daoModeStr;
+		this.daoMode = daoModeStr == null ? "MOCK" : daoModeStr;
 		log.debug("DaoMode: " + daoMode);
 
 		// handle security mode
-		this.employSecurity = Boolean.valueOf(useSecurity).booleanValue();
+		this.employSecurity = useSecurity == null ? false : Boolean.valueOf(useSecurity).booleanValue();
 		log.debug("Employ security: " + this.employSecurity);
 	}
 
 	private ServletContext getMockServletContext() {
 		assert daoMode != null;
-		final boolean isMock = !"ORM".equals(daoMode);
+		final boolean isMock = "MOCK".equals(daoMode);
 		final StringBuilder sb = new StringBuilder();
 		sb.append("com.tll.di.VelocityModule\r\n");
 		sb.append("com.tll.di.MailModule\r\n");
 		sb.append("com.tll.di.RefDataModule\r\n");
-		sb.append("com.tll.di.ValidationModule\r\n");
-		sb.append("com.tll.di.ModelModule\r\n");
-		sb.append("com.tll.di.MockEntityFactoryModule\r\n");
-		if(!isMock) sb.append("com.tll.di.DbDialectModule\r\n");
-		sb.append(!isMock ? "com.tll.di.OrmDaoModule\r\n" : "com.tll.di.MockDaoModule\r\n");
-		sb.append("com.tll.di.EntityAssemblerModule\r\n");
+		sb.append("com.tll.di.SmbizModelModule\r\n");
+		sb.append("com.tll.di.SmbizEGraphModule\r\n");
+		sb.append(!isMock ? "TODO\r\n" : "com.tll.di.MockDaoModule\r\n");
 		sb.append("com.tll.di.EntityServiceFactoryModule\r\n");
 		if(employSecurity) sb.append("com.tll.di.SmbizAcegiModule\r\n");
 		sb.append("com.tll.di.LogExceptionHandlerModule\r\n");
-		sb.append("com.tll.di.ClientPersistModule\r\n");
-		sb.append("com.tll.di.ListingModule\r\n");
+		sb.append("com.tll.di.SmbizMarshalModule\r\n");
+		sb.append("com.tll.di.SmbizClientPersistModule\r\n");
+		sb.append("com.tll.di.SmbizListingModule\r\n");
 		sb.append("com.tll.di.AppModule\r\n");
 
 		final MockServletContext context = new MockServletContext();

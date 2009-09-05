@@ -41,9 +41,12 @@ public class MockDbShellModule extends AbstractModule {
 			@Inject
 			IEntityGraphPopulator populator;
 			
+			@Inject
+			EntityGraph graph;
+			
 			@Override
 			public IDbShell get() {
-				return new MockDbShell(new EntityGraph(), populator);
+				return new MockDbShell(graph, populator);
 			}
 
 		}).in(Scopes.SINGLETON);

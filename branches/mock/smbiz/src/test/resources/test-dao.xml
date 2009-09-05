@@ -1,6 +1,7 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="smbiz-dao-tests">
   
+  <!-- 
   <test name="orm-dao-tests" annotations="JDK">
     <groups>
       <run>
@@ -11,6 +12,7 @@
       <package name="com.tll.dao.jdo" />
     </packages>
   </test>
+  -->
   
   <test name="mock-dao-tests" annotations="JDK">
     <groups>

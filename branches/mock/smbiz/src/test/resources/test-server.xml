@@ -13,32 +13,6 @@
     </packages>
   </test>
 
-  <test name="server-bootstrap-test-orm-security" annotations="JDK">
-    <parameter name="daoMode" value="ORM" />
-    <parameter name="employSecurity" value="true" />
-    <groups>
-      <run>
-        <include name="bootstrap" />
-      </run>
-    </groups>
-    <packages>
-      <package name="com.tll.server.*" />
-    </packages>
-  </test>
-
-  <test name="server-bootstrap-test-orm-nosecurity" annotations="JDK">
-    <parameter name="daoMode" value="ORM" />
-    <parameter name="employSecurity" value="false" />
-    <groups>
-      <run>
-        <include name="bootstrap" />
-      </run>
-    </groups>
-    <packages>
-      <package name="com.tll.server.*" />
-    </packages>
-  </test>
-  
   <test name="server-bootstrap-test-mock-nosecurity" annotations="JDK">
     <parameter name="daoMode" value="MOCK" />
     <parameter name="employSecurity" value="false" />

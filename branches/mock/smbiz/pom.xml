@@ -121,11 +121,6 @@
         <groupId>org.codehaus.groovy.maven</groupId>
         <artifactId>gmaven-plugin</artifactId>
         <dependencies>
-          <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>${mysqlConnectorVersion}</version>
-          </dependency>
         </dependencies>
         <configuration>
           <!-- NOTE: m2eclipse will fail the build if there is no valid source arg param! -->
@@ -209,7 +204,6 @@
               </descriptors>
             </configuration>
           </execution>
-          <!-- 
           <execution>
             <id>tll-server-aggregate</id>
             <goals>
@@ -225,7 +219,6 @@
               </descriptors>
             </configuration>
           </execution>
-          -->
         </executions>
       </plugin>
 
@@ -296,11 +289,9 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <suiteXmlFiles>
-            <!-- 
             <suiteXmlFile>${pom.basedir}/src/test/resources/test-dao.xml</suiteXmlFile>
             <suiteXmlFile>${pom.basedir}/src/test/resources/test-namedqueries.xml</suiteXmlFile>
             <suiteXmlFile>${pom.basedir}/src/test/resources/test-service.xml</suiteXmlFile>
-            -->
             <suiteXmlFile>${pom.basedir}/src/test/resources/test-server.xml</suiteXmlFile>
           </suiteXmlFiles>
         </configuration>
@@ -381,6 +372,9 @@
     </profile>
     <profile>
       <id>mock</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <properties>
         <daoMode>mock</daoMode>
       </properties>
@@ -624,14 +618,6 @@
       <version>${project.parent.version}</version>
     </dependency>
 
-    <!-- for guice 2.0 -->
-    <dependency>
-      <groupId>aopalliance</groupId>
-      <artifactId>aopalliance</artifactId>
-      <version>1.0</version>
-      <scope>runtime</scope>
-    </dependency>
-    
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>

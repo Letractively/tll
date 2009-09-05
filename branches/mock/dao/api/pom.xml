@@ -27,9 +27,8 @@
               <includes>
                 <include>**/Abstract*Test*</include>
                 <include>**/*Test*Util*</include>
-                <include>**/mock/**</include>
+                <include>**/test/**</include>
                 <include>**/IEntityDaoTestHandler*</include>
-                <include>**/Test*Handler*</include>
               </includes>
             </configuration>
           </execution>

@@ -3,12 +3,14 @@
  * @author jpk
  * Jan 24, 2009
  */
-package com.tll.dao;
+package com.tll.dao.test;
 
 import org.testng.Assert;
 
 import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.test.TestSelectNamedQueries;
+import com.tll.dao.AbstractEntityDaoTestHandler;
+import com.tll.dao.Sorting;
 import com.tll.model.Account;
 import com.tll.model.AccountAddress;
 import com.tll.model.Address;
