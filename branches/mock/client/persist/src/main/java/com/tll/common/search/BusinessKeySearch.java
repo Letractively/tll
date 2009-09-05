@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import com.tll.common.model.IEntityType;
+import com.tll.common.model.IEntityTypeProvider;
 import com.tll.common.model.IPropertyValue;
 import com.tll.util.StringUtil;
 
@@ -17,7 +18,7 @@ import com.tll.util.StringUtil;
  * BusinessKeySearch
  * @author jpk
  */
-public class BusinessKeySearch extends SearchBase implements IBusinessKeySearch {
+public class BusinessKeySearch extends SearchBase implements IEntityTypeProvider {
 
 	private IEntityType entityType;
 
@@ -53,12 +54,10 @@ public class BusinessKeySearch extends SearchBase implements IBusinessKeySearch 
 		this.props = props;
 	}
 
-	@Override
 	public String getBusinessKeyName() {
 		return bkName;
 	}
 
-	@Override
 	public IPropertyValue[] getProperties() {
 		return props.toArray(new IPropertyValue[props.size()]);
 	}

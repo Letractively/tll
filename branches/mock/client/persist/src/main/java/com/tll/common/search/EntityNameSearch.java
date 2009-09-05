@@ -6,6 +6,7 @@
 package com.tll.common.search;
 
 import com.tll.common.model.IEntityType;
+import com.tll.common.model.IEntityTypeProvider;
 import com.tll.util.StringUtil;
 
 
@@ -13,7 +14,7 @@ import com.tll.util.StringUtil;
  * EntityNameSearch
  * @author jpk
  */
-public class EntityNameSearch extends SearchBase implements IEntityNameSearch {
+public class EntityNameSearch extends SearchBase implements IEntityTypeProvider {
 
 	private IEntityType entityType;
 	private String name;
@@ -41,7 +42,6 @@ public class EntityNameSearch extends SearchBase implements IEntityNameSearch {
 		return entityType;
 	}
 
-	@Override
 	public String getName() {
 		return name;
 	}

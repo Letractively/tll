@@ -9,6 +9,8 @@ import com.google.inject.Inject;
 import com.tll.common.data.IModelRelatedRequest;
 import com.tll.common.data.ListingRequest;
 import com.tll.common.data.LoadRequest;
+import com.tll.common.data.PersistRequest;
+import com.tll.common.data.PurgeRequest;
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.IEntityTypeProvider;
 import com.tll.common.search.AccountInterfaceDataSearch;
@@ -53,6 +55,18 @@ public class SmbizPersistServiceImplResolver implements IPersistServiceImplResol
 			return resolve(((LoadRequest<?>) request).getSearch());
 		}
 
+		if(request instanceof PersistRequest) {
+			return resolve(((PersistRequest) request).getModel().getEntityType());
+		}
+		
+		if(request instanceof PurgeRequest) {
+			PurgeRequest pr = (PurgeRequest) request;
+			if(pr.getEntityRef() != null) {
+				return resolve(pr.getEntityRef().getEntityType());
+			}
+			return resolve(pr.getModel().getEntityType());
+		}
+
 		// listing request?
 		if(request instanceof ListingRequest) {
 			try {
@@ -70,7 +84,10 @@ public class SmbizPersistServiceImplResolver implements IPersistServiceImplResol
 	private Class<? extends IPersistServiceImpl> resolve(ISearch search)
 	throws IllegalArgumentException {
 
-		if(search instanceof AccountInterfaceDataSearch) {
+		if(IEntityTypeProvider.class.isAssignableFrom(search.getClass())) {
+			return resolve(((IEntityTypeProvider) search).getEntityType());
+		}
+		else if(search instanceof AccountInterfaceDataSearch) {
 			return AccountInterfaceOptionsService.class;
 		}
 

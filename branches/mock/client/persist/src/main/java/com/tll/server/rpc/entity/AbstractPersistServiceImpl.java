@@ -16,10 +16,10 @@ import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
-import com.tll.common.search.IBusinessKeySearch;
-import com.tll.common.search.IEntityNameSearch;
-import com.tll.common.search.IPrimaryKeySearch;
+import com.tll.common.search.BusinessKeySearch;
+import com.tll.common.search.EntityNameSearch;
 import com.tll.common.search.ISearch;
+import com.tll.common.search.PrimaryKeySearch;
 import com.tll.dao.EntityExistsException;
 import com.tll.dao.EntityNotFoundException;
 import com.tll.model.IEntity;
@@ -86,18 +86,18 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 		else {
 			IEntity e = null;
 			IEntityType et = null;
-			if(search instanceof IPrimaryKeySearch) {
-				final IPrimaryKeySearch pks = (IPrimaryKeySearch) search;
+			if(search instanceof PrimaryKeySearch) {
+				final PrimaryKeySearch pks = (PrimaryKeySearch) search;
 				e = loadEntityByPrimaryKey(pks, payload.getStatus());
 				et = pks.getKey().getEntityType();
 			}
-			else if(search instanceof IBusinessKeySearch) {
-				final IBusinessKeySearch bks = (IBusinessKeySearch) search;
+			else if(search instanceof BusinessKeySearch) {
+				final BusinessKeySearch bks = (BusinessKeySearch) search;
 				e = loadEntityByBusinesKey(bks, payload.getStatus());
 				et = bks.getEntityType();
 			}
-			else if(search instanceof IEntityNameSearch) {
-				final IEntityNameSearch ens = (IEntityNameSearch) search;
+			else if(search instanceof EntityNameSearch) {
+				final EntityNameSearch ens = (EntityNameSearch) search;
 				e = loadEntityByName(ens, payload.getStatus());
 				et = ens.getEntityType();
 			}
@@ -204,7 +204,7 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	 * @param status the status to which messages are posted
 	 */
 	@SuppressWarnings("unchecked")
-	protected IEntity loadEntityByPrimaryKey(IPrimaryKeySearch search, Status status) {
+	protected IEntity loadEntityByPrimaryKey(PrimaryKeySearch search, Status status) {
 		try {
 			final ModelKey mkey = search.getKey();
 			final IEntityType et = mkey.getEntityType();
@@ -230,7 +230,7 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	 * @param status the status to which messages are posted
 	 */
 	@SuppressWarnings("unchecked")
-	protected IEntity loadEntityByBusinesKey(IBusinessKeySearch search, Status status) {
+	protected IEntity loadEntityByBusinesKey(BusinessKeySearch search, Status status) {
 		try {
 			final IEntityType et = search.getEntityType();
 			final Class<IEntity> ec = (Class<IEntity>) context.getEntityTypeResolver().resolveEntityClass(et);
@@ -267,7 +267,7 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	 * @param status the status to which messages are posted
 	 */
 	@SuppressWarnings("unchecked")
-	protected IEntity loadEntityByName(IEntityNameSearch search, Status status) {
+	protected IEntity loadEntityByName(EntityNameSearch search, Status status) {
 		try {
 			final IEntityType et = search.getEntityType();
 			final Class<IEntity> ec = (Class<IEntity>) context.getEntityTypeResolver().resolveEntityClass(et);

@@ -204,6 +204,7 @@
               </descriptors>
             </configuration>
           </execution>
+          <!-- TODO temp debug
           <execution>
             <id>tll-server-aggregate</id>
             <goals>
@@ -219,6 +220,7 @@
               </descriptors>
             </configuration>
           </execution>
+          -->
         </executions>
       </plugin>
 

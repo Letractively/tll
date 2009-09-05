@@ -5,6 +5,8 @@
  */
 package com.tll.common.search;
 
+import com.tll.common.model.IEntityType;
+import com.tll.common.model.IEntityTypeProvider;
 import com.tll.common.model.ModelKey;
 
 
@@ -12,7 +14,7 @@ import com.tll.common.model.ModelKey;
  * PrimaryKeySearch
  * @author jpk
  */
-public class PrimaryKeySearch extends SearchBase implements IPrimaryKeySearch {
+public class PrimaryKeySearch extends SearchBase implements IEntityTypeProvider {
 
 	private ModelKey key;
 
@@ -33,6 +35,10 @@ public class PrimaryKeySearch extends SearchBase implements IPrimaryKeySearch {
 	}
 
 	@Override
+	public IEntityType getEntityType() {
+		return key == null ? null : key.getEntityType();
+	}
+
 	public ModelKey getKey() {
 		return key;
 	}
