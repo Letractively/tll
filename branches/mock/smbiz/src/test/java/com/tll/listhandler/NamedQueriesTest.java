@@ -17,7 +17,6 @@ import org.testng.annotations.Test;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.tll.AbstractInjectedTest;
-import com.tll.config.Config;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
@@ -85,7 +84,6 @@ import com.tll.service.entity.IEntityServiceFactory;
 		}
 	}
 	
-	private final Config config;
 	private IDbShell dbShell;
 
 	/**
@@ -93,7 +91,6 @@ import com.tll.service.entity.IEntityServiceFactory;
 	 */
 	public NamedQueriesTest() {
 		super();
-		config = Config.load();
 	}
 
 	@BeforeClass(alwaysRun = true)
@@ -128,7 +125,7 @@ import com.tll.service.entity.IEntityServiceFactory;
 			}
 		});
 		modules.add(new MockDaoModule());
-		modules.add(new MockDbShellModule(config));
+		modules.add(new MockDbShellModule());
 		modules.add(new EntityServiceFactoryModule());
 	}
 

@@ -71,7 +71,7 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
     </dependency>
-
+    
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-common</artifactId>
@@ -93,10 +93,6 @@
         <exclusion>
           <groupId>org.hibernate</groupId>
           <artifactId>hibernate-validator</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.tll</groupId>
-          <artifactId>tll-config</artifactId>
         </exclusion>
       </exclusions>
   	</dependency>

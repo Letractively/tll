@@ -14,7 +14,7 @@ import com.tll.model.key.NonUniqueBusinessKeyException;
 
 
 /**
- * EntityGraphBuilderHelper
+ * AbstractEntityGraphPopulator
  * @author jpk
  */
 public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopulator {

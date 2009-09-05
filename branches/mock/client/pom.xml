@@ -135,7 +135,6 @@
       <artifactId>gwt-servlet</artifactId>
       <scope>runtime</scope>
     </dependency>
-    <!-- 
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-dev</artifactId>
@@ -144,7 +143,6 @@
       <type>zip</type>
       <scope>provided</scope>
     </dependency>
-    -->
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-dev</artifactId>

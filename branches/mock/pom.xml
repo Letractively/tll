@@ -16,12 +16,10 @@
 
     <aspectjVersion>1.6.3</aspectjVersion>
     <springVersion>2.5.6.SEC01</springVersion>
-    <datanucleus.version>2.0.0.m1</datanucleus.version>
-    <mysqlConnectorVersion>5.1.6</mysqlConnectorVersion>
     <slfVersion>1.5.6</slfVersion>
 
     <gwtVersion>1.7.0</gwtVersion>
-    <gwtIncubatorVersion>1.5</gwtIncubatorVersion>
+    <gwtIncubatorVersion>1.7</gwtIncubatorVersion>
     <gwtLogVersion>2.6.2</gwtLogVersion>
 
     <junitVersion>4.5</junitVersion>
@@ -49,49 +47,20 @@
 
   <repositories>
     <!-- for hibernate validator -->
-    <!-- 
-    <repository>
-      <id>jboss</id>
-      <url>http://repository.jboss.com/maven2/</url>
-    </repository>
-    -->
-
-    <!-- data nucleus -->
-    <!-- 
-    <repository>
-      <id>DataNucleus_Repos</id>
-      <name>DataNucleus Repository</name>
-      <url>http://www.datanucleus.org/downloads/maven</url>
-      <layout>legacy</layout>
-    </repository>
-    <repository>
-      <id>DataNucleus_Repos2</id>
-      <name>DataNucleus Repository</name>
-      <url>http://www.datanucleus.org/downloads/maven2</url>
-    </repository>
-    <repository>
-      <id>Java_Net_LEGACY</id>
-      <name>Java.Net legacy</name>
-      <url>http://download.java.net/maven/1/</url>
-      <layout>legacy</layout>
-    </repository>
+    <!--
+      <repository> <id>jboss</id>
+      <url>http://repository.jboss.com/maven2/</url> </repository>
     -->
   </repositories>
 
   <pluginRepositories>
-    <!-- 
-    <pluginRepository>
-      <id>DataNucleus_2</id>
-      <url>http://www.datanucleus.org/downloads/maven2/</url>
-      <layout>legacy</layout>
-    </pluginRepository>
-    -->
   </pluginRepositories>
 
   <modules>
     <!--
-      Modules: - build-tools must be installed separately and before hand since they are referenced as dependencies in
-      this root build file
+      Modules: - build-tools must be installed separately and before
+      hand since they are referenced as dependencies in this root build
+      file
     -->
     <module>common</module>
     <module>core</module>
@@ -202,7 +171,8 @@
             <!--
               doesn't work for some reason <mainfest>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-              <classpathMavenRepositoryLayout>true</classpathMavenRepositoryLayout> </mainfest>
+              <classpathMavenRepositoryLayout>true</classpathMavenRepositoryLayout>
+              </mainfest>
             -->
             <manifestEntries>
               <mode>${mode}</mode>
@@ -253,19 +223,36 @@
 
       <!--  Use the dependency plugin to unpack gwt-dev-PLATFORM-libs.zip -->
       <!--
-        (this is a replacement for the old "automatic" mode - useful if you don't have GWT installed already, or you
-        just want a maven way to handle gwt deps)
+        (this is a replacement for the old "automatic" mode - useful if
+        you don't have GWT installed already, or you just want a maven
+        way to handle gwt deps)
       -->
-
-      <!--
-        TODO temp debug commentout <plugin> <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId> <executions> <execution> <id>unpack</id> <phase>compile</phase>
-        <goals> <goal>unpack</goal> </goals> <configuration> <artifactItems> <artifactItem>
-        <groupId>com.google.gwt</groupId> <artifactId>gwt-dev</artifactId> <version>${gwtVersion}</version>
-        <classifier>${platform}-libs</classifier> <type>zip</type> <overWrite>false</overWrite>
-        <outputDirectory>${settings.localRepository}/com/google/gwt/gwt-dev/${gwtVersion}</outputDirectory>
-        </artifactItem> </artifactItems> </configuration> </execution> </executions> </plugin>
-      -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>com.google.gwt</groupId>
+                  <artifactId>gwt-dev</artifactId>
+                  <version>${gwtVersion}</version>
+                  <classifier>${platform}-libs</classifier>
+                  <type>zip</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${settings.localRepository}/com/google/gwt/gwt-dev/${gwtVersion}</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -305,8 +292,11 @@
           <minimumTokens>100</minimumTokens>
           <targetJdk>1.6</targetJdk>
           <!--
-            <excludes> <exclude>**/*Bean.java</exclude> <exclude>**/generated/*.java</exclude> </excludes>
-            <excludeRoots> <excludeRoot>target/generated-sources/stubs</excludeRoot> </excludeRoots>
+            <excludes> <exclude>**/*Bean.java</exclude>
+            <exclude>**/generated/*.java</exclude> </excludes>
+            <excludeRoots>
+            <excludeRoot>target/generated-sources/stubs</excludeRoot>
+            </excludeRoots>
           -->
         </configuration>
       </plugin>
@@ -499,90 +489,6 @@
       </dependency>
 
       <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>${mysqlConnectorVersion}</version>
-      </dependency>
-
-      <!-- data nucleus -->
-      <dependency>
-        <groupId>org.datanucleus</groupId>
-        <artifactId>datanucleus-cache</artifactId>
-        <version>${datanucleus.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.datanucleus</groupId>
-        <artifactId>datanucleus-connectionpool</artifactId>
-        <version>1.0.2</version>
-      </dependency>
-      <dependency>
-        <groupId>org.datanucleus</groupId>
-        <artifactId>datanucleus-core</artifactId>
-        <version>${datanucleus.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.datanucleus</groupId>
-        <artifactId>datanucleus-enhancer</artifactId>
-        <version>${datanucleus.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.datanucleus</groupId>
-        <artifactId>datanucleus-management</artifactId>
-        <version>1.0.2</version>
-      </dependency>
-      <dependency>
-        <groupId>org.datanucleus</groupId>
-        <artifactId>datanucleus-db4o</artifactId>
-        <version>${datanucleus.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.datanucleus</groupId>
-        <artifactId>datanucleus-rdbms</artifactId>
-        <version>${datanucleus.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.datanucleus</groupId>
-        <artifactId>datanucleus-jpa</artifactId>
-        <version>${datanucleus.version}</version>
-      </dependency>
-      
-      <!-- db4o -->
-      <dependency>
-        <groupId>db4o</groupId>
-        <artifactId>db4o</artifactId>
-        <version>7.4.88.12908</version>
-      </dependency>
-
-      <!-- hibernate -->
-      <!-- 
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-core</artifactId>
-        <version>3.3.1.GA</version>
-      </dependency>
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>ejb3-persistence</artifactId>
-        <version>1.0.2.GA</version>
-      </dependency>
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-c3p0</artifactId>
-        <version>3.3.1.GA</version>
-      </dependency>
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-entitymanager</artifactId>
-        <version>3.4.0.GA</version>
-      </dependency>
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-annotations</artifactId>
-        <version>3.4.0.GA</version>
-      </dependency>
-      -->
-
-      <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-validator</artifactId>
         <version>4.0.0.Beta2</version>
@@ -622,7 +528,10 @@
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-support</artifactId>
-        <version>[2.0.8,)</version><!-- no 2.5.6 version exists at central repo -->
+        <version>[2.0.8,)</version>
+        <!--
+          no 2.5.6 version exists at central repo
+        -->
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
@@ -667,7 +576,7 @@
         <artifactId>appengine</artifactId>
         <version>1.2.2</version>
       </dependency>
-      
+
       <!-- GWT -->
       <dependency>
         <groupId>com.google.gwt</groupId>

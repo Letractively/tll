@@ -12,6 +12,10 @@ import com.tll.di.MockDbShellModule;
  */
 public class MockDbTestModule extends MockDbShellModule {
 
+	public MockDbTestModule() {
+		super();
+	}
+
 	@Override
 	protected void configure() {
 		super.configure();

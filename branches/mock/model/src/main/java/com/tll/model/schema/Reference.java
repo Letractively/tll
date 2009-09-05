@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
  * <em>not</em> part of the defult declaring entities' life-cycle.
  * @author jpk
  */
-@Target(ElementType.FIELD)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Reference {

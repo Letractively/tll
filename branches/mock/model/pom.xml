@@ -17,22 +17,6 @@
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.datanucleus</groupId>
-        <artifactId>maven-datanucleus-plugin</artifactId>
-        <configuration>
-          <log4jConfiguration>${basedir}/src/test/resources/log4j.properties</log4jConfiguration>
-          <verbose>true</verbose>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>enhance</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 
@@ -53,7 +37,6 @@
     <dependency>
       <groupId>javax.validation</groupId>
       <artifactId>validation-api</artifactId>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>

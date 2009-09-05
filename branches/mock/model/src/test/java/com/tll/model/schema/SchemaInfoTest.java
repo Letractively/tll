@@ -174,7 +174,6 @@ public class SchemaInfoTest {
 		private Date date;
 		private TestEntityB relatedOne;
 		private Set<TestEntity> relatedMany = new LinkedHashSet<TestEntity>();
-		@Nested
 		private transient AllTypesData nested;
 		private Map<String, String> smap;
 
@@ -258,6 +257,7 @@ public class SchemaInfoTest {
 			this.date = date;
 		}
 
+		@Nested
 		@NotNull
 		public AllTypesData getNested() {
 			return nested;

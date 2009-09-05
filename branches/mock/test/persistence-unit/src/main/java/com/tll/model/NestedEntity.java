@@ -18,7 +18,6 @@ import com.tll.model.schema.Nested;
 public class NestedEntity extends NamedEntity {
 	private static final long serialVersionUID = -4655882279629798747L;
 
-	@Nested
 	private transient NestedData nestedData;
 
 	public Class<? extends IEntity> entityClass() {
@@ -40,6 +39,7 @@ public class NestedEntity extends NamedEntity {
 
 	@NotNull
 	@Valid
+	@Nested
 	public NestedData getNestedData() {
 		return nestedData;
 	}

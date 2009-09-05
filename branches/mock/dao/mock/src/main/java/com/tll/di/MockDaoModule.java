@@ -15,10 +15,11 @@ import com.tll.model.key.SimplePrimaryKeyGenerator;
  */
 public class MockDaoModule extends AbstractModule {
 
-	static final Log log = LogFactory.getLog(MockDaoModule.class);
+	private static final Log log = LogFactory.getLog(MockDaoModule.class);
 
 	@Override
 	protected void configure() {
+		log.info("Binding mock dao module...");
 		bind(IPrimaryKeyGenerator.class).to(SimplePrimaryKeyGenerator.class).in(Scopes.SINGLETON);
 		// IEntityDao
 		bind(IEntityDao.class).to(com.tll.dao.mock.EntityDao.class).in(Scopes.SINGLETON);

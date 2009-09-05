@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * @author jpk
  *
  */
-@Target(value = { ElementType.METHOD, ElementType.FIELD })
+@Target(value = ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface NoPersist {

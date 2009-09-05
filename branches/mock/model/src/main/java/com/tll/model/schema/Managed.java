@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
  * creating entities.
  * @author jpk
  */
-@Target(ElementType.FIELD)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Managed {

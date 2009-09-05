@@ -19,18 +19,16 @@ import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
-import com.tll.AbstractInjectedTest;
-import com.tll.config.Config;
 import com.tll.criteria.Criteria;
-import com.tll.dao.IDbShell;
+import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.di.EGraphModule;
 import com.tll.di.MockDaoModule;
-import com.tll.di.MockDbShellModule;
 import com.tll.di.ModelModule;
+import com.tll.di.test.MockDbTestModule;
 import com.tll.model.Address;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntityAssembler;
@@ -45,7 +43,7 @@ import com.tll.service.entity.IEntityService;
  * @author jpk
  */
 @Test(groups = "listhandler")
-public class PagingSearchListHandlerTest extends AbstractInjectedTest {
+public class PagingSearchListHandlerTest extends AbstractDbAwareTest {
 
 	/**
 	 * TestEntityService
@@ -75,16 +73,11 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 	 */
 	private static final int NUM_LIST_ELEMENTS = 100;
 
-	private final Config config;
-	
-	private IDbShell dbShell;
-
 	/**
 	 * Constructor
 	 */
 	public PagingSearchListHandlerTest() {
 		super();
-		config = Config.load();
 	}
 
 	@BeforeClass(alwaysRun = true)
@@ -102,9 +95,8 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 		super.beforeClass();
 
 		// create the db shell
-		dbShell = injector.getInstance(IDbShell.class);
-		dbShell.create();
-		dbShell.clear();
+		getDbShell().create();
+		getDbShell().clear();
 
 	}
 
@@ -112,7 +104,7 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 	protected void afterClass() {
 		super.afterClass();
 		// drop the db
-		dbShell.delete();
+		getDbShell().delete();
 	}
 
 	@Override
@@ -133,7 +125,6 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 			}
 		});
 		modules.add(new MockDaoModule());
-		modules.add(new MockDbShellModule(config));
 		modules.add(new Module() {
 
 			@Override
@@ -141,6 +132,7 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 				binder.bind(new TypeLiteral<IEntityService<Address>>() {}).to(TestEntityService.class).in(Scopes.SINGLETON);
 			}
 		});
+		modules.add(new MockDbTestModule());
 	}
 
 	protected final IEntityDao getEntityDao() {
@@ -157,11 +149,11 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 
 	protected final void stubListElements() {
 		// stub the list elements
-		//dbSupport.startNewTransaction();
+		getDbTrans().startTrans();
 		final Set<Address> elements = getEntityBeanFactory().getNEntityCopies(Address.class, NUM_LIST_ELEMENTS, true);
 		getEntityDao().persistAll(elements);
-		//dbSupport.setComplete();
-		//dbSupport.endTransaction();
+		getDbTrans().setComplete();
+		getDbTrans().endTrans();
 	}
 
 	@Test

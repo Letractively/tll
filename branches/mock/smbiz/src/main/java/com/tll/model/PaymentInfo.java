@@ -23,7 +23,6 @@ public class PaymentInfo extends NamedEntity {
 	private static final long serialVersionUID = -8237732782824087760L;
 	public static final int MAXLEN_NAME = 64;
 
-	@Nested
 	private transient PaymentData paymentData;
 
 	public Class<? extends IEntity> entityClass() {
@@ -47,6 +46,7 @@ public class PaymentInfo extends NamedEntity {
 	// @Type(type = "encobj")
 	@NotNull
 	@Valid
+	@Nested
 	public PaymentData getPaymentData() {
 		return paymentData;
 	}

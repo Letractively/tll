@@ -40,7 +40,6 @@ public abstract class EntityBase implements IEntity {
 	//@NotPersistent
 	private boolean _new = true;
 
-	@Managed
 	private Integer version;
 
 	/**
@@ -212,6 +211,7 @@ public abstract class EntityBase implements IEntity {
 	/**
 	 * @return the version
 	 */
+	@Managed
 	public Integer getVersion() {
 		return version;
 	}

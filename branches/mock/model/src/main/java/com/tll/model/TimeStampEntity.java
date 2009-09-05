@@ -17,12 +17,10 @@ public abstract class TimeStampEntity extends EntityBase implements ITimeStampEn
 	private static final long serialVersionUID = 1800355868972602348L;
 
 	//@Persistent
-	@Managed
 	@NotNull
 	private Date dateCreated;
 
 	//@Persistent
-	@Managed
 	@NotNull
 	private Date dateModified;
 
@@ -32,6 +30,7 @@ public abstract class TimeStampEntity extends EntityBase implements ITimeStampEn
 	 * property.
 	 * @return The automatically set date of creation.
 	 */
+	@Managed
 	public Date getDateCreated() {
 		return dateCreated;
 	}
@@ -46,6 +45,7 @@ public abstract class TimeStampEntity extends EntityBase implements ITimeStampEn
 	 * property.
 	 * @return The automatically set date of modification.
 	 */
+	@Managed
 	public Date getDateModified() {
 		return dateModified;
 	}

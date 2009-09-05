@@ -19,7 +19,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.tll.config.Config;
 import com.tll.criteria.Comparator;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.IQueryParam;
@@ -207,11 +206,6 @@ public abstract class AbstractEntityDaoTest extends AbstractDbAwareTest {
 	protected static final Sorting simpleIdSorting = new Sorting(new SortColumn(IEntity.PK_FIELDNAME));
 
 	/**
-	 * The config to employ.
-	 */
-	protected final Config config;
-
-	/**
 	 * The test dao.
 	 */
 	protected final EntityDaoTestDecorator dao;
@@ -237,7 +231,6 @@ public abstract class AbstractEntityDaoTest extends AbstractDbAwareTest {
 	 */
 	public AbstractEntityDaoTest() {
 		super();
-		config = Config.load();
 		dao = new EntityDaoTestDecorator();
 		testEntityRefStack = new Stack<PrimaryKey<IEntity>>();
 	}

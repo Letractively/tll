@@ -1,7 +1,6 @@
 package com.tll.model.schema;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
@@ -36,23 +35,23 @@ public final class SchemaInfo implements ISchemaInfo {
 		/**
 		 * The associated property name.
 		 */
-		final Field field;
+		final String pname;
 
 		/**
 		 * Constructor
 		 * @param accessorMethod the required accessor method ref
 		 * @param fld the corresponding field ref to the persist related property
 		 */
-		public PersistProperty(Method accessorMethod, Field fld) {
+		public PersistProperty(Method accessorMethod, String pname) {
 			super();
 			if(accessorMethod == null) throw new IllegalArgumentException();
 			this.method = accessorMethod;
-			this.field = fld;
+			this.pname = pname;
 		}
 
 		@Override
 		public String toString() {
-			return field.getName();
+			return pname;
 		}
 
 	} // PersistProperty
@@ -88,11 +87,11 @@ public final class SchemaInfo implements ISchemaInfo {
 	 * the parentAccount entity class.
 	 */
 	private final Map<Class<?>, Map<String, ISchemaProperty>> schemaMap =
-		new HashMap<Class<?>, Map<String, ISchemaProperty>>();
+			new HashMap<Class<?>, Map<String, ISchemaProperty>>();
 
 	@Override
 	public PropertyMetadata getPropertyMetadata(final Class<?> entityClass, final String propertyName)
-	throws SchemaInfoException {
+			throws SchemaInfoException {
 		final ISchemaProperty sp = getSchemaProperty(entityClass, propertyName);
 		if(!sp.getPropertyType().isValue()) {
 			throw new SchemaInfoException(propertyName + " for entity type " + entityClass.getName()
@@ -121,7 +120,7 @@ public final class SchemaInfo implements ISchemaInfo {
 
 	@Override
 	public ISchemaProperty getSchemaProperty(final Class<?> entityClass, final String propertyName)
-	throws SchemaInfoException {
+			throws SchemaInfoException {
 		if(propertyName == null || propertyName.length() < 1)
 			throw new IllegalArgumentException("Unable to retreive schema property: no property name specified");
 
@@ -178,6 +177,11 @@ public final class SchemaInfo implements ISchemaInfo {
 	 */
 	private boolean isPersistRelatedAccessor(final Method method) {
 		final String mn = method.getName();
+		// handle IChildEntity.getParent() specifically since its overridden and we
+		// don't want the IChildEntity method decl!
+		if("getParent".equals(method.getName()) && IEntity.class.equals(method.getReturnType())) {
+			return false;
+		}
 		return (method.getAnnotation(NoPersist.class) == null && (mn.startsWith("get") || mn.startsWith("is")));
 	}
 
@@ -219,26 +223,8 @@ public final class SchemaInfo implements ISchemaInfo {
 	 * @return New {@link PersistProperty} instance or <code>null</code>.
 	 */
 	private PersistProperty getFieldInfo(final String propName, final Class<?> entityClass, final Method accessorMethod)
-	throws IllegalStateException {
-		Class<?> ec = entityClass;
-		Field fld;
-		do {
-			fld = null;
-			final Field[] flds = ec.getDeclaredFields();
-			for(final Field f : flds) {
-				if(propName.equals(f.getName())) {
-					fld = f;
-					break;
-				}
-			}
-			if(fld != null) {
-				return new PersistProperty(accessorMethod, fld);
-			}
-			ec = ec.getSuperclass();
-		} while(ec != null);
-
-		// presume not persist related
-		return null;
+			throws IllegalStateException {
+		return new PersistProperty(accessorMethod, propName);
 	}
 
 	/**
@@ -261,7 +247,7 @@ public final class SchemaInfo implements ISchemaInfo {
 		if(Collection.class.isAssignableFrom(rt)) {
 			try {
 				final Class<?> rmec =
-					(Class<?>) ((ParameterizedType) pprop.method.getGenericReturnType()).getActualTypeArguments()[0];
+						(Class<?>) ((ParameterizedType) pprop.method.getGenericReturnType()).getActualTypeArguments()[0];
 				return isEntityType(rmec);
 			}
 			catch(final Throwable t) {
@@ -280,18 +266,17 @@ public final class SchemaInfo implements ISchemaInfo {
 	@SuppressWarnings("unchecked")
 	private ISchemaProperty toSchemaProperty(final PersistProperty pprop) {
 		final Method m = pprop.method;
-		final Field f = pprop.field;
 		final Class<?> rt = m.getReturnType();
 		assert rt != null : "The return type is null";
 
 		// nested
-		if(f.getAnnotation(Nested.class) != null) {
+		if(m.getAnnotation(Nested.class) != null) {
 			return new NestedInfo((Class<? extends Serializable>) rt);
 		}
 
 		if(isRelational(pprop)) {
 			// relational
-			final boolean reference = pprop.field.getAnnotation(Reference.class) != null;
+			final boolean reference = m.getAnnotation(Reference.class) != null;
 			if(isEntityType(rt)) {
 				// related one
 				return new RelationInfo(rt, PropertyType.RELATED_ONE, reference);
@@ -309,11 +294,11 @@ public final class SchemaInfo implements ISchemaInfo {
 
 		PropertyMetadata fd = null;
 
-		final boolean managed = f.getAnnotation(Managed.class) != null;
+		final boolean managed = m.getAnnotation(Managed.class) != null;
 
 		// determine requiredness
 		boolean required = false;
-		final NotNull aN = f.getAnnotation(NotNull.class);
+		final NotNull aN = m.getAnnotation(NotNull.class);
 		if(aN != null) {
 			required = true;
 		}
@@ -367,7 +352,7 @@ public final class SchemaInfo implements ISchemaInfo {
 		else if(Map.class == rt) {
 			// string map?
 			if(String.class == ((ParameterizedType) m.getGenericReturnType()).getActualTypeArguments()[0]
-			                                                                                           && String.class == ((ParameterizedType) m.getGenericReturnType()).getActualTypeArguments()[1]) {
+					&& String.class == ((ParameterizedType) m.getGenericReturnType()).getActualTypeArguments()[1]) {
 				fd = new PropertyMetadata(PropertyType.STRING_MAP, managed, required, -1);
 			}
 		}

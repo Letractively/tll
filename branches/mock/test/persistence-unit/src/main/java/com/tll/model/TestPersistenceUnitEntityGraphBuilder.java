@@ -20,11 +20,11 @@ public final class TestPersistenceUnitEntityGraphBuilder extends AbstractEntityG
 
 	/**
 	 * Constructor
-	 * @param mep
+	 * @param ebf
 	 */
 	@Inject
-	public TestPersistenceUnitEntityGraphBuilder(EntityBeanFactory mep) {
-		super(mep);
+	public TestPersistenceUnitEntityGraphBuilder(EntityBeanFactory ebf) {
+		super(ebf);
 	}
 
 	@Override
