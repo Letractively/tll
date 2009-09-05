@@ -1,22 +1,16 @@
 package com.tll.model;
 
-import javax.jdo.annotations.Discriminator;
-import javax.jdo.annotations.DiscriminatorStrategy;
-import javax.jdo.annotations.Inheritance;
-import javax.jdo.annotations.InheritanceStrategy;
-import javax.jdo.annotations.PersistenceCapable;
-
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
+
+import com.tll.model.schema.Root;
 
 /**
  * Base class for interface options and interface option parameter definition
  * classes.
  * @author jpk
  */
-@PersistenceCapable
-@Inheritance(strategy = InheritanceStrategy.SUPERCLASS_TABLE)
-@Discriminator(column = "record_type", strategy = DiscriminatorStrategy.VALUE_MAP)
+@Root
 public abstract class InterfaceOptionBase extends NamedTimeStampEntity {
 
 	private static final long serialVersionUID = 342581007482865798L;

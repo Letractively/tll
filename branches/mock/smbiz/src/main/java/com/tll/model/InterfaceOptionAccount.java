@@ -3,21 +3,19 @@ package com.tll.model;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * Binder entity between interface options and an account
  * @author jpk
  */
-@PersistenceCapable
-@Uniques(value =
-	@Unique(name = "Option Id and Account Id", members = {
-		"option.id", "account.id" }))
+@BusinessObject(businessKeys =
+	@BusinessKeyDef(name = "Option Id and Account Id", properties = { "option.id", "account.id" })
+)
 public class InterfaceOptionAccount extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 1185305612828685906L;
@@ -25,25 +23,18 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 	public static final int MAXLEN_PARAM_NAME = 50;
 	public static final int MAXLEN_PARAM_VALUE = 255;
 
-	@Persistent
 	protected InterfaceOption option;
 
-	@Persistent
 	protected Account account;
 
-	@Persistent
 	protected InterfaceStatus status;
 
-	@Persistent
 	protected float setUpPrice = 0f;
 
-	@Persistent
 	protected float monthlyPrice = 0f;
 
-	@Persistent
 	protected float annualPrice = 0f;
 
-	@Persistent
 	protected Map<String, String> parameters = new LinkedHashMap<String, String>();
 
 	public Class<? extends IEntity> entityClass() {

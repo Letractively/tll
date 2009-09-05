@@ -1,19 +1,17 @@
 package com.tll.model;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
 
 /**
  * An entity that contains audit information. The information currently stored
  * is the create/modify date and the create/modify user.
  * @author jpk
  */
-@PersistenceCapable
+//@PersistenceCapable
 public abstract class NamedTimeStampEntity extends TimeStampEntity implements INamedTimeStampEntity {
 
 	private static final long serialVersionUID = 2186964556332599921L;
 
-	@Persistent
+	//@Persistent
 	protected String name;
 
 	/**

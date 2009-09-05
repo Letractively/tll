@@ -5,8 +5,6 @@
  */
 package com.tll.dao;
 
-import javax.jdo.annotations.PersistenceAware;
-
 import org.testng.Assert;
 
 import com.tll.criteria.ISelectNamedQueryDef;
@@ -23,7 +21,6 @@ import com.tll.model.NestedEntity;
  * TestEntityDaoTestHandler
  * @author jpk
  */
-@PersistenceAware
 public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Account> {
 
 	// dependent entities

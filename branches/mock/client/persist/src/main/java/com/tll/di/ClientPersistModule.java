@@ -5,8 +5,6 @@
  */
 package com.tll.di;
 
-import javax.jdo.PersistenceManagerFactory;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -71,8 +69,6 @@ public abstract class ClientPersistModule extends AbstractModule {
 			Marshaler marshaler;
 			@Inject
 			IMarshalOptionsResolver marshalOptionsResolver;
-			@Inject(optional = true)
-			PersistenceManagerFactory pmf;
 			@Inject
 			IEntityTypeResolver entityTypeResolver;
 			@Inject
@@ -85,7 +81,6 @@ public abstract class ClientPersistModule extends AbstractModule {
 			@Override
 			public PersistContext get() {
 				return new PersistContext(refData, mailManager, schemaInfo, marshaler, marshalOptionsResolver,
-						pmf,
 						entityTypeResolver, entityAssembler, entityServiceFactory, exceptionHandler);
 			}
 		}).in(Scopes.SINGLETON);

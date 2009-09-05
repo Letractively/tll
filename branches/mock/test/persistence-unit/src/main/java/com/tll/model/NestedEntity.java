@@ -1,14 +1,12 @@
 package com.tll.model;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.NotEmpty;
 
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 import com.tll.model.schema.Nested;
 
 /**
@@ -16,12 +14,10 @@ import com.tll.model.schema.Nested;
  * @see NestedData For the actual field list.
  * @author jpk
  */
-@PersistenceCapable(detachable = "true")
-@Uniques(value = @Unique(name = "Name", members = { INamedEntity.NAME }))
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Name", properties = { INamedEntity.NAME }))
 public class NestedEntity extends NamedEntity {
 	private static final long serialVersionUID = -4655882279629798747L;
 
-	@Persistent(defaultFetchGroup = "true")
 	@Nested
 	private transient NestedData nestedData;
 

@@ -49,6 +49,8 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	/**
 	 * The jsr-303 validation factory.
 	 */
+	@SuppressWarnings("unused")
+	// TODO employ once validation is fixed!
 	private final ValidatorFactory validationFactory;
 
 	/**

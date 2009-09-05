@@ -1,19 +1,16 @@
 package com.tll.model;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
-
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
+
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * General product entity
  * @author jpk
  */
-@PersistenceCapable
-@Uniques(value = @Unique(name = "Titles", members = { "d1", "d2" }))
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Titles", properties = { "d1", "d2" }))
 public class ProductGeneral extends EntityBase {
 
 	private static final long serialVersionUID = 459067490839802092L;
@@ -24,19 +21,14 @@ public class ProductGeneral extends EntityBase {
 	public static final int MAXLEN_IMAGE1 = 64;
 	public static final int MAXLEN_IMAGE2 = 64;
 
-	@Persistent
 	private String d1;
 
-	@Persistent
 	private String d2;
 
-	@Persistent
 	private String d3;
 
-	@Persistent
 	private String image1;
 
-	@Persistent
 	private String image2;
 
 	public Class<? extends IEntity> entityClass() {

@@ -1,34 +1,28 @@
 package com.tll.model;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
 import javax.validation.constraints.NotNull;
+
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * Used to hold shipping rates in terms of upper/lower bounds of a product's
  * "weight"
  * @author jpk
  */
-@PersistenceCapable
-@Uniques(value =
-	@Unique(name = "Ship Mode Id, Lower Bound and Upper Bound",
-			members = { "shipMode.id", "lbound", "ubound" }))
+@BusinessObject(businessKeys =
+	@BusinessKeyDef(name = "Ship Mode Id, Lower Bound and Upper Bound", properties = { "shipMode.id", "lbound", "ubound" })
+)
 public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipMode>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -5074831489410804639L;
 
-	@Persistent
 	private float lbound = 0f;
 
-	@Persistent
 	private float ubound = 0f;
 
-	@Persistent
 	private float cost = 0f;
 
-	@Persistent
 	private ShipMode shipMode;
 
 	public Class<? extends IEntity> entityClass() {

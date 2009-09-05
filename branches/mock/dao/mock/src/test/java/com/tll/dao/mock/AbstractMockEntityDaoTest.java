@@ -11,6 +11,7 @@ import com.tll.dao.AbstractEntityDaoTest;
 import com.tll.di.EGraphModule;
 import com.tll.di.MockDaoModule;
 import com.tll.di.ModelModule;
+import com.tll.di.test.MockDbTestModule;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityGraphPopulator;
 import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
@@ -20,9 +21,8 @@ import com.tll.model.key.PrimaryKey;
  * AbstractMockEntityDaoTest
  * @author jpk
  */
-@Test(groups = {
-	"dao", "mock" })
-	public abstract class AbstractMockEntityDaoTest extends AbstractEntityDaoTest {
+@Test(groups = { "dao", "mock" })
+public abstract class AbstractMockEntityDaoTest extends AbstractEntityDaoTest {
 
 	/**
 	 * Constructor
@@ -49,6 +49,7 @@ import com.tll.model.key.PrimaryKey;
 			}
 		});
 		modules.add(new MockDaoModule());
+		modules.add(new MockDbTestModule());
 	}
 
 	@Override
@@ -59,25 +60,5 @@ import com.tll.model.key.PrimaryKey;
 	@Override
 	protected final IEntity getEntityFromDb(PrimaryKey<IEntity> key) {
 		return dao.load(key);
-	}
-
-	@Override
-	protected final void endTransaction() {
-		// no-op
-	}
-
-	@Override
-	protected final boolean isTransStarted() {
-		return false;
-	}
-
-	@Override
-	protected final void setComplete() {
-		// no-op
-	}
-
-	@Override
-	protected final void startNewTransaction() {
-		// no-op
 	}
 }

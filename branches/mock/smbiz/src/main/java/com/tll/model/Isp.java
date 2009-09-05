@@ -1,14 +1,12 @@
 package com.tll.model;
 
-import javax.jdo.annotations.Discriminator;
-import javax.jdo.annotations.PersistenceCapable;
+import com.tll.model.schema.Extended;
 
 /**
  * The ISP entity
  * @author jpk
  */
-@PersistenceCapable
-@Discriminator(value = Account.ISP_VALUE)
+@Extended
 public class Isp extends Account {
 
 	private static final long serialVersionUID = -1666954465162270432L;

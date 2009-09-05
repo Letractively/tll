@@ -7,8 +7,6 @@ package com.tll.dao;
 
 import java.util.Set;
 
-import javax.jdo.annotations.PersistenceAware;
-
 import org.testng.Assert;
 
 import com.tll.criteria.IQueryParam;
@@ -22,14 +20,12 @@ import com.tll.model.INamedEntity;
  * @param <E> The entity type
  * @author jpk
  */
-@PersistenceAware
 public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements IEntityDaoTestHandler<E> {
 
 	private IEntityDao entityDao;
 	private EntityBeanFactory entityBeanFactory;
 
 	@Override
-	@SuppressWarnings("hiding")
 	public void init(IEntityDao entityDao, EntityBeanFactory entityBeanFactory) {
 		this.entityDao = entityDao;
 		this.entityBeanFactory = entityBeanFactory;

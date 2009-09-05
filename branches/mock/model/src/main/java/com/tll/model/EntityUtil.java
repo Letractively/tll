@@ -5,9 +5,8 @@
  */
 package com.tll.model;
 
-import javax.jdo.annotations.Discriminator;
-import javax.jdo.annotations.Inheritance;
-
+import com.tll.model.schema.Extended;
+import com.tll.model.schema.Root;
 
 /**
  * EntityUtil
@@ -29,11 +28,11 @@ public class EntityUtil {
 	 */
 	@SuppressWarnings("unchecked")
 	public static Class<? extends IEntity> getRootEntityClass(Class<? extends IEntity> entityClass) {
-		if(entityClass.getAnnotation(Discriminator.class) != null) {
+		if(entityClass.getAnnotation(Extended.class) != null) {
 			Class<? extends IEntity> ec = entityClass;
 			do {
 				ec = (Class<? extends IEntity>) ec.getSuperclass();
-			} while(ec != null && ec.getAnnotation(Inheritance.class) == null);
+			} while(ec != null && ec.getAnnotation(Root.class) == null);
 			if(ec != null) return ec;
 		}
 		return entityClass;

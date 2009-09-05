@@ -15,8 +15,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import javax.jdo.annotations.NotPersistent;
-
 import org.springframework.beans.BeanWrapperImpl;
 
 import com.google.inject.Inject;
@@ -40,6 +38,7 @@ import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
 import com.tll.model.IScalar;
 import com.tll.model.schema.ISchemaInfo;
+import com.tll.model.schema.NoPersist;
 import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
 import com.tll.model.schema.RelationInfo;
@@ -137,10 +136,10 @@ public final class Marshaler {
 	 * @return true/false
 	 */
 	private boolean isMarshalableProperty(final PropertyDescriptor pd) {
-		// check bound method annotations and honor @Transient
+		// check bound method annotations and honor @NoPersist
 		final Method m = pd.getReadMethod();
 		if(m != null) {
-			return m.getAnnotation(NotPersistent.class) == null;
+			return m.getAnnotation(NoPersist.class) == null;
 		}
 		return true;
 	}

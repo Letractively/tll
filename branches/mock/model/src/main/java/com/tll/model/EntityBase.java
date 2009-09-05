@@ -2,12 +2,7 @@ package com.tll.model;
 
 import java.util.Collection;
 
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.IdentityType;
-import javax.jdo.annotations.NotPersistent;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
+
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.logging.Log;
@@ -20,7 +15,7 @@ import com.tll.util.StringUtil;
  * EntityBase - Base class for all entities.
  * @author jpk
  */
-@PersistenceCapable(identityType = IdentityType.APPLICATION)
+//@PersistenceCapable(identityType = IdentityType.APPLICATION)
 // @Version(strategy = VersionStrategy.VERSION_NUMBER, column = "VERSION",
 // extensions = { @Extension(vendorName = "datanucleus", key = "field-name",
 // value = "version") })
@@ -30,19 +25,19 @@ public abstract class EntityBase implements IEntity {
 
 	protected static final Log LOG = LogFactory.getLog(EntityBase.class);
 
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.UUIDSTRING)
+	//@PrimaryKey
+	//@Persistent(valueStrategy = IdGeneratorStrategy.UUIDSTRING)
 	// @Extension(vendorName = "datanucleus", key = "gae.encoded-pk", value =
 	// "true")
 	private String id;
 
-	@NotPersistent
+	//@NotPersistent
 	private boolean generated;
 
 	/**
 	 * Manually driven flag to indicate entity newness.
 	 */
-	@NotPersistent
+	//@NotPersistent
 	private boolean _new = true;
 
 	@Managed

@@ -4,22 +4,21 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
 
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
+
 /**
  * Order item entity
  * @author jpk
  */
-@PersistenceCapable
-@Uniques(value =
-	@Unique(name = "Order Id and SKU", members = { "order.id", "sku" }))
+@BusinessObject(businessKeys =
+	@BusinessKeyDef(name = "Order Id and SKU", properties = { "order.id", "sku" })
+)
 public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Order>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 5728694308136658158L;
@@ -29,34 +28,24 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 	public static final int MAXLEN_DESCRIPTION = 255;
 	public static final int MAXLEN_IMAGE = 32;
 
-	@Persistent
 	private Order order;
 
-	@Persistent
 	private String sku;
 
-	@Persistent
 	private OrderItemStatus itemStatus;
 
-	@Persistent
 	private PaymentItemStatus payStatus;
 
-	@Persistent
 	private int qty = 0;
 
-	@Persistent
 	private float price = 0f;
 
-	@Persistent
 	private float weight = 0f;
 
-	@Persistent
 	private String description;
 
-	@Persistent
 	private String image;
 
-	@Persistent
 	private Set<OrderItemTrans> transactions = new LinkedHashSet<OrderItemTrans>();
 
 	public Class<? extends IEntity> entityClass() {

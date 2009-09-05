@@ -1,22 +1,20 @@
 package com.tll.model;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
 
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
+
 /**
  * The visitor entity (those people who visit a storefront site).
  * @author jpk
  */
-@PersistenceCapable
-@Uniques(value =
-	@Unique(name = "Account Id, Date Created, Remote Host",
-			members = { "account.id", "dateCreated", "remoteHost" }))
+@BusinessObject(businessKeys =
+	@BusinessKeyDef(name = "Account Id, Date Created, Remote Host",
+			properties = { "account.id", "dateCreated", "remoteHost" }))
 public class Visitor extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 3466539674112418212L;
@@ -26,19 +24,14 @@ public class Visitor extends TimeStampEntity implements IChildEntity<Account>, I
 	public static final int MAXLEN_REMOTE_USER = 64;
 	public static final int MAXLEN_MC = 16;
 
-	@Persistent
 	private String remoteHost;
 
-	@Persistent
 	private String remoteAddr;
 
-	@Persistent
 	private String remoteUser;
 
-	@Persistent
 	private String mc;
 
-	@Persistent
 	private Account account;
 
 	public Class<? extends IEntity> entityClass() {

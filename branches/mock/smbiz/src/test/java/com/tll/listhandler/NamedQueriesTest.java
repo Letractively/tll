@@ -12,24 +12,25 @@ import java.util.Map;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 import com.google.inject.Scopes;
-import com.tll.AbstractDbAwareTest;
+import com.tll.AbstractInjectedTest;
+import com.tll.config.Config;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.criteria.QueryParam;
 import com.tll.criteria.SelectNamedQueries;
+import com.tll.dao.IDbShell;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.di.EGraphModule;
 import com.tll.di.EntityServiceFactoryModule;
-import com.tll.di.JdoDaoModule;
 import com.tll.di.MockDaoModule;
+import com.tll.di.MockDbShellModule;
 import com.tll.di.ModelModule;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityGraphPopulator;
@@ -41,9 +42,8 @@ import com.tll.service.entity.IEntityServiceFactory;
  * NamedQueriesTest
  * @author jpk
  */
-@Test(groups = {
-	"listhandler", "namedqueries" })
-	public class NamedQueriesTest extends AbstractDbAwareTest {
+@Test(groups = { "listhandler", "namedqueries" })
+	public class NamedQueriesTest extends AbstractInjectedTest {
 
 	private static final Map<SelectNamedQueries, SortColumn> querySortBindings =
 		new HashMap<SelectNamedQueries, SortColumn>();
@@ -84,22 +84,31 @@ import com.tll.service.entity.IEntityServiceFactory;
 			}
 		}
 	}
+	
+	private final Config config;
+	private IDbShell dbShell;
 
-	private boolean mock;
+	/**
+	 * Constructor
+	 */
+	public NamedQueriesTest() {
+		super();
+		config = Config.load();
+	}
 
 	@BeforeClass(alwaysRun = true)
-	@Parameters(value = "mock")
-	public final void onBeforeClass(String mockStr) {
-		this.mock = Boolean.getBoolean(mockStr);
+	public final void onBeforeClass() {
 		beforeClass();
 	}
 
 	@Override
 	protected void beforeClass() {
 		super.beforeClass();
-		if(!mock) {
-			getDbShell().restub();
-		}
+		
+		// set the db shell
+		dbShell = injector.getInstance(IDbShell.class);
+		
+		dbShell.restub();
 	}
 
 	@Override
@@ -111,19 +120,15 @@ import com.tll.service.entity.IEntityServiceFactory;
 			protected void bindEntityAssembler() {
 			}
 		});
-		if(mock) {
-			modules.add(new EGraphModule() {
+		modules.add(new EGraphModule() {
 
-				@Override
-				protected void bindEntityGraphBuilder() {
-					bind(IEntityGraphPopulator.class).to(SmbizEntityGraphBuilder.class).in(Scopes.SINGLETON);
-				}
-			});
-			modules.add(new MockDaoModule());
-		}
-		else {
-			modules.add(new JdoDaoModule(getConfig()));
-		}
+			@Override
+			protected void bindEntityGraphBuilder() {
+				bind(IEntityGraphPopulator.class).to(SmbizEntityGraphBuilder.class).in(Scopes.SINGLETON);
+			}
+		});
+		modules.add(new MockDaoModule());
+		modules.add(new MockDbShellModule(config));
 		modules.add(new EntityServiceFactoryModule());
 	}
 

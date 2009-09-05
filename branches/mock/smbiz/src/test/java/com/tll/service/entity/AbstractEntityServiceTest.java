@@ -10,11 +10,10 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
-import com.tll.AbstractDbAwareTest;
+import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.IEntityDao;
 import com.tll.di.EGraphModule;
 import com.tll.di.EntityServiceFactoryModule;
-import com.tll.di.JdoDaoModule;
 import com.tll.di.ModelModule;
 import com.tll.model.EntityBeanFactory;
 
@@ -47,7 +46,6 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 			protected void bindEntityGraphBuilder() {
 			}
 		});
-		modules.add(new JdoDaoModule(getConfig()));
 		modules.add(new EntityServiceFactoryModule());
 	}
 

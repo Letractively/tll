@@ -1,21 +1,20 @@
 package com.tll.model;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
 
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
+
 /**
  * Product category entity
  * @author jpk
  */
-@PersistenceCapable
-@Uniques(value = 
-	@Unique(name = "Account Id and Name", members = { "account.id", INamedEntity.NAME }))
+@BusinessObject(businessKeys = 
+	@BusinessKeyDef(name = "Account Id and Name", properties = { "account.id", INamedEntity.NAME })
+)
 public class ProductCategory extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 5218888162655443332L;
@@ -24,13 +23,10 @@ public class ProductCategory extends NamedTimeStampEntity implements IChildEntit
 	public static final int MAXLEN_DESCRIPTION = 255;
 	public static final int MAXLEN_IMAGE = 64;
 
-	@Persistent
 	private Account account;
 
-	@Persistent
 	private String description;
 
-	@Persistent
 	private String image;
 
 	public Class<? extends IEntity> entityClass() {

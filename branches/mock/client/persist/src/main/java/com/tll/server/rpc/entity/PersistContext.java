@@ -4,7 +4,6 @@
  */
 package com.tll.server.rpc.entity;
 
-import javax.jdo.PersistenceManagerFactory;
 import javax.servlet.ServletContext;
 
 import com.google.inject.Inject;
@@ -36,7 +35,6 @@ public final class PersistContext {
 	private final ISchemaInfo schemaInfo;
 	private final Marshaler marshaler;
 	private final IMarshalOptionsResolver marshalOptionsResolver;
-	private final PersistenceManagerFactory persistenceManagerFactory;
 	private final IEntityTypeResolver entityTypeResolver;
 	private final IEntityAssembler entityAssembler;
 	private final IEntityServiceFactory entityServiceFactory;
@@ -57,8 +55,7 @@ public final class PersistContext {
 	 */
 	@Inject
 	public PersistContext(RefData refData, MailManager mailManager, ISchemaInfo schemaInfo, Marshaler marshaler,
-			IMarshalOptionsResolver marshalOptionsResolver, PersistenceManagerFactory persistenceManagerFactory,
-			IEntityTypeResolver entityTypeResolver,
+			IMarshalOptionsResolver marshalOptionsResolver, IEntityTypeResolver entityTypeResolver,
 			IEntityAssembler entityAssembler, IEntityServiceFactory entityServiceFactory,
 			IExceptionHandler exceptionHandler) {
 		super();
@@ -67,7 +64,6 @@ public final class PersistContext {
 		this.schemaInfo = schemaInfo;
 		this.marshaler = marshaler;
 		this.marshalOptionsResolver = marshalOptionsResolver;
-		this.persistenceManagerFactory = persistenceManagerFactory;
 		this.entityTypeResolver = entityTypeResolver;
 		this.entityAssembler = entityAssembler;
 		this.entityServiceFactory = entityServiceFactory;
@@ -84,10 +80,6 @@ public final class PersistContext {
 
 	public IEntityAssembler getEntityAssembler() {
 		return entityAssembler;
-	}
-
-	public PersistenceManagerFactory getPersistenceManagerFactory() {
-		return persistenceManagerFactory;
 	}
 
 	public MailManager getMailManager() {

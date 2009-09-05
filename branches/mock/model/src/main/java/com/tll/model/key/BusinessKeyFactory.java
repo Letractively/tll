@@ -10,24 +10,20 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jdo.annotations.PersistenceAware;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
-
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.NullValueInNestedPathException;
 
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
- * BusinessKeyFactory - Lazily discovers entity business keys on an on-demand
- * basis providing factory methods for generating {@link IBusinessKey}
- * instances.
+ * BusinessKeyFactory - Defines all entity business keys in the application and
+ * provides utility methods relating to them.
  * @author jpk
  */
 @SuppressWarnings("unchecked")
-@PersistenceAware
 public final class BusinessKeyFactory {
 
 	/**
@@ -68,7 +64,7 @@ public final class BusinessKeyFactory {
 	 * The cache of discovered business key definitions.
 	 */
 	private static final Map<Class<? extends IEntity>, Set<IBusinessKeyDefinition<? extends IEntity>>> map =
-		new HashMap<Class<? extends IEntity>, Set<IBusinessKeyDefinition<? extends IEntity>>>();
+			new HashMap<Class<? extends IEntity>, Set<IBusinessKeyDefinition<? extends IEntity>>>();
 
 	/**
 	 * Interrogates an entity class' annotations creating a set of
@@ -79,22 +75,22 @@ public final class BusinessKeyFactory {
 	 *         defined for the given entity class.
 	 */
 	private static <E extends IEntity> Set<IBusinessKeyDefinition<E>> discoverBusinessKeys(Class<E> entityClass) {
-		Uniques bo = entityClass.getAnnotation(Uniques.class);
+		BusinessObject bo = entityClass.getAnnotation(BusinessObject.class);
 		if(bo == null) {
 			// try the root entity
-			bo = EntityUtil.getRootEntityClass(entityClass).getAnnotation(Uniques.class);
+			bo = EntityUtil.getRootEntityClass(entityClass).getAnnotation(BusinessObject.class);
 		}
 		if(bo == null) {
 			// no bks defined
 			return null;
 		}
 		final Set<IBusinessKeyDefinition<E>> set = new HashSet<IBusinessKeyDefinition<E>>();
-		for(final Unique def : bo.value()) {
-			set.add(new BusinessKeyDefinition<E>(entityClass, def.name(), def.members()));
+		for(final BusinessKeyDef def : bo.businessKeys()) {
+			set.add(new BusinessKeyDefinition<E>(entityClass, def.name(), def.properties()));
 		}
 		return set;
 	}
-
+	
 	/**
 	 * Does the given entity type have any defined business keys?
 	 * @param <E>
@@ -120,7 +116,7 @@ public final class BusinessKeyFactory {
 	 *         the given entity type.
 	 */
 	public static <E extends IEntity> IBusinessKeyDefinition<E>[] definitions(Class<E> entityClass)
-	throws BusinessKeyNotDefinedException {
+			throws BusinessKeyNotDefinedException {
 
 		if(!map.containsKey(entityClass)) {
 			map.put(entityClass, (Set) discoverBusinessKeys(entityClass));
@@ -130,7 +126,7 @@ public final class BusinessKeyFactory {
 		if(set == null) {
 			throw new BusinessKeyNotDefinedException(entityClass);
 		}
-
+		
 		return (IBusinessKeyDefinition<E>[]) set.toArray(new IBusinessKeyDefinition[set.size()]);
 	}
 
@@ -145,7 +141,7 @@ public final class BusinessKeyFactory {
 	 *         for the given entity type.
 	 */
 	public static <E extends IEntity> IBusinessKeyDefinition<E> getDefinition(Class<E> entityClass, String businessKeyName)
-	throws BusinessKeyNotDefinedException {
+			throws BusinessKeyNotDefinedException {
 		final IBusinessKeyDefinition<E>[] defs = definitions(entityClass);
 		for(final IBusinessKeyDefinition<E> def : defs) {
 			if(def.getBusinessKeyName().equals(businessKeyName)) {
@@ -164,7 +160,7 @@ public final class BusinessKeyFactory {
 	 *         for the given entity type.
 	 */
 	public static <E extends IEntity> IBusinessKey<E>[] create(Class<E> entityClass)
-	throws BusinessKeyNotDefinedException {
+			throws BusinessKeyNotDefinedException {
 		final IBusinessKeyDefinition<E>[] defs = definitions(entityClass);
 		final BusinessKey<E>[] bks = new BusinessKey[defs.length];
 		for(int i = 0; i < defs.length; ++i) {
@@ -184,7 +180,7 @@ public final class BusinessKeyFactory {
 	 *         name.
 	 */
 	public static <E extends IEntity> IBusinessKey<E> create(IBusinessKeyDefinition<E> def)
-	throws BusinessKeyNotDefinedException {
+			throws BusinessKeyNotDefinedException {
 		return new BusinessKey<E>(def);
 	}
 
@@ -200,7 +196,7 @@ public final class BusinessKeyFactory {
 	 *         name.
 	 */
 	public static <E extends IEntity> IBusinessKey<E> create(Class<E> entityClass, String businessKeyName)
-	throws BusinessKeyNotDefinedException {
+			throws BusinessKeyNotDefinedException {
 		return create(getDefinition(entityClass, businessKeyName));
 	}
 
@@ -216,7 +212,7 @@ public final class BusinessKeyFactory {
 	 *         to be set.
 	 */
 	public static <E extends IEntity> IBusinessKey<E>[] create(E entity) throws BusinessKeyNotDefinedException,
-	BusinessKeyPropertyException {
+			BusinessKeyPropertyException {
 		final IBusinessKeyDefinition<E>[] defs = definitions((Class<E>) entity.entityClass());
 		final BusinessKey<E>[] bks = new BusinessKey[defs.length];
 		for(int i = 0; i < defs.length; ++i) {
@@ -240,7 +236,7 @@ public final class BusinessKeyFactory {
 	 *         to be set.
 	 */
 	public static <E extends IEntity> IBusinessKey<E> create(E entity, IBusinessKeyDefinition<E> def)
-	throws BusinessKeyNotDefinedException, BusinessKeyPropertyException {
+			throws BusinessKeyNotDefinedException, BusinessKeyPropertyException {
 		final IBusinessKey<E> bk = create(def);
 		fill(new BeanWrapperImpl(entity), bk);
 		return bk;
@@ -260,13 +256,13 @@ public final class BusinessKeyFactory {
 	 *         to be set.
 	 */
 	public static <E extends IEntity> BusinessKey<E> create(E entity, String businessKeyName)
-	throws BusinessKeyNotDefinedException, BusinessKeyPropertyException {
+			throws BusinessKeyNotDefinedException, BusinessKeyPropertyException {
 		final IBusinessKeyDefinition<E> theDef = getDefinition((Class<E>) entity.entityClass(), businessKeyName);
 		final BusinessKey<E>[] bks = new BusinessKey[] { new BusinessKey(theDef) };
 		fill(entity, bks);
 		return bks[0];
 	}
-
+	
 	/**
 	 * Fills the given business key with values held in the given entity.
 	 * @param <E> The entity type

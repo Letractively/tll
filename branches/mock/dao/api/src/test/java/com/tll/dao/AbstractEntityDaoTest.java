@@ -19,7 +19,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.tll.AbstractInjectedTest;
 import com.tll.config.Config;
 import com.tll.criteria.Comparator;
 import com.tll.criteria.Criteria;
@@ -45,7 +44,7 @@ import com.tll.model.key.PrimaryKey;
  * @author jpk
  */
 @Test(groups = { "dao" })
-public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
+public abstract class AbstractEntityDaoTest extends AbstractDbAwareTest {
 
 	/**
 	 * EntityDaoTestDecorator - Decorates {@link IEntityDao} to:
@@ -283,13 +282,21 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 		super.afterClass();
 	}
 
-	protected abstract void startNewTransaction();
+	protected final void startNewTransaction() {
+		getDbTrans().startTrans();
+	}
 
-	protected abstract void setComplete();
+	protected final void setComplete() {
+		getDbTrans().setComplete();
+	}
 
-	protected abstract void endTransaction();
+	protected final void endTransaction() {
+		getDbTrans().endTrans();
+	}
 
-	protected abstract boolean isTransStarted();
+	protected final boolean isTransStarted() {
+		return getDbTrans().isTransStarted();
+	}
 
 	/**
 	 * Run before dao test methods are invoked for a particular entity dao test

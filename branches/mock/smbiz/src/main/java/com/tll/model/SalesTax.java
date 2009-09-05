@@ -1,22 +1,20 @@
 package com.tll.model;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
 
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
+
 /**
  * Sales tax entity
  * @author jpk
  */
-@PersistenceCapable
-@Uniques(value =
-	@Unique(name = "Account Id, Province, Country and Postal Code",
-			members = { "account.id", "province", "county", "postalCode" }))
+@BusinessObject(businessKeys =
+	@BusinessKeyDef(name = "Account Id, Province, Country and Postal Code", properties = { "account.id", "province", "county", "postalCode" })
+)
 public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -8285702989304183918L;
@@ -25,19 +23,14 @@ public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, 
 	public static final int MAXLEN_COUNTY = 64;
 	public static final int MAXLEN_POSTAL_CODE = 16;
 
-	@Persistent
 	private String province;
 
-	@Persistent
 	private String county;
 
-	@Persistent
 	private String postalCode;
 
-	@Persistent
 	private float tax;
 
-	@Persistent
 	private Account account;
 
 	public Class<? extends IEntity> entityClass() {

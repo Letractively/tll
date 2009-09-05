@@ -1,21 +1,20 @@
 package com.tll.model;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
 
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
+
 /**
  * The ship mode entity
  * @author jpk
  */
-@PersistenceCapable
-@Uniques(value =
-	@Unique(name = "Account Id and Name", members = { "account.id", INamedEntity.NAME }))
+@BusinessObject(businessKeys =
+	@BusinessKeyDef(name = "Account Id and Name", properties = { "account.id", INamedEntity.NAME })
+)
 public class ShipMode extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -8602635055012335230L;
@@ -23,16 +22,12 @@ public class ShipMode extends NamedTimeStampEntity implements IChildEntity<Accou
 	public static final int MAXLEN_NAME = 32;
 	public static final int MAXLEN_SRC_ZIP = 16;
 
-	@Persistent
 	private ShipModeType type;
 
-	@Persistent
 	private float surcharge = 0f;
 
-	@Persistent
 	private String srcZip;
 
-	@Persistent
 	private Account account;
 
 	public Class<? extends IEntity> entityClass() {

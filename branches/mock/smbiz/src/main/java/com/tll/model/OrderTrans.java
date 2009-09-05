@@ -3,24 +3,22 @@ package com.tll.model;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
 
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
+
 /**
  * Order trans entity
  * @author jpk
  */
-@PersistenceCapable
-@Uniques(value =
-	@Unique(name = "Order Id, Date Created and Username",
-			members = { "order.id", "dateCreated", "username" }))
-			public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, IAccountRelatedEntity {
+@BusinessObject(businessKeys =
+	@BusinessKeyDef(name = "Order Id, Date Created and Username", properties = { "order.id", "dateCreated", "username" })
+)
+public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 8026809773722347843L;
 
@@ -28,49 +26,34 @@ import org.hibernate.validation.constraints.NotEmpty;
 	public static final int MAXLEN_SHIP_MODE_NAME = 64;
 	public static final int MAXLEN_SHIP_ROUTING_NUM = 64;
 
-	@Persistent
 	private Order order;
 
-	@Persistent
 	private String username; // author of this transaction
 
-	@Persistent
 	private OrderTransOp orderTransOp;
 
-	@Persistent
 	private OrderTransOpResult orderTransResult;
 
-	@Persistent
 	private String shipModeName;
 
-	@Persistent
 	private String shipRoutingNum;
 
-	@Persistent
 	private float itemTotal = 0f;
 
-	@Persistent
 	private float salesTax = 0f;
 
-	@Persistent
 	private float shipCost = 0f;
 
-	@Persistent
 	private float total = 0f;
 
-	@Persistent
 	private Address billToAddress;
 
-	@Persistent
 	private Address shipToAddress;
 
-	@Persistent
 	private PaymentInfo pymntInfo;
 
-	@Persistent
 	private PaymentTrans pymntTrans;
 
-	@Persistent
 	private Set<OrderItemTrans> itemTransactions = new LinkedHashSet<OrderItemTrans>();
 
 	public Class<? extends IEntity> entityClass() {

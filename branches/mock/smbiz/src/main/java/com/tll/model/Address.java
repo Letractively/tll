@@ -1,22 +1,20 @@
 package com.tll.model;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
-
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
+
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * @author jpk
  */
-@PersistenceCapable
 //@PhoneNumbers(value = {
 //	@PhoneNumber(phonePropertyName = "phone"), @PhoneNumber(phonePropertyName = "fax") })
 //@PostalCode() temp disable
-@Uniques(value = @Unique(name = "Address 1 and Postal Code", members = {
-	"address1", "postalCode" }))
+@BusinessObject(businessKeys = 
+	@BusinessKeyDef(name = "Address 1 and Postal Code", properties = { "address1", "postalCode" })
+)
 public class Address extends EntityBase {
 
 	private static final long serialVersionUID = 69385466934038047L;
@@ -35,33 +33,19 @@ public class Address extends EntityBase {
 	public static final int MAXLEN_FAX = 15;
 	public static final int MAXLEN_EMAIL_ADDRESS = 128;
 
-	@Persistent
 	private String firstName;
-	@Persistent
 	private String lastName;
-	@Persistent
 	private Character mi;
-	@Persistent
 	private String company;
-	@Persistent
 	private String attn;
-	@Persistent
 	private String address1;
-	@Persistent
 	private String address2;
-	@Persistent
 	private String city;
-	@Persistent
 	private String province;
-	@Persistent
 	private String postalCode;
-	@Persistent
 	private String country;
-	@Persistent
 	private String phone;
-	@Persistent
 	private String fax;
-	@Persistent
 	private String emailAddress;
 
 	public Class<? extends IEntity> entityClass() {

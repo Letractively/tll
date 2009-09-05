@@ -1,14 +1,12 @@
 package com.tll.model;
 
-import javax.jdo.annotations.Discriminator;
-import javax.jdo.annotations.PersistenceCapable;
+import com.tll.model.schema.Extended;
 
 /**
  * Single interface entity
  * @author jpk
  */
-@PersistenceCapable
-@Discriminator(value = Interface.SINGLE_VALUE)
+@Extended
 public class InterfaceSingle extends Interface {
 
 	private static final long serialVersionUID = -6871345929021882937L;

@@ -1,14 +1,12 @@
 package com.tll.model;
 
-import javax.jdo.annotations.Discriminator;
-import javax.jdo.annotations.PersistenceCapable;
+import com.tll.model.schema.Extended;
 
 /**
  * The Customer entity
  * @author jpk
  */
-@PersistenceCapable
-@Discriminator(value = Account.CUSTOMER_VALUE)
+@Extended
 public class Customer extends Account {
 
 	private static final long serialVersionUID = -6558055971868370884L;

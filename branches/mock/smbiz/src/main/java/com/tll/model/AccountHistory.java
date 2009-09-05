@@ -2,36 +2,29 @@ package com.tll.model;
 
 import java.util.Date;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
 import javax.validation.constraints.NotNull;
+
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * The account history entity
  * @author jpk
  */
-@PersistenceCapable
-@Uniques(value = @Unique(name = "Account Id, Transaction Date and Status", members = {
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Account Id, Transaction Date and Status", properties = {
 	"account.id", "transDate", "status" }))
 public class AccountHistory extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 5543822993709686604L;
 
-	@Persistent
 	private Account account;
 
-	@Persistent
 	private Date transDate = new Date();
 
-	@Persistent
 	private AccountStatus status;
 
-	@Persistent
 	private String notes;
 
-	@Persistent
 	private PaymentTrans pymntTrans;
 
 	public Class<? extends IEntity> entityClass() {

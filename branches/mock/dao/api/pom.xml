@@ -119,12 +119,6 @@
       <scope>test</scope>
     </dependency>
     
-    <dependency>
-      <groupId>javax.jdo</groupId>
-      <artifactId>jdo2-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
     <!-- for mocked entities (in memory object graph) -->
     <dependency>
       <groupId>com.tll</groupId>

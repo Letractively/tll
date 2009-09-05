@@ -1,36 +1,29 @@
 package com.tll.model;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * The customer account entity
  * @author jpk
  */
-@PersistenceCapable
-@Uniques(value = @Unique(name = "Customer Id and Account Id", members = {
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Customer Id and Account Id", properties = {
 	"customer.id", "account.id" }))
 	public class CustomerAccount extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 7262902363821073379L;
 
-	@Persistent
 	private Customer customer;
 
-	@Persistent
 	private Account account;
 
-	@Persistent
 	private AccountSource source;
 
-	@Persistent
 	private AccountStatus status;
 
-	@Persistent
 	private Visitor initialVisitorRecord;
 
 	public Class<? extends IEntity> entityClass() {

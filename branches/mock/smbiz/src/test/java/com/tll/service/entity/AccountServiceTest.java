@@ -8,8 +8,8 @@ import java.util.List;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.tll.DbTestSupport;
 import com.tll.criteria.Criteria;
+import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.IListHandler;
@@ -48,11 +48,11 @@ public abstract class AccountServiceTest extends AccountRelatedServiceTest {
 			final IAccountService accountService = getEntityServiceFactory().instance(IAccountService.class);
 			account = accountService.persist(account);
 
-			getDbSupport().startNewTransaction();
+			getDbTrans().startTrans();
 			final Criteria<AccountHistory> criteria = new Criteria<AccountHistory>(AccountHistory.class);
 			criteria.getPrimaryGroup().addCriterion("account", new PrimaryKey<Account>(Account.class, account.getId()));
-			final List<SearchResult<?>> list = DbTestSupport.getEntitiesFromDb(getEntityDao(), criteria);
-			getDbSupport().endTransaction();
+			final List<SearchResult<?>> list = AbstractDbAwareTest.getEntitiesFromDb(getEntityDao(), criteria);
+			getDbTrans().endTrans();
 			assert list != null && list.size() == 1;
 		}
 		catch(final Throwable t) {

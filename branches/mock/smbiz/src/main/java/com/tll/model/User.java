@@ -8,10 +8,6 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -20,12 +16,14 @@ import org.hibernate.validation.constraints.NotEmpty;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.userdetails.UserDetails;
 
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
+
 /**
  * The account user entity
  * @author jpk
  */
-@PersistenceCapable
-@Uniques(value = @Unique(name = "Email Address", members = { "emailAddress" }))
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Email Address", properties = { "emailAddress" }))
 public class User extends NamedTimeStampEntity implements UserDetails, IChildEntity<Account>, IAccountRelatedEntity,
 IUserRef {
 
@@ -37,28 +35,20 @@ IUserRef {
 
 	public static final String SUPERUSER = "jpk";
 
-	@Persistent
 	private String emailAddress;
 
-	@Persistent
 	private transient String password;
 
-	@Persistent
 	private boolean locked = true;
 
-	@Persistent
 	private boolean enabled = true;
 
-	@Persistent
 	private Date expires;
 
-	@Persistent
 	private Set<Authority> authorities = new LinkedHashSet<Authority>(3);
 
-	@Persistent
 	private Account account;
 
-	@Persistent
 	private Address address;
 
 	public Class<? extends IEntity> entityClass() {

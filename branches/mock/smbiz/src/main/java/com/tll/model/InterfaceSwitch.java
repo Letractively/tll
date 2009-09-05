@@ -1,14 +1,12 @@
 package com.tll.model;
 
-import javax.jdo.annotations.Discriminator;
-import javax.jdo.annotations.PersistenceCapable;
+import com.tll.model.schema.Extended;
 
 /**
  * Switch type interface
  * @author jpk
  */
-@PersistenceCapable
-@Discriminator(value = Interface.SWITCH_VALUE)
+@Extended
 public class InterfaceSwitch extends Interface {
 
 	private static final long serialVersionUID = 1751342467693070340L;

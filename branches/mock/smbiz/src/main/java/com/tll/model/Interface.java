@@ -4,30 +4,23 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.jdo.annotations.Discriminator;
-import javax.jdo.annotations.DiscriminatorStrategy;
-import javax.jdo.annotations.Inheritance;
-import javax.jdo.annotations.InheritanceStrategy;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
 
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
+import com.tll.model.schema.Root;
 import com.tll.model.validate.BusinessKeyUniqueness;
 
 /**
  * The Interface entity
  * @author jpk
  */
-@PersistenceCapable
-@Inheritance(strategy = InheritanceStrategy.SUPERCLASS_TABLE)
-@Discriminator(strategy = DiscriminatorStrategy.CLASS_NAME)
-@Uniques(value = @Unique(name = "Code", members = { "code" }))
+@Root
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Code", properties = { "code" }))
 public abstract class Interface extends NamedTimeStampEntity {
 
 	private static final long serialVersionUID = 5959712644331302508L;
@@ -48,30 +41,19 @@ public abstract class Interface extends NamedTimeStampEntity {
 	public static final String CODE_PAYMENT_METHOD = "pymntmethod";
 	public static final String CODE_CROSS_SELL = "crosssell";
 
-	@Persistent
 	protected String code;
-	@Persistent
 	protected String description;
 
-	@Persistent
 	protected boolean isAvailableAsp = false;
-	@Persistent
 	protected boolean isAvailableIsp = false;
-	@Persistent
 	protected boolean isAvailableMerchant = false;
-	@Persistent
 	protected boolean isAvailableCustomer = false;
 
-	@Persistent
 	protected boolean isRequiredAsp = false;
-	@Persistent
 	protected boolean isRequiredIsp = false;
-	@Persistent
 	protected boolean isRequiredMerchant = false;
-	@Persistent
 	protected boolean isRequiredCustomer = false;
 
-	@Persistent
 	protected Set<InterfaceOption> options = new LinkedHashSet<InterfaceOption>();
 
 	@NotEmpty

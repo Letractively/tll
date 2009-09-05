@@ -40,8 +40,8 @@ public abstract class AccountRelatedServiceTest extends AbstractEntityServiceTes
 	protected final Account stubValidAccount(boolean persist) {
 		Account account = null;
 
-		getDbSupport().startNewTransaction();
-		getDbSupport().setComplete();
+		getDbTrans().startTrans();
+		getDbTrans().setComplete();
 		try {
 			final IEntityDao dao = getEntityDao();
 			
@@ -62,7 +62,7 @@ public abstract class AccountRelatedServiceTest extends AbstractEntityServiceTes
 			}
 		}
 		finally {
-			getDbSupport().endTransaction();
+			getDbTrans().endTrans();
 		}
 
 		return account;

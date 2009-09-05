@@ -5,18 +5,15 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.jdo.annotations.Inheritance;
-import javax.jdo.annotations.InheritanceStrategy;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
 
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
+import com.tll.model.schema.Root;
 import com.tll.model.validate.AtLeastOne;
 import com.tll.model.validate.BusinessKeyUniqueness;
 
@@ -24,11 +21,8 @@ import com.tll.model.validate.BusinessKeyUniqueness;
  * Account - Base class for account type entities.
  * @author jpk
  */
-@PersistenceCapable
-@Inheritance(strategy = InheritanceStrategy.SUPERCLASS_TABLE)
-// @DiscriminatorColumn(name = "account_type", discriminatorType =
-// DiscriminatorType.INTEGER)
-@Uniques(value = @Unique(name = "Name", members = INamedEntity.NAME))
+@Root
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Name", properties = INamedEntity.NAME))
 public abstract class Account extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -684966689440840694L;
@@ -42,37 +36,26 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	public static final int MAXLEN_BILLING_MODEL = 32;
 	public static final int MAXLEN_BILLING_CYCLE = 32;
 
-	@Persistent
 	protected Account parent;
 
-	@Persistent
 	protected AccountStatus status;
 
-	@Persistent
 	protected boolean persistPymntInfo;
 
-	@Persistent
 	protected String billingModel;
 
-	@Persistent
 	protected String billingCycle;
 
-	@Persistent
 	protected Date dateLastCharged;
 
-	@Persistent
 	protected Date nextChargeDate;
 
-	@Persistent
 	protected Date dateCancelled;
 
-	@Persistent
 	protected PaymentInfo paymentInfo;
 
-	@Persistent
 	protected Currency currency;
 
-	@Persistent
 	protected Set<AccountAddress> addresses = new LinkedHashSet<AccountAddress>(3);
 
 	/**

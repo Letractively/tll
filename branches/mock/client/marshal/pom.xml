@@ -29,11 +29,6 @@
   </build>
   
   <dependencies>
-    <!-- for @NotPersistent annotation ref in Marshaler -->
-    <dependency>
-      <groupId>javax.jdo</groupId>
-      <artifactId>jdo2-api</artifactId>
-    </dependency>
     
     <dependency>
       <groupId>org.springframework</groupId>

@@ -57,7 +57,6 @@ public abstract class AbstractModelProperty implements IModelProperty {
 	}
 
 	// NOTE: we ignore the propPath
-	@SuppressWarnings("unused")
 	public void setProperty(String propPath, Object value) throws PropertyPathException, IllegalArgumentException {
 		setValue(value);
 	}

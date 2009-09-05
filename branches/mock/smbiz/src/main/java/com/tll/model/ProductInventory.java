@@ -1,9 +1,5 @@
 package com.tll.model;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -11,13 +7,16 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
 
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
+
 /**
  * Product inventory entity
  * @author jpk
  */
-@PersistenceCapable
-@Uniques(value =
-	@Unique(name = "Account Id and SKU", members = { "account.id", "sku" }))
+@BusinessObject(businessKeys =
+	@BusinessKeyDef(name = "Account Id and SKU", properties = { "account.id", "sku" })
+)
 public class ProductInventory extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 6472483051056869008L;
@@ -25,40 +24,28 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 	public static final int MAXLEN_SKU = 64;
 	public static final int MAXLEN_AUX_DESCRIPTOR = 255;
 
-	@Persistent
 	private String sku;
 
-	@Persistent
 	private ProductStatus status;
 
-	@Persistent
 	private float retailPrice = 0f;
 
-	@Persistent
 	private float salesPrice = 0f;
 
-	@Persistent
 	private float weight = 0f;
 
-	@Persistent
 	private boolean onSale;
 
-	@Persistent
 	private String auxDescriptor;
 
-	@Persistent
 	private int invInStock = 0;
 
-	@Persistent
 	private int invCommitted = 0;
 
-	@Persistent
 	private int invReorderLevel = 0;
 
-	@Persistent
 	private Account account;
 
-	@Persistent
 	private ProductGeneral productGeneral;
 
 	public Class<? extends IEntity> entityClass() {

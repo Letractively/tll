@@ -1,29 +1,25 @@
 package com.tll.model;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
 import javax.validation.constraints.NotNull;
+
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * product cateory binder entity
  * @author jpk
  */
-@PersistenceCapable
-@Uniques(value =
-	@Unique(name = "Product Id and Category Id", members = { "product.id", "category.id" }))
+@BusinessObject(businessKeys =
+	@BusinessKeyDef(name = "Product Id and Category Id", properties = { "product.id", "category.id" })
+)
 public class ProdCat extends EntityBase implements IChildEntity<ProductInventory>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -8353863817821839414L;
 
-	@Persistent
 	private boolean isFeaturedProduct = false;
 
-	@Persistent
 	private ProductInventory product;
 
-	@Persistent
 	private ProductCategory category;
 
 	public Class<? extends IEntity> entityClass() {

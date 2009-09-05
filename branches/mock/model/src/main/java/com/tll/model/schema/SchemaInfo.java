@@ -9,8 +9,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jdo.annotations.NotPersistent;
-import javax.jdo.annotations.PersistenceCapable;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -18,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.validation.constraints.Length;
 
+import com.tll.model.IEntity;
 import com.tll.util.PropertyPath;
 
 public final class SchemaInfo implements ISchemaInfo {
@@ -179,7 +178,7 @@ public final class SchemaInfo implements ISchemaInfo {
 	 */
 	private boolean isPersistRelatedAccessor(final Method method) {
 		final String mn = method.getName();
-		return (method.getAnnotation(NotPersistent.class) == null && (mn.startsWith("get") || mn.startsWith("is")));
+		return (method.getAnnotation(NoPersist.class) == null && (mn.startsWith("get") || mn.startsWith("is")));
 	}
 
 	/**
@@ -248,7 +247,7 @@ public final class SchemaInfo implements ISchemaInfo {
 	 * @return true/false
 	 */
 	private boolean isEntityType(Class<?> type) {
-		return type.getAnnotation(PersistenceCapable.class) != null;
+		return IEntity.class.isAssignableFrom(type);
 	}
 
 	/**

@@ -78,7 +78,7 @@
     <plugins>
 
       <!-- 
-        Compile Time Weave @Transactional aspects irregardless of mock/jdo profile
+        Compile Time Weave @Transactional aspects irregardless of dao mode profile
         as we are profile agnostic and build jars for both.
         NOTE: this weaving doesn't adversly affect debugging when in mock mode.
               We are still able to do line level debugging.
@@ -168,11 +168,6 @@
                 </element>
                 <element>
                   <groupId>com.tll</groupId>
-                  <artifactId>tll-dao-jdo</artifactId>
-                  <version>${project.parent.version}</version>
-                </element>
-                <element>
-                  <groupId>com.tll</groupId>
                   <artifactId>tll-dao-mock</artifactId>
                   <version>${project.parent.version}</version>
                 </element>
@@ -250,7 +245,7 @@
                 log4j,commons-logging,org.slf4j,com.tll,com.google.gwt,com.google.code.gwt-incubator,com.google.code.gwt-log
               </includeGroupIds>
               <excludeArtifactIds>
-                gwt-servlet,tll-config,tll-core,tll-dao-api,tll-dao-jdo,tll-dao-mock,tll-mail,tll-egraph,tll-model,tll-refdata,tll-security,tll-service,tll-servlet
+                gwt-servlet,tll-config,tll-core,tll-dao-api,tll-dao-mock,tll-mail,tll-egraph,tll-model,tll-refdata,tll-security,tll-service,tll-servlet
               </excludeArtifactIds>
               <excludeTypes>zip</excludeTypes>
               <outputFile>target/gwt-cp.txt</outputFile>
@@ -377,7 +372,7 @@
       </build>
     </profile>
     
-    <!-- dao mode (jdo/mock) profiles -->
+    <!-- dao mode profiles -->
     <profile>
       <id>jdo</id>
       <properties>
@@ -559,11 +554,6 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao-jdo</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
       <artifactId>tll-dao-mock</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
@@ -652,13 +642,6 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-dao-api</artifactId>
-      <classifier>testassets</classifier>
-      <version>${project.parent.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-dao-jdo</artifactId>
       <classifier>testassets</classifier>
       <version>${project.parent.version}</version>
       <scope>test</scope>

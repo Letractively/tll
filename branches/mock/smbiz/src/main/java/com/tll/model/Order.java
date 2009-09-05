@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -15,12 +13,11 @@ import org.hibernate.validation.constraints.Length;
  * The order entity
  * @author jpk
  */
-@PersistenceCapable
 // We can't guarantee this with enough certainity! So we won't have any bks for
 // orders then.
 /*
-@Uniques(value =
-	@Unique(name = "Date Created, Account Id and Customer Id",
+@BusinessObject(value =
+	@BusinessKeyDef(name = "Date Created, Account Id and Customer Id",
 			members = { "dateCreated", "account.id", "customer.id" }))
  */
 public class Order extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
@@ -32,37 +29,26 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 
 	private OrderStatus status;
 
-	@Persistent
 	private String notes;
 
-	@Persistent
 	private String siteCode;
 
-	@Persistent
 	private Account account;
 
-	@Persistent
 	private Visitor visitor;
 
-	@Persistent
 	private Customer customer;
 
-	@Persistent
 	private Currency currency;
 
-	@Persistent
 	private PaymentInfo paymentInfo;
 
-	@Persistent
 	private Address billToAddress;
 
-	@Persistent
 	private Address shipToAddress;
 
-	@Persistent
 	private Set<OrderItem> orderItems = new LinkedHashSet<OrderItem>();
 
-	@Persistent
 	private Set<OrderTrans> transactions = new LinkedHashSet<OrderTrans>();
 
 	public Class<? extends IEntity> entityClass() {

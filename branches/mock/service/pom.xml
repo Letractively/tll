@@ -178,13 +178,13 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao-jdo</artifactId>
+      <artifactId>tll-dao-mock</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao-jdo</artifactId>
+      <artifactId>tll-dao-mock</artifactId>
       <version>${project.version}</version>
       <classifier>testassets</classifier>
       <scope>test</scope>

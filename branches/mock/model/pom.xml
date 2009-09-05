@@ -61,20 +61,6 @@
       <artifactId>hibernate-validator</artifactId>
     </dependency>
 
-    <!-- jdo -->
-    <dependency>
-      <groupId>javax.jdo</groupId>
-      <artifactId>jdo2-api</artifactId>
-    </dependency>
-
-    <!-- google's appengine api (for entity primary key generation) -->
-    <!-- 
-    <dependency>
-      <groupId>com.google.code.appengine</groupId>
-      <artifactId>appengine</artifactId>
-    </dependency>
-    -->
-    
     <dependency>
       <groupId>com.google.code.guice</groupId>
       <artifactId>guice</artifactId>

@@ -2,14 +2,12 @@ package com.tll.model;
 
 import java.io.Serializable;
 
-import javax.jdo.annotations.PersistenceCapable;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 import org.hibernate.validation.constraints.Length;
 
 
-@PersistenceCapable
 public class PaymentData implements Serializable {
 	private static final long serialVersionUID = 4794589680528322269L;
 

@@ -1,21 +1,18 @@
 package com.tll.model;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
-
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
 import org.springframework.security.GrantedAuthority;
+
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * Implementation of Acegi's
  * {@link org.springframework.security.GrantedAuthority} interface.
  * @author jpk
  */
-@PersistenceCapable(table = "authority")
-@Uniques(value = @Unique(name = "Authority", members = { Authority.FIELDNAME_AUTHORITY }))
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Authority", properties = { Authority.FIELDNAME_AUTHORITY }))
 public class Authority extends EntityBase implements INamedEntity, GrantedAuthority {
 
 	static final long serialVersionUID = -4601781277584062384L;
@@ -24,7 +21,6 @@ public class Authority extends EntityBase implements INamedEntity, GrantedAuthor
 
 	public static final int MAXLEN_AUTHORITY = 50;
 
-	@Persistent
 	private String role;
 
 	public Class<? extends IEntity> entityClass() {

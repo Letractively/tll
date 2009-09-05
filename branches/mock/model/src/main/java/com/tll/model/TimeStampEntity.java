@@ -2,8 +2,6 @@ package com.tll.model;
 
 import java.util.Date;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
 import javax.validation.constraints.NotNull;
 
 import com.tll.model.schema.Managed;
@@ -13,17 +11,17 @@ import com.tll.model.schema.Managed;
  * is the create/modify date and the create/modify user.
  * @author jpk
  */
-@PersistenceCapable
+//@PersistenceCapable
 public abstract class TimeStampEntity extends EntityBase implements ITimeStampEntity {
 
 	private static final long serialVersionUID = 1800355868972602348L;
 
-	@Persistent
+	//@Persistent
 	@Managed
 	@NotNull
 	private Date dateCreated;
 
-	@Persistent
+	//@Persistent
 	@Managed
 	@NotNull
 	private Date dateModified;

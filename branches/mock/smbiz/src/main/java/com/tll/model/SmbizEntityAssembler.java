@@ -1,7 +1,5 @@
 package com.tll.model;
 
-import javax.jdo.annotations.PersistenceAware;
-
 import com.google.inject.Inject;
 
 /**
@@ -9,7 +7,6 @@ import com.google.inject.Inject;
  * build functionality specific to the entity type.
  * @author jpk
  */
-@PersistenceAware
 public final class SmbizEntityAssembler implements IEntityFactory, IEntityAssembler {
 
 	/**

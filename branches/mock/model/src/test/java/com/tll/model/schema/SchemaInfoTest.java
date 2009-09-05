@@ -9,10 +9,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jdo.annotations.Embedded;
-import javax.jdo.annotations.PersistenceAware;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -32,7 +28,6 @@ import com.tll.model.validate.BusinessKeyUniqueness;
  * @author jpk
  */
 @Test(groups = "model.schema")
-@PersistenceAware
 public class SchemaInfoTest {
 
 	enum TestEnum {
@@ -119,12 +114,10 @@ public class SchemaInfoTest {
 		}
 	}
 
-	@PersistenceCapable
 	static class TestEntityA extends EntityBase {
 
 		private static final long serialVersionUID = 3324870910518294253L;
 
-		@Persistent
 		private String aProp;
 
 		@Override
@@ -132,7 +125,6 @@ public class SchemaInfoTest {
 			return TestEntityA.class;
 		}
 
-		@Persistent
 		public String getAProp() {
 			return aProp;
 		}
@@ -143,12 +135,10 @@ public class SchemaInfoTest {
 
 	}
 
-	@PersistenceCapable
 	static class TestEntityB extends EntityBase {
 
 		private static final long serialVersionUID = -5868841032847881791L;
 
-		@Persistent
 		private TestEntityA entityA;
 
 		@Override
@@ -169,37 +159,23 @@ public class SchemaInfoTest {
 	 * TestEntity
 	 * @author jpk
 	 */
-	@PersistenceCapable
 	static class TestEntity extends NamedTimeStampEntity {
 
 		private static final long serialVersionUID = -8237732782824087760L;
 		public static final int MAXLEN_NAME = 64;
 
-		@Persistent
 		private TestEnum enm;
-		@Persistent
 		private String string;
-		@Persistent
 		private int integer;
-		@Persistent
 		private double dbl;
-		@Persistent
 		private float flot;
-		@Persistent
 		private char character;
-		@Persistent
 		private long lng;
-		@Persistent
 		private Date date;
-		@Persistent
 		private TestEntityB relatedOne;
-		@Persistent
 		private Set<TestEntity> relatedMany = new LinkedHashSet<TestEntity>();
-		@Persistent
 		@Nested
 		private transient AllTypesData nested;
-		@Persistent(embedded = "true")
-		@Embedded()
 		private Map<String, String> smap;
 
 		public Class<? extends IEntity> entityClass() {

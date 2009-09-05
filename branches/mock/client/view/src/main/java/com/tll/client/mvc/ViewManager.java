@@ -87,7 +87,6 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * @return Extracted hash of the associated {@link ViewKey} or <code>-1</code>
 	 *         if the history token is not a view history token.
 	 */
-	@SuppressWarnings("null")
 	private static double extractViewKeyHash(String historyToken) {
 		final int len = historyToken == null ? 0 : historyToken.length();
 		if(len < 2) return -1;

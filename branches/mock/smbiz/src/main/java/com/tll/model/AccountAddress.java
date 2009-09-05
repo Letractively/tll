@@ -1,24 +1,22 @@
 package com.tll.model;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
 
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
+
 /**
  * The account address entity holding a refs to a single account and single
  * address.
  * @author jpk
  */
-@PersistenceCapable
-@Uniques(value = {
-	@Unique(name = "Account Id and Address Id", members = { "account.id", "address.id" }),
-	@Unique(name = "Account Id and Name", members = { "account.id", INamedEntity.NAME })
+@BusinessObject(businessKeys = {
+	@BusinessKeyDef(name = "Account Id and Address Id", properties = { "account.id", "address.id" }),
+	@BusinessKeyDef(name = "Account Id and Name", properties = { "account.id", INamedEntity.NAME })
 })
 public class AccountAddress extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
@@ -26,13 +24,10 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 
 	public static final int MAXLEN_NAME = 32;
 
-	@Persistent
 	private Account account;
 
-	@Persistent
 	private Address address;
 
-	@Persistent
 	private AddressType type;
 
 	public Class<? extends IEntity> entityClass() {

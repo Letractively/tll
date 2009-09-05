@@ -6,7 +6,7 @@ package com.tll.service.entity;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.tll.DbTestSupport;
+import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.IEntityDao;
 import com.tll.model.Account;
 import com.tll.model.Authority;
@@ -25,8 +25,8 @@ public class UserServiceTest extends AccountRelatedServiceTest {
 
 	private void stubAuthorities() {
 		final IEntityDao dao = getEntityDao();
-		getDbSupport().startNewTransaction();
-		getDbSupport().setComplete();
+		getDbTrans().startTrans();
+		getDbTrans().setComplete();
 		try {
 			for(final AuthorityRoles role : AuthorityRoles.values()) {
 				final Authority a = getMockEntityFactory().getEntityCopy(Authority.class, false);
@@ -35,7 +35,7 @@ public class UserServiceTest extends AccountRelatedServiceTest {
 			}
 		}
 		finally {
-			getDbSupport().endTransaction();
+			getDbTrans().endTrans();
 		}
 	}
 
@@ -68,9 +68,9 @@ public class UserServiceTest extends AccountRelatedServiceTest {
 			final User user = userService.create(account, "name@domain.com", "password");
 			Assert.assertNotNull(user);
 
-			getDbSupport().startNewTransaction();
-			final User dbUser = DbTestSupport.getEntityFromDb(getEntityDao(), new PrimaryKey<User>(user));
-			getDbSupport().endTransaction();
+			getDbTrans().startTrans();
+			final User dbUser = AbstractDbAwareTest.getEntityFromDb(getEntityDao(), new PrimaryKey<User>(user));
+			getDbTrans().endTrans();
 			Assert.assertEquals(dbUser, user);
 		}
 		catch(final Throwable t) {

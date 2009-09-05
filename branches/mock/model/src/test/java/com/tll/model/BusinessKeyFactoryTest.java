@@ -8,9 +8,6 @@ package com.tll.model;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -18,6 +15,8 @@ import com.tll.model.key.BusinessKeyFactory;
 import com.tll.model.key.BusinessKeyUtil;
 import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.NonUniqueBusinessKeyException;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * BusinessKeyFactoryTest
@@ -26,10 +25,10 @@ import com.tll.model.key.NonUniqueBusinessKeyException;
 @Test(groups = "model")
 public class BusinessKeyFactoryTest {
 
-	@Uniques(value = {
-		@Unique(name = TestEntity.BK_NAME, members = { "name" }),
-		@Unique(name = TestEntity.BK_CODE, members = { "code" }),
-		@Unique(name = TestEntity.BK_AR, members = {
+	@BusinessObject(businessKeys = {
+		@BusinessKeyDef(name = TestEntity.BK_NAME, properties = { "name" }),
+		@BusinessKeyDef(name = TestEntity.BK_CODE, properties = { "code" }),
+		@BusinessKeyDef(name = TestEntity.BK_AR, properties = {
 			"authNum", "refNum" })
 	})
 	static class TestEntity extends EntityBase {

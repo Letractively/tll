@@ -2,24 +2,21 @@ package com.tll.model;
 
 import java.util.Date;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
 
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
+
 /**
  * payment transaction entity
  * @author jpk
  */
-@PersistenceCapable
-@Uniques(value = {
-	@Unique(name = "Pay Trans Date, Payment Op and Pay Type",
-			members = { "payTransDate", "payOp", "payType" }),
-	@Unique(name = "Refnum", members = { "refNum" })
+@BusinessObject(businessKeys = {
+	@BusinessKeyDef(name = "Pay Trans Date, Payment Op and Pay Type", properties = { "payTransDate", "payOp", "payType" }),
+	@BusinessKeyDef(name = "Refnum", properties = { "refNum" })
 })
 public class PaymentTrans extends TimeStampEntity {
 
@@ -29,34 +26,24 @@ public class PaymentTrans extends TimeStampEntity {
 	public static final int MAXLEN_RESPONSE = 32;
 	public static final int MAXLEN_RESPONSE_MSG = 128;
 
-	@Persistent
 	private Date payTransDate;
 
-	@Persistent
 	private PaymentOp payOp;
 
-	@Persistent
 	private PaymentType payType;
 
-	@Persistent
 	private float amount = 0f;
 
-	@Persistent
 	private PaymentProcessor paymentProcessor;
 
-	@Persistent
 	private String authNum;
 
-	@Persistent
 	private String refNum;
 
-	@Persistent
 	private String response;
 
-	@Persistent
 	private String responseMsg;
 
-	@Persistent
 	private String notes;
 
 	public Class<? extends IEntity> entityClass() {

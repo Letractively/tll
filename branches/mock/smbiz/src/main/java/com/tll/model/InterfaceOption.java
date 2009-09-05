@@ -4,49 +4,39 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.jdo.annotations.Discriminator;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.jdo.annotations.Uniques;
 import javax.validation.Valid;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
+import com.tll.model.schema.Extended;
+
 /**
  * The interface option entity
  * @author jpk
  */
-@PersistenceCapable
-@Discriminator(value = "option")
-@Uniques(value = @Unique(name = "Code", members = { "code" }))
+@Extended
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Code", properties = { "code" }))
 public class InterfaceOption extends InterfaceOptionBase {
 
 	private static final long serialVersionUID = -3858516767622503827L;
 
-	@Persistent
 	protected boolean isDefault = false;
 
-	@Persistent
 	protected float setUpCost = 0f;
 
-	@Persistent
 	protected float monthlyCost = 0f;
 
-	@Persistent
 	protected float annualCost = 0f;
 
-	@Persistent
 	protected float baseSetupPrice = 0f;
 
-	@Persistent
 	protected float baseMonthlyPrice = 0f;
 
-	@Persistent
 	protected float baseAnnualPrice = 0f;
 
-	@Persistent
 	protected Set<InterfaceOptionParameterDefinition> parameters =
 		new LinkedHashSet<InterfaceOptionParameterDefinition>();
 
