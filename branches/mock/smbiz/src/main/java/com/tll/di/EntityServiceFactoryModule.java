@@ -33,9 +33,7 @@ import com.tll.service.entity.app.AppPropertyService;
 import com.tll.service.entity.app.IAppPropertyService;
 import com.tll.service.entity.currency.CurrencyService;
 import com.tll.service.entity.currency.ICurrencyService;
-import com.tll.service.entity.intf.IInterfaceOptionAccountService;
 import com.tll.service.entity.intf.IInterfaceService;
-import com.tll.service.entity.intf.InterfaceOptionAccountService;
 import com.tll.service.entity.intf.InterfaceService;
 import com.tll.service.entity.order.IOrderService;
 import com.tll.service.entity.order.OrderService;
@@ -83,7 +81,6 @@ public class EntityServiceFactoryModule extends AbstractModule {
 		bind(IAddressService.class).to(AddressService.class).in(Scopes.SINGLETON);
 		bind(IAppPropertyService.class).to(AppPropertyService.class).in(Scopes.SINGLETON);
 		bind(ICurrencyService.class).to(CurrencyService.class).in(Scopes.SINGLETON);
-		bind(IInterfaceOptionAccountService.class).to(InterfaceOptionAccountService.class).in(Scopes.SINGLETON);
 		bind(IInterfaceService.class).to(InterfaceService.class).in(Scopes.SINGLETON);
 		bind(IOrderService.class).to(OrderService.class).in(Scopes.SINGLETON);
 		bind(IProdCatService.class).to(ProdCatService.class).in(Scopes.SINGLETON);
@@ -130,8 +127,6 @@ public class EntityServiceFactoryModule extends AbstractModule {
 			@Inject
 			ICurrencyService cs;
 			@Inject
-			IInterfaceOptionAccountService ioas;
-			@Inject
 			IInterfaceService is;
 			@Inject
 			IOrderService os;
@@ -168,7 +163,6 @@ public class EntityServiceFactoryModule extends AbstractModule {
 				map.put(IAppPropertyService.class, aps);
 				map.put(IAddressService.class, adrs);
 				map.put(ICurrencyService.class, cs);
-				map.put(IInterfaceOptionAccountService.class, ioas);
 				map.put(IInterfaceService.class, is);
 				map.put(IOrderService.class, os);
 				map.put(IProdCatService.class, pcs);

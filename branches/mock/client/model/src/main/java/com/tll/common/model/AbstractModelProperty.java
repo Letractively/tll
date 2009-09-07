@@ -43,7 +43,7 @@ public abstract class AbstractModelProperty implements IModelProperty {
 		if(KStringUtil.isEmpty(propertyName)) {
 			throw new IllegalArgumentException("A property name must be specified");
 		}
-		*/
+		 */
 		this.propertyName = propertyName;
 	}
 
@@ -57,6 +57,7 @@ public abstract class AbstractModelProperty implements IModelProperty {
 	}
 
 	// NOTE: we ignore the propPath
+	@SuppressWarnings("unused")
 	public void setProperty(String propPath, Object value) throws PropertyPathException, IllegalArgumentException {
 		setValue(value);
 	}

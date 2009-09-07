@@ -12,10 +12,12 @@ import com.tll.client.mvc.view.AbstractRpcAndModelAwareView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.RpcUiHandler;
 import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.field.intf.AccountInterfaceOptionsPanel;
 import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.model.ModelKey;
 import com.tll.common.model.SmbizEntityType;
+import com.tll.common.search.AccountInterfaceDataSearch;
 
 /**
  * IntfOptAccView - Manages account to interface option bindings.
@@ -53,12 +55,18 @@ public class IntfOptAccView extends AbstractRpcAndModelAwareView<IntfOptAccViewI
 
 	private InterfaceStack intfStack;
 
+	private ModelKey accountKey;
+
 	/**
 	 * Constructor
 	 */
 	public IntfOptAccView() {
 		super();
 		addWidget(gmp);
+	}
+
+	public void setAccountKey(ModelKey accountKey) {
+		this.accountKey = accountKey;
 	}
 
 	@Override
@@ -78,15 +86,16 @@ public class IntfOptAccView extends AbstractRpcAndModelAwareView<IntfOptAccViewI
 					new InterfaceStack.IFieldPanelResolver() {
 
 				@Override
-				public FieldPanel<?> resolveFieldPanel(SmbizEntityType type) {
-					return null;
+				public FieldPanel<?> resolveFieldPanel(ModelKey intfKey) {
+					return new AccountInterfaceOptionsPanel();
 				}
 			}, new InterfaceStack.IFieldPanelDataLoader() {
 
+				@SuppressWarnings("synthetic-access")
 				@Override
 				public IRpcCommand load(ModelKey intfKey, AuxDataRequest adr) {
 					final CrudCommand c = new CrudCommand();
-								c.load(null, null/*TODO*/);
+					c.load(new AccountInterfaceDataSearch(accountKey.getId(), intfKey.getId()), adr);
 					return c;
 				}
 			}, new CrudCommand());

@@ -78,7 +78,7 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	}
 
 	@Override
-	public void load(ISearch search, ModelPayload payload) {
+	public final void load(ISearch search, ModelPayload payload) {
 		if(search == null || !search.isSet()) {
 			payload.getStatus().addMsg(search == null ? "No search criteria specified" : "Unset search criteria",
 					MsgLevel.ERROR, MsgAttr.STATUS.flag);
@@ -139,7 +139,7 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	}
 
 	@Override
-	public void persist(Model model, ModelPayload payload) {
+	public final void persist(Model model, ModelPayload payload) {
 		if(model.isEntity()) {
 			persistEntity(model, payload);
 		}
@@ -149,7 +149,7 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	}
 
 	@Override
-	public void purge(Model model, ModelPayload payload) {
+	public final void purge(Model model, ModelPayload payload) {
 		purgeImpl(model, payload);
 	}
 

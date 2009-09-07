@@ -26,6 +26,7 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	private EntityBeanFactory entityBeanFactory;
 
 	@Override
+	@SuppressWarnings("hiding")
 	public void init(IEntityDao entityDao, EntityBeanFactory entityBeanFactory) {
 		this.entityDao = entityDao;
 		this.entityBeanFactory = entityBeanFactory;

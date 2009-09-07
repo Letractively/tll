@@ -48,7 +48,7 @@ class InterfaceStack extends StackPanel implements IHasRpcHandlers, IListingHand
 	 */
 	public static interface IFieldPanelResolver {
 
-		FieldPanel<?> resolveFieldPanel(SmbizEntityType type);
+		FieldPanel<?> resolveFieldPanel(ModelKey intfRef);
 	}
 
 	/**
@@ -95,7 +95,7 @@ class InterfaceStack extends StackPanel implements IHasRpcHandlers, IListingHand
 		 * @param showDeleteBtn
 		 */
 		public InterfacePanel(ModelKey intfRef, boolean showCancelBtn, boolean showDeleteBtn) {
-			super(msgDisplay, fldPnlResolver.resolveFieldPanel((SmbizEntityType) intfRef.getEntityType()), showCancelBtn,
+			super(msgDisplay, fldPnlResolver.resolveFieldPanel(intfRef), showCancelBtn,
 					showDeleteBtn);
 			this.intfRef = intfRef;
 

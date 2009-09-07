@@ -42,7 +42,7 @@ public abstract class AbstractDbAwareTest extends AbstractInjectedTest {
 	 * Criteria instance.
 	 * @param <E>
 	 * @param dao
-	 * @param pk
+	 * @param criteria
 	 * @return the found entities satisfying the given criteria
 	 */
 	protected final static <E extends IEntity> List<SearchResult<?>> getEntitiesFromDb(IEntityDao dao,
@@ -64,7 +64,7 @@ public abstract class AbstractDbAwareTest extends AbstractInjectedTest {
 		super();
 		this.config = Config.load();
 	}
-	
+
 	/**
 	 * Constructor
 	 * @param configRefs

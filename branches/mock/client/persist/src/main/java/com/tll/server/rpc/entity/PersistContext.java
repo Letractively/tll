@@ -47,7 +47,6 @@ public final class PersistContext {
 	 * @param schemaInfo
 	 * @param marshaler
 	 * @param marshalOptionsResolver
-	 * @param persistenceManagerFactory
 	 * @param entityTypeResolver
 	 * @param entityAssembler
 	 * @param entityServiceFactory

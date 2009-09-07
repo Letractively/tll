@@ -8,6 +8,7 @@ import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
 import com.tll.common.model.RelatedOneProperty;
 import com.tll.common.model.SmbizEntityType;
+import com.tll.common.model.StringPropertyValue;
 import com.tll.model.Account;
 import com.tll.model.IEntity;
 import com.tll.model.key.PrimaryKey;
@@ -38,8 +39,8 @@ public class AccountService extends AbstractPersistServiceImpl {
 			final IAccountService svc = context.getEntityServiceFactory().instance(IAccountService.class);
 			final Account parent = svc.load(pk);
 			final Model mparent = new Model(SmbizEntityType.ACCOUNT, true);
-			mparent.setProperty(Model.ID_PROPERTY, parent.getId());
-			mparent.setProperty(Model.NAME_PROPERTY, parent.getName());
+			mparent.set(new StringPropertyValue(Model.ID_PROPERTY, parent.getId()));
+			mparent.set(new StringPropertyValue(Model.NAME_PROPERTY, parent.getName()));
 			m.set(new RelatedOneProperty(SmbizEntityType.ACCOUNT, "parent", true, mparent));
 		}
 		return m;

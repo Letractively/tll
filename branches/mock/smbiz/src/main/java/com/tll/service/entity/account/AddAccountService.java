@@ -14,7 +14,7 @@ import com.tll.model.InterfaceOptionAccount;
 import com.tll.model.Isp;
 import com.tll.model.Merchant;
 import com.tll.model.User;
-import com.tll.service.entity.intf.IInterfaceOptionAccountService;
+import com.tll.service.entity.intf.IInterfaceService;
 import com.tll.service.entity.pymnt.IPaymentInfoService;
 import com.tll.service.entity.user.IUserService;
 
@@ -28,7 +28,7 @@ public class AddAccountService {
 
 	private final IAccountService accountService;
 	private final IPaymentInfoService piService;
-	private final IInterfaceOptionAccountService ioaService;
+	private final IInterfaceService iService;
 	private final IUserService userService;
 	// private final ICustomerAccountService caService;
 
@@ -36,16 +36,16 @@ public class AddAccountService {
 	 * Constructor
 	 * @param accountService
 	 * @param piService
-	 * @param ioaService
+	 * @param iService
 	 * @param userService
 	 */
 	@Inject
 	public AddAccountService(IAccountService accountService, IPaymentInfoService piService,
-			IInterfaceOptionAccountService ioaService, IUserService userService/*, ICustomerAccountService caService*/) {
+			IInterfaceService iService, IUserService userService/*, ICustomerAccountService caService*/) {
 		super();
 		this.accountService = accountService;
 		this.piService = piService;
-		this.ioaService = ioaService;
+		this.iService = iService;
 		this.userService = userService;
 		// this.caService = caService;
 	}
@@ -71,7 +71,8 @@ public class AddAccountService {
 		final Account persistedAccount = accountService.persist(account);
 
 		// add the account interface options
-		ioaService.persistAll(accountInterfaceOptions);
+		//iService.persistAccountOptions(accountInterfaceOptions);
+		// TODO fix
 
 		// add the users
 		userService.persistAll(users);

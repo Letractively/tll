@@ -5,9 +5,19 @@
  */
 package com.tll.server.rpc.entity;
 
+import com.tll.common.data.ModelPayload;
+import com.tll.common.model.Model;
+import com.tll.common.model.SmbizEntityType;
+import com.tll.common.search.AccountInterfaceDataSearch;
+import com.tll.common.search.ISearch;
+import com.tll.model.AccountInterface;
+import com.tll.server.marshal.MarshalOptions;
+import com.tll.server.marshal.Marshaler;
+import com.tll.service.entity.intf.IInterfaceService;
+
 
 /**
- * InterfaceOptionAccountService
+ * AccountInterfaceOptionsService
  * @author jpk
  */
 public class AccountInterfaceOptionsService extends AbstractPersistServiceImpl {
@@ -25,4 +35,32 @@ public class AccountInterfaceOptionsService extends AbstractPersistServiceImpl {
 		return "Account Interface Option";
 	}
 
+	@Override
+	public void loadImpl(ISearch search, ModelPayload payload) {
+		if(search instanceof AccountInterfaceDataSearch) {
+			final AccountInterfaceDataSearch ais = (AccountInterfaceDataSearch) search;
+
+			final IInterfaceService isvc = context.getEntityServiceFactory().instance(IInterfaceService.class);
+			final AccountInterface ai = isvc.loadAccountOptions(ais.getAccountId(), ais.getInterfaceId());
+
+			final Marshaler marshaler = context.getMarshaler();
+			final MarshalOptions moptions = context.getMarshalOptionsResolver().resolve(SmbizEntityType.INTERFACE);
+			final Model m = marshaler.marshalEntity(ai, moptions);
+			payload.setModel(m);
+		}
+		else
+			throw new IllegalArgumentException("Unhandled account interface data search type.");
+	}
+
+	@Override
+	public void persistImpl(Model model, ModelPayload payload) {
+		// [re-]set the account interface options for a given interface and account
+
+		final Marshaler marshaler = context.getMarshaler();
+
+		final IInterfaceService isvc = context.getEntityServiceFactory().instance(IInterfaceService.class);
+
+		final AccountInterface ai = marshaler.unmarshalEntity(AccountInterface.class, model);
+		isvc.persistAccountOptions(ai);
+	}
 }

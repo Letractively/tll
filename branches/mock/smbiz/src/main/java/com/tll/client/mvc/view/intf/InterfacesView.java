@@ -195,7 +195,8 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 					new InterfaceStack.IFieldPanelResolver() {
 
 				@Override
-				public FieldPanel<?> resolveFieldPanel(SmbizEntityType type) {
+				public FieldPanel<?> resolveFieldPanel(ModelKey mkey) {
+					final SmbizEntityType type = (SmbizEntityType) mkey.getEntityType();
 					switch(type) {
 						case INTERFACE_SWITCH:
 							return new SwitchInterfacePanel();

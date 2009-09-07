@@ -40,7 +40,7 @@ public final class SchemaInfo implements ISchemaInfo {
 		/**
 		 * Constructor
 		 * @param accessorMethod the required accessor method ref
-		 * @param fld the corresponding field ref to the persist related property
+		 * @param pname the corresponding property name
 		 */
 		public PersistProperty(Method accessorMethod, String pname) {
 			super();
@@ -87,11 +87,11 @@ public final class SchemaInfo implements ISchemaInfo {
 	 * the parentAccount entity class.
 	 */
 	private final Map<Class<?>, Map<String, ISchemaProperty>> schemaMap =
-			new HashMap<Class<?>, Map<String, ISchemaProperty>>();
+		new HashMap<Class<?>, Map<String, ISchemaProperty>>();
 
 	@Override
 	public PropertyMetadata getPropertyMetadata(final Class<?> entityClass, final String propertyName)
-			throws SchemaInfoException {
+	throws SchemaInfoException {
 		final ISchemaProperty sp = getSchemaProperty(entityClass, propertyName);
 		if(!sp.getPropertyType().isValue()) {
 			throw new SchemaInfoException(propertyName + " for entity type " + entityClass.getName()
@@ -120,7 +120,7 @@ public final class SchemaInfo implements ISchemaInfo {
 
 	@Override
 	public ISchemaProperty getSchemaProperty(final Class<?> entityClass, final String propertyName)
-			throws SchemaInfoException {
+	throws SchemaInfoException {
 		if(propertyName == null || propertyName.length() < 1)
 			throw new IllegalArgumentException("Unable to retreive schema property: no property name specified");
 
@@ -223,7 +223,7 @@ public final class SchemaInfo implements ISchemaInfo {
 	 * @return New {@link PersistProperty} instance or <code>null</code>.
 	 */
 	private PersistProperty getFieldInfo(final String propName, final Class<?> entityClass, final Method accessorMethod)
-			throws IllegalStateException {
+	throws IllegalStateException {
 		return new PersistProperty(accessorMethod, propName);
 	}
 
@@ -247,7 +247,7 @@ public final class SchemaInfo implements ISchemaInfo {
 		if(Collection.class.isAssignableFrom(rt)) {
 			try {
 				final Class<?> rmec =
-						(Class<?>) ((ParameterizedType) pprop.method.getGenericReturnType()).getActualTypeArguments()[0];
+					(Class<?>) ((ParameterizedType) pprop.method.getGenericReturnType()).getActualTypeArguments()[0];
 				return isEntityType(rmec);
 			}
 			catch(final Throwable t) {
@@ -352,7 +352,7 @@ public final class SchemaInfo implements ISchemaInfo {
 		else if(Map.class == rt) {
 			// string map?
 			if(String.class == ((ParameterizedType) m.getGenericReturnType()).getActualTypeArguments()[0]
-					&& String.class == ((ParameterizedType) m.getGenericReturnType()).getActualTypeArguments()[1]) {
+			                                                                                           && String.class == ((ParameterizedType) m.getGenericReturnType()).getActualTypeArguments()[1]) {
 				fd = new PropertyMetadata(PropertyType.STRING_MAP, managed, required, -1);
 			}
 		}
