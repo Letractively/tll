@@ -148,7 +148,7 @@ public final class BuildTools {
 	/**
 	 * Copies webapp resources to the target war dir.
 	 */
-	private void copyWebappResources() {
+	public void copyWebappResources() {
 		println 'Copying webapp resources..'
 		String sdir = basedir + '/src/main/webapp'
 		String tdir = basedir + '/target/war'
@@ -164,7 +164,7 @@ public final class BuildTools {
 	/**
 	 * Generates the web.xml file based on the configuration/project state.
 	 */
-	private void generateWebXml() {
+	public void generateWebXml() {
 		println 'Generating web.xml..'
 		
 		Map props = [:];
@@ -242,7 +242,7 @@ public final class BuildTools {
 	/**
 	 * Generates GWT Constants.properties file.
 	 */
-	private void generateGwtConstantsFile() {
+	public void generateGwtConstantsFile() {
 	    println 'Generating GWT Constants.properties file..'
 		String tgtDir = project.build.outputDirectory.toString() + '/com/tll/client'
 	    ant.mkdir(dir: tgtDir)
@@ -264,7 +264,7 @@ public final class BuildTools {
 	/**
 	 * Saves the generated config to disk that is deploy ready.
 	 */
-	private void saveConfig() {
+	public void saveConfig() {
 	    // create aggregated config.properties file..
 	    println 'Creating aggregated config.properties file..'
 		String tgtDir = basedir + '/target/war/WEB-INF/classes'

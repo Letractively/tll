@@ -51,7 +51,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel {
 		 */
 		public OptionPanel() {
 			paramsPanel = new ParamsPanel();
-			dpParams = new DisclosurePanel("Parameters", false);
+			dpParams = new DisclosurePanel("ParametersPanel", false);
 			dpParams.add(paramsPanel);
 		}
 

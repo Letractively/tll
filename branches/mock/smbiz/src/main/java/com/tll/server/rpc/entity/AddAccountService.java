@@ -17,8 +17,8 @@ import com.tll.common.model.SmbizEntityType;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.model.Account;
+import com.tll.model.AccountInterface;
 import com.tll.model.Customer;
-import com.tll.model.InterfaceOptionAccount;
 import com.tll.model.Isp;
 import com.tll.model.Merchant;
 import com.tll.model.User;
@@ -60,7 +60,7 @@ public class AddAccountService extends RpcServlet implements IAddAccountService 
 			s.addMsg("No account specified.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 			return p;
 		}
-		final Collection<Model> maios = request.getAccountInterfaceOptions();
+		final Collection<Model> maios = request.getAccountInterfaces();
 		if(maios == null) {
 			s.addMsg("No account interface options specified.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 			return p;
@@ -71,9 +71,9 @@ public class AddAccountService extends RpcServlet implements IAddAccountService 
 			// un-marshal
 			Account account = mlr.unmarshalEntity(accountClass, maccount);
 
-			final ArrayList<InterfaceOptionAccount> aios = new ArrayList<InterfaceOptionAccount>(maios.size());
+			final ArrayList<AccountInterface> aios = new ArrayList<AccountInterface>(maios.size());
 			for(final Model maio : maios) {
-				aios.add(mlr.unmarshalEntity(InterfaceOptionAccount.class, maio));
+				aios.add(mlr.unmarshalEntity(AccountInterface.class, maio));
 			}
 
 			final ArrayList<User> users = musers == null ? null : new ArrayList<User>(musers.size());

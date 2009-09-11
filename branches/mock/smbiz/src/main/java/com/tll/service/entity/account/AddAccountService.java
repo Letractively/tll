@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.inject.Inject;
 import com.tll.dao.EntityExistsException;
 import com.tll.model.Account;
+import com.tll.model.AccountInterface;
 import com.tll.model.Customer;
-import com.tll.model.InterfaceOptionAccount;
 import com.tll.model.Isp;
 import com.tll.model.Merchant;
 import com.tll.model.User;
@@ -53,13 +53,13 @@ public class AddAccountService {
 	/**
 	 * adds an account along with any related account interface options and users.
 	 * @param account
-	 * @param accountInterfaceOptions may be null
+	 * @param accountInterfaces may be null
 	 * @param users may be null
 	 * @return the added account
 	 * @throws EntityExistsException when the account already exists (by business
 	 *         key)
 	 */
-	private Account addAccount(Account account, Collection<InterfaceOptionAccount> accountInterfaceOptions,
+	private Account addAccount(Account account, Collection<AccountInterface> accountInterfaces,
 			Collection<User> users) throws EntityExistsException {
 
 		// create payment info
@@ -71,8 +71,7 @@ public class AddAccountService {
 		final Account persistedAccount = accountService.persist(account);
 
 		// add the account interface options
-		//iService.persistAccountOptions(accountInterfaceOptions);
-		// TODO fix
+		iService.setAccountInterfaces(accountInterfaces);
 
 		// add the users
 		userService.persistAll(users);
@@ -83,46 +82,46 @@ public class AddAccountService {
 	/**
 	 * Adds an Isp.
 	 * @param isp
-	 * @param accountInterfaceOptions
+	 * @param accountInterfaces
 	 * @param users
 	 * @return the persisted isp
 	 * @throws ConstraintViolationException
 	 * @throws EntityExistsException
 	 */
 	@Transactional
-	public Isp addIsp(Isp isp, Collection<InterfaceOptionAccount> accountInterfaceOptions, Collection<User> users)
+	public Isp addIsp(Isp isp, Collection<AccountInterface> accountInterfaces, Collection<User> users)
 	throws ConstraintViolationException, EntityExistsException {
-		return (Isp) addAccount(isp, accountInterfaceOptions, users);
+		return (Isp) addAccount(isp, accountInterfaces, users);
 	}
 
 	/**
 	 * Adds a merchant.
 	 * @param merchant
-	 * @param accountInterfaceOptions
+	 * @param accountInterfaces
 	 * @param users
 	 * @return the persisted merchant
 	 * @throws ConstraintViolationException
 	 * @throws EntityExistsException
 	 */
 	@Transactional
-	public Merchant addMerchant(Merchant merchant, Collection<InterfaceOptionAccount> accountInterfaceOptions,
+	public Merchant addMerchant(Merchant merchant, Collection<AccountInterface> accountInterfaces,
 			Collection<User> users) throws ConstraintViolationException, EntityExistsException {
-		return (Merchant) addAccount(merchant, accountInterfaceOptions, users);
+		return (Merchant) addAccount(merchant, accountInterfaces, users);
 	}
 
 	/**
 	 * Adds a customer
 	 * @param customer
-	 * @param accountInterfaceOptions
+	 * @param accountInterfaces
 	 * @param users
 	 * @return the persisted customer
 	 * @throws ConstraintViolationException
 	 * @throws EntityExistsException
 	 */
 	@Transactional
-	public Customer addCustomer(Customer customer, Collection<InterfaceOptionAccount> accountInterfaceOptions,
+	public Customer addCustomer(Customer customer, Collection<AccountInterface> accountInterfaces,
 			Collection<User> users) throws ConstraintViolationException, EntityExistsException {
-		return (Customer) addAccount(customer, accountInterfaceOptions, users);
+		return (Customer) addAccount(customer, accountInterfaces, users);
 	}
 
 	/*

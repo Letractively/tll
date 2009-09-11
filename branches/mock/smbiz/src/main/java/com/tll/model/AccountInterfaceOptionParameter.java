@@ -11,7 +11,7 @@ import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 
 /**
- * AccountInterfaceOptionParameter
+ * AccountInterfaceOptionParameter - Pseudo-entity to facilitate ui interaction.
  * @author jpk
  */
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Code", properties = { "code" }))

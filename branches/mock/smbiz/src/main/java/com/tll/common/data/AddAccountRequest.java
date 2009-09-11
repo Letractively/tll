@@ -17,7 +17,7 @@ import com.tll.common.model.Model;
 public class AddAccountRequest extends ModelRequest {
 
 	private Model account;
-	private Collection<Model> accountInterfaceOptions;
+	private Collection<Model> accountInterfaces;
 	private Collection<Model> users;
 
 	/**
@@ -30,13 +30,13 @@ public class AddAccountRequest extends ModelRequest {
 	/**
 	 * Constructor
 	 * @param account
-	 * @param accountInterfaceOptions
+	 * @param accountInterfaces
 	 * @param users
 	 */
-	public AddAccountRequest(Model account, Collection<Model> accountInterfaceOptions, Collection<Model> users) {
+	public AddAccountRequest(Model account, Collection<Model> accountInterfaces, Collection<Model> users) {
 		super();
 		this.account = account;
-		this.accountInterfaceOptions = accountInterfaceOptions;
+		this.accountInterfaces = accountInterfaces;
 		this.users = users;
 	}
 
@@ -57,10 +57,10 @@ public class AddAccountRequest extends ModelRequest {
 	}
 
 	/**
-	 * @return the accountInterfaceOptions
+	 * @return the accountInterfaces
 	 */
-	public Collection<Model> getAccountInterfaceOptions() {
-		return accountInterfaceOptions;
+	public Collection<Model> getAccountInterfaces() {
+		return accountInterfaces;
 	}
 
 	/**

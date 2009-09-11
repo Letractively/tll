@@ -11,11 +11,15 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.tll.client.Style;
+import com.tll.client.model.ModelAssembler;
+import com.tll.client.ui.Br;
 import com.tll.client.ui.Heading;
 import com.tll.client.ui.field.AbstractFieldGroupProvider;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.FieldGroup;
+import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
@@ -25,14 +29,76 @@ import com.tll.client.util.Fmt;
 import com.tll.common.model.DoublePropertyValue;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
+import com.tll.common.model.SmbizEntityType;
 import com.tll.model.InterfaceStatus;
 
 /**
- * AccountInterfaceOptionsPanel - Displays account interface option data for a single
+ * AccountInterfacePanel - Displays account interface option data for a single
  * interface.
  * @author jpk
  */
-public class AccountInterfaceOptionsPanel extends FlowFieldPanel {
+public class AccountInterfacePanel extends FlowFieldPanel {
+
+	static class InterfaceSummary extends Composite {
+
+		final FlowPanel pnl = new FlowPanel();
+		final Grid desc;
+		final VerticalPanel availability;
+
+		/**
+		 * Constructor
+		 */
+		public InterfaceSummary() {
+			super();
+
+			// desc grid
+			desc = new Grid(3, 2);
+			pnl.add(desc);
+			Label lbl;
+			lbl = new Label("Name", false);
+			lbl.addStyleName(Style.BOLD);
+			desc.setWidget(0, 0, lbl);
+			lbl = new Label("Code", false);
+			lbl.addStyleName(Style.BOLD);
+			desc.setWidget(1, 0, lbl);
+			lbl = new Label("Description", false);
+			lbl.addStyleName(Style.BOLD);
+			desc.setWidget(2, 0, lbl);
+
+			// availablity grid
+			availability = new VerticalPanel();
+			pnl.add(availability);
+			Label l;
+			l = new Label("Availability");
+			l.addStyleName(FieldPanel.Styles.FIELD_TITLE);
+			availability.add(l);
+			availability.add(new Label("")); // isAvailableAsp
+			availability.add(new Label("")); // isAvailableIsp
+			availability.add(new Label("")); // isAvailableMerchant
+			availability.add(new Label("")); // isAvailableCustomer
+			availability.add(new Br());
+			l = new Label("Requiredness");
+			l.addStyleName(FieldPanel.Styles.FIELD_TITLE);
+			availability.add(l);
+			availability.add(new Label("")); // isRequiredAsp
+			availability.add(new Label("")); // isRequiredIsp
+			availability.add(new Label("")); // isRequiredMerchant
+			availability.add(new Label("")); // isRequiredCustomer
+
+			initWidget(pnl);
+		}
+
+		void apply(Model intf) {
+			desc.setText(0, 1, intf.asString("name"));
+			desc.setText(1, 1, intf.asString("code"));
+			desc.setText(2, 1, intf.asString("desciption"));
+
+			// TODO finish
+			// availability.getWidget(index)
+
+		}
+
+	} // InterfaceSummary
 
 	/**
 	 * InterfaceOptionSummary - Static text that summarizes an interface option.
@@ -87,9 +153,11 @@ public class AccountInterfaceOptionsPanel extends FlowFieldPanel {
 		}
 
 		public void apply(Model option) {
-			// default?
-			final boolean isDefault = option.asString("default").equals("true");
-			desc.setText(2, 1, isDefault ? "Yes" : "No");
+			// desc
+			desc.setText(0, 1, option.asString("name"));
+			desc.setText(1, 1, option.asString("code"));
+			desc.setText(2, 1, option.asString("desciption"));
+			desc.setText(3, 1, option.asString("default").equals("true") ? "Yes" : "No");
 
 			// pricing
 			DoublePropertyValue dpv;
@@ -108,18 +176,18 @@ public class AccountInterfaceOptionsPanel extends FlowFieldPanel {
 	} // InterfaceOptionSummary
 
 	/**
-	 * AccountInterfaceOption - Manages the interface option to account bindings
-	 * for a given interface option and account.
+	 * AccountOptionPanel - Manages the interface option to account
+	 * bindings for a given interface option and account.
 	 * @author jpk
 	 */
-	static class AccountInterfaceOption extends FlowFieldPanel {
+	static class AccountOptionPanel extends FlowFieldPanel {
 
 		/**
-		 * OptionParameter - Represents an interface option parameter that handles
-		 * account subscribing and un-subscribing.
+		 * AccountParameterPanel - Represents an interface option parameter that
+		 * handles account subscribing and un-subscribing.
 		 * @author jpk
 		 */
-		class OptionParameter extends FlowFieldPanel {
+		class AccountParameterPanel extends FlowFieldPanel {
 
 			CheckboxField fSubscribed;
 			Label lblPName, lblPDesc;
@@ -127,7 +195,7 @@ public class AccountInterfaceOptionsPanel extends FlowFieldPanel {
 
 			@Override
 			protected FieldGroup generateFieldGroup() {
-				final FieldGroup fg = new FieldGroup("Interface Parameters");
+				final FieldGroup fg = new FieldGroup("Account Parameters");
 				fg.addField(fSubscribed);
 				fg.addField(fPValue);
 				return fg;
@@ -168,68 +236,50 @@ public class AccountInterfaceOptionsPanel extends FlowFieldPanel {
 				lblPDesc.setText(iopd.asString("description"));
 			}
 
-		} // OptionParameter
+		} // AccountParameterPanel
 
 		/**
-		 * Parameters - Renders a collection of {@link OptionParameter} panels.
+		 * ParametersPanel - Renders a collection of {@link AccountParameterPanel}
+		 * panels.
 		 * @author jpk
 		 */
-		class Parameters extends TabbedIndexedFieldPanel<OptionParameter> {
+		class ParametersPanel extends TabbedIndexedFieldPanel<AccountParameterPanel> {
 
 			/**
 			 * Constructor
 			 */
-			public Parameters() {
+			public ParametersPanel() {
 				super("Parameters", "parameters", false, false);
 			}
 
 			@Override
 			protected String getIndexTypeName() {
-				return "Option Parameter";
+				return "Account Option Parameter";
 			}
 
 			@Override
-			protected String getInstanceName(OptionParameter index) {
-				return "TODO";
+			protected String getInstanceName(AccountParameterPanel index) {
+				String pname;
+				try {
+					pname = (String) index.getModel().getProperty("name");
+				}
+				catch(final PropertyPathException e) {
+					throw new IllegalStateException(e);
+				}
+				return pname;
 			}
 
 			@Override
-			protected OptionParameter createIndexPanel() {
-				return new OptionParameter();
+			protected AccountParameterPanel createIndexPanel() {
+				return new AccountParameterPanel();
 			}
 
 			@Override
 			protected Model createPrototypeModel() {
-				throw new UnsupportedOperationException();
+				return ModelAssembler.assemble(SmbizEntityType.ACCOUNT_INTERFACE_OPTION_PARAMETER);
 			}
 
-			/*
-			public void apply(Model ioa) {
-				params.clear();
-				Map<String, String> pmap;
-				try {
-					pmap = ((StringMapPropertyValue) ioa.getPropertyValue("parameters")).getStringMap();
-					final Model option = ioa.getNestedModel("option");
-					final List<Model> iopds = option.relatedMany("parameters").getList();
-					int i = 0;
-					for(final Model iopd : iopds) {
-						final String pname = iopd.asString("name");
-
-						final OptionParameter op = new OptionParameter(i++, iopd, pmap.containsKey(pname), pmap.get(pname));
-						params.add(op);
-						tp.add(op, pname);
-					}
-				}
-				catch(final PropPathNodeMismatchException e) {
-					throw new IllegalArgumentException(e);
-				}
-				catch(final PropertyPathException e) {
-					throw new IllegalArgumentException(e);
-				}
-			}
-			 */
-
-		} // Parameters
+		} // ParametersPanel
 
 		/**
 		 * FieldProvider
@@ -252,7 +302,7 @@ public class AccountInterfaceOptionsPanel extends FlowFieldPanel {
 		} // FieldProvider
 
 		final InterfaceOptionSummary ioSmry = new InterfaceOptionSummary();
-		final Parameters paramWidget = new Parameters();
+		final ParametersPanel paramWidget = new ParametersPanel();
 
 		@Override
 		protected FieldGroup generateFieldGroup() {
@@ -276,14 +326,22 @@ public class AccountInterfaceOptionsPanel extends FlowFieldPanel {
 				}
 			};
 		}
-	} // AccountInterfaceOption
 
-	final ArrayList<AccountInterfaceOption> aoptions = new ArrayList<AccountInterfaceOption>(3);
+		@Override
+		public void setModel(Model model) {
+			super.setModel(model);
+			ioSmry.apply(model);
+		}
+
+	} // AccountOptionPanel
+
+	final InterfaceSummary iSmry = new InterfaceSummary();
+	final ArrayList<AccountOptionPanel> options = new ArrayList<AccountOptionPanel>();
 
 	@Override
 	protected FieldGroup generateFieldGroup() {
 		final FieldGroup fg = new FieldGroup("Account Interface Options");
-		//fg.addField(FieldFactory.)
+		// fg.addField(FieldFactory.)
 		return fg;
 	}
 
@@ -295,6 +353,7 @@ public class AccountInterfaceOptionsPanel extends FlowFieldPanel {
 	@Override
 	public void setModel(Model model) {
 		super.setModel(model);
+
 	}
 
 }

@@ -10,10 +10,10 @@ import com.tll.common.model.ModelKey;
 
 
 /**
- * IntfOptAccViewInitializer
+ * AccountInterfaceViewInitializer
  * @author jpk
  */
-public class IntfOptAccViewInitializer extends AbstractDynamicViewInitializer {
+public class AccountInterfaceViewInitializer extends AbstractDynamicViewInitializer {
 
 	private final ModelKey accountRef;
 
@@ -21,8 +21,8 @@ public class IntfOptAccViewInitializer extends AbstractDynamicViewInitializer {
 	 * Constructor
 	 * @param accountRef
 	 */
-	public IntfOptAccViewInitializer(ModelKey accountRef) {
-		super(IntfOptAccView.klas);
+	public AccountInterfaceViewInitializer(ModelKey accountRef) {
+		super(AccountInterfaceView.klas);
 		this.accountRef = accountRef;
 	}
 

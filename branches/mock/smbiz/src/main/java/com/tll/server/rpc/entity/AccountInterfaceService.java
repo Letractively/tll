@@ -15,18 +15,18 @@ import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.marshal.Marshaler;
 import com.tll.service.entity.intf.IInterfaceService;
 
-
 /**
- * AccountInterfaceOptionsService
+ * AccountInterfaceService - Handles account subscriptions to the defined
+ * interface options.
  * @author jpk
  */
-public class AccountInterfaceOptionsService extends AbstractPersistServiceImpl {
+public class AccountInterfaceService extends AbstractPersistServiceImpl {
 
 	/**
 	 * Constructor
 	 * @param context
 	 */
-	public AccountInterfaceOptionsService(PersistContext context) {
+	public AccountInterfaceService(PersistContext context) {
 		super(context);
 	}
 
@@ -41,10 +41,10 @@ public class AccountInterfaceOptionsService extends AbstractPersistServiceImpl {
 			final AccountInterfaceDataSearch ais = (AccountInterfaceDataSearch) search;
 
 			final IInterfaceService isvc = context.getEntityServiceFactory().instance(IInterfaceService.class);
-			final AccountInterface ai = isvc.loadAccountOptions(ais.getAccountId(), ais.getInterfaceId());
+			final AccountInterface ai = isvc.loadAccountInterface(ais.getAccountId(), ais.getInterfaceId());
 
 			final Marshaler marshaler = context.getMarshaler();
-			final MarshalOptions moptions = context.getMarshalOptionsResolver().resolve(SmbizEntityType.INTERFACE);
+			final MarshalOptions moptions = context.getMarshalOptionsResolver().resolve(SmbizEntityType.ACCOUNT_INTERFACE);
 			final Model m = marshaler.marshalEntity(ai, moptions);
 			payload.setModel(m);
 		}
@@ -61,6 +61,6 @@ public class AccountInterfaceOptionsService extends AbstractPersistServiceImpl {
 		final IInterfaceService isvc = context.getEntityServiceFactory().instance(IInterfaceService.class);
 
 		final AccountInterface ai = marshaler.unmarshalEntity(AccountInterface.class, model);
-		isvc.persistAccountOptions(ai);
+		isvc.setAccountInterface(ai);
 	}
 }

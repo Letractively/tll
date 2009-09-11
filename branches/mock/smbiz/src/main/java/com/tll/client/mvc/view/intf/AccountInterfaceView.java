@@ -12,7 +12,7 @@ import com.tll.client.mvc.view.AbstractRpcAndModelAwareView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.RpcUiHandler;
 import com.tll.client.ui.field.FieldPanel;
-import com.tll.client.ui.field.intf.AccountInterfaceOptionsPanel;
+import com.tll.client.ui.field.intf.AccountInterfacePanel;
 import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.model.ModelKey;
@@ -20,10 +20,10 @@ import com.tll.common.model.SmbizEntityType;
 import com.tll.common.search.AccountInterfaceDataSearch;
 
 /**
- * IntfOptAccView - Manages account to interface option bindings.
+ * AccountInterfaceView - Manages account to interface option bindings.
  * @author jpk
  */
-public class IntfOptAccView extends AbstractRpcAndModelAwareView<IntfOptAccViewInitializer> {
+public class AccountInterfaceView extends AbstractRpcAndModelAwareView<AccountInterfaceViewInitializer> {
 
 	public static final Class klas = new Class();
 
@@ -31,12 +31,12 @@ public class IntfOptAccView extends AbstractRpcAndModelAwareView<IntfOptAccViewI
 
 		@Override
 		public String getName() {
-			return "IntfOptAccView";
+			return "AccountInterfaceView";
 		}
 
 		@Override
-		public IntfOptAccView newView() {
-			return new IntfOptAccView();
+		public AccountInterfaceView newView() {
+			return new AccountInterfaceView();
 		}
 	} // Class
 
@@ -47,8 +47,9 @@ public class IntfOptAccView extends AbstractRpcAndModelAwareView<IntfOptAccViewI
 		auxDataRequest.requestEntityPrototype(SmbizEntityType.INTERFACE_SINGLE);
 		auxDataRequest.requestEntityPrototype(SmbizEntityType.INTERFACE_MULTI);
 		auxDataRequest.requestEntityPrototype(SmbizEntityType.INTERFACE_OPTION);
-		auxDataRequest.requestEntityPrototype(SmbizEntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
-		auxDataRequest.requestEntityPrototype(SmbizEntityType.INTERFACE_OPTION_ACCOUNT);
+		auxDataRequest.requestEntityPrototype(SmbizEntityType.ACCOUNT_INTERFACE);
+		auxDataRequest.requestEntityPrototype(SmbizEntityType.ACCOUNT_INTERFACE_OPTION);
+		auxDataRequest.requestEntityPrototype(SmbizEntityType.ACCOUNT_INTERFACE_OPTION_PARAMETER);
 	}
 
 	private final GlobalMsgPanel gmp = new GlobalMsgPanel();
@@ -60,7 +61,7 @@ public class IntfOptAccView extends AbstractRpcAndModelAwareView<IntfOptAccViewI
 	/**
 	 * Constructor
 	 */
-	public IntfOptAccView() {
+	public AccountInterfaceView() {
 		super();
 		addWidget(gmp);
 	}
@@ -80,14 +81,14 @@ public class IntfOptAccView extends AbstractRpcAndModelAwareView<IntfOptAccViewI
 	}
 
 	@Override
-	protected void doInitialization(IntfOptAccViewInitializer initializer) {
+	protected void doInitialization(AccountInterfaceViewInitializer initializer) {
 		intfStack =
 			new InterfaceStack(gmp, new RpcUiHandler(getViewContainerRef()), auxDataRequest,
 					new InterfaceStack.IFieldPanelResolver() {
 
 				@Override
 				public FieldPanel<?> resolveFieldPanel(ModelKey intfKey) {
-					return new AccountInterfaceOptionsPanel();
+					return new AccountInterfacePanel();
 				}
 			}, new InterfaceStack.IFieldPanelDataLoader() {
 

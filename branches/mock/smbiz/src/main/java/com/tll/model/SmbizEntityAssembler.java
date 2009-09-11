@@ -110,6 +110,18 @@ public final class SmbizEntityAssembler implements IEntityFactory, IEntityAssemb
 			final InterfaceSwitch ae = createEntity(InterfaceSwitch.class, generate);
 			e = (E) ae;
 		}
+		else if(AccountInterface.class == entityType) {
+			final AccountInterface ai = createEntity(AccountInterface.class, generate);
+			e = (E) ai;
+		}
+		else if(AccountInterfaceOption.class == entityType) {
+			final AccountInterfaceOption o = createEntity(AccountInterfaceOption.class, generate);
+			e = (E) o;
+		}
+		else if(AccountInterfaceOptionParameter.class == entityType) {
+			final AccountInterfaceOptionParameter p = createEntity(AccountInterfaceOptionParameter.class, generate);
+			e = (E) p;
+		}
 		else if(Isp.class.equals(entityType)) {
 			final Isp ae = createEntity(Isp.class, generate);
 			if(entityProvider != null) {

@@ -23,7 +23,6 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 
 	private static final long serialVersionUID = 7903409644943150791L;
 
-
 	private String accountId, interfaceId;
 
 	private Set<AccountInterfaceOption> options = new LinkedHashSet<AccountInterfaceOption>();

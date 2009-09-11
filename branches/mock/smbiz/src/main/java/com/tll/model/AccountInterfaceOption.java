@@ -15,12 +15,14 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
- * AccountInterfaceOption
+ * AccountOptionPanel - Pseudo-entity to facilitate ui interaction.
  * @author jpk
  */
 public class AccountInterfaceOption extends InterfaceOptionBase {
 
 	private static final long serialVersionUID = -6577796307065099973L;
+
+	/* InterfaceOptionAccount properties */
 
 	protected InterfaceStatus status;
 
@@ -29,6 +31,8 @@ public class AccountInterfaceOption extends InterfaceOptionBase {
 	protected float monthlyPrice = 0f;
 
 	protected float annualPrice = 0f;
+
+	/* InterfaceOption properties */
 
 	protected boolean isDefault = false;
 

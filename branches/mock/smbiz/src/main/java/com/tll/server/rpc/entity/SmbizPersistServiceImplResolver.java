@@ -17,12 +17,12 @@ import com.tll.common.search.AccountInterfaceDataSearch;
 import com.tll.common.search.ISearch;
 import com.tll.model.Account;
 import com.tll.model.AccountAddress;
+import com.tll.model.AccountInterface;
 import com.tll.model.Address;
 import com.tll.model.Authority;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.Interface;
-import com.tll.model.InterfaceOptionAccount;
 import com.tll.model.User;
 
 /**
@@ -58,9 +58,9 @@ public class SmbizPersistServiceImplResolver implements IPersistServiceImplResol
 		if(request instanceof PersistRequest) {
 			return resolve(((PersistRequest) request).getModel().getEntityType());
 		}
-		
+
 		if(request instanceof PurgeRequest) {
-			PurgeRequest pr = (PurgeRequest) request;
+			final PurgeRequest pr = (PurgeRequest) request;
 			if(pr.getEntityRef() != null) {
 				return resolve(pr.getEntityRef().getEntityType());
 			}
@@ -88,7 +88,7 @@ public class SmbizPersistServiceImplResolver implements IPersistServiceImplResol
 			return resolve(((IEntityTypeProvider) search).getEntityType());
 		}
 		else if(search instanceof AccountInterfaceDataSearch) {
-			return AccountInterfaceOptionsService.class;
+			return AccountInterfaceService.class;
 		}
 
 		throw new IllegalArgumentException("Unhandled search type: " + search);
@@ -119,8 +119,8 @@ public class SmbizPersistServiceImplResolver implements IPersistServiceImplResol
 		else if(Interface.class.isAssignableFrom(rootEntityClass)) {
 			return InterfaceService.class;
 		}
-		else if(InterfaceOptionAccount.class.isAssignableFrom(rootEntityClass)) {
-			return AccountInterfaceOptionsService.class;
+		else if(AccountInterface.class.isAssignableFrom(rootEntityClass)) {
+			return AccountInterfaceService.class;
 		}
 		throw new IllegalArgumentException("Unhandled entity type: " + etype);
 	}

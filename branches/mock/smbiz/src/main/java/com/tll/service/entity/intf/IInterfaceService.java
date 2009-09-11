@@ -3,6 +3,8 @@
  */
 package com.tll.service.entity.intf;
 
+import java.util.Collection;
+
 import com.tll.model.AccountInterface;
 import com.tll.model.Interface;
 import com.tll.service.entity.INamedEntityService;
@@ -14,16 +16,37 @@ import com.tll.service.entity.INamedEntityService;
 public interface IInterfaceService extends INamedEntityService<Interface> {
 
 	/**
-	 * Loads interface options for an account.
+	 * Loads the account interface for a given account and interface.
 	 * @param accountId
 	 * @param interfaceId
-	 * @return list of subscribed interface options for a given interface and account
+	 * @return the never-<code>null</code> account interface.
 	 */
-	AccountInterface loadAccountOptions(String accountId, String interfaceId);
+	AccountInterface loadAccountInterface(String accountId, String interfaceId);
 
 	/**
-	 * Replaces the subscribed interface options for a given account.
+	 * Adds or replaces the given account interface.
 	 * @param accountInterface The account interface
 	 */
-	void persistAccountOptions(AccountInterface accountInterface);
+	void setAccountInterface(AccountInterface accountInterface);
+
+	/**
+	 * Replaces <em>all</em> subscribed intf options for all existing master
+	 * interfaces for a given account with the ones given.
+	 * @param accountInterfaces The new subscribed options for all defined
+	 *        interfaces
+	 */
+	void setAccountInterfaces(Collection<AccountInterface> accountInterfaces);
+
+	/**
+	 * Purges the subscribed options for a given account and interface.
+	 * @param accountId
+	 * @param interfaceId
+	 */
+	void purgeAccountInterface(String accountId, String interfaceId);
+
+	/**
+	 * Purges all subscribed interface options for a given account.
+	 * @param accountId
+	 */
+	void purgeAccountInterfacess(String accountId);
 }

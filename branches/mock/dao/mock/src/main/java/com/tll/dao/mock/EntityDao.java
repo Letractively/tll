@@ -2,6 +2,7 @@ package com.tll.dao.mock;
 
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -26,6 +27,7 @@ import com.tll.criteria.CriterionGroup;
 import com.tll.criteria.DBType;
 import com.tll.criteria.ICriterion;
 import com.tll.criteria.IQueryParam;
+import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.EntityExistsException;
 import com.tll.dao.EntityNotFoundException;
@@ -203,6 +205,11 @@ public class EntityDao implements IEntityDao {
 	private final EntityGraph entityGraph;
 
 	/**
+	 * The query handler.
+	 */
+	private final INamedQueryHandler queryHandler;
+
+	/**
 	 * Constructor
 	 * @param entityGraph The entity provider
 	 */
@@ -213,14 +220,7 @@ public class EntityDao implements IEntityDao {
 			throw new IllegalArgumentException("An entity provider must be specified.");
 		}
 		this.entityGraph = entityGraph;
-	}
-
-	/**
-	 * Used for testing purposes.
-	 * @return The entity graph.
-	 */
-	public EntityGraph getEntityGraph() {
-		return entityGraph;
+		this.queryHandler = null;	// TODO handle this member during injection 
 	}
 
 	/**
@@ -231,7 +231,16 @@ public class EntityDao implements IEntityDao {
 	 * @return List of entities that best satisfies the query ref
 	 */
 	private <E extends IEntity> List<E> processQuery(final Criteria<E> criteria) {
-		// base impl: return all
+		if(queryHandler != null) {
+			final ISelectNamedQueryDef qd = criteria.getNamedQueryDefinition();
+			if(!qd.isScalar()) {
+				final Collection<IQueryParam> params = criteria.getQueryParams();
+				return queryHandler.doSelectNamedQuery(criteria.getNamedQueryDefinition().getQueryName(), params);
+			}
+		}
+		// default: return all
+		log.warn("Query: " + criteria.getNamedQueryDefinition().getQueryName()
+				+ " not handled.  Falling back to returning all entities of the given type.");
 		return loadAll(criteria.getEntityClass());
 	}
 
@@ -557,7 +566,10 @@ public class EntityDao implements IEntityDao {
 
 	@Override
 	public int executeQuery(String queryName, IQueryParam[] params) {
-		throw new UnsupportedOperationException();
+		if(queryHandler != null) {
+			queryHandler.doMutationNamedQuery(queryName, Arrays.asList(params));
+		}
+		throw new UnsupportedOperationException(queryName + " not handled.");
 	}
 
 }

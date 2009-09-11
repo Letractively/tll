@@ -16,7 +16,7 @@ import com.tll.client.mvc.view.account.CustomerListingViewInitializer;
 import com.tll.client.mvc.view.account.IspListingView;
 import com.tll.client.mvc.view.account.MerchantListingViewInitializer;
 import com.tll.client.mvc.view.intf.InterfacesView;
-import com.tll.client.mvc.view.intf.IntfOptAccViewInitializer;
+import com.tll.client.mvc.view.intf.AccountInterfaceViewInitializer;
 import com.tll.client.ui.option.Option;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
@@ -198,7 +198,7 @@ public final class OpsManager {
 			return new StaticViewInitializer(InterfacesView.klas);
 		}
 		if(OP_INTERFACES_ACCOUNT.getText().equals(optionText)) {
-			return new IntfOptAccViewInitializer(currentAccount.getKey());
+			return new AccountInterfaceViewInitializer(currentAccount.getKey());
 		}
 
 		if(OP_PRODUCTS.getText().equals(optionText)) {

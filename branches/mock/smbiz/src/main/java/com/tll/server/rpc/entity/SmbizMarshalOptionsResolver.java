@@ -38,6 +38,9 @@ public class SmbizMarshalOptionsResolver implements IMarshalOptionsResolver {
 				case INTERFACE_MULTI:
 				case INTERFACE_SWITCH:
 					return INTERFACE_OPTIONS;
+				case ACCOUNT_INTERFACE:
+					// TODO should these options be different?
+					return INTERFACE_OPTIONS;
 				case ADDRESS:
 					return ADDRESS_OPTIONS;
 				case USER:
