@@ -11,8 +11,9 @@ import com.tll.model.schema.BusinessObject;
  * The account history entity
  * @author jpk
  */
-@BusinessObject(businessKeys = @BusinessKeyDef(name = "Account Id, Transaction Date and Status", properties = {
-	"account.id", "transDate", "status" }))
+@BusinessObject(businessKeys =
+	@BusinessKeyDef(name = "Account Id, Transaction Date and Status", properties = { "account.id", "transDate", "status" })
+)
 public class AccountHistory extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 5543822993709686604L;

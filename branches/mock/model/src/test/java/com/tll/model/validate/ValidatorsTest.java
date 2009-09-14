@@ -14,8 +14,8 @@ import javax.validation.ValidatorFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.validation.constraints.Length;
-import org.hibernate.validation.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.testng.annotations.Test;
 
 import com.tll.model.IEntity;
@@ -126,8 +126,6 @@ public class ValidatorsTest {
 	 * Tests entity validation.
 	 * @throws Exception
 	 */
-	// TODO fix
-	@Test(enabled = false)
 	public final void testEntityValidation() throws Exception {
 		final TestEntity e = getTestEntity();
 		final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();

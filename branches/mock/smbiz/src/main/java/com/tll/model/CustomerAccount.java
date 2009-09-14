@@ -10,9 +10,10 @@ import com.tll.model.schema.BusinessObject;
  * The customer account entity
  * @author jpk
  */
-@BusinessObject(businessKeys = @BusinessKeyDef(name = "Customer Id and Account Id", properties = {
-	"customer.id", "account.id" }))
-	public class CustomerAccount extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
+@BusinessObject(businessKeys =
+	@BusinessKeyDef(name = "Customer Id and Account Id", properties = { "customer.id", "account.id" })
+)
+public class CustomerAccount extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 7262902363821073379L;
 

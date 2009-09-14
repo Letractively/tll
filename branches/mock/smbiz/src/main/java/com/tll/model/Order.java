@@ -7,7 +7,7 @@ import java.util.Set;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validation.constraints.Length;
+import org.hibernate.validator.constraints.Length;
 
 /**
  * The order entity

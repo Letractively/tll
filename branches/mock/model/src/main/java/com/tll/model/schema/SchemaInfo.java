@@ -13,7 +13,8 @@ import javax.validation.constraints.Size;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.validation.constraints.Length;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.tll.model.IEntity;
 import com.tll.util.PropertyPath;
@@ -179,10 +180,10 @@ public final class SchemaInfo implements ISchemaInfo {
 		final String mn = method.getName();
 		// handle IChildEntity.getParent() specifically since its overridden and we
 		// don't want the IChildEntity method decl!
-		if("getParent".equals(method.getName()) && IEntity.class.equals(method.getReturnType())) {
+		if("getParent".equals(method.getName()) && IEntity.class == method.getReturnType()) {
 			return false;
 		}
-		return (method.getAnnotation(NoPersist.class) == null && (mn.startsWith("get") || mn.startsWith("is")));
+		return (method.getAnnotation(Transient.class) == null && (mn.startsWith("get") || mn.startsWith("is")));
 	}
 
 	/**
@@ -298,8 +299,7 @@ public final class SchemaInfo implements ISchemaInfo {
 
 		// determine requiredness
 		boolean required = false;
-		final NotNull aN = m.getAnnotation(NotNull.class);
-		if(aN != null) {
+		if(m.getAnnotation(NotNull.class) != null || m.getAnnotation(NotEmpty.class) != null) {
 			required = true;
 		}
 

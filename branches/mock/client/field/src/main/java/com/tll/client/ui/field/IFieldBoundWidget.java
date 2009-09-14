@@ -12,7 +12,7 @@ import com.tll.common.model.IHasModel;
  * IFieldBoundWidget
  * @author jpk
  */
-public interface IFieldBoundWidget extends IHasFieldGroup, IHasModel {
+public interface IFieldBoundWidget extends IFieldGroupProvider, IHasModel {
 
 	/**
 	 * @return the indexed children or <code>null<code> if there are none.
@@ -20,13 +20,19 @@ public interface IFieldBoundWidget extends IHasFieldGroup, IHasModel {
 	IIndexedFieldBoundWidget[] getIndexedChildren();
 
 	/**
-	 * @return The binding for this bindable widget.
+	 * @return The binding for this field bound widget.
 	 */
 	FieldModelBinding getBinding();
 
 	/**
-	 * Sets the binding.
-	 * @param binding
+	 * Enables or disables the field bound widget. When disabling, all shown
+	 * member fields shall be rendered non-interactable.
+	 * @param enable Enable or disable?
 	 */
-	void setBinding(FieldModelBinding binding);
+	void enable(boolean enable);
+
+	/**
+	 * Resets the state of the fields to reflect the current state of model data.
+	 */
+	void reset();
 }

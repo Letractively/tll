@@ -229,6 +229,12 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphPopulator 
 			if(Interface.CODE_CROSS_SELL.equals(intf.getCode())) {
 				final InterfaceOption io = findInterfaceOption("crosssell-switch", ios);
 				if(io != null) {
+					for(int i = 1; i <= 3; i++) {
+						InterfaceOptionParameterDefinition pd = findParameterDefinition("crosssellP" + i, pds);
+						if(pd != null) {
+							io.addParameter(pd);
+						}
+					}
 					intf.addOption(io);
 				}
 			}

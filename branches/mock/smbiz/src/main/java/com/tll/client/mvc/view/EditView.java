@@ -61,7 +61,7 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 	public EditView(FieldPanel<?> fieldPanel) {
 		super();
 		gmp = new GlobalMsgPanel();
-		editPanel = new EditPanel(gmp, fieldPanel, true, false);
+		editPanel = new EditPanel(fieldPanel, true, false, new GlobalMsgPanel(), true);
 		editPanel.addEditHandler(this);
 
 		addWidget(gmp);

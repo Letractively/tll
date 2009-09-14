@@ -7,6 +7,7 @@ package com.tll.client.ui.msg;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.IWidgetRef;
 import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgLevel;
@@ -66,6 +67,11 @@ public class GlobalMsgPanel extends Composite implements IMsgDisplay {
 			container.add(p);
 		}
 		initWidget(container);
+	}
+
+	@Override
+	public Widget getDisplayWidget() {
+		return this;
 	}
 
 	/**

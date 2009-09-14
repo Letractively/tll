@@ -11,6 +11,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import javax.validation.Constraint;
+import javax.validation.Payload;
 
 /**
  * PhoneNumber - Indicates the annotatee is a phone number.
@@ -37,4 +38,6 @@ public @interface PhoneNumber {
 	String message() default "{validator.phone_number}";
 
 	Class<?>[] groups() default {};
+
+	Class<? extends Payload>[] payload() default {};
 }

@@ -212,7 +212,7 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 				@Override
 				public IRpcCommand load(ModelKey intfKey, AuxDataRequest adr) {
 					final CrudCommand c = new CrudCommand();
-								c.load(new PrimaryKeySearch(intfKey), adr);
+					c.load(new PrimaryKeySearch(intfKey), adr);
 					return c;
 				}
 			}, new CrudCommand());

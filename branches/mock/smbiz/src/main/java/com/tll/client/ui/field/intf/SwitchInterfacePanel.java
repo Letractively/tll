@@ -13,7 +13,7 @@ import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.IFieldWidget;
-import com.tll.common.model.Model;
+import com.tll.client.ui.field.IIndexedFieldBoundWidget;
 
 /**
  * SwitchInterfacePanel - One option exists that is either on or off.
@@ -21,20 +21,32 @@ import com.tll.common.model.Model;
  */
 public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 
+	static class Binding extends FieldModelBinding {
+
+		@Override
+		protected void createBindings() {
+			super.createBindings();
+			addBinding("options[0].name", "intfname");
+			addBinding("options[0].code", "intfCode");
+			addBinding("options[0].description", "intfDescription");
+		}
+	} // Binding
+
 	private final ParamsPanel paramsPanel;
 	private final DisclosurePanel dpParams;
-	private final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
-	private final OptionRenderer optionRenderer;
 
 	/**
 	 * Constructor
 	 */
 	public SwitchInterfacePanel() {
-		super();
-		paramsPanel = new ParamsPanel();
-		dpParams = new DisclosurePanel("ParametersPanel", false);
+		paramsPanel = new ParamsPanel("options[0].parameters");
+		dpParams = new DisclosurePanel("Parameters", false);
 		dpParams.add(paramsPanel);
-		optionRenderer = new OptionRenderer(true, dpParams, cmpsr);
+	}
+
+	@Override
+	protected FieldModelBinding createBinding() {
+		return new Binding();
 	}
 
 	@Override
@@ -54,41 +66,36 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 			@SuppressWarnings("synthetic-access")
 			@Override
 			public void render(FlowPanel widget, FieldGroup fg) {
+				final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 				cmpsr.setCanvas(widget);
 
 				// first row
-				cmpsr.addField(fg.getFieldWidgetByName("intf" + Model.NAME_PROPERTY));
-				final IFieldWidget<?> fw = fg.getFieldWidgetByName("optnDefault");
+				cmpsr.addField(fg.getFieldWidget("intfname"));
+				final IFieldWidget<?> fw = fg.getFieldWidget("optnDefault");
 				fw.setLabelText("On");
 				cmpsr.stopFlow();
 				cmpsr.addField(fw);
 				cmpsr.resetFlow();
-				cmpsr.addField(fg.getFieldWidgetByName("intfCode"));
-				cmpsr.addField(fg.getFieldWidgetByName("intfDescription"));
+				cmpsr.addField(fg.getFieldWidget("intfCode"));
+				cmpsr.addField(fg.getFieldWidget("intfDescription"));
 
 				cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-				cmpsr.addField(fg.getFieldWidgetByName("intf" + Model.DATE_CREATED_PROPERTY));
+				cmpsr.addField(fg.getFieldWidget("intfdateCreated"));
 				cmpsr.stopFlow();
-				cmpsr.addField(fg.getFieldWidgetByName("intf" + Model.DATE_MODIFIED_PROPERTY));
+				cmpsr.addField(fg.getFieldWidget("intfdateModified"));
 				cmpsr.resetAlignment();
 
 				cmpsr.newRow();
 				cmpsr.addWidget(createAvailabilityWidget(fg));
 
+				final OptionRenderer optionRenderer = new OptionRenderer(true, dpParams, cmpsr);
 				optionRenderer.render(widget, fg);
-
 			}
 		};
 	}
 
 	@Override
-	public void setBinding(FieldModelBinding binding) {
-		super.setBinding(binding);
-		// add additional bindings to propagate the interface name/code/desc to the
-		// single switch option
-		final FieldGroup fg = getFieldGroup();
-		getBinding().addBinding("options[0].name", fg.getFieldWidgetByName("intfname"));
-		getBinding().addBinding("options[0].code", fg.getFieldWidgetByName("intfCode"));
-		getBinding().addBinding("options[0].description", fg.getFieldWidgetByName("intfDescription"));
+	public IIndexedFieldBoundWidget[] getIndexedChildren() {
+		return new IIndexedFieldBoundWidget[] { paramsPanel };
 	}
 }

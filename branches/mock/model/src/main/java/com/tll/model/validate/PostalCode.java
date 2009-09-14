@@ -11,6 +11,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import javax.validation.Constraint;
+import javax.validation.Payload;
 
 /**
  * PostalCode - Indicates the annotatee is a postal code (zip code for US).
@@ -19,9 +20,9 @@ import javax.validation.Constraint;
 @Constraint(validatedBy = PostalCodeValidator.class)
 @Target(value = {
 	ElementType.TYPE, ElementType.ANNOTATION_TYPE })
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface PostalCode {
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	public @interface PostalCode {
 
 	/**
 	 * @return The name of the bean property that holds the postal code to
@@ -37,4 +38,6 @@ public @interface PostalCode {
 	String message() default "{validator.postal_code}";
 
 	Class<?>[] groups() default {};
+
+	Class<? extends Payload>[] payload() default {};
 }

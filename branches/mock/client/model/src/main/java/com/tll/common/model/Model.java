@@ -479,9 +479,6 @@ IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 				}
 				final IModelRefProperty mrp = (IModelRefProperty) prop;
 				if(atEnd) {
-					// return new RelatedOneProperty(mrp.getRelatedType(),
-					// mrp.getPropertyName(), mrp.isReference(), mrp.getModel());
-					// TODO figure out why we were creating a *new* instance !!!!
 					return mrp;
 				}
 				// get the nested group...

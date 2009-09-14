@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.FieldModelBinding;
-import com.tll.common.bind.IBindable;
 import com.tll.common.model.Model;
 
 /**
@@ -50,7 +49,7 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	private Model model;
 
 	/**
-	 * The optional binding.
+	 * The binding instance.
 	 */
 	private FieldModelBinding binding;
 
@@ -61,6 +60,16 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	 */
 	public FieldPanel() {
 		super();
+	}
+
+	/**
+	 * @return The composite wrapped {@link Widget} the type of which
+	 *         <em>must</em> be that of the render widget type.
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public final W getWidget() {
+		return (W) super.getWidget();
 	}
 
 	@Override
@@ -78,14 +87,12 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 		return group;
 	}
 
-	@Override
-	public final void setFieldGroup(FieldGroup fields) {
+	protected final void setFieldGroup(FieldGroup fields) {
 		if(fields == null) throw new IllegalArgumentException("Null fields");
-		if(this.group != fields) {
-			if(binding != null && binding.isSet()) throw new IllegalStateException("Already set binding");
-			this.group = fields;
-			this.group.setWidget(this);
-		}
+		if(this.group == fields) return;
+		if(binding != null && binding.isBound()) throw new IllegalStateException("Binding already bound");
+		this.group = fields;
+		this.group.setWidget(this);
 	}
 
 	@Override
@@ -101,68 +108,74 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 		}
 		Log.debug(this + " setting model..");
 
-		final IBindable old = this.model;
-
-		if(old != null && binding != null) {
-			Log.debug(this + " unbinding..");
+		if(binding != null && binding.isBound()) {
 			binding.unbind();
 		}
 
-		getFieldGroup().clearValue();
+		// clear out the field values since we have different model data
+		if(group != null) {
+			group.clearValue();
+		}
+
 		this.model = model;
 
 		if(model != null) {
-			// apply property metadata
-			getFieldGroup().applyPropertyMetadata(model);
-			// don't do incremental validation when the model is new
-			getFieldGroup().validateIncrementally(!model.isNew());
+			// apply property metadata and model new flag (sets incremental validation flag)
+			getFieldGroup().applyPropertyMetadata(model, model.isNew());
 		}
 
-		if(binding != null) {
-			if(model != null) {
-				Log.debug(this + " binding..");
-				binding.set(this);
-				binding.bind();
-			}
-			else {
-				Log.debug(this + " unbinding..");
-				binding.unbind();
-			}
+		if(model != null) {
+			getBinding().bind();
 		}
-		//Log.debug("AbstractBindableWidget - firing 'model' prop change event..");
-		//changeSupport.firePropertyChange(PropertyChangeType.MODEL.prop(), old, model);
+		else if(binding != null) {
+			binding.unbind();
+		}
 	}
 
 	@Override
 	public final FieldModelBinding getBinding() {
+		if(binding == null) {
+			binding = createBinding();
+			binding.set(this);
+		}
 		return binding;
 	}
 
-	@Override
-	public void setBinding(FieldModelBinding binding) {
-		if(binding == null) throw new IllegalArgumentException("Null binding");
-		if(this.binding != null) throw new IllegalStateException("Binding already set");
-		if(model != null) {
-			binding.set(this);
-			binding.bind();
-		}
-		this.binding = binding;
-	}
-
 	/**
-	 * @return The composite wrapped {@link Widget} the type of which
-	 *         <em>must</em> be that of the render widget type.
+	 * @return A new binding instance able to bind member fields to model data.
+	 *         <p>
+	 *         This may be overridden to provide a custom binding type.
 	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public final W getWidget() {
-		return (W) super.getWidget();
+	protected FieldModelBinding createBinding() {
+		return new FieldModelBinding();
 	}
 
 	@Override
 	public IIndexedFieldBoundWidget[] getIndexedChildren() {
 		// default is null
 		return null;
+	}
+
+	public void reset() {
+		if(group == null) return;
+		final IIndexedFieldBoundWidget[] indexed = getIndexedChildren();
+		if(indexed != null) {
+			for(final IIndexedFieldBoundWidget i : indexed) {
+				i.reset();
+			}
+		}
+		group.reset();
+	}
+
+	public void enable(boolean enable) {
+		if(group == null) return;
+		group.setEnabled(enable);
+		final IIndexedFieldBoundWidget[] indexed = getIndexedChildren();
+		if(indexed != null) {
+			for(final IIndexedFieldBoundWidget i : indexed) {
+				i.enable(enable);
+			}
+		}
 	}
 
 	/**
@@ -197,17 +210,13 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	@Override
 	protected void onAttach() {
 		Log.debug("Attaching " + this + "..");
-		// if(binding != null) binding.set(this);
 		super.onAttach();
-		//Log.debug("Firing prop change 'attach' event for " + toString() + "..");
-		//changeSupport.firePropertyChange(PropertyChangeType.ATTACHED.prop(), false, true);
 	}
 
 	@Override
 	protected void onLoad() {
 		Log.debug("Loading " + toString() + "..");
 		super.onLoad();
-		// if(binding != null) binding.bind();
 		if(!drawn) {
 			draw();
 			drawn = true;
@@ -218,8 +227,6 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	protected void onDetach() {
 		Log.debug("Detatching " + toString() + "..");
 		super.onDetach();
-		//Log.debug("Firing prop change 'detach' event for " + toString() + "..");
-		//changeSupport.firePropertyChange(PropertyChangeType.ATTACHED.prop(), true, false);
 	}
 
 	@Override

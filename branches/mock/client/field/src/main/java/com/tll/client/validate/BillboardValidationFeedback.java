@@ -17,7 +17,7 @@ import com.tll.client.validate.IError.Type;
  * BillboardValidationFeedback
  * @author jpk
  */
-public final class BillboardValidationFeedback implements IErrorHandler, IHasMsgDisplay {
+public final class BillboardValidationFeedback extends AbstractErrorHandler implements IHasMsgDisplay {
 
 	private IMsgDisplay msgDisplayWidget;
 
@@ -96,7 +96,7 @@ public final class BillboardValidationFeedback implements IErrorHandler, IHasMsg
 	}
 
 	@Override
-	public void handleError(IWidgetRef source, IError error) {
+	protected void doHandleError(IWidgetRef source, IError error) {
 		if(error.getType() == Type.COMPOSITE) {
 			// unsourced
 			final List<IError> unsourced = ((Errors) error).getUnsourcedErrors();
@@ -121,7 +121,7 @@ public final class BillboardValidationFeedback implements IErrorHandler, IHasMsg
 	}
 
 	@Override
-	public void resolveError(IWidgetRef source, ErrorClassifier classifier) {
+	protected void doResolveError(IWidgetRef source, ErrorClassifier classifier) {
 		if(source == null) {
 			msgDisplayWidget.removeUnsourced(classifier == null ? null : classifier.hashCode());
 		}

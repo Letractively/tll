@@ -11,6 +11,7 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.convert.IConverter;
 import com.tll.client.ui.IWidgetRef;
 import com.tll.client.validate.ErrorClassifier;
+import com.tll.client.validate.ErrorDisplay;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
@@ -106,9 +107,9 @@ public final class Binding {
 				catch(final ValidationException ve) {
 					if(instance.feedback != null) {
 						if(lastException != null) {
-							instance.feedback.resolveError((IWidgetRef) propertyChangeEvent.getSource(), ErrorClassifier.CLIENT);
+							instance.feedback.resolveError((IWidgetRef) propertyChangeEvent.getSource(), ErrorClassifier.CLIENT, ErrorDisplay.ALL_FLAGS);
 						}
-						instance.feedback.handleError((IWidgetRef) propertyChangeEvent.getSource(), ve.getError());
+						instance.feedback.handleError((IWidgetRef) propertyChangeEvent.getSource(), ve.getError(), ErrorDisplay.ALL_FLAGS);
 						lastException = ve;
 						return;
 					}
@@ -118,7 +119,7 @@ public final class Binding {
 			}
 
 			if(instance.feedback != null) {
-				instance.feedback.resolveError((IWidgetRef) propertyChangeEvent.getSource(), ErrorClassifier.CLIENT);
+				instance.feedback.resolveError((IWidgetRef) propertyChangeEvent.getSource(), ErrorClassifier.CLIENT, ErrorDisplay.ALL_FLAGS);
 			}
 
 			lastException = null;
@@ -169,10 +170,10 @@ public final class Binding {
 	 * @param right The right hand object
 	 * @param property The common property name for <em>both</em> the left and
 	 *        right objects.
-	 * @throws RuntimeException When the binding can't be created usu. due to
+	 * @throws BindingException When the binding can't be created usu. due to
 	 *         missing bindable properties.
 	 */
-	public Binding(IBindable left, IBindable right, String property) throws RuntimeException {
+	public Binding(IBindable left, IBindable right, String property) throws BindingException {
 		this(left, property, null, null, null, right, property, null, null, null);
 	}
 
@@ -188,7 +189,7 @@ public final class Binding {
 	 * @param rightConverter
 	 * @param rightValidator
 	 * @param rightFeedback
-	 * @throws RuntimeException When the binding can't be created usu. due to
+	 * @throws BindingException When the binding can't be created usu. due to
 	 *         missing bindable properties.
 	 */
 	public Binding(IBindable left, String leftProperty, IConverter<Object, Object> leftConverter,
@@ -196,7 +197,7 @@ public final class Binding {
 			IErrorHandler leftFeedback, IBindable right,
 			String rightProperty, IConverter<Object, Object> rightConverter, IValidator rightValidator,
 			IErrorHandler rightFeedback)
-	throws RuntimeException {
+	throws BindingException {
 
 		this.left = createBindingInstance(left, leftProperty);
 		this.left.converter = leftConverter;
@@ -223,8 +224,9 @@ public final class Binding {
 
 	/**
 	 * Sets the left hand property to the current value of the right.
+	 * @throws BindingException When a {@link PropertyChangeEvent} dispatch fails.
 	 */
-	public void setLeft() {
+	public void setLeft() throws BindingException {
 		if((left != null) && (right != null)) {
 			Log.debug("Binding.setLeft..");
 			try {
@@ -232,7 +234,7 @@ public final class Binding {
 						.getProperty(right.property)));
 			}
 			catch(final Exception e) {
-				throw new RuntimeException(e);
+				throw new BindingException(e);
 			}
 		}
 
@@ -243,8 +245,9 @@ public final class Binding {
 
 	/**
 	 * Sets the right object's property to the current value of the left.
+	 * @throws BindingException When a {@link PropertyChangeEvent} dispatch fails.
 	 */
-	public void setRight() {
+	public void setRight() throws BindingException {
 		if((left != null) && (right != null)) {
 			Log.debug("Binding.setRight..");
 			try {
@@ -252,7 +255,7 @@ public final class Binding {
 						.getProperty(left.property)));
 			}
 			catch(final Exception e) {
-				throw new RuntimeException(e);
+				throw new BindingException(e);
 			}
 		}
 
@@ -267,11 +270,17 @@ public final class Binding {
 	 * NOTE: Addition of property change listeners to the bindable is presumed to
 	 * have the smarts to discriminate on the property name and remove any
 	 * existing having the same name.
+	 * @throws BindingException When a declared property is encountered that doesn't resolve.
 	 */
-	public void bind() {
+	public void bind() throws BindingException {
 		if(!bound && (left != null) && (right != null)) {
-			left.object.addPropertyChangeListener(left.property, left.listener);
-			right.object.addPropertyChangeListener(right.property, right.listener);
+			try {
+				left.object.addPropertyChangeListener(left.property, left.listener);
+				right.object.addPropertyChangeListener(right.property, right.listener);
+			}
+			catch(final Exception e) {
+				throw new BindingException(e);
+			}
 		}
 
 		for(int i = 0; (children != null) && (i < children.size()); i++) {
@@ -302,20 +311,15 @@ public final class Binding {
 	 * @param bindable the required bindable
 	 * @param propertyName the required property name
 	 * @return A new {@link BindingInstance}.
-	 * @throws RuntimeException When the instance can't be created
+	 * @throws BindingException When the instance can't be created
 	 */
-	private BindingInstance createBindingInstance(IBindable bindable, String propertyName) throws RuntimeException {
+	private BindingInstance createBindingInstance(IBindable bindable, String propertyName) throws BindingException {
 		int dotIndex = propertyName.indexOf(".");
 		final BindingInstance instance = new BindingInstance();
 		if(dotIndex != -1) {
-			final ArrayList<IBindable> parents = new ArrayList<IBindable>();
-			final ArrayList<String> propertyNames = new ArrayList<String>();
-
 			while(dotIndex != -1) {
 				String pname = propertyName.substring(0, dotIndex);
 				propertyName = propertyName.substring(dotIndex + 1);
-				parents.add(bindable);
-
 				try {
 					String discriminator = null;
 					final int descIndex = pname.indexOf("[");
@@ -325,8 +329,6 @@ public final class Binding {
 						pname = pname.substring(0, descIndex);
 					}
 
-					propertyNames.add(pname);
-
 					if(discriminator != null) {
 						// TODO Need a loop here to handle multi-dimensional/collections of
 						// collections
@@ -335,16 +337,19 @@ public final class Binding {
 					else {
 						final Object nested = bindable.getProperty(pname);
 						if(nested instanceof IBindable == false) {
-							throw new RuntimeException("Non-bindable property: " + pname);
+							throw new BindingException("Non-bindable property: " + pname);
 						}
 						bindable = (IBindable) nested;
 					}
 				}
 				catch(final ClassCastException cce) {
-					throw new RuntimeException("Nonbindable sub property: " + bindable + " . " + pname, cce);
+					throw new BindingException("Nonbindable sub property: " + bindable + " . " + pname, cce);
+				}
+				catch(final BindingException e) {
+					throw e;
 				}
 				catch(final Exception e) {
-					throw new RuntimeException(e);
+					throw new BindingException(e);
 				}
 
 				dotIndex = propertyName.indexOf(".");
@@ -352,7 +357,7 @@ public final class Binding {
 		}
 
 		if(bindable == null) {
-			throw new RuntimeException("Missing bindable property: " + propertyName);
+			throw new BindingException("Missing bindable property: " + propertyName);
 		}
 		instance.object = bindable;
 		instance.property = propertyName;
@@ -391,7 +396,7 @@ public final class Binding {
 				}
 			}
 			catch(final Exception e) {
-				throw new RuntimeException(e);
+				throw new BindingException(e);
 			}
 		}
 		throw new RuntimeException("No Object matching " + propertyName + "=" + stringValue);
@@ -405,11 +410,11 @@ public final class Binding {
 				}
 			}
 			catch(final Exception e) {
-				throw new RuntimeException(e);
+				throw new BindingException(e);
 			}
 		}
 
-		throw new RuntimeException("No Object matching " + propertyName + "=" + stringValue);
+		throw new BindingException("No Object matching " + propertyName + "=" + stringValue);
 	}
 
 	private IBindable getBindableAtMapKey(Map<String, IBindable> map, String key) {
@@ -431,7 +436,7 @@ public final class Binding {
 		for(final IBindable b : collection) {
 			if(i++ == index) return b;
 		}
-		throw new IndexOutOfBoundsException("Binding discriminator too high: " + index);
+		throw new BindingException("Binding discriminator too high: " + index);
 	}
 
 	@Override

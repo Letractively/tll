@@ -26,5 +26,4 @@ public abstract class FlowFieldPanel extends FieldPanel<FlowPanel> {
 		super();
 		initWidget(panel);
 	}
-
 }

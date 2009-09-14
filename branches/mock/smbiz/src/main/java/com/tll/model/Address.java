@@ -1,18 +1,22 @@
 package com.tll.model;
 
-import org.hibernate.validation.constraints.Length;
-import org.hibernate.validation.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
+import com.tll.model.validate.PhoneNumber;
+import com.tll.model.validate.PhoneNumbers;
+import com.tll.model.validate.PostalCode;
 
 /**
  * @author jpk
  */
-//@PhoneNumbers(value = {
-//	@PhoneNumber(phonePropertyName = "phone"), @PhoneNumber(phonePropertyName = "fax") })
-//@PostalCode() temp disable
-@BusinessObject(businessKeys = 
+@PhoneNumbers(value = {
+	@PhoneNumber(phonePropertyName = "phone"), @PhoneNumber(phonePropertyName = "fax") }
+)
+@PostalCode()
+@BusinessObject(businessKeys =
 	@BusinessKeyDef(name = "Address 1 and Postal Code", properties = { "address1", "postalCode" })
 )
 public class Address extends EntityBase {

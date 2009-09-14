@@ -11,6 +11,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import javax.validation.Constraint;
+import javax.validation.Payload;
 
 
 /**
@@ -20,13 +21,15 @@ import javax.validation.Constraint;
 @Constraint(validatedBy = AtLeastOneValidator.class)
 @Target(value = {
 	ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE })
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface AtLeastOne {
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	public @interface AtLeastOne {
 
 	String message() default "{validator.at_least_one}";
 
 	Class<?>[] groups() default {};
 
 	String type();
+
+	Class<? extends Payload>[] payload() default {};
 }

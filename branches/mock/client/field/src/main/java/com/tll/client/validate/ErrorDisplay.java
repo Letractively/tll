@@ -15,6 +15,11 @@ public enum ErrorDisplay {
 	LOCAL(1 << 1);
 
 	/**
+	 * Indicates no flags.
+	 */
+	public static final int NO_FLAGS = -1;
+
+	/**
 	 * ORd composite of all defined enum flags.
 	 */
 	public static final int ALL_FLAGS = GLOBAL.flag | LOCAL.flag;

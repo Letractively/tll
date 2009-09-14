@@ -50,8 +50,8 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	}
 
 	@Override
-	public void handleError(IWidgetRef source, IError error) {
-		super.handleError(source, error);
+	protected void doHandleError(IWidgetRef source, IError error) {
+		super.doHandleError(source, error);
 		if((source instanceof IFieldWidget<?>) && error.getType() == Type.SINGLE) {
 			// handle styling
 			source.getWidget().removeStyleName(Styles.DIRTY);
@@ -74,8 +74,8 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	}
 
 	@Override
-	public void resolveError(IWidgetRef source, ErrorClassifier classifier) {
-		super.resolveError(source, classifier);
+	protected void doResolveError(IWidgetRef source, ErrorClassifier classifier) {
+		super.doResolveError(source, classifier);
 		if(source instanceof IFieldWidget<?>) {
 			// handle styling
 			source.getWidget().removeStyleName(Styles.INVALID);

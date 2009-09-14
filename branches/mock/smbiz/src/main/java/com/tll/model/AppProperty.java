@@ -1,15 +1,14 @@
 package com.tll.model;
 
-import org.hibernate.validation.constraints.Length;
-import org.hibernate.validation.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 
 /**
  * AppProperty
- * @author jpk TODO should we eliminate this and just put in config.properties
- *         file???
+ * @author jpk
  */
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Name", properties = { "name" }))
 public class AppProperty extends NamedEntity {

@@ -14,7 +14,7 @@ import com.tll.client.validate.IError.Type;
  * messages.
  * @author jpk
  */
-public class PopupValidationFeedback implements IErrorHandler, IHasMsgPopupRegistry {
+public class PopupValidationFeedback extends AbstractErrorHandler implements IHasMsgPopupRegistry {
 
 	protected MsgPopupRegistry mregistry;
 
@@ -43,7 +43,7 @@ public class PopupValidationFeedback implements IErrorHandler, IHasMsgPopupRegis
 	}
 
 	@Override
-	public void handleError(IWidgetRef source, IError error) {
+	protected void doHandleError(IWidgetRef source, IError error) {
 		// we only handle sourced and single type errors
 		if(error.getType() == Type.SINGLE && source != null) {
 			final ErrorClassifier sourcing = error.getClassifier();
@@ -54,7 +54,7 @@ public class PopupValidationFeedback implements IErrorHandler, IHasMsgPopupRegis
 	}
 
 	@Override
-	public void resolveError(IWidgetRef source, ErrorClassifier classifier) {
+	protected void doResolveError(IWidgetRef source, ErrorClassifier classifier) {
 		if(classifier == null) {
 			mregistry.getOperator(source.getWidget(), false).clearMsgs();
 		}

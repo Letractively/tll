@@ -25,6 +25,12 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 
 	private String accountId, interfaceId;
 
+	private String name, code, description;
+
+	private boolean isAvailableAsp, isAvailableIsp, isAvailableMerchant, isAvailableCustomer = false;
+
+	private boolean isRequiredAsp, isRequiredIsp, isRequiredMerchant, isRequiredCustomer;
+
 	private Set<AccountInterfaceOption> options = new LinkedHashSet<AccountInterfaceOption>();
 
 	@Override
@@ -37,19 +43,6 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 	 */
 	public AccountInterface() {
 		super();
-	}
-
-	/**
-	 * Constructor
-	 * @param accountId
-	 * @param interfaceId
-	 * @param options
-	 */
-	public AccountInterface(String accountId, String interfaceId, Set<AccountInterfaceOption> options) {
-		super();
-		this.accountId = accountId;
-		this.interfaceId = interfaceId;
-		this.options = options;
 	}
 
 	@NotNull
@@ -68,6 +61,94 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 
 	public void setInterfaceId(String interfaceId) {
 		this.interfaceId = interfaceId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public boolean isAvailableAsp() {
+		return isAvailableAsp;
+	}
+
+	public void setAvailableAsp(boolean isAvailableAsp) {
+		this.isAvailableAsp = isAvailableAsp;
+	}
+
+	public boolean isAvailableIsp() {
+		return isAvailableIsp;
+	}
+
+	public void setAvailableIsp(boolean isAvailableIsp) {
+		this.isAvailableIsp = isAvailableIsp;
+	}
+
+	public boolean isAvailableMerchant() {
+		return isAvailableMerchant;
+	}
+
+	public void setAvailableMerchant(boolean isAvailableMerchant) {
+		this.isAvailableMerchant = isAvailableMerchant;
+	}
+
+	public boolean isAvailableCustomer() {
+		return isAvailableCustomer;
+	}
+
+	public void setAvailableCustomer(boolean isAvailableCustomer) {
+		this.isAvailableCustomer = isAvailableCustomer;
+	}
+
+	public boolean isRequiredAsp() {
+		return isRequiredAsp;
+	}
+
+	public void setRequiredAsp(boolean isRequiredAsp) {
+		this.isRequiredAsp = isRequiredAsp;
+	}
+
+	public boolean isRequiredIsp() {
+		return isRequiredIsp;
+	}
+
+	public void setRequiredIsp(boolean isRequiredIsp) {
+		this.isRequiredIsp = isRequiredIsp;
+	}
+
+	public boolean isRequiredMerchant() {
+		return isRequiredMerchant;
+	}
+
+	public void setRequiredMerchant(boolean isRequiredMerchant) {
+		this.isRequiredMerchant = isRequiredMerchant;
+	}
+
+	public boolean isRequiredCustomer() {
+		return isRequiredCustomer;
+	}
+
+	public void setRequiredCustomer(boolean isRequiredCustomer) {
+		this.isRequiredCustomer = isRequiredCustomer;
 	}
 
 	/**

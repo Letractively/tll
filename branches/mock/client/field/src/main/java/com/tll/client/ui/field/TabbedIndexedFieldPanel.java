@@ -290,8 +290,9 @@ implements SelectionHandler<Integer>, BeforeSelectionHandler<Integer> {
 
 	@Override
 	protected void markDeleted(int index, boolean deleted) throws IndexOutOfBoundsException {
-		((Toolbar) tabWidgets.get(index)).getWidget(0).setTitle(
-				(deleted ? "Un-delete " : "Delete ") + getIndexTypeName());
+		final ToggleButton tb = (ToggleButton) ((Toolbar) tabWidgets.get(index)).getWidget(0);
+		tb.setTitle((deleted ? "Un-delete " : "Delete ") + getIndexTypeName());
+		tb.setDown(deleted);	// in case this method was invoked programatically
 		super.markDeleted(index, deleted);
 	}
 

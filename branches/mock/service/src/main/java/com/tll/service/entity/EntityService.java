@@ -49,8 +49,6 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	/**
 	 * The jsr-303 validation factory.
 	 */
-	@SuppressWarnings("unused")
-	// TODO employ once validation is fixed!
 	private final ValidatorFactory validationFactory;
 
 	/**
@@ -73,10 +71,8 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	 * @param e the entity to validate
 	 * @returns The set of invalids
 	 */
-	// TODO re-instate validation
 	protected final Set<ConstraintViolation<E>> validateNoException(E e) {
-		// return validationFactory.getValidator().validate(e);
-		return null;
+		return validationFactory.getValidator().validate(e);
 	}
 
 	protected final void validate(E e) throws ConstraintViolationException {

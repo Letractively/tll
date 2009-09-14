@@ -16,7 +16,6 @@ import com.tll.model.IEntityFactory;
 import com.tll.model.Interface;
 import com.tll.model.InterfaceOption;
 import com.tll.model.InterfaceOptionParameterDefinition;
-import com.tll.model.InterfaceStatus;
 import com.tll.model.key.NameKey;
 import com.tll.service.entity.account.IAccountService;
 import com.tll.service.entity.intf.IInterfaceService;
@@ -67,7 +66,6 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 			aio.setName(io.getName());
 			aio.setCode(io.getCode());
 			aio.setDescription(io.getDescription());
-			aio.setStatus(InterfaceStatus.ON);
 			aio.setAnnualPrice(1f);
 			aio.setMonthlyPrice(1f);
 			aio.setSetUpPrice(1f);

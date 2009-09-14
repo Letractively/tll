@@ -116,10 +116,12 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 		final V oldval = lb.getValue();
 		lb.clear();
 		lb.addItem(""); // ensure we have a null/empty option
-		for(final Map.Entry<V, String> e : data.entrySet()) {
-			lb.addItem(e.getValue());
-			if(ObjectUtil.equals(e.getKey(), oldval)) {
-				lb.setItemSelected(lb.getItemCount() - 1, true);
+		if(data != null) {
+			for(final Map.Entry<V, String> e : data.entrySet()) {
+				lb.addItem(e.getValue());
+				if(ObjectUtil.equals(e.getKey(), oldval)) {
+					lb.setItemSelected(lb.getItemCount() - 1, true);
+				}
 			}
 		}
 	}

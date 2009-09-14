@@ -238,7 +238,6 @@ create table ioa (
    version int not null default 0,
    date_created datetime not null,
    date_last_modified datetime not null,
-   status tinyint not null,
    set_up_price float not null default 0,
    monthly_price float not null default 0,
    annual_price float not null default 0,

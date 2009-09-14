@@ -17,20 +17,17 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.bind.FieldModelBinding;
 import com.tll.client.ui.FocusCommand;
 import com.tll.client.ui.edit.EditEvent.EditOp;
-import com.tll.client.ui.field.FieldErrorHandler;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.msg.IMsgDisplay;
-import com.tll.client.ui.msg.MsgPopupRegistry;
-import com.tll.client.validate.BillboardValidationFeedback;
 import com.tll.client.validate.Error;
 import com.tll.client.validate.ErrorClassifier;
-import com.tll.client.validate.ErrorHandlerDelegate;
+import com.tll.client.validate.ErrorDisplay;
 import com.tll.client.validate.IErrorHandler;
+import com.tll.client.validate.ValidationException;
 import com.tll.common.model.Model;
 import com.tll.common.msg.Msg;
 
@@ -80,11 +77,6 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	private final FieldPanel<? extends Widget> fieldPanel;
 
 	/**
-	 * The model/field data transfer mechanism.
-	 */
-	private final FieldModelBinding binding;
-
-	/**
 	 * The panel containing the edit buttons
 	 */
 	private final FlowPanel pnlButtonRow = new FlowPanel();
@@ -95,31 +87,18 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 
 	/**
 	 * Constructor
-	 * @param globalMsgDisplay Optional global message display employed for
-	 *        providing field validation feedback
 	 * @param fieldPanel The required {@link FieldPanel}
 	 * @param showCancelBtn Show the cancel button? Causes a cancel edit event
 	 *        when clicked.
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
+	 * @param msgDisplay
+	 * @param aggregateMsgDisplay Take ownership of the given msg display? I.e. add to this panel?
 	 */
-	public EditPanel(IMsgDisplay globalMsgDisplay, FieldPanel<? extends Widget> fieldPanel, boolean showCancelBtn,
-			boolean showDeleteBtn) {
-
+	public EditPanel(FieldPanel<? extends Widget> fieldPanel, boolean showCancelBtn, boolean showDeleteBtn, IMsgDisplay msgDisplay, boolean aggregateMsgDisplay) {
+		super();
 		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
 		this.fieldPanel = fieldPanel;
-
-		IErrorHandler errorHandler;
-		if(globalMsgDisplay == null) {
-			errorHandler = new FieldErrorHandler(new MsgPopupRegistry());
-		}
-		else {
-			errorHandler =
-				new ErrorHandlerDelegate(new BillboardValidationFeedback(globalMsgDisplay), new FieldErrorHandler(
-						new MsgPopupRegistry()));
-		}
-
-		binding = new FieldModelBinding(errorHandler);
 
 		portal.setStyleName(Styles.PORTAL);
 		// we need to defer this until needed aux data is ready
@@ -140,6 +119,11 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 		// hide the button row until initialized
 		pnlButtonRow.setVisible(false);
 
+		//fieldPanel.setMsgDisplay(msgDisplay);
+		if(msgDisplay != null && aggregateMsgDisplay) {
+			panel.add(msgDisplay.getDisplayWidget());
+		}
+
 		panel.add(portal);
 		panel.add(pnlButtonRow);
 		panel.setStyleName(Styles.ENTITY_EDIT);
@@ -147,7 +131,19 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 		initWidget(panel);
 	}
 
-	public void showDeleteButton(boolean show) {
+	/**
+	 * Constructor
+	 * @param fieldPanel The required {@link FieldPanel}
+	 * @param showCancelBtn Show the cancel button? Causes a cancel edit event
+	 *        when clicked.
+	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
+	 *        when clicked.
+	 */
+	public EditPanel(FieldPanel<? extends Widget> fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
+		this(fieldPanel, showCancelBtn, showDeleteBtn, null, false);
+	}
+
+	public final void showDeleteButton(boolean show) {
 		if(btnDelete == null) {
 			btnDelete = new Button("Delete", this);
 			pnlButtonRow.add(btnDelete);
@@ -155,7 +151,7 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 		btnDelete.setVisible(show);
 	}
 
-	public void showCancelButton(boolean show) {
+	public final void showCancelButton(boolean show) {
 		if(btnCancel == null) {
 			btnCancel = new Button("Cancel", this);
 			pnlButtonRow.add(btnCancel);
@@ -164,7 +160,7 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	}
 
 	@Override
-	public HandlerRegistration addEditHandler(IEditHandler handler) {
+	public final HandlerRegistration addEditHandler(IEditHandler handler) {
 		return addHandler(handler, EditEvent.TYPE);
 	}
 
@@ -181,25 +177,22 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	/**
 	 * @return The model instance.
 	 */
-	public Model getModel() {
+	public final Model getModel() {
 		return fieldPanel.getModel();
 	}
 
 	/**
-	 * Sets the model where if <code>null</code> all existing bindings are
-	 * cleared.
+	 * Sets the model propagating it to the held field panel.
 	 * @param model The model to set
 	 */
 	public void setModel(Model model) {
 		Log.debug("EditPanel.setModel() - START");
 		fieldPanel.setModel(model);
 		if(model != null) {
-			// assert isAttached() == true;
 			setEditMode(model.isNew());
 			// deferred attachment to guarantee needed aux data is available
-			if(!fieldPanel.isAttached()) {
-				fieldPanel.setBinding(binding);
-				Log.debug("EditPanel.setModel() adding fieldPanel to DOM..");
+			if(fieldPanel.getParent() == null) {
+				Log.debug("EditPanel.setModel() attaching fieldPanel..");
 				portal.add(fieldPanel);
 			}
 		}
@@ -211,13 +204,12 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	 * {@link FieldPanel}.
 	 * @param msgs The field error messages to apply
 	 */
-	public void applyFieldErrors(final List<Msg> msgs) {
+	public final void applyFieldErrors(final List<Msg> msgs) {
 		final FieldGroup root = fieldPanel.getFieldGroup();
-		final IErrorHandler ehandler = binding.getErrorHandler();
-		// clear out any existing server side errors
-		ehandler.clear(ErrorClassifier.SERVER);
+		final IErrorHandler errorHandler = root.getErrorHandler();
+		errorHandler.clear(ErrorClassifier.SERVER);
 		for(final Msg msg : msgs) {
-			final IFieldWidget<?> fw = root.getFieldWidget(msg.getRefToken());
+			final IFieldWidget<?> fw = root.getFieldWidgetByProperty(msg.getRefToken());
 			String emsg;
 			if(fw != null) {
 				emsg = msg.getMsg();
@@ -225,17 +217,21 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 			else {
 				emsg = msg.getRefToken() + ": " + msg.getMsg();
 			}
-			ehandler.handleError(fw, new Error(ErrorClassifier.SERVER, emsg));
+			errorHandler.handleError(fw, new Error(ErrorClassifier.SERVER, emsg), ErrorDisplay.ALL_FLAGS);
 		}
 	}
 
-	public void onClick(ClickEvent event) {
+	public final void onClick(ClickEvent event) {
 		final Object sender = event.getSource();
 		if(sender == btnSave) {
 			try {
 				Log.debug("EditPanel - Saving..");
 				fieldPanel.getBinding().execute();
 				EditEvent.fire(this, isAdd() ? EditOp.ADD : EditOp.UPDATE);
+			}
+			catch(final ValidationException e) {
+				// turn on incremental validation after first pass
+				fieldPanel.getFieldGroup().validateIncrementally(true);
 			}
 			catch(final Exception e) {
 				String emsg = e.getMessage();
@@ -247,7 +243,7 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 			}
 		}
 		else if(sender == btnReset) {
-			fieldPanel.getFieldGroup().reset();
+			fieldPanel.reset();
 		}
 		else if(sender == btnDelete) {
 			EditEvent.fire(this, EditOp.DELETE);

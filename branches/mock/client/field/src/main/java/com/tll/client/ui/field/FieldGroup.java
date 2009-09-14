@@ -235,8 +235,7 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	 * @param group the field group
 	 * @param parents the field group parents
 	 */
-	private static void validate(final Errors errors, FieldGroup group,
-			List<FieldGroup> parents) {
+	private static void validate(final Errors errors, FieldGroup group, List<FieldGroup> parents) {
 		for(final IField field : group) {
 			if(field instanceof FieldGroup) {
 				final ArrayList<FieldGroup> list = new ArrayList<FieldGroup>(parents.size() + 1);
@@ -382,23 +381,23 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	}
 
 	/**
+	 * Recursively searches for a field widget having the given name.
+	 * @param nme Unique name of the field widget to retrieve
+	 * @return The found field widget or <code>null</code> if no field widget
+	 *         exists with the given name.
+	 */
+	public IFieldWidget<?> getFieldWidget(String nme) {
+		final IField f = findByName(nme, this);
+		return f instanceof IFieldWidget<?> ? (IFieldWidget<?>) f : null;
+	}
+
+	/**
 	 * Recursively searches for a field widget having the given property name.
 	 * @param propertyName
 	 * @return The found field or <code>null</code> if it doesn't exist.
 	 */
-	public IFieldWidget<?> getFieldWidget(String propertyName) {
+	public IFieldWidget<?> getFieldWidgetByProperty(String propertyName) {
 		return propertyName == null ? null : findByPropertyName(propertyName, this);
-	}
-
-	/**
-	 * Recursively searches for a field widget having the given name.
-	 * @param nme
-	 * @return The found field widget or <code>null</code> if no field widget
-	 *         exists with the given name.
-	 */
-	public IFieldWidget<?> getFieldWidgetByName(String nme) {
-		final IField f = findByName(nme, this);
-		return f instanceof IFieldWidget<?> ? (IFieldWidget<?>) f : null;
 	}
 
 	/**
@@ -551,9 +550,9 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	}
 
 	@Override
-	public void applyPropertyMetadata(IPropertyMetadataProvider provider) {
+	public void applyPropertyMetadata(IPropertyMetadataProvider provider, boolean isNewModelData) {
 		for(final IField f : fields) {
-			f.applyPropertyMetadata(provider);
+			f.applyPropertyMetadata(provider, isNewModelData);
 		}
 	}
 

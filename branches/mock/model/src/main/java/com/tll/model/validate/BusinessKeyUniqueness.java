@@ -11,6 +11,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import javax.validation.Constraint;
+import javax.validation.Payload;
 
 /**
  * BusinessKeyUniqueness - Applied on a collection of entities. This edit
@@ -24,7 +25,12 @@ import javax.validation.Constraint;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface BusinessKeyUniqueness {
+
 	String type();
+
 	String message() default "{validator.business_key_uniqueness}";
+
 	Class<?>[] groups() default {};
+
+	Class<? extends Payload>[] payload() default {};
 }

@@ -2,8 +2,8 @@ package com.tll.model;
 
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validation.constraints.Length;
-import org.hibernate.validation.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
@@ -13,8 +13,8 @@ import com.tll.model.schema.BusinessObject;
  * @author jpk
  */
 @BusinessObject(businessKeys =
-	@BusinessKeyDef(name = "Account Id, Date Created, Remote Host",
-			properties = { "account.id", "dateCreated", "remoteHost" }))
+	@BusinessKeyDef(name = "Account Id, Date Created, Remote Host",properties = { "account.id", "dateCreated", "remoteHost" })
+)
 public class Visitor extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 3466539674112418212L;

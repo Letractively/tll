@@ -2,8 +2,8 @@ package com.tll.model;
 
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validation.constraints.Length;
-import org.hibernate.validation.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
@@ -15,7 +15,8 @@ import com.tll.model.schema.BusinessObject;
 @BusinessObject(businessKeys = {
 	@BusinessKeyDef(name = "Name", properties = { INamedEntity.NAME }),
 	@BusinessKeyDef(name = "Symbol", properties = { "symbol" }),
-	@BusinessKeyDef(name = "ISO4217", properties = { "iso4217" }) })
+	@BusinessKeyDef(name = "ISO4217", properties = { "iso4217" }) }
+)
 public class Currency extends NamedEntity {
 
 	private static final long serialVersionUID = -1627972414433764825L;

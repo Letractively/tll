@@ -50,8 +50,8 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel {
 		 * Constructor
 		 */
 		public OptionPanel() {
-			paramsPanel = new ParamsPanel();
-			dpParams = new DisclosurePanel("ParametersPanel", false);
+			paramsPanel = new ParamsPanel("parameters");
+			dpParams = new DisclosurePanel("Parameters", false);
 			dpParams.add(paramsPanel);
 		}
 
@@ -62,7 +62,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel {
 			if(single) {
 				// add click handler to the default field to un-check other option's
 				// default property
-				final IFieldWidget<Boolean> thisone = ((IFieldWidget<Boolean>) fg.getFieldWidget("default"));
+				final IFieldWidget<Boolean> thisone = ((IFieldWidget<Boolean>) fg.getFieldWidget("optnDefault"));
 				thisone.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
 					@Override
@@ -85,14 +85,16 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel {
 
 		@Override
 		public IFieldRenderer<FlowPanel> getRenderer() {
-			return new OptionRenderer(false, dpParams, new FlowPanelFieldComposer());
+			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
+			cmpsr.setCanvas(getWidget());
+			return new OptionRenderer(false, dpParams, cmpsr);
 		}
 
 		@Override
 		public IIndexedFieldBoundWidget[] getIndexedChildren() {
 			return new IIndexedFieldBoundWidget[] { paramsPanel };
 		}
-	}
+	} // OptionPanel
 
 	/**
 	 * OptionsPanel
@@ -135,7 +137,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel {
 
 		@Override
 		protected String getInstanceName(OptionPanel index) {
-			return index.getFieldGroup().getFieldWidgetByName("optn" + Model.NAME_PROPERTY).getText();
+			return index.getFieldGroup().getFieldWidget("optn" + Model.NAME_PROPERTY).getText();
 		}
 
 		@Override
@@ -181,14 +183,14 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel {
 				cmpsr.setCanvas(widget);
 
 				// first row
-				cmpsr.addField(fg.getFieldWidgetByName("intf" + Model.NAME_PROPERTY));
-				cmpsr.addField(fg.getFieldWidgetByName("intfCode"));
-				cmpsr.addField(fg.getFieldWidgetByName("intfDescription"));
+				cmpsr.addField(fg.getFieldWidget("intf" + Model.NAME_PROPERTY));
+				cmpsr.addField(fg.getFieldWidget("intfCode"));
+				cmpsr.addField(fg.getFieldWidget("intfDescription"));
 
 				cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-				cmpsr.addField(fg.getFieldWidgetByName("intf" + Model.DATE_CREATED_PROPERTY));
+				cmpsr.addField(fg.getFieldWidget("intf" + Model.DATE_CREATED_PROPERTY));
 				cmpsr.stopFlow();
-				cmpsr.addField(fg.getFieldWidgetByName("intf" + Model.DATE_MODIFIED_PROPERTY));
+				cmpsr.addField(fg.getFieldWidget("intf" + Model.DATE_MODIFIED_PROPERTY));
 				cmpsr.resetAlignment();
 
 				// second row

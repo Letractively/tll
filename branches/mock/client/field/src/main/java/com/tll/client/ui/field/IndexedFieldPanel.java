@@ -15,9 +15,9 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.IProvider;
-import com.tll.client.bind.FieldModelBinding;
 import com.tll.client.convert.IConverter;
 import com.tll.client.ui.BindableWidgetAdapter;
+import com.tll.client.validate.ErrorClassifier;
 import com.tll.client.validate.ValidationException;
 import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.model.Model;
@@ -40,19 +40,17 @@ import com.tll.util.PropertyPath;
  * @param <I> the index field panel type
  * @author jpk
  */
-public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?>> extends FieldPanel<W> implements
-IIndexedFieldBoundWidget {
+public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?>> extends FieldPanel<W> implements IIndexedFieldBoundWidget {
 
 	/**
 	 * Index - Wrapper class for each field panel at an index encapsulating the
 	 * field panel and its own field binding action.
 	 * @author jpk
 	 */
-	final class Index implements IProvider<I> {
+	private final class Index implements IProvider<I> {
 
 		int index = -1;
 		final I fieldPanel;
-		final FieldModelBinding binding;
 
 		/**
 		 * Constructor
@@ -61,18 +59,13 @@ IIndexedFieldBoundWidget {
 		 */
 		public Index(int index, I fieldPanel) {
 			super();
+			//assert fieldPanel.binding != null;
 			this.fieldPanel = fieldPanel;
-			// NOTE: we *don't* specify an error handler for this index field panel's
-			// binding actions
-			// as this is handled by the parent binding action since
-			// its root field group is expected to contain this panel's field group as
-			// a child
-			this.binding = new FieldModelBinding(null);
 
 			// NOTE: we bind *before* we set the index so the property paths jive with
 			// the index model!
-			binding.set(fieldPanel);
-			binding.bind();
+			//fieldPanel.getBinding().set(fieldPanel);
+			fieldPanel.getBinding().bind();
 
 			setIndex(index, true);
 		}
@@ -100,7 +93,7 @@ IIndexedFieldBoundWidget {
 				fieldPanel.getFieldGroup().replaceParentPropertyPath(existing, tgt);
 			}
 			final String name = fieldPanel.getModel().getEntityType().descriptor();
-			fieldPanel.getFieldGroup().setName(name + " - " + index);
+			fieldPanel.getFieldGroup().setName(name + " - " + (index + 1));
 			this.index = index;
 		}
 	}
@@ -153,10 +146,13 @@ IIndexedFieldBoundWidget {
 			// update the model collection!
 			for(final Index index : indexPanels) {
 				try {
-					index.binding.execute();
+					index.fieldPanel.getBinding().execute();
 				}
 				catch(final ValidationException e) {
 					throw new RuntimeException(e);
+				}
+				catch(final Exception e) {
+					Log.error("Unable to get index model collection", e);
 				}
 				value.add(index.fieldPanel.getModel());
 			}
@@ -169,8 +165,6 @@ IIndexedFieldBoundWidget {
 		if(this.value != value) {
 			this.value = null;
 			clearIndexed();
-			// we don't want auto-transfer of data!!
-			//changeSupport.firePropertyChange(IBindableWidget.PROPERTY_VALUE, old, this.value);
 			if(value != null) {
 				for(final Model m : value) {
 					add(m, false);
@@ -214,8 +208,8 @@ IIndexedFieldBoundWidget {
 	/**
 	 * Adds an indexed field group populating the fields with data held in the
 	 * given model.
-	 * @param model The model to be converted to a field group
-	 * @param isUiAdd
+	 * @param model The index model
+	 * @param isUiAdd Are we adding via the UI or is this from initial loading?
 	 * @throws IllegalArgumentException When the field to add already exists in
 	 *         the underlying field group or has the same name as an existing
 	 *         field in the underlying group.
@@ -236,7 +230,7 @@ IIndexedFieldBoundWidget {
 
 		getFieldGroup().addField(ip.getFieldGroup());
 
-		// propagate the error handler from parent field group to this index field group
+		// propagate the error handler
 		ip.getFieldGroup().setErrorHandler(getFieldGroup().getErrorHandler());
 
 		// add in the ui
@@ -258,10 +252,11 @@ IIndexedFieldBoundWidget {
 		Index remove = indexPanels.remove(index);
 		assert remove != null;
 
-		remove.binding.unbind();
+		remove.fieldPanel.getBinding().unbind();
 		if(!getFieldGroup().removeField(remove.fieldPanel.getFieldGroup())) {
 			throw new IllegalStateException("Unable to remove index field group: " + remove.fieldPanel.getFieldGroup());
 		}
+		remove.fieldPanel.getFieldGroup().getErrorHandler().clear(ErrorClassifier.CLIENT);
 		remove = null;
 
 		// re-build indexes only if necessary
@@ -294,7 +289,7 @@ IIndexedFieldBoundWidget {
 	protected void markDeleted(int index, boolean deleted) throws IndexOutOfBoundsException {
 		final Index ip = indexPanels.get(index);
 		ip.fieldPanel.getModel().setMarkedDeleted(deleted);
-		ip.fieldPanel.getFieldGroup().setEnabled(!deleted);
+		ip.fieldPanel.enable(!deleted);
 	}
 
 	public final void clearIndexed() {
@@ -304,6 +299,29 @@ IIndexedFieldBoundWidget {
 		}
 		assert getFieldGroup().size() == 0;
 		assert indexPanels.size() == 0;
+	}
+
+	@Override
+	public final void reset() {
+		// handle indexed field panels
+		final ArrayList<Index> tormv = new ArrayList<Index>();
+		final ArrayList<Index> toundel = new ArrayList<Index>();
+		for(final Index i : indexPanels) {
+			i.fieldPanel.getFieldGroup().getErrorHandler().clear(ErrorClassifier.CLIENT);
+			final Model im = i.fieldPanel.getModel();
+			if(im.isNew()) {
+				tormv.add(i);
+			}
+			else if(im.isMarkedDeleted()) {
+				toundel.add(i);
+			}
+		}
+		for(final Index i : tormv) {
+			remove(i.index, true);
+		}
+		for(final Index i : toundel) {
+			markDeleted(i.index, false);
+		}
 	}
 
 	@Override

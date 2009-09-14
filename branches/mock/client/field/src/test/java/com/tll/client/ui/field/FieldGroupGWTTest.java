@@ -42,14 +42,14 @@ public class FieldGroupGWTTest extends GWTTestCase {
 	}
 
 	/**
-	 * Tests {@link FieldGroup#getFieldWidget(String)}.
+	 * Tests {@link FieldGroup#getFieldWidgetByProperty(String)}.
 	 */
 	public void testGetField() {
 		final FieldGroup fg = (new MockFieldGroupProviders.AddressFieldsProvider()).getFieldGroup();
 		final Collection<String> propNames = getPropNames(fg);
 		assert propNames != null && propNames.size() > 0;
 		for(final String prop : propNames) {
-			final IFieldWidget<?> f = fg.getFieldWidget(prop);
+			final IFieldWidget<?> f = fg.getFieldWidgetByProperty(prop);
 			assert f != null;
 			assert f.getPropertyName() != null && f.getPropertyName().equals(prop);
 		}

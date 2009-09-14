@@ -17,30 +17,30 @@ public class AddressFieldsRenderer implements IFieldRenderer<FlowPanel> {
 		final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 		cmpsr.setCanvas(panel);
 
-		cmpsr.addField(fg.getFieldWidgetByName("adrsEmailAddress"));
+		cmpsr.addField(fg.getFieldWidget("adrsEmailAddress"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getFieldWidgetByName("adrsFirstName"));
-		cmpsr.addField(fg.getFieldWidgetByName("adrsMi"));
-		cmpsr.addField(fg.getFieldWidgetByName("adrsLastName"));
+		cmpsr.addField(fg.getFieldWidget("adrsFirstName"));
+		cmpsr.addField(fg.getFieldWidget("adrsMi"));
+		cmpsr.addField(fg.getFieldWidget("adrsLastName"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getFieldWidgetByName("adrsAttn"));
-		cmpsr.addField(fg.getFieldWidgetByName("adrsCompany"));
+		cmpsr.addField(fg.getFieldWidget("adrsAttn"));
+		cmpsr.addField(fg.getFieldWidget("adrsCompany"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getFieldWidgetByName("adrsAddress1"));
+		cmpsr.addField(fg.getFieldWidget("adrsAddress1"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getFieldWidgetByName("adrsAddress2"));
+		cmpsr.addField(fg.getFieldWidget("adrsAddress2"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getFieldWidgetByName("adrsCity"));
-		cmpsr.addField(fg.getFieldWidgetByName("adrsProvince"));
+		cmpsr.addField(fg.getFieldWidget("adrsCity"));
+		cmpsr.addField(fg.getFieldWidget("adrsProvince"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getFieldWidgetByName("adrsPostalCode"));
-		cmpsr.addField(fg.getFieldWidgetByName("adrsCountry"));
+		cmpsr.addField(fg.getFieldWidget("adrsPostalCode"));
+		cmpsr.addField(fg.getFieldWidget("adrsCountry"));
 	}
 
 }

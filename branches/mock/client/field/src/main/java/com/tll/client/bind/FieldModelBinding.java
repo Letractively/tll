@@ -5,23 +5,32 @@
 package com.tll.client.bind;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.tll.client.convert.IConverter;
 import com.tll.client.ui.IBindableWidget;
+import com.tll.client.ui.field.FieldErrorHandler;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.IFieldBoundWidget;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.IIndexedFieldBoundWidget;
+import com.tll.client.ui.msg.IMsgDisplay;
+import com.tll.client.ui.msg.MsgPopupRegistry;
+import com.tll.client.validate.BillboardValidationFeedback;
 import com.tll.client.validate.Error;
 import com.tll.client.validate.ErrorClassifier;
+import com.tll.client.validate.ErrorDisplay;
+import com.tll.client.validate.ErrorHandlerDelegate;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.ValidationException;
 import com.tll.common.model.Model;
 
 /**
- * FieldModelBinding - Binds fields to model properties enabling bi-directional model
- * and view data transfer.
+ * FieldModelBinding - Binds fields to model properties enabling bi-directional
+ * model and view data transfer.
+ * <p>
+ * This class may be extended to accommodate "custom" bindings.
  * @author jpk
  */
-public final class FieldModelBinding {
+public class FieldModelBinding {
 
 	/**
 	 * Creates a model/field binding on a particular property. If the binding
@@ -29,57 +38,82 @@ public final class FieldModelBinding {
 	 * returnred.
 	 * @param model
 	 * @param modelProp
+	 * @param modelConverter optional
 	 * @param fw
-	 * @param eh
+	 * @throws BindingException When the binding creation fails
 	 */
-	static Binding createBinding(Model model, String modelProp, IFieldWidget<?> fw, IErrorHandler eh) {
-		try {
-			return new Binding(model, fw.getPropertyName(), null, null, null, fw, IBindableWidget.PROPERTY_VALUE, null, fw,
-					eh);
-		}
-		catch(final RuntimeException e) {
-			Log.warn("Skipping binding for property: " + modelProp);
-			return null;
-		}
+	static Binding createBinding(Model model, IConverter<Object, Object> modelConverter, String modelProp,
+			IFieldWidget<?> fw, IConverter<Object, Object> fieldConverter) throws BindingException {
+		return new Binding(model, modelProp, modelConverter, null, null, fw, IBindableWidget.PROPERTY_VALUE,
+				fieldConverter, fw, fw.getErrorHandler());
 	}
 
 	/**
 	 * Generalized binding creation routine to bind a {@link FieldGroup} instance
 	 * to an {@link Model} instance.
 	 * <p>
+	 * <em>This method rests on the assumption that the field property names correlate directly to existant model properties!</em>
+	 * <p>
 	 * All {@link IFieldWidget}s are extracted from the given field group and
-	 * bound to the corresponding model properties with the sole exception that
-	 * "managed" model properties are <em>not</em> bound.
+	 * bound to the corresponding model properties.
 	 * @param group
 	 * @param model
-	 * @param errorHandler
 	 * @return the created {@link Binding}.
+	 * @throws BindingException When the binding creation fails
 	 */
-	static Binding createBinding(FieldGroup group, Model model, IErrorHandler errorHandler) {
+	static Binding createBinding(FieldGroup group, Model model) throws BindingException {
 		final Binding b = new Binding();
-		group.setErrorHandler(errorHandler);
 		// create bindings for all provided field widgets in the root field group
 		for(final IFieldWidget<?> fw : group.getFieldWidgets(null)) {
 			// clear the current value to re-mark the field's initial value
 			fw.clearValue();
 			Log.debug("Binding field group: " + group + " to model [" + model + "]." + fw.getPropertyName());
-			final Binding cb = createBinding(model, fw.getPropertyName(), fw, errorHandler);
-			if(cb != null) {
+			try {
+				final Binding cb = createBinding(model, null, fw.getPropertyName(), fw, null);
 				b.getChildren().add(cb);
+			}
+			catch(final Exception e) {
+				Log.warn("Skipping binding for property: " + fw.getPropertyName());
 			}
 		}
 		return b;
 	}
 
 	/**
-	 * The local error handler
+	 * Convenience builder method that assembles an appropriate
+	 * {@link IErrorHandler}.
+	 * @param msgDisplay msg display implmentation. May be <code>null</code>.
+	 *        providing field validation feedback
+	 * @return A new {@link IErrorHandler} impl instance.
 	 */
-	private final IErrorHandler errorHandler;
+	static IErrorHandler buildErrorHandler(IMsgDisplay msgDisplay) {
+		IErrorHandler errorHandler;
+		if(msgDisplay == null) {
+			errorHandler = new FieldErrorHandler(new MsgPopupRegistry());
+		}
+		else {
+			errorHandler =
+				new ErrorHandlerDelegate(new BillboardValidationFeedback(msgDisplay), new FieldErrorHandler(
+						new MsgPopupRegistry()));
+		}
+		return errorHandler;
+	}
 
 	/**
-	 * The field bound widget.
+	 * The field bound widget. This widget's field group is considered the root
+	 * field group.
 	 */
-	private IFieldBoundWidget widget;
+	protected IFieldBoundWidget widget;
+
+	/**
+	 * Used for displaying validation feedback in a single panel.
+	 */
+	private IMsgDisplay msgDisplay;
+
+	/**
+	 * The sole error handler instance for this binding.
+	 */
+	private IErrorHandler errorHandler;
 
 	/**
 	 * The sole binding.
@@ -89,29 +123,15 @@ public final class FieldModelBinding {
 	private boolean bound;
 
 	/**
-	 * Constructor
-	 * @param errorHandler The error handler to employ.
-	 */
-	public FieldModelBinding(IErrorHandler errorHandler) {
-		this.errorHandler = errorHandler;
-	}
-
-	/**
-	 * @return The composite error handler.
-	 */
-	public IErrorHandler getErrorHandler() {
-		return errorHandler;
-	}
-
-	/**
 	 * Transfers field data to the model through the defined bindings.
-	 * @throws ValidationException When the operation fails
-	 * @throws IllegalStateException When the action state is invalid.
+	 * @throws ValidationException When the root field group fails to validate.
+	 * @throws BindingException When a property change event fails to complete
+	 *         successfully (post validation).
 	 */
-	public void execute() throws IllegalStateException, ValidationException {
+	public final void execute() throws ValidationException, BindingException {
 		ensureSet();
-
-		if(errorHandler != null) errorHandler.clear();
+		final IErrorHandler eh = getErrorHandler();
+		eh.clear();
 		try {
 			// validate
 			widget.getFieldGroup().validate();
@@ -120,12 +140,10 @@ public final class FieldModelBinding {
 			binding.setLeft();
 		}
 		catch(final ValidationException e) {
-			if(errorHandler != null) {
-				errorHandler.handleError(null, e.getError());
-			}
+			eh.handleError(null, e.getError(), ErrorDisplay.ALL_FLAGS);
 			throw e;
 		}
-		catch(final Exception e) {
+		catch(final BindingException e) {
 			String emsg;
 			if(e.getCause() != null && e.getCause().getMessage() != null) {
 				emsg = e.getCause().getMessage();
@@ -136,14 +154,25 @@ public final class FieldModelBinding {
 			if(emsg == null) {
 				emsg = "Unknown error occurred.";
 			}
-			if(errorHandler != null) {
-				errorHandler.handleError(null, new Error(ErrorClassifier.CLIENT, emsg));
-			}
-			throw new ValidationException(emsg);
+			eh.handleError(null, new Error(ErrorClassifier.CLIENT, emsg), ErrorDisplay.ALL_FLAGS);
+			throw e;
 		}
 	}
 
-	public void set(IFieldBoundWidget widget) {
+	public final void setMsgDisplay(IMsgDisplay msgDisplay) {
+		if(errorHandler != null) throw new IllegalStateException("Error handler already set");
+		this.msgDisplay = msgDisplay;
+	}
+
+	protected final IErrorHandler getErrorHandler() {
+		if(errorHandler == null) {
+			Log.debug("Building error handler..");
+			errorHandler = buildErrorHandler(msgDisplay);
+		}
+		return errorHandler;
+	}
+
+	public final void set(IFieldBoundWidget widget) {
 		if(widget == null) {
 			throw new IllegalArgumentException("Null widget");
 		}
@@ -151,41 +180,58 @@ public final class FieldModelBinding {
 			return;
 		}
 		if(widget.getFieldGroup() == null) {
-			throw new IllegalArgumentException("No field group");
-		}
-		if(widget.getModel() == null) {
-			throw new IllegalArgumentException("No model");
+			throw new IllegalArgumentException("No field group specified in field bound widget");
 		}
 		if(this.widget != null) {
 			unset();
 		}
+
 		Log.debug("Setting: " + widget);
 		this.widget = widget;
 	}
 
-	public void bind() {
-		ensureSet();
+	public final void bind() throws BindingException {
 		if(bound) return;
+		if(widget.getModel() == null) {
+			throw new IllegalArgumentException("No model specified in field bound widget");
+		}
+		createBindings();
 		Log.debug("Binding: " + widget);
+		binding.bind();
+		binding.setRight();
+		bound = true;
+	}
+
+	/**
+	 * Creates the field/model bindings.
+	 * <p>
+	 * This is the default implementation and it may be overridden.
+	 */
+	protected void createBindings() throws BindingException {
+		// propagate the binding's error handler
+		Log.debug("Propagating error handler: " + widget);
+		widget.getFieldGroup().setErrorHandler(getErrorHandler());
+
+		Log.debug("Creating bindings for: " + widget);
 		// we only allow binding of the set root field group
-		bind(createBinding(widget.getFieldGroup(), widget.getModel(), errorHandler));
+		Binding b = createBinding(widget.getFieldGroup(), widget.getModel());
+		binding.getChildren().add(b);
 
 		// bind the indexed
 		final IIndexedFieldBoundWidget[] indexedWidgets = widget.getIndexedChildren();
 		if(indexedWidgets != null) {
 			for(final IIndexedFieldBoundWidget iw : indexedWidgets) {
-				Log.debug("Binding indexed: " + iw);
+				Log.debug("Creating indexed bindings for: " + iw);
 				// add binding to the many value collection only
-				bind(new Binding(widget.getModel(), iw.getIndexedPropertyName(), null, null, null, iw,
-						IBindableWidget.PROPERTY_VALUE,
-						null, null, null));
-
+				b =
+					new Binding(widget.getModel(), iw.getIndexedPropertyName(), null, null, null, iw,
+							IBindableWidget.PROPERTY_VALUE, null, null, null);
+				binding.getChildren().add(b);
 			}
 		}
-		bound = true;
 	}
 
-	public void unbind() {
+	public final void unbind() {
 		if(bound) {
 			Log.debug("Un-binding: " + widget);
 			// unbind indexed first
@@ -203,8 +249,8 @@ public final class FieldModelBinding {
 		}
 	}
 
-	public void unset() {
-		if(isSet()) {
+	private void unset() {
+		if(widget != null) {
 			Log.debug("Un-setting: " + widget);
 			unbind();
 			widget.getFieldGroup().clearValue();
@@ -212,40 +258,56 @@ public final class FieldModelBinding {
 		}
 	}
 
-	public boolean isSet() {
-		return widget != null;
-	}
-
-	public boolean isBound() {
+	public final boolean isBound() {
 		return bound;
 	}
 
 	/**
-	 * Creates a "manual" binding. This is a provision to allow for multiple
-	 * bindings beyond the "stock" bindings that are created automatically. This
-	 * binding must first be set.
-	 * @param propPath the property path that identifies the model property to
-	 *        bind
-	 * @param fw the field widget to be bound
+	 * Resolves a field name to an {@link IFieldWidget} instance held in the root
+	 * field group.
+	 * @param fieldName
+	 * @return The found {@link IFieldWidget}
+	 * @throws BindingException When the field can't be found
 	 */
-	public void addBinding(String propPath, IFieldWidget<?> fw) {
+	private IFieldWidget<?> resolveFieldWidget(String fieldName) throws BindingException {
+		final IFieldWidget<?> fw = widget.getFieldGroup().getFieldWidget(fieldName);
+		if(fw == null) throw new BindingException("Field of name: " + fieldName + " was not found.");
+		return fw;
+	}
+
+	/**
+	 * Creates a "manual" default binding. This is a provision to allow for
+	 * multiple bindings beyond the "stock" bindings that are created
+	 * automatically. This binding must first be set.
+	 * @param modelProperty the property path that identifies the model property
+	 *        to bind
+	 * @param fieldName The name of the {@link IFieldWidget} to bind which must be
+	 *        a child of the root field group
+	 */
+	public void addBinding(String modelProperty, String fieldName) {
 		ensureSet();
-		createBinding(widget.getModel(), propPath, fw, errorHandler);
+		createBinding(widget.getModel(), null, modelProperty, resolveFieldWidget(fieldName), null);
+	}
+
+	/**
+	 * Creates a "manual" binding with the provision to specify both a model and
+	 * field converter.
+	 * @param modelProperty
+	 * @param modelConverter
+	 * @param fieldName The name of the {@link IFieldWidget} to bind which must be
+	 *        a child of the root field group
+	 * @param fieldConverter
+	 * @throws BindingException When the binding can't be created
+	 */
+	public void addBinding(String modelProperty, IConverter<Object, Object> modelConverter, String fieldName,
+			IConverter<Object, Object> fieldConverter) throws BindingException {
+		ensureSet();
+		createBinding(widget.getModel(), modelConverter, modelProperty, resolveFieldWidget(fieldName), fieldConverter);
 	}
 
 	private void ensureSet() throws IllegalStateException {
 		if(widget == null) {
-			throw new IllegalStateException("Not field bound widget set.");
+			throw new IllegalStateException("No field bound widget set.");
 		}
-	}
-
-	private void bind(Binding b) {
-		binding.getChildren().add(b);
-
-		// bind
-		b.bind();
-
-		// populate the fields
-		b.setRight();
 	}
 }

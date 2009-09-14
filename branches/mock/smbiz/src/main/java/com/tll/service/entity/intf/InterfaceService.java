@@ -58,6 +58,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 	private AccountInterfaceOption generateAccountInterfaceOption(InterfaceOption io, InterfaceOptionAccount ioa) {
 		assert io != null;
 		final AccountInterfaceOption aio = entityAssembler.assembleEntity(AccountInterfaceOption.class, null, false);
+		aio.setNew(false);
 		aio.setAnnualCost(io.getAnnualCost());
 		aio.setAnnualPrice(io.getBaseAnnualPrice());
 		aio.setBaseAnnualPrice(io.getBaseAnnualPrice());
@@ -71,11 +72,13 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 		aio.setMonthlyCost(io.getMonthlyCost());
 		aio.setName(io.getName());
 		aio.setSetUpCost(io.getSetUpCost());
+		aio.setSubscribed(ioa != null);	// account is subscribed simply if there is a InterfaceOptionAccount record
 		final LinkedHashSet<AccountInterfaceOptionParameter> aiops = new LinkedHashSet<AccountInterfaceOptionParameter>();
+		aio.setParameters(aiops);
 		for(final InterfaceOptionParameterDefinition iopd : io.getParameters()) {
-			final AccountInterfaceOptionParameter aiop = new AccountInterfaceOptionParameter();
+			final AccountInterfaceOptionParameter aiop = entityAssembler.assembleEntity(AccountInterfaceOptionParameter.class, null, false);
 			aiops.add(aiop);
-			aio.setParameters(aiops);
+			aiop.setNew(false);
 			aiop.setCode(iopd.getCode());
 			aiop.setName(iopd.getName());
 			aiop.setDescription(iopd.getDescription());
@@ -113,7 +116,24 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 			aios.add(aio);
 		}
 
-		return new AccountInterface(accountId, interfaceId, aios);
+		final AccountInterface ai = entityAssembler.assembleEntity(AccountInterface.class, null, false);
+		ai.setNew(false);
+		ai.setAccountId(accountId);
+		ai.setInterfaceId(interfaceId);
+		ai.setName(intf.getName());
+		ai.setCode(intf.getCode());
+		ai.setDescription(intf.getDescription());
+		ai.setAvailableAsp(intf.getIsAvailableAsp());
+		ai.setAvailableIsp(intf.getIsAvailableIsp());
+		ai.setAvailableMerchant(intf.getIsAvailableMerchant());
+		ai.setAvailableCustomer(intf.getIsAvailableCustomer());
+		ai.setRequiredAsp(intf.getIsRequiredAsp());
+		ai.setRequiredIsp(intf.getIsRequiredIsp());
+		ai.setRequiredMerchant(intf.getIsRequiredMerchant());
+		ai.setRequiredCustomer(intf.getIsRequiredCustomer());
+		ai.setOptions(aios);
+
+		return ai;
 	}
 
 	@Override
@@ -149,7 +169,6 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 			ioa.setAccount(account);
 			final InterfaceOption io = dao.load(new PrimaryKey<InterfaceOption>(InterfaceOption.class, aio.getId()));
 			ioa.setOption(io);
-			ioa.setStatus(aio.getStatus());
 			ioa.setSetUpPrice(aio.getSetUpPrice());
 			ioa.setMonthlyPrice(aio.getMonthlyPrice());
 			ioa.setAnnualPrice(aio.getAnnualPrice());

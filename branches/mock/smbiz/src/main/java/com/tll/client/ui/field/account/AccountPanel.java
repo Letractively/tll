@@ -52,8 +52,8 @@ public class AccountPanel extends FlowFieldPanel {
 					cmpsr.setCanvas(pnl);
 
 					// account address type/name row
-					cmpsr.addField(fg.getFieldWidgetByName("aatype"));
-					cmpsr.addField(fg.getFieldWidgetByName("aa" + Model.NAME_PROPERTY));
+					cmpsr.addField(fg.getFieldWidget("aatype"));
+					cmpsr.addField(fg.getFieldWidget("aa" + Model.NAME_PROPERTY));
 
 					// address row
 					cmpsr.newRow();
@@ -133,25 +133,25 @@ public class AccountPanel extends FlowFieldPanel {
 		paymentInfoPanel.getFieldGroup().setWidget(dpPaymentInfo);
 		addressesPanel.getFieldGroup().setWidget(dpAddresses);
 
-		fg.getFieldWidget("parent.name").setReadOnly(true);
+		fg.getFieldWidget("acntParentName").setReadOnly(true);
 
-		((IFieldWidget<AccountStatus>) fg.getFieldWidget("status"))
+		((IFieldWidget<AccountStatus>) fg.getFieldWidget("acntStatus"))
 		.addValueChangeHandler(new ValueChangeHandler<AccountStatus>() {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<AccountStatus> event) {
 				final boolean closed = event.getValue() == AccountStatus.CLOSED;
-				final IFieldWidget<?> f = getFieldGroup().getFieldWidget("dateCancelled");
+				final IFieldWidget<?> f = getFieldGroup().getFieldWidget("acntDateCancelled");
 				f.setVisible(closed);
 				f.setRequired(closed);
 			}
 		});
 
-		((IFieldWidget<Boolean>) fg.getFieldWidget("persistPymntInfo"))
+		((IFieldWidget<Boolean>) fg.getFieldWidget("acntPersistPymntInfo"))
 		.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				paymentInfoPanel.getFieldGroup().setEnabled(event.getValue());
+				paymentInfoPanel.enable(event.getValue());
 			}
 		});
 
@@ -168,23 +168,23 @@ public class AccountPanel extends FlowFieldPanel {
 				cmpsr.setCanvas(widget);
 
 				// first row
-				cmpsr.addField(fg.getFieldWidgetByName("acnt" + Model.NAME_PROPERTY));
-				cmpsr.addField(fg.getFieldWidgetByName("acntStatus"));
-				cmpsr.addField(fg.getFieldWidgetByName("acntDateCancelled"));
-				cmpsr.addField(fg.getFieldWidgetByName("acntCurrencyId"));
+				cmpsr.addField(fg.getFieldWidget("acnt" + Model.NAME_PROPERTY));
+				cmpsr.addField(fg.getFieldWidget("acntStatus"));
+				cmpsr.addField(fg.getFieldWidget("acntDateCancelled"));
+				cmpsr.addField(fg.getFieldWidget("acntCurrencyId"));
 				cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-				cmpsr.addField(fg.getFieldWidgetByName("acntParentName"));
+				cmpsr.addField(fg.getFieldWidget("acntParentName"));
 				cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-				cmpsr.addField(fg.getFieldWidgetByName("acnt" + Model.DATE_CREATED_PROPERTY));
+				cmpsr.addField(fg.getFieldWidget("acnt" + Model.DATE_CREATED_PROPERTY));
 				cmpsr.stopFlow();
-				cmpsr.addField(fg.getFieldWidgetByName("acnt" + Model.DATE_MODIFIED_PROPERTY));
+				cmpsr.addField(fg.getFieldWidget("acnt" + Model.DATE_MODIFIED_PROPERTY));
 
 				// second row (billing)
 				cmpsr.newRow();
-				cmpsr.addField(fg.getFieldWidgetByName("acntBillingModel"));
-				cmpsr.addField(fg.getFieldWidgetByName("acntBillingCycle"));
-				cmpsr.addField(fg.getFieldWidgetByName("acntDateLastCharged"));
-				cmpsr.addField(fg.getFieldWidgetByName("acntNextChargeDate"));
+				cmpsr.addField(fg.getFieldWidget("acntBillingModel"));
+				cmpsr.addField(fg.getFieldWidget("acntBillingCycle"));
+				cmpsr.addField(fg.getFieldWidget("acntDateLastCharged"));
+				cmpsr.addField(fg.getFieldWidget("acntNextChargeDate"));
 
 				// third row
 				cmpsr.newRow();
@@ -196,7 +196,7 @@ public class AccountPanel extends FlowFieldPanel {
 				cmpsr.newRow();
 				// payment info block
 				final FlowPanel fp = new FlowPanel();
-				fp.add((Widget) fg.getFieldWidgetByName("acntPersistPymntInfo"));
+				fp.add((Widget) fg.getFieldWidget("acntPersistPymntInfo"));
 				fp.add(paymentInfoPanel);
 				dpPaymentInfo.add(fp);
 				cmpsr.addWidget(dpPaymentInfo);

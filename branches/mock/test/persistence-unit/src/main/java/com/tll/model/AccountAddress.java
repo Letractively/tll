@@ -2,8 +2,8 @@ package com.tll.model;
 
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validation.constraints.Length;
-import org.hibernate.validation.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
@@ -14,8 +14,8 @@ import com.tll.model.schema.BusinessObject;
  * @author jpk
  */
 @BusinessObject(businessKeys = {
-	@BusinessKeyDef(name = "Account Id and Address Id", properties = { "account.id", "address.id" }), 
-	@BusinessKeyDef(name = "Account Id and Name", properties = { "account.id", INamedEntity.NAME }) 
+	@BusinessKeyDef(name = "Account Id and Address Id", properties = { "account.id", "address.id" }),
+	@BusinessKeyDef(name = "Account Id and Name", properties = { "account.id", INamedEntity.NAME })
 })
 public class AccountAddress extends NamedTimeStampEntity implements IChildEntity<Account> {
 

@@ -1,7 +1,7 @@
 package com.tll.model;
 
-import org.hibernate.validation.constraints.Length;
-import org.hibernate.validation.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
@@ -14,7 +14,7 @@ import com.tll.model.schema.BusinessObject;
 //@PostalCode() temp disable
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Address 1 and Postal Code", properties = {
 	"address1", "postalCode" }))
-public class Address extends EntityBase {
+	public class Address extends EntityBase {
 
 	private static final long serialVersionUID = 69385466934038047L;
 

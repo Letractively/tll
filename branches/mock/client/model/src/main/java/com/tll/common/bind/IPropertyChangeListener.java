@@ -8,7 +8,7 @@ package com.tll.common.bind;
 import java.util.EventListener;
 
 /**
- * IPropertyChangeListener - Replica of the java.util.PropertyChangeListener
+ * IPropertyChangeListener - Replica of the java.beans.PropertyChangeListener
  * interface.
  * <p><em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
  * @author jpk

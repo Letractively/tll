@@ -77,8 +77,9 @@ public interface IField extends HasName, IWidgetRef, IHasErrorHandler {
 	/**
 	 * Applies property metadata to this field.
 	 * @param provider The property metadata provider.
+	 * @param isNewModelData Is the model data new or existing?
 	 */
-	void applyPropertyMetadata(IPropertyMetadataProvider provider);
+	void applyPropertyMetadata(IPropertyMetadataProvider provider, boolean isNewModelData);
 
 	/**
 	 * Adds a validator.

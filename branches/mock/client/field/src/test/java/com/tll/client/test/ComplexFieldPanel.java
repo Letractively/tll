@@ -45,8 +45,8 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 					cmpsr.setCanvas(pnl);
 
 					// account address type/name row
-					cmpsr.addField(fg.getFieldWidgetByName("type"));
-					cmpsr.addField(fg.getFieldWidgetByName("aa" + Model.NAME_PROPERTY));
+					cmpsr.addField(fg.getFieldWidget("type"));
+					cmpsr.addField(fg.getFieldWidget("aa" + Model.NAME_PROPERTY));
 
 					// address row
 					cmpsr.newRow();
@@ -58,12 +58,12 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 							final FlowPanelFieldComposer c = new FlowPanelFieldComposer();
 							c.setCanvas(widget);
 
-							c.addField(fgroup.getFieldWidgetByName("adrsEmailAddress"));
+							c.addField(fgroup.getFieldWidget("adrsEmailAddress"));
 
 							c.newRow();
-							c.addField(fgroup.getFieldWidgetByName("adrsFirstName"));
-							c.addField(fgroup.getFieldWidgetByName("adrsMi"));
-							c.addField(fgroup.getFieldWidgetByName("adrsLastName"));
+							c.addField(fgroup.getFieldWidget("adrsFirstName"));
+							c.addField(fgroup.getFieldWidget("adrsMi"));
+							c.addField(fgroup.getFieldWidget("adrsLastName"));
 
 							//cmpsr.newRow();
 							//cmpsr.addField(fg.getFieldWidgetByName("adrsAttn"));
@@ -76,16 +76,16 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 							//cmpsr.addField(fg.getFieldWidgetByName("adrsAddress2"));
 
 							c.newRow();
-							c.addField(fgroup.getFieldWidgetByName("adrsCity"));
-							c.addField(fgroup.getFieldWidgetByName("adrsProvince"));
+							c.addField(fgroup.getFieldWidget("adrsCity"));
+							c.addField(fgroup.getFieldWidget("adrsProvince"));
 
 							c.newRow();
 							//cmpsr.addField(fg.getFieldWidgetByName("adrsPostalCode"));
-							c.addField(fgroup.getFieldWidgetByName("adrsCountry"));
+							c.addField(fgroup.getFieldWidget("adrsCountry"));
 
-							c.addField(fgroup.getFieldWidgetByName("adrsBoolean"));
-							c.addField(fgroup.getFieldWidgetByName("adrsFloat"));
-							c.addField(fgroup.getFieldWidgetByName("adrsDouble"));
+							c.addField(fgroup.getFieldWidget("adrsBoolean"));
+							c.addField(fgroup.getFieldWidget("adrsFloat"));
+							c.addField(fgroup.getFieldWidget("adrsDouble"));
 						}
 					}).render(fp, (FieldGroup) fg.getFieldByName("address"));
 					cmpsr.addWidget(fp);
@@ -161,34 +161,34 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 				cmpsr.setCanvas(widget);
 
 				// first row
-				cmpsr.addField(fg.getFieldWidgetByName("acnt" + Model.NAME_PROPERTY));
-				cmpsr.addField(fg.getFieldWidgetByName("acntStatus"));
-				cmpsr.addField(fg.getFieldWidgetByName("acntDateCancelled"));
+				cmpsr.addField(fg.getFieldWidget("acnt" + Model.NAME_PROPERTY));
+				cmpsr.addField(fg.getFieldWidget("acntStatus"));
+				cmpsr.addField(fg.getFieldWidget("acntDateCancelled"));
 				cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-				cmpsr.addField(fg.getFieldWidgetByName("acntParentName"));
+				cmpsr.addField(fg.getFieldWidget("acntParentName"));
 				cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-				cmpsr.addField(fg.getFieldWidgetByName("acnt" + Model.DATE_CREATED_PROPERTY));
+				cmpsr.addField(fg.getFieldWidget("acnt" + Model.DATE_CREATED_PROPERTY));
 				cmpsr.stopFlow();
-				cmpsr.addField(fg.getFieldWidgetByName("acnt" + Model.DATE_MODIFIED_PROPERTY));
+				cmpsr.addField(fg.getFieldWidget("acnt" + Model.DATE_MODIFIED_PROPERTY));
 
 				// second row (billing)
 				cmpsr.newRow();
-				cmpsr.addField(fg.getFieldWidgetByName("acntBillingModel"));
-				cmpsr.addField(fg.getFieldWidgetByName("acntBillingCycle"));
-				cmpsr.addField(fg.getFieldWidgetByName("acntDateLastCharged"));
-				cmpsr.addField(fg.getFieldWidgetByName("acntNextChargeDate"));
+				cmpsr.addField(fg.getFieldWidget("acntBillingModel"));
+				cmpsr.addField(fg.getFieldWidget("acntBillingCycle"));
+				cmpsr.addField(fg.getFieldWidget("acntDateLastCharged"));
+				cmpsr.addField(fg.getFieldWidget("acntNextChargeDate"));
 
 				// related one panel
 				cmpsr.newRow();
-				cmpsr.addField(fg.getFieldWidgetByName("ccType"));
+				cmpsr.addField(fg.getFieldWidget("ccType"));
 
-				cmpsr.addField(fg.getFieldWidgetByName("ccNum"));
-				cmpsr.addField(fg.getFieldWidgetByName("ccCvv2"));
-				cmpsr.addField(fg.getFieldWidgetByName("ccExpMonth"));
-				cmpsr.addField(fg.getFieldWidgetByName("ccExpYear"));
+				cmpsr.addField(fg.getFieldWidget("ccNum"));
+				cmpsr.addField(fg.getFieldWidget("ccCvv2"));
+				cmpsr.addField(fg.getFieldWidget("ccExpMonth"));
+				cmpsr.addField(fg.getFieldWidget("ccExpYear"));
 
 				cmpsr.newRow();
-				cmpsr.addField(fg.getFieldWidgetByName("ccName"));
+				cmpsr.addField(fg.getFieldWidget("ccName"));
 
 				// related many (indexed) panel
 				cmpsr.newRow();
@@ -213,21 +213,21 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 		//relatedOnePanel.getFieldGroup().setFeedbackWidget(dpPaymentInfo);
 		//addressesPanel.getFieldGroup().setFeedbackWidget(dpAddresses);
 
-		fg.getFieldWidget("parent.name").setReadOnly(true);
+		fg.getFieldWidgetByProperty("parent.name").setReadOnly(true);
 
-		((IFieldWidget<AccountStatus>) fg.getFieldWidget("status"))
+		((IFieldWidget<AccountStatus>) fg.getFieldWidgetByProperty("status"))
 		.addValueChangeHandler(new ValueChangeHandler<AccountStatus>() {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<AccountStatus> event) {
 				final boolean closed = event.getValue() == AccountStatus.CLOSED;
-				final IFieldWidget<?> f = getFieldGroup().getFieldWidget("dateCancelled");
+				final IFieldWidget<?> f = getFieldGroup().getFieldWidgetByProperty("dateCancelled");
 				f.setVisible(closed);
 				f.setRequired(closed);
 			}
 		});
 
-		((IFieldWidget<Boolean>) fg.getFieldWidget("persistPymntInfo"))
+		((IFieldWidget<Boolean>) fg.getFieldWidgetByProperty("persistPymntInfo"))
 		.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
 			public void onValueChange(ValueChangeEvent<Boolean> event) {

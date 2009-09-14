@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -36,6 +37,7 @@ import com.tll.client.ui.test.ModelViewer;
 import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
+import com.tll.common.model.PropertyPathException;
 import com.tll.common.model.test.MockModelStubber;
 
 /**
@@ -399,7 +401,7 @@ public final class UITests extends AbstractUITest {
 			gmp = new GlobalMsgPanel();
 
 			mv = new ModelViewer();
-			ep = new EditPanel(gmp, new ComplexFieldPanel(), false, false);
+			ep = new EditPanel(new ComplexFieldPanel(), false, false, gmp, true);
 			ep.addEditHandler(new IEditHandler() {
 
 				@Override
@@ -408,6 +410,18 @@ public final class UITests extends AbstractUITest {
 					assert m != null;
 					final Model mcopy = m.copy(true, false);
 					mcopy.set(new IntPropertyValue(Model.VERSION_PROPERTY, 1));
+					List<Model> alist;
+					try {
+						alist = mcopy.relatedMany("addresses").getList();
+					}
+					catch(final PropertyPathException e) {
+						throw new RuntimeException(e);
+					}
+					if(alist != null) {
+						for(final Model am : alist) {
+							am.set(new IntPropertyValue(Model.VERSION_PROPERTY, 1));
+						}
+					}
 					ep.setModel(mcopy);
 					mv.setModel(mcopy);
 					m = mcopy;

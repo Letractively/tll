@@ -27,7 +27,6 @@ import com.tll.client.validate.DateValidator;
 import com.tll.client.validate.DecimalValidator;
 import com.tll.client.validate.ErrorClassifier;
 import com.tll.client.validate.ErrorDisplay;
-import com.tll.client.validate.ErrorHandlerDelegate;
 import com.tll.client.validate.IError;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.IValidator;
@@ -140,12 +139,11 @@ ValueChangeHandler<V>, Focusable, BlurHandler {
 	 * Constructor
 	 * @param name The field name which should be unique relative to any sibling
 	 *        fields under a common parent (field group).
-	 * @param propName The property name associated with this field which should
-	 *        be unique relative to a common ancestor (field group).
+	 * @param propName The optional property name for binding purposes
 	 * @param labelText The optional field label text
 	 * @param helpText The options field help text that will appear when the mouse
 	 *        hovers.
-	 * @throws IllegalArgumentException When no property propName is given
+	 * @throws IllegalArgumentException When no field name is given
 	 */
 	public AbstractField(String name, String propName, String labelText, String helpText) {
 		setName(name);
@@ -292,16 +290,13 @@ ValueChangeHandler<V>, Focusable, BlurHandler {
 	}
 
 	public final void setPropertyName(String propName) {
-		if(StringUtil.isEmpty(name)) {
-			throw new IllegalArgumentException("A field must have a property name.");
-		}
 		this.property = propName;
 	}
 
 	public final void clearValue() {
 		setValue(null);
 		// remove all msgs, edit and validation styling
-		resolveError();
+		resolveError(ErrorDisplay.ALL_FLAGS);
 		removeStyleName(Styles.DIRTY);
 		this.initialValue = null;
 		this.initialValueSet = false;
@@ -415,7 +410,7 @@ ValueChangeHandler<V>, Focusable, BlurHandler {
 		}
 	}
 
-	public final void applyPropertyMetadata(IPropertyMetadataProvider provider) {
+	public final void applyPropertyMetadata(IPropertyMetadataProvider provider, boolean isNewModelData) {
 		// Log.debug("AbstractField.applyPropertyMetadata() for " + toString());
 		final PropertyMetadata metadata = provider.getPropertyMetadata(getPropertyName());
 		if(metadata == null) {
@@ -469,6 +464,8 @@ ValueChangeHandler<V>, Focusable, BlurHandler {
 					throw new IllegalStateException("Unhandled property type: " + metadata.getPropertyType().name());
 			}
 		}
+		// apply model new flag
+		validateIncrementally(!isNewModelData);
 	}
 
 	public final void removeValidator(Class<? extends IValidator> type) {
@@ -477,10 +474,11 @@ ValueChangeHandler<V>, Focusable, BlurHandler {
 
 	/**
 	 * Resolves client-side errors.
+	 * @param displayFlags
 	 */
-	private void resolveError() {
+	private void resolveError(int displayFlags) {
 		if(errorHandler != null) {
-			errorHandler.resolveError(this, ErrorClassifier.CLIENT);
+			errorHandler.resolveError(this, ErrorClassifier.CLIENT, displayFlags);
 		}
 	}
 
@@ -493,17 +491,11 @@ ValueChangeHandler<V>, Focusable, BlurHandler {
 			if(error.getClassifier() == null || !error.getClassifier().isClient()) {
 				throw new IllegalStateException("Null or non-client error.");
 			}
-			if(errorHandler instanceof ErrorHandlerDelegate) {
-				((ErrorHandlerDelegate) errorHandler).handleError(this, error, ErrorDisplay.LOCAL.flag());
-			}
-			else {
-				errorHandler.handleError(this, error);
-			}
+			errorHandler.handleError(this, error, ErrorDisplay.LOCAL.flag());
 		}
 	}
 
 	public final void validate() throws ValidationException {
-		resolveError();
 		try {
 			validate(getValue());
 		}
@@ -584,7 +576,7 @@ ValueChangeHandler<V>, Focusable, BlurHandler {
 
 		if(!enabled || readOnly) {
 			// remove all msgs, edit and validation styling
-			resolveError();
+			resolveError(ErrorDisplay.ALL_FLAGS);
 			removeStyleName(Styles.DIRTY);
 		}
 		else if(enabled && !readOnly) {
@@ -618,6 +610,7 @@ ValueChangeHandler<V>, Focusable, BlurHandler {
 		if(incrValFlag) {
 			try {
 				validate();
+				resolveError(ErrorDisplay.ALL_FLAGS);
 				dirtyCheck();
 			}
 			catch(final ValidationException e) {
@@ -633,8 +626,6 @@ ValueChangeHandler<V>, Focusable, BlurHandler {
 		oldValue = event.getValue();
 		if(!ObjectUtil.equals(old, oldValue)) {
 			ValueChangeEvent.fire(this, oldValue);
-			// we don't want auto-transfer!!!
-			//changeSupport.firePropertyChange(PROPERTY_VALUE, old, oldValue);
 		}
 	}
 
@@ -660,7 +651,7 @@ ValueChangeHandler<V>, Focusable, BlurHandler {
 	public final void reset() {
 		if(initialValueSet) {
 			setValue(initialValue);
-			resolveError();
+			resolveError(ErrorDisplay.ALL_FLAGS);
 			removeStyleName(Styles.DIRTY);
 		}
 	}
@@ -710,6 +701,6 @@ ValueChangeHandler<V>, Focusable, BlurHandler {
 
 	@Override
 	public final String toString() {
-		return name + " [ " + property + " ]";
+		return property == null ? name : name + " [ " + property + " ]";
 	}
 }

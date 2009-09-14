@@ -345,31 +345,31 @@
 		</property>
 	</bean>
 	
-	<bean name="Interface1" class="com.tll.model.InterfaceSingle" parent="interfaceBase" scope="prototype">
+	<bean name="payment_processor" class="com.tll.model.InterfaceSingle" parent="interfaceBase" scope="prototype">
 		<property name="name"><value>Payment Processor</value></property>
 		<property name="code"><value>pymntproc</value></property>
 		<property name="description"><value>Gateway for online payments.</value></property>
 	</bean>
 
-	<bean name="Interface2" class="com.tll.model.InterfaceSingle" parent="interfaceBase" scope="prototype">
+	<bean name="shipping_method" class="com.tll.model.InterfaceSingle" parent="interfaceBase" scope="prototype">
 		<property name="name"><value>Shipping Method</value></property>
 		<property name="code"><value>shipmethod</value></property>
 		<property name="description"><value>Method of product delivery.</value></property>
 	</bean>
 
-	<bean name="Interface3" class="com.tll.model.InterfaceSingle" parent="interfaceBase" scope="prototype">
+	<bean name="sales_tax" class="com.tll.model.InterfaceSingle" parent="interfaceBase" scope="prototype">
 		<property name="name"><value>Sales Tax</value></property>
 		<property name="code"><value>salestax</value></property>
 		<property name="description"><value>Sales Tax model.</value></property>
 	</bean>
 
-	<bean name="Interface4" class="com.tll.model.InterfaceMulti" parent="interfaceBase" scope="prototype">
+	<bean name="pay_method" class="com.tll.model.InterfaceMulti" parent="interfaceBase" scope="prototype">
 		<property name="name"><value>Payment Method</value></property>
 		<property name="code"><value>pymntmethod</value></property>
 		<property name="description"><value>Supported payment methods.</value></property>
 	</bean>
 
-	<bean name="Interface5" class="com.tll.model.InterfaceSwitch" parent="interfaceBase" scope="prototype">
+	<bean name="cross_selling" class="com.tll.model.InterfaceSwitch" parent="interfaceBase" scope="prototype">
 		<property name="name"><value>Cross Selling</value></property>
 		<property name="code"><value>crosssell</value></property>
 		<property name="description"><value>Merchant product cross selling.</value></property>
@@ -420,7 +420,7 @@
 		</property>
 	</bean>
 
-	<bean name="InterfaceOption1" class="com.tll.model.InterfaceOption" parent="ioBase" scope="prototype">
+	<bean name="native_payproc" class="com.tll.model.InterfaceOption" parent="ioBase" scope="prototype">
 		<property name="code">
 			<value>native_payproc</value>
 		</property>
@@ -435,7 +435,7 @@
 		</property>
 	</bean>
 	
-	<bean name="InterfaceOption2" class="com.tll.model.InterfaceOption" parent="ioBase" scope="prototype">
+	<bean name="verisign_payproc" class="com.tll.model.InterfaceOption" parent="ioBase" scope="prototype">
 		<property name="code">
 			<value>verisign_payproc</value>
 		</property>
@@ -450,7 +450,7 @@
 		</property>
 	</bean>
 	
-	<bean name="InterfaceOption3" class="com.tll.model.InterfaceOption" parent="ioBase" scope="prototype">
+	<bean name="native_shipmethod" class="com.tll.model.InterfaceOption" parent="ioBase" scope="prototype">
 		<property name="code">
 			<value>native_shipmethod</value>
 		</property>
@@ -465,7 +465,7 @@
 		</property>
 	</bean>
 	
-	<bean name="InterfaceOption4" class="com.tll.model.InterfaceOption" parent="ioBase" scope="prototype">
+	<bean name="native_salestax" class="com.tll.model.InterfaceOption" parent="ioBase" scope="prototype">
 		<property name="code">
 			<value>native_salestax</value>
 		</property>
@@ -480,7 +480,7 @@
 		</property>
 	</bean>
 	
-	<bean name="InterfaceOption5" class="com.tll.model.InterfaceOption" parent="ioBase" scope="prototype">
+	<bean name="visa" class="com.tll.model.InterfaceOption" parent="ioBase" scope="prototype">
 		<property name="code">
 			<value>visa</value>
 		</property>
@@ -495,7 +495,7 @@
 		</property>
 	</bean>
 	
-	<bean name="InterfaceOption6" class="com.tll.model.InterfaceOption" parent="ioBase" scope="prototype">
+	<bean name="mc" class="com.tll.model.InterfaceOption" parent="ioBase" scope="prototype">
 		<property name="code">
 			<value>mc</value>
 		</property>
@@ -510,7 +510,7 @@
 		</property>
 	</bean>
 	
-	<bean name="InterfaceOption7" class="com.tll.model.InterfaceOption" parent="ioBase" scope="prototype">
+	<bean name="crosssell-switch" class="com.tll.model.InterfaceOption" parent="ioBase" scope="prototype">
 		<property name="code">
 			<value>crosssell-switch</value>
 		</property>
@@ -525,7 +525,43 @@
 		</property>
 	</bean>
 
-	<bean name="InterfaceOptionParameterDefinition1" class="com.tll.model.InterfaceOptionParameterDefinition" parent="entityBase" scope="prototype">
+	<bean name="crosssell-switch-p1" class="com.tll.model.InterfaceOptionParameterDefinition" parent="entityBase" scope="prototype">
+		<property name="code">
+			<value>crosssellP1</value>
+		</property>
+		<property name="name">
+			<value>Cross Selling Parameter 1</value>
+		</property>
+		<property name="description">
+			<value>Cross Selling Parameter 1 desc</value>
+		</property>
+	</bean>
+	
+	<bean name="crosssell-switch-p2" class="com.tll.model.InterfaceOptionParameterDefinition" parent="entityBase" scope="prototype">
+		<property name="code">
+			<value>crosssellP2</value>
+		</property>
+		<property name="name">
+			<value>Cross Selling Parameter 2</value>
+		</property>
+		<property name="description">
+			<value>Cross Selling Parameter 2 desc</value>
+		</property>
+	</bean>
+	
+	<bean name="crosssell-switch-p3" class="com.tll.model.InterfaceOptionParameterDefinition" parent="entityBase" scope="prototype">
+		<property name="code">
+			<value>crosssellP3</value>
+		</property>
+		<property name="name">
+			<value>Cross Selling Parameter 3</value>
+		</property>
+		<property name="description">
+			<value>Cross Selling Parameter 3 desc</value>
+		</property>
+	</bean>
+	
+	<bean name="verisignP1" class="com.tll.model.InterfaceOptionParameterDefinition" parent="entityBase" scope="prototype">
 		<property name="code">
 			<value>verisignP1</value>
 		</property>
@@ -537,7 +573,7 @@
 		</property>
 	</bean>
 	
-	<bean name="InterfaceOptionParameterDefinition2" class="com.tll.model.InterfaceOptionParameterDefinition" parent="entityBase" scope="prototype">
+	<bean name="verisignP2" class="com.tll.model.InterfaceOptionParameterDefinition" parent="entityBase" scope="prototype">
 		<property name="code">
 			<value>verisignP2</value>
 		</property>
@@ -550,9 +586,6 @@
 	</bean>
 	
 	<bean name="InterfaceOptionAccount" class="com.tll.model.InterfaceOptionAccount" parent="entityBase" scope="prototype">
-		<property name="status">
-			<value>ON</value>
-		</property>
 		<property name="setUpPrice">
 			<value>22.22</value>
 		</property>

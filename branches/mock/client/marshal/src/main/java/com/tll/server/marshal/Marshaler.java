@@ -38,7 +38,7 @@ import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
 import com.tll.model.IScalar;
 import com.tll.model.schema.ISchemaInfo;
-import com.tll.model.schema.NoPersist;
+import com.tll.model.schema.Transient;
 import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
 import com.tll.model.schema.RelationInfo;
@@ -139,7 +139,7 @@ public final class Marshaler {
 		// check bound method annotations and honor @NoPersist
 		final Method m = pd.getReadMethod();
 		if(m != null) {
-			return m.getAnnotation(NoPersist.class) == null;
+			return m.getAnnotation(Transient.class) == null;
 		}
 		return true;
 	}

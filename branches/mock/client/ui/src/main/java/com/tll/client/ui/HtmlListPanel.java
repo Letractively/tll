@@ -31,7 +31,7 @@ public class HtmlListPanel extends Composite {
 			add(w);
 		}
 	}
-	
+
 	/**
 	 * HtmlList
 	 * @author jpk
@@ -45,7 +45,7 @@ public class HtmlListPanel extends Composite {
 		HtmlList(boolean ordered) {
 			setElement(ordered ? DOM.createElement("ol") : DOM.createElement("ul"));
 		}
-		
+
 		int getNumItems() {
 			return getWidgetCount();
 		}
@@ -54,7 +54,7 @@ public class HtmlListPanel extends Composite {
 			super.insert(new Li(w), getElement(), beforeIndex, true);
 		}
 	}
-	
+
 	private final HtmlList list;
 
 	/**
@@ -83,7 +83,7 @@ public class HtmlListPanel extends Composite {
 	public void prepend(Widget liWidget) {
 		list.insert(liWidget, 0);
 	}
-	
+
 	/**
 	 * Removes the li widget from this list containing the given widget.
 	 * @param liWidget
@@ -92,14 +92,15 @@ public class HtmlListPanel extends Composite {
 		for(final Widget w : list) {
 			if(((Li) w).getWidget() == liWidget) {
 				list.remove(w);
+				break;
 			}
 		}
 	}
-	
+
 	public void clear() {
 		list.clear();
 	}
-	
+
 	/**
 	 * @return The number of list items in this list.
 	 */

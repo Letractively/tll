@@ -5,7 +5,7 @@ import java.io.Serializable;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
-import org.hibernate.validation.constraints.Length;
+import org.hibernate.validator.constraints.Length;
 
 
 public class PaymentData implements Serializable {

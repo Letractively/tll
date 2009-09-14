@@ -5,6 +5,7 @@
  */
 package com.tll.client.ui.msg;
 
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.IWidgetRef;
 import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgLevel;
@@ -15,6 +16,11 @@ import com.tll.common.msg.Msg.MsgLevel;
  * @author jpk
  */
 public interface IMsgDisplay {
+
+	/**
+	 * @return The widget that holds the messages.
+	 */
+	Widget getDisplayWidget();
 
 	/**
 	 * Add a single sourced message with an optional classifier id.

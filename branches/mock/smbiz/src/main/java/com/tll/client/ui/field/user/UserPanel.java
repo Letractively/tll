@@ -37,15 +37,15 @@ public class UserPanel extends FlowFieldPanel {
 			IFieldWidget<?> fw;
 
 			// first row
-			fw = fg.getFieldWidgetByName("userEmailAddress");
+			fw = fg.getFieldWidget("userEmailAddress");
 			fw.getWidget().addStyleName(Style.GAP_RIGHT);
 			cmpsr.addField(fw);
 			cmpsr.stopFlow();
-			cmpsr.addField(fg.getFieldWidgetByName("userLocked"));
-			cmpsr.addField(fg.getFieldWidgetByName("userEnabled"));
+			cmpsr.addField(fg.getFieldWidget("userLocked"));
+			cmpsr.addField(fg.getFieldWidget("userEnabled"));
 			cmpsr.resetFlow();
-			cmpsr.addField(fg.getFieldWidgetByName("user" + Model.NAME_PROPERTY));
-			cmpsr.addField(fg.getFieldWidgetByName("userExpires"));
+			cmpsr.addField(fg.getFieldWidget("user" + Model.NAME_PROPERTY));
+			cmpsr.addField(fg.getFieldWidget("userExpires"));
 
 			// parent account ref link
 			try {
@@ -61,9 +61,9 @@ public class UserPanel extends FlowFieldPanel {
 			}
 
 			cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-			cmpsr.addField(fg.getFieldWidgetByName("user" + Model.DATE_CREATED_PROPERTY));
+			cmpsr.addField(fg.getFieldWidget("user" + Model.DATE_CREATED_PROPERTY));
 			cmpsr.stopFlow();
-			cmpsr.addField(fg.getFieldWidgetByName("user" + Model.DATE_MODIFIED_PROPERTY));
+			cmpsr.addField(fg.getFieldWidget("user" + Model.DATE_MODIFIED_PROPERTY));
 			cmpsr.resetFlow();
 
 			// third row

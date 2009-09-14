@@ -12,11 +12,14 @@ import com.tll.util.StringUtil;
  */
 public class AccountInterfaceDataSearch extends SearchBase {
 
-	private final String accountId, interfaceId;
+	private String accountId, interfaceId;
 
-	@Override
-	public boolean isSet() {
-		return !StringUtil.isEmpty(accountId) && !StringUtil.isEmpty(interfaceId);
+	/**
+	 * Constructor
+	 */
+	public AccountInterfaceDataSearch() {
+		super();
+		
 	}
 
 	/**
@@ -28,6 +31,11 @@ public class AccountInterfaceDataSearch extends SearchBase {
 		super();
 		this.accountId = accountId;
 		this.interfaceId = interfaceId;
+	}
+
+	@Override
+	public boolean isSet() {
+		return !StringUtil.isEmpty(accountId) && !StringUtil.isEmpty(interfaceId);
 	}
 
 	public String getAccountId() {

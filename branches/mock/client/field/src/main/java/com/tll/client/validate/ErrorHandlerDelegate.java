@@ -35,40 +35,27 @@ public final class ErrorHandlerDelegate implements IErrorHandler {
 	}
 
 	@Override
-	public void handleError(IWidgetRef source, IError error) {
-		for(final IErrorHandler handler : handlers) {
-			handler.handleError(source, error);
-		}
-	}
-
-	/**
-	 * Delegate specific method that discriminates error handling based on the
-	 * additionally provided display flags param.
-	 * @param source
-	 * @param error
-	 * @param displayFlags
-	 */
 	public void handleError(IWidgetRef source, IError error, int displayFlags) {
 		for(final IErrorHandler handler : handlers) {
-			final int ef = handler.getDisplayType().flag();
-			if((displayFlags & ef) == ef) {
-				handler.handleError(source, error);
-			}
+			handler.handleError(source, error, displayFlags);
 		}
 	}
 
-	public void resolveError(IWidgetRef source, ErrorClassifier classifier) {
+	@Override
+	public void resolveError(IWidgetRef source, ErrorClassifier classifier, int displayFlags) {
 		for(final IErrorHandler handler : handlers) {
-			handler.resolveError(source, classifier);
+			handler.resolveError(source, classifier, displayFlags);
 		}
 	}
 
+	@Override
 	public void clear(ErrorClassifier classifier) {
 		for(final IErrorHandler handler : handlers) {
 			handler.clear(classifier);
 		}
 	}
 
+	@Override
 	public void clear() {
 		for(final IErrorHandler handler : handlers) {
 			handler.clear();

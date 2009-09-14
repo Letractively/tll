@@ -30,5 +30,8 @@ public class AccountInterfaceViewInitializer extends AbstractDynamicViewInitiali
 	protected int getViewId() {
 		return accountRef.hashCode();
 	}
-
+	
+	public ModelKey getAccountRef() {
+		return accountRef;
+	}
 }

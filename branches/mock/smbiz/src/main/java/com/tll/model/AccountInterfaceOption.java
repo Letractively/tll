@@ -22,34 +22,37 @@ public class AccountInterfaceOption extends InterfaceOptionBase {
 
 	private static final long serialVersionUID = -6577796307065099973L;
 
-	/* InterfaceOptionAccount properties */
-
-	protected InterfaceStatus status;
-
-	protected float setUpPrice = 0f;
-
-	protected float monthlyPrice = 0f;
-
-	protected float annualPrice = 0f;
-
 	/* InterfaceOption properties */
 
-	protected boolean isDefault = false;
+	private boolean isDefault = false;
 
-	protected float setUpCost = 0f;
+	private float setUpCost = 0f;
 
-	protected float monthlyCost = 0f;
+	private float monthlyCost = 0f;
 
-	protected float annualCost = 0f;
+	private float annualCost = 0f;
 
-	protected float baseSetupPrice = 0f;
+	private float baseSetupPrice = 0f;
 
-	protected float baseMonthlyPrice = 0f;
+	private float baseMonthlyPrice = 0f;
 
-	protected float baseAnnualPrice = 0f;
+	private float baseAnnualPrice = 0f;
 
-	protected Set<AccountInterfaceOptionParameter> parameters =
-		new LinkedHashSet<AccountInterfaceOptionParameter>();
+	/* InterfaceOptionAccount properties */
+
+	private float setUpPrice = 0f;
+
+	private float monthlyPrice = 0f;
+
+	private float annualPrice = 0f;
+
+	/**
+	 * I.e. is there a binding record between this account and interface option
+	 * which signifies the account is "subscribed" to this interface option.
+	 */
+	private boolean subscribed;
+
+	private Set<AccountInterfaceOptionParameter> parameters = new LinkedHashSet<AccountInterfaceOptionParameter>();
 
 	public Class<? extends IEntity> entityClass() {
 		return AccountInterfaceOption.class;
@@ -215,13 +218,12 @@ public class AccountInterfaceOption extends InterfaceOptionBase {
 		return getCollectionSize(parameters);
 	}
 
-	@NotNull
-	public InterfaceStatus getStatus() {
-		return status;
+	public boolean isSubscribed() {
+		return subscribed;
 	}
 
-	public void setStatus(InterfaceStatus status) {
-		this.status = status;
+	public void setSubscribed(boolean subscribed) {
+		this.subscribed = subscribed;
 	}
 
 	@NotNull

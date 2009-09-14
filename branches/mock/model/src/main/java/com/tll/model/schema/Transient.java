@@ -8,13 +8,13 @@ import java.lang.annotation.Target;
 
 
 /**
- * NoPersist - Indicates that the bound entity property is not persisted (transient).
+ * Transient - Indicates that the bound entity property is not persisted (transient).
  * @author jpk
  *
  */
 @Target(value = ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface NoPersist {
+public @interface Transient {
 
 }

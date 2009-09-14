@@ -23,6 +23,7 @@ import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
 import com.tll.client.ui.edit.IEditHandler;
 import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.client.ui.msg.IMsgDisplay;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.model.Model;
@@ -95,8 +96,8 @@ class InterfaceStack extends StackPanel implements IHasRpcHandlers, IListingHand
 		 * @param showDeleteBtn
 		 */
 		public InterfacePanel(ModelKey intfRef, boolean showCancelBtn, boolean showDeleteBtn) {
-			super(msgDisplay, fldPnlResolver.resolveFieldPanel(intfRef), showCancelBtn,
-					showDeleteBtn);
+			super(fldPnlResolver.resolveFieldPanel(intfRef), showCancelBtn,
+					showDeleteBtn, new GlobalMsgPanel(), true);
 			this.intfRef = intfRef;
 
 			addEditHandler(this);

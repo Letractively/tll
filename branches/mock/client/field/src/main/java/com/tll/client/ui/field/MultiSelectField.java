@@ -112,8 +112,10 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 	public void setData(Map<V, String> data) {
 		super.setData(data);
 		lb.clear();
-		for(final Map.Entry<V, String> e : data.entrySet()) {
-			lb.addItem(e.getValue());
+		if(data != null) {
+			for(final Map.Entry<V, String> e : data.entrySet()) {
+				lb.addItem(e.getValue());
+			}
 		}
 	}
 

@@ -27,8 +27,6 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 
 	protected Account account;
 
-	protected InterfaceStatus status;
-
 	protected float setUpPrice = 0f;
 
 	protected float monthlyPrice = 0f;
@@ -69,21 +67,6 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 	 */
 	public void setAccount(Account account) {
 		this.account = account;
-	}
-
-	/**
-	 * @return Returns the status.
-	 */
-	@NotNull
-	public InterfaceStatus getStatus() {
-		return status;
-	}
-
-	/**
-	 * @param status The status to set.
-	 */
-	public void setStatus(InterfaceStatus status) {
-		this.status = status;
 	}
 
 	/**
