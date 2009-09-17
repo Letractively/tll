@@ -5,6 +5,8 @@
  */
 package com.tll.client.validate;
 
+import java.util.Collection;
+
 import com.tll.client.ui.IWidgetRef;
 
 
@@ -15,10 +17,21 @@ import com.tll.client.ui.IWidgetRef;
 public abstract class AbstractErrorHandler implements IErrorHandler {
 
 	@Override
-	public final void handleError(IWidgetRef source, IError error, int displayFlags) {
-		final int ef = getDisplayType().flag();
-		if((displayFlags & ef) == ef) {
-			doHandleError(source, error);
+	public final void handleError(Error error, int displayFlags) {
+		if(error != null) {
+			final int ef = getDisplayType().flag();
+			if((displayFlags & ef) == ef) {
+				doHandleError(error);
+			}
+		}
+	}
+
+	@Override
+	public final void handleErrors(Collection<Error> errors, int displayFlags) {
+		if(errors != null) {
+			for(final Error error : errors) {
+				handleError(error, displayFlags);
+			}
 		}
 	}
 
@@ -32,10 +45,9 @@ public abstract class AbstractErrorHandler implements IErrorHandler {
 
 	/**
 	 * Does the actual error handling.
-	 * @param source
 	 * @param error
 	 */
-	protected abstract void doHandleError(IWidgetRef source, IError error);
+	protected abstract void doHandleError(Error error);
 
 	/**
 	 * Does the actual error resolving.

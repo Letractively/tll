@@ -15,6 +15,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.IProvider;
+import com.tll.client.bind.FieldModelBinding;
 import com.tll.client.convert.IConverter;
 import com.tll.client.ui.BindableWidgetAdapter;
 import com.tll.client.validate.ErrorClassifier;
@@ -33,9 +34,11 @@ import com.tll.util.PropertyPath;
  * panel type manages its own binding life-cycle which is triggered by the
  * {@link #setValue(Collection)} and {@link #getValue()} methods.
  * <p>
- * Moreover, each indexed element is comprised of its own child field group and
- * binding action. <b>IMPT:</b> This panel's field group is expected to be a
- * child of the parent field panel's field group.
+ * Moreover, each indexed element is comprised of its own child
+ * {@link FieldGroup} and {@link FieldModelBinding}.
+ * <p>
+ * <b>IMPT:</b> This panel's field group is expected to be a child of the parent
+ * field panel's field group.
  * @param <W> the indexed field panel widget render type
  * @param <I> the index field panel type
  * @author jpk
@@ -59,12 +62,12 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 		 */
 		public Index(int index, I fieldPanel) {
 			super();
-			//assert fieldPanel.binding != null;
+			// assert fieldPanel.binding != null;
 			this.fieldPanel = fieldPanel;
 
 			// NOTE: we bind *before* we set the index so the property paths jive with
 			// the index model!
-			//fieldPanel.getBinding().set(fieldPanel);
+			// fieldPanel.getBinding().set(fieldPanel);
 			fieldPanel.getBinding().bind();
 
 			setIndex(index, true);
@@ -163,6 +166,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	@Override
 	public void setValue(Collection<Model> value) {
 		if(this.value != value) {
+			Log.debug("Setting value: " + this);
 			this.value = null;
 			clearIndexed();
 			if(value != null) {
@@ -253,10 +257,9 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 		assert remove != null;
 
 		remove.fieldPanel.getBinding().unbind();
-		if(!getFieldGroup().removeField(remove.fieldPanel.getFieldGroup())) {
+		if(!getFieldGroup().removeField(remove.fieldPanel.getFieldGroup(), true)) {
 			throw new IllegalStateException("Unable to remove index field group: " + remove.fieldPanel.getFieldGroup());
 		}
-		remove.fieldPanel.getFieldGroup().getErrorHandler().clear(ErrorClassifier.CLIENT);
 		remove = null;
 
 		// re-build indexes only if necessary
@@ -265,7 +268,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 				final Index idx = indexPanels.get(i);
 				// remove and re-add index field group to maintain hash code integrity
 				// since the name field has changed
-				getFieldGroup().removeField(idx.fieldPanel.getFieldGroup());
+				getFieldGroup().removeField(idx.fieldPanel.getFieldGroup(), false);
 				indexPanels.get(i).setIndex(i);
 				getFieldGroup().addField(idx.fieldPanel.getFieldGroup());
 			}

@@ -5,19 +5,23 @@
  */
 package com.tll.client.validate;
 
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 import com.tll.client.ui.IWidgetRef;
+import com.tll.client.ui.msg.IHasMsgDisplay;
+import com.tll.client.ui.msg.IMsgDisplay;
 
 /**
- * ErrorHandlerDelegate - Acts as a single error handler that actually
- * delegates calls to child handlers.
+ * ErrorHandlerDelegate - Acts as a single error handler that actually delegates
+ * calls to child handlers.
  * @author jpk
  */
-public final class ErrorHandlerDelegate implements IErrorHandler {
+public final class ErrorHandlerDelegate implements IErrorHandler, IHasMsgDisplay {
 
-	private final Set<IErrorHandler> handlers = new HashSet<IErrorHandler>();
+	private final HashSet<IErrorHandler> handlers = new HashSet<IErrorHandler>();
+
+	private IHasMsgDisplay msgDisplayAwareErrorHandler;
 
 	/**
 	 * Constructor
@@ -25,7 +29,14 @@ public final class ErrorHandlerDelegate implements IErrorHandler {
 	 */
 	public ErrorHandlerDelegate(IErrorHandler... handlers) {
 		for(final IErrorHandler handler : handlers) {
-			if(handler != null) this.handlers.add(handler);
+			if(handler != null) {
+				if(handler instanceof IHasMsgDisplay) {
+					if(msgDisplayAwareErrorHandler != null)
+						throw new IllegalArgumentException("Multiple msg display aware error handlers not allowed");
+					msgDisplayAwareErrorHandler = (IHasMsgDisplay) handler;
+				}
+				this.handlers.add(handler);
+			}
 		}
 	}
 
@@ -35,9 +46,16 @@ public final class ErrorHandlerDelegate implements IErrorHandler {
 	}
 
 	@Override
-	public void handleError(IWidgetRef source, IError error, int displayFlags) {
+	public void handleError(Error error, int displayFlags) {
 		for(final IErrorHandler handler : handlers) {
-			handler.handleError(source, error, displayFlags);
+			handler.handleError(error, displayFlags);
+		}
+	}
+
+	@Override
+	public void handleErrors(Collection<Error> errors, int displayFlags) {
+		for(final IErrorHandler handler : handlers) {
+			handler.handleErrors(errors, displayFlags);
 		}
 	}
 
@@ -61,4 +79,17 @@ public final class ErrorHandlerDelegate implements IErrorHandler {
 			handler.clear();
 		}
 	}
+
+	@Override
+	public IMsgDisplay getMsgDisplay() {
+		return msgDisplayAwareErrorHandler == null ? null : msgDisplayAwareErrorHandler.getMsgDisplay();
+	}
+
+	@Override
+	public void setMsgDisplay(IMsgDisplay msgDisplay) {
+		if(msgDisplayAwareErrorHandler != null) {
+			msgDisplayAwareErrorHandler.setMsgDisplay(msgDisplay);
+		}
+	}
+
 }

@@ -1,4 +1,4 @@
-package com.tll.client.ui.field;
+package com.tll.client.ui;
 
 import com.google.gwt.event.dom.client.HasMouseOutHandlers;
 import com.google.gwt.event.dom.client.HasMouseOverHandlers;
@@ -8,6 +8,6 @@ import com.google.gwt.event.dom.client.HasMouseOverHandlers;
  * events.
  * @author jpk
  */
-interface IHasHoverHandlers extends HasMouseOverHandlers, HasMouseOutHandlers {
+public interface IHasHoverHandlers extends HasMouseOverHandlers, HasMouseOutHandlers {
 
 }

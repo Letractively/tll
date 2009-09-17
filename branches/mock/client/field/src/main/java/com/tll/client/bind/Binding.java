@@ -31,7 +31,7 @@ import com.tll.util.PropertyPath;
  * @author jpk
  */
 @SuppressWarnings("synthetic-access")
-public final class Binding {
+final class Binding {
 
 	/**
 	 * A data class containing the relevant data for one half of a binding
@@ -45,7 +45,7 @@ public final class Binding {
 		public IBindable object;
 
 		/**
-		 * The full property path of the property being bound.
+		 * The full OGNL compliant property path of the property being bound.
 		 */
 		public String property;
 
@@ -55,12 +55,12 @@ public final class Binding {
 		public IConverter<Object, Object> converter;
 
 		/**
-		 * A IValidator object when needed.
+		 * A validator when needed.
 		 */
 		public IValidator validator;
 
 		/**
-		 * A IErrorHandler object when needed.
+		 * The error handler.
 		 */
 		public IErrorHandler feedback;
 
@@ -109,7 +109,7 @@ public final class Binding {
 						if(lastException != null) {
 							instance.feedback.resolveError((IWidgetRef) propertyChangeEvent.getSource(), ErrorClassifier.CLIENT, ErrorDisplay.ALL_FLAGS);
 						}
-						instance.feedback.handleError((IWidgetRef) propertyChangeEvent.getSource(), ve.getError(), ErrorDisplay.ALL_FLAGS);
+						instance.feedback.handleErrors(ve.getErrors(), ErrorDisplay.ALL_FLAGS);
 						lastException = ve;
 						return;
 					}

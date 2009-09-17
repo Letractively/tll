@@ -12,16 +12,19 @@ import com.google.gwt.event.dom.client.MouseEvent;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.ui.IHasHoverHandlers;
+import com.tll.client.ui.IHoverHandler;
 import com.tll.client.ui.IWidgetRef;
 import com.tll.client.ui.field.IFieldWidget.Styles;
 import com.tll.client.ui.msg.MsgPopupRegistry;
+import com.tll.client.validate.Error;
 import com.tll.client.validate.ErrorClassifier;
-import com.tll.client.validate.IError;
 import com.tll.client.validate.PopupValidationFeedback;
-import com.tll.client.validate.IError.Type;
 
 /**
- * FieldErrorHandler - Localized error handling for field widgets.
+ * FieldErrorHandler - Localized error handling for field widgets based on popup
+ * messages to appear on mouse hover browser events.
  * @author jpk
  */
 public class FieldErrorHandler extends PopupValidationFeedback implements IHoverHandler {
@@ -31,6 +34,7 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	 * @author jpk
 	 */
 	static final class MouseRegs {
+
 		HandlerRegistration rMseOut, rMsgOvr;
 	}
 
@@ -39,7 +43,6 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	 * hoverability.
 	 */
 	private final Map<IFieldWidget<?>, MouseRegs> invalids = new HashMap<IFieldWidget<?>, MouseRegs>();
-
 
 	/**
 	 * Constructor
@@ -50,25 +53,26 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	}
 
 	@Override
-	protected void doHandleError(IWidgetRef source, IError error) {
-		super.doHandleError(source, error);
-		if((source instanceof IFieldWidget<?>) && error.getType() == Type.SINGLE) {
+	protected void doHandleError(Error error) {
+		super.doHandleError(error);
+		final Widget target = error.getTarget() == null ? null : error.getTarget().getWidget();
+		if(target != null) {
 			// handle styling
-			source.getWidget().removeStyleName(Styles.DIRTY);
-			source.getWidget().addStyleName(Styles.INVALID);
+			target.removeStyleName(Styles.DIRTY);
+			target.addStyleName(Styles.INVALID);
 
 			// track popup hovering
-			MouseRegs regs = invalids.get(source);
+			MouseRegs regs = invalids.get(target);
 			if(regs == null) {
 				regs = new MouseRegs();
-				invalids.put((IFieldWidget<?>) source, regs);
+				invalids.put((IFieldWidget<?>) target, regs);
 			}
-			trackHover((IFieldWidget<?>) source, regs, true);
+			trackHover((IFieldWidget<?>) target, regs, true);
 
 			// turn off incremental validation when the error originates from the
 			// server
 			if(error.getClassifier() != null && error.getClassifier().isServer()) {
-				((IFieldWidget<?>) source).validateIncrementally(false);
+				((IFieldWidget<?>) target).validateIncrementally(false);
 			}
 		}
 	}
@@ -106,9 +110,8 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 		super.clear(classifier);
 		if(classifier != null && classifier.isServer()) {
 			// NOTE: to reset incr. validation, we iterate over all invalids
-			// irregardless of classification,
-			// since we don't have easy access to the field widget in this context,
-			// and it doesn't hurt to iterate over all
+			// irregardless of classification, since we don't have easy access
+			// to the field widget in this context
 			for(final IFieldWidget<?> fw : invalids.keySet()) {
 				fw.validateIncrementally(true);
 			}

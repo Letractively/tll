@@ -14,8 +14,6 @@ import com.tll.common.model.Model;
 /**
  * FieldPanel - Common base class for {@link Panel}s that display {@link IField}
  * s.
- * <p>
- * <em><b>IMPT: </b>The composite wrapped widget is used for field rendering.  Consequently, it must be ensured that types of the two match.</em>
  * @param <W> The widget type employed for field rendering
  * @author jpk
  */
@@ -125,6 +123,7 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 		}
 
 		if(model != null) {
+			// use getBinding() to ensure the bindings are first created
 			getBinding().bind();
 		}
 		else if(binding != null) {
@@ -185,11 +184,11 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	protected abstract IFieldRenderer<W> getRenderer();
 
 	/**
-	 * Generates a fresh field group with group this panel will maintain. This
-	 * method is only called when this panel's field group reference is null.
+	 * Generates the root {@link FieldGroup} this panel references via {@link #getFieldGroup()}. This
+	 * method is only called when this panel's field group reference is <code>null</code>.
 	 * Therefore, this method may be circumvented by manually calling
-	 * {@link #setFieldGroup(FieldGroup)} prior to DOM attachment.
-	 * @return The FieldGroup for this panel ensuring it is first populated.
+	 * {@link #setFieldGroup(FieldGroup)}.
+	 * @return A new {@link FieldGroup} instance.
 	 */
 	protected abstract FieldGroup generateFieldGroup();
 

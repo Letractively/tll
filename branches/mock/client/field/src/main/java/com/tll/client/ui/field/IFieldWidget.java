@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.IBindableWidget;
 import com.tll.client.ui.IHasHelpText;
 import com.tll.client.validate.IValidator;
-import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.model.schema.IPropertyNameProvider;
 
 /**
@@ -55,7 +54,7 @@ IValidator {
 		/**
 		 * Style indicating the field's value is invalid.
 		 */
-		public static final String INVALID = MsgLevel.ERROR.getName().toLowerCase();
+		public static final String INVALID = "error";
 
 		/**
 		 * Style for disabling a field.

@@ -7,6 +7,7 @@ package com.tll.client.ui.field;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -14,8 +15,9 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.IWidgetRef;
 import com.tll.client.validate.CompositeValidator;
+import com.tll.client.validate.Error;
 import com.tll.client.validate.ErrorClassifier;
-import com.tll.client.validate.Errors;
+import com.tll.client.validate.ErrorDisplay;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
@@ -228,14 +230,14 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	}
 
 	/**
-	 * Recursive validation routine that maintains a single {@link Errors}
+	 * Recursive validation routine that populates a list or {@link Error}s.
 	 * instance and tracks the nesting. Nesting is tracked to assemble a "fully
 	 * qualified" field better validation feedback.
 	 * @param errors the sole constant instance
 	 * @param group the field group
 	 * @param parents the field group parents
 	 */
-	private static void validate(final Errors errors, FieldGroup group, List<FieldGroup> parents) {
+	private static void validate(final ArrayList<Error> errors, FieldGroup group, List<FieldGroup> parents) {
 		for(final IField field : group) {
 			if(field instanceof FieldGroup) {
 				final ArrayList<FieldGroup> list = new ArrayList<FieldGroup>(parents.size() + 1);
@@ -251,19 +253,22 @@ public final class FieldGroup implements IField, Iterable<IField> {
 					final ArrayList<IField> list = new ArrayList<IField>(parents.size() + 1);
 					list.addAll(parents);
 					list.add(group);
-					errors.add(e.getError(), new IWidgetRef() {
+					for(final Error error : e.getErrors()) {
+						error.setTarget(new IWidgetRef() {
 
-						@Override
-						public Widget getWidget() {
-							return field.getWidget();
-						}
+							@Override
+							public Widget getWidget() {
+								return field.getWidget();
+							}
 
-						@SuppressWarnings("synthetic-access")
-						@Override
-						public String descriptor() {
-							return nestedPath(list, field, false);
-						}
-					});
+							@SuppressWarnings("synthetic-access")
+							@Override
+							public String descriptor() {
+								return nestedPath(list, field, false);
+							}
+						});
+					}
+					errors.addAll(e.getErrors());
 				}
 			}
 		}
@@ -273,7 +278,10 @@ public final class FieldGroup implements IField, Iterable<IField> {
 				group.validator.validate(null);
 			}
 			catch(final ValidationException e) {
-				errors.add(e.getError(), group);
+				for(final Error error : e.getErrors()) {
+					error.setTarget(group);
+				}
+				errors.addAll(e.getErrors());
 			}
 		}
 	}
@@ -284,9 +292,9 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	private String name;
 
 	/**
-	 * The collection of child fields.
+	 * The collection of child fields with order preservation.
 	 */
-	private final Set<IField> fields = new HashSet<IField>();
+	private final LinkedHashSet<IField> fields = new LinkedHashSet<IField>();
 
 	/**
 	 * On ordered collection of commands to be executed before validation happens.
@@ -512,39 +520,64 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	}
 
 	/**
+	 * Recursively removes all errors bound to the given field and any and all child fields.
+	 * @param field the target field
+	 */
+	private void clearErrors(IField field) {
+		assert errorHandler != null;
+		if(field instanceof FieldGroup) {
+			for(final IField fld : ((FieldGroup) field)) {
+				clearErrors(fld);
+			}
+		}
+		else {
+			errorHandler.resolveError(field, ErrorClassifier.CLIENT, ErrorDisplay.ALL_FLAGS);
+		}
+	}
+
+	/**
 	 * Removes a field by reference searching recursively. If the given field is
 	 * <code>null</code> or is <em>this</em> field group, no field is removed and
 	 * <code>false</code> is returned.
 	 * @param field The field to remove.
+	 * @param clearErrors remove all errors bound to the field?
 	 * @return <code>true</code> if the field was removed, <code>false</code> if
 	 *         not.
 	 */
-	public boolean removeField(IField field) {
+	public boolean removeField(IField field, final boolean clearErrors) {
 		if(field != null && !(field == this)) {
+			boolean rval = false;
 			for(final IField fld : fields) {
 				if(fld == field) {
-					final boolean b = fields.remove(field);
-					assert b == true;
-					return b;
+					if(!fields.remove(field)) throw new IllegalStateException("Unable to remove field: " + field);
+					rval = true;
+					break;
 				}
 				else if(fld instanceof FieldGroup) {
-					if(((FieldGroup) fld).removeField(field)) {
-						return true;
+					if(((FieldGroup) fld).removeField(field, clearErrors)) {
+						rval = true;
+						break;
 					}
 				}
 			}
+			if(rval && clearErrors && errorHandler != null) {
+				// remove all associated errors for the removed field
+				clearErrors(field);
+			}
+			return rval;
 		}
 		return false;
 	}
 
 	/**
 	 * Removes a collection of fields from this group.
-	 * @param clc The collection of fields to remove.
+	 * @param clc The collection of fields to remove
+	 * @param clearErrors Remove errors bound to the given fields?
 	 */
-	public void removeFields(Iterable<IField> clc) {
+	public void removeFields(Iterable<IField> clc, final boolean clearErrors) {
 		if(clc != null) {
 			for(final IField fld : clc) {
-				removeField(fld);
+				removeField(fld, clearErrors);
 			}
 		}
 	}
@@ -674,7 +707,7 @@ public final class FieldGroup implements IField, Iterable<IField> {
 				action.execute();
 			}
 		}
-		final Errors errors = new Errors(ErrorClassifier.CLIENT);
+		final ArrayList<Error> errors = new ArrayList<Error>();
 		validate(errors, this, new ArrayList<FieldGroup>());
 		if(errors.size() > 0) {
 			throw new ValidationException(errors);

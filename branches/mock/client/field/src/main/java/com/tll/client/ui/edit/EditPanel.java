@@ -26,6 +26,7 @@ import com.tll.client.ui.msg.IMsgDisplay;
 import com.tll.client.validate.Error;
 import com.tll.client.validate.ErrorClassifier;
 import com.tll.client.validate.ErrorDisplay;
+import com.tll.client.validate.ErrorHandlerDelegate;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.ValidationException;
 import com.tll.common.model.Model;
@@ -74,7 +75,7 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	/**
 	 * Contains the actual edit fields.
 	 */
-	private final FieldPanel<? extends Widget> fieldPanel;
+	protected final FieldPanel<? extends Widget> fieldPanel;
 
 	/**
 	 * The panel containing the edit buttons
@@ -92,10 +93,8 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	 *        when clicked.
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
-	 * @param msgDisplay
-	 * @param aggregateMsgDisplay Take ownership of the given msg display? I.e. add to this panel?
 	 */
-	public EditPanel(FieldPanel<? extends Widget> fieldPanel, boolean showCancelBtn, boolean showDeleteBtn, IMsgDisplay msgDisplay, boolean aggregateMsgDisplay) {
+	public EditPanel(FieldPanel<? extends Widget> fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
 		super();
 		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
 		this.fieldPanel = fieldPanel;
@@ -119,11 +118,6 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 		// hide the button row until initialized
 		pnlButtonRow.setVisible(false);
 
-		//fieldPanel.setMsgDisplay(msgDisplay);
-		if(msgDisplay != null && aggregateMsgDisplay) {
-			panel.add(msgDisplay.getDisplayWidget());
-		}
-
 		panel.add(portal);
 		panel.add(pnlButtonRow);
 		panel.setStyleName(Styles.ENTITY_EDIT);
@@ -133,14 +127,22 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 
 	/**
 	 * Constructor
-	 * @param fieldPanel The required {@link FieldPanel}
-	 * @param showCancelBtn Show the cancel button? Causes a cancel edit event
-	 *        when clicked.
-	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
-	 *        when clicked.
+	 * @param fieldPanel
+	 * @param showCancelBtn
+	 * @param showDeleteBtn
+	 * @param errorHandler The error handler to employ.
 	 */
-	public EditPanel(FieldPanel<? extends Widget> fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
-		this(fieldPanel, showCancelBtn, showDeleteBtn, null, false);
+	public EditPanel(FieldPanel<? extends Widget> fieldPanel, boolean showCancelBtn, boolean showDeleteBtn, ErrorHandlerDelegate errorHandler) {
+		this(fieldPanel, showCancelBtn, showDeleteBtn);
+		setErrorHandler(errorHandler);
+	}
+
+	private void setErrorHandler(ErrorHandlerDelegate errorHandler) {
+		fieldPanel.getBinding().setErrorHandler(errorHandler);
+		final IMsgDisplay msgDisplay = errorHandler.getMsgDisplay();
+		if(msgDisplay != null) {
+			panel.insert(msgDisplay.getDisplayWidget(), 0);
+		}
 	}
 
 	public final void showDeleteButton(boolean show) {
@@ -175,13 +177,6 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	}
 
 	/**
-	 * @return The model instance.
-	 */
-	public final Model getModel() {
-		return fieldPanel.getModel();
-	}
-
-	/**
 	 * Sets the model propagating it to the held field panel.
 	 * @param model The model to set
 	 */
@@ -203,11 +198,14 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	 * Applies field error messages to the fields contained in the member
 	 * {@link FieldPanel}.
 	 * @param msgs The field error messages to apply
+	 * @param classifier the error classifier
+	 * @param clearExisting Remove existing errors of the given error classifier
+	 *        before applying?
 	 */
-	public final void applyFieldErrors(final List<Msg> msgs) {
+	public final void applyFieldErrors(final List<Msg> msgs, ErrorClassifier classifier, boolean clearExisting) {
 		final FieldGroup root = fieldPanel.getFieldGroup();
 		final IErrorHandler errorHandler = root.getErrorHandler();
-		errorHandler.clear(ErrorClassifier.SERVER);
+		if(clearExisting) errorHandler.clear(classifier);
 		for(final Msg msg : msgs) {
 			final IFieldWidget<?> fw = root.getFieldWidgetByProperty(msg.getRefToken());
 			String emsg;
@@ -217,7 +215,7 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 			else {
 				emsg = msg.getRefToken() + ": " + msg.getMsg();
 			}
-			errorHandler.handleError(fw, new Error(ErrorClassifier.SERVER, emsg), ErrorDisplay.ALL_FLAGS);
+			errorHandler.handleError(new Error(classifier, fw, emsg), ErrorDisplay.ALL_FLAGS);
 		}
 	}
 

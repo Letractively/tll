@@ -35,6 +35,7 @@ import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.ui.test.ModelViewer;
 import com.tll.client.util.GlobalFormat;
+import com.tll.client.validate.ErrorHandlerBuilder;
 import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
@@ -401,7 +402,9 @@ public final class UITests extends AbstractUITest {
 			gmp = new GlobalMsgPanel();
 
 			mv = new ModelViewer();
-			ep = new EditPanel(new ComplexFieldPanel(), false, false, gmp, true);
+			ep =
+				new EditPanel(new ComplexFieldPanel(), false, false, ErrorHandlerBuilder.build(true, true,
+						new GlobalMsgPanel()));
 			ep.addEditHandler(new IEditHandler() {
 
 				@Override

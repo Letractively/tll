@@ -4,6 +4,8 @@
  */
 package com.tll.client.ui.field;
 
+import java.util.List;
+
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -25,9 +27,9 @@ import com.tll.client.validate.CharacterValidator;
 import com.tll.client.validate.CompositeValidator;
 import com.tll.client.validate.DateValidator;
 import com.tll.client.validate.DecimalValidator;
+import com.tll.client.validate.Error;
 import com.tll.client.validate.ErrorClassifier;
 import com.tll.client.validate.ErrorDisplay;
-import com.tll.client.validate.IError;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.IntegerValidator;
@@ -45,8 +47,7 @@ import com.tll.util.StringUtil;
  * @param <V> the value type
  * @author jpk
  */
-public abstract class AbstractField<V> extends Composite implements IFieldWidget<V>,
-ValueChangeHandler<V>, Focusable, BlurHandler {
+public abstract class AbstractField<V> extends Composite implements IFieldWidget<V>, ValueChangeHandler<V>, Focusable, BlurHandler {
 
 	/**
 	 * Reflects the number of instantiated {@link AbstractField}s. This is
@@ -484,37 +485,30 @@ ValueChangeHandler<V>, Focusable, BlurHandler {
 
 	/**
 	 * Handles client-side errors.
-	 * @param error
+	 * @param errors
 	 */
-	private void handleError(IError error) {
+	private void handleError(List<Error> errors) {
 		if(errorHandler != null) {
-			if(error.getClassifier() == null || !error.getClassifier().isClient()) {
-				throw new IllegalStateException("Null or non-client error.");
-			}
-			errorHandler.handleError(this, error, ErrorDisplay.LOCAL.flag());
+			errorHandler.handleErrors(errors, ErrorDisplay.LOCAL.flag());
 		}
 	}
 
 	public final void validate() throws ValidationException {
-		try {
-			validate(getValue());
-		}
-		catch(final ValidationException e) {
-			handleError(e.getError());
-			throw e;
-		}
+		validate(getValue());
 	}
 
 	public final Object validate(Object value) throws ValidationException {
-		try {
-			if(validator != null) {
+		if(validator != null) {
+			try {
 				value = validator.validate(value);
 			}
+			catch(final ValidationException e) {
+				for(final Error error : e.getErrors()) {
+					error.setTarget(this);
+				}
+				throw e;
+			}
 		}
-		catch(final ValidationException e) {
-			throw e;
-		}
-
 		return value;
 	}
 
@@ -558,7 +552,7 @@ ValueChangeHandler<V>, Focusable, BlurHandler {
 		formWidget.setVisible(!readOnly);
 
 		// apply disabled property
-		//formWidget.getElement().setPropertyBoolean(Styles.DISABLED, !enabled);
+		// formWidget.getElement().setPropertyBoolean(Styles.DISABLED, !enabled);
 
 		// resolve the containers
 		final Widget fldContainer = container == null ? this : container;
@@ -576,7 +570,7 @@ ValueChangeHandler<V>, Focusable, BlurHandler {
 
 		if(!enabled || readOnly) {
 			// remove all msgs, edit and validation styling
-			resolveError(ErrorDisplay.ALL_FLAGS);
+			resolveError(ErrorDisplay.LOCAL.flag());
 			removeStyleName(Styles.DIRTY);
 		}
 		else if(enabled && !readOnly) {
@@ -608,13 +602,13 @@ ValueChangeHandler<V>, Focusable, BlurHandler {
 	@Override
 	public void onBlur(BlurEvent event) {
 		if(incrValFlag) {
+			resolveError(ErrorDisplay.LOCAL.flag());	// clear out old first
 			try {
 				validate();
-				resolveError(ErrorDisplay.ALL_FLAGS);
 				dirtyCheck();
 			}
 			catch(final ValidationException e) {
-				// ok
+				handleError(e.getErrors());
 			}
 		}
 	}

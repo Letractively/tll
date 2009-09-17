@@ -7,18 +7,13 @@ package com.tll.client.bind;
 import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.convert.IConverter;
 import com.tll.client.ui.IBindableWidget;
-import com.tll.client.ui.field.FieldErrorHandler;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.IFieldBoundWidget;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.IIndexedFieldBoundWidget;
-import com.tll.client.ui.msg.IMsgDisplay;
-import com.tll.client.ui.msg.MsgPopupRegistry;
-import com.tll.client.validate.BillboardValidationFeedback;
 import com.tll.client.validate.Error;
 import com.tll.client.validate.ErrorClassifier;
 import com.tll.client.validate.ErrorDisplay;
-import com.tll.client.validate.ErrorHandlerDelegate;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.ValidationException;
 import com.tll.common.model.Model;
@@ -80,35 +75,10 @@ public class FieldModelBinding {
 	}
 
 	/**
-	 * Convenience builder method that assembles an appropriate
-	 * {@link IErrorHandler}.
-	 * @param msgDisplay msg display implmentation. May be <code>null</code>.
-	 *        providing field validation feedback
-	 * @return A new {@link IErrorHandler} impl instance.
-	 */
-	static IErrorHandler buildErrorHandler(IMsgDisplay msgDisplay) {
-		IErrorHandler errorHandler;
-		if(msgDisplay == null) {
-			errorHandler = new FieldErrorHandler(new MsgPopupRegistry());
-		}
-		else {
-			errorHandler =
-				new ErrorHandlerDelegate(new BillboardValidationFeedback(msgDisplay), new FieldErrorHandler(
-						new MsgPopupRegistry()));
-		}
-		return errorHandler;
-	}
-
-	/**
 	 * The field bound widget. This widget's field group is considered the root
 	 * field group.
 	 */
 	protected IFieldBoundWidget widget;
-
-	/**
-	 * Used for displaying validation feedback in a single panel.
-	 */
-	private IMsgDisplay msgDisplay;
 
 	/**
 	 * The sole error handler instance for this binding.
@@ -122,6 +92,10 @@ public class FieldModelBinding {
 
 	private boolean bound;
 
+	public final void setErrorHandler(IErrorHandler errorHandler) {
+		this.errorHandler = errorHandler;
+	}
+
 	/**
 	 * Transfers field data to the model through the defined bindings.
 	 * @throws ValidationException When the root field group fails to validate.
@@ -130,8 +104,7 @@ public class FieldModelBinding {
 	 */
 	public final void execute() throws ValidationException, BindingException {
 		ensureSet();
-		final IErrorHandler eh = getErrorHandler();
-		eh.clear();
+		if(errorHandler != null) errorHandler.clear();
 		try {
 			// validate
 			widget.getFieldGroup().validate();
@@ -140,7 +113,7 @@ public class FieldModelBinding {
 			binding.setLeft();
 		}
 		catch(final ValidationException e) {
-			eh.handleError(null, e.getError(), ErrorDisplay.ALL_FLAGS);
+			if(errorHandler != null) errorHandler.handleErrors(e.getErrors(), ErrorDisplay.ALL_FLAGS);
 			throw e;
 		}
 		catch(final BindingException e) {
@@ -154,22 +127,10 @@ public class FieldModelBinding {
 			if(emsg == null) {
 				emsg = "Unknown error occurred.";
 			}
-			eh.handleError(null, new Error(ErrorClassifier.CLIENT, emsg), ErrorDisplay.ALL_FLAGS);
+			if(errorHandler != null)
+				errorHandler.handleError(new Error(ErrorClassifier.CLIENT, null, emsg), ErrorDisplay.ALL_FLAGS);
 			throw e;
 		}
-	}
-
-	public final void setMsgDisplay(IMsgDisplay msgDisplay) {
-		if(errorHandler != null) throw new IllegalStateException("Error handler already set");
-		this.msgDisplay = msgDisplay;
-	}
-
-	protected final IErrorHandler getErrorHandler() {
-		if(errorHandler == null) {
-			Log.debug("Building error handler..");
-			errorHandler = buildErrorHandler(msgDisplay);
-		}
-		return errorHandler;
 	}
 
 	public final void set(IFieldBoundWidget widget) {
@@ -178,9 +139,6 @@ public class FieldModelBinding {
 		}
 		if(this.widget == widget) {
 			return;
-		}
-		if(widget.getFieldGroup() == null) {
-			throw new IllegalArgumentException("No field group specified in field bound widget");
 		}
 		if(this.widget != null) {
 			unset();
@@ -209,8 +167,10 @@ public class FieldModelBinding {
 	 */
 	protected void createBindings() throws BindingException {
 		// propagate the binding's error handler
-		Log.debug("Propagating error handler: " + widget);
-		widget.getFieldGroup().setErrorHandler(getErrorHandler());
+		if(errorHandler != null) {
+			Log.debug("Propagating error handler: " + widget);
+			widget.getFieldGroup().setErrorHandler(errorHandler);
+		}
 
 		Log.debug("Creating bindings for: " + widget);
 		// we only allow binding of the set root field group

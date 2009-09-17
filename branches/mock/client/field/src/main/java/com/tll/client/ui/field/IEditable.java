@@ -3,6 +3,7 @@ package com.tll.client.ui.field;
 import com.google.gwt.event.dom.client.HasBlurHandlers;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasValue;
+import com.tll.client.ui.IHasHoverHandlers;
 
 /**
  * IEditable - Marker type interface to aggregate focusability, "hoverability"

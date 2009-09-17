@@ -12,6 +12,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.ui.IHasHoverHandlers;
 import com.tll.client.ui.field.impl.FieldLabelImpl;
 import com.tll.util.StringUtil;
 

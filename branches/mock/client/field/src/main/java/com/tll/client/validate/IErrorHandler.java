@@ -1,9 +1,11 @@
 package com.tll.client.validate;
 
+import java.util.Collection;
+
 import com.tll.client.ui.IWidgetRef;
 
 /**
- * IErrorHandler - Definition for handling {@link IError}s.
+ * IErrorHandler - Definition for handling {@link Error}s.
  * @author jpk
  */
 public interface IErrorHandler {
@@ -15,21 +17,28 @@ public interface IErrorHandler {
 
 	/**
 	 * Handles an error.
-	 * @param source the error source
 	 * @param error the error
-	 * @param displayFlags filter to discriminate whether or not the error should
-	 *        be handled by this implementation
+	 * @param displayFlags bit-wise {@link ErrorDisplay} flags that determines
+	 *        whether this implementation should handle the given error
 	 */
-	void handleError(IWidgetRef source, IError error, int displayFlags);
+	void handleError(Error error, int displayFlags);
 
 	/**
-	 * Resolves (clears) all validation errors for the given source.
-	 * @param source the field ref. May be <code>null</code>
-	 * @param classifier the classifier which may be <code>null</code>
-	 * @param displayFlags filter to discriminate whether or not the error should
-	 *        be resolved by this implementation
+	 * Handles a collection of errors.
+	 * @param errors the errors
+	 * @param displayFlags bit-wise {@link ErrorDisplay} flags that determines
+	 *        whether this implementation should handle the given errors
 	 */
-	void resolveError(IWidgetRef source, ErrorClassifier classifier, int displayFlags);
+	void handleErrors(Collection<Error> errors, int displayFlags);
+
+	/**
+	 * Resolves (clears) validation based on filtering arguments.
+	 * @param target Optional target widget reference
+	 * @param classifier Optional error classifier
+	 * @param displayFlags bit-wise {@link ErrorDisplay} flags that determines
+	 *        whether this implementation should resolve the error
+	 */
+	void resolveError(IWidgetRef target, ErrorClassifier classifier, int displayFlags);
 
 	/**
 	 * Removes all errors found to be associated with the given classifier.
@@ -38,7 +47,7 @@ public interface IErrorHandler {
 	void clear(ErrorClassifier classifier);
 
 	/**
-	 * Removes <em>all</em> errors and internal state.
+	 * Removes <em>all</em> errors and clears internal state.
 	 */
 	void clear();
 }

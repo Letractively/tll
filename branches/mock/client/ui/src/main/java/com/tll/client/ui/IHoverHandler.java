@@ -3,7 +3,7 @@
  * @author jpk
  * Mar 7, 2009
  */
-package com.tll.client.ui.field;
+package com.tll.client.ui;
 
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverHandler;
@@ -13,6 +13,6 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
  * definitions.
  * @author jpk
  */
-interface IHoverHandler extends MouseOverHandler, MouseOutHandler {
+public interface IHoverHandler extends MouseOverHandler, MouseOutHandler {
 
 }
