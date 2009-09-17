@@ -1,0 +1,18 @@
+<module>
+  <inherits name="com.tll.Core" />
+  <inherits name="com.tll.View" />
+  <inherits name="com.tll.Rpc" />
+  <inherits name="com.tll.Field" />
+  <inherits name="com.tll.Listing" />
+  <inherits name="com.tll.Login" />
+
+  <source path="model">
+    <include name="AdminRole.java" />
+    <include name="SmbizEntityType.java" />
+    <include name="InterfaceStatus.java" />
+    <include name="AccountStatus.java" />
+    <include name="AddressType.java" />
+    <include name="CreditCardType.java" />
+  </source>
+
+</module>
