@@ -1,5 +1,5 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.criteria;
 
@@ -13,6 +13,8 @@ import com.tll.model.INamedEntity;
 import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
+import com.tll.util.Comparator;
+import com.tll.util.DBType;
 import com.tll.util.DateRange;
 
 /**
@@ -117,7 +119,7 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	 * @return this for method chaining
 	 */
 	public CriterionGroup addCriterion(PrimaryKey<? extends IEntity> key) {
-		addCriterion(IEntity.PK_FIELDNAME, key.getId(), Comparator.EQUALS, false);
+		addCriterion(IEntity.PK_FIELDNAME, key.getId(), Comparator.EQUALS, true);
 		return this;
 	}
 

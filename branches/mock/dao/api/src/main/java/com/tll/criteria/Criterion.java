@@ -1,5 +1,7 @@
 package com.tll.criteria;
 
+import com.tll.util.Comparator;
+
 /**
  * Object representing a criterion definition. It contains the field name and
  * value as well as the comparator. Any other fields that can be used to
@@ -16,7 +18,7 @@ public class Criterion implements ICriterion {
 
 	private Comparator comparator;
 
-	private boolean caseSensitive;
+	private boolean caseSensitive = true; // true by default
 
 	public Criterion() {
 		this(null, null);

@@ -9,8 +9,7 @@ import java.util.Set;
 
 import org.testng.Assert;
 
-import com.tll.criteria.IQueryParam;
-import com.tll.criteria.ISelectNamedQueryDef;
+import com.tll.criteria.Criteria;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
@@ -131,11 +130,7 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 		}
 	}
 
-	@Override
-	public String toString() {
-		return entityClass().toString();
-	}
-
+	/*
 	@Override
 	public ISelectNamedQueryDef[] getQueriesToTest() {
 		// default is no named queries
@@ -152,5 +147,21 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	public Sorting getSortingForTestQuery(ISelectNamedQueryDef qdef) {
 		// default no sorting
 		return null;
+	}
+	 */
+
+	@Override
+	public Criteria<E> getTestCriteria() {
+		return null;
+	}
+
+	@Override
+	public Sorting getTestSorting() {
+		return null;
+	}
+
+	@Override
+	public String toString() {
+		return entityClass().toString();
 	}
 }

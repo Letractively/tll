@@ -1,4 +1,4 @@
-package com.tll.criteria;
+package com.tll.util;
 
 /**
  * Comparator - Enumarates comparators that can be used to specify a criterion.

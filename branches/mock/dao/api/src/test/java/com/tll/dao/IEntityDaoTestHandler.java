@@ -5,8 +5,7 @@
  */
 package com.tll.dao;
 
-import com.tll.criteria.IQueryParam;
-import com.tll.criteria.ISelectNamedQueryDef;
+import com.tll.criteria.Criteria;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
 
@@ -90,9 +89,21 @@ public interface IEntityDaoTestHandler<E extends IEntity> {
 	void verifyEntityAlteration(E e) throws Exception;
 
 	/**
+	 * @return Optional {@link Criteria} instance by which to test the dao find
+	 *         entities by criteria routine.
+	 */
+	Criteria<E> getTestCriteria();
+
+	/**
+	 * @return Optional test sorting by which to test the dao find entities by
+	 *         criteria routine.
+	 */
+	Sorting getTestSorting();
+
+	/**
 	 * @return An array of select named query definitions to test.
 	 */
-	ISelectNamedQueryDef[] getQueriesToTest();
+	// ISelectNamedQueryDef[] getQueriesToTest();
 
 	/**
 	 * Provides query params for a particular named select query to test.
@@ -100,7 +111,7 @@ public interface IEntityDaoTestHandler<E extends IEntity> {
 	 * @return the needed query params or <code>null</code> which indicates the
 	 *         given query requires no parameters.
 	 */
-	IQueryParam[] getParamsForTestQuery(ISelectNamedQueryDef qdef);
+	// IQueryParam[] getParamsForTestQuery(ISelectNamedQueryDef qdef);
 
 	/**
 	 * @param qdef the particular named query under testing
@@ -109,5 +120,5 @@ public interface IEntityDaoTestHandler<E extends IEntity> {
 	 * @see ISelectNamedQueryDef for an explanation of the query naming
 	 *      convention.
 	 */
-	Sorting getSortingForTestQuery(ISelectNamedQueryDef qdef);
+	// Sorting getSortingForTestQuery(ISelectNamedQueryDef qdef);
 }

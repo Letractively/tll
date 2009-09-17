@@ -8,7 +8,6 @@ package com.tll.dao;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
@@ -19,24 +18,23 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.tll.criteria.Comparator;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.IQueryParam;
-import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
 import com.tll.model.INamedEntity;
-import com.tll.model.IScalar;
 import com.tll.model.ITimeStampEntity;
 import com.tll.model.key.BusinessKeyFactory;
 import com.tll.model.key.BusinessKeyNotDefinedException;
 import com.tll.model.key.BusinessKeyPropertyException;
 import com.tll.model.key.BusinessKeyUtil;
 import com.tll.model.key.IBusinessKey;
+import com.tll.model.key.IBusinessKeyDefinition;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
+import com.tll.util.Comparator;
 
 /**
  * AbstractEntityDaoTest
@@ -158,8 +156,7 @@ public abstract class AbstractEntityDaoTest extends AbstractDbAwareTest {
 	 * @param entities
 	 * @return true/false
 	 */
-	protected static final <E extends IEntity> boolean entitiesAndIdsEquals(Collection<String> ids,
-			Collection<E> entities) {
+	protected static final <E extends IEntity> boolean entitiesAndIdsEquals(Collection<String> ids, Collection<E> entities) {
 		if(ids == null || entities == null) {
 			return false;
 		}
@@ -250,7 +247,10 @@ public abstract class AbstractEntityDaoTest extends AbstractDbAwareTest {
 		afterClass();
 	}
 
-	protected abstract void doBeforeClass();
+	protected void doBeforeClass() {
+		getDbShell().delete();
+		getDbShell().create();
+	}
 
 	@Override
 	protected final void beforeClass() {
@@ -459,47 +459,6 @@ public abstract class AbstractEntityDaoTest extends AbstractDbAwareTest {
 
 	// ***TESTS***
 
-	@SuppressWarnings("unchecked")
-	final void daoFindByName() throws Exception {
-		IEntity e = getTestEntity();
-
-		// create
-		e = dao.persist(e);
-		setComplete();
-		endTransaction();
-		// final Integer persistentId = e.getId();
-
-		// retrieve by name key if applicable..
-		if(INamedEntity.class.isAssignableFrom(entityHandler.entityClass())) {
-			logger.debug("Perfoming actual find by name dao test..");
-			final Class<?> nec = entityHandler.entityClass();
-			final String name = ((INamedEntity) e).getName();
-			final NameKey<INamedEntity> nk = new NameKey(nec, name);
-			startNewTransaction();
-			try {
-				e = dao.load(nk);
-				// NOTE: as there may be other like enties having the same name, we only
-				// test when we know there is no ambiguity
-				Assert.assertNotNull(e, "Unable to load named entity by NameKey for entity type: "
-						+ entityHandler.entityClass());
-				entityHandler.verifyLoadedEntityState(e);
-			}
-			catch(final NonUniqueResultException ex) {
-				// ok
-			}
-			catch(final/*QueryException*/Exception ex) {
-				// ok - this means the INamedEntity doesn't have the getName() method
-				// mapped to "name" which is possible in some cases where we impl
-				// INamedEntity but map INamedEntity.getName() to another ORM property
-				// and declare annotatively INamedEntity.getName() as @Transient
-			}
-			endTransaction();
-		}
-		else {
-			logger.debug("Not performing daoFindByName() as the test entity type is not a named entity");
-		}
-	}
-
 	/**
 	 * Test CRUD and find ops
 	 * @throws Exception
@@ -583,24 +542,45 @@ public abstract class AbstractEntityDaoTest extends AbstractDbAwareTest {
 		Assert.assertNotNull(list, "loadAll returned null");
 	}
 
-	/**
-	 * Tests the findEntities() method
-	 * @throws Exception
-	 */
 	@SuppressWarnings("unchecked")
-	final void daoFindEntities() throws Exception {
+	final void daoFindByName() throws Exception {
 		IEntity e = getTestEntity();
+
+		// create
 		e = dao.persist(e);
 		setComplete();
 		endTransaction();
+		// final Integer persistentId = e.getId();
 
-		startNewTransaction();
-		final Criteria<IEntity> criteria = new Criteria(e.entityClass());
-		criteria.getPrimaryGroup().addCriterion(new PrimaryKey<IEntity>(e));
-		final List<IEntity> list = dao.findEntities(criteria, null);
-		endTransaction();
-		Assert.assertNotNull(list, "findEntities returned null");
-		Assert.assertTrue(list.size() == 1, "findEntities returned empty list");
+		// retrieve by name key if applicable..
+		if(INamedEntity.class.isAssignableFrom(entityHandler.entityClass())) {
+			logger.debug("Perfoming actual find by name dao test..");
+			final Class<?> nec = entityHandler.entityClass();
+			final String name = ((INamedEntity) e).getName();
+			final NameKey<INamedEntity> nk = new NameKey(nec, name);
+			startNewTransaction();
+			try {
+				e = dao.load(nk);
+				// NOTE: as there may be other like enties having the same name, we only
+				// test when we know there is no ambiguity
+				Assert.assertNotNull(e, "Unable to load named entity by NameKey for entity type: "
+						+ entityHandler.entityClass());
+				entityHandler.verifyLoadedEntityState(e);
+			}
+			catch(final NonUniqueResultException ex) {
+				// ok
+			}
+			catch(final/*QueryException*/Exception ex) {
+				// ok - this means the INamedEntity doesn't have the getName() method
+				// mapped to "name" which is possible in some cases where we impl
+				// INamedEntity but map INamedEntity.getName() to another ORM property
+				// and declare annotatively INamedEntity.getName() as @Transient
+			}
+			endTransaction();
+		}
+		else {
+			logger.debug("Not performing daoFindByName() as the test entity type is not a named entity");
+		}
 	}
 
 	/**
@@ -740,6 +720,80 @@ public abstract class AbstractEntityDaoTest extends AbstractDbAwareTest {
 		}
 	}
 
+	final void daoFindEntityByPrimaryKeyCriteria() throws Exception {
+		// persist the target test entity
+		IEntity e = getTestEntity();
+		e = dao.persist(e);
+		setComplete();
+		endTransaction();
+
+		final Criteria<IEntity> c = new Criteria<IEntity>(entityHandler.entityClass());
+		c.getPrimaryGroup().addCriterion(new PrimaryKey<IEntity>(entityHandler.entityClass(), e.getId()));
+		startNewTransaction();
+		final IEntity re = dao.findEntity(c);
+		assert re != null && re.getId().equals(e.getId());
+	}
+
+	final void daoFindEntityByBusinessKeyCriteria() throws Exception {
+		try {
+			final IBusinessKeyDefinition<IEntity>[] bkdefs = BusinessKeyFactory.definitions(entityHandler.entityClass());
+
+			// persist the target test entity
+			IEntity e = getTestEntity();
+			e = dao.persist(e);
+			setComplete();
+			endTransaction();
+
+			startNewTransaction();
+			final Criteria<IEntity> c = new Criteria<IEntity>(entityHandler.entityClass());
+			for(final IBusinessKeyDefinition<IEntity> bkdef : bkdefs) {
+				final IBusinessKey<IEntity> bk = BusinessKeyFactory.create(e, bkdef);
+				c.getPrimaryGroup().addCriterion(bk, true);
+			}
+			final IEntity re = dao.findEntity(c);
+			assert re != null && re.getId().equals(e.getId());
+
+		}
+		catch(final BusinessKeyNotDefinedException e) {
+			// ok skip
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	final void daoFindEntityByName() throws Exception {
+		if(INamedEntity.class.isAssignableFrom(entityHandler.entityClass())) {
+			// persist the target test entity
+			INamedEntity e = getTestEntity();
+			e = dao.persist(e);
+			setComplete();
+			endTransaction();
+
+			startNewTransaction();
+			final Criteria<IEntity> c = new Criteria<IEntity>(entityHandler.entityClass());
+			c.getPrimaryGroup().addCriterion(new NameKey(e.entityClass(), e.getName()), true);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	final void daoFindEntityByCriteria() throws Exception {
+		final Criteria c = entityHandler.getTestCriteria();
+		if(c == null) return;	// ok
+
+		// persist the target test entity
+		IEntity e = getTestEntity();
+		e = dao.persist(e);
+		setComplete();
+		endTransaction();
+
+		startNewTransaction();
+		// NOTE: we only verify that the method executes w/o exceptions
+		dao.findEntities(c, entityHandler.getTestSorting());
+		endTransaction();
+	}
+
+	// TODO do we want to support named queries now in light of the fact that we
+	// offer an object db dao impl now?
+	/*
 	final void daoTestSelectNamedQueries() throws Exception {
 		final ISelectNamedQueryDef[] queryDefs = entityHandler.getQueriesToTest();
 		if(queryDefs == null) return;
@@ -763,4 +817,5 @@ public abstract class AbstractEntityDaoTest extends AbstractDbAwareTest {
 			}
 		}
 	}
+	 */
 }

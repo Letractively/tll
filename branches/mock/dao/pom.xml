@@ -17,7 +17,7 @@
 
   <modules>
     <module>api</module>
-    <module>mock</module>
+    <module>db4o</module>
   </modules>
 
 </project>

@@ -12,7 +12,12 @@ public class DateRange implements Cloneable, IMarshalable {
 
 	public static final Date DATE_PAST = new Date(0L);
 
-	public static final Date DATE_FUTURE = new Date(63387360000000L); // year 2010
+	public static final Date DATE_FUTURE = new Date(new Date().getTime() + 1000 * 3600 * 24 * 365); // now + 1 year
+
+	static {
+		// sanity check
+		if(DATE_FUTURE.getTime() < 0l) throw new IllegalStateException("Date rolled!");
+	}
 
 	public static DateRange upTo(Date end) {
 		return new DateRange(DATE_PAST, end);
@@ -83,7 +88,7 @@ public class DateRange implements Cloneable, IMarshalable {
 	@Override
 	public boolean equals(Object arg) {
 		if(!(arg instanceof DateRange)) return false;
-		DateRange other = (DateRange) arg;
+		final DateRange other = (DateRange) arg;
 		return start.equals(other.start) && end.equals(other.end);
 	}
 
@@ -121,5 +126,5 @@ public class DateRange implements Cloneable, IMarshalable {
 			throw new Error("Unable to a clone a DateRange! NOT SUPPORTED");
 		}
 	}
-	*/
+	 */
 }

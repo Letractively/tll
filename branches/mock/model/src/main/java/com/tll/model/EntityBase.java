@@ -2,7 +2,6 @@ package com.tll.model;
 
 import java.util.Collection;
 
-
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.logging.Log;
@@ -15,30 +14,15 @@ import com.tll.util.StringUtil;
  * EntityBase - Base class for all entities.
  * @author jpk
  */
-//@PersistenceCapable(identityType = IdentityType.APPLICATION)
-// @Version(strategy = VersionStrategy.VERSION_NUMBER, column = "VERSION",
-// extensions = { @Extension(vendorName = "datanucleus", key = "field-name",
-// value = "version") })
 public abstract class EntityBase implements IEntity {
 
 	private static final long serialVersionUID = -4641847785797486723L;
 
 	protected static final Log LOG = LogFactory.getLog(EntityBase.class);
 
-	//@PrimaryKey
-	//@Persistent(valueStrategy = IdGeneratorStrategy.UUIDSTRING)
-	// @Extension(vendorName = "datanucleus", key = "gae.encoded-pk", value =
-	// "true")
 	private String id;
 
-	//@NotPersistent
 	private boolean generated;
-
-	/**
-	 * Manually driven flag to indicate entity newness.
-	 */
-	//@NotPersistent
-	private boolean _new = true;
 
 	private Integer version;
 
@@ -226,10 +210,9 @@ public abstract class EntityBase implements IEntity {
 		if(obj == null) return false;
 		if(getClass() != obj.getClass()) return false;
 		final EntityBase other = (EntityBase) obj;
-		if(id == null) {
-			if(other.id != null) return false;
-		}
-		else if(!id.equals(other.id)) return false;
+		if(other.entityClass() != entityClass()) return false;
+		assert this.id != null && other.id != null;
+		if(!id.equals(other.id)) return false;
 		return true;
 	}
 
@@ -237,6 +220,7 @@ public abstract class EntityBase implements IEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + entityClass().toString().hashCode();
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
@@ -247,11 +231,7 @@ public abstract class EntityBase implements IEntity {
 	}
 
 	public final boolean isNew() {
-		return _new;
-	}
-
-	public final void setNew(boolean b) {
-		this._new = b;
+		return getVersion() == null;
 	}
 
 	/*

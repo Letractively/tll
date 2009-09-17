@@ -74,10 +74,10 @@ public abstract class EGraphModule extends AbstractModule {
 			public EntityGraph get() {
 				final EntityGraph graph = new EntityGraph();
 				builder.setEntityGraph(graph);
-				builder.populateEntityGraph();
+				//builder.populateEntityGraph();
 				return graph;
 			}
-		}).in(Scopes.SINGLETON);
+		}).asEagerSingleton();
 
 	}
 

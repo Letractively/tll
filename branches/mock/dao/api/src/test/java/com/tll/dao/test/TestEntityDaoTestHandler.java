@@ -7,17 +7,15 @@ package com.tll.dao.test;
 
 import org.testng.Assert;
 
-import com.tll.criteria.ISelectNamedQueryDef;
-import com.tll.criteria.test.TestSelectNamedQueries;
+import com.tll.criteria.Criteria;
 import com.tll.dao.AbstractEntityDaoTestHandler;
-import com.tll.dao.Sorting;
 import com.tll.model.Account;
 import com.tll.model.AccountAddress;
 import com.tll.model.Address;
 import com.tll.model.Currency;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.NestedEntity;
-
+import com.tll.util.DateRange;
 
 /**
  * TestEntityDaoTestHandler
@@ -29,7 +27,6 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 	NestedEntity nestedEntity;
 	Currency currency;
 	Account parent;
-
 
 	@Override
 	public Class<Account> entityClass() {
@@ -103,6 +100,14 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 	}
 
 	@Override
+	public Criteria<Account> getTestCriteria() {
+		final Criteria<Account> c = new Criteria<Account>(Account.class);
+		c.getPrimaryGroup().addCriterion("dateLastCharged", new DateRange(DateRange.DATE_PAST, DateRange.DATE_FUTURE));
+		return c;
+	}
+
+	/*
+	@Override
 	public ISelectNamedQueryDef[] getQueriesToTest() {
 		//return TestSelectNamedQueries.values();
 		return new ISelectNamedQueryDef[] { TestSelectNamedQueries.ACCOUNT_LISTING };
@@ -112,4 +117,5 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 	public Sorting getSortingForTestQuery(ISelectNamedQueryDef qdef) {
 		return new Sorting("name");
 	}
+	 */
 }

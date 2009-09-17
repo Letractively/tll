@@ -8,15 +8,166 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+
+import org.apache.commons.lang.math.NumberRange;
 
 /**
  * CommonUtil - common utility methods.
  * @author jpk
  */
 public abstract class CommonUtil {
+
+	/**
+	 * Compares two arbitrary objects.
+	 * @param o1 the first object to be compared.
+	 * @param o2 the second object to be compared.
+	 * @return a negative integer, zero, or a positive integer as the first
+	 *         argument is less than, equal to, or greater than the second.
+	 * @throws IllegalArgumentException When one or both of the given objects are
+	 *         not comparable
+	 */
+	@SuppressWarnings("unchecked")
+	public static int compare(final Object o1, final Object o2) throws IllegalArgumentException {
+		if(o1 instanceof Comparable<?>) {
+			try {
+				return ((Comparable<Object>) o1).compareTo(o2);
+			}
+			catch(final ClassCastException e) {
+				// fall through
+			}
+		}
+		throw new IllegalArgumentException();
+	}
+
+	/**
+	 * Generalized way to compare to objects subject to a {@link Comparator}
+	 * instance.
+	 * @param actualValue The value being checked. May be <code>null</code>
+	 * @param checkValue The sought value. May be <code>null</code>
+	 * @param caseSensitive Enforce case sensitivity? Not applicable in all cases.
+	 * @param cmp the required comparator
+	 * @return true/false
+	 * @throws IllegalArgumentException
+	 */
+	public static boolean matches(final Object actualValue, final Object checkValue, boolean caseSensitive,
+			Comparator cmp) throws IllegalArgumentException {
+		if(cmp == null) {
+			throw new IllegalArgumentException("The comparator argument may not be null");
+		}
+		switch(cmp) {
+			case EQUALS:
+				return equals(actualValue, checkValue, caseSensitive);
+			case NOT_EQUALS:
+				return !equals(actualValue, checkValue, caseSensitive);
+			case GREATER_THAN:
+				try {
+					final int c = compare(actualValue, checkValue);
+					return c > 0;
+				}
+				catch(final IllegalArgumentException e) {
+					return false;
+				}
+			case GREATER_THAN_EQUALS:
+				try {
+					final int c = compare(actualValue, checkValue);
+					return c >= 0;
+				}
+				catch(final IllegalArgumentException e) {
+					return false;
+				}
+			case LESS_THAN:
+				try {
+					final int c = compare(actualValue, checkValue);
+					return c < 0;
+				}
+				catch(final IllegalArgumentException e) {
+					return false;
+				}
+			case LESS_THAN_EQUALS:
+				try {
+					final int c = compare(actualValue, checkValue);
+					return c <= 0;
+				}
+				catch(final IllegalArgumentException e) {
+					return false;
+				}
+			case LIKE:
+				// TODO impl
+				throw new IllegalArgumentException("LIKE comparisons are not supported yet");
+			case CONTAINS:
+				if(checkValue instanceof String == false || actualValue instanceof String == false) {
+					return false;
+				}
+				if(!caseSensitive) {
+					return ((String) checkValue).toLowerCase().indexOf(((String) actualValue).toLowerCase()) >= 0;
+				}
+				return ((String) actualValue).indexOf((String) checkValue) >= 0;
+			case STARTS_WITH:
+				if(checkValue instanceof String == false || actualValue instanceof String == false) {
+					return false;
+				}
+				if(!caseSensitive) {
+					return ((String) checkValue).toLowerCase().startsWith(((String) actualValue).toLowerCase());
+				}
+				return ((String) checkValue).startsWith((String) actualValue);
+			case ENDS_WITH:
+				if(checkValue instanceof String == false || actualValue instanceof String == false) {
+					return false;
+				}
+				return ((String) checkValue).endsWith((String) actualValue);
+			case BETWEEN: {
+				if(checkValue instanceof NumberRange) {
+					if(actualValue instanceof Number == false) {
+						return false;
+					}
+					final Number number = (Number) actualValue;
+					final NumberRange range = (NumberRange) checkValue;
+					return range.containsNumber(number);
+				}
+				else if(checkValue instanceof DateRange) {
+					if(actualValue instanceof Date == false) {
+						return false;
+					}
+					final Date date = (Date) actualValue;
+					final DateRange range = (DateRange) checkValue;
+					return range.includes(date);
+				}
+				return false;
+			}
+			case IS: {
+				if(checkValue instanceof DBType == false) {
+					return false;
+				}
+				final DBType dbType = (DBType) checkValue;
+				if(dbType == DBType.NULL) {
+					return actualValue != null;
+				}
+				return actualValue == null;
+			}
+			case IN: {
+				if(checkValue.getClass().isArray()) {
+					return org.springframework.util.ObjectUtils.containsElement((Object[]) actualValue, checkValue);
+				}
+				else if(checkValue instanceof Collection<?>) {
+					return ((Collection<?>) checkValue).contains(actualValue);
+				}
+				else if(checkValue instanceof String) {
+					// assume comma-delimited string
+					final Object[] arr =
+						org.springframework.util.ObjectUtils.toObjectArray(org.springframework.util.StringUtils
+								.commaDelimitedListToStringArray((String) actualValue));
+					return org.springframework.util.ObjectUtils.containsElement(arr, actualValue);
+				}
+				return false;
+			}
+			default:
+				throw new IllegalStateException("Unhandled Comparator: " + cmp);
+		}
+	}
 
 	/**
 	 * Utility method that does an equals comparison with null checks. If both
