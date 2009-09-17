@@ -5,12 +5,7 @@ package com.tll.dao;
 
 import org.testng.Assert;
 
-import com.tll.criteria.IQueryParam;
-import com.tll.criteria.ISelectNamedQueryDef;
-import com.tll.criteria.QueryParam;
-import com.tll.criteria.SelectNamedQueries;
 import com.tll.model.Merchant;
-import com.tll.model.schema.PropertyType;
 
 /**
  * MerchantDaoTestHandler
@@ -29,6 +24,7 @@ public class MerchantDaoTestHandler extends AbstractAccountDaoTestHandler<Mercha
 		Assert.assertNotNull(e.getStoreName(), "Merchant store name is null");
 	}
 
+	/*
 	@Override
 	public ISelectNamedQueryDef[] getQueriesToTest() {
 		return new ISelectNamedQueryDef[] { SelectNamedQueries.MERCHANT_LISTING };
@@ -43,4 +39,5 @@ public class MerchantDaoTestHandler extends AbstractAccountDaoTestHandler<Mercha
 	public Sorting getSortingForTestQuery(ISelectNamedQueryDef qdef) {
 		return new Sorting("name");
 	}
+	 */
 }

@@ -8,8 +8,6 @@ import java.util.Set;
 
 import org.testng.Assert;
 
-import com.tll.criteria.ISelectNamedQueryDef;
-import com.tll.criteria.SelectNamedQueries;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.Interface;
 import com.tll.model.InterfaceOption;
@@ -104,6 +102,7 @@ public abstract class AbstractInterfaceDaoTestHandler<I extends Interface> exten
 		}
 	}
 
+	/*
 	@Override
 	public ISelectNamedQueryDef[] getQueriesToTest() {
 		return new ISelectNamedQueryDef[] {
@@ -120,4 +119,5 @@ public abstract class AbstractInterfaceDaoTestHandler<I extends Interface> exten
 		}
 		return null;
 	}
+	 */
 }

@@ -26,10 +26,10 @@ import com.tll.dao.IDbShell;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
+import com.tll.di.Db4oDaoModule;
+import com.tll.di.Db4oDbShellModule;
 import com.tll.di.EGraphModule;
 import com.tll.di.EntityServiceFactoryModule;
-import com.tll.di.MockDaoModule;
-import com.tll.di.MockDbShellModule;
 import com.tll.di.ModelModule;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityAssembler;
@@ -44,7 +44,7 @@ import com.tll.service.entity.IEntityServiceFactory;
  * @author jpk
  */
 @Test(groups = { "listhandler", "namedqueries" })
-	public class NamedQueriesTest extends AbstractInjectedTest {
+public class NamedQueriesTest extends AbstractInjectedTest {
 
 	private static final Map<SelectNamedQueries, SortColumn> querySortBindings =
 		new HashMap<SelectNamedQueries, SortColumn>();
@@ -85,7 +85,7 @@ import com.tll.service.entity.IEntityServiceFactory;
 			}
 		}
 	}
-	
+
 	private IDbShell dbShell;
 
 	/**
@@ -103,10 +103,10 @@ import com.tll.service.entity.IEntityServiceFactory;
 	@Override
 	protected void beforeClass() {
 		super.beforeClass();
-		
+
 		// set the db shell
 		dbShell = injector.getInstance(IDbShell.class);
-		
+
 		dbShell.restub();
 	}
 
@@ -127,8 +127,8 @@ import com.tll.service.entity.IEntityServiceFactory;
 				bind(IEntityGraphPopulator.class).to(SmbizEntityGraphBuilder.class).in(Scopes.SINGLETON);
 			}
 		});
-		modules.add(new MockDaoModule());
-		modules.add(new MockDbShellModule());
+		modules.add(new Db4oDaoModule());
+		modules.add(new Db4oDbShellModule());
 		modules.add(new EntityServiceFactoryModule());
 	}
 

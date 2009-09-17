@@ -37,7 +37,7 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 	private IInterfaceService getInterfaceService() {
 		return injector.getInstance(IInterfaceService.class);
 	}
-	
+
 	private IAccountService getAccountService() {
 		return injector.getInstance(IAccountService.class);
 	}
@@ -46,9 +46,10 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 		final IInterfaceService svc = getInterfaceService();
 		final Interface intf = svc.load(new NameKey<Interface>(Interface.class, "Payment Processor"));
 		final IAccountService asvc = getAccountService();
-		Account a = asvc.load(new NameKey<Account>(Account.class, "asp"));
+		final Account a = asvc.load(new NameKey<Account>(Account.class, "asp"));
 		final AccountInterface ai = svc.loadAccountInterface(a.getId(), intf.getId());
 		assert ai != null;
+		assert ai.getId() != null;
 	}
 
 	public void testSetAccountInterface() throws Exception {
@@ -57,7 +58,7 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 		final IInterfaceService svc = getInterfaceService();
 		final Interface intf = svc.load(new NameKey<Interface>(Interface.class, "Payment Processor"));
 		final IAccountService asvc = getAccountService();
-		Account a = asvc.load(new NameKey<Account>(Account.class, "asp"));
+		final Account a = asvc.load(new NameKey<Account>(Account.class, "asp"));
 		ai.setAccountId(a.getId());
 		ai.setInterfaceId(intf.getId());
 		for(final InterfaceOption io : intf.getOptions()) {
@@ -71,7 +72,7 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 			aio.setSetUpPrice(1f);
 			for(final InterfaceOptionParameterDefinition iopd : io.getParameters()) {
 				final AccountInterfaceOptionParameter aiop =
-						efactory.createEntity(AccountInterfaceOptionParameter.class, false);
+					efactory.createEntity(AccountInterfaceOptionParameter.class, false);
 				aiop.setId(iopd.getId());
 				aiop.setName(iopd.getName());
 				aiop.setCode(iopd.getCode());
@@ -82,13 +83,14 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 			ai.addOption(aio);
 		}
 		svc.setAccountInterface(ai);
+		assert ai.getId() != null;
 	}
 
 	public void testPurgeAccountInterface() throws Exception {
 		final IInterfaceService svc = getInterfaceService();
 		final Interface intf = svc.load(new NameKey<Interface>(Interface.class, "Payment Processor"));
 		final IAccountService asvc = getAccountService();
-		Account a = asvc.load(new NameKey<Account>(Account.class, "asp"));
+		final Account a = asvc.load(new NameKey<Account>(Account.class, "asp"));
 		svc.purgeAccountInterface(a.getId(), intf.getId());
 		// TODO verify no account interface options
 	}

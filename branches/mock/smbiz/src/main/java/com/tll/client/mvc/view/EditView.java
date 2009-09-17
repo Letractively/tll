@@ -18,6 +18,8 @@ import com.tll.client.ui.edit.EditPanel;
 import com.tll.client.ui.edit.IEditHandler;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.msg.GlobalMsgPanel;
+import com.tll.client.validate.ErrorClassifier;
+import com.tll.client.validate.ErrorHandlerBuilder;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
@@ -61,7 +63,7 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 	public EditView(FieldPanel<?> fieldPanel) {
 		super();
 		gmp = new GlobalMsgPanel();
-		editPanel = new EditPanel(fieldPanel, true, false, new GlobalMsgPanel(), true);
+		editPanel = new EditPanel(fieldPanel, true, false, ErrorHandlerBuilder.build(true, true, new GlobalMsgPanel()));
 		editPanel.addEditHandler(this);
 
 		addWidget(gmp);
@@ -182,7 +184,7 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 	@Override
 	protected void handleModelChangeError(ModelChangeEvent event) {
 		gmp.clear();
-		editPanel.applyFieldErrors(event.getStatus().getMsgs(MsgAttr.FIELD.flag));
+		editPanel.applyFieldErrors(event.getStatus().getMsgs(MsgAttr.FIELD.flag), ErrorClassifier.SERVER, true);
 	}
 
 	@Override

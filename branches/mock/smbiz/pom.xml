@@ -163,7 +163,7 @@
                 </element>
                 <element>
                   <groupId>com.tll</groupId>
-                  <artifactId>tll-dao-mock</artifactId>
+                  <artifactId>tll-dao-db4o</artifactId>
                   <version>${project.parent.version}</version>
                 </element>
               </classpath>
@@ -240,7 +240,7 @@
                 log4j,commons-logging,org.slf4j,com.tll,com.google.gwt,com.google.code.gwt-incubator,com.google.code.gwt-log
               </includeGroupIds>
               <excludeArtifactIds>
-                gwt-servlet,tll-config,tll-core,tll-dao-api,tll-dao-mock,tll-mail,tll-egraph,tll-model,tll-refdata,tll-security,tll-service,tll-servlet
+                gwt-servlet,tll-config,tll-core,tll-dao-api,tll-dao-db4o,tll-mail,tll-egraph,tll-model,tll-refdata,tll-security,tll-service,tll-servlet
               </excludeArtifactIds>
               <excludeTypes>zip</excludeTypes>
               <outputFile>target/gwt-cp.txt</outputFile>
@@ -550,7 +550,7 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao-mock</artifactId>
+      <artifactId>tll-dao-db4o</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
@@ -636,7 +636,7 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao-mock</artifactId>
+      <artifactId>tll-dao-db4o</artifactId>
       <classifier>testassets</classifier>
       <version>${project.parent.version}</version>
       <scope>test</scope>

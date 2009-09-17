@@ -3,14 +3,14 @@
  * @author jpk
  * Nov 19, 2007
  */
-package com.tll.dao.mock;
+package com.tll.dao.db4o;
 
 import java.util.Collection;
 import java.util.List;
 
+import com.db4o.ObjectContainer;
 import com.google.inject.Inject;
 import com.tll.dao.IPCHDao;
-import com.tll.model.EntityGraph;
 
 
 /**
@@ -18,15 +18,15 @@ import com.tll.model.EntityGraph;
  * TODO implement
  * @author jpk
  */
-public class PCHDao extends EntityDao implements IPCHDao {
+public class PCHDao extends Db4oEntityDao implements IPCHDao {
 
 	/**
 	 * Constructor
-	 * @param entityGraph
+	 * @param oc
 	 */
 	@Inject
-	public PCHDao(EntityGraph entityGraph) {
-		super(entityGraph);
+	public PCHDao(ObjectContainer oc) {
+		super(oc);
 	}
 
 	public void assign(int parentId, int childId) {

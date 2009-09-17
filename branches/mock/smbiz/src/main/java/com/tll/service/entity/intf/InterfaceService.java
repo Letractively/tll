@@ -58,7 +58,6 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 	private AccountInterfaceOption generateAccountInterfaceOption(InterfaceOption io, InterfaceOptionAccount ioa) {
 		assert io != null;
 		final AccountInterfaceOption aio = entityAssembler.assembleEntity(AccountInterfaceOption.class, null, false);
-		aio.setNew(false);
 		aio.setAnnualCost(io.getAnnualCost());
 		aio.setAnnualPrice(io.getBaseAnnualPrice());
 		aio.setBaseAnnualPrice(io.getBaseAnnualPrice());
@@ -78,7 +77,6 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 		for(final InterfaceOptionParameterDefinition iopd : io.getParameters()) {
 			final AccountInterfaceOptionParameter aiop = entityAssembler.assembleEntity(AccountInterfaceOptionParameter.class, null, false);
 			aiops.add(aiop);
-			aiop.setNew(false);
 			aiop.setCode(iopd.getCode());
 			aiop.setName(iopd.getName());
 			aiop.setDescription(iopd.getDescription());
@@ -117,7 +115,6 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 		}
 
 		final AccountInterface ai = entityAssembler.assembleEntity(AccountInterface.class, null, false);
-		ai.setNew(false);
 		ai.setAccountId(accountId);
 		ai.setInterfaceId(interfaceId);
 		ai.setName(intf.getName());

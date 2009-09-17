@@ -25,6 +25,8 @@ import com.tll.client.ui.edit.IEditHandler;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.client.ui.msg.IMsgDisplay;
+import com.tll.client.validate.ErrorClassifier;
+import com.tll.client.validate.ErrorHandlerBuilder;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
@@ -97,7 +99,7 @@ class InterfaceStack extends StackPanel implements IHasRpcHandlers, IListingHand
 		 */
 		public InterfacePanel(ModelKey intfRef, boolean showCancelBtn, boolean showDeleteBtn) {
 			super(fldPnlResolver.resolveFieldPanel(intfRef), showCancelBtn,
-					showDeleteBtn, new GlobalMsgPanel(), true);
+					showDeleteBtn, ErrorHandlerBuilder.build(true, true, new GlobalMsgPanel()));
 			this.intfRef = intfRef;
 
 			addEditHandler(this);
@@ -117,7 +119,7 @@ class InterfaceStack extends StackPanel implements IHasRpcHandlers, IListingHand
 		}
 
 		public void loadIfNecessary() {
-			if(getModel() == null) {
+			if(fieldPanel.getModel() == null) {
 				final IRpcCommand cmd = loader.load(intfRef, auxDataRequest);
 				cmd.setSource(this);
 				DeferredCommand.addCommand(cmd);
@@ -128,13 +130,13 @@ class InterfaceStack extends StackPanel implements IHasRpcHandlers, IListingHand
 		public void onEdit(EditEvent event) {
 			switch(event.getOp()) {
 				case ADD:
-					crud.add(getModel());
+					crud.add(fieldPanel.getModel());
 					break;
 				case UPDATE:
-					crud.update(getModel());
+					crud.update(fieldPanel.getModel());
 					break;
 				case DELETE:
-					crud.purge(getModel().getKey());
+					crud.purge(fieldPanel.getModel().getKey());
 					break;
 				case CANCEL:
 					// remove the pending add from the stack
@@ -152,7 +154,7 @@ class InterfaceStack extends StackPanel implements IHasRpcHandlers, IListingHand
 		@Override
 		public void onModelChangeEvent(ModelChangeEvent event) {
 			if(event.getStatus().hasErrors()) {
-				applyFieldErrors(event.getStatus().getMsgs(MsgAttr.FIELD.flag));
+				applyFieldErrors(event.getStatus().getMsgs(MsgAttr.FIELD.flag), ErrorClassifier.SERVER, true);
 				return;
 			}
 			switch(event.getChangeOp()) {
@@ -163,7 +165,7 @@ class InterfaceStack extends StackPanel implements IHasRpcHandlers, IListingHand
 
 				case UPDATED:
 					setModel(event.getModel());
-					msgDisplay.add(new Msg(getModel().descriptor() + " updated.", MsgLevel.INFO), null);
+					msgDisplay.add(new Msg(fieldPanel.getModel().descriptor() + " updated.", MsgLevel.INFO), null);
 					break;
 
 				case ADDED:
@@ -172,11 +174,11 @@ class InterfaceStack extends StackPanel implements IHasRpcHandlers, IListingHand
 					setModel(event.getModel());
 					showCancelButton(false);
 					showDeleteButton(true);
-					msgDisplay.add(new Msg(getModel().descriptor() + " added.", MsgLevel.INFO), null);
+					msgDisplay.add(new Msg(fieldPanel.getModel().descriptor() + " added.", MsgLevel.INFO), null);
 					break;
 
 				case DELETED:
-					msgDisplay.add(new Msg(getModel().descriptor() + " deleted.", MsgLevel.INFO), null);
+					msgDisplay.add(new Msg(fieldPanel.getModel().descriptor() + " deleted.", MsgLevel.INFO), null);
 					// remove interface
 					removeInterface(InterfacePanel.this);
 					break;

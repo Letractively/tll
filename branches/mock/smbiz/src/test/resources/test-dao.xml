@@ -21,7 +21,7 @@
       </run>
     </groups>
     <packages>
-      <package name="com.tll.dao.mock" />
+      <package name="com.tll.dao.db4o" />
     </packages>
   </test>
   

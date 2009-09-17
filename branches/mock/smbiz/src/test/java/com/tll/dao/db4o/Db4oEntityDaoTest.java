@@ -3,7 +3,7 @@
  * @author jpk
  * Jan 28, 2009
  */
-package com.tll.dao.mock;
+package com.tll.dao.db4o;
 
 import org.testng.annotations.Test;
 
@@ -13,16 +13,16 @@ import com.tll.model.SmbizEntityGraphBuilder;
 import com.tll.util.CommonUtil;
 
 /**
- * MockEntityDaoTest
+ * Db4oEntityDaoTest
  * @author jpk
  */
 @Test(groups = "dao")
-public class MockEntityDaoTest extends AbstractMockEntityDaoTest {
+public class Db4oEntityDaoTest extends AbstractDb4oEntityDaoTest {
 
 	@Override
 	protected IEntityDaoTestHandler<?>[] getDaoTestHandlers() {
 		try {
-			Class<?>[] handlerTypes = CommonUtil.getClasses("com.tll.dao", IEntityDaoTestHandler.class, true, null, null/*new FilenameFilter() {
+			final Class<?>[] handlerTypes = CommonUtil.getClasses("com.tll.dao", IEntityDaoTestHandler.class, true, null, null/*new FilenameFilter() {
 
 									@Override
 									public boolean accept(File dir, String name) {
@@ -30,21 +30,21 @@ public class MockEntityDaoTest extends AbstractMockEntityDaoTest {
 									}
 								}*/);
 
-			IEntityDaoTestHandler<?>[] arr = new IEntityDaoTestHandler[handlerTypes.length];
+			final IEntityDaoTestHandler<?>[] arr = new IEntityDaoTestHandler[handlerTypes.length];
 			int i = 0;
-			for(Class<?> type : handlerTypes) {
-				IEntityDaoTestHandler<?> handler = (IEntityDaoTestHandler<?>) type.newInstance();
+			for(final Class<?> type : handlerTypes) {
+				final IEntityDaoTestHandler<?> handler = (IEntityDaoTestHandler<?>) type.newInstance();
 				arr[i++] = handler;
 			}
 			return arr;
 		}
-		catch(ClassNotFoundException e) {
+		catch(final ClassNotFoundException e) {
 			throw new IllegalStateException("Unable to obtain the entity dao test handlers: " + e.getMessage(), e);
 		}
-		catch(InstantiationException e) {
+		catch(final InstantiationException e) {
 			throw new IllegalStateException("Unable to instantiate an entity dao test handler: " + e.getMessage(), e);
 		}
-		catch(IllegalAccessException e) {
+		catch(final IllegalAccessException e) {
 			throw new IllegalStateException("Unable to access an entity dao test handler: " + e.getMessage(), e);
 		}
 	}

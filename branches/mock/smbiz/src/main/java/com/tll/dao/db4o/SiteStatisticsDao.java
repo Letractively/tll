@@ -3,11 +3,11 @@
  * @author jpk
  * Nov 19, 2007
  */
-package com.tll.dao.mock;
+package com.tll.dao.db4o;
 
+import com.db4o.ObjectContainer;
 import com.google.inject.Inject;
 import com.tll.dao.ISiteStatisticsDao;
-import com.tll.model.EntityGraph;
 
 
 /**
@@ -15,15 +15,15 @@ import com.tll.model.EntityGraph;
  * TODO implement
  * @author jpk
  */
-public class SiteStatisticsDao extends EntityDao implements ISiteStatisticsDao {
+public class SiteStatisticsDao extends Db4oEntityDao implements ISiteStatisticsDao {
 
 	/**
 	 * Constructor
-	 * @param entityGraph
+	 * @param oc
 	 */
 	@Inject
-	public SiteStatisticsDao(EntityGraph entityGraph) {
-		super(entityGraph);
+	public SiteStatisticsDao(ObjectContainer oc) {
+		super(oc);
 	}
 
 	public int numAddresses() {

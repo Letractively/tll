@@ -19,8 +19,8 @@ import com.google.inject.Scopes;
 import com.tll.AbstractInjectedTest;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
+import com.tll.di.Db4oDaoModule;
 import com.tll.di.EGraphModule;
-import com.tll.di.MockDaoModule;
 import com.tll.di.ModelModule;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
@@ -61,7 +61,7 @@ import com.tll.util.CommonUtil;
 				bind(IEntityGraphPopulator.class).to(SmbizEntityGraphBuilder.class).in(Scopes.SINGLETON);
 			}
 		});
-		modules.add(new MockDaoModule());
+		modules.add(new Db4oDaoModule());
 		modules.add(new Module() {
 
 			@Override

@@ -1,10 +1,8 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.dao;
 
-import com.tll.criteria.ISelectNamedQueryDef;
-import com.tll.criteria.SelectNamedQueries;
 import com.tll.model.Isp;
 
 /**
@@ -18,6 +16,7 @@ public class IspDaoTestHandler extends AbstractAccountDaoTestHandler<Isp> {
 		return Isp.class;
 	}
 
+	/*
 	@Override
 	public ISelectNamedQueryDef[] getQueriesToTest() {
 		return new ISelectNamedQueryDef[] { SelectNamedQueries.ISP_LISTING };
@@ -27,4 +26,5 @@ public class IspDaoTestHandler extends AbstractAccountDaoTestHandler<Isp> {
 	public Sorting getSortingForTestQuery(ISelectNamedQueryDef qdef) {
 		return new Sorting("name");
 	}
+	 */
 }

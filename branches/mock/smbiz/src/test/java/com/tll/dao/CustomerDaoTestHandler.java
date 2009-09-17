@@ -3,12 +3,7 @@
  */
 package com.tll.dao;
 
-import com.tll.criteria.IQueryParam;
-import com.tll.criteria.ISelectNamedQueryDef;
-import com.tll.criteria.QueryParam;
-import com.tll.criteria.SelectNamedQueries;
 import com.tll.model.Customer;
-import com.tll.model.schema.PropertyType;
 
 /**
  * CustomerDaoTestHandler
@@ -21,6 +16,7 @@ public class CustomerDaoTestHandler extends AbstractAccountDaoTestHandler<Custom
 		return Customer.class;
 	}
 
+	/*
 	@Override
 	public ISelectNamedQueryDef[] getQueriesToTest() {
 		return new ISelectNamedQueryDef[] { SelectNamedQueries.CUSTOMER_LISTING };
@@ -35,4 +31,5 @@ public class CustomerDaoTestHandler extends AbstractAccountDaoTestHandler<Custom
 	public Sorting getSortingForTestQuery(ISelectNamedQueryDef qdef) {
 		return new Sorting("name");
 	}
+	 */
 }
