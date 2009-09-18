@@ -16,18 +16,17 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 import com.google.inject.Scopes;
-import com.tll.AbstractInjectedTest;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.criteria.QueryParam;
 import com.tll.criteria.SelectNamedQueries;
+import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.IDbShell;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.di.Db4oDaoModule;
-import com.tll.di.Db4oDbShellModule;
 import com.tll.di.EGraphModule;
 import com.tll.di.EntityServiceFactoryModule;
 import com.tll.di.ModelModule;
@@ -44,7 +43,7 @@ import com.tll.service.entity.IEntityServiceFactory;
  * @author jpk
  */
 @Test(groups = { "listhandler", "namedqueries" })
-public class NamedQueriesTest extends AbstractInjectedTest {
+public class NamedQueriesTest extends AbstractDbAwareTest {
 
 	private static final Map<SelectNamedQueries, SortColumn> querySortBindings =
 		new HashMap<SelectNamedQueries, SortColumn>();
@@ -127,8 +126,7 @@ public class NamedQueriesTest extends AbstractInjectedTest {
 				bind(IEntityGraphPopulator.class).to(SmbizEntityGraphBuilder.class).in(Scopes.SINGLETON);
 			}
 		});
-		modules.add(new Db4oDaoModule());
-		modules.add(new Db4oDbShellModule());
+		modules.add(new Db4oDaoModule(getConfig()));
 		modules.add(new EntityServiceFactoryModule());
 	}
 

@@ -26,32 +26,30 @@ public class BootstrapperTest {
 
 	private static final Log log = LogFactory.getLog(BootstrapperTest.class);
 
-	private String daoMode;
+	private String daoImpl;
 	private boolean employSecurity;
 
 	@BeforeTest(alwaysRun = true)
-	@Parameters(value = {"daoMode", "employSecurity" })
-		public void beforeTest(@Optional String daoModeStr, @Optional String useSecurity) {
+	@Parameters(value = {"daoImpl", "employSecurity" })
+	public void beforeTest(@Optional String daoImplStr, @Optional String securityImplStr) {
 
 		// handle the dao mode
-		this.daoMode = daoModeStr == null ? "MOCK" : daoModeStr;
-		log.debug("DaoMode: " + daoMode);
+		this.daoImpl = daoImplStr == null ? "db4o" : daoImplStr;
+		log.debug("Dao Impl: " + daoImpl);
 
 		// handle security mode
-		this.employSecurity = useSecurity == null ? false : Boolean.valueOf(useSecurity).booleanValue();
+		this.employSecurity = securityImplStr == null ? false : securityImplStr.equals("acegi");
 		log.debug("Employ security: " + this.employSecurity);
 	}
 
 	private ServletContext getMockServletContext() {
-		assert daoMode != null;
-		final boolean isMock = "MOCK".equals(daoMode);
 		final StringBuilder sb = new StringBuilder();
 		sb.append("com.tll.di.VelocityModule\r\n");
 		sb.append("com.tll.di.MailModule\r\n");
 		sb.append("com.tll.di.RefDataModule\r\n");
 		sb.append("com.tll.di.SmbizModelModule\r\n");
 		sb.append("com.tll.di.SmbizEGraphModule\r\n");
-		sb.append(!isMock ? "TODO\r\n" : "com.tll.di.MockDaoModule\r\n");
+		sb.append("com.tll.di.Db4oDaoModule\r\n");
 		sb.append("com.tll.di.EntityServiceFactoryModule\r\n");
 		if(employSecurity) sb.append("com.tll.di.SmbizAcegiModule\r\n");
 		sb.append("com.tll.di.LogExceptionHandlerModule\r\n");

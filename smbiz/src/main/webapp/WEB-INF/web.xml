@@ -182,6 +182,9 @@
   </servlet-mapping>
   <!-- END SECURITY ACEGI -->
   
+  <!-- START DB DB4O -->
+  <!-- END DB DB4O -->
+  
   <!-- START DB JDO -->
   <filter>
     <filter-name>OpenEntityManagerInViewFilter</filter-name>
@@ -193,9 +196,6 @@
     <url-pattern>/adminLogin/*</url-pattern>
   </filter-mapping>
   <!-- END DB JDO -->
-  
-  <!-- START DB MOCK -->
-  <!-- END DB MOCK -->
   
   <filter>
     <filter-name>WebClientCacheFilter</filter-name>

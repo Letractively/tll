@@ -18,6 +18,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.inject.Injector;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
@@ -247,6 +248,9 @@ public abstract class AbstractEntityDaoTest extends AbstractDbAwareTest {
 		afterClass();
 	}
 
+	/**
+	 * This method is invoked <em>after</em> the test {@link Injector} instance is created.
+	 */
 	protected void doBeforeClass() {
 		getDbShell().delete();
 		getDbShell().create();
@@ -262,7 +266,7 @@ public abstract class AbstractEntityDaoTest extends AbstractDbAwareTest {
 		}
 
 		// build the injector
-		buildInjector();
+		buildTestInjector();
 		assert injector != null;
 
 		doBeforeClass();

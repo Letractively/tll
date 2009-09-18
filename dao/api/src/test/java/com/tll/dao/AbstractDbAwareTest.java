@@ -5,7 +5,7 @@ package com.tll.dao;
 
 import java.util.List;
 
-import com.tll.AbstractInjectedTest;
+import com.tll.AbstractConfigAwareTest;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.criteria.Criteria;
@@ -17,7 +17,30 @@ import com.tll.model.key.PrimaryKey;
  * AbstractDbAwareTest
  * @author jpk
  */
-public abstract class AbstractDbAwareTest extends AbstractInjectedTest {
+public abstract class AbstractDbAwareTest extends AbstractConfigAwareTest {
+
+	/**
+	 * Constructor
+	 */
+	public AbstractDbAwareTest() {
+		super();
+	}
+
+	/**
+	 * Constructor
+	 * @param config
+	 */
+	public AbstractDbAwareTest(Config config) {
+		super(config);
+	}
+
+	/**
+	 * Constructor
+	 * @param configRefs
+	 */
+	public AbstractDbAwareTest(ConfigRef... configRefs) {
+		super(configRefs);
+	}
 
 	/**
 	 * Manual loading of an entity from the db given a dao impl instance.
@@ -53,25 +76,6 @@ public abstract class AbstractDbAwareTest extends AbstractInjectedTest {
 		catch(final InvalidCriteriaException e) {
 			throw new IllegalStateException("Unexpected invalid criteria exception occurred: " + e.getMessage());
 		}
-	}
-
-	protected final Config config;
-
-	/**
-	 * Constructor
-	 */
-	public AbstractDbAwareTest() {
-		super();
-		this.config = Config.load();
-	}
-
-	/**
-	 * Constructor
-	 * @param configRefs
-	 */
-	public AbstractDbAwareTest(ConfigRef... configRefs) {
-		super();
-		this.config = Config.load(configRefs);
 	}
 
 	protected final IDbTrans getDbTrans() {

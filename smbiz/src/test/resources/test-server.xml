@@ -13,8 +13,8 @@
     </packages>
   </test>
 
-  <test name="server-bootstrap-test-mock-nosecurity" annotations="JDK">
-    <parameter name="daoMode" value="MOCK" />
+  <test name="server-bootstrap-test-db4o-nosecurity" annotations="JDK">
+    <parameter name="daoImpl" value="db4o" />
     <parameter name="employSecurity" value="false" />
     <groups>
       <run>

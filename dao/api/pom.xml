@@ -114,7 +114,6 @@
       <scope>test</scope>
     </dependency>
     
-    <!-- for mocked entities (in memory object graph) -->
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>

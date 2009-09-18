@@ -81,6 +81,12 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>tll-config</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>client-model</artifactId>
       <version>${project.version}</version>
       <classifier>testassets</classifier>
@@ -88,7 +94,14 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao-mock</artifactId>
+      <artifactId>tll-dao-api</artifactId>
+      <version>${project.version}</version>
+      <classifier>testassets</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-db4o</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

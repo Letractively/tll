@@ -5,13 +5,15 @@ import java.util.List;
 
 import org.testng.annotations.Test;
 
+import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.tll.dao.AbstractEntityDaoTest;
+import com.tll.dao.IDbTrans;
+import com.tll.dao.db4o.test.Db4oTrans;
 import com.tll.di.Db4oDaoModule;
 import com.tll.di.EGraphModule;
 import com.tll.di.ModelModule;
-import com.tll.di.test.Db4oDbTestModule;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityGraphPopulator;
 import com.tll.model.key.PrimaryKey;
@@ -23,11 +25,10 @@ import com.tll.model.key.PrimaryKey;
 @Test(groups = { "dao", "db4o" })
 public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest {
 
-	/**
-	 * Constructor
-	 */
-	public AbstractDb4oEntityDaoTest() {
-		super();
+	@Override
+	protected void doBeforeClass() {
+		getConfig().setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
+		super.doBeforeClass();
 	}
 
 	@Override
@@ -47,8 +48,16 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest {
 				bind(IEntityGraphPopulator.class).to(getEntityGraphPopulator()).in(Scopes.SINGLETON);
 			}
 		});
-		modules.add(new Db4oDaoModule());
-		modules.add(new Db4oDbTestModule());
+		getConfig().setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
+		modules.add(new Db4oDaoModule(getConfig()));
+		modules.add(new Module() {
+
+			@Override
+			public void configure(Binder binder) {
+				// IDbTrans
+				binder.bind(IDbTrans.class).to(Db4oTrans.class).in(Scopes.SINGLETON);
+			}
+		});
 	}
 
 	@Override

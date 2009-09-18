@@ -78,10 +78,8 @@
     <plugins>
 
       <!-- 
-        Compile Time Weave @Transactional aspects irregardless of dao mode profile
+        Compile Time Weave @Transactional aspects irregardless of dao impl profile
         as we are profile agnostic and build jars for both.
-        NOTE: this weaving doesn't adversly affect debugging when in mock mode.
-              We are still able to do line level debugging.
         ALSO NOTE: the weaving brings in tll-service *.class/*.java files into the local build classes dir!!
       -->
       <!--  
@@ -156,6 +154,14 @@
                   <groupId>org.springframework</groupId>
                   <artifactId>spring-jdbc</artifactId>
                 </element>
+						    <element>
+						      <groupId>com.google.code.guice</groupId>
+						      <artifactId>guice</artifactId>
+						    </element>
+						    <element>
+						      <groupId>aopalliance</groupId>
+						      <artifactId>aopalliance</artifactId>
+						    </element>
                 <element>
                   <groupId>com.tll</groupId>
                   <artifactId>tll-dao-api</artifactId>
@@ -164,6 +170,11 @@
                 <element>
                   <groupId>com.tll</groupId>
                   <artifactId>tll-dao-db4o</artifactId>
+                  <version>${project.parent.version}</version>
+                </element>
+                <element><!-- needed for Db4oDbShell -->
+                  <groupId>com.tll</groupId>
+                  <artifactId>tll-egraph</artifactId>
                   <version>${project.parent.version}</version>
                 </element>
               </classpath>
@@ -177,8 +188,7 @@
                 b.generateGwtConstantsFile();
                 b.generateWebXml();
                 b.copyWebappResources();
-                //b.stubDbIfNecessary()
-                //println 'temp disabled'
+                b.stubDbIfNecessary()
               ]]></source>
             </configuration>
           </execution>
@@ -216,7 +226,7 @@
               <outputDirectory>target/war/WEB-INF/lib</outputDirectory>
               <appendAssemblyId>false</appendAssemblyId>
               <descriptors>
-                <descriptor>src/main/assembly/tll-server-${daoMode}.xml</descriptor>
+                <descriptor>src/main/assembly/tll-server-${daoImpl}.xml</descriptor>
               </descriptors>
             </configuration>
           </execution>
@@ -365,20 +375,20 @@
       </build>
     </profile>
     
-    <!-- dao mode profiles -->
+    <!-- db type profiles -->
     <profile>
       <id>jdo</id>
       <properties>
-        <daoMode>jdo</daoMode>
+        <daoImpl>jdo</daoImpl>
       </properties>
     </profile>
     <profile>
-      <id>mock</id>
+      <id>db4o</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <daoMode>mock</daoMode>
+        <daoImpl>db4o</daoImpl>
       </properties>
     </profile>
     
