@@ -11,7 +11,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
-import com.tll.AbstractInjectedTest;
 import com.tll.common.data.ListingOp;
 import com.tll.common.data.ListingPayload;
 import com.tll.common.data.ListingRequest;
@@ -20,25 +19,24 @@ import com.tll.common.model.Model;
 import com.tll.common.search.test.TestAddressSearch;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
+import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.Sorting;
+import com.tll.di.Db4oDaoModule;
 import com.tll.di.EntityServiceFactoryModule;
 import com.tll.di.LogExceptionHandlerModule;
 import com.tll.di.MailModule;
-import com.tll.di.MockDaoModule;
 import com.tll.di.RefDataModule;
-import com.tll.di.TestEGraphModule;
 import com.tll.di.TestListingModule;
 import com.tll.di.TestMarshalModule;
-import com.tll.di.TestModelModule;
+import com.tll.di.TestPersistenceUnitModelModule;
 import com.tll.listhandler.ListHandlerType;
 
 /**
  * ListingProcessorTest - Tests the {@link ListingProcessor}.
  * @author jpk
  */
-@Test(groups = {
-	"server", "listing" })
-	public class ListingProcessorTest extends AbstractInjectedTest {
+@Test(groups = { "server", "listing" })
+public class ListingProcessorTest extends AbstractDbAwareTest {
 
 	static final String ssnId1 = "1";
 	static final String ssnId2 = "2";
@@ -56,9 +54,8 @@ import com.tll.listhandler.ListHandlerType;
 		// as it implicitly binds at the MailModule constrctor
 		modules.add(new MailModule(Config.load(new ConfigRef("config-mail.properties"))));
 
-		modules.add(new TestModelModule());
-		modules.add(new TestEGraphModule());
-		modules.add(new MockDaoModule());
+		modules.add(new TestPersistenceUnitModelModule());
+		modules.add(new Db4oDaoModule(getConfig()));
 		modules.add(new EntityServiceFactoryModule());
 		modules.add(new LogExceptionHandlerModule());
 		modules.add(new TestMarshalModule());

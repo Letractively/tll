@@ -1,22 +1,8 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="smbiz-dao-tests">
   
-  <!-- 
-  <test name="listhandler-namedqueries-orm" annotations="JDK">
-    <parameter name="mock" value="false" />
-    <groups>
-      <run>
-        <include name="namedqueries" />
-      </run>
-    </groups>
-    <packages>
-      <package name="com.tll.listhandler" />
-    </packages>
-  </test>
-  -->
-  
-  <test name="listhandler-namedqueries-mock" annotations="JDK">
-    <parameter name="mock" value="true" />
+  <test name="listhandler-namedqueries-db4o" annotations="JDK">
+    <parameter name="db4o" value="true" />
     <groups>
       <run>
         <include name="namedqueries" />

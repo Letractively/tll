@@ -10,10 +10,11 @@ import java.util.List;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.inject.Binder;
+import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
-import com.tll.AbstractInjectedTest;
 import com.tll.common.data.AuxDataPayload;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.IModelRelatedRequest;
@@ -31,19 +32,22 @@ import com.tll.common.model.test.TestEntityType;
 import com.tll.common.search.PrimaryKeySearch;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
+import com.tll.dao.AbstractDbAwareTest;
+import com.tll.dao.IDbShell;
+import com.tll.dao.IDbTrans;
+import com.tll.dao.IEntityDao;
+import com.tll.dao.db4o.test.Db4oTrans;
 import com.tll.di.ClientPersistModule;
-import com.tll.di.EGraphModule;
+import com.tll.di.Db4oDaoModule;
 import com.tll.di.EntityServiceFactoryModule;
 import com.tll.di.LogExceptionHandlerModule;
 import com.tll.di.MailModule;
 import com.tll.di.MarshalModule;
-import com.tll.di.MockDaoModule;
-import com.tll.di.ModelModule;
 import com.tll.di.RefDataModule;
-import com.tll.model.IEntityAssembler;
-import com.tll.model.IEntityGraphPopulator;
-import com.tll.model.TestPersistenceUnitEntityAssembler;
-import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
+import com.tll.di.TestPersistenceUnitModelModule;
+import com.tll.model.Address;
+import com.tll.model.EntityBeanFactory;
+import com.tll.model.IEntity;
 import com.tll.refdata.RefDataType;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.rpc.entity.test.TestAddressService;
@@ -55,7 +59,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
  */
 @Test(groups = {
 	"server", "client-persist" })
-	public class PersistServiceDelegateTest extends AbstractInjectedTest {
+	public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 
 	@Override
 	protected void addModules(List<Module> modules) {
@@ -65,21 +69,8 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 		// as it implicitly binds at the MailModule constrctor
 		modules.add(new MailModule(Config.load(new ConfigRef("config-mail.properties"))));
 
-		modules.add(new ModelModule() {
-
-			@Override
-			protected void bindEntityAssembler() {
-				bind(IEntityAssembler.class).to(TestPersistenceUnitEntityAssembler.class).in(Scopes.SINGLETON);
-			}
-		});
-		modules.add(new EGraphModule() {
-
-			@Override
-			protected void bindEntityGraphBuilder() {
-				bind(IEntityGraphPopulator.class).to(TestPersistenceUnitEntityGraphBuilder.class).in(Scopes.SINGLETON);
-			}
-		});
-		modules.add(new MockDaoModule());
+		modules.add(new TestPersistenceUnitModelModule());
+		modules.add(new Db4oDaoModule(getConfig()));
 		modules.add(new EntityServiceFactoryModule());
 		modules.add(new LogExceptionHandlerModule());
 		modules.add(new MarshalModule() {
@@ -126,11 +117,27 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 				}).in(Scopes.SINGLETON);
 			}
 		});
+		modules.add(new Module() {
+
+			@Override
+			public void configure(Binder binder) {
+				binder.bind(IDbTrans.class).to(Db4oTrans.class).in(Scopes.SINGLETON);
+			}
+		});
 	}
 
 	@Override
 	@BeforeClass
 	protected void beforeClass() {
+		// create the db shell first (before test injector creation) to avoid db4o
+		// file lock when objectcontainer is instantiated
+		final Config cfg = Config.load();
+		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
+		final Injector i = buildInjector(new Db4oDaoModule(cfg));
+		final IDbShell dbs = i.getInstance(IDbShell.class);
+		dbs.delete();
+		dbs.create();
+
 		super.beforeClass();
 	}
 
@@ -142,22 +149,44 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 				.getInstance(IPersistServiceImplResolver.class));
 	}
 
+	private EntityBeanFactory getEntityBeanFactory() {
+		return injector.getInstance(EntityBeanFactory.class);
+	}
+
+	private void addEntityToDb(IEntity entity) {
+		// stub address first
+		final IDbTrans dbt = getDbTrans();
+		dbt.startTrans();
+		dbt.setComplete();
+		try {
+			injector.getInstance(IEntityDao.class).persist(entity);
+		}
+		finally {
+			if(dbt.isTransStarted()) dbt.endTrans();
+		}
+	}
+
 	/**
 	 * Tests {@link PersistServiceDelegate#load(LoadRequest)}
 	 * @throws Exception
 	 */
 	@Test
 	public void testLoad() throws Exception {
-		final PersistServiceDelegate delegate = getDelegate();
 
-		final PrimaryKeySearch search = new PrimaryKeySearch(new ModelKey(TestEntityType.ADDRESS, "1", null));
+		// add test entity to db first
+		final Address a = getEntityBeanFactory().getEntityCopy(Address.class, true);
+		final String id = a.getId();
+		addEntityToDb(a);
+
+		final PersistServiceDelegate delegate = getDelegate();
+		final PrimaryKeySearch search = new PrimaryKeySearch(new ModelKey(TestEntityType.ADDRESS, id, null));
 		final LoadRequest<PrimaryKeySearch> request = new LoadRequest<PrimaryKeySearch>(search);
 		final ModelPayload p = delegate.load(request);
 
 		assert p != null;
 		final Model m = p.getModel();
 		assert m != null;
-		assert m.getId() != null && m.getId().equals("1") && m.getEntityType() != null
+		assert m.getId() != null && m.getId().equals(id) && m.getEntityType() != null
 		&& m.getEntityType().equals(TestEntityType.ADDRESS);
 	}
 
@@ -173,7 +202,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 
 		Model m = new Model(TestEntityType.ADDRESS, true);
 		m.set(new StringPropertyValue(Model.ID_PROPERTY, "10000"));
-		m.set(new StringPropertyValue("address1", "1 tee street"));
+		m.set(new StringPropertyValue("address1", "1 tee streetU"));
 		m.set(new StringPropertyValue("address2", "2 bee"));
 		m.set(new StringPropertyValue("city", "the city"));
 		m.set(new StringPropertyValue("country", "us"));
@@ -204,11 +233,16 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 	 */
 	@Test
 	public void testUpdate() throws Exception {
+		// add test entity to db first
+		final Address a = getEntityBeanFactory().getEntityCopy(Address.class, true);
+		final String id = a.getId();
+		addEntityToDb(a);
+
 		final PersistServiceDelegate delegate = getDelegate();
 
 		Model m = new Model(TestEntityType.ADDRESS, true);
 		m.set(new IntPropertyValue(Model.VERSION_PROPERTY, 0));
-		m.set(new StringPropertyValue(Model.ID_PROPERTY, "10000"));
+		m.set(new StringPropertyValue(Model.ID_PROPERTY, id));
 		m.set(new StringPropertyValue("address1", "1 tee street"));
 		m.set(new StringPropertyValue("address2", "2 bee"));
 		m.set(new StringPropertyValue("city", "the city"));
@@ -226,7 +260,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 		assert p != null;
 		m = p.getModel();
 		assert m != null;
-		assert m.getId() != null && m.getId().equals("10000") && m.getEntityType() != null
+		assert m.getId() != null && m.getId().equals(id) && m.getEntityType() != null
 		&& m.getEntityType().equals(TestEntityType.ADDRESS);
 		final Object ov = m.getProperty("version");
 		assert ov != null && ov.equals(1);
@@ -240,9 +274,13 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 	 */
 	@Test
 	public void testDelete() throws Exception {
-		final PersistServiceDelegate delegate = getDelegate();
+		// add test entity to db first
+		final Address a = getEntityBeanFactory().getEntityCopy(Address.class, true);
+		final String id = a.getId();
+		addEntityToDb(a);
 
-		final ModelKey origMk = new ModelKey(TestEntityType.ADDRESS, "2", null);
+		final PersistServiceDelegate delegate = getDelegate();
+		final ModelKey origMk = new ModelKey(TestEntityType.ADDRESS, id, null);
 		final ModelPayload p = delegate.purge(new PurgeRequest(origMk));
 		assert p != null;
 		final ModelKey mk = p.getRef();
@@ -257,7 +295,6 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 	@Test
 	public void testLoadAuxData() throws Exception {
 		final PersistServiceDelegate delegate = getDelegate();
-
 		final AuxDataRequest adr = new AuxDataRequest();
 		adr.requestAppRefData(RefDataType.ISO_COUNTRY_CODES);
 		adr.requestEntityList(TestEntityType.ADDRESS);

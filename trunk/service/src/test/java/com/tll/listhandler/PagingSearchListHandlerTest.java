@@ -9,32 +9,33 @@ import java.util.Set;
 
 import javax.validation.ValidatorFactory;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.inject.Binder;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
+import com.tll.config.Config;
 import com.tll.criteria.Criteria;
 import com.tll.dao.AbstractDbAwareTest;
+import com.tll.dao.IDbShell;
+import com.tll.dao.IDbTrans;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
-import com.tll.di.EGraphModule;
-import com.tll.di.MockDaoModule;
-import com.tll.di.ModelModule;
-import com.tll.di.test.MockDbTestModule;
+import com.tll.dao.db4o.test.Db4oTrans;
+import com.tll.di.Db4oDaoModule;
+import com.tll.di.TestPersistenceUnitModelModule;
 import com.tll.model.Address;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntityAssembler;
-import com.tll.model.IEntityGraphPopulator;
-import com.tll.model.TestPersistenceUnitEntityAssembler;
-import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
 import com.tll.service.entity.EntityService;
 import com.tll.service.entity.IEntityService;
 
@@ -49,6 +50,7 @@ public class PagingSearchListHandlerTest extends AbstractDbAwareTest {
 	 * TestEntityService
 	 * @author jpk
 	 */
+	@Transactional
 	static final class TestEntityService extends EntityService<Address> {
 
 		/**
@@ -73,13 +75,6 @@ public class PagingSearchListHandlerTest extends AbstractDbAwareTest {
 	 */
 	private static final int NUM_LIST_ELEMENTS = 100;
 
-	/**
-	 * Constructor
-	 */
-	public PagingSearchListHandlerTest() {
-		super();
-	}
-
 	@BeforeClass(alwaysRun = true)
 	public void onBeforeClass() {
 		beforeClass();
@@ -92,47 +87,31 @@ public class PagingSearchListHandlerTest extends AbstractDbAwareTest {
 
 	@Override
 	protected void beforeClass() {
+		// create the db shell first (before test injector creation) to avoid db4o
+		// file lock when objectcontainer is instantiated
+		final Config cfg = Config.load();
+		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
+		final Injector i = buildInjector(new Db4oDaoModule(cfg));
+		final IDbShell dbs = i.getInstance(IDbShell.class);
+		dbs.delete();
+		dbs.create();
+
 		super.beforeClass();
-
-		// create the db shell
-		getDbShell().create();
-		getDbShell().clear();
-
-	}
-
-	@Override
-	protected void afterClass() {
-		super.afterClass();
-		// drop the db
-		getDbShell().delete();
 	}
 
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new ModelModule() {
-
-			@Override
-			protected void bindEntityAssembler() {
-				bind(IEntityAssembler.class).to(TestPersistenceUnitEntityAssembler.class).in(Scopes.SINGLETON);
-			}
-		});
-		modules.add(new EGraphModule() {
-
-			@Override
-			protected void bindEntityGraphBuilder() {
-				bind(IEntityGraphPopulator.class).to(TestPersistenceUnitEntityGraphBuilder.class).in(Scopes.SINGLETON);
-			}
-		});
-		modules.add(new MockDaoModule());
+		modules.add(new TestPersistenceUnitModelModule());
+		modules.add(new Db4oDaoModule(getConfig()));
 		modules.add(new Module() {
 
 			@Override
 			public void configure(Binder binder) {
+				binder.bind(IDbTrans.class).to(Db4oTrans.class).in(Scopes.SINGLETON);
 				binder.bind(new TypeLiteral<IEntityService<Address>>() {}).to(TestEntityService.class).in(Scopes.SINGLETON);
 			}
 		});
-		modules.add(new MockDbTestModule());
 	}
 
 	protected final IEntityDao getEntityDao() {

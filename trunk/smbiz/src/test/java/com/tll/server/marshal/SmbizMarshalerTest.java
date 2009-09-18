@@ -16,9 +16,9 @@ import org.testng.annotations.Test;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
-import com.tll.AbstractInjectedTest;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
+import com.tll.dao.AbstractDbAwareTest;
 import com.tll.di.Db4oDaoModule;
 import com.tll.di.EGraphModule;
 import com.tll.di.ModelModule;
@@ -36,7 +36,7 @@ import com.tll.util.CommonUtil;
  */
 @Test(groups = {
 	"server", "client-model" })
-	public class SmbizMarshalerTest extends AbstractInjectedTest {
+	public class SmbizMarshalerTest extends AbstractDbAwareTest {
 
 	protected static final Map<String, Object> tupleMap = new HashMap<String, Object>();
 
@@ -61,7 +61,7 @@ import com.tll.util.CommonUtil;
 				bind(IEntityGraphPopulator.class).to(SmbizEntityGraphBuilder.class).in(Scopes.SINGLETON);
 			}
 		});
-		modules.add(new Db4oDaoModule());
+		modules.add(new Db4oDaoModule(getConfig()));
 		modules.add(new Module() {
 
 			@Override

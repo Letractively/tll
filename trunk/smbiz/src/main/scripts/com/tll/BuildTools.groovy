@@ -6,28 +6,37 @@
  
 package com.tll;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.ConfigProcessor;
+import com.tll.dao.IDbShell;
+import com.tll.di.Db4oDaoModule;
 
 /**
- * BuildTools - Utility class for project building.
+ * BuildTools - Utility class for smbiz project building.
  * @author jpk
  */
 public final class BuildTools {
 	 
+	static final String DEFAULT_STAGE = 'debug'
+	static final String DEFAULT_DAO_IMPL = 'db40'
+	static final String DEFAULT_SECURITY_IMPL = 'nosecurity'
+	 
 	static final int FLAG_ALL = 0;
-	static final int FLAG_JDO = 1;
-	static final int FLAG_MOCK = 1 << 1;
+	static final int FLAG_DB_DB4O = 1;
+	static final int FLAG_DB_JDO = 1 << 1;
 	static final int FLAG_SECURITY_ACEGI = 1 << 2;
 	static final int FLAG_SECURITY_NONE = 1 << 3;
 	 
 	static final def NL = System.getProperty("line.separator")
 
-	static final def regex_security_none = /(?s)<!-- START NO SECURITY -->(.*)<!-- END NO SECURITY -->/
-	static final def regex_security_acegi = /(?s)<!-- START SECURITY ACEGI -->(.*)<!-- END SECURITY ACEGI -->/
+	static final def regex_db_db4o = /(?s)<!-- START DB DB4O -->(.*)<!-- END DB DB4O -->/
 	static final def regex_db_jdo = /(?s)<!-- START DB JDO -->(.*)<!-- END DB JDO -->/
-	static final def regex_db_mock = /(?s)<!-- START DB MOCK -->(.*)<!-- END DB MOCK -->/
+	static final def regex_security_acegi = /(?s)<!-- START SECURITY ACEGI -->(.*)<!-- END SECURITY ACEGI -->/
+	static final def regex_security_none = /(?s)<!-- START NO SECURITY -->(.*)<!-- END NO SECURITY -->/
 	
 	// all di module ref arrays of format: [name, flags]
 	// where flags indicates the eligibility of inclusion into the 
@@ -36,12 +45,13 @@ public final class BuildTools {
 	                              ['com.tll.di.VelocityModule', FLAG_ALL],
 	                              ['com.tll.di.MailModule', FLAG_ALL],
 	                              ['com.tll.di.RefDataModule', FLAG_ALL],
-	                              ['com.tll.di.EmailExceptionHandlerModule', FLAG_JDO],
-	                              ['com.tll.di.LogExceptionHandlerModule', FLAG_MOCK],
+	                              ['com.tll.di.EmailExceptionHandlerModule', FLAG_DB_JDO],
+	                              ['com.tll.di.LogExceptionHandlerModule', FLAG_DB_DB4O],
 	                              ['com.tll.di.SmbizModelModule', FLAG_ALL],
-	                              ['com.tll.di.SmbizEGraphModule', FLAG_MOCK],
-	                              ['com.tll.di.JdoDaoModule', FLAG_JDO],
-	                              ['com.tll.di.MockDaoModule', FLAG_MOCK],
+	                              ['com.tll.di.SmbizEGraphModule', FLAG_DB_DB4O],
+	                              ['com.tll.di.JdoDaoModule', FLAG_DB_JDO],
+	                              ['com.tll.di.Db4oModule', FLAG_DB_DB4O],
+	                              ['com.tll.di.Db4oDaoModule', FLAG_DB_DB4O],
 	                              ['com.tll.di.EntityServiceFactoryModule', FLAG_ALL],
 	                              ['com.tll.di.SmbizMarshalModule', FLAG_ALL],
 	                              ['com.tll.di.SmbizClientPersistModule', FLAG_ALL],
@@ -87,9 +97,13 @@ public final class BuildTools {
 	private Config config;
 	
 	/**
-	 * The debug, dao mode and security mode flags.
+	 * The project properties.
 	 */
-	private boolean debug, isMock, isSecurity;
+	private String stage, daoImpl, securityImpl;
+	
+	private int daoImplFlag, securityImplFlag;
+	
+	private int flags;
 	
 	/**
 	 * Constructor
@@ -115,34 +129,40 @@ public final class BuildTools {
 		String dir = basedir + "/src/main/resources";
 		this.config = ConfigProcessor.merge(dir, mode, 'local')
 		
-		// add build specific 'debug' property
-		config.addProperty('debug', project.properties.debug)
-		
-		// require that debug and environment config props exist
-		if(config.getString('debug') == null) {
-			throw new IllegalStateException("No debug property present.")
-		}
-		if(config.getString('environment') == null) {
-			throw new IllegalStateException("No environment property present.")
-		}
-		
-		this.debug = config.getBoolean('debug')
+		// obtain the stage
+		this.stage = config.getString('stage', DEFAULT_STAGE)
 	
-		// retain the dao mode
-		String daoMode = project.properties.daoMode
-		if(daoMode == null) {
-			throw new IllegalStateException('No dao mode found.')
+		// obtain the dao impl
+		this.daoImpl = project.properties.daoImpl
+		if(daoImpl == null) {
+			daoImpl = DEFAULT_DAO_IMPL
+			println 'No dao impl specified in project properties reverted to default' 
 		}
-		println "daoMode: ${daoMode}"
-		this.isMock = (daoMode == 'mock')
+		println "daoImpl: ${daoImpl}"
+		switch(daoImpl) {
+			case 'db4o': daoImplFlag = FLAG_DB_DB4O; break
+			case 'jdo': daoImplFlag = FLAG_DB_JDO; break
+			default: throw new IllegalArgumentException("Unhandled dao impl: ${daoImpl}")
+		}
 		
-		// retain the security mode
-		String securityMode = project.properties.securityMode
-		if(securityMode == null) {
-			throw new IllegalStateException('No security mode found.')
+		// obtain the security impl
+		this.securityImpl = project.properties.securityImpl
+		if(securityImpl == null) {
+			securityImpl = DEFAULT_SECURITY_IMPL
+			println 'No security impl specified in project properties reverted to default' 
 		}
-		println "securityMode: ${securityMode}"
-		this.isSecurity = (securityMode == 'acegi')
+		println "securityImpl: ${securityImpl}"
+		switch(securityImpl) {
+			case 'acegi': securityImplFlag = FLAG_SECURITY_ACEGI; break
+			case 'nosecurity': securityImplFlag = FLAG_SECURITY_NONE; break
+			default: throw new IllegalArgumentException("Unhandled security impl: ${securityImpl}")
+		}
+
+		// set 'debug' property to build config
+		config.setProperty('debug', this.stage == 'debug')
+		
+		// set the flags
+		this.flags = 0 | daoImplFlag | securityImplFlag;
 	}
 	
 	/**
@@ -170,9 +190,6 @@ public final class BuildTools {
 		Map props = [:];
 		
 		// add the di props
-		int flags = 0;
-		flags = flags | (isMock? FLAG_MOCK : FLAG_JDO);
-		flags = flags | (isSecurity? FLAG_SECURITY_ACEGI : FLAG_SECURITY_NONE);
 		def sb = new StringBuilder(1024)
 		DI_MODULES_ALL.each { elm ->
 			int flag = elm[1]
@@ -195,7 +212,7 @@ public final class BuildTools {
 		props.put('di.handlers', sb.toString())
 		
 		// web client caching policy
-		String tkn = debug? '' : '.js .css .gif .jpg .png'
+		String tkn = (this.stage == 'debug')? '' : '.js .css .gif .jpg .png'
 		props.put('oneDayCacheFileExts', tkn)
 		
 		// read web.xml
@@ -206,28 +223,26 @@ public final class BuildTools {
 		}
 		String s = sbuf.toString()
 		
-		// security/no security filtering
-		if(isSecurity) {
-			// remove regex_security_none
-			s = s.replaceAll(regex_security_none, '')
-			println 'NO SECURITY section filtered out'
-		}
-		else {
-			// remove regex_security_acegi
-			s = s.replaceAll(regex_security_acegi, '')
-			println 'ACEGI SECURITY section filtered out'
+		// dao impl filtering
+		println "  applying dao impl: ${daoImpl}"
+		switch(daoImpl) {
+			case 'db4o':
+				s = s.replaceAll(regex_db_jdo, '')
+				break;
+			case 'jdo':
+				s = s.replaceAll(regex_db_db40, '')
+				break
 		}
 		
-		// dao orm/mock filtering
-		if(!isMock) {
-			// remove mock
-			s = s.replaceAll(regex_db_mock, '')
-			println 'MOCK DAO section filtered out'
-		}
-		else {
-			// remove jdo
-			s = s.replaceAll(regex_db_jdo, '')
-			println 'JDO DAO section filtered out'
+		// security impl filtering
+		println "  applying security impl: ${daoImpl}"
+		switch(securityImpl) {
+			case 'nosecurity':
+			s = s.replaceAll(regex_security_acegi, '')
+			break
+			case 'acegi':
+				s = s.replaceAll(regex_security_none, '')
+				break
 		}
 		
 		s = s.replaceFirst(/(?s)<web-app>\s+/, '<web-app>' + NL + '\t')
@@ -276,22 +291,34 @@ public final class BuildTools {
 	/**
 	 * Stubs the app db if it doesn't exist.
 	 */
-	 // TODO fix
-	/*
 	private void stubDbIfNecessary() {
-		if(!isMock) {
-			String tgtDir = project.build.outputDirectory.toString()
-			File fSchema = new File(tgtDir, config.getString('db.resource.schema'))
-			File fStub = new File(tgtDir, config.getString('db.resource.stub'))
-			File fDelete = new File(tgtDir, config.getString('db.resource.delete'))
-			def shell = DbShellBuilder.getDbShell(config, 
-			  fSchema.toURI().toURL(), fStub.toURI().toURL(), fDelete.toURI().toURL());
-			if(shell.create()) {
+		
+		 // get a db shell instance
+		 IDbShell dbShell = null;
+		 switch(daoImpl) {
+			case 'db4o':
+				Injector i = Guice.createInjector(new Db4oDaoModule(config))
+				dbShell = i.getInstance(IDbShell.class);
+				break
+			case 'jdo':
+				// TODO implement
+				throw new UnsupportedOperationException()
+				/*
+				String tgtDir = project.build.outputDirectory.toString()
+				File fSchema = new File(tgtDir, config.getString('db.resource.schema'))
+				File fStub = new File(tgtDir, config.getString('db.resource.stub'))
+				File fDelete = new File(tgtDir, config.getString('db.resource.delete'))
+				def shell = DbShellBuilder.getDbShell(config, 
+				  fSchema.toURI().toURL(), fStub.toURI().toURL(), fDelete.toURI().toURL());
+				*/
+				break
+		}
+		if(dbShell != null) {
+			if(dbShell.create()) {
 			  println('Stubbing db..')
-			  shell.stub();
+			  dbShell.stub();
 			  println('db stubbed')
 			}
 		}
     }
-    */
 }

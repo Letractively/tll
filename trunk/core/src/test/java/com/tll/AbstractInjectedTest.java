@@ -19,12 +19,11 @@ import com.google.inject.Stage;
 public abstract class AbstractInjectedTest {
 
 	/**
-	 * Builds a Guice Injector from one or more {@link Module}s.
+	 * Builds a new {@link Injector} from one or more {@link Module}s.
 	 * @param modules The {@link Module}s to bind
 	 * @return A new {@link Injector}
 	 */
 	protected static final Injector buildInjector(Module... modules) {
-		assert modules != null && modules.length > 0;
 		return Guice.createInjector(Stage.DEVELOPMENT, modules);
 	}
 
@@ -43,24 +42,24 @@ public abstract class AbstractInjectedTest {
 	}
 
 	/**
-	 * Builds the Guice injector for this test calling on {@link #getModules()}.
+	 * Sets member property injector used for running the tests.
 	 */
-	protected final void buildInjector() {
+	protected final void buildTestInjector() {
 		assert injector == null : "The injector was already built";
-		logger.debug("Building dependency injector..");
-		final List<Module> modules = getModules();
-		if(modules != null && modules.size() > 0) {
-			this.injector = buildInjector(modules.toArray(new Module[modules.size()]));
+		logger.debug("Building test dependency injector..");
+		final Module[] modules = getModules();
+		if(modules != null && modules.length > 0) {
+			this.injector = buildInjector(modules);
 		}
 	}
 
 	/**
 	 * @return List of {@link Module}s for available for the derived tests.
 	 */
-	private List<Module> getModules() {
+	protected final Module[] getModules() {
 		final List<Module> list = new ArrayList<Module>();
 		addModules(list);
-		return list;
+		return list.toArray(new Module[list.size()]);
 	}
 
 	/**
@@ -75,7 +74,7 @@ public abstract class AbstractInjectedTest {
 	 * Before class hook.
 	 */
 	protected void beforeClass() {
-		buildInjector();
+		buildTestInjector();
 	}
 
 	/**

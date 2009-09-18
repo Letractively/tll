@@ -194,7 +194,21 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao-mock</artifactId>
+      <artifactId>tll-dao-api</artifactId>
+      <version>${project.version}</version>
+      <classifier>testassets</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-db4o</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-db4o</artifactId>
+      <classifier>testassets</classifier>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

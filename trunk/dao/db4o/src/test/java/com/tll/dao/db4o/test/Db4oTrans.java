@@ -3,7 +3,7 @@
  * @author jpk
  * @since Sep 16, 2009
  */
-package com.tll.dao.db4o;
+package com.tll.dao.db4o.test;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

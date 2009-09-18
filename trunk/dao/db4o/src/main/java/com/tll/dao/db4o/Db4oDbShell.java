@@ -31,22 +31,25 @@ public class Db4oDbShell implements IDbShell {
 
 	private static final Log log = LogFactory.getLog(Db4oDbShell.class);
 
+	@Inject
 	private final URI dbFile;
-	private final IEntityGraphPopulator egb;
+	@Inject(optional = true)
+	private final IEntityGraphPopulator populator;
+	@Inject
 	private final Configuration c;
 
 	/**
 	 * Constructor
 	 * @param dbFile A ref to the db file
-	 * @param egb The entity graph builder that defines the db "schema" and
+	 * @param populator The entity graph populator that defines the db "schema" and
 	 *        content.
 	 * @param c the db4o configuration
 	 */
-	@Inject
-	public Db4oDbShell(URI dbFile, IEntityGraphPopulator egb, Configuration c) {
+	//@Inject
+	public Db4oDbShell(URI dbFile, IEntityGraphPopulator populator, Configuration c) {
 		super();
 		this.dbFile = dbFile;
-		this.egb = egb;
+		this.populator = populator;
 		this.c = c;
 	}
 
@@ -80,8 +83,13 @@ public class Db4oDbShell implements IDbShell {
 		if(f.exists()) return false;
 		log.info("Creating db4o db: " + f.getName());
 		f = null;
-		final ObjectContainer db = instantiateObjectContainer();
-		db.close();
+		ObjectContainer db = null;
+		try {
+			db = instantiateObjectContainer();
+		}
+		finally {
+			if(db != null) db.close();
+		}
 		return true;
 	}
 
@@ -90,7 +98,7 @@ public class Db4oDbShell implements IDbShell {
 		final File f = getHandle();
 		if(!f.exists()) return false;
 		log.info("Deleting db4o db: " + f.getName());
-		f.delete();
+		if(!f.delete()) throw new IllegalStateException("Unable to delete db4o file: " + f.getAbsolutePath());
 		return true;
 	}
 
@@ -106,11 +114,13 @@ public class Db4oDbShell implements IDbShell {
 
 	@Override
 	public boolean stub() {
-		final ObjectContainer db = instantiateObjectContainer();
+		if(populator == null) throw new IllegalStateException("No populator set");
+		ObjectContainer db = null;
 		try {
 			log.info("Stubbing db4o db: " + dbFile.getPath());
-			egb.populateEntityGraph();
-			final EntityGraph eg = egb.getEntityGraph();
+			db = instantiateObjectContainer();
+			populator.populateEntityGraph();
+			final EntityGraph eg = populator.getEntityGraph();
 			final Iterator<Class<? extends IEntity>> itr = eg.getEntityTypes();
 			while(itr.hasNext()) {
 				final Class<? extends IEntity> et = itr.next();
@@ -126,7 +136,7 @@ public class Db4oDbShell implements IDbShell {
 			return false;
 		}
 		finally {
-			db.close();
+			if(db != null) db.close();
 		}
 	}
 }

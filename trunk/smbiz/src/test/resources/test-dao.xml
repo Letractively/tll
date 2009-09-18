@@ -1,20 +1,7 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="smbiz-dao-tests">
   
-  <!-- 
-  <test name="orm-dao-tests" annotations="JDK">
-    <groups>
-      <run>
-        <include name="dao" />
-      </run>
-    </groups>
-    <packages>
-      <package name="com.tll.dao.jdo" />
-    </packages>
-  </test>
-  -->
-  
-  <test name="mock-dao-tests" annotations="JDK">
+  <test name="db4o-dao-tests" annotations="JDK">
     <groups>
       <run>
         <include name="dao" />

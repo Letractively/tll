@@ -288,7 +288,9 @@ public final class Config implements Configuration {
 		PropertiesConfiguration pc = new PropertiesConfiguration();
 		for(Iterator<String> itr = sub.getKeys(); itr.hasNext();) {
 			String key = itr.next();
-			pc.addProperty(prependToken == null ? key : prependToken + key, sub.getString(key));
+			Object pval = sub.getProperty(key);
+			String spval = pval == null ? "" : pval.toString();
+			pc.addProperty(prependToken == null ? key : prependToken + key, spval);
 		}
 		return pc;
 	}

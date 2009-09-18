@@ -15,7 +15,7 @@
       com.tll.di.MailModule
       com.tll.di.TestModelModule
       com.tll.di.TestEGraphModule
-      com.tll.di.MockDaoModule
+      com.tll.di.Db4oDaoModule
       com.tll.di.EntityServiceFactoryModule
       com.tll.di.TestMarshalModule
       com.tll.di.LogExceptionHandlerModule

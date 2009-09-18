@@ -1,31 +1,42 @@
 package com.tll.dao.db4o;
 
+import java.io.File;
+import java.net.URI;
 import java.util.List;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.Scopes;
-import com.tll.AbstractInjectedTest;
+import com.tll.config.Config;
+import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.IDbShell;
-import com.tll.di.Db4oDbShellModule;
-import com.tll.di.EGraphModule;
-import com.tll.di.ModelModule;
-import com.tll.model.IEntityAssembler;
-import com.tll.model.IEntityGraphPopulator;
-import com.tll.model.TestPersistenceUnitEntityAssembler;
-import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
-import com.tll.model.key.IPrimaryKeyGenerator;
-import com.tll.model.key.SimplePrimaryKeyGenerator;
+import com.tll.di.Db4oDaoModule;
+import com.tll.di.TestPersistenceUnitModelModule;
+import com.tll.di.Db4oDaoModule.Db4oFile;
 
 /**
  * Db4oDbShellTest
  * @author jpk
  */
 @Test(groups = { "dao", "db4o" } )
-public class Db4oDbShellTest extends AbstractInjectedTest {
+public class Db4oDbShellTest extends AbstractDbAwareTest {
+
+	/**
+	 * Constructor
+	 */
+	public Db4oDbShellTest() {
+		super();
+		// kill the existing db4o file if present
+		final Config cfg = Config.load();
+		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
+		final Injector i = buildInjector(new Db4oDaoModule(cfg));
+		final File f = new File(i.getInstance(Key.get(URI.class, Db4oFile.class)));
+		f.delete();
+	}
 
 	@Override
 	@BeforeClass
@@ -35,23 +46,10 @@ public class Db4oDbShellTest extends AbstractInjectedTest {
 
 	@Override
 	protected void addModules(List<Module> modules) {
-		modules.add(new ModelModule() {
-
-			@Override
-			protected void bindEntityAssembler() {
-				bind(IPrimaryKeyGenerator.class).to(SimplePrimaryKeyGenerator.class).in(Scopes.SINGLETON);
-				bind(IEntityAssembler.class).to(TestPersistenceUnitEntityAssembler.class).in(Scopes.SINGLETON);
-			}
-
-		});
-		modules.add(new EGraphModule() {
-
-			@Override
-			protected void bindEntityGraphBuilder() {
-				bind(IEntityGraphPopulator.class).to(TestPersistenceUnitEntityGraphBuilder.class).in(Scopes.SINGLETON);
-			}
-		});
-		modules.add(new Db4oDbShellModule());
+		modules.add(new TestPersistenceUnitModelModule());
+		// IMPT: turn OFF spring transactions
+		getConfig().setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
+		modules.add(new Db4oDaoModule(getConfig()));
 	}
 
 	public void test() throws Exception {

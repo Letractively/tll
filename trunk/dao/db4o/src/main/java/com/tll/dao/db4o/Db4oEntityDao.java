@@ -199,7 +199,10 @@ import com.tll.util.DateRange;
 	public <E extends IEntity> List<E> findEntities(Criteria<E> criteria, final Sorting sorting)
 	throws InvalidCriteriaException, DataAccessException {
 		if(criteria == null) throw new InvalidCriteriaException("No criteria specified.");
-		if(!criteria.isSet()) throw new InvalidCriteriaException("Criteria not set.");
+		if(!criteria.isSet()) {
+			// return all entities for the entity type
+			return loadAll(criteria.getEntityClass());
+		}
 		if(criteria.getCriteriaType().isQuery()) throw new InvalidCriteriaException("Query type criteria not supported");
 
 		final CriterionGroup pg = criteria.getPrimaryGroup();
@@ -209,6 +212,7 @@ import com.tll.util.DateRange;
 
 		for(final ICriterion ic : pg) {
 			if(ic.isGroup()) throw new InvalidCriteriaException("Nested criterion groups are not supported");
+			if(!ic.isSet()) throw new InvalidCriteriaException("criterion not set");
 			final Criterion ctn = (Criterion) ic;
 			final Object checkValue = ctn.getValue();
 			final String pname = ctn.getPropertyName();

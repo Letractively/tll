@@ -17,18 +17,16 @@ import org.testng.annotations.Test;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
-import com.tll.AbstractInjectedTest;
 import com.tll.common.model.IModelProperty;
 import com.tll.common.model.Model;
-import com.tll.di.EGraphModule;
-import com.tll.di.MockDaoModule;
-import com.tll.di.ModelModule;
+import com.tll.dao.AbstractDbAwareTest;
+import com.tll.di.Db4oDaoModule;
+import com.tll.di.TestPersistenceUnitModelModule;
 import com.tll.model.Account;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.EntityGraph;
 import com.tll.model.FieldEnum;
 import com.tll.model.IEntity;
-import com.tll.model.IEntityGraphPopulator;
 import com.tll.model.IScalar;
 import com.tll.model.NestedEntity;
 import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
@@ -39,9 +37,8 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
  * MarshallerTest
  * @author jpk
  */
-@Test(groups = {
-	"server", "client-marshal" })
-	public class MarshalerTest extends AbstractInjectedTest {
+@Test(groups = { "server", "client-marshal" })
+public class MarshalerTest extends AbstractDbAwareTest {
 
 	protected static final Map<String, Object> tupleMap = new HashMap<String, Object>();
 
@@ -62,21 +59,8 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new ModelModule() {
-
-			@Override
-			protected void bindEntityAssembler() {
-				// not needed
-			}
-		});
-		modules.add(new EGraphModule() {
-
-			@Override
-			protected void bindEntityGraphBuilder() {
-				bind(IEntityGraphPopulator.class).to(TestPersistenceUnitEntityGraphBuilder.class).in(Scopes.SINGLETON);
-			}
-		});
-		modules.add(new MockDaoModule());
+		modules.add(new TestPersistenceUnitModelModule());
+		modules.add(new Db4oDaoModule(getConfig()));
 		modules.add(new Module() {
 
 			@Override

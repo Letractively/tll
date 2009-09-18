@@ -24,12 +24,10 @@
       </excludes>
       <includes>
         <include>**/test/**</include>
-        <include>**/mock/**</include>
         <include>**/I*</include><!-- include interfaces -->
         <include>**/Abstract*Test*</include>
         <include>**/*Util*</include>
         <include>**/*Support*</include>
-        <include>**/TestEntityDaoTestHandler*</include><!-- hack -->
       </includes>
       <outputDirectory>/</outputDirectory>
     </fileSet>
