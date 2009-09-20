@@ -5,8 +5,10 @@ package com.tll.di;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
@@ -34,11 +36,18 @@ public abstract class EGraphModule extends AbstractModule {
 	private String filename = DEFAULT_FILENAME;
 
 	/**
-	 * Sets the name of the file containing the entity definitions expected to be
-	 * at the root of the classpath.
+	 * Constructor
+	 */
+	public EGraphModule() {
+		super();
+	}
+
+	/**
+	 * Constructor
 	 * @param filename
 	 */
-	protected void setBeanDefFilename(String filename) {
+	public EGraphModule(String filename) {
+		super();
 		this.filename = filename;
 	}
 
@@ -56,9 +65,28 @@ public abstract class EGraphModule extends AbstractModule {
 					@SuppressWarnings("synthetic-access")
 					@Override
 					public ListableBeanFactory get() {
-						return new ClassPathXmlApplicationContext(filename);
+						// NOTE: we revert to the system class loader as opposed to Spring's
+						// default current thread context class loader
+						// so gmaven invoked groovy scripts don't blow up
+						try {
+							final ClassPathXmlApplicationContext ac =
+								new ClassPathXmlApplicationContext(new String[] { filename }, false);
+							ac.setClassLoader(getClass().getClassLoader());
+							ac.refresh();
+							return ac;
+						}
+						catch(final BeanDefinitionStoreException e) {
+							// presume the file could't be found at root of classpath
+							// so fallback on a file-based class loader
+							final FileSystemXmlApplicationContext ac =
+								new FileSystemXmlApplicationContext(new String[] { filename }, false);
+							ac.setClassLoader(getClass().getClassLoader());
+							ac.refresh();
+							return ac;
+						}
 					}
 				});
+
 		bind(EntityBeanFactory.class).in(Scopes.SINGLETON);
 
 		// IEntityGraphPopulator
@@ -74,7 +102,7 @@ public abstract class EGraphModule extends AbstractModule {
 			public EntityGraph get() {
 				final EntityGraph graph = new EntityGraph();
 				builder.setEntityGraph(graph);
-				//builder.populateEntityGraph();
+				// builder.populateEntityGraph();
 				return graph;
 			}
 		}).asEagerSingleton();

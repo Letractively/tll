@@ -7,13 +7,14 @@
 package com.tll;
 
 import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.ConfigProcessor;
 import com.tll.dao.IDbShell;
 import com.tll.di.Db4oDaoModule;
+import com.tll.di.SmbizModelModule;
+import com.tll.di.SmbizEGraphModule;
 
 /**
  * BuildTools - Utility class for smbiz project building.
@@ -23,7 +24,7 @@ public final class BuildTools {
 	 
 	static final String DEFAULT_STAGE = 'debug'
 	static final String DEFAULT_DAO_IMPL = 'db40'
-	static final String DEFAULT_SECURITY_IMPL = 'nosecurity'
+	static final String DEFAULT_SECURITY_IMPL = 'none'
 	 
 	static final int FLAG_ALL = 0;
 	static final int FLAG_DB_DB4O = 1;
@@ -42,31 +43,30 @@ public final class BuildTools {
 	// where flags indicates the eligibility of inclusion into the 
 	// target web.xml based on the loaded config state 
 	static final def DI_MODULES_ALL = [
-	                              ['com.tll.di.VelocityModule', FLAG_ALL],
-	                              ['com.tll.di.MailModule', FLAG_ALL],
-	                              ['com.tll.di.RefDataModule', FLAG_ALL],
-	                              ['com.tll.di.EmailExceptionHandlerModule', FLAG_DB_JDO],
-	                              ['com.tll.di.LogExceptionHandlerModule', FLAG_DB_DB4O],
-	                              ['com.tll.di.SmbizModelModule', FLAG_ALL],
-	                              ['com.tll.di.SmbizEGraphModule', FLAG_DB_DB4O],
-	                              ['com.tll.di.JdoDaoModule', FLAG_DB_JDO],
-	                              ['com.tll.di.Db4oModule', FLAG_DB_DB4O],
-	                              ['com.tll.di.Db4oDaoModule', FLAG_DB_DB4O],
-	                              ['com.tll.di.EntityServiceFactoryModule', FLAG_ALL],
-	                              ['com.tll.di.SmbizMarshalModule', FLAG_ALL],
-	                              ['com.tll.di.SmbizClientPersistModule', FLAG_ALL],
-	                              ['com.tll.di.SmbizListingModule', FLAG_ALL],
-	                              ['com.tll.di.SmbizAcegiModule', FLAG_SECURITY_ACEGI],
-	                              ['com.tll.di.AppModule', FLAG_ALL],
-	                             ]
+	  ['com.tll.di.VelocityModule', FLAG_ALL],
+	  ['com.tll.di.MailModule', FLAG_ALL],
+	  ['com.tll.di.RefDataModule', FLAG_ALL],
+	  ['com.tll.di.EmailExceptionHandlerModule', FLAG_DB_JDO],
+	  ['com.tll.di.LogExceptionHandlerModule', FLAG_DB_DB4O],
+	  ['com.tll.di.SmbizModelModule', FLAG_ALL],
+	  ['com.tll.di.JdoDaoModule', FLAG_DB_JDO],
+	  ['com.tll.di.Db4oDaoModule', FLAG_DB_DB4O],
+	  ['com.tll.di.EntityServiceFactoryModule', FLAG_ALL],
+	  ['com.tll.di.SmbizMarshalModule', FLAG_ALL],
+	  ['com.tll.di.SmbizClientPersistModule', FLAG_ALL],
+	  ['com.tll.di.SmbizListingModule', FLAG_ALL],
+	  ['com.tll.di.SmbizAcegiModule', FLAG_SECURITY_ACEGI],
+	  ['com.tll.di.AppModule', FLAG_ALL],
+	]
 	
 	// all di handler (bootstrapper) refs
 	static final def DI_HANDLERS_ALL = [
-	                               ['com.tll.server.rpc.entity.PersistContextBootstrapper', FLAG_ALL],
-	                               ['com.tll.server.rpc.listing.ListingContextBootstrapper', FLAG_ALL],
-	                               ['com.tll.server.SecurityContextBootstrapper', FLAG_SECURITY_ACEGI],
-	                               ['com.tll.server.AppContextBootstrapper', FLAG_ALL],
-	                              ]
+	  ['com.tll.server.Db4oBootstrapper', FLAG_DB_DB4O],
+	  ['com.tll.server.rpc.entity.PersistContextBootstrapper', FLAG_ALL],
+	  ['com.tll.server.rpc.listing.ListingContextBootstrapper', FLAG_ALL],
+	  ['com.tll.server.SecurityContextBootstrapper', FLAG_SECURITY_ACEGI],
+	  ['com.tll.server.AppContextBootstrapper', FLAG_ALL],
+	]
 
 	/**
 	 * Replaces all occurrences of ${prop.name} with the property value held in the provided property map
@@ -125,12 +125,10 @@ public final class BuildTools {
 	private void init() {
 		this.basedir = project.basedir.toString()
 		// load the config
-		String mode = project.properties.mode;
-		String dir = basedir + "/src/main/resources";
-		this.config = ConfigProcessor.merge(dir, mode, 'local')
+		this.config = ConfigProcessor.merge(basedir + "/src/main/resources", project.properties.mode, 'local')
 		
 		// obtain the stage
-		this.stage = config.getString('stage', DEFAULT_STAGE)
+		this.stage = project.properties.stage
 	
 		// obtain the dao impl
 		this.daoImpl = project.properties.daoImpl
@@ -154,7 +152,7 @@ public final class BuildTools {
 		println "securityImpl: ${securityImpl}"
 		switch(securityImpl) {
 			case 'acegi': securityImplFlag = FLAG_SECURITY_ACEGI; break
-			case 'nosecurity': securityImplFlag = FLAG_SECURITY_NONE; break
+			case 'none': securityImplFlag = FLAG_SECURITY_NONE; break
 			default: throw new IllegalArgumentException("Unhandled security impl: ${securityImpl}")
 		}
 
@@ -235,9 +233,9 @@ public final class BuildTools {
 		}
 		
 		// security impl filtering
-		println "  applying security impl: ${daoImpl}"
+		println "  applying security impl: ${securityImpl}"
 		switch(securityImpl) {
-			case 'nosecurity':
+			case 'none':
 			s = s.replaceAll(regex_security_acegi, '')
 			break
 			case 'acegi':
@@ -297,8 +295,11 @@ public final class BuildTools {
 		 IDbShell dbShell = null;
 		 switch(daoImpl) {
 			case 'db4o':
-				Injector i = Guice.createInjector(new Db4oDaoModule(config))
-				dbShell = i.getInstance(IDbShell.class);
+				Config cfg = ConfigProcessor.merge(basedir + "/src/main/resources", project.properties.mode, 'local')
+				cfg.setProperty('db.db4o.filename', 'target/war/WEB-INF/classes/smbizDb');
+				cfg.setProperty('db.db4o.springTransactions', false)
+				dbShell = Guice.createInjector(new SmbizModelModule(), new SmbizEGraphModule('/src/main/resources/mock-entities.xml'), new Db4oDaoModule(cfg)).getInstance(IDbShell.class);
+				dbShell.restub();
 				break
 			case 'jdo':
 				// TODO implement
@@ -312,13 +313,6 @@ public final class BuildTools {
 				  fSchema.toURI().toURL(), fStub.toURI().toURL(), fDelete.toURI().toURL());
 				*/
 				break
-		}
-		if(dbShell != null) {
-			if(dbShell.create()) {
-			  println('Stubbing db..')
-			  dbShell.stub();
-			  println('db stubbed')
-			}
 		}
     }
 }

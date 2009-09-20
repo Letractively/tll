@@ -88,7 +88,7 @@ public class Db4oDbShell implements IDbShell {
 			db = instantiateObjectContainer();
 		}
 		finally {
-			if(db != null) db.close();
+			if(db != null) while(!db.close()) {}
 		}
 		return true;
 	}
@@ -104,10 +104,7 @@ public class Db4oDbShell implements IDbShell {
 
 	@Override
 	public void restub() {
-		final File f = getHandle();
-		if(f.exists()) {
-			delete();
-		}
+		delete();
 		create();
 		stub();
 	}
@@ -136,7 +133,7 @@ public class Db4oDbShell implements IDbShell {
 			return false;
 		}
 		finally {
-			if(db != null) db.close();
+			if(db != null) while(!db.close()) {}
 		}
 	}
 }

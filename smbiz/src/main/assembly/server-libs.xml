@@ -34,6 +34,7 @@
         <exclude>com.google.gwt:*</exclude>
         <exclude>com.google.code.gwt-incubator:*</exclude>
         <exclude>com.tll:tll-dao-db4o</exclude>
+        <exclude>com.tll:tll-dao-jdo</exclude>
       </excludes>
     </dependencySet>
     

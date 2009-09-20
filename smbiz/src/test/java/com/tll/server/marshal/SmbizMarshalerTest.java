@@ -99,6 +99,7 @@ import com.tll.util.CommonUtil;
 			});
 		for(final Class<? extends IEntity> entityClass : entityClasses) {
 			final IEntity e = getEntityBeanFactory().getEntityCopy(entityClass, false);
+			if(e == null) continue;	// skip
 			Assert.assertNotNull(e);
 			final Model model = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
 

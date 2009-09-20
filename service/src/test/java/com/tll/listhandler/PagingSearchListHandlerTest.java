@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.validation.ValidatorFactory;
 
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -89,14 +90,16 @@ public class PagingSearchListHandlerTest extends AbstractDbAwareTest {
 	protected void beforeClass() {
 		// create the db shell first (before test injector creation) to avoid db4o
 		// file lock when objectcontainer is instantiated
-		final Config cfg = Config.load();
+		final Config cfg = getConfig();
 		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
 		final Injector i = buildInjector(new Db4oDaoModule(cfg));
 		final IDbShell dbs = i.getInstance(IDbShell.class);
 		dbs.delete();
 		dbs.create();
 
+		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), true);
 		super.beforeClass();
+		injector.getInstance(PlatformTransactionManager.class);	// bind @Transactional
 	}
 
 	@Override

@@ -4,7 +4,7 @@
   http://maven.apache.org/xsd/assembly-1.1.0.xsd">
 
   <!--
-    Aggregates all db4o tll server-side deps into a single jar. 
+    Aggregates all [db4o] tll server-side deps into a single jar. 
   -->
 
   <id>tll-server-aggregate-db4o</id>
@@ -23,7 +23,7 @@
       <useProjectArtifact>false</useProjectArtifact>
       <useTransitiveDependencies>true</useTransitiveDependencies>
       <useTransitiveFiltering>true</useTransitiveFiltering>
-      <excludes>
+      <excludes><!-- list ALL tll-dao-* impl modules here -->
         <exclude>com.tll:tll-dao-jdo</exclude>
       </excludes>
       <includes>

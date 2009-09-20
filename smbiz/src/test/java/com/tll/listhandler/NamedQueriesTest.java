@@ -14,8 +14,9 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.Scopes;
+import com.tll.config.Config;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
@@ -27,14 +28,10 @@ import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.di.Db4oDaoModule;
-import com.tll.di.EGraphModule;
 import com.tll.di.EntityServiceFactoryModule;
-import com.tll.di.ModelModule;
+import com.tll.di.SmbizEGraphModule;
+import com.tll.di.SmbizModelModule;
 import com.tll.model.IEntity;
-import com.tll.model.IEntityAssembler;
-import com.tll.model.IEntityGraphPopulator;
-import com.tll.model.SmbizEntityAssembler;
-import com.tll.model.SmbizEntityGraphBuilder;
 import com.tll.model.schema.PropertyType;
 import com.tll.service.entity.IEntityServiceFactory;
 
@@ -85,15 +82,6 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 		}
 	}
 
-	private IDbShell dbShell;
-
-	/**
-	 * Constructor
-	 */
-	public NamedQueriesTest() {
-		super();
-	}
-
 	@BeforeClass(alwaysRun = true)
 	public final void onBeforeClass() {
 		beforeClass();
@@ -101,31 +89,23 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 
 	@Override
 	protected void beforeClass() {
+		// create the db shell first (before test injector creation) to avoid db4o
+		// file lock when objectcontainer is instantiated
+		final Config cfg = getConfig();
+		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
+		final Injector i = buildInjector(new Db4oDaoModule(cfg), new SmbizModelModule(),  new SmbizEGraphModule());
+		final IDbShell dbs = i.getInstance(IDbShell.class);
+		dbs.restub();
+
+		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), true);
 		super.beforeClass();
-
-		// set the db shell
-		dbShell = injector.getInstance(IDbShell.class);
-
-		dbShell.restub();
 	}
 
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new ModelModule() {
-
-			@Override
-			protected void bindEntityAssembler() {
-				bind(IEntityAssembler.class).to(SmbizEntityAssembler.class).in(Scopes.SINGLETON);
-			}
-		});
-		modules.add(new EGraphModule() {
-
-			@Override
-			protected void bindEntityGraphBuilder() {
-				bind(IEntityGraphPopulator.class).to(SmbizEntityGraphBuilder.class).in(Scopes.SINGLETON);
-			}
-		});
+		modules.add(new SmbizModelModule());
+		modules.add(new SmbizEGraphModule());
 		modules.add(new Db4oDaoModule(getConfig()));
 		modules.add(new EntityServiceFactoryModule());
 	}
