@@ -24,12 +24,12 @@ import com.tll.service.entity.user.UserService;
 public class UserServiceTest extends AccountRelatedServiceTest {
 
 	private void stubAuthorities() {
-		final IEntityDao dao = getEntityDao();
+		final IEntityDao dao = getDao();
 		getDbTrans().startTrans();
 		getDbTrans().setComplete();
 		try {
 			for(final AuthorityRoles role : AuthorityRoles.values()) {
-				final Authority a = getMockEntityFactory().getEntityCopy(Authority.class, false);
+				final Authority a = getEntityBeanFactory().getEntityCopy(Authority.class, false);
 				a.setAuthority(role.toString());
 				dao.persist(a);
 			}
@@ -69,16 +69,12 @@ public class UserServiceTest extends AccountRelatedServiceTest {
 			Assert.assertNotNull(user);
 
 			getDbTrans().startTrans();
-			final User dbUser = AbstractDbAwareTest.getEntityFromDb(getEntityDao(), new PrimaryKey<User>(user));
+			final User dbUser = AbstractDbAwareTest.getEntityFromDb(getDao(), new PrimaryKey<User>(user));
 			getDbTrans().endTrans();
 			Assert.assertEquals(dbUser, user);
 		}
 		catch(final Throwable t) {
 			Assert.fail(t.getMessage(), t);
 		}
-	}
-	
-	public void testGetUserRef() throws Exception {
-		
 	}
 }

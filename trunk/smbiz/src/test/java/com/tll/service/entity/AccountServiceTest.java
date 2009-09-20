@@ -51,7 +51,7 @@ public abstract class AccountServiceTest extends AccountRelatedServiceTest {
 			getDbTrans().startTrans();
 			final Criteria<AccountHistory> criteria = new Criteria<AccountHistory>(AccountHistory.class);
 			criteria.getPrimaryGroup().addCriterion("account", new PrimaryKey<Account>(Account.class, account.getId()));
-			final List<SearchResult<?>> list = AbstractDbAwareTest.getEntitiesFromDb(getEntityDao(), criteria);
+			final List<SearchResult<?>> list = AbstractDbAwareTest.getEntitiesFromDb(getDao(), criteria);
 			getDbTrans().endTrans();
 			assert list != null && list.size() == 1;
 		}

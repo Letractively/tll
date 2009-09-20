@@ -6,13 +6,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 /**
- * Transient - Indicates that the bound entity property is not persisted (transient).
+ * Transient - Indicates the entity type or entity property is not elidgible for
+ * persistence.
  * @author jpk
- *
  */
-@Target(value = ElementType.METHOD)
+@Target(value = { ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Transient {

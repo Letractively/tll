@@ -1,5 +1,5 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.service.entity;
 
@@ -43,18 +43,18 @@ public abstract class AccountRelatedServiceTest extends AbstractEntityServiceTes
 		getDbTrans().startTrans();
 		getDbTrans().setComplete();
 		try {
-			final IEntityDao dao = getEntityDao();
-			
-			account = getMockEntityFactory().getEntityCopy(Asp.class, false);
-			final AccountAddress aa = getMockEntityFactory().getEntityCopy(AccountAddress.class, false);
-			final Address a = getMockEntityFactory().getEntityCopy(Address.class, false);
+			final IEntityDao dao = getDao();
+
+			account = getEntityBeanFactory().getEntityCopy(Asp.class, false);
+			final AccountAddress aa = getEntityBeanFactory().getEntityCopy(AccountAddress.class, false);
+			final Address a = getEntityBeanFactory().getEntityCopy(Address.class, false);
 			aa.setAddress(a);
 			account.addAccountAddress(aa);
 
-			Currency c = dao.persist(getMockEntityFactory().getEntityCopy(Currency.class, false));
+			final Currency c = dao.persist(getEntityBeanFactory().getEntityCopy(Currency.class, false));
 			account.setCurrency(c);
 
-			pi = dao.persist(getMockEntityFactory().getEntityCopy(PaymentInfo.class, false));
+			pi = dao.persist(getEntityBeanFactory().getEntityCopy(PaymentInfo.class, false));
 			account.setPaymentInfo(pi);
 
 			if(persist) {

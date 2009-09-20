@@ -16,12 +16,14 @@ import org.apache.commons.logging.LogFactory;
 import com.db4o.Db4o;
 import com.db4o.ObjectContainer;
 import com.db4o.config.Configuration;
+import com.db4o.ext.ExtObjectContainer;
+import com.db4o.reflect.ReflectClass;
+import com.db4o.reflect.jdk.JdkClass;
 import com.google.inject.Inject;
 import com.tll.dao.IDbShell;
 import com.tll.model.EntityGraph;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityGraphPopulator;
-
 
 /**
  * MockDbShell
@@ -30,6 +32,35 @@ import com.tll.model.IEntityGraphPopulator;
 public class Db4oDbShell implements IDbShell {
 
 	private static final Log log = LogFactory.getLog(Db4oDbShell.class);
+
+	/**
+	 * Clears out all stored data (hopefully) in target given db4o db given a
+	 * session ref bound to it.
+	 * @param oc the session ref to the target db to clear
+	 */
+	private static void clearDb4oDb(ObjectContainer oc) {
+		if(oc == null) return;
+		final ExtObjectContainer s = oc.ext();
+		final ReflectClass[] rcs = s.knownClasses();
+		if(rcs != null) {
+			for(final ReflectClass rc : rcs) {
+				if(rc.getDelegate() instanceof JdkClass) {
+					final Class<?> objType = ((JdkClass) rc.getDelegate()).getJavaClass();
+					final String cn = objType.getName();
+					if(cn.indexOf("com.db4o") < 0 && objType != Object.class && cn.indexOf("java") < 0) {
+						final Collection<?> clc = s.query(objType);
+						if(clc != null) {
+							for(final Object o : clc) {
+								log.debug("Removing object: " + o);
+								s.delete(o);
+							}
+						}
+					}
+				}
+			}
+			s.purge();
+		}
+	}
 
 	@Inject
 	private final URI dbFile;
@@ -41,11 +72,11 @@ public class Db4oDbShell implements IDbShell {
 	/**
 	 * Constructor
 	 * @param dbFile A ref to the db file
-	 * @param populator The entity graph populator that defines the db "schema" and
-	 *        content.
+	 * @param populator The entity graph populator that defines the db "schema"
+	 *        and content.
 	 * @param c the db4o configuration
 	 */
-	//@Inject
+	// @Inject
 	public Db4oDbShell(URI dbFile, IEntityGraphPopulator populator, Configuration c) {
 		super();
 		this.dbFile = dbFile;
@@ -75,16 +106,31 @@ public class Db4oDbShell implements IDbShell {
 	 */
 	private void killDbSession(ObjectContainer session) {
 		log.info("Killing db4o session for: " + dbFile);
-		if(session != null) while(!session.close()) {}
+		if(session != null) while(!session.close()) {
+		}
 	}
 
 	@Override
 	public boolean clear() {
 		final File f = getHandle();
-		if(f.exists()) {
-			log.info("Clearing db4o db: " + f.getName());
-			f.delete();
-			create();
+		if(!f.exists()) return false;
+		log.info("Clearing db4o db: " + f.getPath());
+		ObjectContainer oc = null;
+		try {
+			oc = createDbSession();
+			clearDb4oDb(oc);
+		}
+		finally {
+			if(oc != null) killDbSession(oc);
+		}
+		return true;
+	}
+
+	@Override
+	public boolean clear(Object dbSession) {
+		if(dbSession instanceof ObjectContainer) {
+			log.info("Clearing db4o db for session: " + dbSession);
+			clearDb4oDb((ObjectContainer) dbSession);
 			return true;
 		}
 		return false;
@@ -94,7 +140,7 @@ public class Db4oDbShell implements IDbShell {
 	public boolean create() {
 		File f = getHandle();
 		if(f.exists()) return false;
-		log.info("Creating db4o db: " + f.getName());
+		log.info("Creating db4o db: " + f.getPath());
 		f = null;
 		ObjectContainer db = null;
 		try {
@@ -110,7 +156,7 @@ public class Db4oDbShell implements IDbShell {
 	public boolean delete() {
 		final File f = getHandle();
 		if(!f.exists()) return false;
-		log.info("Deleting db4o db: " + f.getName());
+		log.info("Deleting db4o db: " + f.getPath());
 		if(!f.delete()) throw new IllegalStateException("Unable to delete db4o file: " + f.getAbsolutePath());
 		return true;
 	}
@@ -137,6 +183,7 @@ public class Db4oDbShell implements IDbShell {
 				log.info("Storing entities of type: " + et.getSimpleName() + "...");
 				final Collection<? extends IEntity> ec = eg.getEntitiesByType(et);
 				for(final IEntity e : ec) {
+					log.info("Storing entity: " + et + "...");
 					db.store(e);
 				}
 			}
