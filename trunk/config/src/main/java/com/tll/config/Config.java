@@ -62,9 +62,10 @@ public final class Config implements Configuration {
 	private final CombinedConfiguration root;
 
 	/**
-	 * Constructor
+	 * Constructor - May be used directory usu. when we want to manually add
+	 * config properties.
 	 */
-	private Config() {
+	public Config() {
 		super();
 		root = new CombinedConfiguration();
 	}

@@ -12,6 +12,7 @@ import com.tll.dao.AbstractEntityDaoTest;
 import com.tll.dao.IDbTrans;
 import com.tll.dao.db4o.test.Db4oTrans;
 import com.tll.di.Db4oDaoModule;
+import com.tll.di.Db4oDbShellModule;
 import com.tll.di.EGraphModule;
 import com.tll.di.ModelModule;
 import com.tll.model.IEntity;
@@ -50,6 +51,7 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest {
 		});
 		getConfig().setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
 		modules.add(new Db4oDaoModule(getConfig()));
+		modules.add(new Db4oDbShellModule());
 		modules.add(new Module() {
 
 			@Override

@@ -159,7 +159,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 		User user;
 		try {
 			final Criteria<User> criteria = new Criteria<User>(User.class);
-			criteria.getPrimaryGroup().addCriterion("emailAddress", emailAddress, false);
+			criteria.getPrimaryGroup().addCriterion("emailAddress", emailAddress, true);
 			user = dao.findEntity(criteria);
 		}
 		catch(final InvalidCriteriaException e) {
@@ -169,7 +169,6 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 			throw new EntityNotFoundException("User with username: " + emailAddress + " was not found.");
 		}
 		final Account ua = user.getAccount();
-		ua.getName(); // force de-proxy
 		user.setAccount(ua);
 		return user;
 	}
@@ -230,7 +229,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 		try {
 			// get the user
 			final Criteria<User> criteria = new Criteria<User>(User.class);
-			criteria.getPrimaryGroup().addCriterion("emailAddress", username, false);
+			criteria.getPrimaryGroup().addCriterion("emailAddress", username, true);
 			final User user = dao.findEntity(criteria);
 
 			// encode the new password

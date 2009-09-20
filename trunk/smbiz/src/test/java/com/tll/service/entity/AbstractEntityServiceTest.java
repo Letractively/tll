@@ -13,6 +13,7 @@ import com.google.inject.Module;
 import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.IEntityDao;
 import com.tll.di.Db4oDaoModule;
+import com.tll.di.Db4oDbShellModule;
 import com.tll.di.EntityServiceFactoryModule;
 import com.tll.di.SmbizEGraphModule;
 import com.tll.di.SmbizModelModule;
@@ -31,6 +32,7 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 		modules.add(new SmbizModelModule());
 		modules.add(new SmbizEGraphModule());
 		modules.add(new Db4oDaoModule(getConfig()));
+		modules.add(new Db4oDbShellModule());
 		modules.add(new EntityServiceFactoryModule());
 	}
 

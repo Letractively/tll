@@ -13,6 +13,7 @@ import com.tll.config.ConfigRef;
 import com.tll.ConfigProcessor;
 import com.tll.dao.IDbShell;
 import com.tll.di.Db4oDaoModule;
+import com.tll.di.Db4oDbShellModule;
 import com.tll.di.SmbizModelModule;
 import com.tll.di.SmbizEGraphModule;
 
@@ -22,6 +23,18 @@ import com.tll.di.SmbizEGraphModule;
  */
 public final class BuildTools {
 	 
+	/**
+	 * Process resources necessary for war assembly. 
+	 */
+	static void processWarResources(def project, def ant) {
+		BuildTools b = new BuildTools(project, ant);
+	    b.saveConfig();
+	    b.generateGwtConstantsFile();
+	    b.generateWebXml();
+	    b.copyWebappResources();
+      	b.stubDbIfNecessary()
+	}
+	
 	static final String DEFAULT_STAGE = 'debug'
 	static final String DEFAULT_DAO_IMPL = 'db40'
 	static final String DEFAULT_SECURITY_IMPL = 'none'
@@ -279,8 +292,9 @@ public final class BuildTools {
 	 */
 	public void saveConfig() {
 	    // create aggregated config.properties file..
-	    println 'Creating aggregated config.properties file..'
-		String tgtDir = basedir + '/target/war/WEB-INF/classes'
+	    println 'Creating consolidated config.properties file..'
+		//String tgtDir = basedir + '/target/war/WEB-INF/classes'
+		String tgtDir = project.build.outputDirectory.toString()
 		File f = new File(tgtDir, ConfigRef.DEFAULT_NAME)
 	    config.saveAsPropFile(f)
 	    println f.getPath() + ' created'
@@ -295,10 +309,13 @@ public final class BuildTools {
 		 IDbShell dbShell = null;
 		 switch(daoImpl) {
 			case 'db4o':
-				Config cfg = ConfigProcessor.merge(basedir + "/src/main/resources", project.properties.mode, 'local')
-				cfg.setProperty('db.db4o.filename', 'target/war/WEB-INF/classes/smbizDb');
+				Config cfg = new Config();
+				String db4oFilepath = project.build.outputDirectory.toString() + '/' + config.getString('db.db4o.filename')
+				cfg.addProperty('db.db4o.filename', db4oFilepath);
 				cfg.setProperty('db.db4o.springTransactions', false)
-				dbShell = Guice.createInjector(new SmbizModelModule(), new SmbizEGraphModule('/src/main/resources/mock-entities.xml'), new Db4oDaoModule(cfg)).getInstance(IDbShell.class);
+				dbShell = Guice.createInjector(new SmbizModelModule(), 
+						new SmbizEGraphModule('/src/main/resources/mock-entities.xml'), 
+						new Db4oDaoModule(cfg), new Db4oDbShellModule()).getInstance(IDbShell.class);
 				dbShell.restub();
 				break
 			case 'jdo':

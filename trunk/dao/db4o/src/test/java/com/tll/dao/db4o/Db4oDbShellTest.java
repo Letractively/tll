@@ -15,6 +15,7 @@ import com.tll.config.Config;
 import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.IDbShell;
 import com.tll.di.Db4oDaoModule;
+import com.tll.di.Db4oDbShellModule;
 import com.tll.di.TestPersistenceUnitModelModule;
 import com.tll.di.Db4oDaoModule.Db4oFile;
 
@@ -50,6 +51,7 @@ public class Db4oDbShellTest extends AbstractDbAwareTest {
 		// IMPT: turn OFF spring transactions
 		getConfig().setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
 		modules.add(new Db4oDaoModule(getConfig()));
+		modules.add(new Db4oDbShellModule());
 	}
 
 	public void test() throws Exception {

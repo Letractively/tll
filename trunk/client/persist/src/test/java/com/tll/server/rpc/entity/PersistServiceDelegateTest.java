@@ -39,6 +39,7 @@ import com.tll.dao.IEntityDao;
 import com.tll.dao.db4o.test.Db4oTrans;
 import com.tll.di.ClientPersistModule;
 import com.tll.di.Db4oDaoModule;
+import com.tll.di.Db4oDbShellModule;
 import com.tll.di.EntityServiceFactoryModule;
 import com.tll.di.LogExceptionHandlerModule;
 import com.tll.di.MailModule;
@@ -71,6 +72,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 
 		modules.add(new TestPersistenceUnitModelModule());
 		modules.add(new Db4oDaoModule(getConfig()));
+		modules.add(new Db4oDbShellModule());
 		modules.add(new EntityServiceFactoryModule());
 		modules.add(new LogExceptionHandlerModule());
 		modules.add(new MarshalModule() {
@@ -133,7 +135,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 		// file lock when objectcontainer is instantiated
 		final Config cfg = Config.load();
 		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
-		final Injector i = buildInjector(new Db4oDaoModule(cfg));
+		final Injector i = buildInjector(new Db4oDaoModule(cfg), new Db4oDbShellModule() );
 		final IDbShell dbs = i.getInstance(IDbShell.class);
 		dbs.delete();
 		dbs.create();
