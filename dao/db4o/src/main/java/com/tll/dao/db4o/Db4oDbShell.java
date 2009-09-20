@@ -61,8 +61,21 @@ public class Db4oDbShell implements IDbShell {
 		return new File(dbFile);
 	}
 
-	private ObjectContainer instantiateObjectContainer() {
+	/**
+	 * @return A newly created db4o session.
+	 */
+	private ObjectContainer createDbSession() {
+		log.info("Instantiating db4o session for: " + dbFile);
 		return c == null ? Db4o.openFile(dbFile.getPath()) : Db4o.openFile(c, dbFile.getPath());
+	}
+
+	/**
+	 * Closes a db session.
+	 * @param session A db4o session
+	 */
+	private void killDbSession(ObjectContainer session) {
+		log.info("Killing db4o session for: " + dbFile);
+		if(session != null) while(!session.close()) {}
 	}
 
 	@Override
@@ -85,10 +98,10 @@ public class Db4oDbShell implements IDbShell {
 		f = null;
 		ObjectContainer db = null;
 		try {
-			db = instantiateObjectContainer();
+			db = createDbSession();
 		}
 		finally {
-			if(db != null) while(!db.close()) {}
+			killDbSession(db);
 		}
 		return true;
 	}
@@ -114,8 +127,8 @@ public class Db4oDbShell implements IDbShell {
 		if(populator == null) throw new IllegalStateException("No populator set");
 		ObjectContainer db = null;
 		try {
-			log.info("Stubbing db4o db: " + dbFile.getPath());
-			db = instantiateObjectContainer();
+			log.info("Stubbing db4o db..");
+			db = createDbSession();
 			populator.populateEntityGraph();
 			final EntityGraph eg = populator.getEntityGraph();
 			final Iterator<Class<? extends IEntity>> itr = eg.getEntityTypes();
@@ -133,7 +146,7 @@ public class Db4oDbShell implements IDbShell {
 			return false;
 		}
 		finally {
-			if(db != null) while(!db.close()) {}
+			killDbSession(db);
 		}
 	}
 }

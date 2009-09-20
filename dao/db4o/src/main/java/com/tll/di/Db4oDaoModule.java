@@ -6,6 +6,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,15 +27,12 @@ import com.google.inject.Scopes;
 import com.tll.config.Config;
 import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
-import com.tll.dao.IDbShell;
 import com.tll.dao.IEntityDao;
-import com.tll.dao.db4o.Db4oDbShell;
-import com.tll.model.IEntityGraphPopulator;
 import com.tll.model.key.IPrimaryKeyGenerator;
 import com.tll.model.key.SimplePrimaryKeyGenerator;
 
 /**
- * MockDaoModule - MOCK dao impl module.
+ * Db4oDaoModule - Db4o dao impl module.
  * @author jpk
  */
 public class Db4oDaoModule extends AbstractModule implements IConfigAware {
@@ -42,7 +41,7 @@ public class Db4oDaoModule extends AbstractModule implements IConfigAware {
 
 	public static final String DEFAULT_DB4O_FILENAME = "db4o";
 
-	public static final boolean DEFAULT_DB4O_EMPLOY_SPRING_TRANSACTIONS = true;
+	public static final boolean DEFAULT_DB4O_EMPLOY_SPRING_TRANSACTIONS = false;
 
 	static final Log log = LogFactory.getLog(Db4oDaoModule.class);
 
@@ -107,8 +106,21 @@ public class Db4oDaoModule extends AbstractModule implements IConfigAware {
 
 		// db40 db file URI
 		final String path = config == null ? DEFAULT_DB4O_FILENAME : config.getString(ConfigKeys.DB4O_FILENAME.getKey());
-		final URI uri = new File(path).toURI();
-		bind(URI.class).annotatedWith(Db4oFile.class).toInstance(uri);
+		//if(path.indexOf('/') >= 0) thr
+		try {
+			// first attempt to load existing file
+			final URL url = Db4oDaoModule.class.getClassLoader().getResource(path);
+			URI uri = url == null ? null : url.toURI();
+			if(uri == null) {
+				// create in working dir
+				final File f = new File(path);
+				uri = f.toURI();
+			}
+			bind(URI.class).annotatedWith(Db4oFile.class).toInstance(uri);
+		}
+		catch(final URISyntaxException e) {
+			throw new IllegalStateException(e);
+		}
 
 		// Configuration (db4o)
 		bind(Configuration.class).toProvider(new Provider<Configuration>() {
@@ -135,6 +147,7 @@ public class Db4oDaoModule extends AbstractModule implements IConfigAware {
 
 			@Override
 			public ObjectContainer get() {
+				log.info("Creating db4o session for: " + db4oUri);
 				return Db4o.openFile(c, db4oUri.getPath());
 			}
 		}).in(Scopes.SINGLETON);
@@ -176,26 +189,6 @@ public class Db4oDaoModule extends AbstractModule implements IConfigAware {
 				}
 			}).in(Scopes.SINGLETON);
 		}
-
-		// IDbShell
-		bind(IDbShell.class).toProvider(new Provider<IDbShell>() {
-
-			@Inject
-			@Db4oFile
-			URI db4oUri;
-
-			@Inject(optional = true)
-			Configuration c;
-
-			@Inject(optional = true)
-			IEntityGraphPopulator populator;
-
-			@Override
-			public IDbShell get() {
-				return new Db4oDbShell(db4oUri, populator, c);
-			}
-
-		}).in(Scopes.SINGLETON);
 
 		// IPrimaryKeyGenerator
 		bind(IPrimaryKeyGenerator.class).to(SimplePrimaryKeyGenerator.class).in(Scopes.SINGLETON);

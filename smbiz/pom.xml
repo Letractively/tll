@@ -13,11 +13,11 @@
 	<name>smbiz</name>
 	<version>0.9.0-SNAPSHOT</version>
 	<description>smbiz admin project.</description>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<build>
-		<finalName>smbizAdmin</finalName>
-		<outputDirectory>target/war/WEB-INF/classes</outputDirectory>
+		<!-- <finalName>smbizAdmin</finalName> -->
+		<!-- <outputDirectory>target/war/WEB-INF/classes</outputDirectory> -->
 
 		<filters>
 			<filter>src/main/resources/config.properties</filter>
@@ -90,6 +90,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- TODO temp
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -109,23 +110,27 @@
 							</descriptors>
 						</configuration>
 					</execution>
+					<execution>
+						<id>tll-server-aggregate</id>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<phase>process-classes</phase>
+						<configuration>
+							<finalName>tll-server</finalName>
+							<outputDirectory>target/war/WEB-INF/lib</outputDirectory>
+							<appendAssemblyId>false</appendAssemblyId>
+							<descriptors>
+								<descriptor>src/main/assembly/tll-server-${daoImpl}.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
+			-->
 			<plugin>
 				<groupId>org.codehaus.groovy.maven</groupId>
 				<artifactId>gmaven-plugin</artifactId>
-				<dependencies>
-					<!--
-						Spring uses the current thread's class loader for loading property editors 
-						defined in the xml app context so we need to declare these deps in the parent 
-						classloader so they are picked up!
-					-->
-					<dependency>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-beans</artifactId>
-						<version>${springVersion}</version>
-					</dependency>
-				</dependencies>
 				<configuration>
 					<!-- NOTE: m2eclipse will fail the build if there is no valid source arg param! -->
 					<source>println 'config'</source>
@@ -133,7 +138,7 @@
 				<executions>
 					<execution>
 						<id>war-resources</id>
-						<phase>process-resources</phase>
+						<phase>compile</phase><!-- we do compile phase since the *.class files need to be present for db stubbing -->
 						<goals>
 							<goal>execute</goal>
 						</goals>
@@ -150,10 +155,6 @@
 								<element>
 									<groupId>commons-configuration</groupId>
 									<artifactId>commons-configuration</artifactId>
-								</element>
-								<element>
-									<groupId>org.springframework</groupId>
-									<artifactId>spring-jdbc</artifactId>
 								</element>
 								<element>
 									<groupId>com.google.code.guice</groupId>
@@ -174,12 +175,7 @@
 								<element>${project.basedir}/src/main/scripts</element>
 							</scriptpath>
 							<source><![CDATA[
-                def b = new com.tll.BuildTools(project, ant);
-                b.saveConfig();
-                b.generateGwtConstantsFile();
-                b.generateWebXml();
-                b.copyWebappResources();
-                b.stubDbIfNecessary()
+                com.tll.BuildTools.processWarResources(project, ant);
               ]]></source>
 						</configuration>
 					</execution>
@@ -208,6 +204,18 @@
 							<outputFile>target/gwt-cp.txt</outputFile>
 						</configuration>
 					</execution>
+					<!-- copies libs to the target/war dir which is needed for gwt host mode -->
+					<execution>
+						<id>libs-to-war</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<excludeScope>test</excludeScope>
+							<outputDirectory>target/war/WEB-INF/lib</outputDirectory>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 
@@ -216,6 +224,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
+					<skip>true</skip><!-- TODO temp -->
 					<suiteXmlFiles>
 						<suiteXmlFile>${pom.basedir}/src/test/resources/test-dao.xml</suiteXmlFile>
 						<suiteXmlFile>${pom.basedir}/src/test/resources/test-namedqueries.xml</suiteXmlFile>
@@ -230,30 +239,83 @@
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>create-war</id>
-						<phase>package</phase>
-						<goals><goal>run</goal></goals>
+						<id>gwt-shell-batchfiles</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
 						<configuration>
 							<tasks>
-								<jar destfile="target/smbizAdmin.war">
-									<fileset dir="target/war">
-										<patternset>
-											<exclude name=".gwt-tmp/**" />
-											<exclude name="**/*.gwt.xml" />
-											<exclude name="**/*.java" />
-											<exclude name="**/mock-entities.xml" />
-											<exclude name="WEB-INF/classes/builddef.lst" />
-											<exclude name="WEB-INF/classes/**/client/**" />
-											<exclude name="WEB-INF/classes/**/common/**/*Async.class" />
-											<exclude name="WEB-INF/classes/**/public/**" />
-										</patternset>
-									</fileset>
-								</jar>
+								<property name="gwt.compile.style" value="${gwtCompileStyle}" />
+								<loadfile property="gcp" srcFile="target/gwt-cp.txt" />
+								<property name="gwt.compile.classpath" value="${project.build.outputDirectory};${gcp}" />
+								<property name="gwt.compile.modules" value="${gwtTargetModule}" />
+								<property name="gwt.shell.entryModule" value="${gwtTargetModule}" />
+								<property name="gwt.shell.startupUrl" value="SmbizAdmin.html" />
+								<property name="gwt.shell.warDir.path" value="target/war" />
+								<ant antfile="${basedir}/../client/build-gwt.xml">
+									<target name="build-shell-exec-file" />
+									<target name="build-shell-debug-exec-file" />
+								</ant>
 							</tasks>
 						</configuration>
 					</execution>
+					<!-- TODO temp
+					<execution>
+						<id>gwt-compile</id>
+						<phase>prepare-package</phase>
+						<goals><goal>run</goal></goals>
+						<configuration>
+							<tasks>
+								<property name="gwt.compile.style" value="${gwtCompileStyle}" />
+								<loadfile property="gcp" srcFile="target/gwt-cp.txt" />
+								<property name="gwt.compile.classpath" value="${project.build.outputDirectory};${gcp}" />
+								<property name="gwt.compile.modules" value="${gwtTargetModule}" />
+								<echo message="classpath: ${gwt.compile.classpath}" />
+								<ant antfile="${basedir}/../client/build-gwt.xml">
+									<target name="compile" />
+								</ant>
+							</tasks>
+						</configuration>
+					</execution>
+					-->
 				</executions>
 			</plugin>
+
+			<!-- 
+			war dir (root) exclusions
+			=========================
+			smbizAdmin/hosted.html
+			work
+			
+			war/WEB-INF/classes exclusions
+			==============================
+			**/*.gwt.xml
+			**/*.java
+			**/mock-entities.xml
+			**/builddef.lst
+			**/client/**
+			**/common/**/*Async.class
+			**/public/**
+			-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <webXml>target/war/WEB-INF/web.xml</webXml>
+        </configuration>
+        <executions>
+        	<execution>
+        		<id>fill-war-dir</id>
+        		<goals><goal>exploded</goal></goals>
+        		<phase>prepare-package</phase>
+        		<configuration>
+        			<webappDirectory>target/war</webappDirectory>
+        		</configuration>
+        	</execution>
+        </executions>
+      </plugin>
+
 		</plugins>
 
 	</build>
@@ -268,55 +330,8 @@
 				<debug>true</debug>
 				<stage>dev</stage>
 				<gwtCompileStyle>PRETTY</gwtCompileStyle>
-				<gwtCompileModules>com.tll.SmbizAdminDev</gwtCompileModules>
+				<gwtTargetModule>com.tll.SmbizAdminDev</gwtTargetModule>
 			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>gwt-compile</id>
-								<phase>compile</phase>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-									<tasks>
-										<property name="gwt.compile.style" value="${gwtCompileStyle}" />
-										<loadfile property="gcp" srcFile="target/gwt-cp.txt" />
-										<property name="gwt.compile.classpath" value="./target/war/WEB-INF/classes;${gcp}" />
-										<property name="gwt.compile.modules" value="${gwtCompileModules}" />
-										<property name="gwt.shell.entryModule" value="${gwtCompileModules}" />
-										<property name="gwt.shell.startupUrl" value="SmbizAdmin.html" />
-										<echo message="classpath: ${gwt.compile.classpath}" />
-										<ant antfile="${basedir}/../client/build-gwt.xml">
-											<target name="build-shell-exec-file" />
-											<target name="build-shell-debug-exec-file" />
-										</ant>
-									</tasks>
-								</configuration>
-							</execution>
-							<execution>
-								<id>lib-copy</id>
-								<phase>prepare-package</phase>
-								<goals><goal>run</goal></goals>
-								<configuration>
-									<tasks>
-										<!-- copy over the necessary non-tll server jars -->
-										<copy todir="target/war/WEB-INF/lib">
-											<fileset dir="target/server-libs">
-												<exclude name="tll-server*" />
-											</fileset>
-										</copy>
-									</tasks>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
 		<!-- prod (production) profile -->
 		<profile>
@@ -328,31 +343,10 @@
 				<debug>false</debug>
 				<stage>prod</stage>
 				<gwtCompileStyle>OBF</gwtCompileStyle>
-				<gwtCompileModules>com.tll.SmbizAdmin</gwtCompileModules>
+				<gwtTargetModule>com.tll.SmbizAdmin</gwtTargetModule>
 			</properties>
 			<build>
 				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>tll-server-aggregate</id>
-								<goals>
-									<goal>single</goal>
-								</goals>
-								<phase>process-classes</phase>
-								<configuration>
-									<finalName>tll-server</finalName>
-									<outputDirectory>target/war/WEB-INF/lib</outputDirectory>
-									<appendAssemblyId>false</appendAssemblyId>
-									<descriptors>
-										<descriptor>src/main/assembly/tll-server-${daoImpl}.xml</descriptor>
-									</descriptors>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-compiler-plugin</artifactId>
@@ -360,61 +354,6 @@
 							<debug>false</debug>
 							<optimize>true</optimize>
 						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-    				<artifactId>maven-surefire-plugin</artifactId>
-    				<configuration>
-    					<skip>true</skip><!-- turn off tests in prod mode -->
-    				</configuration>
-    			</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<dependencies>
-						</dependencies>
-						<executions>
-							<execution>
-								<id>gwt-compile</id>
-								<phase>compile</phase>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-									<tasks>
-										<property name="gwt.compile.style" value="${gwtCompileStyle}" />
-										<loadfile property="gcp" srcFile="target/gwt-cp.txt" />
-										<property name="gwt.compile.classpath" value="./target/war/WEB-INF/classes;${gcp}" />
-										<property name="gwt.compile.modules" value="${gwtCompileModules}" />
-										<property name="gwt.shell.entryModule" value="${gwtCompileModules}" />
-										<property name="gwt.shell.startupUrl" value="SmbizAdmin.html" />
-										<echo message="classpath: ${gwt.compile.classpath}" />
-										<ant antfile="${basedir}/../client/build-gwt.xml">
-											<target name="compile" />
-										</ant>
-									</tasks>
-								</configuration>
-							</execution>
-							<execution>
-								<id>lib-copy</id>
-								<phase>prepare-package</phase>
-								<goals><goal>run</goal></goals>
-								<configuration>
-									<tasks>
-										<!-- copy over the necessary non-tll server jars -->
-										<copy todir="target/war/WEB-INF/lib">
-											<fileset dir="target/server-libs">
-												<exclude name="tll-*" />
-												<exclude name="client-*" />
-											</fileset>
-										</copy>
-										<copy todir="target/war/WEB-INF/lib">
-											<fileset dir="target/server-libs" includes="tll-server.jar" />
-										</copy>
-									</tasks>
-								</configuration>
-							</execution>
-						</executions>
 					</plugin>
 				</plugins>
 			</build>

@@ -28,6 +28,7 @@ import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.di.Db4oDaoModule;
+import com.tll.di.Db4oDbShellModule;
 import com.tll.di.EntityServiceFactoryModule;
 import com.tll.di.SmbizEGraphModule;
 import com.tll.di.SmbizModelModule;
@@ -93,7 +94,7 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 		// file lock when objectcontainer is instantiated
 		final Config cfg = getConfig();
 		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
-		final Injector i = buildInjector(new Db4oDaoModule(cfg), new SmbizModelModule(),  new SmbizEGraphModule());
+		final Injector i = buildInjector(new Db4oDaoModule(cfg), new Db4oDbShellModule(), new SmbizModelModule(), new SmbizEGraphModule());
 		final IDbShell dbs = i.getInstance(IDbShell.class);
 		dbs.restub();
 
@@ -107,6 +108,7 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 		modules.add(new SmbizModelModule());
 		modules.add(new SmbizEGraphModule());
 		modules.add(new Db4oDaoModule(getConfig()));
+		modules.add(new Db4oDbShellModule());
 		modules.add(new EntityServiceFactoryModule());
 	}
 

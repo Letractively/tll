@@ -33,6 +33,7 @@ import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.dao.db4o.test.Db4oTrans;
 import com.tll.di.Db4oDaoModule;
+import com.tll.di.Db4oDbShellModule;
 import com.tll.di.TestPersistenceUnitModelModule;
 import com.tll.model.Address;
 import com.tll.model.EntityBeanFactory;
@@ -92,7 +93,7 @@ public class PagingSearchListHandlerTest extends AbstractDbAwareTest {
 		// file lock when objectcontainer is instantiated
 		final Config cfg = getConfig();
 		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
-		final Injector i = buildInjector(new Db4oDaoModule(cfg));
+		final Injector i = buildInjector(new Db4oDaoModule(cfg), new Db4oDbShellModule() );
 		final IDbShell dbs = i.getInstance(IDbShell.class);
 		dbs.delete();
 		dbs.create();
@@ -107,6 +108,7 @@ public class PagingSearchListHandlerTest extends AbstractDbAwareTest {
 		super.addModules(modules);
 		modules.add(new TestPersistenceUnitModelModule());
 		modules.add(new Db4oDaoModule(getConfig()));
+		modules.add(new Db4oDbShellModule());
 		modules.add(new Module() {
 
 			@Override

@@ -39,7 +39,7 @@ public class CurrencyService extends NamedEntityService<Currency> implements ICu
 	public Currency loadByIso4217(String iso4217) throws EntityNotFoundException {
 		try {
 			final Criteria<Currency> criteria = new Criteria<Currency>(Currency.class);
-			criteria.getPrimaryGroup().addCriterion("iso4217", iso4217, false);
+			criteria.getPrimaryGroup().addCriterion("iso4217", iso4217, true);
 			return dao.findEntity(criteria);
 		}
 		catch(final InvalidCriteriaException e) {
