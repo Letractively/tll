@@ -30,6 +30,7 @@ import com.db4o.events.EventListener4;
 import com.db4o.events.EventRegistry;
 import com.db4o.events.EventRegistryFactory;
 import com.db4o.events.ObjectEventArgs;
+import com.db4o.query.Constraint;
 import com.db4o.query.Predicate;
 import com.db4o.query.Query;
 import com.google.inject.Inject;
@@ -61,6 +62,7 @@ import com.tll.model.key.NonUniqueBusinessKeyException;
 import com.tll.model.key.PrimaryKey;
 import com.tll.util.DBType;
 import com.tll.util.DateRange;
+import com.tll.util.PropertyPath;
 
 /**
  * Db4oEntityDao
@@ -73,7 +75,18 @@ import com.tll.util.DateRange;
 	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(Db4oEntityDao.class);
 
-	private static <E extends IEntity> IScalar scalarize(final E entity) {
+	/**
+	 * Scalarizes an entity by first transforming the entity into a map of
+	 * property name/property value where the property names are those contained
+	 * in the <code>inclusionProperties</code> argument.
+	 * @param <E>
+	 * @param entity
+	 * @param inclusionProperties The properties to scalarize. If
+	 *        <code>null</code>, all 1-st level deep entity properties are
+	 *        scalarized.
+	 * @return A new {@link IScalar} instance
+	 */
+	private static <E extends IEntity> IScalar scalarize(final E entity, Collection<String> inclusionProperties) {
 		final BeanWrapper bw = new BeanWrapperImpl(entity);
 		final Map<String, Object> map = new LinkedHashMap<String, Object>();
 		for(final PropertyDescriptor pd : bw.getPropertyDescriptors()) {
@@ -85,12 +98,23 @@ import com.tll.util.DateRange;
 		return new Scalar(entity.entityClass(), map);
 	}
 
+	/**
+	 * Transforms an entity list to {@link SearchResult} instances. If
+	 * <code>inclusionProperties</code> are specified (non-<code>null</code>),
+	 * {@link IScalar} instances are created in place of the {@link IEntity}
+	 * containing only those properties specifed in the
+	 * <code>inclusionProperties</code> argument.
+	 * @param <E>
+	 * @param entityList
+	 * @param inclusionProperties May be <code>null</code>
+	 * @return New list of transormed {@link SearchResult}s.
+	 */
 	private static <E extends IEntity> List<SearchResult<?>> transformEntityList(final List<E> entityList,
-			final boolean isScalar) {
+			final Collection<String> inclusionProperties) {
 		final List<SearchResult<?>> slist = new ArrayList<SearchResult<?>>(entityList.size());
 		for(final E e : entityList) {
-			if(isScalar) {
-				slist.add(new SearchResult<IScalar>(scalarize(e)));
+			if(inclusionProperties != null) {
+				slist.add(new SearchResult<IScalar>(scalarize(e, inclusionProperties)));
 			}
 			else {
 				slist.add(new SearchResult<E>(e));
@@ -180,7 +204,8 @@ import com.tll.util.DateRange;
 		final List<E> list = findEntities(criteria, sorting);
 
 		// transform list
-		return transformEntityList(list, criteria.getCriteriaType().isScalar());
+		// TODO handle case where we want a sub-set of properties (a tuple scalar)
+		return transformEntityList(list, null);
 	}
 
 	@Override
@@ -199,13 +224,17 @@ import com.tll.util.DateRange;
 	public <E extends IEntity> List<E> findEntities(Criteria<E> criteria, final Sorting sorting)
 	throws InvalidCriteriaException, DataAccessException {
 		if(criteria == null) throw new InvalidCriteriaException("No criteria specified.");
-		if(!criteria.isSet()) {
-			// return all entities for the entity type
+
+		if(criteria.getCriteriaType().isQuery()) {
+			// for now, return all instances of the given type
 			return loadAll(criteria.getEntityClass());
 		}
-		if(criteria.getCriteriaType().isQuery()) throw new InvalidCriteriaException("Query type criteria not supported");
 
 		final CriterionGroup pg = criteria.getPrimaryGroup();
+		if(pg == null || !pg.isSet()) {
+			// retrieve all entities
+			return loadAll(criteria.getEntityClass());
+		}
 
 		final Query query = getDb4oTemplate().query();
 		query.constrain(criteria.getEntityClass());
@@ -216,7 +245,21 @@ import com.tll.util.DateRange;
 			final Criterion ctn = (Criterion) ic;
 			final Object checkValue = ctn.getValue();
 			final String pname = ctn.getPropertyName();
-			final Query pquery = query.descend(pname);
+
+			Query pquery;
+			if(pname.indexOf('.') > 0) {
+				pquery = query;
+				// descend one time for each node in the pname (which may be a dot
+				// notated property path)
+				final PropertyPath path = new PropertyPath(pname);
+				for(final String node : path.nodes()) {
+					pquery = pquery.descend(node);
+				}
+			}
+			else {
+				pquery = query.descend(pname);
+			}
+
 			switch(ctn.getComparator()) {
 				case BETWEEN: {
 					Object min, max;
@@ -256,12 +299,40 @@ import com.tll.util.DateRange;
 				case GREATER_THAN_EQUALS:
 					pquery.constrain(checkValue).greater().equal();
 					break;
-				case IN:
-					pquery.constrain(checkValue).contains();
+				case IN: {
+					Object[] arr;
+					if(checkValue.getClass().isArray()) {
+						arr = (Object[]) checkValue;
+					}
+					else if(checkValue instanceof Collection<?>) {
+						arr = ((Collection) checkValue).toArray();
+					}
+					else if(checkValue instanceof String) {
+						// assume comma-delimited string
+						arr =
+							org.springframework.util.ObjectUtils.toObjectArray(org.springframework.util.StringUtils
+									.commaDelimitedListToStringArray((String) checkValue));
+					}
+					else {
+						throw new InvalidCriteriaException(
+								"Unsupported or null type for IN comparator: " + checkValue == null ? "<null>" : checkValue.getClass()
+										.toString());
+					}
+					Constraint c = null;
+					for(final Object o : arr) {
+						if(c == null) {
+							c = pquery.constrain(o);
+						}
+						else {
+							c.or(pquery.constrain(o));
+						}
+					}
 					break;
+				}
 				case IS:
 					if(checkValue instanceof DBType == false) {
-						throw new InvalidCriteriaException("IS clauses support only check values of type: " + DBType.class.getSimpleName());
+						throw new InvalidCriteriaException("IS clauses support only check values of type: "
+								+ DBType.class.getSimpleName());
 					}
 					final DBType dbType = (DBType) checkValue;
 					if(dbType == DBType.NULL) {

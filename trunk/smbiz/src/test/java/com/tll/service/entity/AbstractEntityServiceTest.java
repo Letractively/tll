@@ -25,13 +25,6 @@ import com.tll.model.EntityBeanFactory;
 @Test(groups = "service.entity")
 public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 
-	/**
-	 * Constructor
-	 */
-	public AbstractEntityServiceTest() {
-		super();
-	}
-
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);

@@ -22,13 +22,8 @@ public class Db4oEntityDaoTest extends AbstractDb4oEntityDaoTest {
 	@Override
 	protected IEntityDaoTestHandler<?>[] getDaoTestHandlers() {
 		try {
-			final Class<?>[] handlerTypes = CommonUtil.getClasses("com.tll.dao", IEntityDaoTestHandler.class, true, null, null/*new FilenameFilter() {
-
-									@Override
-									public boolean accept(File dir, String name) {
-										return dir.getPath().indexOf("smbiz") > 0 && dir.getPath().indexOf("test-classes") > 0;
-									}
-								}*/);
+			final Class<?>[] handlerTypes =
+				CommonUtil.getClasses("com.tll.dao", IEntityDaoTestHandler.class, true, null, null);
 
 			final IEntityDaoTestHandler<?>[] arr = new IEntityDaoTestHandler[handlerTypes.length];
 			int i = 0;

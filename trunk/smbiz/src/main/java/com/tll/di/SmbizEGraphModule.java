@@ -16,6 +16,21 @@ import com.tll.model.SmbizEntityGraphBuilder;
  */
 public class SmbizEGraphModule extends EGraphModule {
 
+	/**
+	 * Constructor
+	 */
+	public SmbizEGraphModule() {
+		super();
+	}
+
+	/**
+	 * Constructor
+	 * @param filename
+	 */
+	public SmbizEGraphModule(String filename) {
+		super(filename);
+	}
+
 	@Override
 	protected void bindEntityGraphBuilder() {
 		bind(IEntityGraphPopulator.class).to(SmbizEntityGraphBuilder.class).in(Scopes.SINGLETON);

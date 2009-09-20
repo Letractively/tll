@@ -83,7 +83,7 @@ public final class Criteria<E extends IEntity> {
 	}
 
 	public boolean isSet() {
-		return criteriaType.isQuery() ? (namedQueryDefinition != null) : (primaryGroup != null && primaryGroup.isSet());
+		return criteriaType.isQuery() ? (namedQueryDefinition != null) : primaryGroup.isSet();
 	}
 
 	public CriterionGroup getPrimaryGroup() {

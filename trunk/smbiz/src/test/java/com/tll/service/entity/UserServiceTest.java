@@ -77,4 +77,8 @@ public class UserServiceTest extends AccountRelatedServiceTest {
 			Assert.fail(t.getMessage(), t);
 		}
 	}
+	
+	public void testGetUserRef() throws Exception {
+		
+	}
 }

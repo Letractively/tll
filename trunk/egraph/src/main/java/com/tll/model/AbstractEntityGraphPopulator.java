@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.Set;
 
 import org.apache.commons.lang.math.RandomUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.tll.model.key.NonUniqueBusinessKeyException;
 
@@ -18,6 +20,8 @@ import com.tll.model.key.NonUniqueBusinessKeyException;
  * @author jpk
  */
 public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopulator {
+
+	protected final Log log;
 
 	/**
 	 * Responsible for generating prototypical entity instances that are subject
@@ -35,6 +39,7 @@ public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopula
 	 * @param entityBeanFactory The mock entity factory
 	 */
 	public AbstractEntityGraphPopulator(EntityBeanFactory entityBeanFactory) {
+		this.log = LogFactory.getLog(getClass());
 		this.entityBeanFactory = entityBeanFactory;
 	}
 
@@ -51,6 +56,7 @@ public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopula
 	@Override
 	public final void populateEntityGraph() throws IllegalStateException {
 		graph.clear();
+		log.info("Stubbing entity graph..");
 		stub();
 		try {
 			graph.validate();
@@ -121,7 +127,13 @@ public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopula
 	 * @return The generated entity that was added to the graph.
 	 */
 	protected final <E extends IEntity> E add(Class<E> entityType, boolean makeUnique) {
-		return addEntity(generateEntity(entityType, makeUnique));
+		try {
+			return addEntity(generateEntity(entityType, makeUnique));
+		}
+		catch(final Throwable t) {
+			log.error(t);
+			throw new RuntimeException(t);
+		}
 	}
 
 	/**

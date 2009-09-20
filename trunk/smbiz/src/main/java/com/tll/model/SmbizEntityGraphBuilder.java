@@ -32,11 +32,8 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphPopulator 
 	protected void stub() {
 		try {
 			stubRudimentaryEntities();
-
 			stubAccounts();
-
 			stubInterfaces();
-
 			stubUsers();
 		}
 		catch(final Exception e) {
@@ -230,7 +227,7 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphPopulator 
 				final InterfaceOption io = findInterfaceOption("crosssell-switch", ios);
 				if(io != null) {
 					for(int i = 1; i <= 3; i++) {
-						InterfaceOptionParameterDefinition pd = findParameterDefinition("crosssellP" + i, pds);
+						final InterfaceOptionParameterDefinition pd = findParameterDefinition("crosssellP" + i, pds);
 						if(pd != null) {
 							io.addParameter(pd);
 						}

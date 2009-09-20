@@ -169,13 +169,16 @@ public final class EntityBeanFactory {
 	 * @param <E>
 	 * @param entityClass
 	 * @param makeUnique Attempt to make the copied entity business key unique?
-	 * @return A fresh entity copy
+	 * @return A fresh entity copy or <code>null</code> if there are no instances
+	 *         present having the given entity type (class).
 	 */
 	public <E extends IEntity> E getEntityCopy(Class<E> entityClass, boolean makeUnique) {
 		final E e = getBean(entityClass);
-		entityFactory.setGenerated(e);
-		if(makeUnique) {
-			makeBusinessKeyUnique(e);
+		if(e != null) {
+			entityFactory.setGenerated(e);
+			if(makeUnique) {
+				makeBusinessKeyUnique(e);
+			}
 		}
 		return e;
 	}
@@ -186,12 +189,15 @@ public final class EntityBeanFactory {
 	 * @param entityClass the desired entity type
 	 * @param n The number of copies to provide
 	 * @param makeUnique Attempt to make the copied entities business key unique?
-	 * @return n entity copies of the given type that may be business key unique
+	 * @return Set of <code>n</code> entity copies of the given type that may be
+	 *         business key unique or an empty set of no entities of the given
+	 *         type exist.
 	 */
 	public <E extends IEntity> Set<E> getNEntityCopies(Class<E> entityClass, int n, boolean makeUnique) {
 		final Set<E> set = new LinkedHashSet<E>(n);
 		for(int i = 0; i < n; i++) {
-			set.add(getEntityCopy(entityClass, makeUnique));
+			final E e = getEntityCopy(entityClass, makeUnique);
+			if(e != null) set.add(e);
 		}
 		return set;
 	}

@@ -21,7 +21,10 @@ public class Authority extends EntityBase implements INamedEntity, GrantedAuthor
 
 	public static final int MAXLEN_AUTHORITY = 50;
 
-	private String role;
+	/**
+	 * I.e. the role.
+	 */
+	private String authority;
 
 	public Class<? extends IEntity> entityClass() {
 		return Authority.class;
@@ -30,11 +33,11 @@ public class Authority extends EntityBase implements INamedEntity, GrantedAuthor
 	@NotEmpty
 	@Length(max = MAXLEN_AUTHORITY)
 	public String getAuthority() {
-		return role;
+		return authority;
 	}
 
 	public void setAuthority(String authority) {
-		this.role = authority;
+		this.authority = authority;
 	}
 
 	public String getName() {
@@ -50,12 +53,12 @@ public class Authority extends EntityBase implements INamedEntity, GrantedAuthor
 		// IMPT: We need to support comparisons to raw strings for ACL related
 		// functionality.
 		if(obj instanceof String) {
-			return obj.equals(this.role);
+			return obj.equals(this.authority);
 		}
 
-		if(obj instanceof GrantedAuthority && this.role != null) {
+		if(obj instanceof GrantedAuthority && this.authority != null) {
 			final GrantedAuthority attr = (GrantedAuthority) obj;
-			return this.role.equals(attr.getAuthority());
+			return this.authority.equals(attr.getAuthority());
 		}
 
 		return super.equals(obj);
@@ -73,7 +76,7 @@ public class Authority extends EntityBase implements INamedEntity, GrantedAuthor
 			if(rhsRole == null) {
 				return -1;
 			}
-			return role.compareTo(rhsRole);
+			return authority.compareTo(rhsRole);
 		}
 		return -1;
 	}

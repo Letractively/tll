@@ -8,6 +8,12 @@ package com.tll.service.entity;
 import org.apache.commons.lang.math.RandomUtils;
 import org.testng.annotations.Test;
 
+import com.google.inject.Injector;
+import com.tll.config.Config;
+import com.tll.dao.IDbShell;
+import com.tll.di.Db4oDaoModule;
+import com.tll.di.SmbizEGraphModule;
+import com.tll.di.SmbizModelModule;
 import com.tll.model.Account;
 import com.tll.model.AccountInterface;
 import com.tll.model.AccountInterfaceOption;
@@ -31,7 +37,13 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 
 	@Override
 	protected void beforeMethod() {
-		getDbShell().restub();
+		// create the db shell first (before test injector creation) to avoid db4o
+		// file lock when objectcontainer is instantiated
+		final Config cfg = getConfig();
+		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
+		final Injector i = buildInjector(new SmbizModelModule(), new SmbizEGraphModule(), new Db4oDaoModule(cfg));
+		final IDbShell dbs = i.getInstance(IDbShell.class);
+		dbs.restub();
 	}
 
 	private IInterfaceService getInterfaceService() {
