@@ -6,27 +6,25 @@
 package com.tll.service.entity;
 
 import org.apache.commons.lang.math.RandomUtils;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.inject.Injector;
-import com.tll.config.Config;
-import com.tll.dao.IDbShell;
-import com.tll.di.Db4oDaoModule;
-import com.tll.di.Db4oDbShellModule;
-import com.tll.di.SmbizEGraphModule;
-import com.tll.di.SmbizModelModule;
+import com.tll.dao.EntityNotFoundException;
 import com.tll.model.Account;
 import com.tll.model.AccountInterface;
 import com.tll.model.AccountInterfaceOption;
 import com.tll.model.AccountInterfaceOptionParameter;
+import com.tll.model.Asp;
 import com.tll.model.IEntityFactory;
 import com.tll.model.Interface;
 import com.tll.model.InterfaceOption;
+import com.tll.model.InterfaceOptionAccount;
 import com.tll.model.InterfaceOptionParameterDefinition;
-import com.tll.model.key.NameKey;
-import com.tll.service.entity.account.IAccountService;
+import com.tll.model.InterfaceSwitch;
+import com.tll.model.key.BusinessKeyFactory;
+import com.tll.model.key.IBusinessKey;
+import com.tll.model.key.PrimaryKey;
 import com.tll.service.entity.intf.IInterfaceService;
-
 
 /**
  * AccountInterfaceTest - Tests the account related interface methods on
@@ -36,42 +34,84 @@ import com.tll.service.entity.intf.IInterfaceService;
 @Test(groups = "service.entity")
 public class AccountInterfaceTest extends AbstractEntityServiceTest {
 
-	@Override
-	protected void beforeMethod() {
-		// create the db shell first (before test injector creation) to avoid db4o
-		// file lock when objectcontainer is instantiated
-		final Config cfg = getConfig();
-		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
-		final Injector i = buildInjector(new SmbizModelModule(), new SmbizEGraphModule(), new Db4oDaoModule(cfg), new Db4oDbShellModule());
-		final IDbShell dbs = i.getInstance(IDbShell.class);
-		dbs.restub();
-	}
+	public void testSetAccountInterface() throws Exception {
+		final Interface intf = stubInterface(true);
+		final InterfaceOption io = intf.getOptions().iterator().next();
+		final Account a = stub(Asp.class, true);
+		final AccountInterface ai = stubAccountInterface(intf, a, false);
 
-	private IInterfaceService getInterfaceService() {
-		return injector.getInstance(IInterfaceService.class);
-	}
+		getInterfaceService().setAccountInterface(ai);
 
-	private IAccountService getAccountService() {
-		return injector.getInstance(IAccountService.class);
+		final IBusinessKey<InterfaceOptionAccount> bk = BusinessKeyFactory.create(InterfaceOptionAccount.class, "Option Id and Account Id");
+		bk.setPropertyValue("option.id", io.getId());
+		bk.setPropertyValue("account.id", a.getId());
+		final InterfaceOptionAccount ioa = getDao().load(bk);
+		Assert.assertNotNull(ioa);
 	}
 
 	public void testLoadAccountInterface() throws Exception {
-		final IInterfaceService svc = getInterfaceService();
-		final Interface intf = svc.load(new NameKey<Interface>(Interface.class, "Payment Processor"));
-		final IAccountService asvc = getAccountService();
-		final Account a = asvc.load(new NameKey<Account>(Account.class, "asp"));
-		final AccountInterface ai = svc.loadAccountInterface(a.getId(), intf.getId());
-		assert ai != null;
-		assert ai.getId() != null;
+		final Interface intf = stubInterface(true);
+		final Account a = stub(Asp.class, true);
+		AccountInterface ai = stubAccountInterface(intf, a, true);
+
+		ai = getInterfaceService().loadAccountInterface(a.getId(), intf.getId());
+
+		Assert.assertNotNull(ai);
 	}
 
-	public void testSetAccountInterface() throws Exception {
+	public void testPurgeAccountInterface() throws Exception {
+		final Interface intf = stubInterface(true);
+		InterfaceOptionAccount ioa = stubIoa(intf, true);
+
+		getInterfaceService().purgeAccountInterface(ioa.accountId(), intf.getId());
+
+		try {
+			ioa = getDao().load(new PrimaryKey<InterfaceOptionAccount>(InterfaceOptionAccount.class, ioa.getId()));
+			Assert.fail("Not purged: " + ioa);
+		}
+		catch(final EntityNotFoundException e) {
+			// expected
+		}
+	}
+
+	private Interface stubInterface(boolean persist) {
+		if(persist) startNewTransaction();
+		final Interface intf = stub(InterfaceSwitch.class, false);
+		final InterfaceOption io = stub(InterfaceOption.class, false);
+		final InterfaceOptionParameterDefinition iopd = stub(InterfaceOptionParameterDefinition.class, false);
+		io.addParameter(iopd);
+		intf.addOption(io);
+		if(persist) {
+			setComplete();
+			getDao().persist(intf);
+			endTransaction();
+		}
+		return intf;
+	}
+
+	private InterfaceOptionAccount stubIoa(Interface intf, boolean persist) {
+		if(persist) startNewTransaction();
+		final Account a = stub(Asp.class, false);
+		final InterfaceOptionAccount ioa = stub(InterfaceOptionAccount.class, false);
+		ioa.setAccount(a);
+		ioa.setOption(intf.getOptions().iterator().next());
+		if(persist) {
+			setComplete();
+			getDao().persist(intf);
+			endTransaction();
+		}
+		return ioa;
+	}
+
+	/**
+	 * @return A newly created {@link AccountInterface} instance.
+	 * @param intf The associated {@link Interface}
+	 * @param a The associated {@link Account}
+	 * @param persist
+	 */
+	private AccountInterface stubAccountInterface(Interface intf, Account a, boolean persist) {
 		final IEntityFactory efactory = injector.getInstance(IEntityFactory.class);
 		final AccountInterface ai = efactory.createEntity(AccountInterface.class, false);
-		final IInterfaceService svc = getInterfaceService();
-		final Interface intf = svc.load(new NameKey<Interface>(Interface.class, "Payment Processor"));
-		final IAccountService asvc = getAccountService();
-		final Account a = asvc.load(new NameKey<Account>(Account.class, "asp"));
 		ai.setAccountId(a.getId());
 		ai.setInterfaceId(intf.getId());
 		for(final InterfaceOption io : intf.getOptions()) {
@@ -95,24 +135,16 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 			}
 			ai.addOption(aio);
 		}
-		svc.setAccountInterface(ai);
-		assert ai.getId() != null;
+		if(persist) {
+			startNewTransaction();
+			getDao().persist(ai);
+			setComplete();
+			endTransaction();
+		}
+		return ai;
 	}
 
-	public void testPurgeAccountInterface() throws Exception {
-		final IInterfaceService svc = getInterfaceService();
-		final Interface intf = svc.load(new NameKey<Interface>(Interface.class, "Payment Processor"));
-		final IAccountService asvc = getAccountService();
-		final Account a = asvc.load(new NameKey<Account>(Account.class, "asp"));
-		svc.purgeAccountInterface(a.getId(), intf.getId());
-		// TODO verify no account interface options
-	}
-
-	public void testSetAccountInterfaces() throws Exception {
-		// TODO impl
-	}
-
-	public void testPurgeAccountInterfacess() throws Exception {
-		// TODO impl
+	private IInterfaceService getInterfaceService() {
+		return injector.getInstance(IInterfaceService.class);
 	}
 }

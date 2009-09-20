@@ -11,7 +11,7 @@ import com.tll.model.IEntity;
 public abstract class AbstractEntityKey<E extends IEntity> implements IKey<E> {
 
 	private static final long serialVersionUID = -1282833100494542743L;
-	
+
 	/**
 	 * The entity type.
 	 */
@@ -57,4 +57,9 @@ public abstract class AbstractEntityKey<E extends IEntity> implements IKey<E> {
 	 * @see #descriptor()
 	 */
 	protected abstract String keyDescriptor();
+
+	@Override
+	public String toString() {
+		return descriptor();
+	}
 }

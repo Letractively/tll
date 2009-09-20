@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
 
-import org.springframework.dao.DataAccessException;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -20,8 +19,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Injector;
 import com.tll.criteria.Criteria;
-import com.tll.criteria.IQueryParam;
-import com.tll.criteria.InvalidCriteriaException;
+import com.tll.dao.test.EntityDaoTestDecorator;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
@@ -39,115 +37,11 @@ import com.tll.util.Comparator;
 
 /**
  * AbstractEntityDaoTest
+ * @param <D> the dao decorator type.
  * @author jpk
  */
 @Test(groups = { "dao" })
-public abstract class AbstractEntityDaoTest extends AbstractDbAwareTest {
-
-	/**
-	 * EntityDaoTestDecorator - Decorates {@link IEntityDao} to:
-	 * <ol>
-	 * <li>Manage dao testing life-cycle and cleanup.
-	 * <li>Prevent the dao tests from degrading as the code base naturally changes
-	 * over time. I.e.: any IEntityDao method signature change is forced upon the
-	 * dao testing.
-	 * </ol>
-	 * @author jpk
-	 */
-	protected static final class EntityDaoTestDecorator implements IEntityDao {
-
-		private IEntityDao rawDao;
-
-		public IEntityDao getRawDao() {
-			return rawDao;
-		}
-
-		public void setRawDao(IEntityDao rawDao) {
-			this.rawDao = rawDao;
-		}
-
-		@Override
-		public int executeQuery(String queryName, IQueryParam[] params) {
-			return rawDao.executeQuery(queryName, params);
-		}
-
-		@Override
-		public <E extends IEntity> List<SearchResult<?>> find(Criteria<E> criteria, Sorting sorting)
-		throws InvalidCriteriaException {
-			return rawDao.find(criteria, sorting);
-		}
-
-		@Override
-		public <E extends IEntity> List<E> findByIds(Class<E> entityType, Collection<String> ids, Sorting sorting) {
-			return rawDao.findByIds(entityType, ids, sorting);
-		}
-
-		@Override
-		public <E extends IEntity> List<E> findEntities(Criteria<E> criteria, Sorting sorting)
-		throws InvalidCriteriaException {
-			return rawDao.findEntities(criteria, sorting);
-		}
-
-		@Override
-		public <E extends IEntity> E findEntity(Criteria<E> criteria) throws InvalidCriteriaException,
-		EntityNotFoundException, NonUniqueResultException, DataAccessException {
-			return rawDao.findEntity(criteria);
-		}
-
-		@Override
-		public <E extends IEntity> List<String> getIds(Criteria<E> criteria, Sorting sorting)
-		throws InvalidCriteriaException {
-			return rawDao.getIds(criteria, sorting);
-		}
-
-		@Override
-		public <E extends IEntity> IPageResult<SearchResult<?>> getPage(Criteria<E> criteria, Sorting sorting, int offset,
-				int pageSize) throws InvalidCriteriaException {
-			return rawDao.getPage(criteria, sorting, offset, pageSize);
-		}
-
-		@Override
-		public <E extends IEntity> E load(IBusinessKey<E> key) throws EntityNotFoundException, DataAccessException {
-			return rawDao.load(key);
-		}
-
-		@Override
-		public <N extends INamedEntity> N load(NameKey<N> nameKey) throws EntityNotFoundException,
-		NonUniqueResultException, DataAccessException {
-			return rawDao.load(nameKey);
-		}
-
-		@Override
-		public <E extends IEntity> E load(PrimaryKey<E> key) throws EntityNotFoundException, DataAccessException {
-			return rawDao.load(key);
-		}
-
-		@Override
-		public <E extends IEntity> List<E> loadAll(Class<E> entityType) throws DataAccessException {
-			return rawDao.loadAll(entityType);
-		}
-
-		@Override
-		public <E extends IEntity> E persist(E entity) throws DataAccessException {
-			return rawDao.persist(entity);
-		}
-
-		@Override
-		public <E extends IEntity> Collection<E> persistAll(Collection<E> entities) throws DataAccessException {
-			return rawDao.persistAll(entities);
-		}
-
-		@Override
-		public <E extends IEntity> void purge(E entity) throws DataAccessException {
-			rawDao.purge(entity);
-		}
-
-		@Override
-		public <E extends IEntity> void purgeAll(Collection<E> entities) throws DataAccessException {
-			rawDao.purgeAll(entities);
-		}
-
-	} // EntityDaoTestDecorator
+public abstract class AbstractEntityDaoTest<D extends EntityDaoTestDecorator> extends AbstractDbAwareTest {
 
 	/**
 	 * Compare a clc of entity ids and entites ensuring the id list is referenced
@@ -206,7 +100,7 @@ public abstract class AbstractEntityDaoTest extends AbstractDbAwareTest {
 	/**
 	 * The test dao.
 	 */
-	protected final EntityDaoTestDecorator dao;
+	protected final D dao;
 
 	/**
 	 * The entity handlers subject to testing.
@@ -226,10 +120,16 @@ public abstract class AbstractEntityDaoTest extends AbstractDbAwareTest {
 
 	/**
 	 * Constructor
+	 * @param daoType
 	 */
-	public AbstractEntityDaoTest() {
+	public AbstractEntityDaoTest(Class<D> daoType) {
 		super();
-		dao = new EntityDaoTestDecorator();
+		try {
+			dao = daoType.newInstance();
+		}
+		catch(final Exception e) {
+			throw new IllegalArgumentException(e);
+		}
 		testEntityRefStack = new Stack<PrimaryKey<IEntity>>();
 	}
 
@@ -277,22 +177,6 @@ public abstract class AbstractEntityDaoTest extends AbstractDbAwareTest {
 	@Override
 	protected void afterClass() {
 		super.afterClass();
-	}
-
-	protected final void startNewTransaction() {
-		getDbTrans().startTrans();
-	}
-
-	protected final void setComplete() {
-		getDbTrans().setComplete();
-	}
-
-	protected final void endTransaction() {
-		getDbTrans().endTrans();
-	}
-
-	protected final boolean isTransStarted() {
-		return getDbTrans().isTransStarted();
 	}
 
 	/**

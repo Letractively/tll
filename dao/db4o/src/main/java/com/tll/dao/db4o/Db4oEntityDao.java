@@ -21,7 +21,6 @@ import org.springextensions.db4o.support.Db4oDaoSupport;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 import com.db4o.ObjectContainer;
 import com.db4o.events.Event4;
@@ -473,7 +472,6 @@ import com.tll.util.PropertyPath;
 	@Override
 	public <N extends INamedEntity> N load(final NameKey<N> nameKey) throws EntityNotFoundException,
 	NonUniqueResultException, DataAccessException {
-		if(!"name".equals(nameKey.getNameProperty())) throw new InvalidDataAccessApiUsageException("Invalid name key");
 		final List<N> list = getDb4oTemplate().query(new Predicate<N>(nameKey.getType()) {
 
 			@Override

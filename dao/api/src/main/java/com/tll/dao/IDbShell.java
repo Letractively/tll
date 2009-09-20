@@ -41,6 +41,17 @@ public interface IDbShell {
 	boolean clear();
 
 	/**
+	 * Clears the database targeted by the given db session ref of all data. If
+	 * the db doesn't exist, nothing happens.
+	 * @param dbSession The session that targets the desired db to clear
+	 * @return <code>true</code> if the db was actually cleared as a result of
+	 *         calling this method and
+	 *         <code>false<code> if the db is <code>not</code> cleared by way of
+	 *         this method.
+	 */
+	boolean clear(Object dbSession);
+
+	/**
 	 * Adds data to the db with the data set gotten from loading the db stub
 	 * resource. The db <em>must</em> already exist else an error is raised.
 	 * @return <code>true</code> if the db was actually stubbed with the stub data
