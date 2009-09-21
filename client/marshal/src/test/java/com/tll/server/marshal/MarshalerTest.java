@@ -178,4 +178,33 @@ public class MarshalerTest extends AbstractDbAwareTest {
 		final IModelProperty mp = m.get("addresses");
 		assert mp != null;
 	}
+
+	@Test
+	public void testEmptyNested() throws Exception {
+		final Marshaler marshaler = getMarshaler();
+		assert marshaler != null;
+		final Account e = getEntityBeanFactory().getEntityCopy(Account.class, false);
+		final NestedEntity n = getEntityBeanFactory().getEntityCopy(NestedEntity.class, false);
+		assert e != null && n != null;
+		e.setNestedEntity(n);
+		final Model m = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
+		assert m != null;
+		final IModelProperty mp = m.get("nestedEntity");
+		assert mp != null;
+	}
+
+	@Test
+	public void testEmptyNestedTarget() throws Exception {
+		final Marshaler marshaler = getMarshaler();
+		assert marshaler != null;
+		final Account e = getEntityBeanFactory().getEntityCopy(Account.class, false);
+		final NestedEntity n = getEntityBeanFactory().getEntityCopy(NestedEntity.class, false);
+		assert e != null && n != null;
+		e.setNestedEntity(n);
+		e.getNestedEntity().setNestedData(null);
+		final Model m = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
+		assert m != null;
+		final IModelProperty mp = m.get("nestedEntity");
+		assert mp != null;
+	}
 }

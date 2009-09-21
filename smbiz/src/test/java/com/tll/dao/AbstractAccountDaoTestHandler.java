@@ -78,6 +78,7 @@ public abstract class AbstractAccountDaoTestHandler<A extends Account> extends A
 
 		Assert.assertNotNull(e.getCurrency(), "No account currency loaded");
 		Assert.assertNotNull(e.getPaymentInfo(), "No account payment info loaded");
+		Assert.assertNotNull(e.getPaymentInfo().getPaymentData(), "No account payment info data loaded");
 		Assert.assertTrue(e.getAddresses() != null && e.getAddresses().size() == 2,
 		"No account address collection loaded or invalid number of them");
 	}

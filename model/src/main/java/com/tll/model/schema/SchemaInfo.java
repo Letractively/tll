@@ -120,16 +120,20 @@ public final class SchemaInfo implements ISchemaInfo {
 	}
 
 	@Override
+	public Map<String, ISchemaProperty> getSchemaProperties(Class<?> entityClass) {
+		if(!schemaMap.containsKey(entityClass)) {
+			load(entityClass);
+		}
+		return schemaMap.get(entityClass);
+	}
+
+	@Override
 	public ISchemaProperty getSchemaProperty(final Class<?> entityClass, final String propertyName)
 	throws SchemaInfoException {
 		if(propertyName == null || propertyName.length() < 1)
 			throw new IllegalArgumentException("Unable to retreive schema property: no property name specified");
 
-		if(!schemaMap.containsKey(entityClass)) {
-			load(entityClass);
-		}
-
-		Map<String, ISchemaProperty> classMap = schemaMap.get(entityClass);
+		Map<String, ISchemaProperty> classMap = getSchemaProperties(entityClass);
 
 		if(!classMap.containsKey(propertyName)) {
 
@@ -176,14 +180,15 @@ public final class SchemaInfo implements ISchemaInfo {
 	 * @return <code>true</code> if the given method is a persiste related
 	 *         accessor (getter) method.
 	 */
-	private boolean isPersistRelatedAccessor(final Method method) {
+	private boolean isElidgible(final Method method) {
 		final String mn = method.getName();
 		// handle IChildEntity.getParent() specifically since its overridden and we
 		// don't want the IChildEntity method decl!
 		if("getParent".equals(method.getName()) && IEntity.class == method.getReturnType()) {
 			return false;
 		}
-		return (method.getAnnotation(Transient.class) == null && (mn.startsWith("get") || mn.startsWith("is")));
+		// we still want to provide info on transient properties!
+		return /*(method.getAnnotation(Transient.class) == null &&*/ (mn.startsWith("get") || mn.startsWith("is"));
 	}
 
 	/**
@@ -197,7 +202,7 @@ public final class SchemaInfo implements ISchemaInfo {
 		String propName, fullPropName;
 		final Method[] mthds = type.getMethods();
 		for(final Method method : mthds) {
-			if(isPersistRelatedAccessor(method)) {
+			if(isElidgible(method)) {
 				propName = getPropertyNameFromAccessorMethodName(method.getName());
 				final PersistProperty fi = getFieldInfo(propName, type, method);
 				if(fi != null) {

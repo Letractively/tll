@@ -198,7 +198,7 @@
 								log4j,commons-logging,org.slf4j,com.tll,com.google.gwt,com.google.code.gwt-incubator,com.google.code.gwt-log
               </includeGroupIds>
 							<excludeArtifactIds>
-								gwt-servlet,tll-config,tll-core,tll-dao-api,tll-dao-db4o,tll-mail,tll-egraph,tll-model,tll-refdata,tll-security,tll-service,tll-servlet
+								gwt-servlet,hibernate-validator,tll-config,tll-core,tll-dao-api,tll-dao-db4o,tll-mail,tll-egraph,tll-model,tll-refdata,tll-security,tll-service,tll-servlet
               </excludeArtifactIds>
 							<excludeTypes>zip</excludeTypes>
 							<outputFile>target/gwt-cp.txt</outputFile>
@@ -212,7 +212,6 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<excludeScope>test</excludeScope>
 							<outputDirectory>target/war/WEB-INF/lib</outputDirectory>
 						</configuration>
 					</execution>
@@ -260,7 +259,6 @@
 							</tasks>
 						</configuration>
 					</execution>
-					<!-- TODO temp
 					<execution>
 						<id>gwt-compile</id>
 						<phase>prepare-package</phase>
@@ -278,7 +276,6 @@
 							</tasks>
 						</configuration>
 					</execution>
-					-->
 				</executions>
 			</plugin>
 
