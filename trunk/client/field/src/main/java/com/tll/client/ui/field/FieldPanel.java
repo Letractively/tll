@@ -76,9 +76,33 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 		super.initWidget(widget);
 	}
 
-	@Override
-	public final FieldGroup getFieldGroup() {
+	/**
+	 * Checks the current state of this field panel ensuring the field group is ok
+	 * to be generated.
+	 * @return true/false
+	 */
+	protected boolean canGenerateFieldGroup() {
 		if(group == null) {
+			if(getIndexedChildren() != null && model == null) {
+				// this field panel is dependent on model data for initial display!
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Generates the fields in the field group if they haven't been created yet.
+	 * This guarantees a non-<code> return value.
+	 * @throws IllegalStateException When the field group can't be generated based
+	 *         on the current state of this panel.
+	 */
+	@Override
+	public final FieldGroup getFieldGroup() throws IllegalStateException {
+		if(group == null) {
+			if(!canGenerateFieldGroup()) {
+				throw new IllegalStateException();
+			}
 			Log.debug(this + " generating fields..");
 			setFieldGroup(generateFieldGroup());
 		}
@@ -118,7 +142,8 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 		this.model = model;
 
 		if(model != null) {
-			// apply property metadata and model new flag (sets incremental validation flag)
+			// apply property metadata and model new flag (sets incremental validation
+			// flag)
 			getFieldGroup().applyPropertyMetadata(model, model.isNew());
 		}
 
@@ -184,10 +209,10 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	protected abstract IFieldRenderer<W> getRenderer();
 
 	/**
-	 * Generates the root {@link FieldGroup} this panel references via {@link #getFieldGroup()}. This
-	 * method is only called when this panel's field group reference is <code>null</code>.
-	 * Therefore, this method may be circumvented by manually calling
-	 * {@link #setFieldGroup(FieldGroup)}.
+	 * Generates the root {@link FieldGroup} this panel references via
+	 * {@link #getFieldGroup()}. This method is only called when this panel's
+	 * field group reference is <code>null</code>. Therefore, this method may be
+	 * circumvented by manually calling {@link #setFieldGroup(FieldGroup)}.
 	 * @return A new {@link FieldGroup} instance.
 	 */
 	protected abstract FieldGroup generateFieldGroup();

@@ -8,7 +8,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -38,11 +37,12 @@ import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
 import com.tll.model.IScalar;
 import com.tll.model.schema.ISchemaInfo;
-import com.tll.model.schema.Transient;
+import com.tll.model.schema.ISchemaProperty;
 import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
 import com.tll.model.schema.RelationInfo;
 import com.tll.model.schema.SchemaInfoException;
+import com.tll.model.schema.Transient;
 import com.tll.server.rpc.entity.IEntityTypeResolver;
 
 /**
@@ -155,7 +155,7 @@ public final class Marshaler {
 	}
 
 	/**
-	 * Returns a property value if the given property type supports it.
+	 * Returns a property value by a given class representing the property type.
 	 * @param ptype The property type
 	 * @param pname The property name
 	 * @param obj The value. May be <code>null</code>.
@@ -264,6 +264,8 @@ public final class Marshaler {
 	private <E extends IEntity> Model marshalEntity(final E source, final MarshalOptions options, final int depth,
 			final BindingStack visited) {
 
+		assert source != null;
+
 		// check visited
 		Binding b = visited.find(source);
 		if(b != null) {
@@ -337,28 +339,28 @@ public final class Marshaler {
 					prop = new StringMapPropertyValue(pname, generatePropertyData(entityClass, pname), (Map) obj);
 				}
 
-				// nested property?
-				else if(schemaInfo.getSchemaProperty(entityClass, pname).getPropertyType().isNested()) {
-					final BeanWrapperImpl bw2 = new BeanWrapperImpl(obj);
-					for(final PropertyDescriptor pd2 : bw2.getPropertyDescriptors()) {
-						if(bw2.isWritableProperty(pd2.getName()) && isMarshalableProperty(pd2)) {
-							try {
-								final Object oval = bw2.getPropertyValue(pd2.getName());
-								if(oval != null) {
+				else {
+					final ISchemaProperty sp = schemaInfo.getSchemaProperty(entityClass, pname);
+
+					// nested property?
+					if(sp != null && sp.getPropertyType().isNested()) {
+						final BeanWrapperImpl bw2 = obj == null ? new BeanWrapperImpl(ptype) : new BeanWrapperImpl(obj);
+						for(final PropertyDescriptor pd2 : bw2.getPropertyDescriptors()) {
+							if(bw2.isWritableProperty(pd2.getName()) && isMarshalableProperty(pd2)) {
+								try {
+									final Object oval = bw2.getPropertyValue(pd2.getName());
 									model.set(createValueProperty(pd2.getPropertyType(), (pname + "_" + pd2.getName()), oval,
 											generatePropertyData(source.entityClass(), (pname + "." + pd2.getName()))));
 								}
-							}
-							catch(final RuntimeException e) {
+								catch(final RuntimeException e) {
+								}
 							}
 						}
 					}
-				}
 
-				else {
-					throw new RuntimeException("Unhandled property type: " + ptype);
+					else throw new RuntimeException("Unhandled property type: " + ptype);
 				}
-			}
+			} // prop == null
 
 			if(prop != null) {
 				model.set(prop);
@@ -446,13 +448,12 @@ public final class Marshaler {
 
 		final BeanWrapperImpl bw = new BeanWrapperImpl(e);
 
-		for(final Iterator itr = model.iterator(); itr.hasNext();) {
-			final IModelProperty prop = (IModelProperty) itr.next();
-			String propName = prop.getPropertyName();
-			final Object pval = prop.getValue();
+		for(final IModelProperty mprop : model) {
+			String propName = mprop.getPropertyName();
+			final Object pval = mprop.getValue();
 			Object val = null;
 
-			switch(prop.getType()) {
+			switch(mprop.getType()) {
 
 				case STRING:
 				case LONG:
@@ -480,8 +481,7 @@ public final class Marshaler {
 				break;
 
 				case NESTED:
-					// no-op since we have the property path extended via '_'
-					// and this is handled below
+					// no-op since these are expressed as "{parent}_{nestedA}"
 					break;
 
 				case RELATED_MANY: {
@@ -523,7 +523,7 @@ public final class Marshaler {
 					break;
 
 				default:
-					throw new RuntimeException("Unhandled Property Value type: " + prop.getType());
+					throw new RuntimeException("Unhandled Property Value type: " + mprop.getType());
 
 			}// switch
 

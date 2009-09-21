@@ -67,6 +67,7 @@ public class StringMapPropertyValue extends AbstractPropertyValue {
 	}
 
 	private void setStringMap(Map<String, String> map) {
+		if(map == null) return;
 		if(this.map == null) {
 			this.map = new LinkedHashMap<String, String>();
 		}

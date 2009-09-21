@@ -13,13 +13,35 @@ package com.tll.common.model;
 @SuppressWarnings("serial")
 public final class IndexOutOfRangeInPropPathException extends PropertyPathException {
 
+	private final String indexedProp;
+
+	private final int index;
+
 	/**
 	 * Constructor
 	 * @param propPath
-	 * @param prop
+	 * @param indexedProp
 	 * @param index
 	 */
-	IndexOutOfRangeInPropPathException(final String propPath, final String prop, final int index) {
-		super("Property index : " + index + " for prop: '" + prop + "' is out of range in prop path: " + propPath, propPath);
+	IndexOutOfRangeInPropPathException(final String propPath, final String indexedProp, final int index) {
+		super("Property index : " + index + " for indexed prop: '" + indexedProp + "' is out of range in prop path: "
+				+ propPath, propPath);
+		this.indexedProp = indexedProp;
+		this.index = index;
 	}
+
+	/**
+	 * @return the indexedProp
+	 */
+	public String getIndexedProp() {
+		return indexedProp;
+	}
+
+	/**
+	 * @return the index
+	 */
+	public int getIndex() {
+		return index;
+	}
+
 }

@@ -203,7 +203,14 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	 *        before applying?
 	 */
 	public final void applyFieldErrors(final List<Msg> msgs, ErrorClassifier classifier, boolean clearExisting) {
-		final FieldGroup root = fieldPanel.getFieldGroup();
+		final FieldGroup root;
+		try {
+			root = fieldPanel.getFieldGroup();
+		}
+		catch(final IllegalStateException e) {
+			// presume field group not initialized yet
+			return;
+		}
 		final IErrorHandler errorHandler = root.getErrorHandler();
 		if(clearExisting) errorHandler.clear(classifier);
 		for(final Msg msg : msgs) {

@@ -6,7 +6,7 @@
 package com.tll.common.model;
 
 /**
- * UnsetPropertyException - Indicates a model property is unset.
+ * UnsetPropertyException - Indicates a model property does not exist.
  * @author jpk
  */
 @SuppressWarnings("serial")
