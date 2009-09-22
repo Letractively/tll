@@ -24,6 +24,7 @@ import com.tll.dao.db4o.test.Db4oTrans;
 import com.tll.di.Db4oDaoModule;
 import com.tll.di.Db4oDbShellModule;
 import com.tll.di.EntityServiceFactoryModule;
+import com.tll.di.SmbizDb4oDaoModule;
 import com.tll.di.SmbizEGraphModule;
 import com.tll.di.SmbizModelModule;
 import com.tll.model.EntityBeanFactory;
@@ -41,7 +42,7 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 		super.addModules(modules);
 		modules.add(new SmbizModelModule());
 		modules.add(new SmbizEGraphModule());
-		modules.add(new Db4oDaoModule(getConfig()));
+		modules.add(new SmbizDb4oDaoModule(getConfig()));
 		modules.add(new Db4oDbShellModule());
 		modules.add(new Module() {
 
@@ -78,7 +79,7 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 		cfg.addProperty(Db4oDaoModule.ConfigKeys.DB_TRANS_TIMEOUT.getKey(), getConfig().getProperty(
 				Db4oDaoModule.ConfigKeys.DB_TRANS_TIMEOUT.getKey()));
 		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
-		final Injector i = buildInjector(new Db4oDaoModule(cfg), new Db4oDbShellModule());
+		final Injector i = buildInjector(new SmbizDb4oDaoModule(cfg), new Db4oDbShellModule());
 		final IDbShell dbs = i.getInstance(IDbShell.class);
 
 		dbs.delete();

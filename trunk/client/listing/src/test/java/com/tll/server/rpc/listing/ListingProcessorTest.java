@@ -21,7 +21,6 @@ import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.Sorting;
-import com.tll.di.Db4oDaoModule;
 import com.tll.di.Db4oDbShellModule;
 import com.tll.di.EntityServiceFactoryModule;
 import com.tll.di.LogExceptionHandlerModule;
@@ -30,6 +29,7 @@ import com.tll.di.RefDataModule;
 import com.tll.di.TestListingModule;
 import com.tll.di.TestMarshalModule;
 import com.tll.di.TestPersistenceUnitModelModule;
+import com.tll.di.test.TestDb4oDaoModule;
 import com.tll.listhandler.ListHandlerType;
 
 /**
@@ -42,8 +42,8 @@ public class ListingProcessorTest extends AbstractDbAwareTest {
 	static final String ssnId1 = "1";
 	static final String ssnId2 = "2";
 
-	static final String listingName1 = "listing1";
-	static final String listingName2 = "listing2";
+	static final String listingId1 = "listing1";
+	static final String listingId2 = "listing2";
 
 	private final ListingProcessor processor = new ListingProcessor();
 
@@ -56,7 +56,7 @@ public class ListingProcessorTest extends AbstractDbAwareTest {
 		modules.add(new MailModule(Config.load(new ConfigRef("config-mail.properties"))));
 
 		modules.add(new TestPersistenceUnitModelModule());
-		modules.add(new Db4oDaoModule(getConfig()));
+		modules.add(new TestDb4oDaoModule(getConfig()));
 		modules.add(new Db4oDbShellModule());
 		modules.add(new EntityServiceFactoryModule());
 		modules.add(new LogExceptionHandlerModule());
@@ -94,7 +94,7 @@ public class ListingProcessorTest extends AbstractDbAwareTest {
 	public void testRefresh() throws Exception {
 		final ListingContext context = getListingContext();
 
-		final ListingRequest request = new ListingRequest(listingName1, getListingDef(), ListingOp.REFRESH, 0, null);
+		final ListingRequest request = new ListingRequest(listingId1, getListingDef(), ListingOp.REFRESH, 0, null);
 
 		final ListingPayload<Model> p = processor.process(ssnId1, context, request);
 

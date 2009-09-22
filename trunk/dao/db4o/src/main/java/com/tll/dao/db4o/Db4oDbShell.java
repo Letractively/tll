@@ -96,8 +96,12 @@ public class Db4oDbShell implements IDbShell {
 	 * @return A newly created db4o session.
 	 */
 	private ObjectContainer createDbSession() {
-		log.info("Instantiating db4o session for: " + dbFile);
-		return c == null ? Db4o.openFile(dbFile.getPath()) : Db4o.openFile(c, dbFile.getPath());
+		if(c == null) {
+			log.info("Instantiating db4o session for: " + dbFile + " with NO configuration");
+			return Db4o.openFile(dbFile.getPath());
+		}
+		log.info("Instantiating db4o session for: " + dbFile + " with config: " + c);
+		return Db4o.openFile(c, dbFile.getPath());
 	}
 
 	/**
@@ -105,8 +109,10 @@ public class Db4oDbShell implements IDbShell {
 	 * @param session A db4o session
 	 */
 	private void killDbSession(ObjectContainer session) {
-		log.info("Killing db4o session for: " + dbFile);
-		if(session != null) while(!session.close()) {
+		if(session != null) {
+			log.info("Killing db4o session for: " + dbFile);
+			while(!session.close()) {
+			}
 		}
 	}
 
@@ -162,19 +168,37 @@ public class Db4oDbShell implements IDbShell {
 	}
 
 	@Override
-	public void restub() {
-		delete();
-		create();
-		stub();
+	public boolean stub() {
+		ObjectContainer dbSession = null;
+		try {
+			log.info("Stubbing db4o db for db4o db: " + dbFile);
+			dbSession = createDbSession();
+			return doStub(dbSession);
+		}
+		finally {
+			killDbSession(dbSession);
+		}
 	}
 
 	@Override
-	public boolean stub() {
-		if(populator == null) throw new IllegalStateException("No populator set");
-		ObjectContainer db = null;
+	public boolean stub(Object dbSession) {
+		if(dbSession instanceof ObjectContainer) {
+			log.info("Stubbing db4o db for session: " + dbSession);
+			doStub((ObjectContainer) dbSession);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Stubs a targeted db.
+	 * @param dbSession the db session ref
+	 * @return true/false
+	 */
+	private boolean doStub(ObjectContainer dbSession) {
+		assert dbSession != null;
 		try {
-			log.info("Stubbing db4o db..");
-			db = createDbSession();
+			if(populator == null) throw new IllegalStateException("No populator set");
 			populator.populateEntityGraph();
 			final EntityGraph eg = populator.getEntityGraph();
 			final Iterator<Class<? extends IEntity>> itr = eg.getEntityTypes();
@@ -184,16 +208,27 @@ public class Db4oDbShell implements IDbShell {
 				final Collection<? extends IEntity> ec = eg.getEntitiesByType(et);
 				for(final IEntity e : ec) {
 					log.info("Storing entity: " + et + "...");
-					db.store(e);
+					dbSession.store(e);
 				}
 			}
 			return true;
 		}
-		catch(final Throwable t) {
+		catch(final Exception e) {
+			log.error("Unable to stub db: " + e.getMessage(), e);
 			return false;
 		}
-		finally {
-			killDbSession(db);
-		}
+	}
+
+	@Override
+	public void restub() {
+		create();
+		clear();
+		stub();
+	}
+
+	@Override
+	public void restub(Object dbSession) {
+		clear(dbSession);
+		stub(dbSession);
 	}
 }

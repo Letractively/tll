@@ -15,12 +15,13 @@ import com.tll.server.marshal.MarshalOptions;
  */
 public class SmbizMarshalOptionsResolver implements IMarshalOptionsResolver {
 
-	private static final MarshalOptions ACCOUNT_MARSHAL_OPTIONS = new MarshalOptions(true, 2);
-	private static final MarshalOptions ACCOUNT_ADDRESS_OPTIONS = new MarshalOptions(false, 1);
-	private static final MarshalOptions ADDRESS_OPTIONS = new MarshalOptions(false, 0);
-	private static final MarshalOptions AUTHORITY_OPTIONS = new MarshalOptions(false, 0);
-	private static final MarshalOptions INTERFACE_OPTIONS = MarshalOptions.UNCONSTRAINED_MARSHALING;
-	private static final MarshalOptions USER_OPTIONS = new MarshalOptions(true, 2);
+	public static final MarshalOptions ACCOUNT_MARSHAL_OPTIONS = new MarshalOptions(false, 2, new String[] { "parent" });
+	public static final MarshalOptions ACCOUNT_ADDRESS_OPTIONS = new MarshalOptions(false, 1, null);
+	public static final MarshalOptions ADDRESS_OPTIONS = new MarshalOptions(false, 0, null);
+	public static final MarshalOptions AUTHORITY_OPTIONS = new MarshalOptions(false, 0, null);
+	public static final MarshalOptions INTERFACE_OPTIONS = MarshalOptions.UNCONSTRAINED_MARSHALING;
+	public static final MarshalOptions USER_OPTIONS = new MarshalOptions(true, 2, new String[] { "parent" });
+	public static final MarshalOptions USER_OPTIONS_ADMIN_CONTEXT = new MarshalOptions(true, 1, new String[] { "parent" });
 
 	@Override
 	public MarshalOptions resolve(IEntityType entityType) throws IllegalArgumentException {

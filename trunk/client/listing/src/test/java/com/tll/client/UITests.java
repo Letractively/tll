@@ -8,11 +8,10 @@ import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ITableCellRenderer;
-import com.tll.client.listing.ListingFactory;
 import com.tll.client.listing.ModelPropertyFormatter;
-import com.tll.client.listing.PropertyBoundColumn;
-import com.tll.client.ui.listing.ListingWidget;
+import com.tll.client.listing.RemoteListingOperator;
 import com.tll.client.ui.listing.ModelListingWidget;
+import com.tll.client.ui.listing.RemoteListingWidget;
 import com.tll.common.model.Model;
 import com.tll.common.model.test.MockModelStubber;
 import com.tll.common.search.test.TestAddressSearch;
@@ -35,11 +34,9 @@ public final class UITests extends AbstractUITest {
 		return new UITestCase[] { new RemoteListingWidgetTest() };
 	}
 
-	static final Sorting defaultSorting = new Sorting("lastName");
-
 	static final class TestRowOptions extends AbstractRowOptions {
 
-		ListingWidget<Model, ?> listing;
+		TestListingWidget listing;
 		Model address;
 
 		/**
@@ -50,7 +47,7 @@ public final class UITests extends AbstractUITest {
 			address = MockModelStubber.stubAddress(1);
 		}
 
-		public void setListing(ListingWidget<Model, ?> listing) {
+		public void setListing(TestListingWidget listing) {
 			this.listing = listing;
 		}
 
@@ -72,9 +69,9 @@ public final class UITests extends AbstractUITest {
 
 	static final class TestAddRowDelegate implements IAddRowDelegate {
 
-		ListingWidget<Model, ?> listing;
+		TestListingWidget listing;
 
-		public void setListing(ListingWidget<Model, ?> listing) {
+		public void setListing(TestListingWidget listing) {
 			this.listing = listing;
 		}
 
@@ -90,16 +87,16 @@ public final class UITests extends AbstractUITest {
 	 */
 	static final class TestConfig implements IListingConfig<Model> {
 
-		PropertyBoundColumn cName = new PropertyBoundColumn("Name", "lastName");
-		PropertyBoundColumn cAddress = new PropertyBoundColumn("Address", "address1");
-		PropertyBoundColumn cCity = new PropertyBoundColumn("City", "city");
-		TestRowOptions rowOptions = new TestRowOptions();
-		TestAddRowDelegate addRowDelegate = new TestAddRowDelegate();
+		static final Sorting defaultSorting = new Sorting("lastName");
 
-		private final Column[] cols = new Column[] {
-			Column.ROW_COUNT_COLUMN, cName, cAddress, cCity };
+		static final Column cName = new Column("Name", "lastName");
+		static final Column cAddress = new Column("Address", "address1");
+		static final Column cCity = new Column("City", "city");
 
-		private final ITableCellRenderer<Model, Column> cellRenderer = new ITableCellRenderer<Model, Column>() {
+		static final String[] mprops = new String[] { "firstName", "lastName", "address1", "address2" };
+		static final Column[] cols = new Column[] { Column.ROW_COUNT_COLUMN, cName, cAddress, cCity };
+
+		private final ITableCellRenderer<Model> cellRenderer = new ITableCellRenderer<Model>() {
 
 			@Override
 			public String getCellValue(Model rowData, Column column) {
@@ -126,6 +123,11 @@ public final class UITests extends AbstractUITest {
 				throw new IllegalStateException("Un-resolvable column: " + column);
 			}
 		};
+
+		@Override
+		public String getListingId() {
+			return "unique";
+		}
 
 		@Override
 		public boolean isSortable() {
@@ -168,7 +170,12 @@ public final class UITests extends AbstractUITest {
 		}
 
 		@Override
-		public ITableCellRenderer<Model, ? extends Column> getCellRenderer() {
+		public String[] getModelProperties() {
+			return mprops;
+		}
+
+		@Override
+		public ITableCellRenderer<Model> getCellRenderer() {
 			return cellRenderer;
 		}
 
@@ -176,17 +183,37 @@ public final class UITests extends AbstractUITest {
 		public String getCaption() {
 			return "Addresses";
 		}
+	} // TestConfig
+
+	static class TestListingWidget extends RemoteListingWidget {
+
+		static final TestConfig config = new TestConfig();
+		static final TestAddressSearch criteria = new TestAddressSearch();
+
+		static final TestRowOptions rowOptions = new TestRowOptions();
+		static final TestAddRowDelegate addRowDelegate = new TestAddRowDelegate();
+
+		public TestListingWidget() {
+			super(config);
+
+			setOperator(RemoteListingOperator.create(config.getListingId(), ListHandlerType.PAGE, criteria, config
+					.getModelProperties(), config.getPageSize(), config.getDefaultSorting()));
+
+			rowOptions.setListing(this);
+			addRowDelegate.setListing(this);
+		}
 
 		@Override
-		public IRowOptionsDelegate getRowOptionsHandler() {
+		protected IAddRowDelegate getAddRowHandler() {
+			return addRowDelegate;
+		}
+
+		@Override
+		protected IRowOptionsDelegate getRowOptionsHandler() {
 			return rowOptions;
 		}
 
-		@Override
-		public IAddRowDelegate getAddRowHandler() {
-			return addRowDelegate;
-		}
-	} // TestConfig
+	} // TestListingWidget
 
 	/**
 	 * RemoteListingWidgetTest
@@ -206,12 +233,7 @@ public final class UITests extends AbstractUITest {
 
 		@Override
 		protected Widget getContext() {
-			config = new TestConfig();
-			lw =
-				ListingFactory.createRemoteListingWidget(config, "addresses", ListHandlerType.PAGE, new TestAddressSearch(),
-						null, defaultSorting);
-			config.rowOptions.setListing(lw);
-			config.addRowDelegate.setListing(lw);
+			lw = new TestListingWidget();
 			lw.setPortalHeight("300px");
 			return lw;
 		}

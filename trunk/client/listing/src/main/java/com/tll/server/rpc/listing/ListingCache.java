@@ -27,12 +27,12 @@ public final class ListingCache {
 	 * Generates the hash that is http session and listing name dependent.
 	 * @param sessionId the required user session id (normally gotten from the
 	 *        http request instance)
-	 * @param listingName
+	 * @param listingId
 	 * @return the corresponding hash key for the given listing name in the given
 	 *         http session.
 	 */
-	private static Integer key(String sessionId, String listingName) {
-		return Integer.valueOf(sessionId.hashCode() + 37 * listingName.hashCode());
+	private static Integer key(String sessionId, String listingId) {
+		return Integer.valueOf(sessionId.hashCode() + 37 * listingId.hashCode());
 	}
 
 	private static Cache handlerCache() {
@@ -47,12 +47,12 @@ public final class ListingCache {
 	 * Retrieves the cached handler by table view name.
 	 * @param <T>
 	 * @param sessionId
-	 * @param listingName
+	 * @param listingId
 	 * @return listing handler
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> ListingHandler<T> getHandler(String sessionId, String listingName) {
-		final Element e = handlerCache().get(key(sessionId, listingName));
+	public static <T> ListingHandler<T> getHandler(String sessionId, String listingId) {
+		final Element e = handlerCache().get(key(sessionId, listingId));
 		return e == null ? null : (ListingHandler) e.getObjectValue();
 	}
 
@@ -60,23 +60,23 @@ public final class ListingCache {
 	 * Caches the handler by table view name.
 	 * @param <T>
 	 * @param sessionId
-	 * @param listingName
+	 * @param listingId
 	 * @param handler
 	 */
-	public static <T> void storeHandler(String sessionId, String listingName, ListingHandler<T> handler) {
-		handlerCache().put(new Element(key(sessionId, listingName), handler));
+	public static <T> void storeHandler(String sessionId, String listingId, ListingHandler<T> handler) {
+		handlerCache().put(new Element(key(sessionId, listingId), handler));
 	}
 
 	/**
 	 * Clears the cached handler by table view name.
 	 * @param <T>
 	 * @param sessionId
-	 * @param listingName
+	 * @param listingId
 	 * @return the cleared handler. May be <code>null</code>.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> ListingHandler<T> clearHandler(String sessionId, String listingName) {
-		final Serializable key = key(sessionId, listingName);
+	public static <T> ListingHandler<T> clearHandler(String sessionId, String listingId) {
+		final Serializable key = key(sessionId, listingId);
 		final Cache c = handlerCache();
 		final Element e = c.get(key);
 		final ListingHandler<T> handler = e == null ? null : (ListingHandler<T>) e.getObjectValue();
@@ -89,33 +89,33 @@ public final class ListingCache {
 	/**
 	 * Retrieves the cached listing state by table view name.
 	 * @param sessionId
-	 * @param listingName name of the table view for which state is retrieved.
+	 * @param listingId name of the table view for which state is retrieved.
 	 * @return the cached listing state or null if not found.
 	 */
-	public static ListingState getState(String sessionId, String listingName) {
-		final Element e = stateCache().get(key(sessionId, listingName));
+	public static ListingState getState(String sessionId, String listingId) {
+		final Element e = stateCache().get(key(sessionId, listingId));
 		return e == null ? null : (ListingState) e.getObjectValue();
 	}
 
 	/**
 	 * Caches the state of the table for the duration of the request session.
 	 * @param sessionId
-	 * @param listingName
+	 * @param listingId
 	 * @param state
 	 */
-	public static void storeState(String sessionId, String listingName, ListingState state) {
-		stateCache().put(new Element(key(sessionId, listingName), state));
+	public static void storeState(String sessionId, String listingId, ListingState state) {
+		stateCache().put(new Element(key(sessionId, listingId), state));
 	}
 
 	/**
 	 * Clears the listing state cached under the given table view name by table
 	 * view name.
 	 * @param sessionId
-	 * @param listingName
+	 * @param listingId
 	 * @return the cleared table mode state. May be <code>null</code>.
 	 */
-	public static ListingState clearState(String sessionId, String listingName) {
-		final Serializable key = key(sessionId, listingName);
+	public static ListingState clearState(String sessionId, String listingId) {
+		final Serializable key = key(sessionId, listingId);
 		final Cache c = stateCache();
 		final Element e = c.get(key);
 		final ListingState state = e == null ? null : (ListingState) e.getObjectValue();

@@ -21,36 +21,12 @@ import com.google.inject.Stage;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.config.IConfigAware;
-import com.tll.config.IConfigKey;
 
 /**
- * Bootstrapper - Bootstraps the app via dependency injection.
+ * Bootstrapper - Responsible for starting up and shutting down the app.
  * @author jpk
  */
-public final class Bootstrapper implements ServletContextListener {
-
-	/**
-	 * ConfigKeys - Configuration property keys for the dao module.
-	 * @author jpk
-	 */
-	public static enum ConfigKeys implements IConfigKey {
-
-		DEBUG_PARAM("debug");
-
-		private final String key;
-
-		/**
-		 * Constructor
-		 * @param key
-		 */
-		private ConfigKeys(String key) {
-			this.key = key;
-		}
-
-		public String getKey() {
-			return key;
-		}
-	}
+public class Bootstrapper implements ServletContextListener {
 
 	private static final Log log = LogFactory.getLog(Bootstrapper.class);
 
@@ -135,6 +111,15 @@ public final class Bootstrapper implements ServletContextListener {
 		}
 	}
 
+	/**
+	 * Hook to do init stuff *before* the bootstrapper handlers and the dependency
+	 * injector is created.
+	 * @param event
+	 */
+	protected void beforeInjection(ServletContextEvent event) {
+		// default no-op
+	}
+
 	public void contextInitialized(ServletContextEvent event) {
 		final ServletContext servletContext = event.getServletContext();
 
@@ -149,17 +134,25 @@ public final class Bootstrapper implements ServletContextListener {
 			throw new Error("Unable to load config: " + e.getMessage(), e);
 		}
 
-		final boolean debug = config.getBoolean(ConfigKeys.DEBUG_PARAM.getKey());
-
-		// create the dependency injector
-		final Injector injector = createInjector(servletContext, debug ? Stage.DEVELOPMENT : Stage.PRODUCTION, config);
+		// pre dependency injection initializing
+		log.debug("Performing pre-injection initialization..");
+		beforeInjection(event);
 
 		// load the dependency handler definitions
+		log.debug("Creating dependency handlers..");
 		loadDependencyHandlers(servletContext);
+
+		final String stage = config.getString("stage", "prod");
+		log.info("Bootstrapping app [stage: " + stage + "]..");
+
+		// create the dependency injector
+		log.debug("Creating dependency injector..");
+		final Injector injector = createInjector(servletContext, "dev".equals(stage) ? Stage.DEVELOPMENT : Stage.PRODUCTION, config);
 
 		// start 'em up
 		if(handlers != null) {
 			for(final IBootstrapHandler handler : handlers) {
+				log.debug("Starting up dependency handlers..");
 				handler.startup(injector, servletContext);
 			}
 		}
@@ -168,6 +161,7 @@ public final class Bootstrapper implements ServletContextListener {
 	public void contextDestroyed(ServletContextEvent servletContextEvent) {
 		// shut 'em down
 		if(handlers != null) {
+			log.debug("Shutting down dependency handlers..");
 			for(final IBootstrapHandler handler : handlers) {
 				handler.shutdown(servletContextEvent.getServletContext());
 			}

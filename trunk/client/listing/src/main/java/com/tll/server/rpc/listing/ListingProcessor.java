@@ -60,8 +60,8 @@ final class ListingProcessor {
 			status.addMsg("No listing request specified.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 		}
 
-		final String listingName = request == null ? null : request.getListingName();
-		if(listingName == null) {
+		final String listingId = request == null ? null : request.getListingId();
+		if(listingId == null) {
 			status.addMsg("No listing name specified.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 		}
 
@@ -82,25 +82,25 @@ final class ListingProcessor {
 				Sorting sorting = request.getSorting();
 
 				// get listing state (if cached)
-				final ListingState state = ListingCache.getState(sessionId, listingName);
+				final ListingState state = ListingCache.getState(sessionId, listingId);
 				if(state != null) {
 					if(log.isDebugEnabled())
-						log.debug("Found cached state for listing '" + listingName + "': " + state.toString());
+						log.debug("Found cached state for listing '" + listingId + "': " + state.toString());
 					if(offset == null) {
 						offset = state.getOffset();
 						assert offset != null;
 						if(log.isDebugEnabled())
-							log.debug("Setting offset (" + offset + ") from cache for listing:" + listingName);
+							log.debug("Setting offset (" + offset + ") from cache for listing:" + listingId);
 					}
 					if(sorting == null) {
 						sorting = state.getSorting();
 						assert sorting != null;
 						if(log.isDebugEnabled())
-							log.debug("Setting sorting (" + sorting.toString() + ") from cache for listing:" + listingName);
+							log.debug("Setting sorting (" + sorting.toString() + ") from cache for listing:" + listingId);
 					}
 				}
 
-				handler = ListingCache.getHandler(sessionId, listingName);
+				handler = ListingCache.getHandler(sessionId, listingId);
 				listingStatus = (handler == null ? ListingStatus.NOT_CACHED : ListingStatus.CACHED);
 				if(log.isDebugEnabled()) log.debug("Listing status: " + listingStatus);
 
@@ -108,13 +108,13 @@ final class ListingProcessor {
 					// acquire the listing handler
 					if(handler == null || listingOp == ListingOp.REFRESH) {
 
-						if(log.isDebugEnabled()) log.debug("Generating listing handler for listing: '" + listingName + "'...");
+						if(log.isDebugEnabled()) log.debug("Generating listing handler for listing: '" + listingId + "'...");
 
 						final RemoteListingDefinition<? extends IListingSearch> listingDef = request.getListingDef();
 						if(listingDef != null) {
 							final IListingSearch search = listingDef.getSearchCriteria();
 							if(search == null) {
-								throw new ListingException(listingName, "No search criteria specified.");
+								throw new ListingException(listingId, "No search criteria specified.");
 							}
 
 							// translate client side criteria to server side criteria
@@ -124,7 +124,7 @@ final class ListingProcessor {
 								criteria = context.getSearchTranslator().translateListingSearchCriteria(context, search);
 							}
 							catch(final IllegalArgumentException iae) {
-								throw new ListingException(listingName, "Unable to translate listing search criteria: "
+								throw new ListingException(listingId, "Unable to translate listing search criteria: "
 										+ request.descriptor(), iae);
 							}
 
@@ -134,19 +134,19 @@ final class ListingProcessor {
 							// resolve the list handler type
 							final ListHandlerType lht = listingDef.getListHandlerType();
 							if(lht == null) {
-								throw new ListingException(listingName, "No list handler type specified.");
+								throw new ListingException(listingId, "No list handler type specified.");
 							}
 							// resolve the sorting to use
 							sorting = (sorting == null ? listingDef.getInitialSorting() : sorting);
 							if(sorting == null) {
-								throw new ListingException(listingName, "No sorting directive specified.");
+								throw new ListingException(listingId, "No sorting directive specified.");
 							}
 							IListHandler<SearchResult<?>> listHandler = null;
 							try {
 								listHandler = ListHandlerFactory.create(criteria, sorting, lht, dataProvider);
 							}
 							catch(final InvalidCriteriaException e) {
-								throw new ListingException(listingName, "Invalid criteria: " + e.getMessage(), e);
+								throw new ListingException(listingId, "Invalid criteria: " + e.getMessage(), e);
 							}
 							catch(final EmptyListException e) {
 								// we proceed to allow client to still show the listing
@@ -170,24 +170,24 @@ final class ListingProcessor {
 										!criteria.getCriteriaType().isScalar());
 
 							// instantiate the handler
-							handler = new ListingHandler<Model>(marshalingListHandler, listingName, listingDef.getPageSize());
+							handler = new ListingHandler<Model>(marshalingListHandler, listingId, listingDef.getPageSize());
 						}
 					}
 
 					// do the query related listing op
 					if(handler != null && listingOp != null && listingOp.isQuery()) {
 						if(log.isDebugEnabled())
-							log.debug("Performing : '" + listingOp.getName() + "' for '" + listingName + "'...");
+							log.debug("Performing : '" + listingOp.getName() + "' for '" + listingId + "'...");
 						try {
 							handler.query(offset.intValue(), sorting, (listingOp == ListingOp.REFRESH));
-							status.addMsg(listingOp.getName() + " for '" + listingName + "' successful.", MsgLevel.INFO,
+							status.addMsg(listingOp.getName() + " for '" + listingId + "' successful.", MsgLevel.INFO,
 									MsgAttr.STATUS.flag);
 						}
 						catch(final EmptyListException e) {
-							throw new ListingException(listingName, "No matching rows exist.", e);
+							throw new ListingException(listingId, "No matching rows exist.", e);
 						}
 						catch(final ListingException e) {
-							throw new ListingException(listingName, "An unexpected error occurred performing listing operation: "
+							throw new ListingException(listingId, "An unexpected error occurred performing listing operation: "
 									+ e.getMessage(), e);
 						}
 					}
@@ -204,18 +204,18 @@ final class ListingProcessor {
 				// do caching
 				if(listingOp == ListingOp.CLEAR) {
 					// clear
-					if(log.isDebugEnabled()) log.debug("Clearing listing '" + listingName + "'...");
-					ListingCache.clearHandler(sessionId, listingName);
+					if(log.isDebugEnabled()) log.debug("Clearing listing '" + listingId + "'...");
+					ListingCache.clearHandler(sessionId, listingId);
 					if(!request.getRetainStateOnClear()) {
-						ListingCache.clearState(sessionId, listingName);
+						ListingCache.clearState(sessionId, listingId);
 					}
 					listingStatus = ListingStatus.NOT_CACHED;
-					status.addMsg("Cleared listing data for " + listingName, MsgLevel.INFO, MsgAttr.STATUS.flag);
+					status.addMsg("Cleared listing data for " + listingId, MsgLevel.INFO, MsgAttr.STATUS.flag);
 				}
 				else if(listingOp == ListingOp.CLEAR_ALL) {
 					// clear all
 					if(log.isDebugEnabled()) log.debug("Clearing ALL listings...");
-					ListingCache.clearHandler(sessionId, listingName);
+					ListingCache.clearHandler(sessionId, listingId);
 					if(!request.getRetainStateOnClear()) {
 						ListingCache.clearAll(request.getRetainStateOnClear());
 					}
@@ -224,22 +224,22 @@ final class ListingProcessor {
 				}
 				else if(handler != null && !status.hasErrors()) {
 					// cache listing handler
-					if(log.isDebugEnabled()) log.debug("[Re-]Caching listing '" + listingName + "'...");
-					ListingCache.storeHandler(sessionId, listingName, handler);
+					if(log.isDebugEnabled()) log.debug("[Re-]Caching listing '" + listingId + "'...");
+					ListingCache.storeHandler(sessionId, listingId, handler);
 					// cache listing state
-					if(log.isDebugEnabled()) log.debug("[Re-]Caching listing state '" + listingName + "'...");
-					ListingCache.storeState(sessionId, listingName, new ListingState(handler.getOffset(), handler.getSorting()));
+					if(log.isDebugEnabled()) log.debug("[Re-]Caching listing state '" + listingId + "'...");
+					ListingCache.storeState(sessionId, listingId, new ListingState(handler.getOffset(), handler.getSorting()));
 					listingStatus = ListingStatus.CACHED;
 				}
 			}
 		} // !status.hasErrors()
 
-		final ListingPayload<Model> p = new ListingPayload<Model>(status, listingName, listingStatus);
+		final ListingPayload<Model> p = new ListingPayload<Model>(status, listingId, listingStatus);
 
 		// only provide page data when it is needed at the client and there are no
 		// errors
 		if(handler != null && !status.hasErrors() && (listingOp != null && !listingOp.isClear())) {
-			if(log.isDebugEnabled()) log.debug("Sending page data for '" + listingName + "'...");
+			if(log.isDebugEnabled()) log.debug("Sending page data for '" + listingId + "'...");
 			final List<Model> list = handler.getElements();
 			p.setPageData(handler.size(), list.toArray(new Model[list.size()]), handler.getOffset(), handler.getSorting());
 		}

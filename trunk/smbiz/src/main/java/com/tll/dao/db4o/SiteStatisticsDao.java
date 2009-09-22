@@ -20,10 +20,11 @@ public class SiteStatisticsDao extends Db4oEntityDao implements ISiteStatisticsD
 	/**
 	 * Constructor
 	 * @param oc
+	 * @param namedQueryTranslator
 	 */
 	@Inject
-	public SiteStatisticsDao(ObjectContainer oc) {
-		super(oc);
+	public SiteStatisticsDao(ObjectContainer oc, IDb4oNamedQueryTranslator namedQueryTranslator) {
+		super(oc, namedQueryTranslator);
 	}
 
 	public int numAddresses() {

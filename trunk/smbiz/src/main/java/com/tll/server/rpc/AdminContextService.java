@@ -49,7 +49,7 @@ public class AdminContextService extends RpcServlet implements IAdminContextServ
 		final Marshaler entityMarshaller = mec.getMarshaler();
 		assert entityMarshaller != null : "No marshaler present";
 
-		final Model user = entityMarshaller.marshalEntity(sac.getUser(), new MarshalOptions(true, 1));
+		final Model user = entityMarshaller.marshalEntity(sac.getUser(), new MarshalOptions(true, 1, null));
 		// NOTE: we want a distinct copy of the account here so we separately
 		// marshall the account as opposed to grabbing the nested account from the
 		// just marshaled user

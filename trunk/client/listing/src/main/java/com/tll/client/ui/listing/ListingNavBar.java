@@ -115,17 +115,10 @@ IListingHandler<R> {
 	/**
 	 * Constructor
 	 * @param config Must be specified.
+	 * @param addRowHandler Optional handler that handles row adding
 	 */
-	public ListingNavBar(IListingConfig<R> config) {
+	public ListingNavBar(IListingConfig<R> config, IAddRowDelegate addRowHandler) {
 		super();
-		initialize(config);
-	}
-
-	/**
-	 * Initializes the nav bar.
-	 * @param config
-	 */
-	protected void initialize(IListingConfig<R> config) {
 		assert config != null;
 
 		this.listingElementName = config.getListingElementName();
@@ -195,7 +188,7 @@ IListingHandler<R> {
 		}
 
 		// show add button?
-		if(config.getAddRowHandler() != null) {
+		if(addRowHandler != null) {
 			// imgAdd = imageBundle.add().createImage();
 			final String title = "Add " + config.getListingElementName();
 			btnAdd = new PushButton(title, this);
@@ -206,10 +199,11 @@ IListingHandler<R> {
 				add(split);
 			}
 			addButton(btnAdd, title);
+			this.addRowDelegate = addRowHandler;
 		}
 
 		// separator
-		if(pageSize > 0 || config.isShowRefreshBtn() || config.getAddRowHandler() != null) {
+		if(pageSize > 0 || config.isShowRefreshBtn() || addRowHandler != null) {
 			split = imageBundle.split().createImage();
 			split.setStylePrimaryName(Toolbar.Styles.SPLIT);
 			add(split);
@@ -231,14 +225,6 @@ IListingHandler<R> {
 	 */
 	void setListingOperator(IListingOperator<R> listingOperator) {
 		this.listingOperator = listingOperator;
-	}
-
-	/**
-	 * Sets the add row delegate
-	 * @param addRowDelegate
-	 */
-	public void setAddRowDelegate(IAddRowDelegate addRowDelegate) {
-		this.addRowDelegate = addRowDelegate;
 	}
 
 	@Override

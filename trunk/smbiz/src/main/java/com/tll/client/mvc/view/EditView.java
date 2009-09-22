@@ -167,7 +167,6 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 		}
 	}
 
-	@Override
 	protected final boolean shouldHandleModelChangeEvent(ModelChangeEvent event) {
 		final ModelKey mkey = event.getModelKey();
 		if((event.getSource() == this) || (mkey != null && mkey.equals(modelKey))) {

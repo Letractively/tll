@@ -16,7 +16,7 @@ import com.tll.client.data.rpc.RpcEvent;
 import com.tll.client.listing.IListingHandler;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ListingEvent;
-import com.tll.client.listing.ListingFactory;
+import com.tll.client.listing.RemoteListingOperator;
 import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.ui.edit.EditEvent;
@@ -98,8 +98,8 @@ class InterfaceStack extends StackPanel implements IHasRpcHandlers, IListingHand
 		 * @param showDeleteBtn
 		 */
 		public InterfacePanel(ModelKey intfRef, boolean showCancelBtn, boolean showDeleteBtn) {
-			super(fldPnlResolver.resolveFieldPanel(intfRef), showCancelBtn,
-					showDeleteBtn, ErrorHandlerBuilder.build(true, true, new GlobalMsgPanel()));
+			super(fldPnlResolver.resolveFieldPanel(intfRef), showCancelBtn, showDeleteBtn, ErrorHandlerBuilder.build(true,
+					true, new GlobalMsgPanel()));
 			this.intfRef = intfRef;
 
 			addEditHandler(this);
@@ -224,12 +224,11 @@ class InterfaceStack extends StackPanel implements IHasRpcHandlers, IListingHand
 		this.rpcHandler = rpcHandler;
 		this.auxDataRequest = auxDataRequest;
 		this.fldPnlResolver = fldPnlResolver;
-		final String listingName = SmbizEntityType.INTERFACE.name();
-		final NamedQuerySearch criteria = new NamedQuerySearch(SmbizEntityType.INTERFACE, "interface.summaryList", true);
+		final String listingId = SmbizEntityType.INTERFACE.name();
+		final NamedQuerySearch criteria = new NamedQuerySearch(SmbizEntityType.INTERFACE, "interface.select", true);
 		final Sorting defaultSorting = new Sorting("name");
 		listHandler =
-			ListingFactory
-			.createRemoteOperator(listingName, ListHandlerType.COLLECTION, criteria, null, -1, defaultSorting);
+			RemoteListingOperator.create(listingId, ListHandlerType.COLLECTION, criteria, null, -1, defaultSorting);
 		listHandler.setSourcingWidget(this);
 		this.loader = loader;
 		this.crud = crud;

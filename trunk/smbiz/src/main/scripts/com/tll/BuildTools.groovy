@@ -12,7 +12,7 @@ import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.ConfigProcessor;
 import com.tll.dao.IDbShell;
-import com.tll.di.Db4oDaoModule;
+import com.tll.di.SmbizDb4oDaoModule;
 import com.tll.di.Db4oDbShellModule;
 import com.tll.di.SmbizModelModule;
 import com.tll.di.SmbizEGraphModule;
@@ -63,7 +63,7 @@ public final class BuildTools {
 	  ['com.tll.di.LogExceptionHandlerModule', FLAG_DB_DB4O],
 	  ['com.tll.di.SmbizModelModule', FLAG_ALL],
 	  ['com.tll.di.JdoDaoModule', FLAG_DB_JDO],
-	  ['com.tll.di.Db4oDaoModule', FLAG_DB_DB4O],
+	  ['com.tll.di.SmbizDb4oDaoModule', FLAG_DB_DB4O],
 	  ['com.tll.di.EntityServiceFactoryModule', FLAG_ALL],
 	  ['com.tll.di.SmbizMarshalModule', FLAG_ALL],
 	  ['com.tll.di.SmbizClientPersistModule', FLAG_ALL],
@@ -170,7 +170,7 @@ public final class BuildTools {
 		}
 
 		// set 'debug' property to build config
-		config.setProperty('debug', this.stage == 'debug')
+		config.setProperty('stage', this.stage)
 		
 		// set the flags
 		this.flags = 0 | daoImplFlag | securityImplFlag;
@@ -315,7 +315,7 @@ public final class BuildTools {
 				cfg.setProperty('db.db4o.springTransactions', false)
 				dbShell = Guice.createInjector(new SmbizModelModule(), 
 						new SmbizEGraphModule('/src/main/resources/mock-entities.xml'), 
-						new Db4oDaoModule(cfg), new Db4oDbShellModule()).getInstance(IDbShell.class);
+						new SmbizDb4oDaoModule(cfg), new Db4oDbShellModule()).getInstance(IDbShell.class);
 				dbShell.restub();
 				break
 			case 'jdo':

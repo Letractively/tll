@@ -15,18 +15,15 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import com.google.inject.Scopes;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 import com.tll.dao.AbstractDbAwareTest;
-import com.tll.di.Db4oDaoModule;
 import com.tll.di.Db4oDbShellModule;
-import com.tll.di.EGraphModule;
-import com.tll.di.ModelModule;
+import com.tll.di.SmbizDb4oDaoModule;
+import com.tll.di.SmbizEGraphModule;
+import com.tll.di.SmbizModelModule;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
-import com.tll.model.IEntityGraphPopulator;
-import com.tll.model.SmbizEntityGraphBuilder;
 import com.tll.server.rpc.entity.IEntityTypeResolver;
 import com.tll.server.rpc.entity.SmbizEntityTypeResolver;
 import com.tll.util.CommonUtil;
@@ -49,20 +46,9 @@ import com.tll.util.CommonUtil;
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new ModelModule() {
-
-			@Override
-			protected void bindEntityAssembler() {
-			}
-		});
-		modules.add(new EGraphModule() {
-
-			@Override
-			protected void bindEntityGraphBuilder() {
-				bind(IEntityGraphPopulator.class).to(SmbizEntityGraphBuilder.class).in(Scopes.SINGLETON);
-			}
-		});
-		modules.add(new Db4oDaoModule(getConfig()));
+		modules.add(new SmbizModelModule());
+		modules.add(new SmbizEGraphModule());
+		modules.add(new SmbizDb4oDaoModule(getConfig()));
 		modules.add(new Db4oDbShellModule());
 		modules.add(new Module() {
 
@@ -116,5 +102,9 @@ import com.tll.util.CommonUtil;
 			Assert.assertNotNull(e2);
 			Assert.assertEquals(e, e2);
 		}
+	}
+
+	public void testAccountMarshaling() throws Exception {
+
 	}
 }

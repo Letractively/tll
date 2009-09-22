@@ -10,29 +10,29 @@ public class ListingException extends ListHandlerException {
 
 	static final long serialVersionUID = -1116645045511338623L;
 
-	private final String listingName;
+	private final String listingId;
 
 	/**
 	 * Constructor
-	 * @param listingName
+	 * @param listingId
 	 * @param message
 	 */
-	public ListingException(final String listingName, final String message) {
-		this(listingName, message, null);
+	public ListingException(final String listingId, final String message) {
+		this(listingId, message, null);
 	}
 
 	/**
 	 * Constructor
-	 * @param listingName
+	 * @param listingId
 	 * @param message
 	 * @param t
 	 */
-	public ListingException(final String listingName, final String message, final Throwable t) {
+	public ListingException(final String listingId, final String message, final Throwable t) {
 		super(message, t);
-		this.listingName = listingName;
+		this.listingId = listingId;
 	}
 
-	public String getListingName() {
-		return listingName;
+	public String getListingId() {
+		return listingId;
 	}
 }

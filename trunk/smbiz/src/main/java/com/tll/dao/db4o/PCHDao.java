@@ -23,10 +23,11 @@ public class PCHDao extends Db4oEntityDao implements IPCHDao {
 	/**
 	 * Constructor
 	 * @param oc
+	 * @param namedQueryTranslator
 	 */
 	@Inject
-	public PCHDao(ObjectContainer oc) {
-		super(oc);
+	public PCHDao(ObjectContainer oc, IDb4oNamedQueryTranslator namedQueryTranslator) {
+		super(oc, namedQueryTranslator);
 	}
 
 	public void assign(int parentId, int childId) {

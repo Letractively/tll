@@ -9,9 +9,8 @@ package com.tll.client.listing;
  * ready columned text.
  * @author jpk
  * @param <R> The row data type
- * @param <C> the column type
  */
-public interface ITableCellRenderer<R, C extends Column> {
+public interface ITableCellRenderer<R> {
 
 	/**
 	 * Provides the table cell value given the row data and particular column.
@@ -19,5 +18,5 @@ public interface ITableCellRenderer<R, C extends Column> {
 	 * @param column The table column
 	 * @return The table cell value
 	 */
-	String getCellValue(R rowData, C column);
+	String getCellValue(R rowData, Column column);
 }

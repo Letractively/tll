@@ -32,8 +32,8 @@ public class AppModule extends AbstractModule implements IConfigAware {
 	 */
 	public static enum ConfigKeys implements IConfigKey {
 
+		STAGE("stage"),
 		ENVIRONMENT("environment"),
-		DEBUG("debug"),
 		NOSECURITY_USER_EMAIL("server.nosecurity.user.email");
 
 		private final String key;
@@ -86,10 +86,10 @@ public class AppModule extends AbstractModule implements IConfigAware {
 
 			@Override
 			public AppContext get() {
-				final String environment = config.getString(ConfigKeys.ENVIRONMENT.getKey());
+				final String stage = config.getString(ConfigKeys.STAGE.getKey(), AppContext.DEFAULT_STAGE);
+				final String environment = config.getString(ConfigKeys.ENVIRONMENT.getKey(), AppContext.DEFAULT_ENVIRONMENT);
 				final String dfltUserEmail = config.getString(ConfigKeys.NOSECURITY_USER_EMAIL.getKey());
-				final boolean debug = config.getBoolean(ConfigKeys.DEBUG.getKey());
-				return new AppContext(debug, environment, dfltUserEmail, aas);
+				return new AppContext(stage, environment, dfltUserEmail, aas);
 			}
 		}).in(Scopes.SINGLETON);
 	}

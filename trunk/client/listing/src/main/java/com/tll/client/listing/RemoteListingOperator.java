@@ -20,6 +20,7 @@ import com.tll.common.data.rpc.IListingServiceAsync;
 import com.tll.common.model.Model;
 import com.tll.common.search.IListingSearch;
 import com.tll.dao.Sorting;
+import com.tll.listhandler.ListHandlerType;
 
 /**
  * RemoteListingOperator
@@ -28,6 +29,28 @@ import com.tll.dao.Sorting;
  */
 @SuppressWarnings("unchecked")
 public final class RemoteListingOperator<S extends IListingSearch> extends AbstractListingOperator<Model> {
+
+	/**
+	 * Factory method that creates a listing command to control acccess to a remote listing.
+	 * @param <S> The search type
+	 * @param listingId the unique listing id
+	 * @param listHandlerType The remote list handler type
+	 * @param searchCriteria The search criteria that generates the remote
+	 *        listing.
+	 * @param propKeys Optional OGNL formatted property names representing a
+	 *        white-list of properties to retrieve from those that are queried. If
+	 *        <code>null</code>, all queried properties are provided.
+	 * @param pageSize The desired paging page size.
+	 * @param initialSorting The initial sorting directive
+	 * @return A new {@link RemoteListingOperator}
+	 */
+	public static <S extends IListingSearch> RemoteListingOperator<S> create(
+			String listingId, ListHandlerType listHandlerType, S searchCriteria, String[] propKeys, int pageSize, Sorting initialSorting) {
+
+		final RemoteListingDefinition<S> rld =
+			new RemoteListingDefinition<S>(listHandlerType, searchCriteria, propKeys, pageSize, initialSorting);
+		return new RemoteListingOperator<S>(listingId, rld);
+	}
 
 	private static final IListingServiceAsync<IListingSearch, IMarshalable> svc;
 	static {
@@ -55,7 +78,7 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 		@Override
 		protected void handleSuccess(ListingPayload<Model> payload) {
 			super.handleSuccess(payload);
-			assert payload.getListingName() != null && listingName != null && payload.getListingName().equals(listingName);
+			assert payload.getListingId() != null && listingId != null && payload.getListingId().equals(listingId);
 
 			final ListingOp op = listingRequest.getListingOp();
 
@@ -76,7 +99,7 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 				// reset
 				listingRequest = null;
 				// fire the listing event
-				sourcingWidget.fireEvent(new ListingEvent<Model>(payload.getListingName(), op, payload
+				sourcingWidget.fireEvent(new ListingEvent<Model>(payload.getListingId(), op, payload
 						.getListSize(), payload.getPageElements(), payload.getOffset(), payload.getSorting(), listingDef
 						.getPageSize()));
 			}
@@ -87,7 +110,7 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 	 * The unique name that identifies the listing this command targets on the
 	 * server.
 	 */
-	private final String listingName;
+	private final String listingId;
 
 	/**
 	 * The server-side listing definition.
@@ -98,14 +121,12 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 
 	/**
 	 * Constructor
-	 * @param listingName the identifying listing name for client and server. this
-	 *        name <em>must</em> be unique among the others that are presently
-	 *        cached server side.
+	 * @param listingId unique listing id
 	 * @param listingDef the remote listing definition
 	 */
-	public RemoteListingOperator(String listingName, RemoteListingDefinition<S> listingDef) {
-		if(listingName == null || listingDef == null) throw new IllegalArgumentException();
-		this.listingName = listingName;
+	public RemoteListingOperator(String listingId, RemoteListingDefinition<S> listingDef) {
+		if(listingId == null || listingDef == null) throw new IllegalArgumentException();
+		this.listingId = listingId;
 		this.listingDef = listingDef;
 	}
 
@@ -128,7 +149,7 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 	 */
 	private void fetch(int ofst, Sorting srtg, boolean refresh) {
 		this.listingRequest =
-			new ListingRequest(listingName, listingDef, refresh ? ListingOp.REFRESH : ListingOp.FETCH, ofst, srtg);
+			new ListingRequest(listingId, listingDef, refresh ? ListingOp.REFRESH : ListingOp.FETCH, ofst, srtg);
 		execute();
 	}
 
@@ -144,7 +165,7 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 	 */
 	@Override
 	protected void doFetch(int ofst, Sorting srtg) {
-		listingRequest = new ListingRequest(listingName, ofst, srtg);
+		listingRequest = new ListingRequest(listingId, ofst, srtg);
 		execute();
 	}
 
@@ -153,7 +174,7 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 	 * @param retainListingState Retain the listing state on the server?
 	 */
 	private void clear(boolean retainListingState) {
-		listingRequest = new ListingRequest(listingName, retainListingState);
+		listingRequest = new ListingRequest(listingId, retainListingState);
 		execute();
 	}
 
