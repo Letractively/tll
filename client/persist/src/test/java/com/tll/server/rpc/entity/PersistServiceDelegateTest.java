@@ -46,6 +46,7 @@ import com.tll.di.MailModule;
 import com.tll.di.MarshalModule;
 import com.tll.di.RefDataModule;
 import com.tll.di.TestPersistenceUnitModelModule;
+import com.tll.di.test.TestDb4oDaoModule;
 import com.tll.model.Address;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
@@ -71,7 +72,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 		modules.add(new MailModule(Config.load(new ConfigRef("config-mail.properties"))));
 
 		modules.add(new TestPersistenceUnitModelModule());
-		modules.add(new Db4oDaoModule(getConfig()));
+		modules.add(new TestDb4oDaoModule(getConfig()));
 		modules.add(new Db4oDbShellModule());
 		modules.add(new EntityServiceFactoryModule());
 		modules.add(new LogExceptionHandlerModule());
@@ -135,7 +136,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 		// file lock when objectcontainer is instantiated
 		final Config cfg = Config.load();
 		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
-		final Injector i = buildInjector(new Db4oDaoModule(cfg), new Db4oDbShellModule() );
+		final Injector i = buildInjector(new TestDb4oDaoModule(cfg), new Db4oDbShellModule() );
 		final IDbShell dbs = i.getInstance(IDbShell.class);
 		dbs.delete();
 		dbs.create();

@@ -20,9 +20,9 @@ import com.google.inject.Scopes;
 import com.tll.common.model.IModelProperty;
 import com.tll.common.model.Model;
 import com.tll.dao.AbstractDbAwareTest;
-import com.tll.di.Db4oDaoModule;
 import com.tll.di.Db4oDbShellModule;
 import com.tll.di.TestPersistenceUnitModelModule;
+import com.tll.di.test.TestDb4oDaoModule;
 import com.tll.model.Account;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.EntityGraph;
@@ -62,7 +62,7 @@ public class MarshalerTest extends AbstractDbAwareTest {
 		super.addModules(modules);
 		modules.add(new TestPersistenceUnitModelModule());
 		modules.add(new Db4oDbShellModule());
-		modules.add(new Db4oDaoModule(getConfig()));
+		modules.add(new TestDb4oDaoModule(getConfig()));
 		modules.add(new Module() {
 
 			@Override

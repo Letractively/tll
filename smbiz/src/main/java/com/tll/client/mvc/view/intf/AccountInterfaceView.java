@@ -7,7 +7,6 @@ package com.tll.client.mvc.view.intf;
 
 import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.data.rpc.IRpcCommand;
-import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.mvc.view.AbstractRpcAndModelAwareView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.RpcUiHandler;
@@ -119,10 +118,5 @@ public class AccountInterfaceView extends AbstractRpcAndModelAwareView<AccountIn
 	@Override
 	protected void doDestroy() {
 		intfStack.clearData();
-	}
-
-	@Override
-	protected boolean shouldHandleModelChangeEvent(ModelChangeEvent event) {
-		return false;
 	}
 }

@@ -27,9 +27,9 @@ public class ListingPayload<R extends IMarshalable> extends Payload {
 	}
 
 	/**
-	 * The listing name uniquely identifying the listing on the server.
+	 * The unique listing id.
 	 */
-	private String listingName;
+	private String listingId;
 
 	/**
 	 * The server side status of the listing
@@ -54,12 +54,12 @@ public class ListingPayload<R extends IMarshalable> extends Payload {
 	/**
 	 * Constructor
 	 * @param status
-	 * @param listingName
+	 * @param listingId
 	 * @param listingStatus
 	 */
-	public ListingPayload(Status status, String listingName, ListingStatus listingStatus) {
+	public ListingPayload(Status status, String listingId, ListingStatus listingStatus) {
 		super(status);
-		this.listingName = listingName;
+		this.listingId = listingId;
 		this.listingStatus = listingStatus;
 	}
 
@@ -77,8 +77,8 @@ public class ListingPayload<R extends IMarshalable> extends Payload {
 		this.sorting = sorting;
 	}
 
-	public String getListingName() {
-		return listingName;
+	public String getListingId() {
+		return listingId;
 	}
 
 	public ListingStatus getListingStatus() {

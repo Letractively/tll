@@ -28,6 +28,7 @@ import com.tll.config.Config;
 import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
 import com.tll.dao.IEntityDao;
+import com.tll.dao.db4o.IDb4oNamedQueryTranslator;
 import com.tll.model.key.IPrimaryKeyGenerator;
 import com.tll.model.key.SimplePrimaryKeyGenerator;
 
@@ -35,7 +36,7 @@ import com.tll.model.key.SimplePrimaryKeyGenerator;
  * Db4oDaoModule - Db4o dao impl module.
  * @author jpk
  */
-public class Db4oDaoModule extends AbstractModule implements IConfigAware {
+public abstract class Db4oDaoModule extends AbstractModule implements IConfigAware {
 
 	public static final int DEFAULT_TRANS_TIMEOUT = 60;	// seconds
 
@@ -100,8 +101,13 @@ public class Db4oDaoModule extends AbstractModule implements IConfigAware {
 		this.config = config;
 	}
 
+	/**
+	 * @return The db4o named query translator implmentation type.
+	 */
+	protected abstract Class<? extends IDb4oNamedQueryTranslator> getNamedQueryTranslatorImpl();
+
 	@Override
-	protected void configure() {
+	protected final void configure() {
 		log.info("Loading db4o dao module...");
 
 		// db40 db file URI
@@ -192,6 +198,9 @@ public class Db4oDaoModule extends AbstractModule implements IConfigAware {
 
 		// IPrimaryKeyGenerator
 		bind(IPrimaryKeyGenerator.class).to(SimplePrimaryKeyGenerator.class).in(Scopes.SINGLETON);
+
+		// IDb4oNamedQueryTranslator
+		bind(IDb4oNamedQueryTranslator.class).to(getNamedQueryTranslatorImpl()).in(Scopes.SINGLETON);
 
 		// IEntityDao
 		bind(IEntityDao.class).to(com.tll.dao.db4o.Db4oEntityDao.class).in(Scopes.SINGLETON);

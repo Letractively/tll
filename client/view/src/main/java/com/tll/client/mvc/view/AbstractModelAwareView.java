@@ -5,6 +5,7 @@
 package com.tll.client.mvc.view;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.common.model.Model;
 
@@ -14,15 +15,7 @@ import com.tll.common.model.Model;
  * @author jpk
  * @param <I> the view initializer type
  */
-public abstract class AbstractModelAwareView<I extends IViewInitializer> extends AbstractView<I> implements
-IModelAwareView<I> {
-
-	/**
-	 * Must be implemented by concrete views.
-	 * @param event
-	 * @return true/false
-	 */
-	protected abstract boolean shouldHandleModelChangeEvent(ModelChangeEvent event);
+public abstract class AbstractModelAwareView<I extends IViewInitializer> extends AbstractView<I> implements IModelAwareView<I> {
 
 	/**
 	 * Handles model change errors. Sub-classes should override as necessary.
@@ -40,17 +33,34 @@ IModelAwareView<I> {
 		// base impl no-op
 	}
 
+	/**
+	 * Provides the child widgets that are model aware. These handlers are
+	 * notified of model change events.
+	 * @return The model change handlers in this view that should recieve model change events.
+	 */
+	protected IModelChangeHandler[] getModelChangeHandlers() {
+		return null; // default
+	}
+
 	@Override
 	public final void onModelChangeEvent(ModelChangeEvent event) {
-		if(shouldHandleModelChangeEvent(event)) {
-			Log.debug("View ( " + toString() + " ) is handling model change event: " + event.toString() + "..");
-			if(event.getStatus() != null && event.getStatus().hasErrors()) {
-				// has errors
-				handleModelChangeError(event);
-			}
-			else {
-				// no errors
-				handleModelChangeSuccess(event);
+		Log.debug("View ( " + toString() + " ) is handling model change event: " + event.toString() + "..");
+
+		// global handling
+		if(event.getStatus() != null && event.getStatus().hasErrors()) {
+			// has errors
+			handleModelChangeError(event);
+		}
+		else {
+			// no errors
+			handleModelChangeSuccess(event);
+		}
+
+		// dispatch to any child widget that handle model change events too
+		final IModelChangeHandler[] handlers = getModelChangeHandlers();
+		if(handlers != null) {
+			for(final IModelChangeHandler handler : handlers) {
+				handler.onModelChangeEvent(event);
 			}
 		}
 	}

@@ -166,15 +166,20 @@ import com.tll.util.PropertyPath;
 
 	} // Versioner
 
+	private final IDb4oNamedQueryTranslator nqt;
+
 	/**
 	 * Constructor
 	 * @param container The required db4o object container
+	 * @param namedQueryTranslator optional named query translator to handle named
+	 *        query based queries
 	 */
 	@Inject
-	public Db4oEntityDao(ObjectContainer container) {
+	public Db4oEntityDao(ObjectContainer container, IDb4oNamedQueryTranslator namedQueryTranslator) {
 		super();
 		setObjectContainer(container);
 		registerCallbacks();
+		this.nqt = namedQueryTranslator;
 	}
 
 	private void registerCallbacks() {
@@ -224,140 +229,138 @@ import com.tll.util.PropertyPath;
 	throws InvalidCriteriaException, DataAccessException {
 		if(criteria == null) throw new InvalidCriteriaException("No criteria specified.");
 
-		if(criteria.getCriteriaType().isQuery()) {
-			// for now, return all instances of the given type
-			return loadAll(criteria.getEntityClass());
-		}
-
-		final CriterionGroup pg = criteria.getPrimaryGroup();
-		if(pg == null || !pg.isSet()) {
-			// retrieve all entities
-			return loadAll(criteria.getEntityClass());
-		}
-
 		final Query query = getDb4oTemplate().query();
-		query.constrain(criteria.getEntityClass());
 
-		for(final ICriterion ic : pg) {
-			if(ic.isGroup()) throw new InvalidCriteriaException("Nested criterion groups are not supported");
-			if(!ic.isSet()) throw new InvalidCriteriaException("criterion not set");
-			final Criterion ctn = (Criterion) ic;
-			final Object checkValue = ctn.getValue();
-			final String pname = ctn.getPropertyName();
+		if(criteria.getCriteriaType().isQuery()) {
+			if(nqt == null) throw new InvalidCriteriaException("No db4o named query translator specified.");
+			nqt.translateNamedQuery(criteria.getNamedQueryDefinition(), criteria.getQueryParams(), query);
+		}
+		else {
+			query.constrain(criteria.getEntityClass());
+			final CriterionGroup pg = criteria.getPrimaryGroup();
+			if(pg != null && pg.isSet()) {
+				for(final ICriterion ic : pg) {
+					if(ic.isGroup()) throw new InvalidCriteriaException("Nested criterion groups are not supported");
+					if(!ic.isSet()) throw new InvalidCriteriaException("criterion not set");
+					final Criterion ctn = (Criterion) ic;
+					final Object checkValue = ctn.getValue();
+					final String pname = ctn.getPropertyName();
 
-			Query pquery;
-			if(pname.indexOf('.') > 0) {
-				pquery = query;
-				// descend one time for each node in the pname (which may be a dot
-				// notated property path)
-				final PropertyPath path = new PropertyPath(pname);
-				for(final String node : path.nodes()) {
-					pquery = pquery.descend(node);
-				}
-			}
-			else {
-				pquery = query.descend(pname);
-			}
-
-			switch(ctn.getComparator()) {
-				case BETWEEN: {
-					Object min, max;
-					if(checkValue instanceof NumberRange) {
-						final NumberRange range = (NumberRange) checkValue;
-						min = range.getMinimumNumber();
-						max = range.getMaximumNumber();
-					}
-					else if(checkValue instanceof DateRange) {
-						final DateRange range = (DateRange) checkValue;
-						min = range.getStartDate();
-						max = range.getEndDate();
-					}
-					else {
-						// presume an object array
-						final Object[] oarr = (Object[]) checkValue;
-						min = oarr[0];
-						max = oarr[1];
-					}
-					pquery.constrain(min).greater().equal().or(pquery.constrain(max).smaller().equal());
-					break;
-				}
-				case CONTAINS:
-					pquery.constrain(checkValue).contains();
-					break;
-				case ENDS_WITH:
-					pquery.constrain(checkValue).endsWith(ctn.isCaseSensitive());
-					break;
-				case EQUALS:
-					if(!ctn.isCaseSensitive())
-						throw new InvalidCriteriaException("Case insensitive equals checking is currently not supported");
-					pquery.constrain(checkValue);
-					break;
-				case GREATER_THAN:
-					pquery.constrain(checkValue).greater();
-					break;
-				case GREATER_THAN_EQUALS:
-					pquery.constrain(checkValue).greater().equal();
-					break;
-				case IN: {
-					Object[] arr;
-					if(checkValue.getClass().isArray()) {
-						arr = (Object[]) checkValue;
-					}
-					else if(checkValue instanceof Collection<?>) {
-						arr = ((Collection) checkValue).toArray();
-					}
-					else if(checkValue instanceof String) {
-						// assume comma-delimited string
-						arr =
-							org.springframework.util.ObjectUtils.toObjectArray(org.springframework.util.StringUtils
-									.commaDelimitedListToStringArray((String) checkValue));
-					}
-					else {
-						throw new InvalidCriteriaException(
-								"Unsupported or null type for IN comparator: " + checkValue == null ? "<null>" : checkValue.getClass()
-										.toString());
-					}
-					Constraint c = null;
-					for(final Object o : arr) {
-						if(c == null) {
-							c = pquery.constrain(o);
-						}
-						else {
-							c.or(pquery.constrain(o));
+					Query pquery;
+					if(pname.indexOf('.') > 0) {
+						pquery = query;
+						// descend one time for each node in the pname (which may be a dot
+						// notated property path)
+						final PropertyPath path = new PropertyPath(pname);
+						for(final String node : path.nodes()) {
+							pquery = pquery.descend(node);
 						}
 					}
-					break;
-				}
-				case IS:
-					if(checkValue instanceof DBType == false) {
-						throw new InvalidCriteriaException("IS clauses support only check values of type: "
-								+ DBType.class.getSimpleName());
-					}
-					final DBType dbType = (DBType) checkValue;
-					if(dbType == DBType.NULL) {
-						// null
-						pquery.constrain(null);
-					}
 					else {
-						// not null
-						pquery.constrain(null).not();
+						pquery = query.descend(pname);
 					}
-				case LESS_THAN:
-					pquery.constrain(checkValue).smaller();
-					break;
-				case LESS_THAN_EQUALS:
-					pquery.constrain(checkValue).smaller().equal();
-					break;
-				case LIKE:
-					pquery.constrain(checkValue).like();
-					break;
-				case NOT_EQUALS:
-					pquery.constrain(checkValue).not();
-					break;
-				case STARTS_WITH:
-					pquery.constrain(checkValue).startsWith(ctn.isCaseSensitive());
-					break;
-			} // comparator switch
+
+					switch(ctn.getComparator()) {
+						case BETWEEN: {
+							Object min, max;
+							if(checkValue instanceof NumberRange) {
+								final NumberRange range = (NumberRange) checkValue;
+								min = range.getMinimumNumber();
+								max = range.getMaximumNumber();
+							}
+							else if(checkValue instanceof DateRange) {
+								final DateRange range = (DateRange) checkValue;
+								min = range.getStartDate();
+								max = range.getEndDate();
+							}
+							else {
+								// presume an object array
+								final Object[] oarr = (Object[]) checkValue;
+								min = oarr[0];
+								max = oarr[1];
+							}
+							pquery.constrain(min).greater().equal().or(pquery.constrain(max).smaller().equal());
+							break;
+						}
+						case CONTAINS:
+							pquery.constrain(checkValue).contains();
+							break;
+						case ENDS_WITH:
+							pquery.constrain(checkValue).endsWith(ctn.isCaseSensitive());
+							break;
+						case EQUALS:
+							if(!ctn.isCaseSensitive())
+								throw new InvalidCriteriaException("Case insensitive equals checking is currently not supported");
+							pquery.constrain(checkValue);
+							break;
+						case GREATER_THAN:
+							pquery.constrain(checkValue).greater();
+							break;
+						case GREATER_THAN_EQUALS:
+							pquery.constrain(checkValue).greater().equal();
+							break;
+						case IN: {
+							Object[] arr;
+							if(checkValue.getClass().isArray()) {
+								arr = (Object[]) checkValue;
+							}
+							else if(checkValue instanceof Collection<?>) {
+								arr = ((Collection) checkValue).toArray();
+							}
+							else if(checkValue instanceof String) {
+								// assume comma-delimited string
+								arr =
+									org.springframework.util.ObjectUtils.toObjectArray(org.springframework.util.StringUtils
+											.commaDelimitedListToStringArray((String) checkValue));
+							}
+							else {
+								throw new InvalidCriteriaException(
+										"Unsupported or null type for IN comparator: " + checkValue == null ? "<null>" : checkValue
+												.getClass().toString());
+							}
+							Constraint c = null;
+							for(final Object o : arr) {
+								if(c == null) {
+									c = pquery.constrain(o);
+								}
+								else {
+									c.or(pquery.constrain(o));
+								}
+							}
+							break;
+						}
+						case IS:
+							if(checkValue instanceof DBType == false) {
+								throw new InvalidCriteriaException("IS clauses support only check values of type: "
+										+ DBType.class.getSimpleName());
+							}
+							final DBType dbType = (DBType) checkValue;
+							if(dbType == DBType.NULL) {
+								// null
+								pquery.constrain(null);
+							}
+							else {
+								// not null
+								pquery.constrain(null).not();
+							}
+						case LESS_THAN:
+							pquery.constrain(checkValue).smaller();
+							break;
+						case LESS_THAN_EQUALS:
+							pquery.constrain(checkValue).smaller().equal();
+							break;
+						case LIKE:
+							pquery.constrain(checkValue).like();
+							break;
+						case NOT_EQUALS:
+							pquery.constrain(checkValue).not();
+							break;
+						case STARTS_WITH:
+							pquery.constrain(checkValue).startsWith(ctn.isCaseSensitive());
+							break;
+					} // comparator switch
+				}
+			}
 		}
 
 		// apply sorting

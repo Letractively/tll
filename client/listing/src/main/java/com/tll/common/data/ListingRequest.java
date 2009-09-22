@@ -17,7 +17,7 @@ public final class ListingRequest implements IModelRelatedRequest {
 	/**
 	 * The unique listing name.
 	 */
-	private String listingName;
+	private String listingId;
 
 	/**
 	 * The listing definition used to generate or refresh a listing.
@@ -39,17 +39,17 @@ public final class ListingRequest implements IModelRelatedRequest {
 	/**
 	 * Constructor - Used for fetching listing data against a non-cached server
 	 * side listing.
-	 * @param listingName The unique listing name
+	 * @param listingId The unique listing id
 	 * @param listingDef The listing definition
 	 * @param listingOp The listing op
 	 * @param offset The listing index offset
 	 * @param sorting The sorting directive
 	 */
-	public ListingRequest(String listingName, RemoteListingDefinition<? extends IListingSearch> listingDef,
+	public ListingRequest(String listingId, RemoteListingDefinition<? extends IListingSearch> listingDef,
 			ListingOp listingOp, Integer offset,
 			Sorting sorting) {
 		super();
-		this.listingName = listingName;
+		this.listingId = listingId;
 		this.listingDef = listingDef;
 		this.listingOp = listingOp;
 		this.offset = offset;
@@ -60,13 +60,13 @@ public final class ListingRequest implements IModelRelatedRequest {
 	 * Constructor - Used for fetching listing data for a cached listing. If the
 	 * listing is not cached server-side the response will indicate this and it is
 	 * up to the client how to proceed.
-	 * @param listingName The unique listing name
+	 * @param listingId The unique listing name
 	 * @param offset The list index offset
 	 * @param sorting The sorting directive
 	 */
-	public ListingRequest(String listingName, Integer offset, Sorting sorting) {
+	public ListingRequest(String listingId, Integer offset, Sorting sorting) {
 		super();
-		this.listingName = listingName;
+		this.listingId = listingId;
 		this.listingOp = ListingOp.FETCH;
 		this.offset = offset;
 		this.sorting = sorting;
@@ -74,27 +74,27 @@ public final class ListingRequest implements IModelRelatedRequest {
 
 	/**
 	 * Constructor - Used for clearing an existing listing.
-	 * @param listingName The unique listing name
+	 * @param listingId The unique listing name
 	 * @param retainStateOnClear Retain the server side state when the listing is
 	 *        cleared on the server?
 	 */
-	public ListingRequest(String listingName, Boolean retainStateOnClear) {
+	public ListingRequest(String listingId, Boolean retainStateOnClear) {
 		super();
-		this.listingName = listingName;
+		this.listingId = listingId;
 		this.listingOp = ListingOp.CLEAR;
 		this.retainStateOnClear = retainStateOnClear;
 	}
 
 	public String descriptor() {
-		return "'" + getListingName() + "' listing command";
+		return "'" + getListingId() + "' listing command";
 	}
 
 	/**
 	 * Uniquely identifies a single listing.
 	 * @return The unique listing name
 	 */
-	public String getListingName() {
-		return listingName;
+	public String getListingId() {
+		return listingId;
 	}
 
 	/**

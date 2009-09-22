@@ -15,7 +15,7 @@ import com.tll.listhandler.ListHandlerException;
 public final class ListingHandler<R> {
 
 	private final int pageSize;
-	private final String listingName;
+	private final String listingId;
 
 	private final IListHandler<R> listHandler;
 
@@ -37,25 +37,25 @@ public final class ListingHandler<R> {
 	/**
 	 * Constructor
 	 * @param listHandler The wrapped list handler
-	 * @param listingName The unique listing name
+	 * @param listingId The unique listing name
 	 * @param pageSize The desired page size or <code>-1</code> if not paging is
 	 *        desired.
 	 * @throws IllegalArgumentException When one of the arguments is
 	 *         <code>null</code>.
 	 */
-	ListingHandler(IListHandler<R> listHandler, String listingName, int pageSize) throws IllegalArgumentException {
+	ListingHandler(IListHandler<R> listHandler, String listingId, int pageSize) throws IllegalArgumentException {
 		super();
 
 		if(listHandler == null) {
 			throw new IllegalArgumentException("Unable to instantiate listing handler: No list handler specified");
 		}
 
-		if(listingName == null) {
+		if(listingId == null) {
 			throw new IllegalArgumentException("Unable to instantiate listing handler: No listing name specified");
 		}
 
 		this.listHandler = listHandler;
-		this.listingName = listingName;
+		this.listingId = listingId;
 		this.pageSize = pageSize;
 	}
 
@@ -97,7 +97,7 @@ public final class ListingHandler<R> {
 			page = listHandler.getElements(ofst, psize, srtg);
 		}
 		catch(final ListHandlerException e) {
-			throw new ListingException(listingName, e.getMessage());
+			throw new ListingException(listingId, e.getMessage());
 		}
 
 		// update state

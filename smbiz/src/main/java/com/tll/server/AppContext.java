@@ -14,37 +14,48 @@ import com.tll.service.entity.account.AddAccountService;
  */
 public class AppContext {
 
+	public static final String DEFAULT_STAGE = "prod"; // production
+
+	public static final String DEFAULT_ENVIRONMENT = "UNSPECIFIED";
+
 	/**
 	 * The key identifying the sole {@link AppContext} in the
 	 * {@link ServletContext}.
 	 */
 	public static final String KEY = AppContext.class.getName();
 
-	private final boolean debug;
+	private final String stage;
 	private final String environment;
 	private final String dfltUserEmail;
 	private final AddAccountService addAccountService;
 
 	/**
 	 * Constructor
-	 * @param debug
+	 * @param stage
 	 * @param environment
 	 * @param dfltUserEmail
 	 * @param addAccountService
 	 */
-	public AppContext(boolean debug, String environment, String dfltUserEmail, AddAccountService addAccountService) {
+	public AppContext(String stage, String environment, String dfltUserEmail, AddAccountService addAccountService) {
 		super();
-		this.debug = debug;
+		this.stage = stage;
 		this.environment = environment;
 		this.dfltUserEmail = dfltUserEmail;
 		this.addAccountService = addAccountService;
 	}
 
 	/**
+	 * @return the stage
+	 */
+	public String getStage() {
+		return stage;
+	}
+
+	/**
 	 * @return the debug
 	 */
 	public boolean isDebug() {
-		return debug;
+		return "dev".equals(stage);
 	}
 
 	/**

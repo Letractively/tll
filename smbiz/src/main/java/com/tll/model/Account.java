@@ -13,6 +13,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
+import com.tll.model.schema.Reference;
 import com.tll.model.schema.Root;
 import com.tll.model.validate.AtLeastOne;
 import com.tll.model.validate.BusinessKeyUniqueness;
@@ -72,6 +73,7 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 		return name;
 	}
 
+	@Reference
 	public Account getParent() {
 		return parent;
 	}

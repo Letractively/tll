@@ -618,7 +618,7 @@
         <version>${gwtVersion}</version>
       </dependency>
       <dependency>
-        <groupId>com.google.code.gwt-log</groupId>
+        <groupId>com.allen_sauer.gwt.log</groupId>
         <artifactId>gwt-log</artifactId>
         <version>${gwtLogVersion}</version>
       </dependency>

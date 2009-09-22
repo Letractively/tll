@@ -17,6 +17,7 @@ import com.tll.di.Db4oDaoModule;
 import com.tll.di.Db4oDbShellModule;
 import com.tll.di.EGraphModule;
 import com.tll.di.ModelModule;
+import com.tll.di.test.TestDb4oDaoModule;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityGraphPopulator;
 import com.tll.model.key.PrimaryKey;
@@ -61,7 +62,7 @@ import com.tll.model.key.PrimaryKey;
 			}
 		});
 		getConfig().setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
-		modules.add(new Db4oDaoModule(getConfig()));
+		modules.add(new TestDb4oDaoModule(getConfig()));
 		modules.add(new Db4oDbShellModule());
 		modules.add(new Module() {
 

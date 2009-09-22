@@ -14,6 +14,7 @@ import java.lang.annotation.Target;
 /**
  * Reference - Indicates a related one entity or related many entities are
  * <em>not</em> part of the defult declaring entities' life-cycle.
+ * <p>I.e. consider this in a client context as read-only!
  * @author jpk
  */
 @Target(ElementType.METHOD)

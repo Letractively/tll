@@ -56,7 +56,7 @@ public class BootstrapperTest {
 		sb.append("com.tll.di.SmbizMarshalModule\r\n");
 		sb.append("com.tll.di.SmbizClientPersistModule\r\n");
 		sb.append("com.tll.di.SmbizListingModule\r\n");
-		sb.append("com.tll.di.AppModule\r\n");
+		sb.append("com.tll.di.SmbizAppModule\r\n");
 
 		final MockServletContext context = new MockServletContext();
 		context.addInitParameter(Bootstrapper.DEPENDENCY_MODULE_CLASS_NAMES, sb.toString());

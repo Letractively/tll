@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.common.data.Payload;
 import com.tll.common.data.Status;
+import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgLevel;
 
 /**
@@ -98,7 +99,7 @@ public abstract class RpcCommand<P extends Payload> implements AsyncCallback<P>,
 		// fire status event
 		String msg = caught.getMessage();
 		if(msg == null) msg = "An unknown RPC error occurred";
-		final Status status = new Status(msg, MsgLevel.ERROR);
+		final Status status = new Status(msg, MsgLevel.ERROR, (Msg.MsgAttr.STATUS.flag | Msg.MsgAttr.EXCEPTION.flag) );
 		StatusEventDispatcher.get().fireEvent(new StatusEvent(status));
 	}
 

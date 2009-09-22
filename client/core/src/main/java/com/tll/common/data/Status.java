@@ -22,19 +22,45 @@ public final class Status implements IMarshalable {
 
 	private List<Msg> msgs;
 
+	/**
+	 * Constructor
+	 */
 	public Status() {
 	}
 
+	/**
+	 * Constructor
+	 * @param msgs
+	 */
 	public Status(List<Msg> msgs) {
 		addMsgs(msgs);
 	}
 
+	/**
+	 * Constructor
+	 * @param msg
+	 */
 	public Status(Msg msg) {
 		addMsg(msg);
 	}
 
+	/**
+	 * Constructor
+	 * @param msg
+	 * @param level
+	 */
 	public Status(String msg, MsgLevel level) {
 		addMsg(new Msg(msg, level));
+	}
+
+	/**
+	 * Constructor
+	 * @param msg the message
+	 * @param level the msg level
+	 * @param attribs the message attribs
+	 */
+	public Status(String msg, MsgLevel level, int attribs) {
+		addMsg(new Msg(msg, level, attribs, null));
 	}
 
 	public boolean hasErrors() {

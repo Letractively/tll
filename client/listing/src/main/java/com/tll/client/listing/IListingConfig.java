@@ -18,6 +18,11 @@ public interface IListingConfig<R> {
 	public static final int DEFAULT_PAGE_SIZE = 25;
 
 	/**
+	 * @return A unique token that uniquely identifies this listing.
+	 */
+	String getListingId();
+
+	/**
 	 * @return A presentation worthy name for the row type.
 	 */
 	String getListingElementName();
@@ -32,6 +37,14 @@ public interface IListingConfig<R> {
 	 * @return The columns
 	 */
 	Column[] getColumns();
+
+	/**
+	 * @return Array of (dot notation) property paths that correspond to a single
+	 *         row. If <code>null</code>, row model data is NOT filtered on the
+	 *         server. Impls should endeavor to constrain row model data instances
+	 *         by specifying only the needed properties to fill a row.
+	 */
+	String[] getModelProperties();
 
 	/**
 	 * @return The desired page size or <code>-1</code> for no paging.
@@ -71,22 +84,5 @@ public interface IListingConfig<R> {
 	 * @return The table cell transformer responsible for rendering cell values
 	 *         from the backing listing data.
 	 */
-	ITableCellRenderer<R, ? extends Column> getCellRenderer();
-
-	/**
-	 * Optional add row handler. This is usually used in conjunction w/ the
-	 * oprional add button in the listing's nav bar. If this property is set and
-	 * intended for use, make sure the {@link #isShowNavBar()} is set to
-	 * <code>true</code>.
-	 * @return The optional add row handler.
-	 */
-	IAddRowDelegate getAddRowHandler();
-
-	/**
-	 * Optional row options provider and handler. If set, a contextual poupup with
-	 * vertically laid out options will appear when a listing row is clicked. This
-	 * handler is delegated to for handling option selection.
-	 * @return The optional row context handler.
-	 */
-	IRowOptionsDelegate getRowOptionsHandler();
+	ITableCellRenderer<R> getCellRenderer();
 }

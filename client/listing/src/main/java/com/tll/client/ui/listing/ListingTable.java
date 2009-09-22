@@ -25,7 +25,6 @@ import com.tll.client.listing.IListingHandler;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.listing.ListingEvent;
-import com.tll.client.listing.PropertyBoundColumn;
 import com.tll.client.ui.SimpleHyperLink;
 import com.tll.dao.SortColumn;
 import com.tll.dao.SortDir;
@@ -79,7 +78,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 
 	protected boolean ignoreCaseWhenSorting;
 
-	protected ITableCellRenderer<R, Column> cellRenderer;
+	protected ITableCellRenderer<R> cellRenderer;
 
 	protected IListingOperator<R> listingOperator;
 
@@ -181,7 +180,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 	private int resolveColumnIndex(String colProp) {
 		for(int i = 0; i < columns.length; i++) {
 			final Column c = columns[i];
-			if((c instanceof PropertyBoundColumn) && ((PropertyBoundColumn) c).getPropertyName().equals(colProp)) {
+			if(c.getPropertyName() != null && c.getPropertyName().equals(colProp)) {
 				return i;
 			}
 		}
@@ -215,7 +214,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 
 		private final SimpleHyperLink lnk;
 
-		private final PropertyBoundColumn column;
+		private final Column column;
 
 		private SortDir direction;
 
@@ -223,7 +222,8 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		 * Constructor
 		 * @param column
 		 */
-		public SortLink(PropertyBoundColumn column) {
+		public SortLink(Column column) {
+			assert column.getPropertyName() != null;
 			lnk = new SimpleHyperLink(column.getName(), this);
 			pnl.add(lnk);
 			initWidget(pnl);
@@ -294,9 +294,9 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 				if(isRowCntCol) {
 					setWidget(0, c, new Label("#"));
 				}
-				else if(col instanceof PropertyBoundColumn) {
+				else if(col.getPropertyName() != null) {
 					assert sortlinks != null;
-					final SortLink sl = new SortLink((PropertyBoundColumn) col);
+					final SortLink sl = new SortLink(col);
 					sortlinks[c] = sl;
 					setWidget(0, c, sl);
 				}

@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingHandler;
 import com.tll.client.listing.IListingOperator;
@@ -29,8 +30,8 @@ import com.tll.client.model.ModelChangeEvent;
  * @param <R> The row data type.
  * @param <T> the table widget type
  */
-public class ListingWidget<R, T extends ListingTable<R>> extends Composite implements
- Focusable, KeyDownHandler, IListingHandler<R>, IHasModelChangeHandlers {
+public abstract class ListingWidget<R, T extends ListingTable<R>> extends Composite implements
+Focusable, KeyDownHandler, IListingHandler<R>, IHasModelChangeHandlers {
 
 	/**
 	 * Styles - (tableview.css)
@@ -112,16 +113,15 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 
 		// generate nav bar
 		if(config.isShowNavBar()) {
-			navBar = new ListingNavBar<R>(config);
+			navBar = new ListingNavBar<R>(config, getAddRowHandler());
 			tableViewPanel.add(navBar.getWidget());
-			navBar.setAddRowDelegate(config.getAddRowHandler());
 		}
 		else {
 			navBar = null;
 		}
 
 		// row delegate?
-		final IRowOptionsDelegate rod = config.getRowOptionsHandler();
+		final IRowOptionsDelegate rod = getRowOptionsHandler();
 		if(rod != null) rowPopup = new RowContextPopup(2000, table, rod);
 
 		focusPanel.add(tableViewPanel);
@@ -129,8 +129,16 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 		initWidget(focusPanel);
 	}
 
+	protected IRowOptionsDelegate getRowOptionsHandler() {
+		return null; // default
+	}
+
+	protected IAddRowDelegate getAddRowHandler() {
+		return null; // default
+	}
+
 	@Override
-	public HandlerRegistration addModelChangeHandler(IModelChangeHandler handler) {
+	public final HandlerRegistration addModelChangeHandler(IModelChangeHandler handler) {
 		return addHandler(handler, ModelChangeEvent.TYPE);
 	}
 

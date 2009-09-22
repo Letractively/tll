@@ -209,16 +209,6 @@ public abstract class AbstractEntityDaoTest<D extends EntityDaoTestDecorator> ex
 		finally {
 			endTransaction();
 		}
-
-		// mock dao mode only - verify the number of entities in the mock dao's
-		// object graph matches the retained number prior to testing for the current
-		// entity type
-		/*
-		if(dao.getRawDao() instanceof com.tll.dao.mock.EntityDao) {
-			final int afterNumEntities = ((com.tll.dao.mock.EntityDao) dao.getRawDao()).getEntityGraph().size();
-			Assert.assertEquals(afterNumEntities, numEntities, entityHandler + " dao test handler didn't clean up properly!");
-		}
-		 */
 	}
 
 	@Override
