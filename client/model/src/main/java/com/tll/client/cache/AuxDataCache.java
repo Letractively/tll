@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.tll.common.cache.AuxDataType;
+import com.tll.common.model.CopyCriteria;
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
 import com.tll.refdata.RefDataType;
@@ -117,7 +118,7 @@ public final class AuxDataCache {
 		if(entityPrototypes != null && entityType != null) {
 			for(final Model p : entityPrototypes) {
 				if(p.getEntityType().equals(entityType)) {
-					return p.copy(true); // IMPT: provide a distinct instance
+					return p.copy(CopyCriteria.COPY_ALL); // IMPT: provide a distinct instance
 				}
 			}
 		}
@@ -133,21 +134,21 @@ public final class AuxDataCache {
 	public boolean isCached(AuxDataType type, Object obj) {
 		if(obj == null) return false;
 		switch(type) {
-			case REFDATA:
-				return refDataMaps == null ? false : refDataMaps.containsKey(obj);
-			case ENTITY:
-				return entityMap == null ? false : entityMap.containsKey(obj);
-			case ENTITY_PROTOTYPE: {
-				if(entityPrototypes != null) {
-					final IEntityType et = (IEntityType) obj;
-					for(final Model p : entityPrototypes) {
-						if(et.equals(p.getEntityType())) return true;
-					}
+		case REFDATA:
+			return refDataMaps == null ? false : refDataMaps.containsKey(obj);
+		case ENTITY:
+			return entityMap == null ? false : entityMap.containsKey(obj);
+		case ENTITY_PROTOTYPE: {
+			if(entityPrototypes != null) {
+				final IEntityType et = (IEntityType) obj;
+				for(final Model p : entityPrototypes) {
+					if(et.equals(p.getEntityType())) return true;
 				}
-				return false;
 			}
-			default:
-				return false;
+			return false;
+		}
+		default:
+			return false;
 		}
 	}
 

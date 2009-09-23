@@ -53,7 +53,12 @@ public class AccountInterfaceService extends AbstractPersistServiceImpl {
 	}
 
 	@Override
-	public void persistImpl(Model model, ModelPayload payload) {
+	public void doAdd(Model model, ModelPayload payload) {
+		doUpdate(model, payload);
+	}
+
+	@Override
+	public void doUpdate(Model model, ModelPayload payload) {
 		// [re-]set the account interface options for a given interface and account
 
 		final Marshaler marshaler = context.getMarshaler();

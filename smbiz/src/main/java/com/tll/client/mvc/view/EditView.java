@@ -148,18 +148,19 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 	public final void onEdit(EditEvent event) {
 		Command cmd = null;
 		switch(event.getOp()) {
-			case CANCEL:
-				ViewManager.get().dispatch(new UnloadViewRequest(getViewKey(), false, false));
-				break;
-			case ADD:
-			case UPDATE:
-				cmd = CrudCommand.persistModel(this, model);
-				break;
-			case DELETE:
-				if(!model.isNew()) {
-					cmd = CrudCommand.deleteModel(this, modelKey);
-				}
-				break;
+		case CANCEL:
+			ViewManager.get().dispatch(new UnloadViewRequest(getViewKey(), false, false));
+			break;
+		case ADD:
+		case UPDATE: {
+			cmd = CrudCommand.persistModel(this, model);
+			break;
+		}
+		case DELETE:
+			if(!model.isNew()) {
+				cmd = CrudCommand.deleteModel(this, modelKey);
+			}
+			break;
 		}
 		if(cmd != null) {
 			// addRpcHandler(new RpcUiHandler(getViewWidget()));
@@ -191,37 +192,37 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 		gmp.clear();
 		switch(event.getChangeOp()) {
 
-			case LOADED:
-				model = event.getModel();
-				// NOTE we fall through
-			case AUXDATA_READY:
-				reload();
-				return;
+		case LOADED:
+			model = event.getModel();
+			// NOTE we fall through
+		case AUXDATA_READY:
+			reload();
+			return;
 
-			case ADDED:
-				model = event.getModel();
-				gmp.add(new Msg(model.descriptor() + " added", MsgLevel.INFO), null);
-				editPanel.setModel(model);
-				break;
+		case ADDED:
+			model = event.getModel();
+			gmp.add(new Msg(model.descriptor() + " added", MsgLevel.INFO), null);
+			editPanel.setModel(model);
+			break;
 
-			case UPDATED:
-				model = event.getModel();
-				gmp.add(new Msg(model.descriptor() + " updated", MsgLevel.INFO), null);
-				editPanel.setModel(model);
-				break;
+		case UPDATED:
+			model = event.getModel();
+			gmp.add(new Msg(model.descriptor() + " updated", MsgLevel.INFO), null);
+			editPanel.setModel(model);
+			break;
 
-			case DELETED:
-				// we need to defer so as not to interfere with ViewManager's
-				// onModelChangeEvent iteration
-				// otherwise we get a ConcurrentModificationException
-				DeferredCommand.addCommand(new Command() {
+		case DELETED:
+			// we need to defer so as not to interfere with ViewManager's
+			// onModelChangeEvent iteration
+			// otherwise we get a ConcurrentModificationException
+			DeferredCommand.addCommand(new Command() {
 
-					@Override
-					public void execute() {
-						ViewManager.get().dispatch(new UnloadViewRequest(getViewKey(), true, true));
-					}
-				});
-				break;
+				@Override
+				public void execute() {
+					ViewManager.get().dispatch(new UnloadViewRequest(getViewKey(), true, true));
+				}
+			});
+			break;
 		}
 	}
 }

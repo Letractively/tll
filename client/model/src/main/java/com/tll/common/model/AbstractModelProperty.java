@@ -84,6 +84,8 @@ public abstract class AbstractModelProperty implements IModelProperty {
 		getChangeSupport().removePropertyChangeListener(propName, listener);
 	}
 
+	// TODO figure out why we had equals()/hascode() overrides!!!!
+	/*
 	@Override
 	public int hashCode() {
 		return 31 + ((propertyName == null) ? 0 : propertyName.hashCode());
@@ -101,5 +103,5 @@ public abstract class AbstractModelProperty implements IModelProperty {
 		else if(!propertyName.equals(other.propertyName)) return false;
 		return true;
 	}
-
+	 */
 }

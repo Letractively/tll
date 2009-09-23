@@ -15,6 +15,8 @@ public class PersistRequest extends ModelRequest {
 
 	private Model model;
 
+	private boolean dirtyProps;
+
 	/**
 	 * Constructor
 	 */
@@ -25,10 +27,13 @@ public class PersistRequest extends ModelRequest {
 	/**
 	 * Constructor
 	 * @param model
+	 * @param dirtyProps Signifies the held model data is for updating and
+	 *        contains <em>only</em> those properties that were marked as dirty during the ui edit process.
 	 */
-	public PersistRequest(Model model) {
+	public PersistRequest(Model model, boolean dirtyProps) {
 		super();
 		this.model = model;
+		this.dirtyProps = dirtyProps;
 	}
 
 	@Override
@@ -41,5 +46,13 @@ public class PersistRequest extends ModelRequest {
 	 */
 	public Model getModel() {
 		return model;
+	}
+
+
+	/**
+	 * @return the dirtyProps
+	 */
+	public boolean isDirtyProps() {
+		return dirtyProps;
 	}
 }

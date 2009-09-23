@@ -24,6 +24,7 @@ import com.tll.di.Db4oDbShellModule;
 import com.tll.di.TestPersistenceUnitModelModule;
 import com.tll.di.test.TestDb4oDaoModule;
 import com.tll.model.Account;
+import com.tll.model.AccountAddress;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.EntityGraph;
 import com.tll.model.FieldEnum;
@@ -84,7 +85,6 @@ public class MarshalerTest extends AbstractDbAwareTest {
 	 * Tests marshaler handling of entity circular referencing.
 	 * @throws Exception Upon failure
 	 */
-	@Test
 	public void testCircularEntity() throws Exception {
 		final TestPersistenceUnitEntityGraphBuilder entityGraphBuilder =
 			new TestPersistenceUnitEntityGraphBuilder(getEntityBeanFactory());
@@ -111,7 +111,6 @@ public class MarshalerTest extends AbstractDbAwareTest {
 	 * Tests the marshaling of a nested entity.
 	 * @throws Exception Upon failure
 	 */
-	@Test
 	public void testNestedEntity() throws Exception {
 		final Marshaler marshaler = getMarshaler();
 		assert marshaler != null;
@@ -129,7 +128,6 @@ public class MarshalerTest extends AbstractDbAwareTest {
 	 * Tests basic marshaling of IScalar instances.
 	 * @throws Exception Upon failure.
 	 */
-	@Test
 	public void testScalarMarshaling() throws Exception {
 		final IScalar scalar = new IScalar() {
 
@@ -166,7 +164,6 @@ public class MarshalerTest extends AbstractDbAwareTest {
 	 * entities present.
 	 * @throws Exception
 	 */
-	@Test
 	public void testEmptyRelatedMany() throws Exception {
 		final Marshaler marshaler = getMarshaler();
 		assert marshaler != null;
@@ -179,7 +176,6 @@ public class MarshalerTest extends AbstractDbAwareTest {
 		assert mp != null;
 	}
 
-	@Test
 	public void testEmptyNested() throws Exception {
 		final Marshaler marshaler = getMarshaler();
 		assert marshaler != null;
@@ -193,7 +189,6 @@ public class MarshalerTest extends AbstractDbAwareTest {
 		assert mp != null;
 	}
 
-	@Test
 	public void testEmptyNestedTarget() throws Exception {
 		final Marshaler marshaler = getMarshaler();
 		assert marshaler != null;
@@ -206,5 +201,25 @@ public class MarshalerTest extends AbstractDbAwareTest {
 		assert m != null;
 		final IModelProperty mp = m.get("nestedEntity");
 		assert mp != null;
+	}
+
+	public void testUnmarshalAgainstExistingEntity() throws Exception {
+		final Marshaler marshaler = getMarshaler();
+		assert marshaler != null;
+		final Account e = getEntityBeanFactory().getEntityCopy(Account.class, false);
+		final AccountAddress aa1 = getEntityBeanFactory().getEntityCopy(AccountAddress.class, false);
+		final AccountAddress aa2 = getEntityBeanFactory().getEntityCopy(AccountAddress.class, true);
+		e.addAccountAddress(aa1);
+		e.addAccountAddress(aa2);
+
+		final Model m = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
+		m.indexed("addresses[0]").getModel().setMarkedDeleted(true);
+
+		final Account rea = marshaler.unmarshalEntity(e, m);
+		Assert.assertTrue(e == rea);
+		Assert.assertTrue(e.equals(rea));
+		Assert.assertTrue(e.getAddresses() != null);
+		Assert.assertTrue(e.getAddresses().size() == 1);
+		Assert.assertTrue(e.getAddresses().iterator().next().equals(aa2));
 	}
 }

@@ -59,27 +59,29 @@ public class MockModelStubber {
 	 */
 	public static Model create(ModelType modelType) {
 		switch(modelType) {
-			case SIMPLE:
-				return stubAddress(1);
-			case COMPLEX:
-				return stubAccount(true);
-			default:
-				throw new UnsupportedOperationException("Unhandled model type");
+		case SIMPLE:
+			return stubAddress(1);
+		case COMPLEX:
+			return stubAccount(true);
+		default:
+			throw new UnsupportedOperationException("Unhandled model type");
 		}
 	}
 
 	/**
 	 * Stubs a model of the given type having the given id.
 	 * @param type the model entity type
+	 * @param version the desired entity version
+	 * @param timestamping add the standard entity timestamping properties?
 	 * @param name optional name property value. If non-<code>null</code>, a
 	 *        standard entity name property will be added.
-	 * @param timestamping add the standard entity timestamping properties?
 	 * @return the stubbed model
 	 */
-	private static Model stubModel(MockEntityType type, String name, boolean timestamping) {
-		final Model m = new Model(type, true);
+	public static Model stubModel(MockEntityType type, Integer version, boolean timestamping, String name) {
+		final Model m = new Model(type);
 		m.set(new StringPropertyValue(Model.ID_PROPERTY, new PropertyMetadata(PropertyType.STRING, false, true, 10),
 				Integer.toString(++nextUniqueId)));
+		m.set(new IntPropertyValue(Model.VERSION_PROPERTY, version));
 		if(name != null) {
 			m.set(new StringPropertyValue(Model.NAME_PROPERTY, new PropertyMetadata(PropertyType.STRING, false, true, 32),
 					name));
@@ -123,7 +125,7 @@ public class MockModelStubber {
 	 * @return new instance
 	 */
 	public static Model stubAccount(Model parentAccount, MockEntityType accountType, int num) {
-		final Model m = stubModel(accountType, "ISP " + num, true);
+		final Model m = stubModel(accountType, null, true, "ISP " + num);
 		m
 		.set(new EnumPropertyValue("status", new PropertyMetadata(PropertyType.ENUM, false, true, 16),
 				AccountStatus.OPEN));
@@ -154,7 +156,7 @@ public class MockModelStubber {
 	 * @return new instance
 	 */
 	public static Model stubAccountAddress(Model account, Model address, int num) {
-		final Model m = stubModel(MockEntityType.ACCOUNT_ADDRESS, ("Adrs " + num), true);
+		final Model m = stubModel(MockEntityType.ACCOUNT_ADDRESS, null, true, ("Adrs " + num));
 		m.set(new EnumPropertyValue("type", new PropertyMetadata(PropertyType.ENUM, false, true, 8),
 				AddressType.values()[num - 1]));
 		m.set(new RelatedOneProperty(MockEntityType.ACCOUNT, "account", true, account));
@@ -168,7 +170,7 @@ public class MockModelStubber {
 	 * @return new instance
 	 */
 	public static Model stubAddress(int num) {
-		final Model address = stubModel(MockEntityType.ADDRESS, null, false);
+		final Model address = stubModel(MockEntityType.ADDRESS, null, false, null);
 		address.set(new StringPropertyValue("emailAddress", new PropertyMetadata(PropertyType.STRING, false, false, 32),
 				"email" + num + "@domain.com"));
 		address.set(new StringPropertyValue("firstName", new PropertyMetadata(PropertyType.STRING, false, false, 32),
@@ -207,7 +209,7 @@ public class MockModelStubber {
 	 * @return new instance
 	 */
 	public static Model stubCurrency() {
-		final Model m = stubModel(MockEntityType.CURRENCY, null, false);
+		final Model m = stubModel(MockEntityType.CURRENCY, null, false, null);
 		m.set(new StringPropertyValue("iso4217", new PropertyMetadata(PropertyType.STRING, false, true, 8), "usd"));
 		m.set(new StringPropertyValue("symbol", new PropertyMetadata(PropertyType.STRING, false, true, 8), "$"));
 		m.set(new DoublePropertyValue("usdExchangeRage", new PropertyMetadata(PropertyType.DOUBLE, false, true, -1), 1d));
@@ -219,7 +221,7 @@ public class MockModelStubber {
 	 * @return new Model representing payment info
 	 */
 	public static Model stubPaymentInfo() {
-		final Model m = stubModel(MockEntityType.PAYMENT_INFO, null, false);
+		final Model m = stubModel(MockEntityType.PAYMENT_INFO, null, false, null);
 		m.set(new StringPropertyValue("paymentData_bankAccountNo", new PropertyMetadata(PropertyType.STRING, false, false,
 				16), "0005543"));
 		m.set(new StringPropertyValue("paymentData_bankName", new PropertyMetadata(PropertyType.STRING, false, false, 16),

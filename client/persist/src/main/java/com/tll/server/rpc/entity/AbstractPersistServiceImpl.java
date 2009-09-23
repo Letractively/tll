@@ -36,7 +36,6 @@ import com.tll.service.entity.IEntityService;
 import com.tll.service.entity.INamedEntityService;
 import com.tll.util.PropertyPath;
 
-
 /**
  * AbstractPersistServiceImpl
  * @author jpk
@@ -138,13 +137,79 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 		}
 	}
 
+	/**
+	 * The default add routine which may be overridden.
+	 * @param model
+	 * @param payload
+	 */
+	@SuppressWarnings("unchecked")
+	protected void doAdd(Model model, ModelPayload payload) {
+		final Class<? extends IEntity> entityClass =
+			(Class<? extends IEntity>) context.getEntityTypeResolver().resolveEntityClass(model.getEntityType());
+		IEntity e = context.getMarshaler().unmarshalEntity(entityClass, model);
+		final IEntityService<IEntity> svc =
+			(IEntityService<IEntity>) context.getEntityServiceFactory().instanceByEntityType(entityClass);
+		e = svc.persist(e);
+
+		// marshall
+		model = marshal(model.getEntityType(), e);
+		payload.setModel(model);
+
+		payload.getStatus().addMsg(e.descriptor() + " added.", MsgLevel.INFO, MsgAttr.STATUS.flag);
+	}
+
+	/**
+	 * The default update routine which may be overridden.
+	 * @param modelChanges presumed to only contain model properties that were
+	 *        altered
+	 * @param payload
+	 */
+	@SuppressWarnings("unchecked")
+	protected void doUpdate(Model modelChanges, ModelPayload payload) {
+		final Class<? extends IEntity> entityClass =
+			(Class<? extends IEntity>) context.getEntityTypeResolver().resolveEntityClass(modelChanges.getEntityType());
+		final IEntityService<IEntity> svc =
+			(IEntityService<IEntity>) context.getEntityServiceFactory().instanceByEntityType(entityClass);
+		final Class<IEntity> eclass = resolveEntityClass(modelChanges.getEntityType());
+
+		// load current state of this entity
+		IEntity e = svc.load(new PrimaryKey<IEntity>(eclass, modelChanges.getId()));
+
+		// marshal the changes only
+		context.getMarshaler().unmarshalEntity(e, modelChanges);
+		final boolean isNew = e.isNew();
+		e = svc.persist(e);
+
+		// marshal
+		final Model refreshedModel = marshal(modelChanges.getEntityType(), e);
+		payload.setModel(refreshedModel);
+
+		payload.getStatus().addMsg(e.descriptor() + (isNew ? " added." : " updated."), MsgLevel.INFO, MsgAttr.STATUS.flag);
+	}
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public final void persist(Model model, ModelPayload payload) {
-		if(model.isEntity()) {
-			persistEntity(model, payload);
+		final Class<? extends IEntity> entityClass = null;
+		try {
+			if(model.isNew())
+				doAdd(model, payload);
+			else
+				doUpdate(model, payload);
 		}
-		else {
-			persistImpl(model, payload);
+		catch(final EntityExistsException e) {
+			RpcServlet.exceptionToStatus(e, payload.getStatus());
+		}
+		catch(final ConstraintViolationException ise) {
+			for(final ConstraintViolation iv : ise.getConstraintViolations()) {
+				payload.getStatus().addMsg(iv.getMessage(), MsgLevel.ERROR, MsgAttr.FIELD.flag,
+						clientizePropertyPath(context.getSchemaInfo(), entityClass, iv.getPropertyPath().toString()));
+			}
+		}
+		catch(final RuntimeException e) {
+			RpcServlet.exceptionToStatus(e, payload.getStatus());
+			context.getExceptionHandler().handleException(e);
+			throw e;
 		}
 	}
 
@@ -158,17 +223,19 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 		purgeEntity(ref, payload);
 	}
 
+	@SuppressWarnings("unchecked")
+	protected final Class<IEntity> resolveEntityClass(IEntityType entityType) {
+		return (Class<IEntity>) context.getEntityTypeResolver().resolveEntityClass(entityType);
+	}
+
 	/**
 	 * Resolves the approprate entity service for a particular entity type.
 	 * @param entityType
 	 * @return the resolved entity service
 	 * @throws IllegalArgumentException when the service can't be resolved
 	 */
-	@SuppressWarnings("unchecked")
-	protected final IEntityService<IEntity> getEntityService(IEntityType entityType)
-	throws IllegalArgumentException {
-		final Class<IEntity> eclass = (Class<IEntity>) context.getEntityTypeResolver().resolveEntityClass(entityType);
-		return context.getEntityServiceFactory().instanceByEntityType(eclass);
+	protected final IEntityService<IEntity> getEntityService(IEntityType entityType) throws IllegalArgumentException {
+		return context.getEntityServiceFactory().instanceByEntityType(resolveEntityClass(entityType));
 	}
 
 	/**
@@ -299,58 +366,6 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	 * @param payload
 	 */
 	protected void loadImpl(ISearch search, ModelPayload payload) {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * Persists (adds or updates) an entity in the form of a {@link Model}
-	 * instance.
-	 * @param model the entity expressed as a {@link Model} instance
-	 * @param payload The {@link ModelPayload} that is filled
-	 */
-	@SuppressWarnings("unchecked")
-	protected void persistEntity(Model model, ModelPayload payload) {
-		Class<? extends IEntity> entityClass = null;
-		try {
-			// core persist
-			final IEntityType et = model.getEntityType();
-			entityClass = (Class<? extends IEntity>) context.getEntityTypeResolver().resolveEntityClass(et);
-			IEntity e = context.getMarshaler().unmarshalEntity(entityClass, model);
-			final IEntityService<IEntity> svc =
-				(IEntityService<IEntity>) context.getEntityServiceFactory().instanceByEntityType(entityClass);
-			final boolean isNew = e.isNew();
-			e = svc.persist(e);
-
-			// marshall
-			model = marshal(et, e);
-			payload.setModel(model);
-
-			payload.getStatus()
-			.addMsg(e.descriptor() + (isNew ? " added." : " updated."), MsgLevel.INFO, MsgAttr.STATUS.flag);
-		}
-		catch(final EntityExistsException e) {
-			RpcServlet.exceptionToStatus(e, payload.getStatus());
-		}
-		catch(final ConstraintViolationException ise) {
-			for(final ConstraintViolation iv : ise.getConstraintViolations()) {
-				payload.getStatus().addMsg(iv.getMessage(), MsgLevel.ERROR, MsgAttr.FIELD.flag,
-						clientizePropertyPath(context.getSchemaInfo(), entityClass, iv.getPropertyPath().toString()));
-			}
-		}
-		catch(final RuntimeException e) {
-			RpcServlet.exceptionToStatus(e, payload.getStatus());
-			context.getExceptionHandler().handleException(e);
-			throw e;
-		}
-	}
-
-	/**
-	 * Impl specific persist routine. Usually employed when we are not adhering to
-	 * entity boundaries.
-	 * @param model
-	 * @param payload
-	 */
-	protected void persistImpl(Model model, ModelPayload payload) {
 		throw new UnsupportedOperationException();
 	}
 

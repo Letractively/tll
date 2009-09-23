@@ -118,20 +118,20 @@ public class CrudCommand extends RpcCommand<ModelPayload> {
 		if(model == null || !model.isNew()) {
 			throw new IllegalArgumentException("A non-null and new entity must be specified.");
 		}
-		final PersistRequest pr = new PersistRequest(model);
+		final PersistRequest pr = new PersistRequest(model, false);
 		modelRequest = pr;
 		crudOp = CrudOp.ADD;
 	}
 
 	/**
 	 * Sets the state of this command for updating an entity.
-	 * @param model The model data to update.
+	 * @param dirtyModel The model data containing only the properties that were changed
 	 */
-	public final void update(Model model) {
-		if(model == null || model.isNew()) {
+	public final void update(Model dirtyModel) {
+		if(dirtyModel == null || dirtyModel.isNew()) {
 			throw new IllegalArgumentException("A non-null and non-new entity must be specified.");
 		}
-		final PersistRequest pr = new PersistRequest(model);
+		final PersistRequest pr = new PersistRequest(dirtyModel, true);
 		modelRequest = pr;
 		crudOp = CrudOp.UPDATE;
 	}
@@ -152,21 +152,21 @@ public class CrudCommand extends RpcCommand<ModelPayload> {
 	@Override
 	protected void doExecute() {
 		switch(crudOp) {
-			case LOAD:
-				svc.load((LoadRequest<?>) modelRequest, getAsyncCallback());
-				break;
+		case LOAD:
+			svc.load((LoadRequest<?>) modelRequest, getAsyncCallback());
+			break;
 
-			case ADD:
-			case UPDATE:
-				svc.persist((PersistRequest) modelRequest, getAsyncCallback());
-				break;
+		case ADD:
+		case UPDATE:
+			svc.persist((PersistRequest) modelRequest, getAsyncCallback());
+			break;
 
-			case PURGE:
-				svc.purge((PurgeRequest) modelRequest, getAsyncCallback());
-				break;
+		case PURGE:
+			svc.purge((PurgeRequest) modelRequest, getAsyncCallback());
+			break;
 
-			default:
-				throw new IllegalStateException("Unknown crud op: " + crudOp);
+		default:
+			throw new IllegalStateException("Unknown crud op: " + crudOp);
 		}
 	}
 
@@ -179,20 +179,20 @@ public class CrudCommand extends RpcCommand<ModelPayload> {
 			// fire a model change event
 			ModelChangeOp mop;
 			switch(crudOp) {
-				case LOAD:
-					mop = ModelChangeOp.LOADED;
-					break;
-				case ADD:
-					mop = ModelChangeOp.ADDED;
-					break;
-				case UPDATE:
-					mop = ModelChangeOp.UPDATED;
-					break;
-				case PURGE:
-					mop = ModelChangeOp.DELETED;
-					break;
-				default:
-					throw new IllegalStateException("Unhandled crud op: " + crudOp);
+			case LOAD:
+				mop = ModelChangeOp.LOADED;
+				break;
+			case ADD:
+				mop = ModelChangeOp.ADDED;
+				break;
+			case UPDATE:
+				mop = ModelChangeOp.UPDATED;
+				break;
+			case PURGE:
+				mop = ModelChangeOp.DELETED;
+				break;
+			default:
+				throw new IllegalStateException("Unhandled crud op: " + crudOp);
 			}
 			source.fireEvent(new ModelChangeEvent(mop, result.getModel(), result.getRef(), result.getStatus()));
 		}

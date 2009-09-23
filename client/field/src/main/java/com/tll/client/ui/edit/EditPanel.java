@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.FocusCommand;
-import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.IFieldWidget;
@@ -232,7 +231,14 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 			try {
 				Log.debug("EditPanel - Saving..");
 				fieldPanel.getBinding().execute();
-				EditEvent.fire(this, isAdd() ? EditOp.ADD : EditOp.UPDATE);
+				if(isAdd()) {
+					EditEvent.fireAdd(this);
+
+				}
+				else {
+					final Model mchanged = fieldPanel.getBinding().getModelChangeTracker().generateChangeModel();
+					EditEvent.fireUpdate(this, mchanged);
+				}
 			}
 			catch(final ValidationException e) {
 				// turn on incremental validation after first pass
@@ -251,10 +257,10 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 			fieldPanel.reset();
 		}
 		else if(sender == btnDelete) {
-			EditEvent.fire(this, EditOp.DELETE);
+			EditEvent.fireDelete(this);
 		}
 		else if(sender == btnCancel) {
-			EditEvent.fire(this, EditOp.CANCEL);
+			EditEvent.fireCancel(this);
 		}
 	}
 

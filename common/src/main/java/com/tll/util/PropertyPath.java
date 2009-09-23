@@ -5,7 +5,6 @@
  */
 package com.tll.util;
 
-
 /**
  * PropertyPath - Encapsulates a property path String providing convenience
  * methods for accessing and modifying its attributes.
@@ -55,7 +54,8 @@ public final class PropertyPath {
 	}
 
 	/**
-	 * Is the given property path indexed?
+	 * Is the given property path indexed? E.g.: <code>propA.propB[1]</code> is
+	 * indexed but <code>propA[0].propB</code> is NOT.
 	 * @param propPath
 	 * @return true/false
 	 */
