@@ -6,6 +6,8 @@
 package com.tll.client.ui.edit;
 
 import com.google.gwt.event.shared.GwtEvent;
+import com.tll.client.model.ModelPropertyChangeTracker;
+import com.tll.common.model.Model;
 
 /**
  * EditEvent
@@ -25,30 +27,54 @@ public final class EditEvent extends GwtEvent<IEditHandler> {
 	}
 
 	public static final Type<IEditHandler> TYPE = new Type<IEditHandler>();
-	
-  /**
-	 * Fires a value change event on all registered handlers in the handler
-	 * manager.If no such handlers exist, this method will do nothing.
-	 * @param <I> the old value type
+
+	/**
+	 * Fires an edit event signifying a request to add.
 	 * @param source the source of the handlers
-	 * @param op the edit operation
 	 */
-	public static <I> void fire(IHasEditHandlers source, EditOp op) {
-		source.fireEvent(new EditEvent(op));
+	public static void fireAdd(IHasEditHandlers source) {
+		source.fireEvent(new EditEvent(EditOp.ADD, null));
+	}
+
+	/**
+	 * Fires an edit event signifying a request to update.
+	 * @param source the source of the handlers
+	 * @param changedModel the model data to update containing ONLY those
+	 *        properties that were altered
+	 * @see ModelPropertyChangeTracker
+	 */
+	public static void fireUpdate(IHasEditHandlers source, Model changedModel) {
+		source.fireEvent(new EditEvent(EditOp.UPDATE, changedModel));
+	}
+
+	public static void fireDelete(IHasEditHandlers source) {
+		source.fireEvent(new EditEvent(EditOp.DELETE, null));
+	}
+
+	public static void fireCancel(IHasEditHandlers source) {
+		source.fireEvent(new EditEvent(EditOp.CANCEL, null));
 	}
 
 	private final EditOp op;
 
+	private final Model changedModel;
+
 	/**
 	 * Constructor
 	 * @param op
+	 * @param changedModel
 	 */
-	EditEvent(EditOp op) {
+	private EditEvent(EditOp op, Model changedModel) {
 		this.op = op;
+		this.changedModel = changedModel;
 	}
 
 	public EditOp getOp() {
 		return op;
+	}
+
+	public Model getChangedModel() {
+		return changedModel;
 	}
 
 	@Override

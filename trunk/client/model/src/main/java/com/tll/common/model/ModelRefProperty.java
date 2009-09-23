@@ -63,8 +63,9 @@ public abstract class ModelRefProperty extends AbstractRelationalProperty implem
 					&& !(relatedType == model.getEntityType() || relatedType.isSubtype(model.getEntityType()))) {
 				throw new IllegalArgumentException("The model must be a " + relatedType.getPresentationName());
 			}
-			*/
+			 */
 			doSetModel(oldModel, model);
+			getChangeSupport().firePropertyChange(propertyName, oldModel, model);
 		}
 	}
 
@@ -79,10 +80,10 @@ public abstract class ModelRefProperty extends AbstractRelationalProperty implem
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		sb.append(propertyName);
 		sb.append(isReference() ? " [REF] " : " ");
-		Model m = getModel();
+		final Model m = getModel();
 		sb.append(m == null ? "-empty-" : m.toString());
 		return sb.toString();
 	}

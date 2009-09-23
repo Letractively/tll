@@ -19,6 +19,8 @@ public final class ModelPayload extends AuxDataPayload {
 	 */
 	private Model model;
 
+	//private Model changedModel;
+
 	private ModelKey ref;
 
 	/**

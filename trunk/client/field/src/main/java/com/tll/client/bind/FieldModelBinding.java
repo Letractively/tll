@@ -6,6 +6,7 @@ package com.tll.client.bind;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.convert.IConverter;
+import com.tll.client.model.ModelPropertyChangeTracker;
 import com.tll.client.ui.IBindableWidget;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.IFieldBoundWidget;
@@ -16,6 +17,7 @@ import com.tll.client.validate.ErrorClassifier;
 import com.tll.client.validate.ErrorDisplay;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.ValidationException;
+import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.model.Model;
 
 /**
@@ -32,15 +34,28 @@ public class FieldModelBinding {
 	 * can't be created due to a binding exception, <code>null</code> is
 	 * returnred.
 	 * @param model
+	 * @param modelConverter
 	 * @param modelProp
-	 * @param modelConverter optional
+	 * @param modelChangeListener Optional model property change listener in
+	 *        addition to the default one that takes in data from a field
+	 *        generated property change event
 	 * @param fw
+	 * @param fieldConverter
+	 * @param fieldChangeListener Optional field property change listener in
+	 *        addition to the default one that takes in data from a model
+	 *        generated property change event
+	 * @return new binding instance
 	 * @throws BindingException When the binding creation fails
 	 */
 	static Binding createBinding(Model model, IConverter<Object, Object> modelConverter, String modelProp,
-			IFieldWidget<?> fw, IConverter<Object, Object> fieldConverter) throws BindingException {
-		return new Binding(model, modelProp, modelConverter, null, null, fw, IBindableWidget.PROPERTY_VALUE,
-				fieldConverter, fw, fw.getErrorHandler());
+			IPropertyChangeListener modelChangeListener, IFieldWidget<?> fw, IConverter<Object, Object> fieldConverter,
+			IPropertyChangeListener fieldChangeListener) throws BindingException {
+		final Binding b =
+			new Binding(model, modelProp, modelConverter, null, null, fw, IBindableWidget.PROPERTY_VALUE, fieldConverter,
+					fw, fw.getErrorHandler());
+		if(modelChangeListener != null) b.addPropertyChangeListener(modelChangeListener, true);
+		if(fieldChangeListener != null) b.addPropertyChangeListener(fieldChangeListener, false);
+		return b;
 	}
 
 	/**
@@ -53,10 +68,11 @@ public class FieldModelBinding {
 	 * bound to the corresponding model properties.
 	 * @param group
 	 * @param model
+	 * @param modelChangeTracker Optional model change tracker
 	 * @return the created {@link Binding}.
 	 * @throws BindingException When the binding creation fails
 	 */
-	static Binding createBinding(FieldGroup group, Model model) throws BindingException {
+	static Binding createBinding(FieldGroup group, Model model, ModelPropertyChangeTracker modelChangeTracker) throws BindingException {
 		final Binding b = new Binding();
 		// create bindings for all provided field widgets in the root field group
 		for(final IFieldWidget<?> fw : group.getFieldWidgets(null)) {
@@ -64,7 +80,7 @@ public class FieldModelBinding {
 			fw.clearValue();
 			Log.debug("Binding field group: " + group + " to model [" + model + "]." + fw.getPropertyName());
 			try {
-				final Binding cb = createBinding(model, null, fw.getPropertyName(), fw, null);
+				final Binding cb = createBinding(model, null, fw.getPropertyName(), modelChangeTracker, fw, null, null);
 				b.getChildren().add(cb);
 			}
 			catch(final Exception e) {
@@ -89,6 +105,11 @@ public class FieldModelBinding {
 	 * The sole binding.
 	 */
 	private final Binding binding = new Binding();
+
+	/**
+	 * Tracks which properties have been altered in the model.
+	 */
+	private final ModelPropertyChangeTracker modelChangeTracker = new ModelPropertyChangeTracker();
 
 	private boolean bound;
 
@@ -153,42 +174,12 @@ public class FieldModelBinding {
 		if(widget.getModel() == null) {
 			throw new IllegalArgumentException("No model specified in field bound widget");
 		}
+		modelChangeTracker.set(widget.getModel());
 		createBindings();
 		Log.debug("Binding: " + widget);
 		binding.bind();
 		binding.setRight();
 		bound = true;
-	}
-
-	/**
-	 * Creates the field/model bindings.
-	 * <p>
-	 * This is the default implementation and it may be overridden.
-	 */
-	protected void createBindings() throws BindingException {
-		// propagate the binding's error handler
-		if(errorHandler != null) {
-			Log.debug("Propagating error handler: " + widget);
-			widget.getFieldGroup().setErrorHandler(errorHandler);
-		}
-
-		Log.debug("Creating bindings for: " + widget);
-		// we only allow binding of the set root field group
-		Binding b = createBinding(widget.getFieldGroup(), widget.getModel());
-		binding.getChildren().add(b);
-
-		// bind the indexed
-		final IIndexedFieldBoundWidget[] indexedWidgets = widget.getIndexedChildren();
-		if(indexedWidgets != null) {
-			for(final IIndexedFieldBoundWidget iw : indexedWidgets) {
-				Log.debug("Creating indexed bindings for: " + iw);
-				// add binding to the many value collection only
-				b =
-					new Binding(widget.getModel(), iw.getIndexedPropertyName(), null, null, null, iw,
-							IBindableWidget.PROPERTY_VALUE, null, null, null);
-				binding.getChildren().add(b);
-			}
-		}
 	}
 
 	public final void unbind() {
@@ -205,6 +196,7 @@ public class FieldModelBinding {
 
 			binding.unbind();
 			binding.getChildren().clear();
+			modelChangeTracker.clear();
 			bound = false;
 		}
 	}
@@ -220,6 +212,41 @@ public class FieldModelBinding {
 
 	public final boolean isBound() {
 		return bound;
+	}
+
+	public final ModelPropertyChangeTracker getModelChangeTracker() {
+		return modelChangeTracker;
+	}
+
+	/**
+	 * Creates the field/model bindings.
+	 * <p>
+	 * This is the default implementation and it may be overridden.
+	 */
+	protected void createBindings() throws BindingException {
+		// propagate the binding's error handler
+		if(errorHandler != null) {
+			Log.debug("Propagating error handler: " + widget);
+			widget.getFieldGroup().setErrorHandler(errorHandler);
+		}
+
+		Log.debug("Creating bindings for: " + widget);
+		// we only allow binding of the set root field group
+		Binding b = createBinding(widget.getFieldGroup(), widget.getModel(), modelChangeTracker);
+		binding.getChildren().add(b);
+
+		// bind the indexed
+		final IIndexedFieldBoundWidget[] indexedWidgets = widget.getIndexedChildren();
+		if(indexedWidgets != null) {
+			for(final IIndexedFieldBoundWidget iw : indexedWidgets) {
+				Log.debug("Creating indexed bindings for: " + iw);
+				// add binding to the many value collection only
+				b =
+					new Binding(widget.getModel(), iw.getIndexedPropertyName(), null, null, null, iw,
+							IBindableWidget.PROPERTY_VALUE, null, null, null);
+				binding.getChildren().add(b);
+			}
+		}
 	}
 
 	/**
@@ -246,7 +273,7 @@ public class FieldModelBinding {
 	 */
 	public void addBinding(String modelProperty, String fieldName) {
 		ensureSet();
-		createBinding(widget.getModel(), null, modelProperty, resolveFieldWidget(fieldName), null);
+		createBinding(widget.getModel(), null, modelProperty, modelChangeTracker, resolveFieldWidget(fieldName), null, null);
 	}
 
 	/**
@@ -262,7 +289,7 @@ public class FieldModelBinding {
 	public void addBinding(String modelProperty, IConverter<Object, Object> modelConverter, String fieldName,
 			IConverter<Object, Object> fieldConverter) throws BindingException {
 		ensureSet();
-		createBinding(widget.getModel(), modelConverter, modelProperty, resolveFieldWidget(fieldName), fieldConverter);
+		createBinding(widget.getModel(), modelConverter, modelProperty, modelChangeTracker, resolveFieldWidget(fieldName), fieldConverter, null);
 	}
 
 	private void ensureSet() throws IllegalStateException {

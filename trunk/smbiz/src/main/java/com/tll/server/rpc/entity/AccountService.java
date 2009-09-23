@@ -38,7 +38,7 @@ public class AccountService extends AbstractPersistServiceImpl {
 			final PrimaryKey<Account> pk = new PrimaryKey<Account>(Account.class, a.getParent().getId());
 			final IAccountService svc = context.getEntityServiceFactory().instance(IAccountService.class);
 			final Account parent = svc.load(pk);
-			final Model mparent = new Model(SmbizEntityType.ACCOUNT, true);
+			final Model mparent = new Model(SmbizEntityType.ACCOUNT);
 			mparent.set(new StringPropertyValue(Model.ID_PROPERTY, parent.getId()));
 			mparent.set(new StringPropertyValue(Model.NAME_PROPERTY, parent.getName()));
 			m.set(new RelatedOneProperty(SmbizEntityType.ACCOUNT, "parent", true, mparent));

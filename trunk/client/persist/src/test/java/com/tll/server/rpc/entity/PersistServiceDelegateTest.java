@@ -203,7 +203,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 	public void testAdd() throws Exception {
 		final PersistServiceDelegate delegate = getDelegate();
 
-		Model m = new Model(TestEntityType.ADDRESS, true);
+		Model m = new Model(TestEntityType.ADDRESS);
 		m.set(new StringPropertyValue(Model.ID_PROPERTY, "10000"));
 		m.set(new StringPropertyValue("address1", "1 tee streetU"));
 		m.set(new StringPropertyValue("address2", "2 bee"));
@@ -218,7 +218,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 		m.set(new StringPropertyValue("postalCode", "48104"));
 		m.set(new StringPropertyValue("province", "MI"));
 
-		final ModelPayload p = delegate.persist(new PersistRequest(m));
+		final ModelPayload p = delegate.persist(new PersistRequest(m, false));
 		assert p != null;
 		m = p.getModel();
 		assert m != null;
@@ -243,23 +243,14 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 
 		final PersistServiceDelegate delegate = getDelegate();
 
-		Model m = new Model(TestEntityType.ADDRESS, true);
+		Model m = new Model(TestEntityType.ADDRESS);
 		m.set(new IntPropertyValue(Model.VERSION_PROPERTY, 0));
 		m.set(new StringPropertyValue(Model.ID_PROPERTY, id));
-		m.set(new StringPropertyValue("address1", "1 tee street"));
-		m.set(new StringPropertyValue("address2", "2 bee"));
-		m.set(new StringPropertyValue("city", "the city"));
-		m.set(new StringPropertyValue("country", "us"));
-		m.set(new StringPropertyValue("emailAddress", "email@schmemail.com"));
-		m.set(new StringPropertyValue("fax", "2223334444"));
-		m.set(new StringPropertyValue("firstName", "First"));
-		m.set(new StringPropertyValue("lastName", "Last"));
-		m.set(new CharacterPropertyValue("mi", 'm'));
-		m.set(new StringPropertyValue("phone", "1112223333"));
-		m.set(new StringPropertyValue("postalCode", "48104"));
-		m.set(new StringPropertyValue("province", "MI"));
+		m.set(new StringPropertyValue("address1", "1 changed street"));
+		m.set(new StringPropertyValue("address2", "2 beechange"));
+		m.set(new StringPropertyValue("city", "change city"));
 
-		final ModelPayload p = delegate.persist(new PersistRequest(m));
+		final ModelPayload p = delegate.persist(new PersistRequest(m, true));
 		assert p != null;
 		m = p.getModel();
 		assert m != null;

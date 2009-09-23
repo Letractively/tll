@@ -166,8 +166,7 @@ final class ListingProcessor {
 								mo = MarshalOptions.NO_REFERENCES;
 							}
 							final MarshalingListHandler marshalingListHandler =
-								new MarshalingListHandler(listHandler, context.getMarshaler(), mo, listingDef.getPropKeys(),
-										!criteria.getCriteriaType().isScalar());
+								new MarshalingListHandler(listHandler, context.getMarshaler(), mo, listingDef.getPropKeys());
 
 							// instantiate the handler
 							handler = new ListingHandler<Model>(marshalingListHandler, listingId, listingDef.getPageSize());

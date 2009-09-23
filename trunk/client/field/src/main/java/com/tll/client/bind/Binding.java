@@ -64,7 +64,10 @@ final class Binding {
 		 */
 		public IErrorHandler feedback;
 
-		private IPropertyChangeListener listener;
+		/**
+		 * List of property change listeners
+		 */
+		private final ArrayList<IPropertyChangeListener> listeners = new ArrayList<IPropertyChangeListener>();
 
 		/**
 		 * Constructor
@@ -73,6 +76,15 @@ final class Binding {
 			super();
 		}
 
+		public void addPropertyChangeListener(IPropertyChangeListener pcl) {
+			listeners.add(pcl);
+		}
+
+		public void firePropertyChange(PropertyChangeEvent pce) {
+			for(final IPropertyChangeListener l : listeners) {
+				l.propertyChange(pce);
+			}
+		}
 	} // BindingInstance
 
 	/**
@@ -209,8 +221,8 @@ final class Binding {
 		this.right.validator = rightValidator;
 		this.right.feedback = rightFeedback;
 
-		this.left.listener = new DefaultPropertyChangeListener(this.left, this.right);
-		this.right.listener = new DefaultPropertyChangeListener(this.right, this.left);
+		this.left.listeners.add(new DefaultPropertyChangeListener(this.left, this.right));
+		this.right.listeners.add(new DefaultPropertyChangeListener(this.right, this.left));
 	}
 
 	/**
@@ -223,6 +235,18 @@ final class Binding {
 	}
 
 	/**
+	 * Add a property change listener either on the left side or the right side.
+	 * @param pcl the listener to add
+	 * @param toLeft add to left side (<code>true</code>) or right side?
+	 */
+	public void addPropertyChangeListener(IPropertyChangeListener pcl, boolean toLeft) {
+		if(toLeft)
+			left.addPropertyChangeListener(pcl);
+		else
+			right.addPropertyChangeListener(pcl);
+	}
+
+	/**
 	 * Sets the left hand property to the current value of the right.
 	 * @throws BindingException When a {@link PropertyChangeEvent} dispatch fails.
 	 */
@@ -230,7 +254,7 @@ final class Binding {
 		if((left != null) && (right != null)) {
 			Log.debug("Binding.setLeft..");
 			try {
-				right.listener.propertyChange(new PropertyChangeEvent(right.object, right.property, null, right.object
+				right.firePropertyChange(new PropertyChangeEvent(right.object, right.property, null, right.object
 						.getProperty(right.property)));
 			}
 			catch(final Exception e) {
@@ -251,7 +275,7 @@ final class Binding {
 		if((left != null) && (right != null)) {
 			Log.debug("Binding.setRight..");
 			try {
-				left.listener.propertyChange(new PropertyChangeEvent(left.object, left.property, null, left.object
+				left.firePropertyChange(new PropertyChangeEvent(left.object, left.property, null, left.object
 						.getProperty(left.property)));
 			}
 			catch(final Exception e) {
@@ -275,8 +299,12 @@ final class Binding {
 	public void bind() throws BindingException {
 		if(!bound && (left != null) && (right != null)) {
 			try {
-				left.object.addPropertyChangeListener(left.property, left.listener);
-				right.object.addPropertyChangeListener(right.property, right.listener);
+				for(final IPropertyChangeListener l : left.listeners) {
+					left.object.addPropertyChangeListener(left.property, l);
+				}
+				for(final IPropertyChangeListener l : right.listeners) {
+					right.object.addPropertyChangeListener(right.property, l);
+				}
 			}
 			catch(final Exception e) {
 				throw new BindingException(e);
@@ -295,8 +323,12 @@ final class Binding {
 	 */
 	public void unbind() {
 		if(bound && (left != null) && (right != null)) {
-			left.object.removePropertyChangeListener(left.property, left.listener);
-			right.object.removePropertyChangeListener(right.property, right.listener);
+			for(final IPropertyChangeListener l : left.listeners) {
+				left.object.removePropertyChangeListener(left.property, l);
+			}
+			for(final IPropertyChangeListener l : right.listeners) {
+				right.object.removePropertyChangeListener(right.property, l);
+			}
 		}
 
 		for(int i = 0; (children != null) && (i < children.size()); i++) {

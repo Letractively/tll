@@ -36,6 +36,7 @@ import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.ui.test.ModelViewer;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.ErrorHandlerBuilder;
+import com.tll.common.model.CopyCriteria;
 import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
@@ -405,13 +406,16 @@ public final class UITests extends AbstractUITest {
 			ep =
 				new EditPanel(new ComplexFieldPanel(), false, false, ErrorHandlerBuilder.build(true, true,
 						new GlobalMsgPanel()));
+
+			final CopyCriteria mcrit = new CopyCriteria(true, false, null, null);
+
 			ep.addEditHandler(new IEditHandler() {
 
 				@Override
 				public void onEdit(EditEvent event) {
 					// mimic model persist life-cycle
 					assert m != null;
-					final Model mcopy = m.copy(true, false);
+					final Model mcopy = m.copy(mcrit);
 					mcopy.set(new IntPropertyValue(Model.VERSION_PROPERTY, 1));
 					List<Model> alist;
 					try {

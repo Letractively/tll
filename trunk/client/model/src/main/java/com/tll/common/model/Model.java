@@ -26,8 +26,7 @@ import com.tll.util.StringUtil;
  * to represent an entity instance object graph on the client.
  * @author jpk
  */
-public final class Model implements IMarshalable, IBindable, IPropertyMetadataProvider,
-IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
+public final class Model implements IMarshalable, IBindable, IPropertyMetadataProvider, IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 
 	/**
 	 * Entity id property name
@@ -61,7 +60,7 @@ IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 	 * The set of model properties. <br>
 	 * NOTE: can't mark as final for GWT RPC compatibility
 	 */
-	private /*final*/Set<IModelProperty> props = new HashSet<IModelProperty>();
+	private/*final*/Set<IModelProperty> props = new HashSet<IModelProperty>();
 
 	/**
 	 * The bound entity type.
@@ -81,13 +80,6 @@ IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 	private RelatedOneProperty selfRef;
 
 	/**
-	 * Flag indicating that this instance is a marshaled entity. A model instance
-	 * doesn't necessarily have to reflect an entity and may simply serve to hold
-	 * "model data".
-	 */
-	private boolean entity;
-
-	/**
 	 * Constructor
 	 */
 	public Model() {
@@ -97,13 +89,10 @@ IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 	/**
 	 * Constructor
 	 * @param entityType
-	 * @param entity is this instance a marshaled entity? Or is is just "scalar"
-	 *        model data.
 	 */
-	public Model(IEntityType entityType, boolean entity) {
+	public Model(IEntityType entityType) {
 		super();
 		this.entityType = entityType;
-		this.entity = entity;
 	}
 
 	/**
@@ -113,17 +102,12 @@ IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 		return entityType;
 	}
 
-	public boolean isEntity() {
-		return entity;
-	}
-
 	/**
 	 * Is this model entity new?
 	 * @return true/false
 	 */
 	public boolean isNew() {
-		final IntPropertyValue prop = (IntPropertyValue) get(VERSION_PROPERTY);
-		return prop == null ? true : (prop.getInteger() == null);
+		return getVersion() != null;
 	}
 
 	/**
@@ -136,12 +120,28 @@ IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 	}
 
 	/**
+	 * Sets the id property creating it if not present.
+	 * @param id
+	 */
+	public void setId(String id) {
+		setPropertyNoPropertyPathException(ID_PROPERTY, id, PropertyType.STRING);
+	}
+
+	/**
 	 * Retrieves the entities' name property value
 	 * @return The entities' name
 	 */
 	public String getName() {
 		final StringPropertyValue prop = (StringPropertyValue) get(NAME_PROPERTY);
 		return prop == null ? null : prop.getString();
+	}
+
+	/**
+	 * Sets the name property creating it if not present.
+	 * @param name
+	 */
+	public void setName(String name) {
+		setPropertyNoPropertyPathException(NAME_PROPERTY, name, PropertyType.STRING);
 	}
 
 	/**
@@ -160,6 +160,15 @@ IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 	public Date getDateModified() {
 		final DatePropertyValue prop = (DatePropertyValue) get(DATE_MODIFIED_PROPERTY);
 		return prop == null ? null : prop.getDate();
+	}
+
+	public Integer getVersion() {
+		final IntPropertyValue prop = (IntPropertyValue) get(VERSION_PROPERTY);
+		return prop == null ? null : prop.getInteger();
+	}
+
+	public void setVersion(Integer version) {
+		setPropertyNoPropertyPathException(VERSION_PROPERTY, version, PropertyType.INT);
 	}
 
 	/**
@@ -276,13 +285,58 @@ IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 	}
 
 	public void setProperty(String propPath, Object value) throws PropertyPathException, IllegalArgumentException {
-		if(PropertyPath.isIndexed(propPath)) {
-			// divert to the "physical" related many property as indexed properties
-			// are "virtual"
-			relatedMany(PropertyPath.deIndex(propPath)).setProperty(propPath, value);
+		setProperty(propPath, value, null);
+	}
+
+	/**
+	 * Sets a model properties' value conditionally creating the wrapping model property if not present.
+	 * @param propPath
+	 * @param value
+	 * @param ptype if specified, the property will be automatically created if it
+	 *        doesn't exist
+	 * @throws PropertyPathException
+	 * @throws IllegalArgumentException
+	 */
+	private void setProperty(String propPath, Object value, PropertyType ptype) throws PropertyPathException, IllegalArgumentException {
+		try {
+			IModelProperty mprop = null;
+			if(PropertyPath.isIndexed(propPath)) {
+				// divert to the "physical" related many property as indexed properties
+				// are "virtual"
+				mprop = relatedMany(PropertyPath.deIndex(propPath));
+			}
+			else {
+				mprop = getModelProperty(propPath);
+			}
+			mprop.setProperty(propPath, value);
 		}
-		else {
-			getModelProperty(propPath).setProperty(propPath, value);
+		catch(final UnsetPropertyException e) {
+			if(ptype != null) {
+				// create it
+				final IPropertyValue pv = AbstractPropertyValue.create(ptype, e.parentProperty, null);
+				e.parentModel.set(pv);
+			}
+		}
+	}
+
+	/**
+	 * Same as {@link #setProperty(String, Object, PropertyType)} but when a
+	 * @param propPath
+	 * @param value
+	 * @param ptype if specified, the property will be automatically created if it
+	 *        doesn't exist {@link PropertyPathException} occurs, it is converted
+	 *        into an {@link IllegalStateException}.
+	 * @throws IllegalArgumentException
+	 * @throws IllegalStateException
+	 */
+	public void setPropertyNoPropertyPathException(String propPath, Object value, PropertyType ptype)
+	throws IllegalArgumentException, IllegalStateException {
+		try {
+			setProperty(propPath, value, ptype);
+		}
+		catch(final PropertyPathException e) {
+			// shouldn't happen
+			throw new IllegalStateException(e);
 		}
 	}
 
@@ -451,11 +505,11 @@ IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 			final boolean indexed = (index >= 0);
 			final boolean atEnd = (i == len - 1);
 
-			// find the prop val under current group
+			// find the prop val under current model
 			prop = model.get(pname);
 			if(prop == null) {
 				if(atEnd) {
-					throw new UnsetPropertyException(pp.toString());
+					throw new UnsetPropertyException(pp.toString(), model, pname);
 				}
 				throw new NullNodeInPropPathException(pp.toString(), pname);
 			}
@@ -497,7 +551,7 @@ IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 					if(atEnd) {
 						return rmp;
 					}
-					// and index is expected if were not at the end
+					// an index is expected if we're not at the end
 					throw new MalformedPropPathException(pp.toString());
 				}
 				else if(indexed) {
@@ -575,51 +629,35 @@ IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 	}
 
 	/**
-	 * Deep copies this instance ignoring those nested models marked as deleted.
-	 * @param copyReferences Copy relational properties that are marked as
-	 *        reference?
+	 * Deep copies this instance creating a new distinct model instance containing
+	 * a sub-set of properties that match the given criteria.
+	 * @param criteria the copy criteria
 	 * @return Clone of this instance or <code>null</code> if this model is marked
 	 *         as deleted and the given <code>copyMarkedDeleted</code> param is
 	 *         <code>true</code>.
 	 */
-	public Model copy(final boolean copyReferences) {
-		return copy(this, copyReferences, true, new BindingStack<CopyBinding>());
-	}
-
-	/**
-	 * Deep copies this instance.
-	 * @param copyReferences Copy relational properties that are marked as
-	 *        reference?
-	 * @param copyMarkedDeleted Copy nested models marked as deleted?
-	 * @return Clone of this instance or <code>null</code> if this model is marked
-	 *         as deleted and the given <code>copyMarkedDeleted</code> param is
-	 *         <code>true</code>.
-	 */
-	public Model copy(final boolean copyReferences, boolean copyMarkedDeleted) {
-		return copy(this, copyReferences, copyMarkedDeleted, new BindingStack<CopyBinding>());
+	public Model copy(final CopyCriteria criteria) {
+		return copy(this, criteria, new BindingStack<CopyBinding>());
 	}
 
 	/**
 	 * Recursive copy routine to guard against re-copying entities
 	 * @param source The model to be copied
-	 * @param copyReferences Copy relational properties that are marked as
-	 *        reference?
-	 * @param copyMarkedDeleted Copy models marked as deleted?
+	 * @param criteria the copy criteria
 	 * @param visited
 	 * @return A deep copy of the model
 	 */
-	private static Model copy(Model source, final boolean copyReferences, final boolean copyMarkedDeleted,
-			BindingStack<CopyBinding> visited) {
+	private static Model copy(Model source, final CopyCriteria criteria, BindingStack<CopyBinding> visited) {
 
 		if(source == null) return null;
 
-		if(!copyMarkedDeleted && source.isMarkedDeleted()) return null;
+		if(!criteria.markedDeleted && source.isMarkedDeleted()) return null;
 
 		// check visited
 		final CopyBinding binding = (CopyBinding) visited.find(source);
 		if(binding != null) return binding.target;
 
-		final Model copy = new Model(source.entityType, source.entity);
+		final Model copy = new Model(source.entityType);
 
 		visited.add(new CopyBinding(source, copy));
 
@@ -632,10 +670,9 @@ IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 			if(prop instanceof IModelRefProperty) {
 				final IModelRefProperty mrp = (IModelRefProperty) prop;
 				final Model model =
-					(copyMarkedDeleted || (!copyMarkedDeleted && mrp.getModel() != null && !mrp.getModel().isMarkedDeleted())) ?
-							(copyReferences || !mrp.isReference()) ? copy(mrp.getModel(), copyReferences, copyMarkedDeleted, visited)
-									: mrp.getModel()
-									: null;
+					(criteria.markedDeleted || (!criteria.markedDeleted && mrp.getModel() != null && !mrp.getModel()
+							.isMarkedDeleted())) ? (criteria.references || !mrp.isReference()) ? copy(mrp.getModel(), criteria,
+									visited) : mrp.getModel() : null;
 									copy.props.add(new RelatedOneProperty(mrp.getRelatedType(), mrp.getPropertyName(), mrp.isReference(), model));
 			}
 
@@ -647,10 +684,8 @@ IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 				if(list != null) {
 					nlist = new ArrayList<Model>(list.size());
 					for(final Model model : list) {
-						if(copyMarkedDeleted || (!copyMarkedDeleted && !model.isMarkedDeleted())) {
-							nlist
-							.add((copyReferences || !rmp.isReference()) ? copy(model, copyReferences, copyMarkedDeleted, visited)
-									: model);
+						if(criteria.markedDeleted || (!criteria.markedDeleted && !model.isMarkedDeleted())) {
+							nlist.add((criteria.references || !rmp.isReference()) ? copy(model, criteria, visited) : model);
 						}
 					}
 				}
@@ -659,7 +694,14 @@ IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 
 			// prop val..
 			else {
-				copy.props.add(((IPropertyValue) prop).copy());
+				boolean doCopy = false;
+				if(criteria.whiteList != null) {
+					doCopy = criteria.whiteList.contains(prop);
+				}
+				else if(criteria.blackList != null) {
+					doCopy = !criteria.blackList.contains(prop);
+				}
+				if(doCopy) copy.props.add(((IPropertyValue) prop).copy());
 			}
 		}
 
@@ -736,6 +778,8 @@ IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 	}
 
 	/**
+	 * Non-hierarchical iteration over the primary model properties for this
+	 * instance.
 	 * @return IPropertyValue Iterator for the referenced property values for this
 	 *         model.
 	 */

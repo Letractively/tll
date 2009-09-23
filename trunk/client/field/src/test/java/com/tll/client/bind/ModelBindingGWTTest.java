@@ -13,6 +13,7 @@ import junit.framework.Assert;
 import com.google.gwt.junit.client.GWTTestCase;
 import com.tll.common.bind.IBindable;
 import com.tll.common.bind.PropertyChangeSupport;
+import com.tll.common.model.CopyCriteria;
 import com.tll.common.model.IModelProperty;
 import com.tll.common.model.IndexOutOfRangeInPropPathException;
 import com.tll.common.model.Model;
@@ -167,7 +168,7 @@ public class ModelBindingGWTTest extends GWTTestCase {
 	 */
 	protected Model[] stubLeftAndRight() throws Exception {
 		final Model left = MockModelStubber.stubAccount(true);
-		final Model right = left.copy(true);
+		final Model right = left.copy(CopyCriteria.COPY_ALL);
 		// right.setAsRoot();
 
 		// sanity check: verify we are equal before we bind

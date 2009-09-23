@@ -17,14 +17,18 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
+import com.tll.common.model.SmbizEntityType;
 import com.tll.dao.AbstractDbAwareTest;
 import com.tll.di.Db4oDbShellModule;
 import com.tll.di.SmbizDb4oDaoModule;
 import com.tll.di.SmbizEGraphModule;
 import com.tll.di.SmbizModelModule;
 import com.tll.model.EntityBeanFactory;
+import com.tll.model.EntityGraph;
 import com.tll.model.IEntity;
+import com.tll.model.Merchant;
 import com.tll.server.rpc.entity.IEntityTypeResolver;
+import com.tll.server.rpc.entity.IMarshalOptionsResolver;
 import com.tll.server.rpc.entity.SmbizEntityTypeResolver;
 import com.tll.util.CommonUtil;
 
@@ -32,9 +36,8 @@ import com.tll.util.CommonUtil;
  * SmbizMarshallerTest - Tests the marshaling of the smbiz defined entities.
  * @author jpk
  */
-@Test(groups = {
-	"server", "client-model" })
-	public class SmbizMarshalerTest extends AbstractDbAwareTest {
+@Test(groups = {"server", "client-model" })
+public class SmbizMarshalerTest extends AbstractDbAwareTest {
 
 	protected static final Map<String, Object> tupleMap = new HashMap<String, Object>();
 
@@ -65,6 +68,14 @@ import com.tll.util.CommonUtil;
 
 	private EntityBeanFactory getEntityBeanFactory() {
 		return injector.getInstance(EntityBeanFactory.class);
+	}
+
+	private EntityGraph getEntityGraph() {
+		return injector.getInstance(EntityGraph.class);
+	}
+
+	private IMarshalOptionsResolver getMarshalOptionsResolver() {
+		return injector.getInstance(IMarshalOptionsResolver.class);
 	}
 
 	/**
@@ -104,7 +115,19 @@ import com.tll.util.CommonUtil;
 		}
 	}
 
+	@SuppressWarnings("null")
 	public void testAccountMarshaling() throws Exception {
+		final Merchant e = getEntityGraph().getEntitiesByType(Merchant.class).iterator().next();
+		Assert.assertTrue(e != null && e.getParent() != null && e.getPaymentInfo() != null && e.getPaymentInfo().getPaymentData() != null);
 
+		final MarshalOptions mo = getMarshalOptionsResolver().resolve(SmbizEntityType.MERCHANT);
+		final Model m = getMarshaler().marshalEntity(e, mo);
+
+		final Merchant e2 = getMarshaler().unmarshalEntity(Merchant.class, m);
+
+		Assert.assertNotNull(e2.getParent());
+		Assert.assertEquals(e, e2);
+		Assert.assertEquals(e.getVersion(), e2.getVersion());
+		Assert.assertEquals(e.getVersion(), e.getVersion());
 	}
 }
