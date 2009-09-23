@@ -79,8 +79,16 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>test-persistence-unit</artifactId>
+      <artifactId>tll-model</artifactId>
       <version>${project.version}</version>
+      <classifier>testassets</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-egraph</artifactId>
+      <version>${project.version}</version>
+      <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>

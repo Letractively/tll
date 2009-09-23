@@ -143,12 +143,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.tll</groupId>
-			<artifactId>test-persistence-unit</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
 			<version>${testNGVersion}</version>

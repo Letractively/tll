@@ -72,7 +72,6 @@
     <module>refdata</module>
     <module>model</module>
     <module>egraph</module>
-    <module>test/persistence-unit</module>
     <module>dao</module>
     <module>service</module>
     <module>test/service-layer</module>

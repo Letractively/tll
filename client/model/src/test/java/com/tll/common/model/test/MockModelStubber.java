@@ -22,9 +22,9 @@ import com.tll.common.model.StringPropertyValue;
 import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
 
-
 /**
- * TestModelFactory - Ad-hoc factory for generating testable {@link Model} instances.
+ * TestModelFactory - Ad-hoc factory for generating testable {@link Model}
+ * instances.
  * @author jpk
  */
 public class MockModelStubber {

@@ -1,6 +1,10 @@
-package com.tll.model;
+package com.tll.model.test;
 
 import com.google.inject.Inject;
+import com.tll.model.IEntity;
+import com.tll.model.IEntityAssembler;
+import com.tll.model.IEntityFactory;
+import com.tll.model.IEntityProvider;
 
 /**
  * TestPersistenceUnitEntityAssembler - Decorator around the {@link IEntityFactory} with additional

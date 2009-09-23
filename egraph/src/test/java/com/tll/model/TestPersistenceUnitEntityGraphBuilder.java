@@ -9,6 +9,11 @@ import java.util.Set;
 import org.apache.commons.lang.math.RandomUtils;
 
 import com.google.inject.Inject;
+import com.tll.model.test.Account;
+import com.tll.model.test.AccountAddress;
+import com.tll.model.test.Address;
+import com.tll.model.test.Currency;
+import com.tll.model.test.NestedEntity;
 
 /**
  * TestPersistenceUnitEntityGraphBuilder

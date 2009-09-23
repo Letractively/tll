@@ -1,4 +1,4 @@
-package com.tll.model;
+package com.tll.model.test;
 
 import com.tll.IMarshalable;
 import com.tll.INameValueProvider;

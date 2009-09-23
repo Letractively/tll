@@ -5,7 +5,7 @@
  */
 package com.tll.service.entity;
 
-import com.tll.model.Address;
+import com.tll.model.test.Address;
 
 /**
  * IAddressService
