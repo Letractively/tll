@@ -6,8 +6,8 @@
 package com.tll.criteria.test;
 
 import com.tll.criteria.ISelectNamedQueryDef;
-import com.tll.model.Account;
-import com.tll.model.Address;
+import com.tll.model.test.Account;
+import com.tll.model.test.Address;
 
 public enum TestSelectNamedQueries implements ISelectNamedQueryDef {
 	ACCOUNT_LISTING("account.testScalarQuery", Account.class, true, true),

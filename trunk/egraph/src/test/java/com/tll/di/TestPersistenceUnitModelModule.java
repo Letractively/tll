@@ -10,8 +10,8 @@ import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.IEntityGraphPopulator;
-import com.tll.model.TestPersistenceUnitEntityAssembler;
 import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
+import com.tll.model.test.TestPersistenceUnitEntityAssembler;
 
 
 /**

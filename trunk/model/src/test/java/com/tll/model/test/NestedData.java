@@ -1,4 +1,4 @@
-package com.tll.model;
+package com.tll.model.test;
 
 import java.io.Serializable;
 

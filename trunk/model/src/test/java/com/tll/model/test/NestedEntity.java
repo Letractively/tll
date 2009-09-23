@@ -1,10 +1,13 @@
-package com.tll.model;
+package com.tll.model.test;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.tll.model.IEntity;
+import com.tll.model.INamedEntity;
+import com.tll.model.NamedEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 import com.tll.model.schema.Nested;

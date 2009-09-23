@@ -36,9 +36,9 @@ import com.tll.di.Db4oDaoModule;
 import com.tll.di.Db4oDbShellModule;
 import com.tll.di.TestPersistenceUnitModelModule;
 import com.tll.di.test.TestDb4oDaoModule;
-import com.tll.model.Address;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntityAssembler;
+import com.tll.model.test.Address;
 import com.tll.service.entity.EntityService;
 import com.tll.service.entity.IEntityService;
 

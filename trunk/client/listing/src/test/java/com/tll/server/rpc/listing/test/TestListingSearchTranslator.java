@@ -8,8 +8,8 @@ package com.tll.server.rpc.listing.test;
 import com.tll.common.search.IListingSearch;
 import com.tll.common.search.test.TestAddressSearch;
 import com.tll.criteria.Criteria;
-import com.tll.model.Address;
 import com.tll.model.IEntity;
+import com.tll.model.test.Address;
 import com.tll.server.rpc.listing.AbstractListingSearchTranslator;
 import com.tll.server.rpc.listing.ListingContext;
 

@@ -5,7 +5,7 @@
  */
 package com.tll.service.entity;
 
-import com.tll.model.Account;
+import com.tll.model.test.Account;
 
 
 /**
