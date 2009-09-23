@@ -5,11 +5,9 @@
  */
 package com.tll.common.model;
 
-
 /**
- * PropPathNodeMismatchException - Indicates the wrong relational
- * {@link IPropertyValue} instance was encountered while resolving a given
- * property path.
+ * PropPathNodeMismatchException - An unexpected {@link IModelProperty} type was
+ * provided different from a prescribed expected type.
  * @author jpk
  */
 @SuppressWarnings("serial")

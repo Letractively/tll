@@ -36,12 +36,6 @@
   
   <dependencies>
     <dependency>
-      <groupId>com.allen_sauer.gwt.log</groupId>
-      <artifactId>gwt-log</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
     </dependency>

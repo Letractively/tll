@@ -419,7 +419,7 @@ public final class UITests extends AbstractUITest {
 					mcopy.set(new IntPropertyValue(Model.VERSION_PROPERTY, 1));
 					List<Model> alist;
 					try {
-						alist = mcopy.relatedMany("addresses").getList();
+						alist = mcopy.relatedMany("addresses").getModelList();
 					}
 					catch(final PropertyPathException e) {
 						throw new RuntimeException(e);

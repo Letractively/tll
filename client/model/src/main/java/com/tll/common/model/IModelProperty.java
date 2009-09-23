@@ -17,6 +17,11 @@ import com.tll.model.schema.PropertyType;
 public interface IModelProperty extends IPropertyNameProvider, IBindable, IMarshalable {
 
 	/**
+	 * @return The parent model property or <code>null</code> if at root.
+	 */
+	IRelationalProperty getParent();
+
+	/**
 	 * @return The property type.
 	 */
 	PropertyType getType();

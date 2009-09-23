@@ -143,7 +143,7 @@ public final class AdminContext {
 		if(userRole == null) {
 			userRole = AdminRole.VISITOR; // default
 			try {
-				final List<Model> auths = user.relatedMany("authoritys").getList();
+				final List<Model> auths = user.relatedMany("authoritys").getModelList();
 				if(auths != null) {
 					int ordinal, highest = -1;
 					for(final Model auth : auths) {

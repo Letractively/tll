@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import com.tll.common.bind.PropertyChangeEvent;
 import com.tll.model.schema.PropertyType;
@@ -20,42 +19,15 @@ import com.tll.util.PropertyPath;
 public final class RelatedManyProperty extends AbstractRelationalProperty implements Iterable<IndexedProperty> {
 
 	/**
-	 * IndexedIterator
-	 * @author jpk
+	 * The list of indexed props.
 	 */
-	public final class IndexedIterator implements Iterator<IndexedProperty> {
-
-		private int index = -1;
-		private final int size;
-
-		/**
-		 * Constructor
-		 */
-		public IndexedIterator() {
-			super();
-			this.size = list == null ? 0 : list.size();
-		}
-
-		public boolean hasNext() {
-			return index < (size - 1);
-		}
-
-		public IndexedProperty next() {
-			if(index >= size) {
-				throw new NoSuchElementException();
-			}
-			return getIndexedProperty(++index);
-		}
-
-		public void remove() {
-			throw new UnsupportedOperationException();
-		}
-	}
+	protected ArrayList<IndexedProperty> list;
 
 	/**
-	 * The list of related many {@link Model}s.
+	 * The corresponding model list whereby at each index, the the model in the
+	 * indexed property list is that in this list. We track this to fire proper property change events
 	 */
-	protected List<Model> list;
+	protected ArrayList<Model> mlist;
 
 	/**
 	 * Constructor
@@ -66,7 +38,7 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 
 	/**
 	 * Constructor
-	 * @param manyType The related many Model type.
+	 * @param manyType The required related many Model type.
 	 * @param propName
 	 * @param reference
 	 * @param clc Collection of {@link Model}s.
@@ -82,26 +54,40 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	}
 
 	public final Object getValue() {
-		return getList();
+		return getModelList();
 	}
 
 	@SuppressWarnings("unchecked")
 	public void setValue(Object value) throws IllegalArgumentException {
-		if(this.list == value) return;
+		if(this.mlist == value) return;
 
 		if(value == null) {
-			if(list != null) {
-				final Object old = list;
-				list = null;
-				getChangeSupport().firePropertyChange(propertyName, old, list);
+			if(mlist != null) {
+				final Object old = mlist;
+				list.clear();
+				mlist.clear();
+				getChangeSupport().firePropertyChange(propertyName, old, mlist);
 			}
 		}
 		else if(value instanceof Collection) {
 			final Collection<Model> clc = (Collection) value;
-			final Object old = list;
-			list = new ArrayList<Model>(clc.size());
-			list.addAll(clc);
-			// IMPT: refer to the value agrument as the new value to avoid spurious re-firings of property change events
+			final Object old = mlist;
+			if(mlist == null) {
+				mlist = new ArrayList<Model>(clc.size());
+				assert list == null;
+				list = new ArrayList<IndexedProperty>(clc.size());
+			}
+			else {
+				mlist.clear();
+				assert list != null;
+				list.clear();
+			}
+			int i = 0;
+			for(final Model im : clc) {
+				list.add(new IndexedProperty(this, relatedType, im, propertyName, isReference(), i++));
+			}
+			// IMPT: refer to the value agrument as the new value to avoid spurious
+			// re-firings of property change events
 			getChangeSupport().firePropertyChange(propertyName, old, value);
 		}
 		else {
@@ -116,24 +102,23 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	 * <em><b>IMPT:</b>Mutations made to this list do <b>NOT</b> invoke {@link PropertyChangeEvent}s.</em>
 	 * @return the list of indexed models
 	 */
-	public List<Model> getList() {
-		if(list == null) {
-			list = new ArrayList<Model>();
-		}
-		return list;
+	public List<Model> getModelList() {
+		assert mlist != null;
+		return mlist;
 	}
 
 	/**
 	 * Get an indexed property at the given index.
 	 * @param index The index
+	 * @throws IndexOutOfBoundsException
 	 * @return The {@link IndexedProperty} at the given index.
 	 */
-	protected IndexedProperty getIndexedProperty(int index) {
-		return new IndexedProperty(relatedType, propertyName, isReference(), list, index);
+	protected IndexedProperty getIndexedProperty(int index) throws IndexOutOfBoundsException {
+		return list.get(index);
 	}
 
 	public Iterator<IndexedProperty> iterator() {
-		return new IndexedIterator();
+		return list.iterator();
 	}
 
 	@Override
@@ -157,19 +142,23 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 			final int size = size();
 
 			if(index == size) {
+				// we're appending a new index
 				if(m != null) {
 					// add
-					list.add(m);
+					mlist.add(m);
+					list.add(new IndexedProperty(this, relatedType, m, propertyName, isReference(), index));
 				}
 			}
 			else if(index < size) {
 				if(m != null) {
 					// replace
-					old = list.set(index, m);
+					old = mlist.set(index, m);
+					list.get(index).setModel(m);
 				}
 				else {
 					// remove
-					old = list.remove(index);
+					old = mlist.remove(index);
+					list.remove(index);
 				}
 			}
 			else {
@@ -195,19 +184,17 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
 		sb.append(propertyName);
-		sb.append(isReference() ? "|REF|" : "");
+		sb.append(isReference() ? "[REF] " : " ");
+		sb.append(" parent: " + parent == null ? "null" : parent.getPropertyName());
 		sb.append(" [");
 		if(list != null) {
-			for(final Iterator<Model> itr = list.iterator(); itr.hasNext();) {
-				final Model m = itr.next();
-				sb.append(m == null ? "-empty-" : m.toString());
+			for(final Iterator<IndexedProperty> itr = list.iterator(); itr.hasNext();) {
+				final IndexedProperty ip = itr.next();
+				sb.append(ip);
 				if(itr.hasNext()) {
 					sb.append(", ");
 				}
 			}
-		}
-		else {
-			sb.append("-empty-");
 		}
 		sb.append(']');
 

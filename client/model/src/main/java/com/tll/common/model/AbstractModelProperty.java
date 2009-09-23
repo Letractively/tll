@@ -4,6 +4,7 @@
  */
 package com.tll.common.model;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.bind.ISourcesPropertyChangeEvents;
 import com.tll.common.bind.PropertyChangeSupport;
@@ -20,6 +21,8 @@ public abstract class AbstractModelProperty implements IModelProperty {
 	 */
 	protected/*final*/String propertyName;
 
+	protected IRelationalProperty parent;
+
 	/**
 	 * Needed for {@link ISourcesPropertyChangeEvents} implementation. <br>
 	 * <b>NOTE: </b>This member is <em>not</em> intended for RPC marshaling.
@@ -31,6 +34,7 @@ public abstract class AbstractModelProperty implements IModelProperty {
 	 */
 	public AbstractModelProperty() {
 		super();
+		Log.debug("AbstractModelProperty() - default constructor!");
 	}
 
 	/**
@@ -44,11 +48,22 @@ public abstract class AbstractModelProperty implements IModelProperty {
 			throw new IllegalArgumentException("A property name must be specified");
 		}
 		 */
+		Log.debug("Creating model property: " + propertyName);
+		assert propertyName != null;
 		this.propertyName = propertyName;
 	}
 
 	public final String getPropertyName() {
 		return propertyName;
+	}
+
+	@Override
+	public final IRelationalProperty getParent() {
+		return parent;
+	}
+
+	final void setParent(IRelationalProperty parent) {
+		this.parent = parent;
 	}
 
 	// NOTE: we ignore the propPath
@@ -61,7 +76,7 @@ public abstract class AbstractModelProperty implements IModelProperty {
 		setValue(value);
 	}
 
-	protected PropertyChangeSupport getChangeSupport() {
+	protected final PropertyChangeSupport getChangeSupport() {
 		if(changeSupport == null) {
 			changeSupport = new PropertyChangeSupport(this);
 		}
@@ -84,24 +99,19 @@ public abstract class AbstractModelProperty implements IModelProperty {
 		getChangeSupport().removePropertyChangeListener(propName, listener);
 	}
 
-	// TODO figure out why we had equals()/hascode() overrides!!!!
 	/*
+	 * We want physical (by memory address) comparison ONLY
+	 */
 	@Override
-	public int hashCode() {
-		return 31 + ((propertyName == null) ? 0 : propertyName.hashCode());
+	public final boolean equals(Object obj) {
+		return super.equals(obj);
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if(this == obj) return true;
-		if(obj == null) return false;
-		if(getClass() != obj.getClass()) return false;
-		final AbstractModelProperty other = (AbstractModelProperty) obj;
-		if(propertyName == null) {
-			if(other.propertyName != null) return false;
-		}
-		else if(!propertyName.equals(other.propertyName)) return false;
-		return true;
-	}
+	/*
+	 * We want physical (by memory address) comparison ONLY
 	 */
+	@Override
+	public final int hashCode() {
+		return super.hashCode();
+	}
 }

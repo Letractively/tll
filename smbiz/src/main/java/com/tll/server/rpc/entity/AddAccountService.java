@@ -69,17 +69,17 @@ public class AddAccountService extends RpcServlet implements IAddAccountService 
 
 		try {
 			// un-marshal
-			Account account = mlr.unmarshalEntity(accountClass, maccount);
+			Account account = mlr.marshal(accountClass, maccount);
 
 			final ArrayList<AccountInterface> aios = new ArrayList<AccountInterface>(maios.size());
 			for(final Model maio : maios) {
-				aios.add(mlr.unmarshalEntity(AccountInterface.class, maio));
+				aios.add(mlr.marshal(AccountInterface.class, maio));
 			}
 
 			final ArrayList<User> users = musers == null ? null : new ArrayList<User>(musers.size());
 			if(musers != null) {
 				for(final Model muser : musers) {
-					users.add(mlr.unmarshalEntity(User.class, muser));
+					users.add(mlr.marshal(User.class, muser));
 				}
 			}
 
@@ -101,7 +101,7 @@ public class AddAccountService extends RpcServlet implements IAddAccountService 
 			}
 
 			// marshal the added account
-			maccount = mlr.marshalEntity(account, pc.getMarshalOptionsResolver().resolve(SmbizEntityType.ACCOUNT));
+			maccount = mlr.marshal(account, pc.getMarshalOptionsResolver().resolve(SmbizEntityType.ACCOUNT));
 			p.setModel(maccount);
 
 			return p;

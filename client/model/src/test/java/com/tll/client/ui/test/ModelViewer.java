@@ -56,7 +56,7 @@ public class ModelViewer extends Composite {
 		}
 		this.model = model;
 	}
-	
+
 	/**
 	 * Fills the tree with the given model properties.
 	 * @param amodel
@@ -86,7 +86,7 @@ public class ModelViewer extends Composite {
 		catch(final PropertyPathException e) {
 			throw new IllegalStateException("Unable to add model props: " + e.getMessage(), e);
 		}
-		
+
 		root.setState(true);
 	}
 
@@ -100,7 +100,7 @@ public class ModelViewer extends Composite {
 			return false;
 		}
 	}
-	
+
 	private String getPropValueHtml(IPropertyValue p) {
 		String sval;
 		if(p.getValue() == null) {
@@ -113,7 +113,7 @@ public class ModelViewer extends Composite {
 			sval = p.getValue().toString();
 		}
 		return "<span style=\"color:gray\">" + p.getPropertyName() + "</span>&nbsp;<span style=\"color:blue\">"
-				+ sval + "</span>";
+		+ sval + "</span>";
 	}
 
 	private String getModelRefHtml(IModelRefProperty p) {
@@ -126,7 +126,7 @@ public class ModelViewer extends Composite {
 		}
 		if(p.getType() == PropertyType.INDEXED) {
 			return "<span style=\"color:green\"><b>[" + ((IndexedProperty) p).getIndex()
-					+ "]</b></span>&nbsp;<span style=\"color:gray\">" + sval + "</span>";
+			+ "]</b></span>&nbsp;<span style=\"color:gray\">" + sval + "</span>";
 		}
 		// related one
 		if(p.getPropertyName() == null) {
@@ -140,14 +140,14 @@ public class ModelViewer extends Composite {
 
 	private String getModelCollectionHtml(RelatedManyProperty p) {
 		String sval;
-		if(p.getList() == null) {
+		if(p.getModelList() == null) {
 			sval = "-";
 		}
 		else {
 			sval = "(" + p.size() + ")";
 		}
 		return "<span style=\"color:darkgreen\"><b>" + p.getPropertyName() + "</b>&nbsp;<span style=\"color:gray\">" + sval
-				+ "</span>";
+		+ "</span>";
 	}
 
 	/**
@@ -165,7 +165,7 @@ public class ModelViewer extends Composite {
 		else {
 			return;
 		}
-		
+
 		final PropertyType ptype = prop.getType();
 		if(ptype.isModelRef()) {
 			// related one
