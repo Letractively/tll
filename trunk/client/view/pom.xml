@@ -9,8 +9,8 @@
   </parent>
 
   <groupId>com.tll</groupId>
-  <artifactId>client-view</artifactId>
-  <name>client-view</name>
+  <artifactId>tll-client-view</artifactId>
+  <name>tll-client-view</name>
   <version>${project.parent.version}</version>
   <description>Client side view management and caching.</description>
   
@@ -84,17 +84,17 @@
     -->
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>client-core</artifactId>
+      <artifactId>tll-client-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>client-ui</artifactId>
+      <artifactId>tll-client-ui</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>client-model</artifactId>
+      <artifactId>tll-client-model</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -106,7 +106,7 @@
 
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>client-ui</artifactId>
+      <artifactId>tll-client-ui</artifactId>
       <version>${project.version}</version>
       <classifier>testassets</classifier>
       <scope>test</scope>
