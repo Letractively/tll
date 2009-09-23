@@ -74,7 +74,6 @@
     <module>egraph</module>
     <module>dao</module>
     <module>service</module>
-    <module>test/service-layer</module>
     <module>servlet</module>
     <module>security</module>
     <module>client</module>

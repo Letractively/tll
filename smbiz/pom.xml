@@ -595,52 +595,52 @@
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
-			<artifactId>client-core</artifactId>
+			<artifactId>tll-client-core</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
-			<artifactId>client-ui</artifactId>
+			<artifactId>tll-client-ui</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
-			<artifactId>client-rpc</artifactId>
+			<artifactId>tll-client-rpc</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
-			<artifactId>client-model</artifactId>
+			<artifactId>tll-client-model</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
-			<artifactId>client-marshal</artifactId>
+			<artifactId>tll-client-marshal</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
-			<artifactId>client-persist</artifactId>
+			<artifactId>tll-client-persist</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
-			<artifactId>client-listing</artifactId>
+			<artifactId>tll-client-listing</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
-			<artifactId>client-view</artifactId>
+			<artifactId>tll-client-view</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
-			<artifactId>client-field</artifactId>
+			<artifactId>tll-client-field</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
-			<artifactId>client-login</artifactId>
+			<artifactId>tll-client-login</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 

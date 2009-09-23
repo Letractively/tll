@@ -9,8 +9,8 @@
   </parent>
 
   <groupId>com.tll</groupId>
-  <artifactId>client-ui</artifactId>
-  <name>client-ui</name>
+  <artifactId>tll-client-ui</artifactId>
+  <name>tll-client-ui</name>
   <version>${project.parent.version}</version>
   <description>Houses common client ui widgets and supporting ui related functionality.</description>
   
@@ -90,7 +90,7 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>client-core</artifactId>
+      <artifactId>tll-client-core</artifactId>
       <version>${project.version}</version>
     </dependency>
 

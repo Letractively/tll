@@ -8,9 +8,9 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <groupId>com.tll</groupId>
-  <artifactId>client-marshal</artifactId>
-  <name>client-marshal</name>
-  <version>0.0.1-SNAPSHOT</version>
+  <artifactId>tll-client-marshal</artifactId>
+  <name>tll-client-marshal</name>
+  <version>${project.parent.version}</version>
   <description>Bi-directional conversion of server/client model data objects.</description>
 
   <build>
@@ -61,7 +61,7 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>client-model</artifactId>
+      <artifactId>tll-client-model</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -87,7 +87,7 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>client-model</artifactId>
+      <artifactId>tll-client-model</artifactId>
       <version>${project.version}</version>
       <classifier>testassets</classifier>
       <scope>test</scope>

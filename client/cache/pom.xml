@@ -9,8 +9,8 @@
   </parent>
 
   <groupId>com.tll</groupId>
-  <artifactId>client-cache</artifactId>
-  <name>client-cache</name>
+  <artifactId>tll-client-cache</artifactId>
+  <name>tll-client-cache</name>
   <version>${project.parent.version}</version>
   <description>Provides client-side (browser) caching.</description>
 
