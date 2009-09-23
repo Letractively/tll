@@ -9,8 +9,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.tll.IDescriptorProvider;
 import com.tll.IMarshalable;
 import com.tll.common.bind.IBindable;
@@ -19,6 +19,7 @@ import com.tll.model.schema.IPropertyMetadataProvider;
 import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
 import com.tll.util.PropertyPath;
+import com.tll.util.RefSet;
 import com.tll.util.StringUtil;
 
 /**
@@ -27,6 +28,58 @@ import com.tll.util.StringUtil;
  * @author jpk
  */
 public final class Model implements IMarshalable, IBindable, IPropertyMetadataProvider, IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
+
+	@SuppressWarnings("serial")
+	static class ModelPropSet extends HashSet<IModelProperty> {
+
+		/**
+		 * Ensures the given model prop is non-null and unique by name against the
+		 * existing child props (non-hierarchically).
+		 */
+		@Override
+		public boolean add(IModelProperty mp) {
+			if(mp == null) return false;
+			if(mp.getPropertyName() == null) throw new IllegalArgumentException();
+			// we need to ensure the name is unique among the other model props (but
+			// not hierarchically)
+			for(final IModelProperty emp : this) {
+				if(emp.getPropertyName().equals(mp.getPropertyName())) {
+					return false;
+				}
+			}
+			return super.add(mp);
+		}
+
+		/**
+		 * Sets the given {@link IPropertyValue}. If an existing model prop has the
+		 * same property name, it is replaced by the one given.
+		 * @param mp The {@link IModelProperty} to set
+		 */
+		public void set(IModelProperty mp) {
+			if(mp == null) return;
+			if(mp.getPropertyName() == null) throw new IllegalArgumentException();
+			final IModelProperty prop = get(mp.getPropertyName());
+			if(prop != mp) {
+				if(prop != null) {
+					remove(prop);
+				}
+				add(mp);
+			}
+		}
+
+		/**
+		 * Retrieves a model prop by property name
+		 * @param propName
+		 * @return The found model property or <code>null<code> if not found
+		 */
+		public IModelProperty get(String propName) {
+			for(final IModelProperty m : this) {
+				if(m.getPropertyName().equals(propName)) return m;
+			}
+			return null;
+		}
+
+	} // ModelPropSet
 
 	/**
 	 * Entity id property name
@@ -60,7 +113,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * The set of model properties. <br>
 	 * NOTE: can't mark as final for GWT RPC compatibility
 	 */
-	private/*final*/Set<IModelProperty> props = new HashSet<IModelProperty>();
+	private/*final*/ModelPropSet props = new ModelPropSet();
 
 	/**
 	 * The bound entity type.
@@ -183,9 +236,9 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * @return Reference to <em>this</em> Model expressed as an
 	 *         {@link IModelProperty}.
 	 */
-	private RelatedOneProperty getSelfRef() {
+	public RelatedOneProperty getSelfRef() {
 		if(selfRef == null) {
-			selfRef = new RelatedOneProperty(getEntityType(), null, true, this);
+			selfRef = new RelatedOneProperty(getEntityType(), this, "<root>", true);
 		}
 		return selfRef;
 	}
@@ -199,11 +252,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 *         present.
 	 */
 	public IModelProperty get(String name) {
-		if(name == null) return null;
-		for(final IModelProperty prop : props) {
-			if(name.equals(prop.getPropertyName())) return prop;
-		}
-		return null;
+		return props.get(name);
 	}
 
 	/**
@@ -215,14 +264,8 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * @param mprop The replacing {@link IPropertyValue}
 	 */
 	public void set(IModelProperty mprop) {
-		if(mprop == null) return;
-		final IModelProperty prop = get(mprop.getPropertyName());
-		if(prop != mprop) {
-			if(prop != null) {
-				props.remove(prop);
-			}
-			props.add(mprop);
-		}
+		props.set(mprop);
+		((AbstractModelProperty) mprop).setParent(getSelfRef());
 	}
 
 	/**
@@ -243,7 +286,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 				return ((IModelRefProperty) prop).getModel().remove(prop, true);
 			}
 			else if(drill && prop.getType() == PropertyType.RELATED_MANY) {
-				for(final Model m : ((RelatedManyProperty) prop).getList()) {
+				for(final Model m : ((RelatedManyProperty) prop).getModelList()) {
 					if(m.remove(mprop, true)) {
 						return true;
 					}
@@ -251,7 +294,10 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 			}
 		}
 		if(rmv != null) {
-			return props.remove(rmv);
+			if(props.remove(rmv)) {
+				((AbstractModelProperty) mprop).setParent(null);
+				return true;
+			}
 		}
 		return false;
 	}
@@ -289,7 +335,8 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	}
 
 	/**
-	 * Sets a model properties' value conditionally creating the wrapping model property if not present.
+	 * Sets a model properties' value conditionally creating the wrapping model
+	 * property if not present.
 	 * @param propPath
 	 * @param value
 	 * @param ptype if specified, the property will be automatically created if it
@@ -297,7 +344,8 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * @throws PropertyPathException
 	 * @throws IllegalArgumentException
 	 */
-	private void setProperty(String propPath, Object value, PropertyType ptype) throws PropertyPathException, IllegalArgumentException {
+	private void setProperty(String propPath, Object value, PropertyType ptype) throws PropertyPathException,
+	IllegalArgumentException {
 		try {
 			IModelProperty mprop = null;
 			if(PropertyPath.isIndexed(propPath)) {
@@ -571,61 +619,33 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	}
 
 	/**
-	 * PropBinding
+	 * ModelRefs
 	 * @author jpk
-	 */
-	private static class PropBinding {
-
-		Model model;
-
-		/**
-		 * Constructor
-		 * @param model
-		 */
-		PropBinding(Model model) {
-			super();
-			this.model = model;
-		}
-	}
-
-	/**
-	 * CopyBinding - Used for deep copying {@link Model} instances.
-	 * @author jpk
-	 */
-	private static final class CopyBinding extends PropBinding {
-
-		Model target;
-
-		/**
-		 * Constructor
-		 * @param source
-		 * @param target
-		 */
-		CopyBinding(Model source, Model target) {
-			super(source);
-			this.target = target;
-		}
-	}
-
-	/**
-	 * BindingStack
-	 * @author jpk
-	 * @param <B>
 	 */
 	@SuppressWarnings("serial")
-	static final class BindingStack<B extends PropBinding> extends ArrayList<B> {
+	static final class ModelRefs extends RefSet<Model> {
+	}
 
-		/**
-		 * Locates an {@link PropBinding} given a model ref.
-		 * @param model The sought model in this list of bindings
-		 * @return The containing binding or <code>null</code> if not present.
-		 */
-		PropBinding find(final Model model) {
-			for(final PropBinding b : this) {
-				if(b.model == model) return b;
-			}
-			return null;
-		}
+	/**
+	 * Calculates the property path from an ancestor to a child target. If the
+	 * descendant is not reachable from the ancestor, <code>null</code> is
+	 * returned.
+	 * @param ancestor
+	 * @param descendant
+	 * @return property path of the target relative to the ancestor or
+	 *         <code>null</code> if they are not "related" (reachable)
+	 */
+	public static String getRelativePath(IRelationalProperty ancestor, IModelProperty descendant) {
+		if(ancestor == null || descendant == null) return null;
+		final PropertyPath rpath = new PropertyPath();
+		IModelProperty current = descendant;
+		do {
+			if(current == ancestor) break;
+			rpath.prepend(current.getPropertyName());
+			current = current.getParent();
+		} while(current != null);
+
+		return rpath.toString();
 	}
 
 	/**
@@ -637,75 +657,111 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 *         <code>true</code>.
 	 */
 	public Model copy(final CopyCriteria criteria) {
-		return copy(this, criteria, new BindingStack<CopyBinding>());
+		final Model copy = new Model(this.entityType);
+		copy(getSelfRef(), this, copy, criteria, new ModelRefs());
+		return copy;
 	}
 
 	/**
 	 * Recursive copy routine to guard against re-copying entities
+	 * @param root the root model ref which is always constant
 	 * @param source The model to be copied
+	 * @param copy the copy
 	 * @param criteria the copy criteria
 	 * @param visited
-	 * @return A deep copy of the model
 	 */
-	private static Model copy(Model source, final CopyCriteria criteria, BindingStack<CopyBinding> visited) {
+	private static void copy(final RelatedOneProperty root, Model source, Model copy, final CopyCriteria criteria,
+			final ModelRefs visited) {
 
-		if(source == null) return null;
+		if(source == null) return;
 
-		if(!criteria.markedDeleted && source.isMarkedDeleted()) return null;
+		if(!criteria.markedDeleted && source.isMarkedDeleted()) return;
 
 		// check visited
-		final CopyBinding binding = (CopyBinding) visited.find(source);
-		if(binding != null) return binding.target;
-
-		final Model copy = new Model(source.entityType);
-
-		visited.add(new CopyBinding(source, copy));
+		if(visited.exists(source)) return;
+		if(!visited.add(source)) throw new IllegalStateException();
 
 		copy.markedDeleted = source.markedDeleted;
 
-		for(final IModelProperty prop : source.props) {
-			assert prop != null;
+		for(final IModelProperty srcprop : source.props) {
+			assert srcprop != null;
+
+			final String crntRootRelPath = getRelativePath(root, srcprop);
+			Log.debug("Iterating Model prop [" + srcprop + "] Root rel path: " + crntRootRelPath);
+			// PropertyPath ppCrntRelRoot = new PropertyPath(crntRootRelPath);
+
+			// white list check
+			if(criteria.whiteList != null) {
+				boolean cpy = false;
+				for(final IModelProperty whiteProp : criteria.whiteList) {
+					final String whiteRootRelPath = getRelativePath(root, whiteProp);
+					// PropertyPath ppWhiteRelRoot = new PropertyPath(whiteRootRelPath);
+
+					// if the current root rel property path is contained in or equals
+					// this white list root rel path then we proceed
+					if(whiteRootRelPath.indexOf(crntRootRelPath) != 0) {
+						cpy = false;
+						Log.debug(" Skipping [" + srcprop + "] not in white list - skipping");
+						break;
+					}
+				}
+				if(!cpy) continue;
+			}
+
+			// black list check
+			else if(criteria.blackList != null) {
+				boolean cpy = false;
+				for(final IModelProperty blackProp : criteria.blackList) {
+					final String blackRootRelPath = getRelativePath(root, blackProp);
+
+					// if the current root rel property path is contained in or equals
+					// this black list root rel path then we skip
+					if(blackRootRelPath.indexOf(crntRootRelPath) == 0) {
+						cpy = false;
+						Log.debug(" Skipping [" + srcprop + "] in black list");
+						break;
+					}
+				}
+				if(!cpy) continue;
+			}
 
 			// related one or indexed prop...
-			if(prop instanceof IModelRefProperty) {
-				final IModelRefProperty mrp = (IModelRefProperty) prop;
-				final Model model =
-					(criteria.markedDeleted || (!criteria.markedDeleted && mrp.getModel() != null && !mrp.getModel()
-							.isMarkedDeleted())) ? (criteria.references || !mrp.isReference()) ? copy(mrp.getModel(), criteria,
-									visited) : mrp.getModel() : null;
-									copy.props.add(new RelatedOneProperty(mrp.getRelatedType(), mrp.getPropertyName(), mrp.isReference(), model));
+			if(srcprop instanceof IModelRefProperty) {
+				final IModelRefProperty mrp = (IModelRefProperty) srcprop;
+				final Model srcModel = mrp.getModel();
+				if((criteria.markedDeleted || (!criteria.markedDeleted && srcModel != null && !srcModel.isMarkedDeleted()))
+						&& (criteria.references || !mrp.isReference())) {
+					final Model cpyModel = srcModel == null ? null : new Model(srcModel.entityType);
+					if(cpyModel != null) copy(root, srcModel, cpyModel, criteria, visited);
+					copy.set(new RelatedOneProperty(mrp.getRelatedType(), cpyModel, mrp.getPropertyName(), mrp.isReference()));
+				}
 			}
 
 			// related many...
-			else if(prop instanceof RelatedManyProperty) {
-				final RelatedManyProperty rmp = (RelatedManyProperty) prop;
-				final List<Model> list = rmp.getList();
-				List<Model> nlist = null;
-				if(list != null) {
-					nlist = new ArrayList<Model>(list.size());
-					for(final Model model : list) {
-						if(criteria.markedDeleted || (!criteria.markedDeleted && !model.isMarkedDeleted())) {
-							nlist.add((criteria.references || !rmp.isReference()) ? copy(model, criteria, visited) : model);
+			else if(srcprop instanceof RelatedManyProperty) {
+				final RelatedManyProperty rmp = (RelatedManyProperty) srcprop;
+				if(criteria.references || !rmp.isReference()) {
+					final List<Model> list = rmp.getModelList();
+					List<Model> clist = null;
+					if(list != null) {
+						clist = new ArrayList<Model>(list.size());
+						for(final Model model : list) {
+							if((criteria.markedDeleted || (!criteria.markedDeleted && !model.isMarkedDeleted()))) {
+								final Model cim = new Model(model.entityType);
+								copy(root, model, cim, criteria, visited);
+								clist.add(cim);
+							}
 						}
 					}
+					copy.set(new RelatedManyProperty(rmp.getRelatedType(), rmp.getPropertyName(), rmp.isReference(), clist));
 				}
-				copy.props.add(new RelatedManyProperty(rmp.getRelatedType(), rmp.getPropertyName(), rmp.isReference(), nlist));
 			}
 
 			// prop val..
 			else {
-				boolean doCopy = false;
-				if(criteria.whiteList != null) {
-					doCopy = criteria.whiteList.contains(prop);
-				}
-				else if(criteria.blackList != null) {
-					doCopy = !criteria.blackList.contains(prop);
-				}
-				if(doCopy) copy.props.add(((IPropertyValue) prop).copy());
+				copy.set(((IPropertyValue) srcprop).copy());
 			}
 		}
-
-		return copy;
 	}
 
 	/**
@@ -724,7 +780,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 *        reference?
 	 */
 	public void clearPropertyValues(boolean clearReferences) {
-		clearProps(this, clearReferences, new BindingStack<PropBinding>());
+		clearProps(this, clearReferences, new ModelRefs());
 	}
 
 	/**
@@ -734,15 +790,13 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 *        reference?
 	 * @param visited
 	 */
-	private static void clearProps(Model model, final boolean clearReferences, BindingStack<PropBinding> visited) {
+	private static void clearProps(Model model, final boolean clearReferences, ModelRefs visited) {
 
 		if(model == null) return;
 
 		// check visited
-		final PropBinding binding = visited.find(model);
-		if(binding != null) return;
-
-		visited.add(new PropBinding(model));
+		if(visited.exists(model)) return;
+		if(!visited.add(model)) throw new IllegalStateException();
 
 		model.markedDeleted = false;
 
@@ -761,7 +815,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 			else if(prop instanceof RelatedManyProperty) {
 				final RelatedManyProperty rmp = (RelatedManyProperty) prop;
 				if(clearReferences || !rmp.isReference()) {
-					final List<Model> list = rmp.getList();
+					final List<Model> list = rmp.getModelList();
 					if(list != null) {
 						for(final Model m : list) {
 							clearProps(m, clearReferences, visited);
@@ -778,13 +832,49 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	}
 
 	/**
-	 * Non-hierarchical iteration over the primary model properties for this
-	 * instance.
-	 * @return IPropertyValue Iterator for the referenced property values for this
-	 *         model.
+	 * Non-hierarchical iteration.
+	 * @return An iterator traversing only the immediate child model propertis of
+	 *         this intance.
 	 */
 	public Iterator<IModelProperty> iterator() {
 		return props.iterator();
+	}
+
+	/**
+	 * Hierarchical iteration.
+	 * @return An iterator that traverses <em>all</em> descending model
+	 *         properties.
+	 */
+	public Iterator<IModelProperty> hierarchicalIterator() {
+		final RefSet<IModelProperty> set = new RefSet<IModelProperty>();
+		visitModelProps(getSelfRef(), set);
+		return set.iterator();
+	}
+
+	private static void visitModelProps(IModelProperty current, final RefSet<IModelProperty> visited) {
+
+		if(visited.exists(current)) return;
+		if(!visited.add(current)) throw new IllegalStateException();
+		Log.debug("Visiting [" + current + "]");
+
+		if(current instanceof RelatedOneProperty) {
+			final RelatedOneProperty rop = (RelatedOneProperty) current;
+			final Model m = rop.getModel();
+			if(m != null) {
+				for(final IModelProperty mp : m) {
+					visitModelProps(mp, visited);
+				}
+			}
+		}
+		else if(current instanceof RelatedManyProperty) {
+			final RelatedManyProperty rmp = (RelatedManyProperty) current;
+			final List<Model> list = rmp.getModelList();
+			for(final Model m : list) {
+				for(final IModelProperty mp : m) {
+					visitModelProps(mp, visited);
+				}
+			}
+		}
 	}
 
 	/**

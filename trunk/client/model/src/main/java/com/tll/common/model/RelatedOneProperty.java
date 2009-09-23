@@ -15,11 +15,6 @@ import com.tll.model.schema.PropertyType;
 public final class RelatedOneProperty extends ModelRefProperty {
 
 	/**
-	 * The related one model.
-	 */
-	private Model model;
-
-	/**
 	 * Constructor
 	 */
 	public RelatedOneProperty() {
@@ -27,28 +22,17 @@ public final class RelatedOneProperty extends ModelRefProperty {
 	}
 
 	/**
-	 * Constructor
-	 * @param relatedType
+	 * Constructor - Use when there is a non-null {@link Model} ref
+	 * @param relatedType required related one type
+	 * @param model the required related one model ref
 	 * @param propName
 	 * @param reference
-	 * @param model
 	 */
-	public RelatedOneProperty(IEntityType relatedType, String propName, boolean reference, Model model) {
-		super(relatedType, propName, reference);
-		this.model = model;
+	public RelatedOneProperty(IEntityType relatedType, Model model, String propName, boolean reference) {
+		super(relatedType, model, propName, reference);
 	}
 
 	public PropertyType getType() {
 		return PropertyType.RELATED_ONE;
-	}
-
-	@Override
-	public Model getModel() {
-		return model;
-	}
-
-	@Override
-	protected void doSetModel(Model oldModel, Model newModel) {
-		model = newModel;
 	}
 }

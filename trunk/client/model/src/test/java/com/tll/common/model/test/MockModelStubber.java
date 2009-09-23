@@ -142,9 +142,9 @@ public class MockModelStubber {
 		.set(new DatePropertyValue("nextChargeDate", new PropertyMetadata(PropertyType.DATE, false, true, 32),
 				new Date()));
 		m.set(new DatePropertyValue("dateCancelled", new PropertyMetadata(PropertyType.DATE, false, true, 32), new Date()));
-		m.set(new RelatedOneProperty(MockEntityType.CURRENCY, "currency", true, stubCurrency()));
-		m.set(new RelatedOneProperty(MockEntityType.PAYMENT_INFO, "paymentInfo", false, stubPaymentInfo()));
-		m.set(new RelatedOneProperty(MockEntityType.ACCOUNT, "parent", true, parentAccount));
+		m.set(new RelatedOneProperty(MockEntityType.CURRENCY, stubCurrency(), "currency", true));
+		m.set(new RelatedOneProperty(MockEntityType.PAYMENT_INFO, stubPaymentInfo(), "paymentInfo", false));
+		m.set(new RelatedOneProperty(MockEntityType.ACCOUNT, parentAccount, "parent", true));
 		return m;
 	}
 
@@ -159,8 +159,8 @@ public class MockModelStubber {
 		final Model m = stubModel(MockEntityType.ACCOUNT_ADDRESS, null, true, ("Adrs " + num));
 		m.set(new EnumPropertyValue("type", new PropertyMetadata(PropertyType.ENUM, false, true, 8),
 				AddressType.values()[num - 1]));
-		m.set(new RelatedOneProperty(MockEntityType.ACCOUNT, "account", true, account));
-		m.set(new RelatedOneProperty(MockEntityType.ADDRESS, "address", false, address));
+		m.set(new RelatedOneProperty(MockEntityType.ACCOUNT, account, "account", true));
+		m.set(new RelatedOneProperty(MockEntityType.ADDRESS, address, "address", false));
 		return m;
 	}
 

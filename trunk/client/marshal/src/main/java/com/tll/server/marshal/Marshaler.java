@@ -12,7 +12,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,6 +46,8 @@ import com.tll.model.schema.RelationInfo;
 import com.tll.model.schema.SchemaInfoException;
 import com.tll.model.schema.Transient;
 import com.tll.server.rpc.entity.IEntityTypeResolver;
+import com.tll.util.Binding;
+import com.tll.util.BindingRefSet;
 
 /**
  * Marshaler - Converts server-side entities to client-bound value objects and
@@ -76,66 +77,6 @@ public final class Marshaler {
 	}
 
 	/**
-	 * Binding - Used for walking an {@link Object}'s hiererchy to avoid infinite
-	 * looping as the hierarchy may contain circular references.
-	 * @author jpk
-	 */
-	protected static final class Binding {
-
-		final Object source;
-		final Model group;
-
-		/**
-		 * Constructor
-		 * @param source
-		 * @param group
-		 */
-		Binding(final Object source, final Model group) {
-			this.source = source;
-			this.group = group;
-		}
-	}
-
-	/**
-	 * BindingStack
-	 * @author jpk
-	 */
-	protected static final class BindingStack extends Stack<Binding> {
-
-		private static final long serialVersionUID = -7748594505590343080L;
-
-		/**
-		 * Searches for a {@link Binding} given an {@link Object} ref.
-		 * @param source
-		 * @return The found {@link Binding} or <code>null</code> if not present in
-		 *         this stack.
-		 */
-		public Binding find(final Object source) {
-			for(final Binding b : this) {
-				if(b.source == source) {
-					return b;
-				}
-			}
-			return null;
-		}
-
-		/**
-		 * Searches for a {@link Binding} given a {@link Model} ref.
-		 * @param group
-		 * @return The found {@link Binding} or <code>null</code> if not present in
-		 *         this stack.
-		 */
-		public Binding find(final Model group) {
-			for(final Binding b : this) {
-				if(b.group == group) {
-					return b;
-				}
-			}
-			return null;
-		}
-	}
-
-	/**
 	 * Converts a {@link SearchResult} instance to a new {@link Model} instance
 	 * containing all marshalable properties contained within the search result.
 	 * @param searchResult May NOT be <code>null</code>.
@@ -150,8 +91,8 @@ public final class Marshaler {
 		Model model;
 		final Object r = searchResult.getElement();
 		if(r instanceof IEntity) {
-			BindingStack visited = new BindingStack();
-			model = marshalEntity((IEntity) r, options, 0, visited);
+			BindingRefSet<IEntity, Model> visited = new BindingRefSet<IEntity, Model>();
+			model = marshal((IEntity) r, options, visited, 0);
 			visited = null;
 		}
 		else {
@@ -162,44 +103,39 @@ public final class Marshaler {
 
 	/**
 	 * Marshals the given entity.
-	 * @param <E>
 	 * @param entity May not be <code>null</code>.
 	 * @param options May not be <code>null</code>.
 	 * @return New {@link Model} instance containing the marshaled entity
 	 *         properties.
 	 * @throws RuntimeException upon any error encountered.
 	 */
-	public <E extends IEntity> Model marshalEntity(final E entity, final MarshalOptions options) {
-		return marshalEntity(entity, options, 0, new BindingStack());
+	public Model marshal(final IEntity entity, final MarshalOptions options) {
+		return marshal(entity, options, new BindingRefSet<IEntity, Model>(), 0);
 	}
 
 	/**
 	 * Converts a source IEntity instance to a marshalable {@link Model}.
-	 * @param <E> The entity type
 	 * @param source The source IEntity to marshal. May not be <code>null</code>.
 	 * @param options The marshaling options. May NOT be <code>null</code>.
-	 * @param depth the recursion depth
 	 * @param visited collection of visited nodes to avoid infinite looping
+	 * @param depth the recursion depth
 	 * @return Marshaled {@link Model}.
 	 * @throws RuntimeException upon any error encountered.
 	 */
 	@SuppressWarnings("unchecked")
-	private <E extends IEntity> Model marshalEntity(final E source, final MarshalOptions options, final int depth,
-			final BindingStack visited) {
+	private Model marshal(final IEntity source, final MarshalOptions options, final BindingRefSet<IEntity, Model> visited,
+			final int depth) {
 
 		assert source != null;
 
 		// check visited
-		Binding b = visited.find(source);
-		if(b != null) {
-			return b.group;
-		}
+		final Binding<IEntity, Model> b = visited.findBindingBySource(source);
+		if(b != null) return b.tgt;
 
 		final Class<? extends IEntity> entityClass = source.entityClass();
 		final Model model = new Model(etResolver.resolveEntityType(entityClass));
 
-		b = new Binding(source, model);
-		visited.push(b);
+		visited.add(new Binding<IEntity, Model>(source, model));
 
 		final BeanWrapperImpl bw = new BeanWrapperImpl(source);
 
@@ -231,10 +167,10 @@ public final class Marshaler {
 					final boolean reference = ri.isReference();
 					if(shouldMarshalRelation(reference, depth, options)) {
 						final IEntity e = (IEntity) obj;
-						final Model ngrp = e == null ? null : marshalEntity(e, options, depth + 1, visited);
+						final Model m = e == null ? null : marshal(e, options, visited, depth + 1);
 						final IEntityType etype =
 							ri.getRelatedType() == null ? null : etResolver.resolveEntityType(e == null ? ri.getRelatedType() : e.entityClass());
-						prop = new RelatedOneProperty(etype, pname, reference, ngrp);
+						prop = new RelatedOneProperty(etype, m, pname, reference);
 					}
 				}
 
@@ -248,7 +184,7 @@ public final class Marshaler {
 							list = new ArrayList<Model>();
 							final Collection<IEntity> set = (Collection<IEntity>) obj;
 							for(final IEntity e : set) {
-								final Model nested = marshalEntity(e, options, depth + 1, visited);
+								final Model nested = marshal(e, options, visited, depth + 1);
 								list.add(nested);
 							}
 						}
@@ -322,63 +258,55 @@ public final class Marshaler {
 	}
 
 	/**
-	 * Un-marshals a {@link Model} representing an entity to an {@link IEntity}.
+	 * Marshals a {@link Model} representing an entity to an {@link IEntity}.
 	 * @param <E>
 	 * @param entityClass
 	 * @param model the client wise model instance
-	 * @return Un-marshaled server-side {@link IEntity} instance.
+	 * @return The generated {@link IEntity} instance.
 	 */
-	public <E extends IEntity> E unmarshalEntity(final Class<E> entityClass, final Model model) {
-		BindingStack visited = new BindingStack();
-		final E e = unmarshalEntity(instantiateEntity(entityClass), model, visited, 0);
+	@SuppressWarnings("unchecked")
+	public <E extends IEntity> E marshal(final Class<E> entityClass, final Model model) {
+		BindingRefSet<IEntity, Model> visited = new BindingRefSet<IEntity, Model>();
+		final E e = (E) marshal(instantiateEntity(entityClass), model, visited, 0);
 		visited = null;
 		return e;
 	}
 
 	/**
-	 * Un-marshals a {@link Model} against an given entity instance.
+	 * Marshals a {@link Model} to a given entity instance.
 	 * @param <E>
-	 * @param entity
 	 * @param model the client wise model instance
-	 * @return Un-marshaled server-side {@link IEntity} instance.
+	 * @param entity
+	 * @return The generated {@link IEntity} instance.
 	 */
-	public <E extends IEntity> E unmarshalEntity(final E entity, final Model model) {
-		BindingStack visited = new BindingStack();
-		final E e = unmarshalEntity(entity, model, visited, 0);
+	@SuppressWarnings("unchecked")
+	public <E extends IEntity> E marshal(final Model model, final E entity) {
+		BindingRefSet<IEntity, Model> visited = new BindingRefSet<IEntity, Model>();
+		final IEntity e = marshal(entity, model, visited, 0);
 		visited = null;
-		return e;
-	}
-
-	private <E extends IEntity> E instantiateEntity(Class<E> entityClass) {
-		try {
-			return entityClass.newInstance();
-		}
-		catch(final Exception ie) {
-			throw new RuntimeException("Unable to instantiate entity of class: " + entityClass.getSimpleName());
-		}
+		return (E) e;
 	}
 
 	/**
-	 * Unmarshals a UI entity to a new {@link IEntity} instance.
-	 * @param <E>
+	 * Marshals a {@link Model} to the given entity instance.
 	 * @param crntEntity The "current" (recursion) entity whose properties are updated
 	 * @param model The {@link Model} holding the properties to be applied to the given entity
 	 * @param visited collection of visited nodes to avoid infinite looping
 	 * @param depth the current recursion depth
-	 * @return New <E> instance
+	 * @return New <IEntity> instance
 	 * @throws RuntimeException upon any error encountered.
 	 */
 	@SuppressWarnings("unchecked")
-	private <E extends IEntity> E unmarshalEntity(E crntEntity, Model model, final BindingStack visited, int depth) {
+	private IEntity marshal(IEntity crntEntity, Model model, final BindingRefSet visited, int depth) {
 
 		// only recurse if not already visited
-		Binding b = visited.find(model);
+		Binding<Model, Object> b = visited.findBindingBySource(model);
 		if(b != null) {
-			return (E) b.source;
+			return (IEntity) b.tgt;
 		}
 
 		b = new Binding(crntEntity, model);
-		visited.push(b);
+		visited.add(b);
 
 		final BeanWrapperImpl bw = new BeanWrapperImpl(crntEntity);
 
@@ -407,7 +335,7 @@ public final class Marshaler {
 			case RELATED_ONE: {
 				final Model rltdOne = (Model) pval;
 				final IEntityType rltdEntityType = rltdOne == null ? null : rltdOne.getEntityType();
-				final Class<IEntity> rltdEntityClass = (Class<IEntity>) etResolver.resolveEntityClass(rltdEntityType);
+				final Class<? extends IEntity> rltdEntityClass = (Class<? extends IEntity>) etResolver.resolveEntityClass(rltdEntityType);
 				IEntity toOne;
 				if(rltdOne == null || rltdOne.isMarkedDeleted()) {
 					toOne = null;
@@ -421,7 +349,7 @@ public final class Marshaler {
 						log.warn("Unable to get related one entity ref", re);
 						toOne = null;
 					}
-					toOne = unmarshalEntity(toOne, rltdOne, visited, depth + 1);
+					toOne = marshal(toOne, rltdOne, visited, depth + 1);
 				}
 				val = toOne;
 			}
@@ -469,7 +397,7 @@ public final class Marshaler {
 							if(indexedModel.isNew()) {
 								assert indexedModel.isMarkedDeleted() == false;
 								// add indexed
-								indexedEntity = unmarshalEntity(instantiateEntity(indexedEntityClass), indexedModel, visited, depth + 1);
+								indexedEntity = marshal(instantiateEntity(indexedEntityClass), indexedModel, visited, depth + 1);
 								newRmEntitySet.add(indexedEntity);
 							}
 							// else presume removed after it was initially sent to client by another web session..
@@ -485,7 +413,7 @@ public final class Marshaler {
 							}
 							else {
 								// update existing indexed entity
-								indexedEntity = unmarshalEntity(indexedEntity, indexedModel, visited, depth + 1);
+								indexedEntity = marshal(indexedEntity, indexedModel, visited, depth + 1);
 							}
 							// satisify bi-di relationship
 							if(indexedEntity instanceof IChildEntity) {
@@ -530,6 +458,15 @@ public final class Marshaler {
 		}
 
 		return crntEntity;
+	}
+
+	private IEntity instantiateEntity(Class<? extends IEntity> entityClass) {
+		try {
+			return entityClass.newInstance();
+		}
+		catch(final Exception ie) {
+			throw new RuntimeException("Unable to instantiate entity of class: " + entityClass.getSimpleName());
+		}
 	}
 
 	/**

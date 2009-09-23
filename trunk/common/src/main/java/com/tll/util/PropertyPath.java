@@ -490,6 +490,25 @@ public final class PropertyPath {
 	}
 
 	/**
+	 * Prepends a property path to this property path.
+	 * @param path The property path to insert at the start
+	 */
+	public void prepend(String path) {
+		parse(getPropertyPath(path, buf == null ? null : buf.toString()));
+	}
+
+	/**
+	 * Prepends an indexed property path to this property path. <br>
+	 * E.g.: A path of <code>parameters</code> and an index of <code>2</code>
+	 * would prepend: <code>parameters[2]</code>.
+	 * @param path The indexable property name
+	 * @param index The index
+	 */
+	public void prepend(String path, int index) {
+		prepend(index(path, index));
+	}
+
+	/**
 	 * Appends a property path to this property path.
 	 * @param path The property path to append
 	 */

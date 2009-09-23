@@ -3,14 +3,17 @@
  */
 package com.tll.common.model;
 
-
-
 /**
  * ModelRefProperty - Thin wrapper around a {@link Model} in order to realize
  * relationships in a model hierarchy.
  * @author jpk
  */
 public abstract class ModelRefProperty extends AbstractRelationalProperty implements IModelRefProperty {
+
+	/**
+	 * The related one model.
+	 */
+	protected Model model;
 
 	/**
 	 * Constructor
@@ -21,13 +24,15 @@ public abstract class ModelRefProperty extends AbstractRelationalProperty implem
 
 	/**
 	 * Constructor
-	 * @param relatedType The related Model type. This <em>must</em> match that of
-	 *        the given Model's type if the given Model is non-<code>null</code>.
+	 * @param relatedType the required related type which should be base or equal
+	 *        to the non-null model instance
+	 * @param model may be <code>null</code>
 	 * @param propName
 	 * @param reference
 	 */
-	public ModelRefProperty(IEntityType relatedType, String propName, boolean reference) {
+	public ModelRefProperty(IEntityType relatedType, Model model, String propName, boolean reference) {
 		super(relatedType, propName, reference);
+		this.model = model;
 	}
 
 	public final Object getValue() {
@@ -41,10 +46,10 @@ public abstract class ModelRefProperty extends AbstractRelationalProperty implem
 		setModel((Model) value);
 	}
 
-	/**
-	 * @return The model.
-	 */
-	public abstract Model getModel();
+	@Override
+	public final Model getModel() {
+		return model;
+	}
 
 	/**
 	 * Responsible for setting the model and firing a property change events if
@@ -53,7 +58,7 @@ public abstract class ModelRefProperty extends AbstractRelationalProperty implem
 	 * @throws IllegalArgumentException
 	 */
 	protected final void setModel(Model model) throws IllegalArgumentException {
-		final Model oldModel = getModel();
+		final Model oldModel = this.model;
 		if(oldModel != model) {
 			// NOTE: we don't *require* the relatedType to be set but if it is, we
 			// enfore type compatability
@@ -64,27 +69,19 @@ public abstract class ModelRefProperty extends AbstractRelationalProperty implem
 				throw new IllegalArgumentException("The model must be a " + relatedType.getPresentationName());
 			}
 			 */
-			doSetModel(oldModel, model);
+			this.model = model;
 			getChangeSupport().firePropertyChange(propertyName, oldModel, model);
 		}
 	}
-
-	/**
-	 * Called when the model is to be updated. Responsible for setting the model
-	 * to the given new model and firing an appropriate property change event.
-	 * @param oldModel
-	 * @param newModel
-	 * @throws IllegalArgumentException
-	 */
-	protected abstract void doSetModel(Model oldModel, Model newModel) throws IllegalArgumentException;
 
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
 		sb.append(propertyName);
-		sb.append(isReference() ? " [REF] " : " ");
+		sb.append(isReference() ? "[REF] " : " ");
 		final Model m = getModel();
-		sb.append(m == null ? "-empty-" : m.toString());
+		sb.append(m == null ? "null" : m.toString());
+		sb.append(" parent: " + (parent == null ? "null" : parent.getPropertyName()));
 		return sb.toString();
 	}
 }

@@ -109,11 +109,6 @@
     </dependency>
     
     <dependency>
-      <groupId>com.allen_sauer.gwt.log</groupId>
-      <artifactId>gwt-log</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>com.google.code.gwt-incubator</groupId>
       <artifactId>gwt-incubator</artifactId>
       <scope>provided</scope>

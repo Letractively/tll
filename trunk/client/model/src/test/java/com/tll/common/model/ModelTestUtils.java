@@ -22,15 +22,11 @@ public class ModelTestUtils {
 	 * copied model's properties.
 	 * @param source
 	 * @param copy
-	 * @param compareReferences Ignore the isReference property for related model
-	 *        properties?
-	 * @param copyMarkedDeletedFlag Whether or not the copy copied nested models
-	 *        that are marked deleted
+	 * @param criteria the copy criteria that are marked deleted
 	 * @throws Exception When a copy discrepancy is encountered
 	 */
-	public static void validateCopy(final Model source, final Model copy, final boolean compareReferences,
-			boolean copyMarkedDeletedFlag) throws Exception {
-		compare(source, copy, compareReferences, copyMarkedDeletedFlag, true, new ArrayList<Model>());
+	public static void validateCopy(final Model source, final Model copy, CopyCriteria criteria) throws Exception {
+		compare(source, copy, criteria.references, criteria.markedDeleted, true, new ArrayList<Model>());
 	}
 
 	/**
@@ -61,7 +57,7 @@ public class ModelTestUtils {
 			}
 			else if(pvType == PropertyType.RELATED_MANY) {
 				final RelatedManyProperty srcRmp = (RelatedManyProperty) srcMp;
-				final List<Model> srcSet = srcRmp.getList();
+				final List<Model> srcSet = srcRmp.getModelList();
 				if(srcSet != null) {
 					for(final Model m : srcSet) {
 						if(!visited.contains(m)) {
@@ -103,13 +99,26 @@ public class ModelTestUtils {
 	 */
 	private static void compare(Model source, Model target, final boolean compareReferences,
 			final boolean copyMarkedDeletedFlag, boolean requireDistinctModelProperties, List<Model> visited)
-			throws Exception {
+	throws Exception {
 		assert source != null && target != null;
 
 		for(final Iterator<IModelProperty> itr = source.iterator(); itr.hasNext();) {
 			final IModelProperty srcProp = itr.next();
 			final String propName = srcProp.getPropertyName();
-			final IModelProperty tgtProp = target.getModelProperty(propName);
+
+			IModelProperty tgtProp = null;
+			try {
+				tgtProp = target.getModelProperty(propName);
+			}
+			catch(final PropertyPathException e) {
+				if(e instanceof NullNodeInPropPathException || e instanceof UnsetPropertyException) {
+					// we have a missing model prop in the copy implying it was filtered
+					// via either a white or black list in the copy criteria
+					// TODO do the actual checking
+					continue;
+				}
+				throw e;
+			}
 
 			// verify like types
 			TestUtils.validateEqualTypes(srcProp, tgtProp);
@@ -161,8 +170,8 @@ public class ModelTestUtils {
 			else if(pvType == PropertyType.RELATED_MANY) {
 				final RelatedManyProperty src = (RelatedManyProperty) srcProp;
 				final RelatedManyProperty tgt = (RelatedManyProperty) tgtProp;
-				final List<Model> srcList = src.getList();
-				final List<Model> tgtList = tgt.getList();
+				final List<Model> srcList = src.getModelList();
+				final List<Model> tgtList = tgt.getModelList();
 
 				if((srcList == null && tgtList != null) || (srcList != null && tgtList == null)) {
 					throw new Exception("Related many lists differ by null for prop:" + propName);
@@ -175,10 +184,12 @@ public class ModelTestUtils {
 						for(final Model srcModel : srcList) {
 							// find the copied target model
 							Model tgtModel = null;
-							// NOTE: we can rely on this since we are doing a logical equals as Model overrides equals()/hashCode()
+							// NOTE: we can rely on this since we are doing a logical equals
+							// as Model overrides equals()/hashCode()
 							final int ti = tgtList.indexOf(srcModel);
 							if(ti == -1) {
-								// this should only happen when we aren't copying models marked as deleted
+								// this should only happen when we aren't copying models marked
+								// as deleted
 								if(copyMarkedDeletedFlag) {
 									throw new Exception("Missing related many model element for property: " + srcProp);
 								}

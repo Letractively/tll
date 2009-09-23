@@ -6,10 +6,12 @@ package com.tll.common.model;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.model.ModelPropertyChangeTracker;
 import com.tll.common.model.test.MockEntityType;
 import com.tll.common.model.test.MockModelStubber;
@@ -21,6 +23,47 @@ import com.tll.common.model.test.MockModelStubber.ModelType;
  */
 @Test(groups = "client-model")
 public class ModelTest {
+
+	public void testHierarchicalIteration() throws Exception {
+		final Model m = MockModelStubber.stubAccount(true);
+		final Iterator<IModelProperty> mpItr = m.hierarchicalIterator();
+		while(mpItr.hasNext()) {
+			final IModelProperty mp = mpItr.next();
+			Log.debug(mp.toString());
+		}
+	}
+
+	public void testParentExistsInModelProps() throws Exception {
+		final Model m = MockModelStubber.stubAccount(true);
+		final Iterator<IModelProperty> mpItr = m.hierarchicalIterator();
+		while(mpItr.hasNext()) {
+			final IModelProperty mp = mpItr.next();
+			Log.debug(mp + " parent: " + mp.getParent());
+			if(mp instanceof RelatedOneProperty && ((RelatedOneProperty)mp).getModel() == m) continue;
+			Assert.assertTrue(mp.getParent() != null);
+		}
+	}
+
+	/**
+	 * Tests {@link Model#getRelativePath(IRelationalProperty, IModelProperty)}
+	 * @throws Exception
+	 */
+	public void testRelativePath() throws Exception {
+		final Model m = MockModelStubber.stubAccount(true);
+		String actual, expected;
+
+		expected = "addresses[0].address.firstName";
+		actual = Model.getRelativePath(m.getSelfRef(), m.getModelProperty(expected));
+		Assert.assertEquals(actual, expected);
+
+		expected = "address.firstName";
+		actual = Model.getRelativePath(m.indexed("addresses[0]"), m.getModelProperty(expected));
+		Assert.assertEquals(actual, expected);
+
+		expected = "firstName";
+		actual = Model.getRelativePath(m.indexed("addresses[0].address"), m.getModelProperty(expected));
+		Assert.assertEquals(actual, expected);
+	}
 
 	/**
 	 * Verifies the clear method.
@@ -39,7 +82,7 @@ public class ModelTest {
 	public void testCopy() throws Exception {
 		final Model model = MockModelStubber.create(ModelType.COMPLEX);
 		final Model copy = model.copy(CopyCriteria.COPY_ALL);
-		ModelTestUtils.validateCopy(model, copy, true, true);
+		ModelTestUtils.validateCopy(model, copy, CopyCriteria.COPY_ALL);
 	}
 
 	/**
@@ -61,8 +104,9 @@ public class ModelTest {
 		assert mrp != null;
 		mrp.getModel().setMarkedDeleted(true);
 
-		final Model copy = model.copy(new CopyCriteria(true, false, null, null));
-		ModelTestUtils.validateCopy(model, copy, true, false);
+		final CopyCriteria criteria = new CopyCriteria(true, false, null, null);
+		final Model copy = model.copy(criteria);
+		ModelTestUtils.validateCopy(model, copy, criteria);
 	}
 
 	public void testGetSetEntityRelatedProps() throws Exception {
@@ -95,7 +139,7 @@ public class ModelTest {
 		((IndexedProperty)mp).getModel().setMarkedDeleted(true);
 		mpSet.add(mp);
 
-		final CopyCriteria cc = new CopyCriteria(false, true, null, mpSet);
+		final CopyCriteria cc = new CopyCriteria(false, true, mpSet, null);
 
 		final Model mcopy = m.copy(cc);
 
@@ -114,7 +158,6 @@ public class ModelTest {
 		final Model m = MockModelStubber.stubAccount(true);
 		final ModelPropertyChangeTracker changeTracker = new ModelPropertyChangeTracker();
 		changeTracker.set(m);
-		m.addPropertyChangeListener(changeTracker);
 		// TODO finish
 	}
 }

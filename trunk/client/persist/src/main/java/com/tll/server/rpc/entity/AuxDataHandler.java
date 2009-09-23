@@ -101,7 +101,7 @@ public abstract class AuxDataHandler {
 					final MarshalOptions mo = getMarshalOptions(context, et, MarshalOptions.NO_REFERENCES);
 					final List<Model> elist = new ArrayList<Model>(list.size());
 					for(final IEntity e : list) {
-						final Model group = context.getMarshaler().marshalEntity(e, mo);
+						final Model group = context.getMarshaler().marshal(e, mo);
 						elist.add(group);
 					}
 					if(entityMap == null) {
@@ -120,7 +120,7 @@ public abstract class AuxDataHandler {
 				context.getEntityAssembler().assembleEntity(
 						(Class<IEntity>) context.getEntityTypeResolver().resolveEntityClass(et), null, false);
 			final MarshalOptions mo = getMarshalOptions(context, et, MarshalOptions.NO_REFERENCES);
-			final Model model = context.getMarshaler().marshalEntity(e, mo);
+			final Model model = context.getMarshaler().marshal(e, mo);
 			if(entityPrototypes == null) {
 				entityPrototypes = new HashSet<Model>();
 			}

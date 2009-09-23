@@ -5,44 +5,34 @@
  */
 package com.tll.common.model;
 
-import java.util.List;
-
 import com.tll.model.schema.PropertyType;
 import com.tll.util.PropertyPath;
 
 /**
  * IndexedProperty - Represents a single indexed property referenced by a parent
  * {@link RelatedManyProperty}.
- * <p>
- * <em><b>IMPT:</b> This property type is a purely client-side construct and is <b>not</em>
- * client/server marshaled.
  * @author jpk
  */
 public final class IndexedProperty extends ModelRefProperty {
 
 	/**
-	 * The underlying related many collection property.
-	 */
-	private transient final List<Model> list;
-
-	/**
 	 * The index at which the target {@link Model} exists in the underlying list.
 	 */
-	private transient final int index;
+	private final int index;
 
 	/**
 	 * Constructor
-	 * @param indexedType
+	 * @param parent the required related many prop
+	 * @param indexedType the required related type (type of the indexed models)
+	 * @param model indexed model ref. May be <code>null</code>
 	 * @param propName
 	 * @param reference
-	 * @param list The underlying related many list holding the model element
-	 *        targeted by the given index
 	 * @param index The index
 	 */
-	IndexedProperty(IEntityType indexedType, String propName, boolean reference, List<Model> list, int index) {
-		super(indexedType, PropertyPath.index(propName, index), reference);
-		assert list != null;
-		this.list = list;
+	IndexedProperty(RelatedManyProperty parent, IEntityType indexedType, Model model, String propName, boolean reference, int index) {
+		super(indexedType, model, PropertyPath.index(propName, index), reference);
+		assert parent != null;
+		setParent(parent);
 		this.index = index;
 	}
 
@@ -55,15 +45,5 @@ public final class IndexedProperty extends ModelRefProperty {
 	 */
 	public int getIndex() {
 		return index;
-	}
-
-	@Override
-	public Model getModel() {
-		return list.get(index);
-	}
-
-	@Override
-	protected void doSetModel(Model oldModel, Model newModel) {
-		throw new UnsupportedOperationException();
 	}
 }
