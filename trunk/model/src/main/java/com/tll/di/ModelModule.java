@@ -26,10 +26,10 @@ public abstract class ModelModule extends AbstractModule {
 	/**
 	 * Responsible for binding an {@link IEntityAssembler} implmementation.
 	 */
-	protected abstract void bindEntityAssembler();
+	protected abstract Class<? extends IEntityAssembler> getEntityAssemblerImplType();
 
 	@Override
-	protected void configure() {
+	protected final void configure() {
 		// IEntityFactory
 		bind(IEntityFactory.class).to(EntityFactory.class).in(Scopes.SINGLETON);
 
@@ -37,7 +37,7 @@ public abstract class ModelModule extends AbstractModule {
 		bind(ISchemaInfo.class).to(SchemaInfo.class).in(Scopes.SINGLETON);
 
 		// IEntityAssembler impl
-		bindEntityAssembler();
+		bind(IEntityAssembler.class).to(getEntityAssemblerImplType()).in(Scopes.SINGLETON);
 
 		// ValidationFactory
 		bind(ValidatorFactory.class).toProvider(new Provider<ValidatorFactory>() {

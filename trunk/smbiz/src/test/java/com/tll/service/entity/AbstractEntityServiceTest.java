@@ -22,11 +22,11 @@ import com.tll.dao.IDbTrans;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.db4o.test.Db4oTrans;
 import com.tll.di.Db4oDaoModule;
-import com.tll.di.Db4oDbShellModule;
 import com.tll.di.EntityServiceFactoryModule;
 import com.tll.di.SmbizDb4oDaoModule;
 import com.tll.di.SmbizEGraphModule;
 import com.tll.di.SmbizModelModule;
+import com.tll.di.test.Db4oDbShellModule;
 import com.tll.model.IEntity;
 import com.tll.model.test.EntityBeanFactory;
 

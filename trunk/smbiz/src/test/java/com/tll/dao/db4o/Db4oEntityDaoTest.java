@@ -8,8 +8,6 @@ package com.tll.dao.db4o;
 import org.testng.annotations.Test;
 
 import com.tll.dao.IEntityDaoTestHandler;
-import com.tll.model.IEntityGraphPopulator;
-import com.tll.model.SmbizEntityGraphBuilder;
 import com.tll.util.CommonUtil;
 
 /**
@@ -43,10 +41,4 @@ public class Db4oEntityDaoTest extends AbstractDb4oEntityDaoTest {
 			throw new IllegalStateException("Unable to access an entity dao test handler: " + e.getMessage(), e);
 		}
 	}
-
-	@Override
-	protected Class<? extends IEntityGraphPopulator> getEntityGraphPopulator() {
-		return SmbizEntityGraphBuilder.class;
-	}
-
 }

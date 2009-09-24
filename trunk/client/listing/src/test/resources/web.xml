@@ -11,9 +11,9 @@
 		<param-value>
       com.tll.di.RefDataModule
       com.tll.di.MailModule
-      com.tll.di.TestPersistenceUnitModelModule
+      com.tll.di.test.TestPersistenceUnitModelModule
       com.tll.di.Db4oDaoModule
-      com.tll.di.Db4oDbShellModule
+      com.tll.di.test.Db4oDbShellModule
       com.tll.di.EntityServiceFactoryModule
       com.tll.di.TestMarshalModule
       com.tll.di.LogExceptionHandlerModule
