@@ -14,9 +14,9 @@ import com.tll.client.ui.field.IIndexedFieldBoundWidget;
 import com.tll.client.ui.field.TabbedIndexedFieldPanel;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
-import com.tll.common.model.test.AccountStatus;
-import com.tll.common.model.test.AddressType;
-import com.tll.common.model.test.MockModelStubber;
+import com.tll.common.model.test.TestModelStubber;
+import com.tll.model.test.AccountStatus;
+import com.tll.model.test.AddressType;
 
 /**
  * ComplexFieldPanel - Contains a simple field panel mocking a related one
@@ -130,7 +130,7 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 
 		@Override
 		protected Model createPrototypeModel() {
-			final Model m = MockModelStubber.stubAccountAddress(null, MockModelStubber.stubAddress(1), 1);
+			final Model m = TestModelStubber.stubAccountAddress(null, TestModelStubber.stubAddress(1), 1);
 			m.clearPropertyValues(false);
 			return m;
 		}

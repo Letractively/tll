@@ -13,6 +13,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.tll.model.key.NonUniqueBusinessKeyException;
+import com.tll.model.test.EntityBeanFactory;
 
 
 /**

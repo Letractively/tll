@@ -7,6 +7,7 @@ package com.tll.model;
 import java.util.Set;
 
 import com.google.inject.Inject;
+import com.tll.model.test.EntityBeanFactory;
 import com.tll.util.EnumUtil;
 
 /**

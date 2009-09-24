@@ -3,11 +3,6 @@
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 
   http://maven.apache.org/xsd/assembly-1.1.0.xsd">
 
-  <!--
-  Creates a jar containing test assets for the project this assembly 
-  is applied to allowing dependent projects to use them. 
-  -->
-
   <id>testassets</id>
   <includeBaseDirectory>false</includeBaseDirectory>
   <formats>
@@ -17,17 +12,9 @@
   <fileSets>
     <fileSet>
       <directory>target/test-classes</directory>
-      <!-- exclude concrete tests that test util related! -->
-      <excludes>
-        <exclude>**/*UtilTest*</exclude>
-        <exclude>**/SimpleEntityDaoTest*</exclude><!-- hack -->
-      </excludes>
       <includes>
         <include>**/test/**</include>
-        <include>**/I*</include><!-- include interfaces -->
-        <include>**/Abstract*Test*</include>
-        <include>**/*Util*</include>
-        <include>**/*Support*</include>
+        <include>**/*.xml</include>
         <include>**/Test*Module.class</include>
       </includes>
       <outputDirectory>/</outputDirectory>

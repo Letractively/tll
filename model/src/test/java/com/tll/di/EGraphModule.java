@@ -14,10 +14,10 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
-import com.tll.model.EntityBeanFactory;
 import com.tll.model.EntityGraph;
 import com.tll.model.IEntityGraphPopulator;
-import com.tll.model.EntityBeanFactory.EntityBeanFactoryParam;
+import com.tll.model.test.EntityBeanFactory;
+import com.tll.model.test.EntityBeanFactory.EntityBeanFactoryParam;
 
 /**
  * EGraphModule - Provides {@link EntityGraph} instances.

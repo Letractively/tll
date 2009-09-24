@@ -8,10 +8,10 @@ import java.util.Set;
 
 import org.testng.Assert;
 
-import com.tll.model.EntityBeanFactory;
 import com.tll.model.Interface;
 import com.tll.model.InterfaceOption;
 import com.tll.model.InterfaceOptionParameterDefinition;
+import com.tll.model.test.EntityBeanFactory;
 
 /**
  * AbstractInterfaceDaoTestHandler

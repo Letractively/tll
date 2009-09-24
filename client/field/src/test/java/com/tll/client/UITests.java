@@ -40,7 +40,7 @@ import com.tll.common.model.CopyCriteria;
 import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
-import com.tll.common.model.test.MockModelStubber;
+import com.tll.common.model.test.TestModelStubber;
 
 /**
  * UI Tests - GWT module for the sole purpose of verifying the DOM/Style of
@@ -445,7 +445,7 @@ public final class UITests extends AbstractUITest {
 
 			RootPanel.get().add(layout);
 
-			m = MockModelStubber.stubAccount(false);
+			m = TestModelStubber.stubAccount(false);
 			ep.setModel(m);
 			mv.setModel(m);
 		}

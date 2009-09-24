@@ -15,11 +15,11 @@ import com.tll.client.ui.field.AbstractFieldGroupProvider;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.RadioGroupField.GridStyles;
 import com.tll.common.model.Model;
-import com.tll.common.model.test.AccountStatus;
-import com.tll.common.model.test.AddressType;
-import com.tll.common.model.test.CreditCardType;
-import com.tll.common.model.test.MockEntityType;
-import com.tll.common.model.test.MockModelStubber;
+import com.tll.common.model.test.TestEntityType;
+import com.tll.common.model.test.TestModelStubber;
+import com.tll.model.test.AccountStatus;
+import com.tll.model.test.AddressType;
+import com.tll.model.test.CreditCardType;
 import com.tll.refdata.RefDataType;
 
 /**
@@ -44,8 +44,8 @@ public class MockFieldGroupProviders {
 			if(!auxDataInitialized) {
 				// set needed aux data cache
 				final List<Model> list = new ArrayList<Model>();
-				list.add(MockModelStubber.stubCurrency());
-				AuxDataCache.get().cacheEntityList(MockEntityType.CURRENCY, list);
+				list.add(TestModelStubber.stubCurrency());
+				AuxDataCache.get().cacheEntityList(TestEntityType.CURRENCY, list);
 
 				final Map<String, String> cc = new HashMap<String, String>();
 				cc.put("us", "United States");
