@@ -9,11 +9,11 @@ import org.testng.Assert;
 
 import com.tll.criteria.Criteria;
 import com.tll.dao.AbstractEntityDaoTestHandler;
-import com.tll.model.EntityBeanFactory;
 import com.tll.model.test.Account;
 import com.tll.model.test.AccountAddress;
 import com.tll.model.test.Address;
 import com.tll.model.test.Currency;
+import com.tll.model.test.EntityBeanFactory;
 import com.tll.model.test.NestedEntity;
 import com.tll.util.DateRange;
 

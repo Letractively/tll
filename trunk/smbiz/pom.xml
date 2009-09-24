@@ -198,7 +198,7 @@
 								log4j,commons-logging,org.slf4j,com.tll,com.google.gwt,com.google.code.gwt-incubator,com.allen_sauer.gwt.log
               </includeGroupIds>
 							<excludeArtifactIds>
-								gwt-servlet,hibernate-validator,tll-config,tll-core,tll-dao-api,tll-dao-db4o,tll-mail,tll-egraph,tll-model,tll-refdata,tll-security,tll-service,tll-servlet
+								gwt-servlet,hibernate-validator,tll-config,tll-core,tll-dao-api,tll-dao-db4o,tll-mail,tll-model,tll-refdata,tll-security,tll-service,tll-servlet
               </excludeArtifactIds>
 							<excludeTypes>zip</excludeTypes>
 							<outputFile>target/gwt-cp.txt</outputFile>
@@ -560,12 +560,6 @@
 			<groupId>com.tll</groupId>
 			<artifactId>tll-model</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.tll</groupId>
-			<artifactId>tll-egraph</artifactId>
-			<version>${project.parent.version}</version>
-			<scope>provided</scope><!-- since we don't need this in the war file as the db is already stubbed! -->
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>

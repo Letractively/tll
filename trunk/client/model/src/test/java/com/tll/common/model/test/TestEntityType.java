@@ -19,6 +19,7 @@ public enum TestEntityType implements IEntityType, INameValueProvider<String> {
 	ACCOUNT_ADDRESS("Account Address"),
 	ADDRESS("Address"),
 	CURRENCY("Currency"),
+	PAYMENT_INFO("Payment Info"),
 	NESTED_ENTITY("Nested Entity");
 
 	private String name;

@@ -21,13 +21,16 @@ import com.tll.common.model.RelatedOneProperty;
 import com.tll.common.model.StringPropertyValue;
 import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
+import com.tll.model.test.AccountStatus;
+import com.tll.model.test.AddressType;
+import com.tll.model.test.CreditCardType;
 
 /**
  * TestModelFactory - Ad-hoc factory for generating testable {@link Model}
  * instances.
  * @author jpk
  */
-public class MockModelStubber {
+public class TestModelStubber {
 
 	/**
 	 * ModelType - The test model types.
@@ -77,7 +80,7 @@ public class MockModelStubber {
 	 *        standard entity name property will be added.
 	 * @return the stubbed model
 	 */
-	public static Model stubModel(MockEntityType type, Integer version, boolean timestamping, String name) {
+	public static Model stubModel(TestEntityType type, Integer version, boolean timestamping, String name) {
 		final Model m = new Model(type);
 		m.set(new StringPropertyValue(Model.ID_PROPERTY, new PropertyMetadata(PropertyType.STRING, false, true, 10),
 				Integer.toString(++nextUniqueId)));
@@ -102,7 +105,7 @@ public class MockModelStubber {
 	 * @return A stubbed root model for testing.
 	 */
 	public static Model stubAccount(boolean addAddresses) {
-		final Model account = stubAccount(stubAccount(null, MockEntityType.ACCOUNT, 1), MockEntityType.ACCOUNT, 2);
+		final Model account = stubAccount(stubAccount(null, TestEntityType.ACCOUNT, 1), TestEntityType.ACCOUNT, 2);
 
 		final Model aa1 = stubAccountAddress(account, stubAddress(1), 1);
 		final Model aa2 = stubAccountAddress(account, stubAddress(2), 2);
@@ -112,7 +115,7 @@ public class MockModelStubber {
 			addresses.add(aa1);
 			addresses.add(aa2);
 		}
-		account.set(new RelatedManyProperty(MockEntityType.ACCOUNT_ADDRESS, "addresses", false, addresses));
+		account.set(new RelatedManyProperty(TestEntityType.ACCOUNT_ADDRESS, "addresses", false, addresses));
 
 		return account;
 	}
@@ -124,7 +127,7 @@ public class MockModelStubber {
 	 * @param num
 	 * @return new instance
 	 */
-	public static Model stubAccount(Model parentAccount, MockEntityType accountType, int num) {
+	public static Model stubAccount(Model parentAccount, TestEntityType accountType, int num) {
 		final Model m = stubModel(accountType, null, true, "ISP " + num);
 		m
 		.set(new EnumPropertyValue("status", new PropertyMetadata(PropertyType.ENUM, false, true, 16),
@@ -142,9 +145,9 @@ public class MockModelStubber {
 		.set(new DatePropertyValue("nextChargeDate", new PropertyMetadata(PropertyType.DATE, false, true, 32),
 				new Date()));
 		m.set(new DatePropertyValue("dateCancelled", new PropertyMetadata(PropertyType.DATE, false, true, 32), new Date()));
-		m.set(new RelatedOneProperty(MockEntityType.CURRENCY, stubCurrency(), "currency", true));
-		m.set(new RelatedOneProperty(MockEntityType.PAYMENT_INFO, stubPaymentInfo(), "paymentInfo", false));
-		m.set(new RelatedOneProperty(MockEntityType.ACCOUNT, parentAccount, "parent", true));
+		m.set(new RelatedOneProperty(TestEntityType.CURRENCY, stubCurrency(), "currency", true));
+		m.set(new RelatedOneProperty(TestEntityType.PAYMENT_INFO, stubPaymentInfo(), "paymentInfo", false));
+		m.set(new RelatedOneProperty(TestEntityType.ACCOUNT, parentAccount, "parent", true));
 		return m;
 	}
 
@@ -156,11 +159,11 @@ public class MockModelStubber {
 	 * @return new instance
 	 */
 	public static Model stubAccountAddress(Model account, Model address, int num) {
-		final Model m = stubModel(MockEntityType.ACCOUNT_ADDRESS, null, true, ("Adrs " + num));
+		final Model m = stubModel(TestEntityType.ACCOUNT_ADDRESS, null, true, ("Adrs " + num));
 		m.set(new EnumPropertyValue("type", new PropertyMetadata(PropertyType.ENUM, false, true, 8),
 				AddressType.values()[num - 1]));
-		m.set(new RelatedOneProperty(MockEntityType.ACCOUNT, account, "account", true));
-		m.set(new RelatedOneProperty(MockEntityType.ADDRESS, address, "address", false));
+		m.set(new RelatedOneProperty(TestEntityType.ACCOUNT, account, "account", true));
+		m.set(new RelatedOneProperty(TestEntityType.ADDRESS, address, "address", false));
 		return m;
 	}
 
@@ -170,7 +173,7 @@ public class MockModelStubber {
 	 * @return new instance
 	 */
 	public static Model stubAddress(int num) {
-		final Model address = stubModel(MockEntityType.ADDRESS, null, false, null);
+		final Model address = stubModel(TestEntityType.ADDRESS, null, false, null);
 		address.set(new StringPropertyValue("emailAddress", new PropertyMetadata(PropertyType.STRING, false, false, 32),
 				"email" + num + "@domain.com"));
 		address.set(new StringPropertyValue("firstName", new PropertyMetadata(PropertyType.STRING, false, false, 32),
@@ -209,7 +212,7 @@ public class MockModelStubber {
 	 * @return new instance
 	 */
 	public static Model stubCurrency() {
-		final Model m = stubModel(MockEntityType.CURRENCY, null, false, null);
+		final Model m = stubModel(TestEntityType.CURRENCY, null, false, null);
 		m.set(new StringPropertyValue("iso4217", new PropertyMetadata(PropertyType.STRING, false, true, 8), "usd"));
 		m.set(new StringPropertyValue("symbol", new PropertyMetadata(PropertyType.STRING, false, true, 8), "$"));
 		m.set(new DoublePropertyValue("usdExchangeRage", new PropertyMetadata(PropertyType.DOUBLE, false, true, -1), 1d));
@@ -221,7 +224,7 @@ public class MockModelStubber {
 	 * @return new Model representing payment info
 	 */
 	public static Model stubPaymentInfo() {
-		final Model m = stubModel(MockEntityType.PAYMENT_INFO, null, false, null);
+		final Model m = stubModel(TestEntityType.PAYMENT_INFO, null, false, null);
 		m.set(new StringPropertyValue("paymentData_bankAccountNo", new PropertyMetadata(PropertyType.STRING, false, false,
 				16), "0005543"));
 		m.set(new StringPropertyValue("paymentData_bankName", new PropertyMetadata(PropertyType.STRING, false, false, 16),

@@ -5,7 +5,7 @@ import org.testng.annotations.Test;
 import com.tll.dao.IEntityDaoTestHandler;
 import com.tll.dao.test.TestEntityDaoTestHandler;
 import com.tll.model.IEntityGraphPopulator;
-import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
+import com.tll.model.test.TestPersistenceUnitEntityGraphBuilder;
 
 
 

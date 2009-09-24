@@ -3,7 +3,7 @@ package com.tll.client.bind;
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.tll.client.test.ComplexFieldPanel;
-import com.tll.common.model.test.MockModelStubber;
+import com.tll.common.model.test.TestModelStubber;
 
 /**
  * GWT JUnit tests must extend GWTTestCase.
@@ -24,7 +24,7 @@ public class FieldBindingGWTTest extends GWTTestCase {
 	public void testBind() {
 		final ComplexFieldPanel fieldPanel = new ComplexFieldPanel();
 		//fieldPanel.setAction(new SimpleBindingAction());
-		fieldPanel.setModel(MockModelStubber.stubAccount(true));
+		fieldPanel.setModel(TestModelStubber.stubAccount(true));
 		RootPanel.get().add(fieldPanel);
 	}
 }

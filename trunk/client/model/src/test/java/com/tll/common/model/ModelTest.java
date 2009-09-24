@@ -13,9 +13,9 @@ import org.testng.annotations.Test;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.model.ModelPropertyChangeTracker;
-import com.tll.common.model.test.MockEntityType;
-import com.tll.common.model.test.MockModelStubber;
-import com.tll.common.model.test.MockModelStubber.ModelType;
+import com.tll.common.model.test.TestEntityType;
+import com.tll.common.model.test.TestModelStubber;
+import com.tll.common.model.test.TestModelStubber.ModelType;
 
 /**
  * ModelTest - Test the {@link Model#clearPropertyValues(boolean)} method.
@@ -25,7 +25,7 @@ import com.tll.common.model.test.MockModelStubber.ModelType;
 public class ModelTest {
 
 	public void testHierarchicalIteration() throws Exception {
-		final Model m = MockModelStubber.stubAccount(true);
+		final Model m = TestModelStubber.stubAccount(true);
 		final Iterator<IModelProperty> mpItr = m.hierarchicalIterator();
 		while(mpItr.hasNext()) {
 			final IModelProperty mp = mpItr.next();
@@ -34,7 +34,7 @@ public class ModelTest {
 	}
 
 	public void testParentExistsInModelProps() throws Exception {
-		final Model m = MockModelStubber.stubAccount(true);
+		final Model m = TestModelStubber.stubAccount(true);
 		final Iterator<IModelProperty> mpItr = m.hierarchicalIterator();
 		while(mpItr.hasNext()) {
 			final IModelProperty mp = mpItr.next();
@@ -49,7 +49,7 @@ public class ModelTest {
 	 * @throws Exception
 	 */
 	public void testRelativePath() throws Exception {
-		final Model m = MockModelStubber.stubAccount(true);
+		final Model m = TestModelStubber.stubAccount(true);
 		String actual, expected;
 
 		expected = "addresses[0].address.firstName";
@@ -70,7 +70,7 @@ public class ModelTest {
 	 * @throws Exception When the test fails.
 	 */
 	public void testClear() throws Exception {
-		final Model model = MockModelStubber.create(ModelType.COMPLEX);
+		final Model model = TestModelStubber.create(ModelType.COMPLEX);
 		model.clearPropertyValues(true);
 		ModelTestUtils.validateClear(model, new ArrayList<Model>());
 	}
@@ -80,7 +80,7 @@ public class ModelTest {
 	 * @throws Exception When the test fails.
 	 */
 	public void testCopy() throws Exception {
-		final Model model = MockModelStubber.create(ModelType.COMPLEX);
+		final Model model = TestModelStubber.create(ModelType.COMPLEX);
 		final Model copy = model.copy(CopyCriteria.COPY_ALL);
 		ModelTestUtils.validateCopy(model, copy, CopyCriteria.COPY_ALL);
 	}
@@ -90,7 +90,7 @@ public class ModelTest {
 	 * @throws Exception
 	 */
 	public void testMarkedDeleted() throws Exception {
-		final Model model = MockModelStubber.create(ModelType.COMPLEX);
+		final Model model = TestModelStubber.create(ModelType.COMPLEX);
 
 		IModelRefProperty mrp;
 
@@ -110,7 +110,7 @@ public class ModelTest {
 	}
 
 	public void testGetSetEntityRelatedProps() throws Exception {
-		final Model model = MockModelStubber.stubModel(MockEntityType.ADDRESS, null, false, null);
+		final Model model = TestModelStubber.stubModel(TestEntityType.ADDRESS, null, false, null);
 
 		final String id = model.getId();
 		Assert.assertTrue(id != null);
@@ -123,7 +123,7 @@ public class ModelTest {
 	}
 
 	public void testModelCopyNoRefsAndMarkedDeletedAndWhiteList() throws Exception {
-		final Model m = MockModelStubber.stubAccount(true);
+		final Model m = TestModelStubber.stubAccount(true);
 		IModelProperty mp;
 		final HashSet<IModelProperty> mpSet = new HashSet<IModelProperty>();
 
@@ -151,11 +151,11 @@ public class ModelTest {
 	}
 
 	public void testModelCopyNoRefsAndMarkedDeletedAndBlackList() throws Exception {
-		//final Model m = MockModelStubber.stubAccount(true);
+		//final Model m = TestModelStubber.stubAccount(true);
 	}
 
 	public void testModelPropertyChangeTracker() throws Exception {
-		final Model m = MockModelStubber.stubAccount(true);
+		final Model m = TestModelStubber.stubAccount(true);
 		final ModelPropertyChangeTracker changeTracker = new ModelPropertyChangeTracker();
 		changeTracker.set(m);
 		// TODO finish

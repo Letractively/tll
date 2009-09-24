@@ -13,7 +13,7 @@ import com.tll.client.listing.RemoteListingOperator;
 import com.tll.client.ui.listing.ModelListingWidget;
 import com.tll.client.ui.listing.RemoteListingWidget;
 import com.tll.common.model.Model;
-import com.tll.common.model.test.MockModelStubber;
+import com.tll.common.model.test.TestModelStubber;
 import com.tll.common.search.test.TestAddressSearch;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
@@ -44,7 +44,7 @@ public final class UITests extends AbstractUITest {
 		 */
 		public TestRowOptions() {
 			super();
-			address = MockModelStubber.stubAddress(1);
+			address = TestModelStubber.stubAddress(1);
 		}
 
 		public void setListing(TestListingWidget listing) {
@@ -77,7 +77,7 @@ public final class UITests extends AbstractUITest {
 
 		@Override
 		public void handleAddRow() {
-			listing.addRow(MockModelStubber.stubAddress(1));
+			listing.addRow(TestModelStubber.stubAddress(1));
 		}
 
 	}
