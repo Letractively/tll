@@ -5,7 +5,6 @@
  */
 package com.tll.di;
 
-import com.google.inject.Scopes;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.SmbizEntityAssembler;
 
@@ -16,7 +15,8 @@ import com.tll.model.SmbizEntityAssembler;
 public class SmbizModelModule extends ModelModule {
 
 	@Override
-	protected void bindEntityAssembler() {
-		bind(IEntityAssembler.class).to(SmbizEntityAssembler.class).in(Scopes.SINGLETON);
+	protected Class<? extends IEntityAssembler> getEntityAssemblerImplType() {
+		return SmbizEntityAssembler.class;
 	}
+
 }

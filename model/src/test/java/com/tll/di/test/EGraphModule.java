@@ -1,7 +1,10 @@
 /*
  * The Logic Lab
  */
-package com.tll.di;
+package com.tll.di.test;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,9 +17,9 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
-import com.tll.model.EntityGraph;
-import com.tll.model.IEntityGraphPopulator;
 import com.tll.model.test.EntityBeanFactory;
+import com.tll.model.test.EntityGraph;
+import com.tll.model.test.IEntityGraphPopulator;
 import com.tll.model.test.EntityBeanFactory.EntityBeanFactoryParam;
 
 /**
@@ -30,31 +33,19 @@ public abstract class EGraphModule extends AbstractModule {
 	private static final Log log = LogFactory.getLog(EGraphModule.class);
 
 	/**
-	 * The name of the file containing the entity definitions expected to be at
-	 * the root of the classpath.
-	 */
-	private String filename = DEFAULT_FILENAME;
-
-	/**
 	 * Constructor
 	 */
 	public EGraphModule() {
 		super();
 	}
 
-	/**
-	 * Constructor
-	 * @param filename
-	 */
-	public EGraphModule(String filename) {
-		super();
-		this.filename = filename;
-	}
+	protected abstract Class<? extends IEntityGraphPopulator> getEntityGraphBuilderImplType();
 
 	/**
-	 * Binds an {@link IEntityGraphPopulator} impl.
+	 * @return The location of the Spring xml file containing the core entity
+	 *         definitions.
 	 */
-	protected abstract void bindEntityGraphBuilder();
+	protected abstract URI getBeanDefRef();
 
 	@Override
 	protected void configure() {
@@ -62,15 +53,23 @@ public abstract class EGraphModule extends AbstractModule {
 		bind(ListableBeanFactory.class).annotatedWith(EntityBeanFactoryParam.class).toProvider(
 				new Provider<ListableBeanFactory>() {
 
-					@SuppressWarnings("synthetic-access")
 					@Override
 					public ListableBeanFactory get() {
+						URI beanDefRef = getBeanDefRef();
+						if(beanDefRef == null) try {
+							beanDefRef = new URI("mock-entities");
+						}
+						catch(final URISyntaxException e1) {
+							throw new IllegalStateException("Can't locate entity bean def file");
+						}
+
 						// NOTE: we revert to the system class loader as opposed to Spring's
 						// default current thread context class loader
 						// so gmaven invoked groovy scripts don't blow up
 						try {
-							final ClassPathXmlApplicationContext ac =
-								new ClassPathXmlApplicationContext(new String[] { filename }, false);
+							final ClassPathXmlApplicationContext ac = new ClassPathXmlApplicationContext(new String[] {
+								beanDefRef.toString()
+							}, false);
 							ac.setClassLoader(getClass().getClassLoader());
 							ac.refresh();
 							return ac;
@@ -78,8 +77,9 @@ public abstract class EGraphModule extends AbstractModule {
 						catch(final BeanDefinitionStoreException e) {
 							// presume the file could't be found at root of classpath
 							// so fallback on a file-based class loader
-							final FileSystemXmlApplicationContext ac =
-								new FileSystemXmlApplicationContext(new String[] { filename }, false);
+							final FileSystemXmlApplicationContext ac = new FileSystemXmlApplicationContext(new String[] {
+								beanDefRef.toString()
+							}, false);
 							ac.setClassLoader(getClass().getClassLoader());
 							ac.refresh();
 							return ac;
@@ -90,7 +90,7 @@ public abstract class EGraphModule extends AbstractModule {
 		bind(EntityBeanFactory.class).in(Scopes.SINGLETON);
 
 		// IEntityGraphPopulator
-		bindEntityGraphBuilder();
+		bind(IEntityGraphPopulator.class).to(getEntityGraphBuilderImplType()).in(Scopes.SINGLETON);
 
 		// EntityGraph
 		bind(EntityGraph.class).toProvider(new Provider<EntityGraph>() {

@@ -3,7 +3,7 @@
  * @author jpk
  * @since Aug 29, 2009
  */
-package com.tll.dao.db4o;
+package com.tll.dao.db4o.test;
 
 import java.io.File;
 import java.net.URI;
@@ -21,9 +21,9 @@ import com.db4o.reflect.ReflectClass;
 import com.db4o.reflect.jdk.JdkClass;
 import com.google.inject.Inject;
 import com.tll.dao.IDbShell;
-import com.tll.model.EntityGraph;
 import com.tll.model.IEntity;
-import com.tll.model.IEntityGraphPopulator;
+import com.tll.model.test.EntityGraph;
+import com.tll.model.test.IEntityGraphPopulator;
 
 /**
  * MockDbShell

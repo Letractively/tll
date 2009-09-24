@@ -21,15 +21,15 @@ import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.Sorting;
-import com.tll.di.Db4oDbShellModule;
 import com.tll.di.EntityServiceFactoryModule;
 import com.tll.di.LogExceptionHandlerModule;
 import com.tll.di.MailModule;
 import com.tll.di.RefDataModule;
 import com.tll.di.TestListingModule;
 import com.tll.di.TestMarshalModule;
-import com.tll.di.TestPersistenceUnitModelModule;
+import com.tll.di.test.Db4oDbShellModule;
 import com.tll.di.test.TestDb4oDaoModule;
+import com.tll.di.test.TestPersistenceUnitModelModule;
 import com.tll.listhandler.ListHandlerType;
 
 /**

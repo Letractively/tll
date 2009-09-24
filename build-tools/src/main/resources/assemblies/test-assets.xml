@@ -29,6 +29,7 @@
         <include>**/*Util*</include>
         <include>**/*Support*</include>
         <include>**/Test*Module.class</include>
+        <include>**/*.xml</include>
       </includes>
       <outputDirectory>/</outputDirectory>
     </fileSet>

@@ -1,4 +1,4 @@
-package com.tll.di;
+package com.tll.di.test;
 
 import java.net.URI;
 
@@ -11,9 +11,9 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.dao.IDbShell;
-import com.tll.dao.db4o.Db4oDbShell;
+import com.tll.dao.db4o.test.Db4oDbShell;
 import com.tll.di.Db4oDaoModule.Db4oFile;
-import com.tll.model.IEntityGraphPopulator;
+import com.tll.model.test.IEntityGraphPopulator;
 
 /**
  * Db4oDaoModule - Db4o db shell impl module.

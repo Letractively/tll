@@ -647,6 +647,13 @@
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
+			<artifactId>tll-model</artifactId>
+			<classifier>testassets</classifier>
+			<version>${project.parent.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
 			<artifactId>tll-dao-api</artifactId>
 			<classifier>testassets</classifier>
 			<version>${project.parent.version}</version>

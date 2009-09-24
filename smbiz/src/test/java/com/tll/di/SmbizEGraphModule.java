@@ -5,9 +5,12 @@
  */
 package com.tll.di;
 
-import com.google.inject.Scopes;
-import com.tll.model.IEntityGraphPopulator;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import com.tll.di.test.EGraphModule;
 import com.tll.model.SmbizEntityGraphBuilder;
+import com.tll.model.test.IEntityGraphPopulator;
 
 
 /**
@@ -23,17 +26,18 @@ public class SmbizEGraphModule extends EGraphModule {
 		super();
 	}
 
-	/**
-	 * Constructor
-	 * @param filename
-	 */
-	public SmbizEGraphModule(String filename) {
-		super(filename);
+	@Override
+	protected URI getBeanDefRef() {
+		try {
+			return new URI("target/classes/mock-entities.xml");
+		}
+		catch(final URISyntaxException e) {
+			throw new IllegalStateException("Can't find mock entities file", e);
+		}
 	}
 
 	@Override
-	protected void bindEntityGraphBuilder() {
-		bind(IEntityGraphPopulator.class).to(SmbizEntityGraphBuilder.class).in(Scopes.SINGLETON);
+	protected Class<? extends IEntityGraphPopulator> getEntityGraphBuilderImplType() {
+		return SmbizEntityGraphBuilder.class;
 	}
-
 }
