@@ -5,7 +5,6 @@
  */
 package com.tll.client.model;
 
-import java.util.Collection;
 import java.util.HashSet;
 
 import com.tll.common.bind.IPropertyChangeListener;
@@ -13,7 +12,6 @@ import com.tll.common.bind.PropertyChangeEvent;
 import com.tll.common.model.CopyCriteria;
 import com.tll.common.model.IModelProperty;
 import com.tll.common.model.Model;
-import com.tll.common.model.PropertyPathException;
 
 /**
  * ModelPropertyChangeTracker - Tracks model properties whose value has changed (become dirty).
@@ -49,27 +47,11 @@ public class ModelPropertyChangeTracker implements IPropertyChangeListener {
 	}
 
 	/**
-	 * @return Set of dirty (altered) model properties.
-	 */
-	public final Collection<IModelProperty> getChangedModelProperties() {
-		return changes;
-	}
-
-	/**
 	 * @return {@link Model} instance at the same "level" as the specified root
 	 *         model containing <em>only</em> those properties that have been
 	 *         tracked as changed.
 	 */
 	public Model generateChangeModel() {
-		final HashSet<IModelProperty> copySet = new HashSet<IModelProperty>();
-		copySet.addAll(changes);
-		try {
-			copySet.add(root.getModelProperty(Model.ID_PROPERTY));
-			copySet.add(root.getModelProperty(Model.VERSION_PROPERTY));
-		}
-		catch(final PropertyPathException e) {
-			throw new IllegalStateException(e);
-		}
-		return root.copy(new CopyCriteria(false,  true, copySet, null));
+		return root.copy(new CopyCriteria(true, false,  true, changes));
 	}
 }

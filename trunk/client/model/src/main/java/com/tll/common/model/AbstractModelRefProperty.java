@@ -4,11 +4,11 @@
 package com.tll.common.model;
 
 /**
- * ModelRefProperty - Thin wrapper around a {@link Model} in order to realize
+ * AbstractModelRefProperty - Thin wrapper around a {@link Model} in order to realize
  * relationships in a model hierarchy.
  * @author jpk
  */
-public abstract class ModelRefProperty extends AbstractRelationalProperty implements IModelRefProperty {
+abstract class AbstractModelRefProperty extends AbstractRelationalProperty implements IModelRefProperty {
 
 	/**
 	 * The related one model.
@@ -18,7 +18,7 @@ public abstract class ModelRefProperty extends AbstractRelationalProperty implem
 	/**
 	 * Constructor
 	 */
-	public ModelRefProperty() {
+	public AbstractModelRefProperty() {
 		super();
 	}
 
@@ -30,9 +30,9 @@ public abstract class ModelRefProperty extends AbstractRelationalProperty implem
 	 * @param propName
 	 * @param reference
 	 */
-	public ModelRefProperty(IEntityType relatedType, Model model, String propName, boolean reference) {
+	public AbstractModelRefProperty(IEntityType relatedType, Model model, String propName, boolean reference) {
 		super(relatedType, propName, reference);
-		this.model = model;
+		setModel(model, false);
 	}
 
 	public final Object getValue() {
@@ -43,7 +43,7 @@ public abstract class ModelRefProperty extends AbstractRelationalProperty implem
 		if(value != null && value instanceof Model == false) {
 			throw new IllegalArgumentException("The value is not a Model instance.");
 		}
-		setModel((Model) value);
+		setModel((Model) value, true);
 	}
 
 	@Override
@@ -55,22 +55,24 @@ public abstract class ModelRefProperty extends AbstractRelationalProperty implem
 	 * Responsible for setting the model and firing a property change events if
 	 * necessary.
 	 * @param model The model to set
+	 * @param fireChangeEvent when <code>true</code>, a property change event will be fired
 	 * @throws IllegalArgumentException
 	 */
-	protected final void setModel(Model model) throws IllegalArgumentException {
+	protected final void setModel(Model model, boolean fireChangeEvent) throws IllegalArgumentException {
 		final Model oldModel = this.model;
 		if(oldModel != model) {
-			// NOTE: we don't *require* the relatedType to be set but if it is, we
-			// enfore type compatability
-			// TODO re-impl
-			/*
-			if(relatedType != null && model != null
-					&& !(relatedType == model.getEntityType() || relatedType.isSubtype(model.getEntityType()))) {
-				throw new IllegalArgumentException("The model must be a " + relatedType.getPresentationName());
+			if(model != null) {
+				// TODO re-impl (?)
+				// enfore type compatability
+				/*
+				if(relatedType != null && model != null
+						&& !(relatedType == model.getEntityType() || relatedType.isSubtype(model.getEntityType()))) {
+					throw new IllegalArgumentException("The model must be a " + relatedType.getPresentationName());
+				}
+				 */
 			}
-			 */
 			this.model = model;
-			getChangeSupport().firePropertyChange(propertyName, oldModel, model);
+			if(fireChangeEvent) getChangeSupport().firePropertyChange(propertyName, oldModel, model);
 		}
 	}
 
@@ -81,7 +83,6 @@ public abstract class ModelRefProperty extends AbstractRelationalProperty implem
 		sb.append(isReference() ? "[REF] " : " ");
 		final Model m = getModel();
 		sb.append(m == null ? "null" : m.toString());
-		sb.append(" parent: " + (parent == null ? "null" : parent.getPropertyName()));
 		return sb.toString();
 	}
 }

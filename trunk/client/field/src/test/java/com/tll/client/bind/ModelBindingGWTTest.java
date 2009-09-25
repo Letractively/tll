@@ -172,7 +172,7 @@ public class ModelBindingGWTTest extends GWTTestCase {
 		// right.setAsRoot();
 
 		// sanity check: verify we are equal before we bind
-		ModelTestUtils.validateCopy(left, right, new CopyCriteria(true, false ,null, null));
+		ModelTestUtils.validateCopy(left, right, new CopyCriteria(true, true, false ,null));
 
 		return new Model[] {
 			left, right };

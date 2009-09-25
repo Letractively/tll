@@ -3,17 +3,15 @@
  */
 package com.tll.common.model;
 
-
-
 /**
- * AbstractRelationalProperty - Base class for Model properties that are
- * relational.
+ * AbstractRelationalProperty - Base class for model properties target a single
+ * {@link Model} instance.
  * @author jpk
  */
 public abstract class AbstractRelationalProperty extends AbstractModelProperty implements IRelationalProperty {
 
 	/**
-	 * The related type.
+	 * The related type (needed when the model ref is null).
 	 */
 	protected IEntityType relatedType;
 
@@ -33,12 +31,13 @@ public abstract class AbstractRelationalProperty extends AbstractModelProperty i
 
 	/**
 	 * Constructor
-	 * @param relatedType The related type
+	 * @param relatedType The required related type
 	 * @param propertyName The property name
 	 * @param reference Is the relation a reference?
 	 */
 	public AbstractRelationalProperty(IEntityType relatedType, String propertyName, boolean reference) {
 		super(propertyName);
+		if(relatedType == null) throw new IllegalArgumentException("Null related type");
 		this.relatedType = relatedType;
 		this.reference = reference;
 	}

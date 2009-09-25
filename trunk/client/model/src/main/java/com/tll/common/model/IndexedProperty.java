@@ -13,7 +13,7 @@ import com.tll.util.PropertyPath;
  * {@link RelatedManyProperty}.
  * @author jpk
  */
-public final class IndexedProperty extends ModelRefProperty {
+public final class IndexedProperty extends AbstractModelRefProperty {
 
 	/**
 	 * The index at which the target {@link Model} exists in the underlying list.
@@ -22,17 +22,14 @@ public final class IndexedProperty extends ModelRefProperty {
 
 	/**
 	 * Constructor
-	 * @param parent the required related many prop
 	 * @param indexedType the required related type (type of the indexed models)
 	 * @param model indexed model ref. May be <code>null</code>
 	 * @param propName
 	 * @param reference
 	 * @param index The index
 	 */
-	IndexedProperty(RelatedManyProperty parent, IEntityType indexedType, Model model, String propName, boolean reference, int index) {
+	IndexedProperty(IEntityType indexedType, Model model, String propName, boolean reference, int index) {
 		super(indexedType, model, PropertyPath.index(propName, index), reference);
-		assert parent != null;
-		setParent(parent);
 		this.index = index;
 	}
 

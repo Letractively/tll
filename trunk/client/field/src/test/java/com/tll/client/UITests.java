@@ -407,7 +407,7 @@ public final class UITests extends AbstractUITest {
 				new EditPanel(new ComplexFieldPanel(), false, false, ErrorHandlerBuilder.build(true, true,
 						new GlobalMsgPanel()));
 
-			final CopyCriteria mcrit = new CopyCriteria(true, false, null, null);
+			final CopyCriteria mcrit = new CopyCriteria(true, true, false, null);
 
 			ep.addEditHandler(new IEditHandler() {
 

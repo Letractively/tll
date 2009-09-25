@@ -7,7 +7,6 @@ package com.tll.common.model;
 import org.testng.annotations.Test;
 
 import com.tll.common.model.test.TestModelStubber;
-import com.tll.common.model.test.TestModelStubber.ModelType;
 
 /**
  * PropertyPathModelResolutionTest
@@ -15,17 +14,17 @@ import com.tll.common.model.test.TestModelStubber.ModelType;
  */
 @Test(groups = "client-model")
 public class PropertyPathModelResolutionTest {
-	
+
 	/**
 	 * Test the property path resolution of EXISTING property values
 	 * @throws Exception Upon any encountered failure
 	 */
 	public void testResolution() throws Exception {
-		final Model model = TestModelStubber.create(ModelType.COMPLEX);
+		final Model model = TestModelStubber.stubAccount(true);
 
 		IModelProperty prop;
 		String path;
-		
+
 		path = "name";
 		prop = model.getModelProperty(path);
 		assert prop != null : "Unable to resolve property path: " + path;
@@ -51,7 +50,7 @@ public class PropertyPathModelResolutionTest {
 		path = "addresses[0]";
 		prop = model.getModelProperty(path);
 		assert prop != null : "Unable to resolve property path: " + path;
-		assert prop instanceof ModelRefProperty : "Expected ModelRefProperty impl at property path: " + path;
+		assert prop instanceof IModelRefProperty : "Expected AbstractModelRefProperty impl at property path: " + path;
 
 		path = "addresses[20]";
 		try {

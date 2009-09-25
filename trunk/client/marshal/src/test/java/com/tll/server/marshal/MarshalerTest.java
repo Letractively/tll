@@ -27,9 +27,9 @@ import com.tll.model.IEntity;
 import com.tll.model.IScalar;
 import com.tll.model.test.Account;
 import com.tll.model.test.AccountAddress;
+import com.tll.model.test.AccountStatus;
 import com.tll.model.test.EntityBeanFactory;
 import com.tll.model.test.EntityGraph;
-import com.tll.model.test.FieldEnum;
 import com.tll.model.test.NestedEntity;
 import com.tll.model.test.TestPersistenceUnitEntityGraphBuilder;
 import com.tll.server.rpc.entity.IEntityTypeResolver;
@@ -49,7 +49,7 @@ public class MarshalerTest extends AbstractDbAwareTest {
 		tupleMap.put("date", new Date());
 		tupleMap.put("integer", new Integer(1));
 		tupleMap.put("character", new Character('c'));
-		tupleMap.put("enum", FieldEnum.OPEN);
+		tupleMap.put("enum", AccountStatus.OPEN);
 		tupleMap.put("boolean", new Boolean(true));
 	}
 

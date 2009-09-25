@@ -21,8 +21,6 @@ public abstract class AbstractModelProperty implements IModelProperty {
 	 */
 	protected/*final*/String propertyName;
 
-	protected IRelationalProperty parent;
-
 	/**
 	 * Needed for {@link ISourcesPropertyChangeEvents} implementation. <br>
 	 * <b>NOTE: </b>This member is <em>not</em> intended for RPC marshaling.
@@ -48,22 +46,13 @@ public abstract class AbstractModelProperty implements IModelProperty {
 			throw new IllegalArgumentException("A property name must be specified");
 		}
 		 */
-		Log.debug("Creating model property: " + propertyName);
-		assert propertyName != null;
+		//Log.debug("Creating model property: " + propertyName);
+		//assert propertyName != null;
 		this.propertyName = propertyName;
 	}
 
 	public final String getPropertyName() {
 		return propertyName;
-	}
-
-	@Override
-	public final IRelationalProperty getParent() {
-		return parent;
-	}
-
-	final void setParent(IRelationalProperty parent) {
-		this.parent = parent;
 	}
 
 	// NOTE: we ignore the propPath

@@ -34,7 +34,7 @@ public class Account extends NamedTimeStampEntity implements IChildEntity<Accoun
 
 	protected Account parent;
 
-	protected FieldEnum status;
+	protected AccountStatus status;
 
 	protected String billingModel;
 
@@ -137,14 +137,14 @@ public class Account extends NamedTimeStampEntity implements IChildEntity<Accoun
 	 * @return Returns the status.
 	 */
 	@NotNull
-	public FieldEnum getStatus() {
+	public AccountStatus getStatus() {
 		return status;
 	}
 
 	/**
 	 * @param status The status to set.
 	 */
-	public void setStatus(FieldEnum status) {
+	public void setStatus(AccountStatus status) {
 		this.status = status;
 	}
 
