@@ -48,7 +48,7 @@ public class ModelTestUtils {
 			}
 			else if(pvType == PropertyType.RELATED_ONE) {
 				// drill into if not already visited
-				final ModelRefProperty srcMrp = (ModelRefProperty) srcMp;
+				final IModelRefProperty srcMrp = (IModelRefProperty) srcMp;
 				final Model m = srcMrp.getModel();
 				visited.add(m);
 				if(m != null) {
@@ -137,8 +137,8 @@ public class ModelTestUtils {
 			}
 			else if(pvType == PropertyType.RELATED_ONE) {
 				// drill into if not already visited
-				final ModelRefProperty src = (ModelRefProperty) srcProp;
-				final ModelRefProperty tgt = (ModelRefProperty) tgtProp;
+				final IModelRefProperty src = (IModelRefProperty) srcProp;
+				final IModelRefProperty tgt = (IModelRefProperty) tgtProp;
 				final Model srcModel = src.getModel();
 				final Model tgtModel = tgt.getModel();
 				if(srcModel == null && tgtModel != null) {

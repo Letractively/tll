@@ -21,13 +21,13 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	/**
 	 * The list of indexed props.
 	 */
-	protected ArrayList<IndexedProperty> list;
+	private ArrayList<IndexedProperty> list;
 
 	/**
 	 * The corresponding model list whereby at each index, the the model in the
 	 * indexed property list is that in this list. We track this to fire proper property change events
 	 */
-	protected ArrayList<Model> mlist;
+	private ArrayList<Model> mlist;
 
 	/**
 	 * Constructor
@@ -84,7 +84,9 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 			}
 			int i = 0;
 			for(final Model im : clc) {
-				list.add(new IndexedProperty(this, relatedType, im, propertyName, isReference(), i++));
+				final IndexedProperty ip = new IndexedProperty(relatedType, im, propertyName, isReference(), i++);
+				list.add(ip);
+				mlist.add(im);
 			}
 			// IMPT: refer to the value agrument as the new value to avoid spurious
 			// re-firings of property change events
@@ -146,14 +148,14 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 				if(m != null) {
 					// add
 					mlist.add(m);
-					list.add(new IndexedProperty(this, relatedType, m, propertyName, isReference(), index));
+					list.add(new IndexedProperty(relatedType, m, propertyName, isReference(), index));
 				}
 			}
 			else if(index < size) {
 				if(m != null) {
 					// replace
 					old = mlist.set(index, m);
-					list.get(index).setModel(m);
+					list.get(index).setModel(m, false);
 				}
 				else {
 					// remove
@@ -185,7 +187,6 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 		final StringBuilder sb = new StringBuilder();
 		sb.append(propertyName);
 		sb.append(isReference() ? "[REF] " : " ");
-		sb.append(" parent: " + parent == null ? "null" : parent.getPropertyName());
 		sb.append(" [");
 		if(list != null) {
 			for(final Iterator<IndexedProperty> itr = list.iterator(); itr.hasNext();) {

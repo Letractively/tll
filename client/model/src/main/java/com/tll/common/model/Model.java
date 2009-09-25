@@ -109,6 +109,184 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 */
 	public static final String DATE_MODIFIED_PROPERTY = "dateModified";
 
+	private static String resolveModelProperty(final IModelProperty target, IModelProperty current, String parentPath,
+			RefSet<Model> visited) {
+
+		if(current.getType().isModelRef()) {
+			final Model m = ((IModelRefProperty) current).getModel();
+			if(visited.exists(m)) return null;
+			if(!visited.add(m)) throw new IllegalStateException();
+		}
+
+		final String cpp = PropertyPath.getPropertyPath(parentPath, current.getPropertyName());
+		//Log.debug("resolveModelProperty() current prop path: " + cpp);
+
+		if(target == current) return cpp;
+
+		if(current instanceof RelatedOneProperty) {
+			final RelatedOneProperty rop = (RelatedOneProperty) current;
+			final Model m = rop.getModel();
+			if(m != null) {
+				for(final IModelProperty mp : m) {
+					final String path = resolveModelProperty(target, mp, cpp, visited);
+					if(path != null) return path;
+				}
+			}
+		}
+		else if(current instanceof RelatedManyProperty) {
+			final RelatedManyProperty rmp = (RelatedManyProperty) current;
+			for(final IndexedProperty ip : rmp) {
+				final String ipath = PropertyPath.index(cpp, ip.getIndex());
+				if(ip == target) return ipath;
+				for(final IModelProperty mp : ip.getModel()) {
+					final String path = resolveModelProperty(target, mp, ipath, visited);
+					if(path != null) return path;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Recursive copy routine to guard against re-copying entities.
+	 * <p><b>NOTE: </b>A model prop whitelist trumps the references flag!
+	 * @param parentPropPath the parent property path relative to the "root" model
+	 * @param source The model to be copied
+	 * @param copy the copy
+	 * @param idAndVersion
+	 * @param references
+	 * @param markedDeleted
+	 * @param propWhitelist
+	 * @param visited
+	 */
+	private static void copy(String parentPropPath, final Model source, Model copy, final boolean idAndVersion,
+			final boolean references, final boolean markedDeleted, final String[] propWhitelist, final RefSet<Model> visited) {
+
+		if(source == null) return;
+
+		if(!markedDeleted && source.isMarkedDeleted()) return;
+
+		// check visited
+		if(visited.exists(source)) return;
+		if(!visited.add(source)) throw new IllegalStateException();
+
+		copy.markedDeleted = source.markedDeleted;
+		if(idAndVersion) {
+			copy.setId(source.getId());
+			copy.setVersion(source.getVersion());
+		}
+
+		for(final IModelProperty srcprop : source.props) {
+			assert srcprop != null;
+
+			final String crntPropPath = PropertyPath.getPropertyPath(parentPropPath, srcprop.getPropertyName());
+
+			boolean cpyByWhitelist = false;
+			// white list check
+			if(propWhitelist != null) {
+				// if the current root rel property path is parent to or
+				// equals any white list path we proceed
+				for(final String whiteProp : propWhitelist) {
+					if(whiteProp.indexOf(crntPropPath) == 0) {
+						cpyByWhitelist = true;
+						break;
+					}
+				}
+				if(!cpyByWhitelist) {
+					Log.debug(" Skipping [" + crntPropPath + "] not in white list - skipping");
+					continue;
+				}
+			}
+
+			// related one
+			if(srcprop instanceof RelatedOneProperty) {
+				final IModelRefProperty mrp = (IModelRefProperty) srcprop;
+				final Model srcModel = mrp.getModel();
+				if((cpyByWhitelist || (markedDeleted || (!markedDeleted && srcModel != null && !srcModel.isMarkedDeleted()))
+						&& (references || !mrp.isReference()))) {
+					final Model cpyModel = srcModel == null ? null : new Model(srcModel.entityType);
+					if(cpyModel != null)
+						copy(crntPropPath, srcModel, cpyModel, idAndVersion, references, markedDeleted, propWhitelist, visited);
+					copy.set(new RelatedOneProperty(mrp.getRelatedType(), cpyModel, mrp.getPropertyName(), mrp.isReference()));
+				}
+			}
+
+			// related many
+			else if(srcprop instanceof RelatedManyProperty) {
+				final RelatedManyProperty rmp = (RelatedManyProperty) srcprop;
+				if(propWhitelist != null || references || !rmp.isReference()) {
+					final ArrayList<Model> clist = new ArrayList<Model>(rmp.size());
+					for(final IndexedProperty ip : rmp) {
+						final Model im = ip.getModel();
+						if(cpyByWhitelist || (markedDeleted || (!markedDeleted && !im.isMarkedDeleted()))) {
+							final String ipath = PropertyPath.index(crntPropPath, ip.getIndex());
+							final Model cim = new Model(im.entityType);
+							copy(ipath, im, cim, idAndVersion, references, markedDeleted, propWhitelist, visited);
+							clist.add(cim);
+						}
+						copy.set(new RelatedManyProperty(rmp.getRelatedType(), rmp.getPropertyName(), rmp.isReference(), clist));
+					}
+				}
+			}
+
+			// prop or nested val..
+			else {
+				assert srcprop.getType().isValue() || srcprop.getType().isNested();
+				copy.set(((IPropertyValue) srcprop).copy());
+			}
+		} // loop
+
+	}
+
+	/**
+	 * Clears all nested property values of the given model.
+	 * @param model The group to be cleared
+	 * @param clearReferences Clear valus held in related models marked as a
+	 *        reference?
+	 * @param visited
+	 */
+	private static void clearProps(Model model, final boolean clearReferences, RefSet<Model> visited) {
+
+		if(model == null) return;
+
+		// check visited
+		if(visited.exists(model)) return;
+		if(!visited.add(model)) throw new IllegalStateException();
+
+		model.markedDeleted = false;
+
+		for(final IModelProperty prop : model.props) {
+			assert prop != null;
+
+			// model prop (relational) val...
+			if(prop instanceof IModelRefProperty) {
+				final IModelRefProperty gpv = (IModelRefProperty) prop;
+				if(clearReferences || !gpv.isReference()) {
+					clearProps(gpv.getModel(), clearReferences, visited);
+				}
+			}
+
+			// model list (relational) prop val...
+			else if(prop instanceof RelatedManyProperty) {
+				final RelatedManyProperty rmp = (RelatedManyProperty) prop;
+				if(clearReferences || !rmp.isReference()) {
+					final List<Model> list = rmp.getModelList();
+					if(list != null) {
+						for(final Model m : list) {
+							clearProps(m, clearReferences, visited);
+						}
+					}
+				}
+			}
+
+			// property values...
+			else {
+				((IPropertyValue) prop).clear();
+			}
+		}
+	}
+
 	/**
 	 * The set of model properties. <br>
 	 * NOTE: can't mark as final for GWT RPC compatibility
@@ -125,12 +303,6 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * data is scheduled for deletion.
 	 */
 	private boolean markedDeleted;
-
-	/**
-	 * Ref to self (this {@link Model}) that is lazily instantiated and is exists
-	 * to be able to pass a {@link Model} ref as an {@link IModelProperty}.
-	 */
-	private RelatedOneProperty selfRef;
 
 	/**
 	 * Constructor
@@ -233,17 +405,6 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	}
 
 	/**
-	 * @return Reference to <em>this</em> Model expressed as an
-	 *         {@link IModelProperty}.
-	 */
-	public RelatedOneProperty getSelfRef() {
-		if(selfRef == null) {
-			selfRef = new RelatedOneProperty(getEntityType(), this, "<root>", true);
-		}
-		return selfRef;
-	}
-
-	/**
 	 * Finds a property value in this model's collection of property values given
 	 * a non-path property name. (No property path resolution is performed.)
 	 * <p>
@@ -265,7 +426,6 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 */
 	public void set(IModelProperty mprop) {
 		props.set(mprop);
-		((AbstractModelProperty) mprop).setParent(getSelfRef());
 	}
 
 	/**
@@ -295,7 +455,6 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		}
 		if(rmv != null) {
 			if(props.remove(rmv)) {
-				((AbstractModelProperty) mprop).setParent(null);
 				return true;
 			}
 		}
@@ -332,39 +491,6 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 
 	public void setProperty(String propPath, Object value) throws PropertyPathException, IllegalArgumentException {
 		setProperty(propPath, value, null);
-	}
-
-	/**
-	 * Sets a model properties' value conditionally creating the wrapping model
-	 * property if not present.
-	 * @param propPath
-	 * @param value
-	 * @param ptype if specified, the property will be automatically created if it
-	 *        doesn't exist
-	 * @throws PropertyPathException
-	 * @throws IllegalArgumentException
-	 */
-	private void setProperty(String propPath, Object value, PropertyType ptype) throws PropertyPathException,
-	IllegalArgumentException {
-		try {
-			IModelProperty mprop = null;
-			if(PropertyPath.isIndexed(propPath)) {
-				// divert to the "physical" related many property as indexed properties
-				// are "virtual"
-				mprop = relatedMany(PropertyPath.deIndex(propPath));
-			}
-			else {
-				mprop = getModelProperty(propPath);
-			}
-			mprop.setProperty(propPath, value);
-		}
-		catch(final UnsetPropertyException e) {
-			if(ptype != null) {
-				// create it
-				final IPropertyValue pv = AbstractPropertyValue.create(ptype, e.parentProperty, null);
-				e.parentModel.set(pv);
-			}
-		}
 	}
 
 	/**
@@ -417,7 +543,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * @throws PropertyPathException When the model property can't be resolved.
 	 */
 	public IModelProperty getModelProperty(String propPath) throws PropertyPathException {
-		return StringUtil.isEmpty(propPath) ? getSelfRef() : resolvePropertyPath(propPath);
+		return StringUtil.isEmpty(propPath) ? getNonNullRef() : resolvePropertyPath(propPath);
 	}
 
 	/**
@@ -524,6 +650,189 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	}
 
 	/**
+	 * Determines the root relative path of a given descendant.
+	 * @param descendant A model property presumed to be a desdendant under this
+	 *        model instance
+	 * @return the calculated property path relative to this root model instance
+	 */
+	public String getRelPath(IModelProperty descendant) {
+		return resolveModelProperty(descendant);
+	}
+
+	/**
+	 * Deep copies this instance creating a new distinct model instance containing
+	 * a sub-set of properties that match the given criteria.
+	 * @param criteria the copy criteria
+	 * @return Clone of this instance or <code>null</code> if this model is marked
+	 *         as deleted and the given <code>copyMarkedDeleted</code> param is
+	 *         <code>true</code>.
+	 */
+	public Model copy(final CopyCriteria criteria) {
+		final Model copy = new Model(this.entityType);
+		// resolve the white list model prop refs to property paths
+		final int wls = criteria.whiteList == null ? 0 : criteria.whiteList.size();
+		final HashSet<String> pwl = wls == 0 ? null : new HashSet<String>(wls);
+		if(pwl != null) {
+			for(final IModelProperty mp : criteria.whiteList) {
+				pwl.add(resolveModelProperty(mp));
+			}
+		}
+		final String[] arrpwl = pwl == null ? null : pwl.toArray(new String[pwl.size()]);
+		copy(null, this, copy, criteria.idAndVersion, criteria.references, criteria.markedDeleted, arrpwl, new RefSet<Model>());
+		return copy;
+	}
+
+	/**
+	 * Clears a single property value.
+	 * @param propPath Identifies the property value to clear
+	 * @throws PropertyPathException
+	 */
+	public void clearPropertyValue(String propPath) throws PropertyPathException {
+		getPropertyValue(propPath).clear();
+	}
+
+	/**
+	 * Walks the held collection of {@link IPropertyValue}s clearing then
+	 * recursing as necessary to ensure all have been visited.
+	 * @param clearReferences Clear valus held in related models marked as a
+	 *        reference?
+	 */
+	public void clearPropertyValues(boolean clearReferences) {
+		clearProps(this, clearReferences, new RefSet<Model>());
+	}
+
+	/**
+	 * Non-hierarchical iteration.
+	 * @return An iterator traversing only the immediate child model propertis of
+	 *         this intance.
+	 */
+	public Iterator<IModelProperty> iterator() {
+		return props.iterator();
+	}
+
+	/**
+	 * @return <code>true</code> if this group is marked for deletion.
+	 */
+	public boolean isMarkedDeleted() {
+		return markedDeleted;
+	}
+
+	/**
+	 * Sets the makred for deletion flag.
+	 * @param markedDeleted
+	 */
+	public void setMarkedDeleted(boolean markedDeleted) {
+		this.markedDeleted = markedDeleted;
+	}
+
+	public void addPropertyChangeListener(IPropertyChangeListener listener) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void addPropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
+		try {
+			resolvePropertyPath(propertyName).addPropertyChangeListener(listener);
+		}
+		catch(final PropertyPathException e) {
+			throw new IllegalArgumentException("Unable to add property change listener", e);
+		}
+	}
+
+	public IPropertyChangeListener[] getPropertyChangeListeners() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void removePropertyChangeListener(IPropertyChangeListener listener) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void removePropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
+		try {
+			resolvePropertyPath(propertyName).removePropertyChangeListener(listener);
+		}
+		catch(final PropertyPathException e) {
+			throw new IllegalArgumentException("Unable to remove property change listener", e);
+		}
+	}
+
+	@Override
+	public String descriptor() {
+		return getKey().descriptor();
+	}
+
+	/**
+	 * @return The number of immediate (non-hierarchical) child properties.
+	 */
+	public int size() {
+		return props.size();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(!(obj instanceof Model)) return false;
+		return getKey().equals(((Model) obj).getKey());
+	}
+
+	@Override
+	public int hashCode() {
+		return getKey().hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return getKey().toString()/* + " [" + ((Object) this).hashCode() + ']'*/;
+	}
+
+	private IModelRefProperty getNonNullRef() {
+		return new RelatedOneProperty(entityType, this, null, true);
+	}
+
+	/**
+	 * Sets a model properties' value conditionally creating the wrapping model
+	 * property if not present.
+	 * @param propPath
+	 * @param value
+	 * @param ptype if specified, the property will be automatically created if it
+	 *        doesn't exist
+	 * @throws PropertyPathException
+	 * @throws IllegalArgumentException
+	 */
+	private void setProperty(String propPath, Object value, PropertyType ptype) throws PropertyPathException,
+	IllegalArgumentException {
+		try {
+			IModelProperty mprop = null;
+			if(PropertyPath.isIndexed(propPath)) {
+				// divert to the "physical" related many property as indexed properties
+				// are "virtual"
+				mprop = relatedMany(PropertyPath.deIndex(propPath));
+			}
+			else {
+				mprop = getModelProperty(propPath);
+			}
+			mprop.setProperty(propPath, value);
+		}
+		catch(final UnsetPropertyException e) {
+			if(ptype != null) {
+				// create it
+				final IPropertyValue pv = AbstractPropertyValue.create(ptype, e.parentProperty, null);
+				e.parentModel.set(pv);
+			}
+		}
+	}
+
+	/**
+	 * Calculates the property path of the given descendant model property.
+	 * @param descendant
+	 * @return the property path that resolves to the given descendant or
+	 *         <code>null</code> if it doesn't resolve.
+	 */
+	private String resolveModelProperty(IModelProperty descendant) {
+		return resolveModelProperty(descendant, new RelatedOneProperty(entityType, this, null, true), "",
+				new RefSet<Model>());
+	}
+
+	/**
 	 * Resolves a given property path against the hierarchy of this model throwing
 	 * a specific {@link PropertyPathException} when an error occurs.
 	 * @param propPath The property path
@@ -616,332 +925,6 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 			}
 		}
 		throw new MalformedPropPathException(propPath);
-	}
-
-	/**
-	 * ModelRefs
-	 * @author jpk
-	 */
-	@SuppressWarnings("serial")
-	static final class ModelRefs extends RefSet<Model> {
-	}
-
-	/**
-	 * Calculates the property path from an ancestor to a child target. If the
-	 * descendant is not reachable from the ancestor, <code>null</code> is
-	 * returned.
-	 * @param ancestor
-	 * @param descendant
-	 * @return property path of the target relative to the ancestor or
-	 *         <code>null</code> if they are not "related" (reachable)
-	 */
-	public static String getRelativePath(IRelationalProperty ancestor, IModelProperty descendant) {
-		if(ancestor == null || descendant == null) return null;
-		final PropertyPath rpath = new PropertyPath();
-		IModelProperty current = descendant;
-		do {
-			if(current == ancestor) break;
-			rpath.prepend(current.getPropertyName());
-			current = current.getParent();
-		} while(current != null);
-
-		return rpath.toString();
-	}
-
-	/**
-	 * Deep copies this instance creating a new distinct model instance containing
-	 * a sub-set of properties that match the given criteria.
-	 * @param criteria the copy criteria
-	 * @return Clone of this instance or <code>null</code> if this model is marked
-	 *         as deleted and the given <code>copyMarkedDeleted</code> param is
-	 *         <code>true</code>.
-	 */
-	public Model copy(final CopyCriteria criteria) {
-		final Model copy = new Model(this.entityType);
-		copy(getSelfRef(), this, copy, criteria, new ModelRefs());
-		return copy;
-	}
-
-	/**
-	 * Recursive copy routine to guard against re-copying entities
-	 * @param root the root model ref which is always constant
-	 * @param source The model to be copied
-	 * @param copy the copy
-	 * @param criteria the copy criteria
-	 * @param visited
-	 */
-	private static void copy(final RelatedOneProperty root, Model source, Model copy, final CopyCriteria criteria,
-			final ModelRefs visited) {
-
-		if(source == null) return;
-
-		if(!criteria.markedDeleted && source.isMarkedDeleted()) return;
-
-		// check visited
-		if(visited.exists(source)) return;
-		if(!visited.add(source)) throw new IllegalStateException();
-
-		copy.markedDeleted = source.markedDeleted;
-
-		for(final IModelProperty srcprop : source.props) {
-			assert srcprop != null;
-
-			final String crntRootRelPath = getRelativePath(root, srcprop);
-			Log.debug("Iterating Model prop [" + srcprop + "] Root rel path: " + crntRootRelPath);
-			// PropertyPath ppCrntRelRoot = new PropertyPath(crntRootRelPath);
-
-			// white list check
-			if(criteria.whiteList != null) {
-				boolean cpy = false;
-				for(final IModelProperty whiteProp : criteria.whiteList) {
-					final String whiteRootRelPath = getRelativePath(root, whiteProp);
-					// PropertyPath ppWhiteRelRoot = new PropertyPath(whiteRootRelPath);
-
-					// if the current root rel property path is contained in or equals
-					// this white list root rel path then we proceed
-					if(whiteRootRelPath.indexOf(crntRootRelPath) != 0) {
-						cpy = false;
-						Log.debug(" Skipping [" + srcprop + "] not in white list - skipping");
-						break;
-					}
-				}
-				if(!cpy) continue;
-			}
-
-			// black list check
-			else if(criteria.blackList != null) {
-				boolean cpy = false;
-				for(final IModelProperty blackProp : criteria.blackList) {
-					final String blackRootRelPath = getRelativePath(root, blackProp);
-
-					// if the current root rel property path is contained in or equals
-					// this black list root rel path then we skip
-					if(blackRootRelPath.indexOf(crntRootRelPath) == 0) {
-						cpy = false;
-						Log.debug(" Skipping [" + srcprop + "] in black list");
-						break;
-					}
-				}
-				if(!cpy) continue;
-			}
-
-			// related one or indexed prop...
-			if(srcprop instanceof IModelRefProperty) {
-				final IModelRefProperty mrp = (IModelRefProperty) srcprop;
-				final Model srcModel = mrp.getModel();
-				if((criteria.markedDeleted || (!criteria.markedDeleted && srcModel != null && !srcModel.isMarkedDeleted()))
-						&& (criteria.references || !mrp.isReference())) {
-					final Model cpyModel = srcModel == null ? null : new Model(srcModel.entityType);
-					if(cpyModel != null) copy(root, srcModel, cpyModel, criteria, visited);
-					copy.set(new RelatedOneProperty(mrp.getRelatedType(), cpyModel, mrp.getPropertyName(), mrp.isReference()));
-				}
-			}
-
-			// related many...
-			else if(srcprop instanceof RelatedManyProperty) {
-				final RelatedManyProperty rmp = (RelatedManyProperty) srcprop;
-				if(criteria.references || !rmp.isReference()) {
-					final List<Model> list = rmp.getModelList();
-					List<Model> clist = null;
-					if(list != null) {
-						clist = new ArrayList<Model>(list.size());
-						for(final Model model : list) {
-							if((criteria.markedDeleted || (!criteria.markedDeleted && !model.isMarkedDeleted()))) {
-								final Model cim = new Model(model.entityType);
-								copy(root, model, cim, criteria, visited);
-								clist.add(cim);
-							}
-						}
-					}
-					copy.set(new RelatedManyProperty(rmp.getRelatedType(), rmp.getPropertyName(), rmp.isReference(), clist));
-				}
-			}
-
-			// prop val..
-			else {
-				copy.set(((IPropertyValue) srcprop).copy());
-			}
-		}
-	}
-
-	/**
-	 * Clears a single property value.
-	 * @param propPath Identifies the property value to clear
-	 * @throws PropertyPathException
-	 */
-	public void clearPropertyValue(String propPath) throws PropertyPathException {
-		getPropertyValue(propPath).clear();
-	}
-
-	/**
-	 * Walks the held collection of {@link IPropertyValue}s clearing then
-	 * recursing as necessary to ensure all have been visited.
-	 * @param clearReferences Clear valus held in related models marked as a
-	 *        reference?
-	 */
-	public void clearPropertyValues(boolean clearReferences) {
-		clearProps(this, clearReferences, new ModelRefs());
-	}
-
-	/**
-	 * Clears all nested property values of the given model.
-	 * @param model The group to be cleared
-	 * @param clearReferences Clear valus held in related models marked as a
-	 *        reference?
-	 * @param visited
-	 */
-	private static void clearProps(Model model, final boolean clearReferences, ModelRefs visited) {
-
-		if(model == null) return;
-
-		// check visited
-		if(visited.exists(model)) return;
-		if(!visited.add(model)) throw new IllegalStateException();
-
-		model.markedDeleted = false;
-
-		for(final IModelProperty prop : model.props) {
-			assert prop != null;
-
-			// model prop (relational) val...
-			if(prop instanceof IModelRefProperty) {
-				final IModelRefProperty gpv = (IModelRefProperty) prop;
-				if(clearReferences || !gpv.isReference()) {
-					clearProps(gpv.getModel(), clearReferences, visited);
-				}
-			}
-
-			// model list (relational) prop val...
-			else if(prop instanceof RelatedManyProperty) {
-				final RelatedManyProperty rmp = (RelatedManyProperty) prop;
-				if(clearReferences || !rmp.isReference()) {
-					final List<Model> list = rmp.getModelList();
-					if(list != null) {
-						for(final Model m : list) {
-							clearProps(m, clearReferences, visited);
-						}
-					}
-				}
-			}
-
-			// property values...
-			else {
-				((IPropertyValue) prop).clear();
-			}
-		}
-	}
-
-	/**
-	 * Non-hierarchical iteration.
-	 * @return An iterator traversing only the immediate child model propertis of
-	 *         this intance.
-	 */
-	public Iterator<IModelProperty> iterator() {
-		return props.iterator();
-	}
-
-	/**
-	 * Hierarchical iteration.
-	 * @return An iterator that traverses <em>all</em> descending model
-	 *         properties.
-	 */
-	public Iterator<IModelProperty> hierarchicalIterator() {
-		final RefSet<IModelProperty> set = new RefSet<IModelProperty>();
-		visitModelProps(getSelfRef(), set);
-		return set.iterator();
-	}
-
-	private static void visitModelProps(IModelProperty current, final RefSet<IModelProperty> visited) {
-
-		if(visited.exists(current)) return;
-		if(!visited.add(current)) throw new IllegalStateException();
-		Log.debug("Visiting [" + current + "]");
-
-		if(current instanceof RelatedOneProperty) {
-			final RelatedOneProperty rop = (RelatedOneProperty) current;
-			final Model m = rop.getModel();
-			if(m != null) {
-				for(final IModelProperty mp : m) {
-					visitModelProps(mp, visited);
-				}
-			}
-		}
-		else if(current instanceof RelatedManyProperty) {
-			final RelatedManyProperty rmp = (RelatedManyProperty) current;
-			final List<Model> list = rmp.getModelList();
-			for(final Model m : list) {
-				for(final IModelProperty mp : m) {
-					visitModelProps(mp, visited);
-				}
-			}
-		}
-	}
-
-	/**
-	 * @return <code>true</code> if this group is marked for deletion.
-	 */
-	public boolean isMarkedDeleted() {
-		return markedDeleted;
-	}
-
-	/**
-	 * Sets the makred for deletion flag.
-	 * @param markedDeleted
-	 */
-	public void setMarkedDeleted(boolean markedDeleted) {
-		this.markedDeleted = markedDeleted;
-	}
-
-	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-		throw new UnsupportedOperationException();
-	}
-
-	public void addPropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
-		try {
-			resolvePropertyPath(propertyName).addPropertyChangeListener(listener);
-		}
-		catch(final PropertyPathException e) {
-			throw new IllegalArgumentException("Unable to add property change listener", e);
-		}
-	}
-
-	public IPropertyChangeListener[] getPropertyChangeListeners() {
-		throw new UnsupportedOperationException();
-	}
-
-	public void removePropertyChangeListener(IPropertyChangeListener listener) {
-		throw new UnsupportedOperationException();
-	}
-
-	public void removePropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
-		try {
-			resolvePropertyPath(propertyName).removePropertyChangeListener(listener);
-		}
-		catch(final PropertyPathException e) {
-			throw new IllegalArgumentException("Unable to remove property change listener", e);
-		}
-	}
-
-	@Override
-	public String descriptor() {
-		return getKey().descriptor();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if(this == obj) return true;
-		if(!(obj instanceof Model)) return false;
-		return getKey().equals(((Model) obj).getKey());
-	}
-
-	@Override
-	public int hashCode() {
-		return getKey().hashCode();
-	}
-
-	@Override
-	public String toString() {
-		return getKey().toString()/* + " [" + ((Object) this).hashCode() + ']'*/;
 	}
 
 }

@@ -18,8 +18,11 @@ import com.tll.model.schema.BusinessObject;
  * @author jpk
  */
 @BusinessObject(businessKeys = {
-	@BusinessKeyDef(name = "Account Id and Address Id", properties = { "account.id", "address.id" }),
-	@BusinessKeyDef(name = "Account Id and Name", properties = { "account.id", INamedEntity.NAME })
+	@BusinessKeyDef(name = "Account Id and Address Id", properties = {
+		"account.id", "address.id"
+	}), @BusinessKeyDef(name = "Account Id and Name", properties = {
+		"account.id", INamedEntity.NAME
+	})
 })
 public class AccountAddress extends NamedTimeStampEntity implements IChildEntity<Account> {
 
@@ -31,6 +34,8 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 
 	private Address address;
 
+	private AddressType type;
+
 	public Class<? extends IEntity> entityClass() {
 		return AccountAddress.class;
 	}
@@ -40,6 +45,20 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 	@Length(max = MAXLEN_NAME)
 	public String getName() {
 		return name;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public AddressType getType() {
+		return type;
+	}
+
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(AddressType type) {
+		this.type = type;
 	}
 
 	@NotNull

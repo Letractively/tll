@@ -12,7 +12,7 @@ import com.tll.model.schema.PropertyType;
  * hierarchical model.
  * @author jpk
  */
-public final class RelatedOneProperty extends ModelRefProperty {
+public final class RelatedOneProperty extends AbstractModelRefProperty {
 
 	/**
 	 * Constructor

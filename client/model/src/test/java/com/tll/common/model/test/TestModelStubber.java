@@ -33,48 +33,15 @@ import com.tll.model.test.CreditCardType;
 public class TestModelStubber {
 
 	/**
-	 * ModelType - The test model types.
-	 * @author jpk
-	 */
-	public static enum ModelType {
-		/**
-		 * Simple model having non-relational properties only.
-		 */
-		SIMPLE,
-		/**
-		 * Model having a related many property, a related one property and one or
-		 * more non-relational properties including one "nested" related one
-		 * property.
-		 */
-		COMPLEX;
-	}
-
-	/**
 	 * Global static for ensuring all ids are unique for proper equals/hashcode
 	 * behavior down the line.
 	 */
 	private static int nextUniqueId = 0;
 
 	/**
-	 * Creates a {@link Model} instance of the given mock type.
-	 * @param modelType the desired model complexity
-	 * @return newly created instance
-	 */
-	public static Model create(ModelType modelType) {
-		switch(modelType) {
-		case SIMPLE:
-			return stubAddress(1);
-		case COMPLEX:
-			return stubAccount(true);
-		default:
-			throw new UnsupportedOperationException("Unhandled model type");
-		}
-	}
-
-	/**
-	 * Stubs a model of the given type having the given id.
+	 * Stubs an empty model but with with core entity properties.
 	 * @param type the model entity type
-	 * @param version the desired entity version
+	 * @param version the desired entity version which may be <code>null</code>
 	 * @param timestamping add the standard entity timestamping properties?
 	 * @param name optional name property value. If non-<code>null</code>, a
 	 *        standard entity name property will be added.
@@ -127,8 +94,8 @@ public class TestModelStubber {
 	 * @param num
 	 * @return new instance
 	 */
-	public static Model stubAccount(Model parentAccount, TestEntityType accountType, int num) {
-		final Model m = stubModel(accountType, null, true, "ISP " + num);
+	private static Model stubAccount(Model parentAccount, TestEntityType accountType, int num) {
+		final Model m = stubModel(accountType, null, true, accountType.descriptor() + " " + num);
 		m
 		.set(new EnumPropertyValue("status", new PropertyMetadata(PropertyType.ENUM, false, true, 16),
 				AccountStatus.OPEN));

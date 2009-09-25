@@ -6,16 +6,13 @@ package com.tll.common.model;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.model.ModelPropertyChangeTracker;
 import com.tll.common.model.test.TestEntityType;
 import com.tll.common.model.test.TestModelStubber;
-import com.tll.common.model.test.TestModelStubber.ModelType;
 
 /**
  * ModelTest - Test the {@link Model#clearPropertyValues(boolean)} method.
@@ -24,45 +21,36 @@ import com.tll.common.model.test.TestModelStubber.ModelType;
 @Test(groups = "client-model")
 public class ModelTest {
 
-	public void testHierarchicalIteration() throws Exception {
-		final Model m = TestModelStubber.stubAccount(true);
-		final Iterator<IModelProperty> mpItr = m.hierarchicalIterator();
-		while(mpItr.hasNext()) {
-			final IModelProperty mp = mpItr.next();
-			Log.debug(mp.toString());
-		}
-	}
-
-	public void testParentExistsInModelProps() throws Exception {
-		final Model m = TestModelStubber.stubAccount(true);
-		final Iterator<IModelProperty> mpItr = m.hierarchicalIterator();
-		while(mpItr.hasNext()) {
-			final IModelProperty mp = mpItr.next();
-			Log.debug(mp + " parent: " + mp.getParent());
-			if(mp instanceof RelatedOneProperty && ((RelatedOneProperty)mp).getModel() == m) continue;
-			Assert.assertTrue(mp.getParent() != null);
-		}
-	}
-
 	/**
-	 * Tests {@link Model#getRelativePath(IRelationalProperty, IModelProperty)}
+	 * Tests {@link Model#getRelPath(IModelProperty)}
 	 * @throws Exception
 	 */
-	public void testRelativePath() throws Exception {
+	public void testGetRelPath() throws Exception {
 		final Model m = TestModelStubber.stubAccount(true);
-		String actual, expected;
+		final String[][] arrPropExp = new String[][] {
+			{"parent", "parent"},
+			{"billingModel", "billingModel"},
+			{"paymentInfo", "paymentInfo"},
+			{"paymentInfo.paymentData_bankAccountNo", "paymentInfo.paymentData_bankAccountNo"},
+			{"addresses", "addresses"},
+			{"addresses[0]", "addresses[0]"},
+			{"addresses[0].address", "addresses[0].address"},
+			{"addresses[0].address.firstName", "addresses[0].address.firstName"},
+			{"addresses[0].account", null},	// make sure we properly handle circularity
+		};
+		for(final String[] pe : arrPropExp) {
+			final String prop = pe[0];
+			final IModelProperty descendant = m.getModelProperty(prop);
+			final String actual = m.getRelPath(descendant);
+			final String expected = pe[1];
+			Assert.assertEquals(actual, expected);
 
-		expected = "addresses[0].address.firstName";
-		actual = Model.getRelativePath(m.getSelfRef(), m.getModelProperty(expected));
-		Assert.assertEquals(actual, expected);
-
-		expected = "address.firstName";
-		actual = Model.getRelativePath(m.indexed("addresses[0]"), m.getModelProperty(expected));
-		Assert.assertEquals(actual, expected);
-
-		expected = "firstName";
-		actual = Model.getRelativePath(m.indexed("addresses[0].address"), m.getModelProperty(expected));
-		Assert.assertEquals(actual, expected);
+			// verify the converse
+			if(actual != null) {
+				final IModelProperty mp = m.getModelProperty(actual);
+				Assert.assertEquals(mp, descendant);
+			}
+		}
 	}
 
 	/**
@@ -70,7 +58,7 @@ public class ModelTest {
 	 * @throws Exception When the test fails.
 	 */
 	public void testClear() throws Exception {
-		final Model model = TestModelStubber.create(ModelType.COMPLEX);
+		final Model model = TestModelStubber.stubAccount(true);
 		model.clearPropertyValues(true);
 		ModelTestUtils.validateClear(model, new ArrayList<Model>());
 	}
@@ -80,7 +68,7 @@ public class ModelTest {
 	 * @throws Exception When the test fails.
 	 */
 	public void testCopy() throws Exception {
-		final Model model = TestModelStubber.create(ModelType.COMPLEX);
+		final Model model = TestModelStubber.stubAccount(true);
 		final Model copy = model.copy(CopyCriteria.COPY_ALL);
 		ModelTestUtils.validateCopy(model, copy, CopyCriteria.COPY_ALL);
 	}
@@ -90,7 +78,7 @@ public class ModelTest {
 	 * @throws Exception
 	 */
 	public void testMarkedDeleted() throws Exception {
-		final Model model = TestModelStubber.create(ModelType.COMPLEX);
+		final Model model = TestModelStubber.stubAccount(true);
 
 		IModelRefProperty mrp;
 
@@ -100,11 +88,11 @@ public class ModelTest {
 		mrp.getModel().setMarkedDeleted(true);
 
 		// mark deleted a related many model element
-		mrp = (IModelRefProperty) model.getModelProperty("addresses[1]");
+		mrp = (IModelRefProperty) model.getModelProperty("addresses[0]");
 		assert mrp != null;
 		mrp.getModel().setMarkedDeleted(true);
 
-		final CopyCriteria criteria = new CopyCriteria(true, false, null, null);
+		final CopyCriteria criteria = new CopyCriteria(true, true, false, null);
 		final Model copy = model.copy(criteria);
 		ModelTestUtils.validateCopy(model, copy, criteria);
 	}
@@ -117,7 +105,7 @@ public class ModelTest {
 		model.setId("6000");
 		Assert.assertTrue(model.getId() != null && model.getId().equals("6000"));
 
-		Assert.assertTrue(model.getVersion() != null);
+		Assert.assertTrue(model.getVersion() == null);
 		model.setVersion(1);
 		Assert.assertTrue(model.getVersion() == 1);
 	}
@@ -135,29 +123,32 @@ public class ModelTest {
 		mp.setValue("caaname");
 		mpSet.add(mp);
 
-		mp = m.indexed("addresses[1]");
-		((IndexedProperty)mp).getModel().setMarkedDeleted(true);
+		mp = m.getModelProperty("paymentInfo.paymentData_bankAccountNo");
+		mp.setValue("altereD");
 		mpSet.add(mp);
 
-		final CopyCriteria cc = new CopyCriteria(false, true, mpSet, null);
+		final CopyCriteria cc = new CopyCriteria(true, false, true, mpSet);
 
 		final Model mcopy = m.copy(cc);
 
 		Assert.assertTrue(mcopy.propertyExists("name"));
 		Assert.assertTrue(mcopy.propertyExists("addresses[0].name"));
-		Assert.assertFalse(mcopy.propertyExists("addresses[1]"));
+		Assert.assertTrue(mcopy.propertyExists("paymentInfo.paymentData_bankAccountNo"));
 		Assert.assertFalse(mcopy.propertyExists("currency"));
 		Assert.assertFalse(mcopy.propertyExists("billingModel"));
 	}
 
-	public void testModelCopyNoRefsAndMarkedDeletedAndBlackList() throws Exception {
-		//final Model m = TestModelStubber.stubAccount(true);
-	}
-
 	public void testModelPropertyChangeTracker() throws Exception {
-		final Model m = TestModelStubber.stubAccount(true);
+		final Model m = TestModelStubber.stubAddress(1);
 		final ModelPropertyChangeTracker changeTracker = new ModelPropertyChangeTracker();
 		changeTracker.set(m);
-		// TODO finish
+		for(final IModelProperty mp : m) {
+			mp.addPropertyChangeListener(changeTracker);
+		}
+		m.getModelProperty("emailAddress").setValue("changed email");
+		m.getModelProperty("address1").setValue("change address1");
+
+		final Model changed = changeTracker.generateChangeModel();
+		Assert.assertEquals(changed.size(), 4); // id and version are there by default (2 + 2)
 	}
 }

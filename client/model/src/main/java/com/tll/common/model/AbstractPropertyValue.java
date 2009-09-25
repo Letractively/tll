@@ -106,7 +106,6 @@ public abstract class AbstractPropertyValue extends AbstractModelProperty implem
 		final StringBuilder sb = new StringBuilder();
 		sb.append(propertyName);
 		sb.append("(" + (getValue() == null ? "null" : getValue().toString()) + ")");
-		sb.append(", parent:" + (parent == null ? "null" : parent.getPropertyName() + ")"));
 		return sb.toString();
 	}
 }
