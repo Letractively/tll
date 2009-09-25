@@ -16,7 +16,6 @@ import com.tll.model.test.IEntityGraphPopulator;
 import com.tll.model.test.TestPersistenceUnitEntityAssembler;
 import com.tll.model.test.TestPersistenceUnitEntityGraphBuilder;
 
-
 /**
  * TestPersistenceUnitModelModule
  * @author jpk
@@ -38,7 +37,8 @@ public class TestPersistenceUnitModelModule implements Module {
 			@Override
 			protected URI getBeanDefRef() {
 				try {
-					return Thread.currentThread().getContextClassLoader().getResource("com/tll/model/test/mock-entities.xml").toURI();
+					return Thread.currentThread().getContextClassLoader().getResource("com/tll/model/test/mock-entities.xml")
+					.toURI();
 				}
 				catch(final URISyntaxException e) {
 					return null;

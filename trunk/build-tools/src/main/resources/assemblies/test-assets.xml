@@ -29,7 +29,7 @@
         <include>**/*Util*</include>
         <include>**/*Support*</include>
         <include>**/Test*Module.class</include>
-        <include>**/*.xml</include>
+        <include>**/*.gwt.xml</include>
       </includes>
       <outputDirectory>/</outputDirectory>
     </fileSet>

@@ -146,7 +146,7 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	protected void doAdd(Model model, ModelPayload payload) {
 		final Class<? extends IEntity> entityClass =
 			(Class<? extends IEntity>) context.getEntityTypeResolver().resolveEntityClass(model.getEntityType());
-		IEntity e = context.getMarshaler().marshal(entityClass, model);
+		IEntity e = context.getMarshaler().marshalModel(model, entityClass);
 		final IEntityService<IEntity> svc =
 			(IEntityService<IEntity>) context.getEntityServiceFactory().instanceByEntityType(entityClass);
 		e = svc.persist(e);
@@ -176,7 +176,7 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 		IEntity e = svc.load(new PrimaryKey<IEntity>(eclass, modelChanges.getId()));
 
 		// marshal the changes only
-		context.getMarshaler().marshal(modelChanges, e);
+		context.getMarshaler().marshalModel(modelChanges, e);
 		final boolean isNew = e.isNew();
 		e = svc.persist(e);
 
@@ -254,7 +254,7 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 			// default fallback
 			mo = MarshalOptions.NO_REFERENCES;
 		}
-		final Model m = context.getMarshaler().marshal(entity, mo);
+		final Model m = context.getMarshaler().marshalEntity(entity, mo);
 		assert m != null;
 		return m;
 	}

@@ -26,6 +26,17 @@
         </includes>
       </resource>
     </resources>
+    <testResources>
+    	<testResource>
+    		<directory>src/test/java</directory>
+    		<includes>
+    			<include>**/*.java</include>
+    		</includes>
+    	</testResource>
+    	<testResource>
+    		<directory>src/test/resources</directory>
+    	</testResource>
+    </testResources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -37,6 +48,24 @@
             <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
           </suiteXmlFiles>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>client-server-jar.xml</descriptor>
+                <descriptor>test-assets.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

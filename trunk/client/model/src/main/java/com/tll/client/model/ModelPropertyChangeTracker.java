@@ -12,9 +12,11 @@ import com.tll.common.bind.PropertyChangeEvent;
 import com.tll.common.model.CopyCriteria;
 import com.tll.common.model.IModelProperty;
 import com.tll.common.model.Model;
+import com.tll.common.model.PropertyPathException;
 
 /**
- * ModelPropertyChangeTracker - Tracks model properties whose value has changed (become dirty).
+ * ModelPropertyChangeTracker - Tracks model properties whose value has changed
+ * (become dirty).
  * @author jpk
  */
 public class ModelPropertyChangeTracker implements IPropertyChangeListener {
@@ -24,9 +26,32 @@ public class ModelPropertyChangeTracker implements IPropertyChangeListener {
 
 	private Model root;
 
+	/**
+	 * Flag to turn on/off this tracker to jive with the field binding life-cycle.
+	 */
+	private boolean handleChanges = true;
+
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		changes.add((IModelProperty)evt.getSource());
+		if(!handleChanges) return;
+		final Object src = evt.getSource();
+		if(src instanceof Model) {
+			try {
+				final IModelProperty mp = ((Model) src).getModelProperty(evt.getPropertyName());
+				changes.add(mp);
+			}
+			catch(final PropertyPathException e) {
+				throw new IllegalStateException("Unable to resolve model property: " + evt.getPropertyName()
+						+ " due to error: " + e.getMessage(), e);
+			}
+		}
+		else if(src instanceof IModelProperty) {
+			//assert root.getModelProperty(evt.getPropertyName()) != null;
+			changes.add((IModelProperty) src);
+		}
+		else {
+			throw new IllegalArgumentException("Unhandled event source type: " + src);
+		}
 	}
 
 	/**
@@ -36,6 +61,20 @@ public class ModelPropertyChangeTracker implements IPropertyChangeListener {
 	public void set(Model rootModel) {
 		clear();
 		this.root = rootModel;
+	}
+
+	/**
+	 * @return the handleChanges
+	 */
+	public boolean isHandleChanges() {
+		return handleChanges;
+	}
+
+	/**
+	 * @param handleChanges the handleChanges to set
+	 */
+	public void setHandleChanges(boolean handleChanges) {
+		this.handleChanges = handleChanges;
 	}
 
 	/**
@@ -52,6 +91,6 @@ public class ModelPropertyChangeTracker implements IPropertyChangeListener {
 	 *         tracked as changed.
 	 */
 	public Model generateChangeModel() {
-		return root.copy(new CopyCriteria(true, false,  true, changes));
+		return root.copy(new CopyCriteria(true, false, true, changes));
 	}
 }

@@ -175,10 +175,12 @@ public class FieldModelBinding {
 			throw new IllegalArgumentException("No model specified in field bound widget");
 		}
 		modelChangeTracker.set(widget.getModel());
+		modelChangeTracker.setHandleChanges(false);
 		createBindings();
 		Log.debug("Binding: " + widget);
 		binding.bind();
 		binding.setRight();
+		modelChangeTracker.setHandleChanges(true);
 		bound = true;
 	}
 

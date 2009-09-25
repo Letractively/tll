@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.tll.IDescriptorProvider;
 import com.tll.IMarshalable;
 import com.tll.common.bind.IBindable;
@@ -194,7 +193,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 					}
 				}
 				if(!cpyByWhitelist) {
-					Log.debug(" Skipping [" + crntPropPath + "] not in white list - skipping");
+					//Log.debug(" Skipping [" + crntPropPath + "] not in white list - skipping");
 					continue;
 				}
 			}

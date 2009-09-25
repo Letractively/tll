@@ -56,6 +56,11 @@ import com.tll.util.BindingRefSet;
  */
 public final class Marshaler {
 
+	/**
+	 * We only recurse to a certain depth to avoid infinite looping.
+	 */
+	private static final int MAX_DEPTH = 10;
+
 	private static final Log log = LogFactory.getLog(Marshaler.class);
 
 	private final IEntityTypeResolver etResolver;
@@ -77,10 +82,10 @@ public final class Marshaler {
 	}
 
 	/**
-	 * Converts a {@link SearchResult} instance to a new {@link Model} instance
-	 * containing all marshalable properties contained within the search result.
-	 * @param searchResult May NOT be <code>null</code>.
-	 * @param options May NOT be <code>null</code>.
+	 * Converts a {@link SearchResult} instance to a new {@link Model} instance.
+	 * containing all marshalable properties contained within the search result
+	 * @param searchResult May NOT be <code>null</code>
+	 * @param options May NOT be <code>null</code>
 	 * @return client ready model
 	 * @throws IllegalArgumentException When neither an IEntity nor an IScalar is
 	 *         resolved from the given SearchResult.
@@ -92,7 +97,7 @@ public final class Marshaler {
 		final Object r = searchResult.getElement();
 		if(r instanceof IEntity) {
 			BindingRefSet<IEntity, Model> visited = new BindingRefSet<IEntity, Model>();
-			model = marshal((IEntity) r, options, visited, 0);
+			model = marshalEntity((IEntity) r, options, visited, 0);
 			visited = null;
 		}
 		else {
@@ -102,132 +107,16 @@ public final class Marshaler {
 	}
 
 	/**
-	 * Marshals the given entity.
+	 * Converts the given {@link IEntity} instance to a new {@link Model}
+	 * instance.
 	 * @param entity May not be <code>null</code>.
 	 * @param options May not be <code>null</code>.
 	 * @return New {@link Model} instance containing the marshaled entity
 	 *         properties.
 	 * @throws RuntimeException upon any error encountered.
 	 */
-	public Model marshal(final IEntity entity, final MarshalOptions options) {
-		return marshal(entity, options, new BindingRefSet<IEntity, Model>(), 0);
-	}
-
-	/**
-	 * Converts a source IEntity instance to a marshalable {@link Model}.
-	 * @param source The source IEntity to marshal. May not be <code>null</code>.
-	 * @param options The marshaling options. May NOT be <code>null</code>.
-	 * @param visited collection of visited nodes to avoid infinite looping
-	 * @param depth the recursion depth
-	 * @return Marshaled {@link Model}.
-	 * @throws RuntimeException upon any error encountered.
-	 */
-	@SuppressWarnings("unchecked")
-	private Model marshal(final IEntity source, final MarshalOptions options, final BindingRefSet<IEntity, Model> visited,
-			final int depth) {
-
-		assert source != null;
-
-		// check visited
-		final Binding<IEntity, Model> b = visited.findBindingBySource(source);
-		if(b != null) return b.tgt;
-
-		final Class<? extends IEntity> entityClass = source.entityClass();
-		final Model model = new Model(etResolver.resolveEntityType(entityClass));
-
-		visited.add(new Binding<IEntity, Model>(source, model));
-
-		final BeanWrapperImpl bw = new BeanWrapperImpl(source);
-
-		for(final PropertyDescriptor pd : bw.getPropertyDescriptors()) {
-			final String pname = pd.getName();
-
-			// skip certain properties...
-			if(!bw.isWritableProperty(pname) || !isMarshalableProperty(pd)) {
-				continue;
-			}
-
-			final Class<?> ptype = pd.getPropertyType();
-			Object obj = null;
-			try {
-				obj = bw.getPropertyValue(pname);
-			}
-			catch(final RuntimeException re) {
-				continue;
-			}
-
-			final PropertyMetadata pdata = generatePropertyData(entityClass, pname);
-
-			IModelProperty prop = createValueProperty(ptype, pname, obj, pdata);
-
-			if(prop == null) {
-				// related one
-				if(IEntity.class.isAssignableFrom(ptype)) {
-					final RelationInfo ri = schemaInfo.getRelationInfo(entityClass, pname);
-					final boolean reference = ri.isReference();
-					if(shouldMarshalRelation(reference, depth, options)) {
-						final IEntity e = (IEntity) obj;
-						final Model m = e == null ? null : marshal(e, options, visited, depth + 1);
-						final IEntityType etype =
-							ri.getRelatedType() == null ? null : etResolver.resolveEntityType(e == null ? ri.getRelatedType() : e.entityClass());
-						prop = new RelatedOneProperty(etype, m, pname, reference);
-					}
-				}
-
-				// related many collection
-				else if(Collection.class.isAssignableFrom(ptype)) {
-					final RelationInfo ri = schemaInfo.getRelationInfo(entityClass, pname);
-					final boolean reference = ri.isReference();
-					if(shouldMarshalRelation(reference, depth, options)) {
-						List<Model> list = null;
-						if(obj != null) {
-							list = new ArrayList<Model>();
-							final Collection<IEntity> set = (Collection<IEntity>) obj;
-							for(final IEntity e : set) {
-								final Model nested = marshal(e, options, visited, depth + 1);
-								list.add(nested);
-							}
-						}
-						prop = new RelatedManyProperty(etResolver.resolveEntityType(ri.getRelatedType()), pname, reference, list);
-					}
-				}
-
-				// map (assume <String, String> type)
-				else if(Map.class.isAssignableFrom(ptype)) {
-					prop = new StringMapPropertyValue(pname, generatePropertyData(entityClass, pname), (Map) obj);
-				}
-
-				else {
-					final ISchemaProperty sp = schemaInfo.getSchemaProperty(entityClass, pname);
-
-					// nested property?
-					if(sp != null && sp.getPropertyType().isNested()) {
-						final BeanWrapperImpl bw2 = obj == null ? new BeanWrapperImpl(ptype) : new BeanWrapperImpl(obj);
-						for(final PropertyDescriptor pd2 : bw2.getPropertyDescriptors()) {
-							if(bw2.isWritableProperty(pd2.getName()) && isMarshalableProperty(pd2)) {
-								try {
-									final Object oval = bw2.getPropertyValue(pd2.getName());
-									model.set(createValueProperty(pd2.getPropertyType(), (pname + "_" + pd2.getName()), oval,
-											generatePropertyData(source.entityClass(), (pname + "." + pd2.getName()))));
-								}
-								catch(final RuntimeException e) {
-								}
-							}
-						}
-					}
-
-					else
-						throw new RuntimeException("Unhandled property type: " + ptype);
-				}
-			} // prop == null
-
-			if(prop != null) {
-				model.set(prop);
-			}
-
-		}
-
-		return model;
+	public Model marshalEntity(final IEntity entity, final MarshalOptions options) {
+		return marshalEntity(entity, options, new BindingRefSet<IEntity, Model>(), 0);
 	}
 
 	/**
@@ -258,16 +147,18 @@ public final class Marshaler {
 	}
 
 	/**
-	 * Marshals a {@link Model} representing an entity to an {@link IEntity}.
-	 * @param <E>
-	 * @param entityClass
+	 * Marshals a {@link Model} to a new {@link IEntity} instance of the given
+	 * type.
 	 * @param model the client wise model instance
+	 * @param entityClass
+	 * @param <E>
 	 * @return The generated {@link IEntity} instance.
 	 */
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> E marshal(final Class<E> entityClass, final Model model) {
-		BindingRefSet<IEntity, Model> visited = new BindingRefSet<IEntity, Model>();
-		final E e = (E) marshal(instantiateEntity(entityClass), model, visited, 0);
+	public <E extends IEntity> E marshalModel(final Model model, final Class<E> entityClass) {
+		BindingRefSet<Model, IEntity> visited = new BindingRefSet<Model, IEntity>();
+		final E e = (E) instantiateEntity(entityClass);
+		marshalModel(model, e, visited, 0);
 		visited = null;
 		return e;
 	}
@@ -279,34 +170,158 @@ public final class Marshaler {
 	 * @param entity
 	 * @return The generated {@link IEntity} instance.
 	 */
-	@SuppressWarnings("unchecked")
-	public <E extends IEntity> E marshal(final Model model, final E entity) {
-		BindingRefSet<IEntity, Model> visited = new BindingRefSet<IEntity, Model>();
-		final IEntity e = marshal(entity, model, visited, 0);
+	public <E extends IEntity> E marshalModel(final Model model, final E entity) {
+		BindingRefSet<Model, IEntity> visited = new BindingRefSet<Model, IEntity>();
+		marshalModel(model, entity, visited, 0);
 		visited = null;
-		return (E) e;
+		return entity;
 	}
 
 	/**
-	 * Marshals a {@link Model} to the given entity instance.
-	 * @param crntEntity The "current" (recursion) entity whose properties are updated
-	 * @param model The {@link Model} holding the properties to be applied to the given entity
+	 * Converts an {@link IEntity} instance to a {@link Model} instance.
+	 * @param source The source IEntity to marshal. May not be <code>null</code>.
+	 * @param options The marshaling options. May NOT be <code>null</code>.
 	 * @param visited collection of visited nodes to avoid infinite looping
-	 * @param depth the current recursion depth
-	 * @return New <IEntity> instance
+	 * @param depth the recursion depth
+	 * @return Marshaled {@link Model}.
 	 * @throws RuntimeException upon any error encountered.
 	 */
 	@SuppressWarnings("unchecked")
-	private IEntity marshal(IEntity crntEntity, Model model, final BindingRefSet visited, int depth) {
+	private Model marshalEntity(final IEntity source, final MarshalOptions options,
+			final BindingRefSet<IEntity, Model> visited, final int depth) {
 
-		// only recurse if not already visited
-		Binding<Model, Object> b = visited.findBindingBySource(model);
-		if(b != null) {
-			return (IEntity) b.tgt;
+		assert source != null;
+
+		// check visited
+		final Binding<IEntity, Model> b = visited.findBindingBySource(source);
+		if(b != null) return b.tgt;
+
+		final Class<? extends IEntity> entityClass = source.entityClass();
+		final Model model = new Model(etResolver.resolveEntityType(entityClass));
+
+		visited.add(new Binding<IEntity, Model>(source, model));
+
+		final BeanWrapperImpl bw = new BeanWrapperImpl(source);
+
+		for(final PropertyDescriptor pd : bw.getPropertyDescriptors()) {
+			final String pname = pd.getName();
+
+			// skip certain properties...
+			if(!bw.isWritableProperty(pname) || !isMarshalableProperty(pd)) {
+				continue;
+			}
+
+			final Class<?> ptype = pd.getPropertyType();
+			Object obj = null;
+			try {
+				obj = bw.getPropertyValue(pname);
+			}
+			catch(final RuntimeException re) {
+				log.debug("Skipping entity prop: " + pname + " due to: " + re.getMessage());
+				continue;
+			}
+
+			final PropertyMetadata pdata = generatePropertyData(entityClass, pname);
+
+			IModelProperty prop = createValueProperty(ptype, pname, obj, pdata);
+
+			if(prop == null) {
+				// related one
+				if(IEntity.class.isAssignableFrom(ptype)) {
+					final RelationInfo ri = schemaInfo.getRelationInfo(entityClass, pname);
+					final boolean reference = ri.isReference();
+					if(shouldMarshalRelation(reference, depth, options)) {
+						final IEntity e = (IEntity) obj;
+						final Model m = e == null ? null : marshalEntity(e, options, visited, depth + 1);
+						final IEntityType etype =
+								ri.getRelatedType() == null ? null : etResolver.resolveEntityType(e == null ? ri.getRelatedType() : e
+										.entityClass());
+						prop = new RelatedOneProperty(etype, m, pname, reference);
+					}
+				}
+
+				// related many collection
+				else if(Collection.class.isAssignableFrom(ptype)) {
+					final RelationInfo ri = schemaInfo.getRelationInfo(entityClass, pname);
+					final boolean reference = ri.isReference();
+					if(shouldMarshalRelation(reference, depth, options)) {
+						List<Model> list = null;
+						if(obj != null) {
+							list = new ArrayList<Model>();
+							final Collection<IEntity> set = (Collection<IEntity>) obj;
+							for(final IEntity e : set) {
+								final Model nested = marshalEntity(e, options, visited, depth + 1);
+								list.add(nested);
+							}
+						}
+						prop = new RelatedManyProperty(etResolver.resolveEntityType(ri.getRelatedType()), pname, reference, list);
+					}
+				}
+
+				// map (assume <String, String> type)
+				else if(Map.class.isAssignableFrom(ptype)) {
+					prop = new StringMapPropertyValue(pname, generatePropertyData(entityClass, pname), (Map) obj);
+				}
+
+				else {
+					final ISchemaProperty sp = schemaInfo.getSchemaProperty(entityClass, pname);
+
+					// nested property?
+					if(sp != null && sp.getPropertyType().isNested()) {
+						final BeanWrapperImpl bw2 = obj == null ? new BeanWrapperImpl(ptype) : new BeanWrapperImpl(obj);
+						for(final PropertyDescriptor pd2 : bw2.getPropertyDescriptors()) {
+							if(bw2.isWritableProperty(pd2.getName()) && isMarshalableProperty(pd2)) {
+								try {
+									final Object oval = bw2.getPropertyValue(pd2.getName());
+									model.set(createValueProperty(pd2.getPropertyType(), (pname + "_" + pd2.getName()), oval,
+											generatePropertyData(source.entityClass(), (pname + "." + pd2.getName()))));
+								}
+								catch(final RuntimeException e) {
+									log.debug("Didn't set nested model prop: " + pname + " due to: " + e.getMessage());
+								}
+							}
+						}
+					}
+
+					else
+						throw new RuntimeException("Unhandled property type: " + ptype);
+				}
+			} // prop == null
+
+			if(prop != null) {
+				model.set(prop);
+			}
+
 		}
 
-		b = new Binding(crntEntity, model);
+		return model;
+	}
+
+	/**
+	 * Recursively marshals a {@link Model} onto the given {@link IEntity}
+	 * instance.
+	 * @param model The {@link Model} holding the properties to be applied to the
+	 *        given entity
+	 * @param crntEntity The "current" (recursion) entity whose properties are
+	 *        updated
+	 * @param visited collection of visited nodes to avoid infinite looping
+	 * @param depth the current recursion depth
+	 * @throws RuntimeException upon any error encountered.
+	 */
+	@SuppressWarnings("unchecked")
+	private void marshalModel(Model model, IEntity crntEntity, final BindingRefSet visited, int depth) {
+
+		// only recurse if not already visited
+		Binding<Model, IEntity> b = visited.findBindingBySource(model);
+		if(b != null) return;
+		b = new Binding<Model, IEntity>(model, crntEntity);
+		log.debug("Adding new binding to visited: " + b);
 		visited.add(b);
+
+		// max depth check
+		if(!depthCheck(depth, -1)) {
+			throw new IllegalStateException("Can't marshal model to entity: max depth reached");
+		}
 
 		final BeanWrapperImpl bw = new BeanWrapperImpl(crntEntity);
 
@@ -314,6 +329,7 @@ public final class Marshaler {
 			String propName = mprop.getPropertyName();
 			final Object pval = mprop.getValue();
 			Object val = null;
+			log.debug("marshalModel - propName: " + propName);
 
 			switch(mprop.getType()) {
 
@@ -334,13 +350,16 @@ public final class Marshaler {
 
 			case RELATED_ONE: {
 				final Model rltdOne = (Model) pval;
-				final IEntityType rltdEntityType = rltdOne == null ? null : rltdOne.getEntityType();
-				final Class<? extends IEntity> rltdEntityClass = (Class<? extends IEntity>) etResolver.resolveEntityClass(rltdEntityType);
+				final IEntityType rltdEntityType =
+						rltdOne == null ? ((RelatedOneProperty) mprop).getRelatedType() : rltdOne.getEntityType();
+				assert rltdEntityType != null;
 				IEntity toOne;
 				if(rltdOne == null || rltdOne.isMarkedDeleted()) {
 					toOne = null;
 				}
 				else {
+					final Class<? extends IEntity> rltdEntityClass =
+							(Class<? extends IEntity>) etResolver.resolveEntityClass(rltdEntityType);
 					try {
 						toOne = (IEntity) bw.getPropertyValue(propName);
 						if(toOne == null) toOne = instantiateEntity(rltdEntityClass);
@@ -349,11 +368,12 @@ public final class Marshaler {
 						log.warn("Unable to get related one entity ref", re);
 						toOne = null;
 					}
-					toOne = marshal(toOne, rltdOne, visited, depth + 1);
+					log.debug("About to marshal related one [model: " + rltdOne + "] [entity: " + toOne + "]");
+					marshalModel(rltdOne, toOne, visited, depth + 1);
 				}
 				val = toOne;
 			}
-			break;
+				break;
 
 			case NESTED:
 				// no-op since these are expressed as "{parent}_{nestedA}"
@@ -367,17 +387,12 @@ public final class Marshaler {
 					rmEntitySet = (Set<IEntity>) bw.getPropertyValue(propName);
 					final LinkedHashSet<IEntity> newRmEntitySet = new LinkedHashSet<IEntity>(rmModelList.size());
 					if(rmEntitySet != null) {
-						newRmEntitySet.addAll(rmEntitySet);
+						newRmEntitySet.addAll(rmEntitySet); // fail fast so don't trap exception here
 					}
-					/* we want to fail fast in this case so don't trap this exception!
-					}
-					catch(final RuntimeException e) {
-						log.warn("Unable to get related many entity collection", e);
-					}
-					 */
 					//if(rmEntitySet != null) {
 					// re-build the rm entity set
 					for(final Model indexedModel : rmModelList) {
+						assert indexedModel != null;
 						final IEntityType indexedEntityType = indexedModel.getEntityType();
 						final Class<IEntity> indexedEntityClass = (Class<IEntity>) etResolver.resolveEntityClass(indexedEntityType);
 						final PrimaryKey<IEntity> imodelPk = new PrimaryKey<IEntity>(indexedEntityClass, indexedModel.getId());
@@ -397,7 +412,8 @@ public final class Marshaler {
 							if(indexedModel.isNew()) {
 								assert indexedModel.isMarkedDeleted() == false;
 								// add indexed
-								indexedEntity = marshal(instantiateEntity(indexedEntityClass), indexedModel, visited, depth + 1);
+								indexedEntity = instantiateEntity(indexedEntityClass);
+								marshalModel(indexedModel, indexedEntity, visited, depth + 1);
 								newRmEntitySet.add(indexedEntity);
 							}
 							// else presume removed after it was initially sent to client by another web session..
@@ -413,7 +429,7 @@ public final class Marshaler {
 							}
 							else {
 								// update existing indexed entity
-								indexedEntity = marshal(indexedEntity, indexedModel, visited, depth + 1);
+								marshalModel(indexedModel, indexedEntity, visited, depth + 1);
 							}
 							// satisify bi-di relationship
 							if(indexedEntity instanceof IChildEntity) {
@@ -425,7 +441,7 @@ public final class Marshaler {
 					//}
 				}
 			}
-			break;
+				break;
 
 			case STRING_MAP:
 				val = pval;
@@ -443,6 +459,7 @@ public final class Marshaler {
 				bw.setPropertyValue(propName, val);
 			}
 			catch(final RuntimeException re) {
+				log.debug("Didn't set entity prop: " + re.getMessage());
 				// ok
 			}
 
@@ -456,8 +473,6 @@ public final class Marshaler {
 			}
 			entityFactory.setGenerated(crntEntity);
 		}
-
-		return crntEntity;
 	}
 
 	private IEntity instantiateEntity(Class<? extends IEntity> entityClass) {
@@ -567,7 +582,7 @@ public final class Marshaler {
 	 * @return true/false
 	 */
 	private boolean isMarshalableProperty(final PropertyDescriptor pd) {
-		// check bound method annotations and honor @NoPersist
+		// check bound method annotations and honor @Transient
 		final Method m = pd.getReadMethod();
 		if(m != null) {
 			return m.getAnnotation(Transient.class) == null;
@@ -582,6 +597,6 @@ public final class Marshaler {
 	 * @return <code>true</code> if depth check passes.
 	 */
 	private boolean depthCheck(final int depth, final int maxDepth) {
-		return (maxDepth < 0 || (maxDepth >= 0 && ((depth + 1) <= maxDepth)));
+		return ((maxDepth < 0 || (maxDepth >= 0 && ((depth + 1) <= maxDepth))) || (depth >= MAX_DEPTH));
 	}
 }
