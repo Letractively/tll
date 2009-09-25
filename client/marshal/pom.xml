@@ -29,7 +29,10 @@
   </build>
   
   <dependencies>
-    
+  	<dependency>
+  		<groupId>commons-logging</groupId>
+  		<artifactId>commons-logging</artifactId>
+  	</dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
@@ -85,19 +88,6 @@
       <artifactId>tll-client-model</artifactId>
       <version>${project.version}</version>
       <classifier>testassets</classifier>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-dao-api</artifactId>
-      <version>${project.version}</version>
-      <classifier>testassets</classifier>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-dao-db4o</artifactId>
-      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

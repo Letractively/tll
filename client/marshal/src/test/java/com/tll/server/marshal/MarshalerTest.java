@@ -14,14 +14,11 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.inject.Binder;
 import com.google.inject.Module;
-import com.google.inject.Scopes;
+import com.tll.AbstractConfigAwareTest;
 import com.tll.common.model.IModelProperty;
 import com.tll.common.model.Model;
-import com.tll.dao.AbstractDbAwareTest;
-import com.tll.di.test.Db4oDbShellModule;
-import com.tll.di.test.TestDb4oDaoModule;
+import com.tll.di.TestMarshalModule;
 import com.tll.di.test.TestPersistenceUnitModelModule;
 import com.tll.model.IEntity;
 import com.tll.model.IScalar;
@@ -32,15 +29,14 @@ import com.tll.model.test.EntityBeanFactory;
 import com.tll.model.test.EntityGraph;
 import com.tll.model.test.NestedEntity;
 import com.tll.model.test.TestPersistenceUnitEntityGraphBuilder;
-import com.tll.server.rpc.entity.IEntityTypeResolver;
-import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 
 /**
  * MarshallerTest
  * @author jpk
  */
 @Test(groups = { "server", "client-marshal" })
-public class MarshalerTest extends AbstractDbAwareTest {
+@SuppressWarnings("null")
+public class MarshalerTest extends AbstractConfigAwareTest {
 
 	protected static final Map<String, Object> tupleMap = new HashMap<String, Object>();
 
@@ -62,15 +58,7 @@ public class MarshalerTest extends AbstractDbAwareTest {
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
 		modules.add(new TestPersistenceUnitModelModule());
-		modules.add(new Db4oDbShellModule());
-		modules.add(new TestDb4oDaoModule(getConfig()));
-		modules.add(new Module() {
-
-			@Override
-			public void configure(Binder binder) {
-				binder.bind(IEntityTypeResolver.class).to(TestEntityTypeResolver.class).in(Scopes.SINGLETON);
-			}
-		});
+		modules.add(new TestMarshalModule());
 	}
 
 	private Marshaler getMarshaler() {
@@ -96,15 +84,16 @@ public class MarshalerTest extends AbstractDbAwareTest {
 		// wire up a circular entity
 		final Collection<Account> accounts = entityGraph.getEntitiesByType(Account.class);
 		// NOTE: we expect 3 of them per test-persistence-unit jar
-		final Account account = accounts.iterator().next();
-		final Account parentAccount = accounts.iterator().next();
-		account.setParent(parentAccount);
+		final Iterator<Account> aitr = accounts.iterator();
+		final Account account = aitr.next(), parent = aitr.next();
+		account.setParent(parent);
+		parent.setParent(account);
 
-		final Model model = marshaler.marshal(account, MarshalOptions.UNCONSTRAINED_MARSHALING);
-		assert model != null;
-		final Account unmarshaled = marshaler.marshal(Account.class, model);
-		assert unmarshaled != null;
-		assert account.equals(unmarshaled);
+		final Model model = marshaler.marshalEntity(account, MarshalOptions.UNCONSTRAINED_MARSHALING);
+		Assert.assertTrue(model != null);
+		final Account unmarshaled = marshaler.marshalModel(model, Account.class);
+		Assert.assertTrue(unmarshaled != null);
+		Assert.assertEquals(account, unmarshaled);
 	}
 
 	/**
@@ -113,13 +102,13 @@ public class MarshalerTest extends AbstractDbAwareTest {
 	 */
 	public void testNestedEntity() throws Exception {
 		final Marshaler marshaler = getMarshaler();
-		assert marshaler != null;
+		Assert.assertTrue(marshaler != null);
 		final IEntity e = getEntityBeanFactory().getEntityCopy(NestedEntity.class, false);
 		Assert.assertNotNull(e);
 
-		final Model model = marshaler.marshal(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
+		final Model model = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
 		Assert.assertNotNull(model);
-		final IEntity e2 = marshaler.marshal(e.entityClass(), model);
+		final IEntity e2 = marshaler.marshalModel(model, e.entityClass());
 		Assert.assertNotNull(e2);
 		Assert.assertEquals(e, e2);
 	}
@@ -145,15 +134,15 @@ public class MarshalerTest extends AbstractDbAwareTest {
 		};
 
 		final Marshaler marshaler = getMarshaler();
-		assert marshaler != null;
+		Assert.assertTrue(marshaler != null);
 		final Model model = marshaler.marshalScalar(scalar, MarshalOptions.UNCONSTRAINED_MARSHALING);
 
 		final Iterator<IModelProperty> itr = model.iterator();
 		while(itr.hasNext()) {
 			final IModelProperty prop = itr.next();
-			assert prop != null;
+			Assert.assertTrue(prop != null);
 			final Object val = tupleMap.get(prop.getPropertyName());
-			assert val != null;
+			Assert.assertTrue(val != null);
 		}
 
 	}
@@ -166,56 +155,56 @@ public class MarshalerTest extends AbstractDbAwareTest {
 	 */
 	public void testEmptyRelatedMany() throws Exception {
 		final Marshaler marshaler = getMarshaler();
-		assert marshaler != null;
+		Assert.assertTrue(marshaler != null);
 		final Account e = getEntityBeanFactory().getEntityCopy(Account.class, false);
-		assert e != null;
+		Assert.assertTrue(e != null);
 		e.setAddresses(null);
-		final Model m = marshaler.marshal(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
-		assert m != null;
+		final Model m = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
+		Assert.assertTrue(m != null);
 		final IModelProperty mp = m.get("addresses");
-		assert mp != null;
+		Assert.assertTrue(mp != null);
 	}
 
 	public void testEmptyNested() throws Exception {
 		final Marshaler marshaler = getMarshaler();
-		assert marshaler != null;
+		Assert.assertTrue(marshaler != null);
 		final Account e = getEntityBeanFactory().getEntityCopy(Account.class, false);
 		final NestedEntity n = getEntityBeanFactory().getEntityCopy(NestedEntity.class, false);
-		assert e != null && n != null;
+		Assert.assertTrue(e != null && n != null);
 		e.setNestedEntity(n);
-		final Model m = marshaler.marshal(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
-		assert m != null;
+		final Model m = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
+		Assert.assertTrue(m != null);
 		final IModelProperty mp = m.get("nestedEntity");
-		assert mp != null;
+		Assert.assertTrue(mp != null);
 	}
 
 	public void testEmptyNestedTarget() throws Exception {
 		final Marshaler marshaler = getMarshaler();
-		assert marshaler != null;
+		Assert.assertTrue(marshaler != null);
 		final Account e = getEntityBeanFactory().getEntityCopy(Account.class, false);
 		final NestedEntity n = getEntityBeanFactory().getEntityCopy(NestedEntity.class, false);
-		assert e != null && n != null;
+		Assert.assertTrue(e != null && n != null);
 		e.setNestedEntity(n);
 		e.getNestedEntity().setNestedData(null);
-		final Model m = marshaler.marshal(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
-		assert m != null;
+		final Model m = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
+		Assert.assertTrue(m != null);
 		final IModelProperty mp = m.get("nestedEntity");
-		assert mp != null;
+		Assert.assertTrue(mp != null);
 	}
 
 	public void testUnmarshalAgainstExistingEntity() throws Exception {
 		final Marshaler marshaler = getMarshaler();
-		assert marshaler != null;
+		Assert.assertTrue(marshaler != null);
 		final Account e = getEntityBeanFactory().getEntityCopy(Account.class, false);
 		final AccountAddress aa1 = getEntityBeanFactory().getEntityCopy(AccountAddress.class, false);
 		final AccountAddress aa2 = getEntityBeanFactory().getEntityCopy(AccountAddress.class, true);
 		e.addAccountAddress(aa1);
 		e.addAccountAddress(aa2);
 
-		final Model m = marshaler.marshal(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
+		final Model m = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
 		m.indexed("addresses[0]").getModel().setMarkedDeleted(true);
 
-		final Account rea = marshaler.marshal(m, e);
+		final Account rea = marshaler.marshalModel(m, e);
 		Assert.assertTrue(e == rea);
 		Assert.assertTrue(e.equals(rea));
 		Assert.assertTrue(e.getAddresses() != null);

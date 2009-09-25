@@ -1,4 +1,5 @@
 <module rename-to="uitests">
+  <inherits name="com.tll.CommonTest" />
   <inherits name="com.tll.Field" />
 
   <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />

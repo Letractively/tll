@@ -29,8 +29,6 @@ import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.db4o.IDb4oNamedQueryTranslator;
-import com.tll.model.key.IPrimaryKeyGenerator;
-import com.tll.model.key.SimplePrimaryKeyGenerator;
 
 /**
  * Db4oDaoModule - Db4o dao impl module.
@@ -195,9 +193,6 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 				}
 			}).in(Scopes.SINGLETON);
 		}
-
-		// IPrimaryKeyGenerator
-		bind(IPrimaryKeyGenerator.class).to(SimplePrimaryKeyGenerator.class).in(Scopes.SINGLETON);
 
 		// IDb4oNamedQueryTranslator
 		bind(IDb4oNamedQueryTranslator.class).to(getNamedQueryTranslatorImpl()).in(Scopes.SINGLETON);

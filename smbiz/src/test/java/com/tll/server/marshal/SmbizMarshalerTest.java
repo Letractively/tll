@@ -100,7 +100,7 @@ public class SmbizMarshalerTest extends AbstractDbAwareTest {
 			final IEntity e = getEntityBeanFactory().getEntityCopy(entityClass, false);
 			if(e == null) continue;	// skip
 			Assert.assertNotNull(e);
-			final Model model = marshaler.marshal(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
+			final Model model = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
 
 			assert model.getEntityType() != null : "The marshaled entity model's ref type was found null";
 
@@ -109,7 +109,7 @@ public class SmbizMarshalerTest extends AbstractDbAwareTest {
 			assert refKey.isSet() : "The marshaled entity model's ref key was found un-set";
 
 			Assert.assertNotNull(model);
-			final IEntity e2 = marshaler.marshal(e.entityClass(), model);
+			final IEntity e2 = marshaler.marshalModel(model, e.entityClass());
 			Assert.assertNotNull(e2);
 			Assert.assertEquals(e, e2);
 		}
@@ -121,9 +121,9 @@ public class SmbizMarshalerTest extends AbstractDbAwareTest {
 		Assert.assertTrue(e != null && e.getParent() != null && e.getPaymentInfo() != null && e.getPaymentInfo().getPaymentData() != null);
 
 		final MarshalOptions mo = getMarshalOptionsResolver().resolve(SmbizEntityType.MERCHANT);
-		final Model m = getMarshaler().marshal(e, mo);
+		final Model m = getMarshaler().marshalEntity(e, mo);
 
-		final Merchant e2 = getMarshaler().marshal(Merchant.class, m);
+		final Merchant e2 = getMarshaler().marshalModel(m, Merchant.class);
 
 		Assert.assertNotNull(e2.getParent());
 		Assert.assertEquals(e, e2);

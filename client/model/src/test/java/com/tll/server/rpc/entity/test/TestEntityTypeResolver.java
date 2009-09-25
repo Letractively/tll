@@ -17,7 +17,7 @@ import com.tll.util.StringUtil;
  */
 public class TestEntityTypeResolver implements IEntityTypeResolver {
 
-	private static final String MODEL_PKG_TKN = "com.tll.model.";
+	private static final String MODEL_PKG_TKN = "com.tll.model.test.";
 
 	@Override
 	public Class<?> resolveEntityClass(IEntityType entityType) throws IllegalArgumentException {

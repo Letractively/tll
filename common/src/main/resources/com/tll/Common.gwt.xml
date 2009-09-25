@@ -19,6 +19,9 @@
     <include name="PropertyPath.java" />
     <include name="FNum.java" />
     <include name="DataPoint.java" />
+    <include name="RefSet.java" />
+    <include name="Binding.java" />
+    <include name="BindingRefSet.java" />
   </source>
 
   <source path="key">

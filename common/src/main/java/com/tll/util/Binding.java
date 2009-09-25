@@ -28,4 +28,8 @@ public class Binding<S, T> {
 		this.tgt = tgt;
 	}
 
+	@Override
+	public String toString() {
+		return "src: " + src + ", tgt: " + tgt;
+	}
 }

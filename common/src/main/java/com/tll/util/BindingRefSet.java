@@ -14,9 +14,8 @@ import java.util.Iterator;
  * @param <S> the "source" type
  * @param <T> the "target" type
  */
+@SuppressWarnings("serial")
 public class BindingRefSet<S, T> extends HashSet<Binding<S, T>> {
-
-	private static final long serialVersionUID = 3589507254633231431L;
 
 	public T findTarget(S arg) {
 		for(final Binding<S, T> bndg : this) {

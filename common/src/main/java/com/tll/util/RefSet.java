@@ -13,8 +13,8 @@ import java.util.HashSet;
  * @author jpk
  * @param <E> the element type
  */
+@SuppressWarnings("serial")
 public class RefSet<E> extends HashSet<E> {
-	private static final long serialVersionUID = 3963114477962268237L;
 
 	public boolean exists(E arg) {
 		for(final E e : this) {

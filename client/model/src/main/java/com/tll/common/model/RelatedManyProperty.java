@@ -105,7 +105,6 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	 * @return the list of indexed models
 	 */
 	public List<Model> getModelList() {
-		assert mlist != null;
 		return mlist;
 	}
 
