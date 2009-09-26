@@ -24,8 +24,6 @@ Ensure the following environment variables exist:
 || ANT_HOME || Points to the root Ant install dir. ||
 || GWT_HOME || Points to the root GWT _install_ dir. (Used for building GWT from source.) ||
 || GWT_TOOLS || Points to the root GWT Tools dir. (Used for building GWT from source.)||
-|| TLL_ROOT || The root dir of the local working copy of the tll source tree ('http://tll.googlecode.com/svn/trunk'). ||
-|| TLL_TOOLS || Points to the local working copy dir of tll tools root dir ('http://tll.googlecode.com/svn/tools'). ||
 
   * Add the following paths to the system path:
  {{{
@@ -63,22 +61,10 @@ mvn install
 The following steps cover the necessary [http://www.eclipse.org/ eclipse] IDE workspace settings.
 
 ==bootstrap==
-Specify the -vm option in the eclipse.ini or at the command line:
+Specify the -vm option in the eclipse.ini or at the command line (This is necessary for the m2eclipse plugin):
  {{{
 -vm {JAVA_HOME}/bin/javaw.exe
 }}}
-
-==Classpath Variables==
-The following _Preferences -> Java -> Build Path -> *Classpath Variables*_ are required:
-|| TLL_TOOLS || Replica of the environment variable defined above. ||
-|| TLL_ROOT || Replica of the environment variable defined above. ||
-|| GWT_HOME || Points to the root install dir of the Google Web Toolkit. ||
-|| GWT_INCUBATOR_HOME || Points to the root install dir of the [http://code.google.com/p/google-web-toolkit-incubator/ GWT Incubator] project. ||
-
-==String Substitution==
-The following _Preferences -> Run/Debug -> *String Substitutions*_ are required:
-|| aspectj_home || Points to the root install dir of AspectJ. ||
-|| gwt_host_webroot || {TLL_ROOT}/smbiz/smbiz-client/tomcat/webapps/ROOT ||
 
 ==Add Ons==
 || *Name* || *URL* || *Notes* ||
