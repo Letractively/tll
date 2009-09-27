@@ -110,7 +110,7 @@ public class FieldModelBinding {
 	/**
 	 * Tracks which properties have been altered in the model.
 	 */
-	private final ModelPropertyChangeTracker modelChangeTracker = new ModelPropertyChangeTracker();
+	private ModelPropertyChangeTracker modelChangeTracker;
 
 	private boolean bound;
 
@@ -118,6 +118,14 @@ public class FieldModelBinding {
 
 	public final void setErrorHandler(IErrorHandler errorHandler) {
 		this.errorHandler = errorHandler;
+	}
+
+	public final ModelPropertyChangeTracker getModelChangeTracker() {
+		return modelChangeTracker;
+	}
+
+	public final void setModelChangeTracker(ModelPropertyChangeTracker modelChangeTracker) {
+		this.modelChangeTracker = modelChangeTracker;
 	}
 
 	/**
@@ -136,9 +144,11 @@ public class FieldModelBinding {
 			// update the model
 			binding.setLeft();
 
-			// generate the changed model
-			changedModel = modelChangeTracker.generateChangeModel();
-			modelChangeTracker.clear();	// reset
+			if(modelChangeTracker != null) {
+				// generate the changed model
+				changedModel = modelChangeTracker.generateChangeModel();
+				modelChangeTracker.clear();	// reset
+			}
 		}
 		catch(final ValidationException e) {
 			if(errorHandler != null) errorHandler.handleErrors(e.getErrors(), ErrorDisplay.ALL_FLAGS);
@@ -181,13 +191,15 @@ public class FieldModelBinding {
 		if(widget.getModel() == null) {
 			throw new IllegalArgumentException("No model specified in field bound widget");
 		}
-		modelChangeTracker.set(widget.getModel());
-		modelChangeTracker.setHandleChanges(false);
+		if(modelChangeTracker != null) {
+			//modelChangeTracker.set(widget.getModel());
+			modelChangeTracker.setHandleChanges(false);
+		}
 		createBindings();
 		Log.debug("Binding: " + widget);
 		binding.bind();
 		binding.setRight();
-		modelChangeTracker.setHandleChanges(true);
+		if(modelChangeTracker != null) modelChangeTracker.setHandleChanges(true);
 		bound = true;
 	}
 
@@ -205,7 +217,7 @@ public class FieldModelBinding {
 
 			binding.unbind();
 			binding.getChildren().clear();
-			modelChangeTracker.clear();
+			if(modelChangeTracker != null) modelChangeTracker.clear();
 			changedModel = null;
 			bound = false;
 		}
@@ -258,6 +270,7 @@ public class FieldModelBinding {
 				b =
 					new Binding(widget.getModel(), iw.getIndexedPropertyName(), null, null, null, iw,
 							IBindableWidget.PROPERTY_VALUE, null, null, null);
+				//b.addPropertyChangeListener(modelChangeTracker, true);
 				binding.getChildren().add(b);
 			}
 		}

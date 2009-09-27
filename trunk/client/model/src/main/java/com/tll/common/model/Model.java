@@ -223,6 +223,10 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 						return true;
 				}
 				else {
+					if(srcProp instanceof IPropertyValue) {
+						final PropertyMetadata metadata = ((IPropertyValue) srcProp).getMetadata();
+						if(metadata != null && metadata.isManaged()) return false;
+					}
 					if(wle.rootRelPath.equals(rootRelPath)
 							|| rootRelPath.endsWith(ID_PROPERTY)
 							|| rootRelPath.endsWith(VERSION_PROPERTY)) {

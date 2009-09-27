@@ -67,7 +67,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 
 			// NOTE: we bind *before* we set the index so the property paths jive with
 			// the index model!
-			// fieldPanel.getBinding().set(fieldPanel);
+			fieldPanel.getBinding().setModelChangeTracker(IndexedFieldPanel.this.getBinding().getModelChangeTracker());
 			fieldPanel.getBinding().bind();
 
 			setIndex(index, true);
