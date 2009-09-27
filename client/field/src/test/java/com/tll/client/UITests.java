@@ -36,6 +36,7 @@ import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.ui.test.ModelViewer;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.ErrorHandlerBuilder;
+import com.tll.client.validate.ErrorHandlerDelegate;
 import com.tll.common.model.CopyCriteria;
 import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
@@ -379,8 +380,10 @@ public final class UITests extends AbstractUITest {
 		HorizontalPanel layout;
 		VerticalPanel context;
 		GlobalMsgPanel gmp;
+		TestFieldPanel fp;
+		ErrorHandlerDelegate eh;
 		EditPanel ep;
-		ModelViewer mv;
+		ModelViewer mv, mvchanged;
 		Model m;
 
 		@Override
@@ -403,9 +406,11 @@ public final class UITests extends AbstractUITest {
 			gmp = new GlobalMsgPanel();
 
 			mv = new ModelViewer();
+			mvchanged = new ModelViewer();
+			fp = new TestFieldPanel();
+			eh = ErrorHandlerBuilder.build(true, true, new GlobalMsgPanel());
 			ep =
-				new EditPanel(new TestFieldPanel(), false, false, ErrorHandlerBuilder.build(true, true,
-						new GlobalMsgPanel()));
+				new EditPanel(fp, false, false, eh);
 
 			final CopyCriteria mcrit = CopyCriteria.all();
 
@@ -431,6 +436,7 @@ public final class UITests extends AbstractUITest {
 					}
 					ep.setModel(mcopy);
 					mv.setModel(mcopy);
+					mvchanged.setModel(event.getChangedModel());
 					m = mcopy;
 				}
 			});
@@ -441,7 +447,14 @@ public final class UITests extends AbstractUITest {
 			context.add(ep);
 
 			layout.add(context);
-			layout.add(mv);
+			VerticalPanel vp = new VerticalPanel();
+			vp.add(new Label("Model props"));
+			vp.add(mv);
+			layout.add(vp);
+			vp = new VerticalPanel();
+			vp.add(new Label("Changed model props"));
+			vp.add(mvchanged);
+			layout.add(vp);
 
 			RootPanel.get().add(layout);
 
@@ -458,9 +471,11 @@ public final class UITests extends AbstractUITest {
 			}
 			context = null;
 			gmp = null;
+			fp.getBinding().unbind();
 			ep = null;
 			mv = null;
 			m = null;
+			mvchanged = null;
 		}
 
 	} // FieldBindingLifecycleTest

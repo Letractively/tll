@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.model.ModelPropertyChangeTracker;
 import com.tll.client.ui.FocusCommand;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
@@ -181,6 +182,9 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	 */
 	public void setModel(Model model) {
 		Log.debug("EditPanel.setModel() - START");
+		final ModelPropertyChangeTracker t = new ModelPropertyChangeTracker();
+		t.set(model);
+		fieldPanel.getBinding().setModelChangeTracker(t);
 		fieldPanel.setModel(model);
 		if(model != null) {
 			setEditMode(model.isNew());
