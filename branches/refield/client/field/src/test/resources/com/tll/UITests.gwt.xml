@@ -1,0 +1,29 @@
+<module rename-to="uitests">
+  <inherits name="com.tll.CommonTest" />
+  <inherits name="com.tll.Field" />
+
+  <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
+  <set-property name="log_ConsoleLogger" value="ENABLED" />
+  <set-property name="log_FirebugLogger" value="ENABLED" />
+  <set-property name="log_SystemLogger" value="ENABLED" />
+  <set-property name="log_GWTLogger" value="DISABLED" />
+  <set-property name="log_DivLogger" value="DISABLED" />
+  <set-property name="log_RemoteLogger" value="DISABLED" />
+  <set-property name="log_WindowLogger" value="DISABLED" />
+
+  <source path="client">
+    <exclude name="**/*GWTTest*" />
+  </source>
+
+  <source path="common/model">
+    <exclude name="*Test.java" />
+  </source>
+
+  <!-- target host mode browser only -->
+  <!-- 
+  <set-property name="user.agent" value="ie6" />
+  <set-property name="locale" value="default" />
+  -->
+
+  <entry-point class="com.tll.client.UITests" />
+</module>
