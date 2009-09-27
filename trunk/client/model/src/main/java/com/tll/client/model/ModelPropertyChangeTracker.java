@@ -21,10 +21,15 @@ import com.tll.common.model.PropertyPathException;
  */
 public class ModelPropertyChangeTracker implements IPropertyChangeListener {
 
-	// chronological ordering
-	private final HashSet<IModelProperty> changes = new HashSet<IModelProperty>();
-
+	/**
+	 *  The root model subject to editing.
+	 */
 	private Model root;
+
+	/**
+	 * The set of model properties under that have been altered.
+	 */
+	private final HashSet<IModelProperty> changes = new HashSet<IModelProperty>();
 
 	/**
 	 * Flag to turn on/off this tracker to jive with the field binding life-cycle.
@@ -46,7 +51,6 @@ public class ModelPropertyChangeTracker implements IPropertyChangeListener {
 			}
 		}
 		else if(src instanceof IModelProperty) {
-			//assert root.getModelProperty(evt.getPropertyName()) != null;
 			changes.add((IModelProperty) src);
 		}
 		else {
@@ -64,13 +68,14 @@ public class ModelPropertyChangeTracker implements IPropertyChangeListener {
 	}
 
 	/**
-	 * @return the handleChanges
+	 * @return <code>true</code> if this instance is tracking changes.
 	 */
 	public boolean isHandleChanges() {
 		return handleChanges;
 	}
 
 	/**
+	 * Manually turns or or off property change tracking.
 	 * @param handleChanges the handleChanges to set
 	 */
 	public void setHandleChanges(boolean handleChanges) {
@@ -82,7 +87,7 @@ public class ModelPropertyChangeTracker implements IPropertyChangeListener {
 	 */
 	public void clear() {
 		changes.clear();
-		root = null;
+		//root = null;
 	}
 
 	/**
@@ -91,6 +96,6 @@ public class ModelPropertyChangeTracker implements IPropertyChangeListener {
 	 *         tracked as changed.
 	 */
 	public Model generateChangeModel() {
-		return root.copy(new CopyCriteria(true, false, true, changes));
+		return root.copy(CopyCriteria.changes(changes));
 	}
 }

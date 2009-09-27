@@ -232,12 +232,13 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 				Log.debug("EditPanel - Saving..");
 				fieldPanel.getBinding().execute();
 				if(isAdd()) {
-					EditEvent.fireAdd(this);
+					EditEvent.fireAdd(this, fieldPanel.getModel());
 
 				}
 				else {
-					final Model mchanged = fieldPanel.getBinding().getModelChangeTracker().generateChangeModel();
-					EditEvent.fireUpdate(this, mchanged);
+					final Model medited = fieldPanel.getModel();
+					final Model mchanged = fieldPanel.getBinding().getChangedModel();
+					EditEvent.fireUpdate(this, medited, mchanged);
 				}
 			}
 			catch(final ValidationException e) {

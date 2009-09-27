@@ -23,23 +23,23 @@ import com.tll.model.test.CreditCardType;
 import com.tll.refdata.RefDataType;
 
 /**
- * MockFieldGroupProviders
+ * TestFieldGroupProviders
  * @author jpk
  */
-public class MockFieldGroupProviders {
+public class TestFieldGroupProviders {
 
 	/**
-	 * AbstractMockFieldGroupProvider
+	 * AbstractTestFieldGroupProvider
 	 * @author jpk
 	 */
-	static abstract class AbstractMockFieldGroupProvider extends AbstractFieldGroupProvider {
+	static abstract class AbstractTestFieldGroupProvider extends AbstractFieldGroupProvider {
 
 		private static boolean auxDataInitialized;
 
 		/**
 		 * Constructor
 		 */
-		protected AbstractMockFieldGroupProvider() {
+		protected AbstractTestFieldGroupProvider() {
 			super();
 			if(!auxDataInitialized) {
 				// set needed aux data cache
@@ -60,13 +60,13 @@ public class MockFieldGroupProviders {
 				auxDataInitialized = true;
 			}
 		}
-	} // AbstractMockFieldGroupProvider
+	} // AbstractTestFieldGroupProvider
 
 	/**
 	 * AddressFieldsProvider
 	 * @author jpk
 	 */
-	public static final class AddressFieldsProvider extends AbstractMockFieldGroupProvider {
+	public static final class AddressFieldsProvider extends AbstractTestFieldGroupProvider {
 
 		@Override
 		protected String getFieldGroupName() {
@@ -100,7 +100,7 @@ public class MockFieldGroupProviders {
 	 * PaymentInfoFieldsProvider
 	 * @author jpk
 	 */
-	public static class PaymentInfoFieldsProvider extends AbstractMockFieldGroupProvider {
+	public static class PaymentInfoFieldsProvider extends AbstractTestFieldGroupProvider {
 
 		@Override
 		protected String getFieldGroupName() {
@@ -130,7 +130,7 @@ public class MockFieldGroupProviders {
 	 * AccountAddressFieldsProvider
 	 * @author jpk
 	 */
-	public static class AccountAddressFieldsProvider extends AbstractMockFieldGroupProvider {
+	public static class AccountAddressFieldsProvider extends AbstractTestFieldGroupProvider {
 
 		@Override
 		protected String getFieldGroupName() {
@@ -151,7 +151,7 @@ public class MockFieldGroupProviders {
 	 * AccountFieldsProvider - Provides non-relational account properties.
 	 * @author jpk
 	 */
-	public static class AccountFieldsProvider extends AbstractMockFieldGroupProvider {
+	public static class AccountFieldsProvider extends AbstractTestFieldGroupProvider {
 
 		@Override
 		protected String getFieldGroupName() {

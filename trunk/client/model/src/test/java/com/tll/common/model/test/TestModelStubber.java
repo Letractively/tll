@@ -27,7 +27,7 @@ import com.tll.model.test.CreditCardType;
 
 /**
  * TestModelFactory - Ad-hoc factory for generating testable {@link Model}
- * instances.
+ * instances w/o the need for db access.
  * @author jpk
  */
 public class TestModelStubber {

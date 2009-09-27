@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.tll.client.TestUtils;
+import com.tll.common.model.CopyCriteria.CopyMode;
 import com.tll.model.schema.PropertyType;
 
 /**
@@ -26,7 +27,10 @@ public class ModelTestUtils {
 	 * @throws Exception When a copy discrepancy is encountered
 	 */
 	public static void validateCopy(final Model source, final Model copy, CopyCriteria criteria) throws Exception {
-		compare(source, copy, criteria.references, criteria.markedDeleted, true, new ArrayList<Model>());
+		final boolean references = criteria.getMode() == CopyMode.ALL;
+		final boolean ignoreMissingProps = criteria.getMode() == CopyMode.CHANGES;
+		compare(source, copy, references, true, ignoreMissingProps, new ArrayList<Model>());
+		if(source.size() != copy.size()) throw new Exception("source/copy size mismatch");
 	}
 
 	/**
@@ -90,15 +94,15 @@ public class ModelTestUtils {
 	 * @param target The target
 	 * @param compareReferences Compare nested relational properties marked as
 	 *        reference?
-	 * @param copyMarkedDeletedFlag
 	 * @param requireDistinctModelProperties Fail if any encountered
 	 *        {@link IModelProperty} on the source is equal by memory address on
 	 *        the copy?
+	 * @param ignoreMissingProps
 	 * @param visited
 	 * @throws Exception
 	 */
 	private static void compare(Model source, Model target, final boolean compareReferences,
-			final boolean copyMarkedDeletedFlag, boolean requireDistinctModelProperties, List<Model> visited)
+			boolean requireDistinctModelProperties, final boolean ignoreMissingProps, final List<Model> visited)
 	throws Exception {
 		assert source != null && target != null;
 
@@ -114,8 +118,7 @@ public class ModelTestUtils {
 				if(e instanceof NullNodeInPropPathException || e instanceof UnsetPropertyException) {
 					// we have a missing model prop in the copy implying it was filtered
 					// via either a white or black list in the copy criteria
-					// TODO do the actual checking
-					continue;
+					if(ignoreMissingProps) continue;
 				}
 				throw e;
 			}
@@ -145,20 +148,14 @@ public class ModelTestUtils {
 					throw new Exception("Nested source model null but not on the target for prop: " + propName);
 				}
 				else if(tgtModel == null && srcModel != null) {
-					if(copyMarkedDeletedFlag) {
-						throw new Exception("Nested source model non-null but not on the target for prop: " + propName);
-					}
+					// no-op
 				}
 				else if(tgtModel != null && srcModel != null) {
 					// both are non-null
-					if(!copyMarkedDeletedFlag && srcModel.isMarkedDeleted()) {
-						throw new Exception("Nested source model non-null and target non-null for model for prop: " + propName
-								+ " but the source was marked as deleted");
-					}
 					if((compareReferences || !src.isReference())) {
 						if(!visited.contains(srcModel)) {
 							visited.add(srcModel);
-							compare(srcModel, tgtModel, compareReferences, copyMarkedDeletedFlag, requireDistinctModelProperties,
+							compare(srcModel, tgtModel, compareReferences, requireDistinctModelProperties, ignoreMissingProps,
 									visited);
 						}
 					}
@@ -177,20 +174,21 @@ public class ModelTestUtils {
 					throw new Exception("Related many lists differ by null for prop:" + propName);
 				}
 				if(srcList != null && tgtList != null) {
-					if(copyMarkedDeletedFlag && srcList.size() != tgtList.size()) {
-						throw new Exception("Source and copy related many list sizes differ for prop: " + propName);
-					}
 					if(compareReferences || !src.isReference()) {
 						for(final Model srcModel : srcList) {
 							// find the copied target model
 							Model tgtModel = null;
-							// NOTE: we can rely on this since we are doing a logical equals
-							// as Model overrides equals()/hashCode()
-							final int ti = tgtList.indexOf(srcModel);
+							int ti = -1, index = 0;
+							for(final Model tm : tgtList) {
+								if(tm.getKey().equals(srcModel.getKey())) {
+									ti = index;
+									break;
+								}
+								index++;
+							}
 							if(ti == -1) {
-								// this should only happen when we aren't copying models marked
-								// as deleted
-								if(copyMarkedDeletedFlag) {
+								// this should only happen when we are copying in change mode
+								if(!ignoreMissingProps) {
 									throw new Exception("Missing related many model element for property: " + srcProp);
 								}
 							}
@@ -200,7 +198,7 @@ public class ModelTestUtils {
 							}
 							if(tgtModel != null && !visited.contains(srcModel)) {
 								visited.add(srcModel);
-								compare(srcModel, tgtModel, compareReferences, copyMarkedDeletedFlag, requireDistinctModelProperties,
+								compare(srcModel, tgtModel, compareReferences, requireDistinctModelProperties, ignoreMissingProps,
 										visited);
 							}
 						}

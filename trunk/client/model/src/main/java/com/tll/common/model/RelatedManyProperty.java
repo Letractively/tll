@@ -21,11 +21,11 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	/**
 	 * The list of indexed props.
 	 */
-	private ArrayList<IndexedProperty> list;
+	private ArrayList<IndexedProperty> list = new ArrayList<IndexedProperty>();
 
 	/**
-	 * The corresponding model list whereby at each index, the the model in the
-	 * indexed property list is that in this list. We track this to fire proper property change events
+	 * The value collection whereby each indexed model corresponds to the wrapped
+	 * model in the {@link #list}.
 	 */
 	private ArrayList<Model> mlist;
 
@@ -53,7 +53,7 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 		return PropertyType.RELATED_MANY;
 	}
 
-	public final Object getValue() {
+	public Object getValue() {
 		return getModelList();
 	}
 
@@ -65,22 +65,19 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 			if(mlist != null) {
 				final Object old = mlist;
 				list.clear();
-				mlist.clear();
+				mlist = null;
 				getChangeSupport().firePropertyChange(propertyName, old, mlist);
 			}
 		}
 		else if(value instanceof Collection) {
 			final Collection<Model> clc = (Collection) value;
 			final Object old = mlist;
+			list.clear();
 			if(mlist == null) {
 				mlist = new ArrayList<Model>(clc.size());
-				assert list == null;
-				list = new ArrayList<IndexedProperty>(clc.size());
 			}
 			else {
 				mlist.clear();
-				assert list != null;
-				list.clear();
 			}
 			int i = 0;
 			for(final Model im : clc) {
@@ -114,7 +111,7 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	 * @throws IndexOutOfBoundsException
 	 * @return The {@link IndexedProperty} at the given index.
 	 */
-	protected IndexedProperty getIndexedProperty(int index) throws IndexOutOfBoundsException {
+	public IndexedProperty getIndexedProperty(int index) throws IndexOutOfBoundsException {
 		return list.get(index);
 	}
 
@@ -146,6 +143,9 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 				// we're appending a new index
 				if(m != null) {
 					// add
+					if(mlist == null) {
+						mlist = new ArrayList<Model>();
+					}
 					mlist.add(m);
 					list.add(new IndexedProperty(relatedType, m, propertyName, isReference(), index));
 				}
@@ -172,6 +172,8 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 		else {
 			setValue(value);
 		}
+
+		assert ((mlist == null && list.size() == 0) || (mlist.size() == list.size()));
 	}
 
 	/**

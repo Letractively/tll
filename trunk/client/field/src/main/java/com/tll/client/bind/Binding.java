@@ -80,6 +80,10 @@ final class Binding {
 			listeners.add(pcl);
 		}
 
+		public void removePropertyChangeListener(IPropertyChangeListener pcl) {
+			listeners.remove(pcl);
+		}
+
 		public void firePropertyChange(PropertyChangeEvent pce) {
 			for(final IPropertyChangeListener l : listeners) {
 				l.propertyChange(pce);
@@ -244,6 +248,18 @@ final class Binding {
 			left.addPropertyChangeListener(pcl);
 		else
 			right.addPropertyChangeListener(pcl);
+	}
+
+	/**
+	 * Remove a property change listener either on the left side or the right side.
+	 * @param pcl the listener to remove
+	 * @param toLeft add to left side (<code>true</code>) or right side?
+	 */
+	public void removePropertyChangeListener(IPropertyChangeListener pcl, boolean toLeft) {
+		if(toLeft)
+			left.removePropertyChangeListener(pcl);
+		else
+			right.removePropertyChangeListener(pcl);
 	}
 
 	/**
