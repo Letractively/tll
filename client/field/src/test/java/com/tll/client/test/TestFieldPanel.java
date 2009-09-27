@@ -19,11 +19,11 @@ import com.tll.model.test.AccountStatus;
 import com.tll.model.test.AddressType;
 
 /**
- * ComplexFieldPanel - Contains a simple field panel mocking a related one
+ * TestFieldPanel - Contains a simple field panel mocking a related one
  * model, and an indexed field panel mocking a related many model collection.
  * @author jpk
  */
-public class ComplexFieldPanel extends FlowFieldPanel {
+public class TestFieldPanel extends FlowFieldPanel {
 
 	/**
 	 * IndexFieldPanel
@@ -33,7 +33,7 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 
 		@Override
 		protected FieldGroup generateFieldGroup() {
-			return new MockFieldGroupProviders.AccountAddressFieldsProvider().getFieldGroup();
+			return new TestFieldGroupProviders.AccountAddressFieldsProvider().getFieldGroup();
 		}
 
 		@Override
@@ -131,7 +131,7 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 		@Override
 		protected Model createPrototypeModel() {
 			final Model m = TestModelStubber.stubAccountAddress(null, TestModelStubber.stubAddress(1), 1);
-			m.clearPropertyValues(false);
+			m.clearPropertyValues(false, true);
 			return m;
 		}
 
@@ -147,7 +147,7 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 	/**
 	 * Constructor
 	 */
-	public ComplexFieldPanel() {
+	public TestFieldPanel() {
 		super();
 		indexedPanel = new IndexedFieldPanel();
 	}
@@ -203,8 +203,8 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 		final FieldGroup fg = (new IFieldGroupProvider() {
 
 			public FieldGroup getFieldGroup() {
-				final FieldGroup fgroup = (new MockFieldGroupProviders.AccountFieldsProvider()).getFieldGroup();
-				fgroup.addField("paymentInfo", (new MockFieldGroupProviders.PaymentInfoFieldsProvider()).getFieldGroup());
+				final FieldGroup fgroup = (new TestFieldGroupProviders.AccountFieldsProvider()).getFieldGroup();
+				fgroup.addField("paymentInfo", (new TestFieldGroupProviders.PaymentInfoFieldsProvider()).getFieldGroup());
 				fgroup.addField("addresses", indexedPanel.getFieldGroup());
 				return fgroup;
 			}

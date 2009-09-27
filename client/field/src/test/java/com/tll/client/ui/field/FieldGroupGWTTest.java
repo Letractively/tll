@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.google.gwt.junit.client.GWTTestCase;
-import com.tll.client.test.MockFieldGroupProviders;
+import com.tll.client.test.TestFieldGroupProviders;
 import com.tll.model.schema.IPropertyNameProvider;
 
 /**
@@ -45,7 +45,7 @@ public class FieldGroupGWTTest extends GWTTestCase {
 	 * Tests {@link FieldGroup#getFieldWidgetByProperty(String)}.
 	 */
 	public void testGetField() {
-		final FieldGroup fg = (new MockFieldGroupProviders.AddressFieldsProvider()).getFieldGroup();
+		final FieldGroup fg = (new TestFieldGroupProviders.AddressFieldsProvider()).getFieldGroup();
 		final Collection<String> propNames = getPropNames(fg);
 		assert propNames != null && propNames.size() > 0;
 		for(final String prop : propNames) {

@@ -2,7 +2,7 @@ package com.tll.client.bind;
 
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.tll.client.test.ComplexFieldPanel;
+import com.tll.client.test.TestFieldPanel;
 import com.tll.common.model.test.TestModelStubber;
 
 /**
@@ -22,7 +22,7 @@ public class FieldBindingGWTTest extends GWTTestCase {
 	 * Tests the initial binding of model properties to fields.
 	 */
 	public void testBind() {
-		final ComplexFieldPanel fieldPanel = new ComplexFieldPanel();
+		final TestFieldPanel fieldPanel = new TestFieldPanel();
 		//fieldPanel.setAction(new SimpleBindingAction());
 		fieldPanel.setModel(TestModelStubber.stubAccount(true));
 		RootPanel.get().add(fieldPanel);

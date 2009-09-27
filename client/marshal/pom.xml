@@ -72,6 +72,13 @@
     
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>tll-common</artifactId>
+      <version>${project.version}</version>
+      <classifier>testassets</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
       <version>${project.version}</version>
       <classifier>testassets</classifier>

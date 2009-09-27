@@ -20,7 +20,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.test.ComplexFieldPanel;
+import com.tll.client.test.TestFieldPanel;
 import com.tll.client.ui.GridRenderer;
 import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
@@ -404,10 +404,10 @@ public final class UITests extends AbstractUITest {
 
 			mv = new ModelViewer();
 			ep =
-				new EditPanel(new ComplexFieldPanel(), false, false, ErrorHandlerBuilder.build(true, true,
+				new EditPanel(new TestFieldPanel(), false, false, ErrorHandlerBuilder.build(true, true,
 						new GlobalMsgPanel()));
 
-			final CopyCriteria mcrit = new CopyCriteria(true, true, false, null);
+			final CopyCriteria mcrit = CopyCriteria.all();
 
 			ep.addEditHandler(new IEditHandler() {
 

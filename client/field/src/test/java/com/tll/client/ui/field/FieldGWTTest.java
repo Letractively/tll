@@ -34,7 +34,7 @@ public class FieldGWTTest extends GWTTestCase {
 		return "com.tll.FieldTest";
 	}
 
-	protected void validateFieldCommon(IFieldWidget<?> f) throws Exception {
+	protected static void validateFieldCommon(IFieldWidget<?> f) throws Exception {
 		assert PROP_NAME.equals(f.getName());
 		assert PROP_NAME.equals(f.getPropertyName());
 
@@ -56,7 +56,7 @@ public class FieldGWTTest extends GWTTestCase {
 		}
 	}
 
-	protected void validateStringField(IFieldWidget<String> f) throws Exception {
+	protected static void validateStringField(IFieldWidget<String> f) throws Exception {
 		validateFieldCommon(f);
 
 		assert StringUtil.isEmpty(f.getValue());
@@ -121,7 +121,7 @@ public class FieldGWTTest extends GWTTestCase {
 		// NOTE: we compare the dates as *Strings* to get around "micro-time"
 		// difference that Date.setSeconds() doesn't handle
 		assert now.toString().equals(fdate.toString());
-		*/
+		 */
 	}
 
 	/**
@@ -155,7 +155,7 @@ public class FieldGWTTest extends GWTTestCase {
 		data.put("s2", "S2");
 		data.put("s3", "S3");
 		final RadioGroupField<String> f =
-				FieldFactory.fradiogroup(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, data, new GridRenderer(1, null));
+			FieldFactory.fradiogroup(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, data, new GridRenderer(1, null));
 		validateFieldCommon(f);
 
 		// TODO finish

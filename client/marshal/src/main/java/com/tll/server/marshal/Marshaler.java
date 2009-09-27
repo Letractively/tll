@@ -48,6 +48,7 @@ import com.tll.model.schema.Transient;
 import com.tll.server.rpc.entity.IEntityTypeResolver;
 import com.tll.util.Binding;
 import com.tll.util.BindingRefSet;
+import com.tll.util.ObjectUtil;
 
 /**
  * Marshaler - Converts server-side entities to client-bound value objects and
@@ -234,8 +235,8 @@ public final class Marshaler {
 						final IEntity e = (IEntity) obj;
 						final Model m = e == null ? null : marshalEntity(e, options, visited, depth + 1);
 						final IEntityType etype =
-								ri.getRelatedType() == null ? null : etResolver.resolveEntityType(e == null ? ri.getRelatedType() : e
-										.entityClass());
+							ri.getRelatedType() == null ? null : etResolver.resolveEntityType(e == null ? ri.getRelatedType() : e
+									.entityClass());
 						prop = new RelatedOneProperty(etype, m, pname, reference);
 					}
 				}
@@ -311,17 +312,25 @@ public final class Marshaler {
 	@SuppressWarnings("unchecked")
 	private void marshalModel(Model model, IEntity crntEntity, final BindingRefSet visited, int depth) {
 
+		// max depth check
+		if(!depthCheck(depth, -1)) {
+			throw new IllegalStateException("Can't marshal model to entity: max depth reached");
+		}
+
+		// ensure id and version match!
+		{
+			final PrimaryKey<IEntity> modelPk = new PrimaryKey<IEntity>((Class<IEntity>) crntEntity.entityClass(), model.getId());
+			final PrimaryKey<IEntity> entityPk = new PrimaryKey<IEntity>((Class<IEntity>) crntEntity.entityClass(), crntEntity.getId());
+			if(!modelPk.equals(entityPk)) throw new RuntimeException("Model and entity primary keys don't match.");
+			if(!ObjectUtil.equals(model.getVersion(), crntEntity.getVersion())) throw new RuntimeException("Versions don't match.");
+		}
+
 		// only recurse if not already visited
 		Binding<Model, IEntity> b = visited.findBindingBySource(model);
 		if(b != null) return;
 		b = new Binding<Model, IEntity>(model, crntEntity);
 		log.debug("Adding new binding to visited: " + b);
 		visited.add(b);
-
-		// max depth check
-		if(!depthCheck(depth, -1)) {
-			throw new IllegalStateException("Can't marshal model to entity: max depth reached");
-		}
 
 		final BeanWrapperImpl bw = new BeanWrapperImpl(crntEntity);
 
@@ -351,29 +360,29 @@ public final class Marshaler {
 			case RELATED_ONE: {
 				final Model rltdOne = (Model) pval;
 				final IEntityType rltdEntityType =
-						rltdOne == null ? ((RelatedOneProperty) mprop).getRelatedType() : rltdOne.getEntityType();
-				assert rltdEntityType != null;
-				IEntity toOne;
-				if(rltdOne == null || rltdOne.isMarkedDeleted()) {
-					toOne = null;
-				}
-				else {
-					final Class<? extends IEntity> rltdEntityClass =
-							(Class<? extends IEntity>) etResolver.resolveEntityClass(rltdEntityType);
-					try {
-						toOne = (IEntity) bw.getPropertyValue(propName);
-						if(toOne == null) toOne = instantiateEntity(rltdEntityClass);
-					}
-					catch(final RuntimeException re) {
-						log.warn("Unable to get related one entity ref", re);
+					rltdOne == null ? ((RelatedOneProperty) mprop).getRelatedType() : rltdOne.getEntityType();
+					assert rltdEntityType != null;
+					IEntity toOne;
+					if(rltdOne == null || rltdOne.isMarkedDeleted()) {
 						toOne = null;
 					}
-					log.debug("About to marshal related one [model: " + rltdOne + "] [entity: " + toOne + "]");
-					marshalModel(rltdOne, toOne, visited, depth + 1);
-				}
-				val = toOne;
+					else {
+						final Class<? extends IEntity> rltdEntityClass =
+							(Class<? extends IEntity>) etResolver.resolveEntityClass(rltdEntityType);
+						try {
+							toOne = (IEntity) bw.getPropertyValue(propName);
+							if(toOne == null) toOne = instantiateEntity(rltdEntityClass);
+						}
+						catch(final RuntimeException re) {
+							log.warn("Unable to get related one entity ref", re);
+							toOne = null;
+						}
+						log.debug("About to marshal related one [model: " + rltdOne + "] [entity: " + toOne + "]");
+						marshalModel(rltdOne, toOne, visited, depth + 1);
+					}
+					val = toOne;
 			}
-				break;
+			break;
 
 			case NESTED:
 				// no-op since these are expressed as "{parent}_{nestedA}"
@@ -441,7 +450,7 @@ public final class Marshaler {
 					//}
 				}
 			}
-				break;
+			break;
 
 			case STRING_MAP:
 				val = pval;

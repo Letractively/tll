@@ -135,6 +135,7 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 		}
 
 		// clear out the field values since we have different model data
+		// NOTE: we don't want to lazily instantite the field group here
 		if(group != null) {
 			group.clearValue();
 		}
@@ -142,8 +143,8 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 		this.model = model;
 
 		if(model != null) {
-			// apply property metadata and model new flag (sets incremental validation
-			// flag)
+			// apply property metadata and model new flag (sets incremental validation flag)
+			// NOTE: first ensure the field group has been generated
 			getFieldGroup().applyPropertyMetadata(model, model.isNew());
 		}
 

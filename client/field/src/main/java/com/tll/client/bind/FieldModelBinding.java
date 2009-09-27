@@ -72,7 +72,8 @@ public class FieldModelBinding {
 	 * @return the created {@link Binding}.
 	 * @throws BindingException When the binding creation fails
 	 */
-	static Binding createBinding(FieldGroup group, Model model, ModelPropertyChangeTracker modelChangeTracker) throws BindingException {
+	static Binding createBinding(FieldGroup group, Model model, ModelPropertyChangeTracker modelChangeTracker)
+	throws BindingException {
 		final Binding b = new Binding();
 		// create bindings for all provided field widgets in the root field group
 		for(final IFieldWidget<?> fw : group.getFieldWidgets(null)) {
@@ -113,6 +114,8 @@ public class FieldModelBinding {
 
 	private boolean bound;
 
+	private Model changedModel;
+
 	public final void setErrorHandler(IErrorHandler errorHandler) {
 		this.errorHandler = errorHandler;
 	}
@@ -132,6 +135,10 @@ public class FieldModelBinding {
 
 			// update the model
 			binding.setLeft();
+
+			// generate the changed model
+			changedModel = modelChangeTracker.generateChangeModel();
+			modelChangeTracker.clear();	// reset
 		}
 		catch(final ValidationException e) {
 			if(errorHandler != null) errorHandler.handleErrors(e.getErrors(), ErrorDisplay.ALL_FLAGS);
@@ -199,6 +206,7 @@ public class FieldModelBinding {
 			binding.unbind();
 			binding.getChildren().clear();
 			modelChangeTracker.clear();
+			changedModel = null;
 			bound = false;
 		}
 	}
@@ -216,8 +224,12 @@ public class FieldModelBinding {
 		return bound;
 	}
 
-	public final ModelPropertyChangeTracker getModelChangeTracker() {
-		return modelChangeTracker;
+	/**
+	 * @return Sub-set of the underlying model containing only those properties
+	 *         that were altered.
+	 */
+	public final Model getChangedModel() {
+		return changedModel;
 	}
 
 	/**
@@ -291,7 +303,8 @@ public class FieldModelBinding {
 	public void addBinding(String modelProperty, IConverter<Object, Object> modelConverter, String fieldName,
 			IConverter<Object, Object> fieldConverter) throws BindingException {
 		ensureSet();
-		createBinding(widget.getModel(), modelConverter, modelProperty, modelChangeTracker, resolveFieldWidget(fieldName), fieldConverter, null);
+		createBinding(widget.getModel(), modelConverter, modelProperty, modelChangeTracker, resolveFieldWidget(fieldName),
+				fieldConverter, null);
 	}
 
 	private void ensureSet() throws IllegalStateException {

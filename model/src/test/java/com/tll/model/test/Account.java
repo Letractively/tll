@@ -17,6 +17,7 @@ import com.tll.model.INamedEntity;
 import com.tll.model.NamedTimeStampEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
+import com.tll.model.schema.Reference;
 import com.tll.model.validate.AtLeastOne;
 import com.tll.model.validate.BusinessKeyUniqueness;
 
@@ -65,6 +66,7 @@ public class Account extends NamedTimeStampEntity implements IChildEntity<Accoun
 		return name;
 	}
 
+	@Reference
 	public Account getParent() {
 		return parent;
 	}
@@ -93,6 +95,7 @@ public class Account extends NamedTimeStampEntity implements IChildEntity<Accoun
 	 * @return Returns the currency.
 	 */
 	@NotNull
+	@Reference
 	public Currency getCurrency() {
 		return currency;
 	}

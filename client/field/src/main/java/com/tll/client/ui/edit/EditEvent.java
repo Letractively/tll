@@ -31,41 +31,48 @@ public final class EditEvent extends GwtEvent<IEditHandler> {
 	/**
 	 * Fires an edit event signifying a request to add.
 	 * @param source the source of the handlers
+	 * @param addedModel The model to be added
 	 */
-	public static void fireAdd(IHasEditHandlers source) {
-		source.fireEvent(new EditEvent(EditOp.ADD, null));
+	public static void fireAdd(IHasEditHandlers source, Model addedModel) {
+		source.fireEvent(new EditEvent(EditOp.ADD, addedModel, null));
 	}
 
 	/**
 	 * Fires an edit event signifying a request to update.
 	 * @param source the source of the handlers
+	 * @param editedModel the model containing all original properties reflecting all edit alterations
 	 * @param changedModel the model data to update containing ONLY those
 	 *        properties that were altered
 	 * @see ModelPropertyChangeTracker
 	 */
-	public static void fireUpdate(IHasEditHandlers source, Model changedModel) {
-		source.fireEvent(new EditEvent(EditOp.UPDATE, changedModel));
+	public static void fireUpdate(IHasEditHandlers source, Model editedModel, Model changedModel) {
+		source.fireEvent(new EditEvent(EditOp.UPDATE, editedModel, changedModel));
 	}
 
 	public static void fireDelete(IHasEditHandlers source) {
-		source.fireEvent(new EditEvent(EditOp.DELETE, null));
+		source.fireEvent(new EditEvent(EditOp.DELETE, null, null));
 	}
 
 	public static void fireCancel(IHasEditHandlers source) {
-		source.fireEvent(new EditEvent(EditOp.CANCEL, null));
+		source.fireEvent(new EditEvent(EditOp.CANCEL, null, null));
 	}
 
 	private final EditOp op;
+
+	private final Model editedModel;
 
 	private final Model changedModel;
 
 	/**
 	 * Constructor
 	 * @param op
-	 * @param changedModel
+	 * @param editedModel The entire model with edits
+	 * @param changedModel Sub-set of the original model containing only those
+	 *        properties that were altered. Only specified when updating.
 	 */
-	private EditEvent(EditOp op, Model changedModel) {
+	private EditEvent(EditOp op, Model editedModel, Model changedModel) {
 		this.op = op;
+		this.editedModel = editedModel;
 		this.changedModel = changedModel;
 	}
 
@@ -73,6 +80,18 @@ public final class EditEvent extends GwtEvent<IEditHandler> {
 		return op;
 	}
 
+	/**
+	 * @return The edited model
+	 */
+	public Model getEditedModel() {
+		return editedModel;
+	}
+
+	/**
+	 * @return A sub-set of the original model containing only those properties
+	 *         that were altered. This property is specified only when the edit
+	 *         mode is {@link EditOp#UPDATE}.
+	 */
 	public Model getChangedModel() {
 		return changedModel;
 	}

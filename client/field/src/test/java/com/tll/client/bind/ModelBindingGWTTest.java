@@ -168,11 +168,11 @@ public class ModelBindingGWTTest extends GWTTestCase {
 	 */
 	protected Model[] stubLeftAndRight() throws Exception {
 		final Model left = TestModelStubber.stubAccount(true);
-		final Model right = left.copy(CopyCriteria.COPY_ALL);
+		final Model right = left.copy(CopyCriteria.all());
 		// right.setAsRoot();
 
 		// sanity check: verify we are equal before we bind
-		ModelTestUtils.validateCopy(left, right, new CopyCriteria(true, true, false ,null));
+		ModelTestUtils.validateCopy(left, right, CopyCriteria.all());
 
 		return new Model[] {
 			left, right };
