@@ -1,6 +1,0 @@
-<module>
-  <inherits name="com.tll.Common" />
-
-  <source path="model/test" />
-
-</module>
