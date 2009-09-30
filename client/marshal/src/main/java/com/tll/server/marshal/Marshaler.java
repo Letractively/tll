@@ -48,7 +48,6 @@ import com.tll.model.schema.Transient;
 import com.tll.server.rpc.entity.IEntityTypeResolver;
 import com.tll.util.Binding;
 import com.tll.util.BindingRefSet;
-import com.tll.util.ObjectUtil;
 
 /**
  * Marshaler - Converts server-side entities to client-bound value objects and
@@ -317,14 +316,6 @@ public final class Marshaler {
 			throw new IllegalStateException("Can't marshal model to entity: max depth reached");
 		}
 
-		// ensure id and version match!
-		{
-			final PrimaryKey<IEntity> modelPk = new PrimaryKey<IEntity>((Class<IEntity>) crntEntity.entityClass(), model.getId());
-			final PrimaryKey<IEntity> entityPk = new PrimaryKey<IEntity>((Class<IEntity>) crntEntity.entityClass(), crntEntity.getId());
-			if(!modelPk.equals(entityPk)) throw new RuntimeException("Model and entity primary keys don't match.");
-			if(!ObjectUtil.equals(model.getVersion(), crntEntity.getVersion())) throw new RuntimeException("Versions don't match.");
-		}
-
 		// only recurse if not already visited
 		Binding<Model, IEntity> b = visited.findBindingBySource(model);
 		if(b != null) return;
@@ -473,20 +464,16 @@ public final class Marshaler {
 			}
 
 		}// for loop
-
-		if(crntEntity.getId() == null) {
-			// assume new and set generated id
-			if(crntEntity.getVersion() != null) {
-				throw new RuntimeException("Encountered an entity (" + crntEntity.descriptor()
-						+ ") w/o an id having a non-null version.");
-			}
-			entityFactory.setGenerated(crntEntity);
-		}
 	}
 
+	/**
+	 * Creates a new entity instance.
+	 * @param entityClass the entity type
+	 * @return Newly created entity instance of the given type.
+	 */
 	private IEntity instantiateEntity(Class<? extends IEntity> entityClass) {
 		try {
-			return entityClass.newInstance();
+			return this.entityFactory.createEntity(entityClass, true);
 		}
 		catch(final Exception ie) {
 			throw new RuntimeException("Unable to instantiate entity of class: " + entityClass.getSimpleName());

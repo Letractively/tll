@@ -12,9 +12,9 @@
       com.tll.di.RefDataModule
       com.tll.di.MailModule
       com.tll.di.test.TestPersistenceUnitModelModule
-      com.tll.di.Db4oDaoModule
+      com.tll.di.test.TestDb4oDaoModule
       com.tll.di.test.Db4oDbShellModule
-      com.tll.di.EntityServiceFactoryModule
+      com.tll.di.TestEntityServiceFactoryModule
       com.tll.di.TestMarshalModule
       com.tll.di.LogExceptionHandlerModule
       com.tll.di.TestListingModule

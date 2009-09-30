@@ -205,6 +205,13 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>tll-common</artifactId>
+      <version>${project.version}</version>
+      <classifier>testassets</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>tll-model</artifactId>
       <version>${project.version}</version>
       <classifier>testassets</classifier>
@@ -239,6 +246,13 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>tll-dao-db4o</artifactId>
+      <version>${project.version}</version>
+      <classifier>testassets</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>tll-client-core</artifactId>
       <version>${project.version}</version>
       <classifier>testassets</classifier>
@@ -254,6 +268,13 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-client-model</artifactId>
+      <version>${project.version}</version>
+      <classifier>testassets</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-client-marshal</artifactId>
       <version>${project.version}</version>
       <classifier>testassets</classifier>
       <scope>test</scope>

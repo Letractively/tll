@@ -21,7 +21,7 @@ import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.Sorting;
-import com.tll.di.EntityServiceFactoryModule;
+import com.tll.di.TestEntityServiceFactoryModule;
 import com.tll.di.LogExceptionHandlerModule;
 import com.tll.di.MailModule;
 import com.tll.di.RefDataModule;
@@ -58,7 +58,7 @@ public class ListingProcessorTest extends AbstractDbAwareTest {
 		modules.add(new TestPersistenceUnitModelModule());
 		modules.add(new TestDb4oDaoModule(getConfig()));
 		modules.add(new Db4oDbShellModule());
-		modules.add(new EntityServiceFactoryModule());
+		modules.add(new TestEntityServiceFactoryModule());
 		modules.add(new LogExceptionHandlerModule());
 		modules.add(new TestMarshalModule());
 		modules.add(new TestListingModule());

@@ -34,6 +34,7 @@ import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.rpc.RpcServlet;
 import com.tll.service.entity.IEntityService;
 import com.tll.service.entity.INamedEntityService;
+import com.tll.util.ObjectUtil;
 import com.tll.util.PropertyPath;
 
 /**
@@ -163,9 +164,11 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	 * @param modelChanges presumed to only contain model properties that were
 	 *        altered
 	 * @param payload
+	 * @throws VersionMismatchException When the model data version doesn't match
+	 *         the loaded target entity version
 	 */
 	@SuppressWarnings("unchecked")
-	protected void doUpdate(Model modelChanges, ModelPayload payload) {
+	protected void doUpdate(Model modelChanges, ModelPayload payload) throws VersionMismatchException {
 		final Class<? extends IEntity> entityClass =
 			(Class<? extends IEntity>) context.getEntityTypeResolver().resolveEntityClass(modelChanges.getEntityType());
 		final IEntityService<IEntity> svc =
@@ -174,6 +177,11 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 
 		// load current state of this entity
 		IEntity e = svc.load(new PrimaryKey<IEntity>(eclass, modelChanges.getId()));
+
+		// ensure versions match!
+		if(!ObjectUtil.equals(modelChanges.getVersion(), e.getVersion())) {
+			throw new VersionMismatchException(eclass, e.getVersion(), modelChanges.getVersion());
+		}
 
 		// marshal the changes only
 		context.getMarshaler().marshalModel(modelChanges, e);
@@ -196,6 +204,9 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 				doAdd(model, payload);
 			else
 				doUpdate(model, payload);
+		}
+		catch(final VersionMismatchException e) {
+			RpcServlet.exceptionToStatus(e, payload.getStatus());
 		}
 		catch(final EntityExistsException e) {
 			RpcServlet.exceptionToStatus(e, payload.getStatus());

@@ -12,7 +12,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.tll.IDescriptorProvider;
 import com.tll.IMarshalable;
 import com.tll.common.bind.IBindable;

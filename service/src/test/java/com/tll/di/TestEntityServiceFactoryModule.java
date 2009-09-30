@@ -14,21 +14,21 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.model.IEntity;
-import com.tll.service.entity.AccountService;
-import com.tll.service.entity.AddressService;
 import com.tll.service.entity.EntityServiceFactory;
-import com.tll.service.entity.IAccountService;
-import com.tll.service.entity.IAddressService;
 import com.tll.service.entity.IEntityService;
 import com.tll.service.entity.IEntityServiceFactory;
+import com.tll.service.entity.test.AccountService;
+import com.tll.service.entity.test.AddressService;
+import com.tll.service.entity.test.IAccountService;
+import com.tll.service.entity.test.IAddressService;
 
 /**
- * EntityServiceFactoryModule
+ * TestEntityServiceFactoryModule
  * @author jpk
  */
-public class EntityServiceFactoryModule extends AbstractModule {
+public class TestEntityServiceFactoryModule extends AbstractModule {
 
-	private static final Log log = LogFactory.getLog(EntityServiceFactoryModule.class);
+	private static final Log log = LogFactory.getLog(TestEntityServiceFactoryModule.class);
 
 	@Override
 	protected void configure() {
