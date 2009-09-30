@@ -44,14 +44,14 @@ public abstract class ClientPersistModule extends AbstractModule {
 	 * Responsible for binding the needed {@link IPersistServiceImplResolver}
 	 * implementation.
 	 */
-	protected abstract void bindPersistServiceImplResolver();
+	protected abstract Class<? extends IPersistServiceImplResolver> getPersistServiceImplResolverType();
 
 	@Override
 	protected final void configure() {
 		log.info("Employing Client Persistence module");
 
 		// IPersistServiceImplResolver
-		bindPersistServiceImplResolver();
+		bind(IPersistServiceImplResolver.class).to(getPersistServiceImplResolverType()).in(Scopes.SINGLETON);
 
 		// manually construct the persist context instance since we have optional
 		// constructor params

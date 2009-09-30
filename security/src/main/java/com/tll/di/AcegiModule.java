@@ -94,14 +94,15 @@ public abstract class AcegiModule extends AbstractModule implements IConfigAware
 	/**
 	 * Necessary provision to bind {@link UserDetailsService}.
 	 */
-	protected abstract void bindUserDetailsService();
+	protected abstract Class<? extends UserDetailsService> getUserDetailsImplType();
 
 	@Override
 	protected final void configure() {
 		if(config == null) throw new IllegalStateException("No config instance specified.");
 		log.info("Employing Acegi Security");
 
-		bindUserDetailsService();
+		// UserDetailsService
+		bind(UserDetailsService.class).to(getUserDetailsImplType());
 
 		// SaltSource
 		bind(SaltSource.class).toProvider(new Provider<SaltSource>() {

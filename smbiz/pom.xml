@@ -90,44 +90,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- TODO temp
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>server-libs</id>
-						<goals>
-							<goal>directory-single</goal>
-						</goals>
-						<phase>process-resources</phase>
-						<configuration>
-							<finalName>server-libs</finalName>
-							<appendAssemblyId>false</appendAssemblyId>
-							<outputDirectory>target</outputDirectory>
-							<descriptors>
-								<descriptor>src/main/assembly/server-libs.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-					<execution>
-						<id>tll-server-aggregate</id>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<phase>process-classes</phase>
-						<configuration>
-							<finalName>tll-server</finalName>
-							<outputDirectory>target/war/WEB-INF/lib</outputDirectory>
-							<appendAssemblyId>false</appendAssemblyId>
-							<descriptors>
-								<descriptor>src/main/assembly/tll-server-${daoImpl}.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			-->
 			<plugin>
 				<groupId>org.codehaus.groovy.maven</groupId>
 				<artifactId>gmaven-plugin</artifactId>
@@ -138,7 +100,7 @@
 				<executions>
 					<execution>
 						<id>war-resources</id>
-						<phase>compile</phase><!-- we do compile phase since the *.class files need to be present for db stubbing -->
+						<phase>test-compile</phase><!-- we do compile phase since the *.class files need to be present for db stubbing -->
 						<goals>
 							<goal>execute</goal>
 						</goals>
@@ -168,6 +130,24 @@
 									<groupId>com.tll</groupId>
 									<artifactId>tll-config</artifactId>
 									<version>${project.parent.version}</version>
+								</element>
+								<element>
+									<groupId>com.tll</groupId>
+									<artifactId>tll-model</artifactId>
+									<version>${project.parent.version}</version>
+									<classifier>testassets</classifier>
+								</element>
+								<element>
+									<groupId>com.tll</groupId>
+									<artifactId>tll-dao-api</artifactId>
+									<version>${project.parent.version}</version>
+									<classifier>testassets</classifier>
+								</element>
+								<element>
+									<groupId>com.tll</groupId>
+									<artifactId>tll-dao-db4o</artifactId>
+									<version>${project.parent.version}</version>
+									<classifier>testassets</classifier>
 								</element>
 							</classpath>
 							<scriptpath>
@@ -279,22 +259,6 @@
 				</executions>
 			</plugin>
 
-			<!-- 
-			war dir (root) exclusions
-			=========================
-			smbizAdmin/hosted.html
-			work
-			
-			war/WEB-INF/classes exclusions
-			==============================
-			**/*.gwt.xml
-			**/*.java
-			**/mock-entities.xml
-			**/builddef.lst
-			**/client/**
-			**/common/**/*Async.class
-			**/public/**
-			-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
@@ -351,6 +315,58 @@
 							<debug>false</debug>
 							<optimize>true</optimize>
 						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>tll-server-aggregate</id>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<phase>process-classes</phase>
+								<configuration>
+									<finalName>tll-server</finalName>
+									<outputDirectory>target</outputDirectory>
+									<appendAssemblyId>false</appendAssemblyId>
+									<descriptors>
+										<descriptor>src/main/assembly/tll-server-${daoImpl}.xml</descriptor>
+									</descriptors>
+								</configuration>
+							</execution>
+							<!-- 
+							war dir (root) exclusions
+							=========================
+							smbizAdmin/hosted.html
+							work
+							
+							war/WEB-INF/classes exclusions
+							==============================
+							**/*.gwt.xml
+							**/*.java
+							**/mock-entities.xml
+							**/builddef.lst
+							**/client/**
+							**/common/**/*Async.class
+							**/public/**
+							-->
+							<execution>
+								<id>prod-war</id>
+								<goals>	
+									<goal>single</goal>
+								</goals>
+								<phase>package</phase>
+								<configuration>
+									<finalName>smbiz</finalName>
+									<outputDirectory>target</outputDirectory>
+									<appendAssemblyId>false</appendAssemblyId>
+									<descriptors>
+										<descriptor>src/main/assembly/prod-war.xml</descriptor>
+									</descriptors>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>

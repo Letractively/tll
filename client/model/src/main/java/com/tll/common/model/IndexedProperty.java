@@ -18,7 +18,14 @@ public final class IndexedProperty extends AbstractModelRefProperty {
 	/**
 	 * The index at which the target {@link Model} exists in the underlying list.
 	 */
-	private final int index;
+	private/*final*/int index;
+
+	/**
+	 * Constructor - GWT RPC compatibility
+	 */
+	public IndexedProperty() {
+		super();
+	}
 
 	/**
 	 * Constructor

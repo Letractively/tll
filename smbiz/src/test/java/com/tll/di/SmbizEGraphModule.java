@@ -19,13 +19,6 @@ import com.tll.model.test.IEntityGraphPopulator;
  */
 public class SmbizEGraphModule extends EGraphModule {
 
-	/**
-	 * Constructor
-	 */
-	public SmbizEGraphModule() {
-		super();
-	}
-
 	@Override
 	protected URI getBeanDefRef() {
 		try {

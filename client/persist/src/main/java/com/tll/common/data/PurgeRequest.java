@@ -12,7 +12,7 @@ import com.tll.common.model.ModelKey;
  * EntityPurgeRequest
  * @author jpk
  */
-public class PurgeRequest extends ModelRequest {
+public class PurgeRequest extends AbstractModelRequest {
 
 	/**
 	 * This member is set when the purge request is for a server side defined

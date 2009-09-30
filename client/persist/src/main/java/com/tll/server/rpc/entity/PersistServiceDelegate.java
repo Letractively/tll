@@ -15,7 +15,7 @@ import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.IModelRelatedRequest;
 import com.tll.common.data.LoadRequest;
 import com.tll.common.data.ModelPayload;
-import com.tll.common.data.ModelRequest;
+import com.tll.common.data.AbstractModelRequest;
 import com.tll.common.data.Payload;
 import com.tll.common.data.PersistRequest;
 import com.tll.common.data.PurgeRequest;
@@ -177,7 +177,7 @@ public final class PersistServiceDelegate {
 	 * @param payload Can't be <code>null</code>
 	 * @return true/false
 	 */
-	private boolean validateEntityRequest(final ModelRequest request, final Payload payload) {
+	private boolean validateEntityRequest(final AbstractModelRequest request, final Payload payload) {
 		if(request == null) {
 			payload.getStatus().addMsg("No model request specified", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 			return false;

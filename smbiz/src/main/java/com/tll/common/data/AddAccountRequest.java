@@ -14,7 +14,7 @@ import com.tll.common.model.Model;
  * AddAccountRequest
  * @author jpk
  */
-public class AddAccountRequest extends ModelRequest {
+public class AddAccountRequest extends AbstractModelRequest {
 
 	private Model account;
 	private Collection<Model> accountInterfaces;
