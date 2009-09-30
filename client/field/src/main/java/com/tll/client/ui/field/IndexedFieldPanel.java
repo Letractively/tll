@@ -15,7 +15,6 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.IProvider;
-import com.tll.client.bind.FieldModelBinding;
 import com.tll.client.convert.IConverter;
 import com.tll.client.ui.BindableWidgetAdapter;
 import com.tll.client.validate.ErrorClassifier;
@@ -26,16 +25,13 @@ import com.tll.common.model.PropertyPathException;
 import com.tll.util.PropertyPath;
 
 /**
- * IndexedFieldPanel - Caters to the display of indexed field collections.
+ * TestIndexedFieldPanel - Caters to the display of indexed field collections.
  * <p>
  * The {@link IndexedFieldPanel} is savagely different from its brethren
  * {@link FieldPanel} in that the value type is a raw reference to a model
  * collection rather than a {@link FieldGroup}. Because of this, this field
  * panel type manages its own binding life-cycle which is triggered by the
  * {@link #setValue(Collection)} and {@link #getValue()} methods.
- * <p>
- * Moreover, each indexed element is comprised of its own child
- * {@link FieldGroup} and {@link FieldModelBinding}.
  * <p>
  * <b>IMPT:</b> This panel's field group is expected to be a child of the parent
  * field panel's field group.
@@ -62,14 +58,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 		 */
 		public Index(int index, I fieldPanel) {
 			super();
-			// assert fieldPanel.binding != null;
 			this.fieldPanel = fieldPanel;
-
-			// NOTE: we bind *before* we set the index so the property paths jive with
-			// the index model!
-			fieldPanel.getBinding().setModelChangeTracker(IndexedFieldPanel.this.getBinding().getModelChangeTracker());
-			fieldPanel.getBinding().bind();
-
 			setIndex(index, true);
 		}
 
@@ -149,7 +138,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 			// update the model collection!
 			for(final Index index : indexPanels) {
 				try {
-					index.fieldPanel.getBinding().execute();
+					index.fieldPanel.updateModel();
 				}
 				catch(final ValidationException e) {
 					throw new RuntimeException(e);
@@ -191,6 +180,9 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 
 	/**
 	 * Factory method to obtain a new index field panel instance.
+	 * <p>
+	 * NOTE: no wiring of this created field panel should be performed as this is
+	 * managed internally.
 	 * @return new field panel instance for employ at a particular index.
 	 */
 	protected abstract I createIndexPanel();
@@ -219,10 +211,12 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	 *         field in the underlying group.
 	 */
 	private void add(Model model, boolean isUiAdd) throws IllegalArgumentException {
-		Log.debug("IndexedFieldPanel.add() - START");
+		Log.debug("TestIndexedFieldPanel.add() - START");
 
 		final I ip = createIndexPanel();
-		ip.setModel(model);
+		//ip.setErrorHandler(getErrorHandler());
+		ip.setModelChangeTracker(getModelChangeTracker());
+		ip.setModel(model); // this generates the field group and binds!
 
 		// calculate the property index
 		final int pindex = size();
@@ -256,7 +250,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 		Index remove = indexPanels.remove(index);
 		assert remove != null;
 
-		remove.fieldPanel.getBinding().unbind();
+		remove.fieldPanel.unbind();
 		if(!getFieldGroup().removeField(remove.fieldPanel.getFieldGroup(), true)) {
 			throw new IllegalStateException("Unable to remove index field group: " + remove.fieldPanel.getFieldGroup());
 		}
@@ -293,6 +287,15 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 		final Index ip = indexPanels.get(index);
 		ip.fieldPanel.getModel().setMarkedDeleted(deleted);
 		ip.fieldPanel.enable(!deleted);
+
+		// add mark deletion change to model change tracker if present
+		if(getModelChangeTracker() != null) {
+			final String path = PropertyPath.index(indexedPropertyName, index);
+			if(deleted)
+				getModelChangeTracker().addChange(path);
+			else
+				getModelChangeTracker().removeChange(path);
+		}
 	}
 
 	public final void clearIndexed() {
@@ -400,6 +403,6 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 
 	@Override
 	public String toString() {
-		return "IndexedFieldPanel [ " + indexedPropertyName + " ]";
+		return "TestIndexedFieldPanel [ " + indexedPropertyName + " ]";
 	}
 }

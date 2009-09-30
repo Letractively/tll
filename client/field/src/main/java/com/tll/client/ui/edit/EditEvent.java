@@ -6,7 +6,7 @@
 package com.tll.client.ui.edit;
 
 import com.google.gwt.event.shared.GwtEvent;
-import com.tll.client.model.ModelPropertyChangeTracker;
+import com.tll.client.model.ModelChangeTracker;
 import com.tll.common.model.Model;
 
 /**
@@ -43,7 +43,7 @@ public final class EditEvent extends GwtEvent<IEditHandler> {
 	 * @param editedModel the model containing all original properties reflecting all edit alterations
 	 * @param changedModel the model data to update containing ONLY those
 	 *        properties that were altered
-	 * @see ModelPropertyChangeTracker
+	 * @see ModelChangeTracker
 	 */
 	public static void fireUpdate(IHasEditHandlers source, Model editedModel, Model changedModel) {
 		source.fireEvent(new EditEvent(EditOp.UPDATE, editedModel, changedModel));

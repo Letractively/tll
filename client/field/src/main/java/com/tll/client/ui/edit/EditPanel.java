@@ -17,10 +17,11 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.model.ModelPropertyChangeTracker;
+import com.tll.client.model.ModelChangeTracker;
 import com.tll.client.ui.FocusCommand;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.field.IFieldBoundWidget;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.msg.IMsgDisplay;
 import com.tll.client.validate.Error;
@@ -75,7 +76,7 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	/**
 	 * Contains the actual edit fields.
 	 */
-	protected final FieldPanel<? extends Widget> fieldPanel;
+	protected final IFieldBoundWidget fieldPanel;
 
 	/**
 	 * The panel containing the edit buttons
@@ -94,9 +95,10 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
 	 */
-	public EditPanel(FieldPanel<? extends Widget> fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
+	public EditPanel(IFieldBoundWidget fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
 		super();
 		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
+		fieldPanel.setModelChangeTracker(new ModelChangeTracker());
 		this.fieldPanel = fieldPanel;
 
 		portal.setStyleName(Styles.PORTAL);
@@ -138,7 +140,7 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	}
 
 	private void setErrorHandler(ErrorHandlerDelegate errorHandler) {
-		fieldPanel.getBinding().setErrorHandler(errorHandler);
+		fieldPanel.setErrorHandler(errorHandler);
 		final IMsgDisplay msgDisplay = errorHandler.getMsgDisplay();
 		if(msgDisplay != null) {
 			panel.insert(msgDisplay.getDisplayWidget(), 0);
@@ -182,16 +184,14 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	 */
 	public void setModel(Model model) {
 		Log.debug("EditPanel.setModel() - START");
-		final ModelPropertyChangeTracker t = new ModelPropertyChangeTracker();
-		t.set(model);
-		fieldPanel.getBinding().setModelChangeTracker(t);
 		fieldPanel.setModel(model);
 		if(model != null) {
 			setEditMode(model.isNew());
 			// deferred attachment to guarantee needed aux data is available
-			if(fieldPanel.getParent() == null) {
+			final Widget w = (Widget) fieldPanel;
+			if(w.getParent() == null) {
 				Log.debug("EditPanel.setModel() attaching fieldPanel..");
-				portal.add(fieldPanel);
+				portal.add(w);
 			}
 		}
 		Log.debug("EditPanel.setModel() - END");
@@ -234,14 +234,14 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 		if(sender == btnSave) {
 			try {
 				Log.debug("EditPanel - Saving..");
-				fieldPanel.getBinding().execute();
+				fieldPanel.updateModel();
 				if(isAdd()) {
 					EditEvent.fireAdd(this, fieldPanel.getModel());
 
 				}
 				else {
 					final Model medited = fieldPanel.getModel();
-					final Model mchanged = fieldPanel.getBinding().getChangedModel();
+					final Model mchanged = fieldPanel.getChangedModel();
 					EditEvent.fireUpdate(this, medited, mchanged);
 				}
 			}

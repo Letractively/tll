@@ -38,9 +38,9 @@ import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.ErrorHandlerBuilder;
 import com.tll.client.validate.ErrorHandlerDelegate;
 import com.tll.common.model.CopyCriteria;
-import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
+import com.tll.common.model.RelatedManyProperty;
 import com.tll.common.model.test.TestModelStubber;
 
 /**
@@ -418,21 +418,33 @@ public final class UITests extends AbstractUITest {
 
 				@Override
 				public void onEdit(EditEvent event) {
+					Integer version;
+
 					// mimic model persist life-cycle
 					assert m != null;
 					final Model mcopy = m.copy(mcrit);
-					mcopy.set(new IntPropertyValue(Model.VERSION_PROPERTY, 1));
-					List<Model> alist;
+					version = mcopy.getVersion();
+					mcopy.setVersion(version == null ? 0 : version++);
+					ArrayList<Model> alist = null;
+					List<Model> existing;
+					RelatedManyProperty ap;
 					try {
-						alist = mcopy.relatedMany("addresses").getModelList();
+						ap = mcopy.relatedMany("addresses");
 					}
 					catch(final PropertyPathException e) {
 						throw new RuntimeException(e);
 					}
-					if(alist != null) {
-						for(final Model am : alist) {
-							am.set(new IntPropertyValue(Model.VERSION_PROPERTY, 1));
+					existing = ap.getModelList();
+					if(existing != null) {
+						alist = new ArrayList<Model>();
+						for(final Model am : existing) {
+							if(!am.isMarkedDeleted()) {
+								version = am.getVersion();
+								am.setVersion(version == null ? 0 : version++);
+								alist.add(am);
+							}
 						}
+						ap.setValue(alist);
 					}
 					ep.setModel(mcopy);
 					mv.setModel(mcopy);
@@ -471,7 +483,7 @@ public final class UITests extends AbstractUITest {
 			}
 			context = null;
 			gmp = null;
-			fp.getBinding().unbind();
+			fp.unbind();
 			ep = null;
 			mv = null;
 			m = null;

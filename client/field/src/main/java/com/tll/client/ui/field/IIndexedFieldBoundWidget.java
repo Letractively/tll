@@ -10,7 +10,6 @@ import java.util.Collection;
 import com.tll.client.ui.IBindableWidget;
 import com.tll.common.model.Model;
 
-
 /**
  * IIndexedFieldBoundWidget
  * @author jpk
