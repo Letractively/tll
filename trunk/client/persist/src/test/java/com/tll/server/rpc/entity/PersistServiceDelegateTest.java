@@ -39,11 +39,11 @@ import com.tll.dao.IEntityDao;
 import com.tll.dao.db4o.test.Db4oTrans;
 import com.tll.di.ClientPersistModule;
 import com.tll.di.Db4oDaoModule;
-import com.tll.di.EntityServiceFactoryModule;
 import com.tll.di.LogExceptionHandlerModule;
 import com.tll.di.MailModule;
 import com.tll.di.MarshalModule;
 import com.tll.di.RefDataModule;
+import com.tll.di.TestEntityServiceFactoryModule;
 import com.tll.di.test.Db4oDbShellModule;
 import com.tll.di.test.TestDb4oDaoModule;
 import com.tll.di.test.TestPersistenceUnitModelModule;
@@ -74,7 +74,7 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 		modules.add(new TestPersistenceUnitModelModule());
 		modules.add(new TestDb4oDaoModule(getConfig()));
 		modules.add(new Db4oDbShellModule());
-		modules.add(new EntityServiceFactoryModule());
+		modules.add(new TestEntityServiceFactoryModule());
 		modules.add(new LogExceptionHandlerModule());
 		modules.add(new MarshalModule() {
 

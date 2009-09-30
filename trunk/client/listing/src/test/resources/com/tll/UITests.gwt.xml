@@ -1,4 +1,5 @@
 <module rename-to="uitests">
+  <inherits name="com.tll.CommonTest" />
   <inherits name="com.tll.Listing" />
   <inherits name="com.tll.UI" />
 

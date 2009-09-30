@@ -64,7 +64,7 @@ public final class BuildTools {
 	  ['com.tll.di.SmbizModelModule', FLAG_ALL],
 	  ['com.tll.di.JdoDaoModule', FLAG_DB_JDO],
 	  ['com.tll.di.SmbizDb4oDaoModule', FLAG_DB_DB4O],
-	  ['com.tll.di.EntityServiceFactoryModule', FLAG_ALL],
+	  ['com.tll.di.SmbizEntityServiceFactoryModule', FLAG_ALL],
 	  ['com.tll.di.SmbizMarshalModule', FLAG_ALL],
 	  ['com.tll.di.SmbizClientPersistModule', FLAG_ALL],
 	  ['com.tll.di.SmbizListingModule', FLAG_ALL],

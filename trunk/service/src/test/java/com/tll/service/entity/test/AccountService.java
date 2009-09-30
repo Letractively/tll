@@ -3,7 +3,7 @@
  * @author jpk
  * @since Mar 13, 2009
  */
-package com.tll.service.entity;
+package com.tll.service.entity.test;
 
 import javax.validation.ValidatorFactory;
 
@@ -13,6 +13,7 @@ import com.google.inject.Inject;
 import com.tll.dao.IEntityDao;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.test.Account;
+import com.tll.service.entity.NamedEntityService;
 
 
 /**

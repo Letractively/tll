@@ -28,7 +28,7 @@ import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.di.Db4oDaoModule;
-import com.tll.di.EntityServiceFactoryModule;
+import com.tll.di.SmbizEntityServiceFactoryModule;
 import com.tll.di.SmbizDb4oDaoModule;
 import com.tll.di.SmbizEGraphModule;
 import com.tll.di.SmbizModelModule;
@@ -110,7 +110,7 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 		modules.add(new SmbizEGraphModule());
 		modules.add(new SmbizDb4oDaoModule(getConfig()));
 		modules.add(new Db4oDbShellModule());
-		modules.add(new EntityServiceFactoryModule());
+		modules.add(new SmbizEntityServiceFactoryModule());
 	}
 
 	/**

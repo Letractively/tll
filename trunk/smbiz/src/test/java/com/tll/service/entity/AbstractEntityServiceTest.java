@@ -22,7 +22,7 @@ import com.tll.dao.IDbTrans;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.db4o.test.Db4oTrans;
 import com.tll.di.Db4oDaoModule;
-import com.tll.di.EntityServiceFactoryModule;
+import com.tll.di.SmbizEntityServiceFactoryModule;
 import com.tll.di.SmbizDb4oDaoModule;
 import com.tll.di.SmbizEGraphModule;
 import com.tll.di.SmbizModelModule;
@@ -51,7 +51,7 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 				binder.bind(IDbTrans.class).to(Db4oTrans.class).in(Scopes.SINGLETON);
 			}
 		});
-		modules.add(new EntityServiceFactoryModule());
+		modules.add(new SmbizEntityServiceFactoryModule());
 	}
 
 	@Override

@@ -28,7 +28,7 @@
         <include>**/Abstract*Test*</include>
         <include>**/*Util*</include>
         <include>**/*Support*</include>
-        <include>**/Test*Module.class</include>
+        <include>**/Test*Module*.class</include>
         <include>**/*.gwt.xml</include>
       </includes>
       <outputDirectory>/</outputDirectory>

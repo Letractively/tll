@@ -63,12 +63,12 @@ import com.tll.service.entity.visitor.IVisitorService;
 import com.tll.service.entity.visitor.VisitorService;
 
 /**
- * EntityServiceFactoryModule
+ * SmbizEntityServiceFactoryModule
  * @author jpk
  */
-public class EntityServiceFactoryModule extends AbstractModule {
+public class SmbizEntityServiceFactoryModule extends AbstractModule {
 
-	static final Log log = LogFactory.getLog(EntityServiceFactoryModule.class);
+	static final Log log = LogFactory.getLog(SmbizEntityServiceFactoryModule.class);
 
 	public static final String USER_DETAILS_CACHE_NAME = "acegiUserDetailsCache";
 
