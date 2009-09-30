@@ -8,9 +8,11 @@ package com.tll.client.ui.field.intf;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.tll.client.bind.FieldModelBinding;
+import com.tll.client.bind.Binding;
+import com.tll.client.ui.field.DefaultFieldBindingBuilder;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
+import com.tll.client.ui.field.IFieldBindingBuilder;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.IIndexedFieldBoundWidget;
@@ -21,14 +23,17 @@ import com.tll.client.ui.field.IIndexedFieldBoundWidget;
  */
 public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 
-	static class Binding extends FieldModelBinding {
+	/**
+	 * BindingBuilder - Custom binding impl
+	 * @author jpk
+	 */
+	static class BindingBuilder extends DefaultFieldBindingBuilder {
 
 		@Override
-		protected void createBindings() {
-			super.createBindings();
-			addBinding("options[0].name", "intfname");
-			addBinding("options[0].code", "intfCode");
-			addBinding("options[0].description", "intfDescription");
+		protected void postCreateBindings(Binding binding) {
+			binding.getChildren().add(createBinding("options[0].name", "intfname"));
+			binding.getChildren().add(createBinding("options[0].code", "intfCode"));
+			binding.getChildren().add(createBinding("options[0].description", "intfDescription"));
 		}
 	} // Binding
 
@@ -45,8 +50,8 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 	}
 
 	@Override
-	protected FieldModelBinding createBinding() {
-		return new Binding();
+	protected IFieldBindingBuilder getFieldBindingBuilder() {
+		return new BindingBuilder();
 	}
 
 	@Override

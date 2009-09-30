@@ -26,10 +26,10 @@ import com.tll.model.test.AddressType;
 public class TestFieldPanel extends FlowFieldPanel {
 
 	/**
-	 * IndexFieldPanel
+	 * TestIndexFieldPanel
 	 * @author jpk
 	 */
-	static class IndexFieldPanel extends FlowFieldPanel {
+	static class TestIndexFieldPanel extends FlowFieldPanel {
 
 		@Override
 		protected FieldGroup generateFieldGroup() {
@@ -93,18 +93,18 @@ public class TestFieldPanel extends FlowFieldPanel {
 			};
 		}
 
-	} // IndexFieldPanel
+	} // TestIndexFieldPanel
 
 	/**
-	 * IndexedFieldPanel
+	 * TestIndexedFieldPanel
 	 * @author jpk
 	 */
-	static class IndexedFieldPanel extends TabbedIndexedFieldPanel<IndexFieldPanel> {
+	static class TestIndexedFieldPanel extends TabbedIndexedFieldPanel<TestIndexFieldPanel> {
 
 		/**
 		 * Constructor
 		 */
-		public IndexedFieldPanel() {
+		public TestIndexedFieldPanel() {
 			super("Addresses", "addresses", true, true);
 		}
 
@@ -114,7 +114,7 @@ public class TestFieldPanel extends FlowFieldPanel {
 		}
 
 		@Override
-		protected String getInstanceName(IndexFieldPanel index) {
+		protected String getInstanceName(TestIndexFieldPanel index) {
 			AddressType type;
 			String aaName;
 			try {
@@ -136,20 +136,20 @@ public class TestFieldPanel extends FlowFieldPanel {
 		}
 
 		@Override
-		protected IndexFieldPanel createIndexPanel() {
-			return new IndexFieldPanel();
+		protected TestIndexFieldPanel createIndexPanel() {
+			return new TestIndexFieldPanel();
 		}
 
-	} // IndexedFieldPanel
+	} // TestIndexedFieldPanel
 
-	final IndexedFieldPanel indexedPanel;
+	final TestIndexedFieldPanel indexedPanel;
 
 	/**
 	 * Constructor
 	 */
 	public TestFieldPanel() {
 		super();
-		indexedPanel = new IndexedFieldPanel();
+		indexedPanel = new TestIndexedFieldPanel();
 	}
 
 	@Override

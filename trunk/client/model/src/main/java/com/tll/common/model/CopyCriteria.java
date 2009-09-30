@@ -64,6 +64,7 @@ public class CopyCriteria {
 	 */
 	private CopyCriteria(CopyMode mode, Set<IModelProperty> whiteList) {
 		super();
+		assert mode == CopyMode.CHANGES ? whiteList != null : whiteList == null;
 		this.mode = mode;
 		this.whiteList = whiteList;
 	}

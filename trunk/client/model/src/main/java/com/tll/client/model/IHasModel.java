@@ -3,7 +3,9 @@
  * @author jpk
  * @since Mar 10, 2009
  */
-package com.tll.common.model;
+package com.tll.client.model;
+
+import com.tll.common.model.Model;
 
 
 /**
