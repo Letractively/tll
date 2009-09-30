@@ -6,18 +6,18 @@ package com.tll.common.data;
 
 
 /**
- * EntityRequest - Encapsulates the needed properties to fullfill an model
+ * AbstractModelRequest - Encapsulates the needed properties to fullfill an model
  * related request.
  * <p>
  * NOTE: Not all properties may be set for a particular model request.
  * @author jpk
  */
-public abstract class ModelRequest implements IModelRelatedRequest {
+public abstract class AbstractModelRequest implements IModelRelatedRequest {
 
 	/**
 	 * Constructor
 	 */
-	public ModelRequest() {
+	public AbstractModelRequest() {
 		super();
 	}
 }

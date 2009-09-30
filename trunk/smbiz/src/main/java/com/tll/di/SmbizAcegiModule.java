@@ -17,9 +17,7 @@ import com.tll.service.entity.user.IUserService;
 public class SmbizAcegiModule extends AcegiModule {
 
 	@Override
-	protected void bindUserDetailsService() {
-		// UserDetailsService
-		bind(UserDetailsService.class).to(IUserService.class);
+	protected Class<? extends UserDetailsService> getUserDetailsImplType() {
+		return IUserService.class;
 	}
-
 }

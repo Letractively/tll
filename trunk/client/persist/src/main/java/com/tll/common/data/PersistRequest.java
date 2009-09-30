@@ -11,7 +11,7 @@ import com.tll.common.model.Model;
  * PersistRequest - Model data transport for add/update crud ops.
  * @author jpk
  */
-public class PersistRequest extends ModelRequest {
+public class PersistRequest extends AbstractModelRequest {
 
 	private Model model;
 

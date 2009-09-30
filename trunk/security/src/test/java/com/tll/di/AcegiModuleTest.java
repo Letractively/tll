@@ -33,6 +33,15 @@ import com.tll.config.Config;
 @Test
 public class AcegiModuleTest {
 
+	static class TestUserDetailsService implements UserDetailsService {
+
+		@Override
+		public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
+			return null;
+		}
+
+	}
+
 	static class TestAcegiModule extends AcegiModule {
 
 		/**
@@ -44,15 +53,10 @@ public class AcegiModuleTest {
 		}
 
 		@Override
-		protected void bindUserDetailsService() {
-			bind(UserDetailsService.class).toInstance(new UserDetailsService() {
-
-				@Override
-				public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-					return null;
-				}
-			});
+		protected Class<? extends UserDetailsService> getUserDetailsImplType() {
+			return TestUserDetailsService.class;
 		}
+
 	}
 
 	public void testAcegiModuleLoad() throws Exception {

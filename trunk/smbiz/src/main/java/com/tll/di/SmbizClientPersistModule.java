@@ -5,7 +5,6 @@
  */
 package com.tll.di;
 
-import com.google.inject.Scopes;
 import com.tll.server.rpc.entity.IPersistServiceImplResolver;
 import com.tll.server.rpc.entity.SmbizPersistServiceImplResolver;
 
@@ -17,8 +16,7 @@ import com.tll.server.rpc.entity.SmbizPersistServiceImplResolver;
 public class SmbizClientPersistModule extends ClientPersistModule {
 
 	@Override
-	protected void bindPersistServiceImplResolver() {
-		bind(IPersistServiceImplResolver.class).to(SmbizPersistServiceImplResolver.class).in(Scopes.SINGLETON);
+	protected Class<? extends IPersistServiceImplResolver> getPersistServiceImplResolverType() {
+		return SmbizPersistServiceImplResolver.class;
 	}
-
 }

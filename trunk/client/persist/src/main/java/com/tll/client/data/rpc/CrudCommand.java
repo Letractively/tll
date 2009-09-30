@@ -12,7 +12,7 @@ import com.tll.client.model.ModelChangeEvent.ModelChangeOp;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.LoadRequest;
 import com.tll.common.data.ModelPayload;
-import com.tll.common.data.ModelRequest;
+import com.tll.common.data.AbstractModelRequest;
 import com.tll.common.data.PersistRequest;
 import com.tll.common.data.PurgeRequest;
 import com.tll.common.data.rpc.ICrudService;
@@ -93,7 +93,7 @@ public class CrudCommand extends RpcCommand<ModelPayload> {
 	}
 
 	protected CrudOp crudOp;
-	protected ModelRequest modelRequest;
+	protected AbstractModelRequest modelRequest;
 
 	/**
 	 * Sets the state of this command for loading an entity by primary key.

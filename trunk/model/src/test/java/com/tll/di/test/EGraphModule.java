@@ -28,16 +28,12 @@ import com.tll.model.test.EntityBeanFactory.EntityBeanFactoryParam;
  */
 public abstract class EGraphModule extends AbstractModule {
 
-	public static final String DEFAULT_FILENAME = "mock-entities.xml";
+	/**
+	 * The default path file name of the [Spring] bean context file.
+	 */
+	public static final String DEFAULT_BEAN_DEF_FILENAME = "mock-entities.xml";
 
 	private static final Log log = LogFactory.getLog(EGraphModule.class);
-
-	/**
-	 * Constructor
-	 */
-	public EGraphModule() {
-		super();
-	}
 
 	protected abstract Class<? extends IEntityGraphPopulator> getEntityGraphBuilderImplType();
 
@@ -57,7 +53,7 @@ public abstract class EGraphModule extends AbstractModule {
 					public ListableBeanFactory get() {
 						URI beanDefRef = getBeanDefRef();
 						if(beanDefRef == null) try {
-							beanDefRef = new URI("mock-entities");
+							beanDefRef = new URI(DEFAULT_BEAN_DEF_FILENAME);
 						}
 						catch(final URISyntaxException e1) {
 							throw new IllegalStateException("Can't locate entity bean def file");

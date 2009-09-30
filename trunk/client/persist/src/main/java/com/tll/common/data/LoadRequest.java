@@ -13,7 +13,7 @@ import com.tll.common.search.ISearch;
  * @author jpk
  * @param <S> the search type
  */
-public class LoadRequest<S extends ISearch> extends ModelRequest {
+public class LoadRequest<S extends ISearch> extends AbstractModelRequest {
 
 	/**
 	 * The client-side search criteria.

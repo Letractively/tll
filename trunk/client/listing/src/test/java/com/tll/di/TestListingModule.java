@@ -5,7 +5,6 @@
  */
 package com.tll.di;
 
-import com.google.inject.Scopes;
 import com.tll.server.rpc.listing.IListingDataProviderResolver;
 import com.tll.server.rpc.listing.IListingSearchTranslator;
 import com.tll.server.rpc.listing.INamedQueryResolver;
@@ -21,17 +20,17 @@ import com.tll.server.rpc.listing.test.TestNamedQueryResolver;
 public class TestListingModule extends ListingModule {
 
 	@Override
-	protected void bindListingDataProviderResolver() {
-		bind(IListingDataProviderResolver.class).to(TestListingDataProviderResolver.class).in(Scopes.SINGLETON);
+	protected Class<? extends IListingDataProviderResolver> getListingDataProviderResolverImplType() {
+		return TestListingDataProviderResolver.class;
 	}
 
 	@Override
-	protected void bindListingSearchTranslator() {
-		bind(IListingSearchTranslator.class).to(TestListingSearchTranslator.class).in(Scopes.SINGLETON);
+	protected Class<? extends IListingSearchTranslator> getListingSearchTranslatorImplType() {
+		return TestListingSearchTranslator.class;
 	}
 
 	@Override
-	protected void bindNamedQueryResolver() {
-		bind(INamedQueryResolver.class).to(TestNamedQueryResolver.class).in(Scopes.SINGLETON);
+	protected Class<? extends INamedQueryResolver> getNamedQueryResolverImplType() {
+		return TestNamedQueryResolver.class;
 	}
 }

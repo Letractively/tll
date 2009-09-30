@@ -13,7 +13,6 @@ import org.testng.annotations.Test;
 import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.common.data.AuxDataPayload;
 import com.tll.common.data.AuxDataRequest;
@@ -23,7 +22,6 @@ import com.tll.common.data.ModelPayload;
 import com.tll.common.data.PersistRequest;
 import com.tll.common.data.PurgeRequest;
 import com.tll.common.model.CharacterPropertyValue;
-import com.tll.common.model.IEntityType;
 import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
@@ -41,9 +39,9 @@ import com.tll.di.ClientPersistModule;
 import com.tll.di.Db4oDaoModule;
 import com.tll.di.LogExceptionHandlerModule;
 import com.tll.di.MailModule;
-import com.tll.di.MarshalModule;
 import com.tll.di.RefDataModule;
 import com.tll.di.TestEntityServiceFactoryModule;
+import com.tll.di.TestMarshalModule;
 import com.tll.di.test.Db4oDbShellModule;
 import com.tll.di.test.TestDb4oDaoModule;
 import com.tll.di.test.TestPersistenceUnitModelModule;
@@ -51,17 +49,22 @@ import com.tll.model.IEntity;
 import com.tll.model.test.Address;
 import com.tll.model.test.EntityBeanFactory;
 import com.tll.refdata.RefDataType;
-import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.rpc.entity.test.TestAddressService;
-import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 
 /**
  * PersistServiceDelegateTest
  * @author jpk
  */
-@Test(groups = {
-	"server", "client-persist" })
-	public class PersistServiceDelegateTest extends AbstractDbAwareTest {
+@Test(groups = { "server", "client-persist" })
+public class PersistServiceDelegateTest extends AbstractDbAwareTest {
+
+	static class TestPersistServiceImplResolver implements IPersistServiceImplResolver {
+		@Override
+		public Class<? extends IPersistServiceImpl> resolve(IModelRelatedRequest request)
+		throws IllegalArgumentException {
+			return TestAddressService.class;
+		}
+	}
 
 	@Override
 	protected void addModules(List<Module> modules) {
@@ -76,48 +79,12 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 		modules.add(new Db4oDbShellModule());
 		modules.add(new TestEntityServiceFactoryModule());
 		modules.add(new LogExceptionHandlerModule());
-		modules.add(new MarshalModule() {
-
-			@Override
-			protected void bindMarshalOptionsResolver() {
-				bind(IMarshalOptionsResolver.class).toProvider(new Provider<IMarshalOptionsResolver>() {
-
-					@Override
-					public IMarshalOptionsResolver get() {
-						return new IMarshalOptionsResolver() {
-
-							@Override
-							public MarshalOptions resolve(IEntityType entityType) throws IllegalArgumentException {
-								return MarshalOptions.NO_REFERENCES;
-							}
-						};
-					}
-				}).in(Scopes.SINGLETON);
-			}
-
-			@Override
-			protected void bindEntityTypeResolver() {
-				bind(IEntityTypeResolver.class).to(TestEntityTypeResolver.class).in(Scopes.SINGLETON);
-			}
-		});
+		modules.add(new TestMarshalModule());
 		modules.add(new ClientPersistModule() {
 
 			@Override
-			protected void bindPersistServiceImplResolver() {
-				bind(IPersistServiceImplResolver.class).toProvider(new Provider<IPersistServiceImplResolver>() {
-
-					@Override
-					public IPersistServiceImplResolver get() {
-						return new IPersistServiceImplResolver() {
-
-							@Override
-							public Class<? extends IPersistServiceImpl> resolve(IModelRelatedRequest request)
-							throws IllegalArgumentException {
-								return TestAddressService.class;
-							}
-						};
-					}
-				}).in(Scopes.SINGLETON);
+			protected Class<? extends IPersistServiceImplResolver> getPersistServiceImplResolverType() {
+				return TestPersistServiceImplResolver.class;
 			}
 		});
 		modules.add(new Module() {
