@@ -31,7 +31,7 @@ import com.tll.util.PropertyPath;
  * @author jpk
  */
 @SuppressWarnings("synthetic-access")
-final class Binding {
+public final class Binding {
 
 	/**
 	 * A data class containing the relevant data for one half of a binding
@@ -151,7 +151,7 @@ final class Binding {
 					PropertyPath.index(targetProperty, ((IndexedPropertyChangeEvent) propertyChangeEvent).getIndex());
 			}
 
-			Log.debug("Issuing propertyChange on [ " + target.object + " ] for " + targetProperty + "..");
+			Log.debug("Setting prop val on [ " + target.object + " ] for " + targetProperty + "..");
 			try {
 				target.object.setProperty(targetProperty, value);
 			}
@@ -268,7 +268,7 @@ final class Binding {
 	 */
 	public void setLeft() throws BindingException {
 		if((left != null) && (right != null)) {
-			Log.debug("Binding.setLeft..");
+			//Log.debug("Binding.setLeft..");
 			try {
 				right.firePropertyChange(new PropertyChangeEvent(right.object, right.property, null, right.object
 						.getProperty(right.property)));
@@ -289,7 +289,7 @@ final class Binding {
 	 */
 	public void setRight() throws BindingException {
 		if((left != null) && (right != null)) {
-			Log.debug("Binding.setRight..");
+			//Log.debug("Binding.setRight..");
 			try {
 				left.firePropertyChange(new PropertyChangeEvent(left.object, left.property, null, left.object
 						.getProperty(left.property)));
