@@ -77,3 +77,10 @@ Specify the -vm option in the eclipse.ini or at the command line (This is necess
 
 ==Preferences==
 Import the tll eclipse preferences files.  These files are located under:  [http://tll.googlecode.com/svn/eclipse eclipse].
+
+==Misc==
+
+===smbiz===
+To quickly update only the lib dependencies for GWT host mode, do:
+ {{{ mvn dependency:copy-dependencies -DoutputDirectory=target/war/WEB-INF/lib }}}
+from the smbiz root dir.
