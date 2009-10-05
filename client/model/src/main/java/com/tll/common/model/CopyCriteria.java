@@ -16,6 +16,7 @@ public class CopyCriteria {
 	static enum CopyMode {
 		ALL,
 		NO_REFERENCES,
+		SUBSET,
 		CHANGES
 	}
 
@@ -42,10 +43,19 @@ public class CopyCriteria {
 	}
 
 	/**
+	 * Creates copy criteria where a whitelist is employed to create a sub-set of model properties.
+	 * @param whiteList the subset of model properties to copy over
+	 * @return the subset model
+	 */
+	public static CopyCriteria subset(Set<IModelProperty> whiteList) {
+		return new CopyCriteria(CopyMode.SUBSET, whiteList);
+	}
+
+	/**
 	 * Creates copy criteria in change mode where the given white list represent
 	 * the properties that were altered.
 	 * @param whiteList
-	 * @return
+	 * @return the "changed" model
 	 */
 	public static CopyCriteria changes(Set<IModelProperty> whiteList) {
 		return new CopyCriteria(CopyMode.CHANGES, whiteList);
@@ -64,7 +74,6 @@ public class CopyCriteria {
 	 */
 	private CopyCriteria(CopyMode mode, Set<IModelProperty> whiteList) {
 		super();
-		assert mode != CopyMode.CHANGES ? whiteList == null : true;
 		this.mode = mode;
 		this.whiteList = whiteList;
 	}

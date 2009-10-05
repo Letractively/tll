@@ -36,6 +36,15 @@ implements IModelChangeHandler {
 	}
 
 	/**
+	 * Get the row data for a given row.
+	 * @param row 0-based table row num (considers the header row).
+	 * @return Model
+	 */
+	public Model getRowData(int row) {
+		return table.getRowData(row);
+	}
+
+	/**
 	 * Get the row index given a {@link ModelKey}.
 	 * @param rowKey The ModelKey for which to find the associated row index.
 	 * @return The row index or <code>-1</code> if no row matching the given ref
@@ -53,27 +62,27 @@ implements IModelChangeHandler {
 	 */
 	public void onModelChangeEvent(ModelChangeEvent event) {
 		switch(event.getChangeOp()) {
-			case ADDED:
-				addRow(event.getModel());
-				break;
-			case UPDATED: {
-				final ModelKey mkey = event.getModel().getKey();
-				final int rowIndex = getRowIndex(mkey);
-				if(rowIndex != -1) {
-					assert rowIndex > 0; // header row
-					updateRow(rowIndex, event.getModel());
-				}
-				break;
+		case ADDED:
+			addRow(event.getModel());
+			break;
+		case UPDATED: {
+			final ModelKey mkey = event.getModel().getKey();
+			final int rowIndex = getRowIndex(mkey);
+			if(rowIndex != -1) {
+				assert rowIndex > 0; // header row
+				updateRow(rowIndex, event.getModel());
 			}
-			case DELETED: {
-				final ModelKey modelRef = event.getModelKey();
-				final int rowIndex = getRowIndex(modelRef);
-				if(rowIndex != -1) {
-					assert rowIndex > 0; // header row
-					markRowDeleted(rowIndex, true);
-				}
-				break;
+			break;
+		}
+		case DELETED: {
+			final ModelKey modelRef = event.getModelKey();
+			final int rowIndex = getRowIndex(modelRef);
+			if(rowIndex != -1) {
+				assert rowIndex > 0; // header row
+				markRowDeleted(rowIndex, true);
 			}
+			break;
+		}
 		}
 	}
 }

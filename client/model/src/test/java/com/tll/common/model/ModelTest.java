@@ -202,6 +202,29 @@ public class ModelTest {
 	}
 
 	@Test(enabled = true)
+	public void testCopySubset() throws Exception {
+		final Model m = TestModelStubber.stubAccount(true);
+		IModelProperty mp;
+		final HashSet<IModelProperty> mpSet = new HashSet<IModelProperty>();
+
+		mp = m.getModelProperty("name");
+		mpSet.add(mp);
+
+		mp = m.getModelProperty("addresses[0].name");
+		mpSet.add(mp);
+
+		mp = m.getModelProperty("paymentInfo.paymentData_bankAccountNo");
+		mpSet.add(mp);
+
+		m.getNestedModel("addresses[1]").setMarkedDeleted(true);
+
+		final Model subset = m.copy(CopyCriteria.subset(mpSet));
+
+		Assert.assertFalse(subset.propertyExists("currency"));
+		Assert.assertFalse(subset.propertyExists("parent"));
+	}
+
+	@Test(enabled = true)
 	public void testCopyChanges() throws Exception {
 		final Model m = TestModelStubber.stubAccount(true);
 		IModelProperty mp;

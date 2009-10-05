@@ -14,6 +14,10 @@ import com.tll.model.IEntity;
 import com.tll.model.key.PrimaryKey;
 import com.tll.service.entity.account.IAccountService;
 
+/**
+ * AccountService
+ * @author jpk
+ */
 public class AccountService extends AbstractPersistServiceImpl {
 
 	/**

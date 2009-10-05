@@ -19,9 +19,9 @@ import com.tll.common.model.ModelKey;
 public final class ModelListingTable extends ListingTable<Model> {
 
 	/**
-	 * {@link ModelKey}s for each listing element row.
+	 * {@link Model}s for each listing element row.
 	 */
-	protected final List<ModelKey> rowKeys = new ArrayList<ModelKey>();
+	protected final List<Model> rowDataList = new ArrayList<Model>();
 
 	/**
 	 * Constructor
@@ -37,7 +37,16 @@ public final class ModelListingTable extends ListingTable<Model> {
 	 * @return ModelKey
 	 */
 	ModelKey getRowKey(int row) {
-		return rowKeys.get(row - 1);
+		return getRowData(row).getKey();
+	}
+
+	/**
+	 * Get the underlying model data for a row.
+	 * @param row 0-based table row num (considers the header row).
+	 * @return the model row data
+	 */
+	Model getRowData(int row) {
+		return rowDataList.get(row - 1);
 	}
 
 	/**
@@ -47,31 +56,31 @@ public final class ModelListingTable extends ListingTable<Model> {
 	 *         given row key is present in the table.
 	 */
 	int getRowIndex(ModelKey rowKey) {
-		final int i = rowKeys.indexOf(rowKey);
+		final int i = rowDataList.indexOf(rowKey);
 		return i == -1 ? -1 : i + 1; // account for header row
 	}
 
 	@Override
 	protected void setRowData(int rowIndex, int rowNum, Model rowData, boolean overwriteOnNull) {
 		super.setRowData(rowIndex, rowNum, rowData, overwriteOnNull);
-		rowKeys.add(rowData.getKey());
+		rowDataList.add(rowData);
 	}
 
 	@Override
 	int addRow(Model rowData) {
-		rowKeys.add(rowData.getKey());
+		rowDataList.add(rowData);
 		return super.addRow(rowData);
 	}
 
 	@Override
 	void updateRow(int rowIndex, Model rowData) {
-		rowKeys.set(rowIndex - 1, rowData.getKey());
+		rowDataList.set(rowIndex - 1, rowData);
 		super.updateRow(rowIndex, rowData);
 	}
 
 	@Override
 	void deleteRow(int rowIndex) {
-		rowKeys.remove(rowIndex - 1);
+		rowDataList.remove(rowIndex - 1);
 		super.deleteRow(rowIndex);
 	}
 }

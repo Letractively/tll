@@ -12,6 +12,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.tll.IDescriptorProvider;
 import com.tll.IMarshalable;
 import com.tll.common.bind.IBindable;
@@ -132,7 +133,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 			this.srcProp = srcProp;
 			this.rootRelPath = rootRelPath;
 			this.nearestParentRefPath = nearestParentRefPath;
-			//Log.debug("CopyChangesPredicate elm: " + this);
+			//Log.debug("ChangesPredicate elm: " + this);
 		}
 
 		@Override
@@ -176,14 +177,18 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 
 	} // NoReferencesPredicate
 
+	/**
+	 * SubsetPredicate
+	 * @author jpk
+	 */
 	@SuppressWarnings("serial")
-	class CopyChangesPredicate extends HashSet<WhitelistElement> implements ICopyPredicate {
+	class SubsetPredicate extends HashSet<WhitelistElement> implements ICopyPredicate {
 
 		/**
 		 * Constructor
 		 * @param whitelistModelProps
 		 */
-		public CopyChangesPredicate(Set<IModelProperty> whitelistModelProps) {
+		public SubsetPredicate(Set<IModelProperty> whitelistModelProps) {
 			super();
 			// create whitelist elements needed for the main copy routine
 			if(whitelistModelProps != null) {
@@ -214,6 +219,53 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 			copy.markedDeleted = source.markedDeleted;
 			copy.setId(source.getId());
 			copy.setVersion(source.getVersion());
+			return true;
+		}
+
+		/**
+		 * We copy relational props if the are parent to targeted white list props
+		 * @param rootRelPath the current root relative path to check for copying
+		 * @return true/false
+		 */
+		public boolean evaluateProperty(IModelProperty srcProp, String rootRelPath) {
+			if(size() > 0) {
+				final boolean relational = srcProp.getType().isRelational();
+				final boolean indexed = srcProp.getType() == PropertyType.INDEXED;
+				for(final WhitelistElement wle : this) {
+					if(relational || indexed) {
+						if(wle.nearestParentRefPath.indexOf(rootRelPath) == 0) {
+							Log.debug("Allowing relational/indexed [" + rootRelPath + "]");
+							return true;
+						}
+					}
+					else {
+						if(wle.rootRelPath.equals(rootRelPath) || rootRelPath.endsWith(ID_PROPERTY)
+								|| rootRelPath.endsWith(VERSION_PROPERTY)) {
+							Log.debug("Allowing value/nested [" + rootRelPath + "]");
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+
+	} // SubsetPredicate
+
+	@SuppressWarnings("serial")
+	class ChangesPredicate extends SubsetPredicate {
+
+		/**
+		 * Constructor
+		 * @param whitelistModelProps
+		 */
+		public ChangesPredicate(Set<IModelProperty> whitelistModelProps) {
+			super(whitelistModelProps);
+		}
+
+		@Override
+		public boolean evaluateSourceAndCopy(Model source, Model copy) {
+			super.evaluateSourceAndCopy(source, copy);
 			// when in change mode, only copy id and version when a model is marked as deleted
 			if(source.markedDeleted) {
 				return false;
@@ -226,6 +278,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		 * @param rootRelPath the current root relative path to check for copying
 		 * @return true/false
 		 */
+		@Override
 		public boolean evaluateProperty(IModelProperty srcProp, String rootRelPath) {
 			if(srcProp instanceof IModelRefProperty) {
 				final Model m = ((IModelRefProperty) srcProp).getModel();
@@ -238,27 +291,10 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 				final PropertyMetadata metadata = ((IPropertyValue) srcProp).getMetadata();
 				if(metadata != null && metadata.isManaged()) return false;
 			}
-			final boolean relational = srcProp.getType().isRelational();
-			final boolean indexed = srcProp.getType() == PropertyType.INDEXED;
-			for(final WhitelistElement wle : this) {
-				if(relational || indexed) {
-					if(wle.nearestParentRefPath.indexOf(rootRelPath) == 0) {
-						//Log.debug("Allowing relational/indexed [" + rootRelPath + "]");
-						return true;
-					}
-				}
-				else {
-					if(wle.rootRelPath.equals(rootRelPath) || rootRelPath.endsWith(ID_PROPERTY)
-							|| rootRelPath.endsWith(VERSION_PROPERTY)) {
-						//Log.debug("Allowing value/nested [" + rootRelPath + "]");
-						return true;
-					}
-				}
-			}
-			return false;
+			return super.evaluateProperty(srcProp, rootRelPath);
 		}
 
-	} // CopyChangesPredicate
+	} // ChangesPredicate
 
 	/**
 	 * Entity id property name
@@ -833,8 +869,11 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	public Model copy(final CopyCriteria criteria) {
 		ICopyPredicate cp;
 		switch(criteria.getMode()) {
+		case SUBSET:
+			cp = new SubsetPredicate(criteria.getWhitelistProps());
+			break;
 		case CHANGES:
-			cp = new CopyChangesPredicate(criteria.getWhitelistProps());
+			cp = new ChangesPredicate(criteria.getWhitelistProps());
 			break;
 		case NO_REFERENCES:
 			cp = new NoReferencesPredicate();
