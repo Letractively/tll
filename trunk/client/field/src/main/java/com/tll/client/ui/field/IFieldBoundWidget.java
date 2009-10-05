@@ -50,11 +50,12 @@ public interface IFieldBoundWidget extends IHasFieldGroup, IHasModel, IHasErrorH
 
 	/**
 	 * Transfers field data to the model through the defined bindings.
+	 * @throws NoChangesException When no field edits were performed
 	 * @throws ValidationException When the root field group fails to validate.
 	 * @throws BindingException When a property change event fails to complete
 	 *         successfully (post validation).
 	 */
-	void updateModel() throws ValidationException, BindingException;
+	void updateModel() throws NoChangesException, ValidationException, BindingException;
 
 	/**
 	 * @return New model instance containing a sub-set of the root model subject

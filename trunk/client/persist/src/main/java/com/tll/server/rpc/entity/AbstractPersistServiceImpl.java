@@ -142,9 +142,11 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	 * The default add routine which may be overridden.
 	 * @param model
 	 * @param payload
+	 * @throws EntityExistsException When the entity is non-unique by way of a defined business key
+	 * @throws ConstraintViolationException When the marshaled entity is found invalid
 	 */
 	@SuppressWarnings("unchecked")
-	protected void doAdd(Model model, ModelPayload payload) {
+	protected void doAdd(Model model, ModelPayload payload) throws EntityExistsException, ConstraintViolationException {
 		final Class<? extends IEntity> entityClass =
 			(Class<? extends IEntity>) context.getEntityTypeResolver().resolveEntityClass(model.getEntityType());
 		IEntity e = context.getMarshaler().marshalModel(model, entityClass);
@@ -166,9 +168,10 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	 * @param payload
 	 * @throws VersionMismatchException When the model data version doesn't match
 	 *         the loaded target entity version
+	 * @throws ConstraintViolationException When the marshaled entity is found invalid
 	 */
 	@SuppressWarnings("unchecked")
-	protected void doUpdate(Model modelChanges, ModelPayload payload) throws VersionMismatchException {
+	protected void doUpdate(Model modelChanges, ModelPayload payload) throws VersionMismatchException, ConstraintViolationException {
 		final Class<? extends IEntity> entityClass =
 			(Class<? extends IEntity>) context.getEntityTypeResolver().resolveEntityClass(modelChanges.getEntityType());
 		final IEntityService<IEntity> svc =
@@ -198,7 +201,6 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	@SuppressWarnings("unchecked")
 	@Override
 	public final void persist(Model model, ModelPayload payload) {
-		final Class<? extends IEntity> entityClass = null;
 		try {
 			if(model.isNew())
 				doAdd(model, payload);
@@ -212,7 +214,12 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 			RpcServlet.exceptionToStatus(e, payload.getStatus());
 		}
 		catch(final ConstraintViolationException ise) {
+			final Class<? extends IEntity> entityClass =
+				(Class<? extends IEntity>) context.getEntityTypeResolver().resolveEntityClass(model.getEntityType());
 			for(final ConstraintViolation iv : ise.getConstraintViolations()) {
+				// resolve index if we have a violation on under an indexed entity property
+				// since the validation api doesn't provide the index rather only empty brackets ([])
+				// in the ConstraintViolation's propertyPath property
 				payload.getStatus().addMsg(iv.getMessage(), MsgLevel.ERROR, MsgAttr.FIELD.flag,
 						clientizePropertyPath(context.getSchemaInfo(), entityClass, iv.getPropertyPath().toString()));
 			}

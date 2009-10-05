@@ -13,7 +13,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
@@ -21,15 +20,15 @@ import com.tll.common.model.SmbizEntityType;
 import com.tll.dao.AbstractDbAwareTest;
 import com.tll.di.SmbizDb4oDaoModule;
 import com.tll.di.SmbizEGraphModule;
+import com.tll.di.SmbizMarshalModule;
 import com.tll.di.SmbizModelModule;
 import com.tll.di.test.Db4oDbShellModule;
 import com.tll.model.IEntity;
 import com.tll.model.Merchant;
 import com.tll.model.test.EntityBeanFactory;
 import com.tll.model.test.EntityGraph;
-import com.tll.server.rpc.entity.IEntityTypeResolver;
+import com.tll.model.test.IEntityGraphPopulator;
 import com.tll.server.rpc.entity.IMarshalOptionsResolver;
-import com.tll.server.rpc.entity.SmbizEntityTypeResolver;
 import com.tll.util.CommonUtil;
 
 /**
@@ -47,19 +46,20 @@ public class SmbizMarshalerTest extends AbstractDbAwareTest {
 	}
 
 	@Override
+	protected void beforeClass() {
+		super.beforeClass();
+		// populate the entity graph
+		injector.getInstance(IEntityGraphPopulator.class).populateEntityGraph();
+	}
+
+	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
 		modules.add(new SmbizModelModule());
 		modules.add(new SmbizEGraphModule());
 		modules.add(new SmbizDb4oDaoModule(getConfig()));
+		modules.add(new SmbizMarshalModule());
 		modules.add(new Db4oDbShellModule());
-		modules.add(new Module() {
-
-			@Override
-			public void configure(Binder binder) {
-				binder.bind(IEntityTypeResolver.class).toInstance(new SmbizEntityTypeResolver());
-			}
-		});
 	}
 
 	private Marshaler getMarshaler() {

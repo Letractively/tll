@@ -78,11 +78,11 @@ public abstract class AbstractDbAwareTest extends AbstractConfigAwareTest {
 		}
 	}
 
-	protected final IDbTrans getDbTrans() {
+	protected IDbTrans getDbTrans() {
 		return injector.getInstance(IDbTrans.class);
 	}
 
-	protected final IDbShell getDbShell() {
+	protected IDbShell getDbShell() {
 		return injector.getInstance(IDbShell.class);
 	}
 

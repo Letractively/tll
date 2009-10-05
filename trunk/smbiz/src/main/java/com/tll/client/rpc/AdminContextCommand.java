@@ -110,21 +110,21 @@ public final class AdminContextCommand extends RpcCommand<AdminContextPayload> i
 	protected void handleSuccess(AdminContextPayload result) {
 		super.handleSuccess(result);
 		switch(changeType) {
-			case USER_CHANGE:
-				adminContext.setDebug(result.isDebug());
-				adminContext.setEnvironment(result.getEnvironment());
-				adminContext.setUser(result.getUser());
-				adminContext.setAccount(result.getAccount());
-				if(adminContext.getUser() == null) {
-					// presume not logged in yet
-					changeType = ChangeType.INVALIDATE;
-				}
-				break;
-			case ACCOUNT_CHANGE:
-				adminContext.setAccount(result.getAccount());
-				break;
-			default:
-				throw new IllegalStateException("Unhandled change type for rpc request: " + changeType);
+		case USER_CHANGE:
+			adminContext.setDebug(result.isDebug());
+			adminContext.setEnvironment(result.getEnvironment());
+			adminContext.setUser(result.getUser());
+			adminContext.setAccount(result.getAccount());
+			if(adminContext.getUser() == null) {
+				// presume not logged in yet
+				changeType = ChangeType.INVALIDATE;
+			}
+			break;
+		case ACCOUNT_CHANGE:
+			adminContext.setAccount(result.getAccount());
+			break;
+		default:
+			throw new IllegalStateException("Unhandled change type for rpc request: " + changeType);
 		}
 		DeferredCommand.addCommand(new Command() {
 
@@ -139,6 +139,7 @@ public final class AdminContextCommand extends RpcCommand<AdminContextPayload> i
 
 	@Override
 	protected void handleFailure(Throwable caught) {
+		super.handleFailure(caught);
 		DeferredCommand.addCommand(new Command() {
 
 			@Override

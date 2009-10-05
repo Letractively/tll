@@ -8,7 +8,6 @@ package com.tll.dao.db4o.test;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springextensions.db4o.Db4oTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -28,7 +27,7 @@ public class Db4oTrans implements IDbTrans {
 	/**
 	 * The trans manager.
 	 */
-	private PlatformTransactionManager tm;
+	private Db4oTransactionManager tm;
 
 	/**
 	 * Used to check if a transaction is in progress only when using Spring
@@ -58,6 +57,14 @@ public class Db4oTrans implements IDbTrans {
 	public Db4oTrans(ObjectContainer oc) {
 		super();
 		this.oc = oc;
+	}
+
+	/**
+	 * Hook to [re-]set the {@link ObjectContainer} ref.
+	 * @param oc the object container to set
+	 */
+	public void setObjectContainer(ObjectContainer oc) {
+		getTransMgr().setObjectContainer(oc);
 	}
 
 	@Override
@@ -100,7 +107,7 @@ public class Db4oTrans implements IDbTrans {
 	/**
 	 * @return The lazily instantiated db level trans manager.
 	 */
-	private PlatformTransactionManager getTransMgr() {
+	private Db4oTransactionManager getTransMgr() {
 		if(tm == null) {
 			final Db4oTransactionManager db4oTm = new Db4oTransactionManager(oc);
 

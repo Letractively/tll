@@ -16,7 +16,6 @@ import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.tll.common.data.AuxDataPayload;
 import com.tll.common.data.AuxDataRequest;
-import com.tll.common.data.IModelRelatedRequest;
 import com.tll.common.data.LoadRequest;
 import com.tll.common.data.ModelPayload;
 import com.tll.common.data.PersistRequest;
@@ -35,7 +34,6 @@ import com.tll.dao.IDbShell;
 import com.tll.dao.IDbTrans;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.db4o.test.Db4oTrans;
-import com.tll.di.ClientPersistModule;
 import com.tll.di.Db4oDaoModule;
 import com.tll.di.LogExceptionHandlerModule;
 import com.tll.di.MailModule;
@@ -43,13 +41,13 @@ import com.tll.di.RefDataModule;
 import com.tll.di.TestEntityServiceFactoryModule;
 import com.tll.di.TestMarshalModule;
 import com.tll.di.test.Db4oDbShellModule;
+import com.tll.di.test.TestClientPersistModule;
 import com.tll.di.test.TestDb4oDaoModule;
 import com.tll.di.test.TestPersistenceUnitModelModule;
 import com.tll.model.IEntity;
 import com.tll.model.test.Address;
 import com.tll.model.test.EntityBeanFactory;
 import com.tll.refdata.RefDataType;
-import com.tll.server.rpc.entity.test.TestAddressService;
 
 /**
  * PersistServiceDelegateTest
@@ -57,14 +55,6 @@ import com.tll.server.rpc.entity.test.TestAddressService;
  */
 @Test(groups = { "server", "client-persist" })
 public class PersistServiceDelegateTest extends AbstractDbAwareTest {
-
-	static class TestPersistServiceImplResolver implements IPersistServiceImplResolver {
-		@Override
-		public Class<? extends IPersistServiceImpl> resolve(IModelRelatedRequest request)
-		throws IllegalArgumentException {
-			return TestAddressService.class;
-		}
-	}
 
 	@Override
 	protected void addModules(List<Module> modules) {
@@ -80,13 +70,7 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 		modules.add(new TestEntityServiceFactoryModule());
 		modules.add(new LogExceptionHandlerModule());
 		modules.add(new TestMarshalModule());
-		modules.add(new ClientPersistModule() {
-
-			@Override
-			protected Class<? extends IPersistServiceImplResolver> getPersistServiceImplResolverType() {
-				return TestPersistServiceImplResolver.class;
-			}
-		});
+		modules.add(new TestClientPersistModule());
 		modules.add(new Module() {
 
 			@Override

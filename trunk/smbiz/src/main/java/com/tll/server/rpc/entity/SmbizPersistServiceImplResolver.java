@@ -16,7 +16,6 @@ import com.tll.common.model.IEntityTypeProvider;
 import com.tll.common.search.AccountInterfaceDataSearch;
 import com.tll.common.search.ISearch;
 import com.tll.model.Account;
-import com.tll.model.AccountAddress;
 import com.tll.model.AccountInterface;
 import com.tll.model.Address;
 import com.tll.model.Authority;
@@ -109,9 +108,6 @@ public class SmbizPersistServiceImplResolver implements IPersistServiceImplResol
 		}
 		else if(Address.class.isAssignableFrom(rootEntityClass)) {
 			return AddressService.class;
-		}
-		else if(AccountAddress.class.isAssignableFrom(rootEntityClass)) {
-			return AccountAddressService.class;
 		}
 		else if(Authority.class.isAssignableFrom(rootEntityClass)) {
 			return AuthorityService.class;

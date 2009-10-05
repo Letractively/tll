@@ -29,16 +29,17 @@ import com.tll.model.key.PrimaryKey;
  * dao testing.
  * </ol>
  * @author jpk
+ * @param <T> the raw dao impl type
  */
-public class EntityDaoTestDecorator implements IEntityDao {
+public class EntityDaoTestDecorator<T extends IEntityDao> implements IEntityDao {
 
-	private IEntityDao rawDao;
+	protected T rawDao;
 
 	public IEntityDao getRawDao() {
 		return rawDao;
 	}
 
-	public void setRawDao(IEntityDao rawDao) {
+	public void setRawDao(T rawDao) {
 		this.rawDao = rawDao;
 	}
 
@@ -116,6 +117,11 @@ public class EntityDaoTestDecorator implements IEntityDao {
 	@Override
 	public <E extends IEntity> void purge(E entity) throws DataAccessException {
 		rawDao.purge(entity);
+	}
+
+	@Override
+	public <E extends IEntity> void purge(PrimaryKey<E> key) throws EntityNotFoundException, DataAccessException {
+		rawDao.purge(key);
 	}
 
 	@Override

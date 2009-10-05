@@ -25,7 +25,6 @@ import com.tll.client.mvc.view.StaticViewInitializer;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.Dialog;
 import com.tll.client.ui.GridRenderer;
-import com.tll.client.ui.RpcUiHandler;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
@@ -190,19 +189,19 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 		// now we are ready to create the intf stack as we have a valid view
 		// container ref
 		intfStack =
-			new InterfaceStack(gmp, new RpcUiHandler(getViewContainerRef()), auxDataRequest,
+			new InterfaceStack(gmp, auxDataRequest,
 					new InterfaceStack.IFieldPanelResolver() {
 
 				@Override
 				public FieldPanel<?> resolveFieldPanel(ModelKey mkey) {
 					final SmbizEntityType type = (SmbizEntityType) mkey.getEntityType();
 					switch(type) {
-						case INTERFACE_SWITCH:
-							return new SwitchInterfacePanel();
-						case INTERFACE_SINGLE:
-							return new MultiOptionInterfacePanel(true);
-						case INTERFACE_MULTI:
-							return new MultiOptionInterfacePanel(false);
+					case INTERFACE_SWITCH:
+						return new SwitchInterfacePanel();
+					case INTERFACE_SINGLE:
+						return new MultiOptionInterfacePanel(true);
+					case INTERFACE_MULTI:
+						return new MultiOptionInterfacePanel(false);
 					}
 					throw new IllegalArgumentException("Unhandled interface type");
 				}
@@ -214,7 +213,7 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 					c.load(new PrimaryKeySearch(intfKey), adr);
 					return c;
 				}
-			}, new CrudCommand());
+			});
 		addWidget(intfStack);
 	}
 

@@ -16,7 +16,7 @@ import com.tll.di.Db4oDaoModule.Db4oFile;
 import com.tll.model.test.IEntityGraphPopulator;
 
 /**
- * Db4oDaoModule - Db4o db shell impl module.
+ * Db4oDbShellModule - Db4o db shell impl module.
  * @author jpk
  */
 public class Db4oDbShellModule extends AbstractModule {

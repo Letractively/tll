@@ -7,23 +7,24 @@ package com.tll.client.ui.listing;
 
 import com.tll.client.App;
 import com.tll.client.SmbizAdmin;
+import com.tll.client.listing.AbstractAccountListingConfig;
+import com.tll.client.listing.AbstractRowOptions;
+import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IRowOptionsDelegate;
-import com.tll.client.listing.MerchantListingConfig;
-import com.tll.client.listing.ModelChangingRowHandler;
 import com.tll.client.listing.RemoteListingOperator;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.ShowViewRequest;
-import com.tll.client.mvc.view.ViewClass;
-import com.tll.client.mvc.view.account.AccountEditView;
 import com.tll.client.mvc.view.account.CustomerListingViewInitializer;
 import com.tll.client.ui.option.Option;
+import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 import com.tll.common.model.SmbizEntityType;
 import com.tll.common.model.StringPropertyValue;
 import com.tll.common.search.NamedQuerySearch;
+import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
 
 /**
@@ -32,11 +33,50 @@ import com.tll.listhandler.ListHandlerType;
  */
 public class MerchantListingWidget extends RemoteListingWidget {
 
-	class RowHandler extends ModelChangingRowHandler {
+	/**
+	 * MerchantListingConfig
+	 * @author jpk
+	 */
+	static class MerchantListingConfig extends AbstractAccountListingConfig {
+
+		private static final String listingElementName = SmbizEntityType.MERCHANT.getName();
+
+		private static final Sorting defaultSorting = new Sorting("name");
+
+		private static final Column[] cols = new Column[] {
+			Column.ROW_COUNT_COLUMN,
+			new Column("Name", Model.NAME_PROPERTY, "rowData"),
+			new Column("Created", GlobalFormat.DATE, Model.DATE_CREATED_PROPERTY, "rowData"),
+			new Column("Modified", GlobalFormat.DATE, Model.DATE_MODIFIED_PROPERTY, "rowData"),
+			new Column("Status", "status", "rowData"),
+			new Column("Billing Model", "billingModel", "rowData"),
+			new Column("Billing Cycle", "billingCycle", "rowData"),
+			new Column("Store Name", "storeName", "rowData")
+		};
+
+		private static final String[] mprops = new String[] {
+			Model.NAME_PROPERTY,
+			Model.DATE_CREATED_PROPERTY,
+			Model.DATE_MODIFIED_PROPERTY,
+			"status",
+			"billingModel",
+			"billingCycle",
+			"storeName",
+		};
+
+		/**
+		 * Constructor
+		 */
+		public MerchantListingConfig() {
+			super(null, listingElementName, mprops, cols, defaultSorting);
+		}
+	}
+
+	class RowHandler extends AbstractRowOptions {
 
 		@Override
 		protected Option[] getCustomRowOps(int rowIndex) {
-			final ModelKey rowRef = listingWidget.getRowKey(rowIndex);
+			final ModelKey rowRef = getRowKey(rowIndex);
 			if(SmbizAdmin.canSetAsCurrent(rowRef, parentAccountRef)) {
 				return new Option[] {
 					cListing, App.OPTION_SET_CURRENT };
@@ -48,16 +88,11 @@ public class MerchantListingWidget extends RemoteListingWidget {
 		protected void handleRowOp(String optionText, int rowIndex) {
 			if(cListing.getText().equals(optionText)) {
 				ViewManager.get().dispatch(
-						new ShowViewRequest(new CustomerListingViewInitializer(listingWidget.getRowKey(rowIndex), parentAccountRef)));
+						new ShowViewRequest(new CustomerListingViewInitializer(getRowKey(rowIndex), parentAccountRef)));
 			}
 			else if(App.OPTION_SET_CURRENT.getText().equals(optionText)) {
-				SmbizAdmin.getAdminContextCmd().changeCurrentAccount(listingWidget.getRowKey(rowIndex));
+				SmbizAdmin.getAdminContextCmd().changeCurrentAccount(getRowKey(rowIndex));
 			}
-		}
-
-		@Override
-		protected ViewClass getEditViewClass() {
-			return AccountEditView.klas;
 		}
 
 		@Override

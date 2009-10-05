@@ -210,11 +210,12 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 
 		@Override
 		public boolean evaluateSourceAndCopy(Model source, Model copy) {
+			// core model props to always have
 			copy.markedDeleted = source.markedDeleted;
+			copy.setId(source.getId());
+			copy.setVersion(source.getVersion());
 			// when in change mode, only copy id and version when a model is marked as deleted
 			if(source.markedDeleted) {
-				copy.setId(source.getId());
-				copy.setVersion(source.getVersion());
 				return false;
 			}
 			return true;
@@ -830,7 +831,6 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 *         <code>true</code>.
 	 */
 	public Model copy(final CopyCriteria criteria) {
-
 		ICopyPredicate cp;
 		switch(criteria.getMode()) {
 		case CHANGES:

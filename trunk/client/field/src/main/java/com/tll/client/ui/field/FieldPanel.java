@@ -189,7 +189,8 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	/**
 	 * Creates a new {@link Binding} instance employing a
 	 * {@link DefaultFieldBindingBuilder} instance.
-	 * @throws BindingException When the bindings are not created for whatever reason
+	 * @throws BindingException When the bindings are not created for whatever
+	 *         reason
 	 */
 	private void createBindings() throws BindingException {
 		assert !isBound();
@@ -207,7 +208,7 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 		}
 		Log.debug(this + " setting model: [" + model + "]..");
 
-		unbind();	// if not bound no-op
+		unbind(); // if not bound no-op
 
 		// clear out the field values since we have different model data
 		// NOTE: we don't want to lazily instantite the field group here
@@ -219,18 +220,13 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 		this.model = model;
 		Log.debug("model set");
 
-
-
-		if(model != null) {
-			// apply property metadata and model new flag (sets incremental validation flag)
-			// NOTE: first ensure the field group has been generated
-			Log.debug("Applying prop metadata to fields..");
-			getFieldGroup().applyPropertyMetadata(model, model.isNew());
-		}
-
 		if(model != null) {
 			bind();
 			updateFields();
+
+			// apply property metadata and model new flag (sets incremental validation flag)
+			Log.debug("Applying prop metadata to fields..");
+			getFieldGroup().applyPropertyMetadata(model, model.isNew());
 		}
 	}
 
@@ -294,7 +290,7 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	}
 
 	@Override
-	public final void updateModel() throws ValidationException, BindingException {
+	public final void updateModel() throws NoChangesException, ValidationException, BindingException {
 		if(!isBound()) throw new IllegalStateException("Not bound");
 		if(errorHandler != null) errorHandler.clear();
 		try {
@@ -303,6 +299,10 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 
 			// update the model
 			binding.setLeft();
+
+			if(modelChangeTracker != null && modelChangeTracker.getNumChanges() < 1) {
+				throw new NoChangesException();
+			}
 		}
 		catch(final ValidationException e) {
 			if(errorHandler != null) errorHandler.handleErrors(e.getErrors(), ErrorDisplay.ALL_FLAGS);
@@ -327,10 +327,11 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 
 	@Override
 	public void updateFields() throws BindingException {
+		if(!isBound()) return;
 		if(modelChangeTracker != null) {
 			modelChangeTracker.setHandleChanges(false);
 		}
-		if(isBound()) binding.setRight();
+		binding.setRight();
 		if(modelChangeTracker != null) {
 			modelChangeTracker.setHandleChanges(true);
 		}

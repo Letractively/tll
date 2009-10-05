@@ -12,6 +12,7 @@ import org.testng.Assert;
 import com.tll.criteria.Criteria;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
+import com.tll.model.key.PrimaryKey;
 import com.tll.model.test.EntityBeanFactory;
 
 /**
@@ -54,6 +55,16 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	}
 
 	/**
+	 * Loads an entity by primary key from the datastore.
+	 * @param <D>
+	 * @param key
+	 * @return the loaded entity
+	 */
+	protected final <D extends IEntity> D load(PrimaryKey<D> key) {
+		return entityDao.load(key);
+	}
+
+	/**
 	 * Persists the given entity to the datastore returning the persisted entity.
 	 * @param <D>
 	 * @param entity
@@ -70,6 +81,15 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	 */
 	protected final <D extends IEntity> void purge(D entity) {
 		entityDao.purge(entity);
+	}
+
+	/**
+	 * Purges the given entity from the datastore by primary key.
+	 * @param <D>
+	 * @param key
+	 */
+	protected final <D extends IEntity> void purge(PrimaryKey<D> key) {
+		entityDao.purge(key);
 	}
 
 	/**
