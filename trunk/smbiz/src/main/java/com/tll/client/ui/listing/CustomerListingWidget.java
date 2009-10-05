@@ -43,25 +43,29 @@ public class CustomerListingWidget extends RemoteListingWidget {
 
 		private static final String listingElementName = SmbizEntityType.CUSTOMER.getName();
 
-		private static final Sorting defaultSorting = new Sorting("name");
+		private static final Sorting defaultSorting = new Sorting("customer.name");
 
 		private static final Column[] cols = new Column[] {
 			Column.ROW_COUNT_COLUMN,
-			new Column("Name", Model.NAME_PROPERTY, "c"),
+			new Column("Name", "customer.name", "c"),
 			new Column("Created", GlobalFormat.DATE, Model.DATE_CREATED_PROPERTY, "ca"),
 			new Column("Modified", GlobalFormat.DATE, Model.DATE_MODIFIED_PROPERTY, "ca"),
 			new Column("Status", "status", "ca"),
-			new Column("Billing Model", "billingModel", "ca"),
-			new Column("Billing Cycle", "billingCycle", "ca"),
+			new Column("Initial Visitor", "initialVisitorRecord.remoteHost", "ca"),
+			new Column("Billing Model", "customer.billingModel", "ca"),
+			new Column("Billing Cycle", "customer.billingCycle", "ca"),
 		};
 
 		private static final String[] mprops = new String[] {
-			Model.NAME_PROPERTY,
+			"customer.id",
+			"customer.name",
 			Model.DATE_CREATED_PROPERTY,
 			Model.DATE_MODIFIED_PROPERTY,
+			"source",
 			"status",
-			"billingModel",
-			"billingCycle",
+			"initialVisitorRecord.remoteHost",
+			"customer.billingModel",
+			"customer.billingCycle",
 		};
 
 		/**
@@ -97,8 +101,11 @@ public class CustomerListingWidget extends RemoteListingWidget {
 
 		@Override
 		protected void doEditRow(int rowIndex) {
+			final Model rowData = getRowData(rowIndex);
+			final String cid = rowData.asString("customer.id");
+			final ModelKey ck = new ModelKey(SmbizEntityType.CUSTOMER, cid, null);
 			ViewManager.get().dispatch(
-					new ShowViewRequest(new EditViewInitializer(AccountEditView.klas, getRowKey(rowIndex))));
+					new ShowViewRequest(new EditViewInitializer(AccountEditView.klas, ck)));
 		}
 
 		@Override
@@ -122,7 +129,7 @@ public class CustomerListingWidget extends RemoteListingWidget {
 		super(config);
 		this.parentAccountRef = parentAccountRef;
 		criteria = new NamedQuerySearch(SmbizEntityType.CUSTOMER, "account.customerList", true);
-		criteria.addParam(new StringPropertyValue("merchantId", parentAccountRef.getId()));
+		criteria.addParam(new StringPropertyValue("parentId", parentAccountRef.getId()));
 
 		setOperator(RemoteListingOperator.create(config.getListingId(),
 				ListHandlerType.PAGE, criteria, config.getModelProperties(),

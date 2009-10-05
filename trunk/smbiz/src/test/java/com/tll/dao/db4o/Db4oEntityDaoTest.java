@@ -13,7 +13,11 @@ import com.google.inject.Module;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.dao.AspAccountDaoTestHandler;
+import com.tll.dao.CustomerAccountDaoTestHandler;
 import com.tll.dao.IEntityDaoTestHandler;
+import com.tll.dao.InterfaceSingleDaoTestHandler;
+import com.tll.dao.InterfaceSwitchDaoTestHandler;
+import com.tll.dao.MerchantDaoTestHandler;
 import com.tll.di.Db4oDaoModule;
 import com.tll.di.SmbizDb4oDaoModule;
 import com.tll.di.SmbizEGraphModule;
@@ -52,7 +56,12 @@ public class Db4oEntityDaoTest extends AbstractDb4oEntityDaoTest {
 		}
 		 */
 		return new IEntityDaoTestHandler<?>[] {
-			new AspAccountDaoTestHandler()
+			new AspAccountDaoTestHandler(),
+			new MerchantDaoTestHandler(),
+			new CustomerAccountDaoTestHandler(),
+			new CustomerAccountDaoTestHandler(),
+			new InterfaceSingleDaoTestHandler(),
+			new InterfaceSwitchDaoTestHandler(),
 		};
 	}
 

@@ -224,7 +224,7 @@ class InterfaceStack extends StackPanel implements IRpcHandler, IListingHandler<
 		this.auxDataRequest = auxDataRequest;
 		this.fldPnlResolver = fldPnlResolver;
 		final String listingId = SmbizEntityType.INTERFACE.name();
-		final NamedQuerySearch criteria = new NamedQuerySearch(SmbizEntityType.INTERFACE, "interface.select", true);
+		final NamedQuerySearch criteria = new NamedQuerySearch(SmbizEntityType.INTERFACE, "interface.summaryList", true);
 		final Sorting defaultSorting = new Sorting("name");
 		final String[] propKeys = {
 			"name", "code", "description"

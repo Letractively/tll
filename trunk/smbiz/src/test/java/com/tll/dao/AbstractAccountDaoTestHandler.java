@@ -8,9 +8,9 @@ import org.testng.Assert;
 import com.tll.model.Account;
 import com.tll.model.AccountAddress;
 import com.tll.model.Address;
-import com.tll.model.Asp;
 import com.tll.model.Currency;
 import com.tll.model.PaymentInfo;
+import com.tll.model.key.PrimaryKey;
 import com.tll.model.test.EntityBeanFactory;
 
 /**
@@ -20,35 +20,37 @@ import com.tll.model.test.EntityBeanFactory;
  */
 public abstract class AbstractAccountDaoTestHandler<A extends Account> extends AbstractEntityDaoTestHandler<A> {
 
-	PaymentInfo paymentInfo;
-	Currency currency;
-	Account parent;
+	PrimaryKey<PaymentInfo> pkPaymentInfo;
+	PrimaryKey<Currency> pkCurrency;
+	PrimaryKey<Account> pkAccountParent;
 
 	@Override
 	public void persistDependentEntities() {
-		currency = createAndPersist(Currency.class, true);
-		paymentInfo = createAndPersist(PaymentInfo.class, true);
+		final Currency currency = createAndPersist(Currency.class, true);
+		final PaymentInfo paymentInfo = createAndPersist(PaymentInfo.class, true);
+		pkCurrency = new PrimaryKey<Currency>(currency);
 
-		parent = create(Asp.class, true);
+		Account parent = create(Account.class, true);
 		parent.setParent(null); // eliminate pointer chasing
 		parent.setCurrency(currency);
 		parent.setPaymentInfo(paymentInfo);
 		parent = persist(parent);
+		pkAccountParent = new PrimaryKey<Account>(parent);
+		pkPaymentInfo = new PrimaryKey<PaymentInfo>(paymentInfo);
 	}
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(parent);
-		purge(paymentInfo);
-		purge(currency);
+		purge(pkAccountParent); pkAccountParent = null;
+		purge(pkPaymentInfo); pkPaymentInfo = null;
+		purge(pkCurrency); pkCurrency = null;
 	}
 
 	@Override
 	public void assembleTestEntity(A e) throws Exception {
-
-		e.setCurrency(currency);
-		e.setPaymentInfo(paymentInfo);
-		e.setParent(parent);
+		e.setCurrency(load(pkCurrency));
+		e.setPaymentInfo(load(pkPaymentInfo));
+		e.setParent(load(pkAccountParent));
 
 		final Address address1 = create(Address.class, true);
 		final Address address2 = create(Address.class, true);

@@ -1,5 +1,5 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.dao;
 
@@ -12,6 +12,7 @@ import com.tll.model.Currency;
 import com.tll.model.Customer;
 import com.tll.model.CustomerAccount;
 import com.tll.model.Visitor;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * CustomerAccountDaoTestHandler
@@ -19,10 +20,10 @@ import com.tll.model.Visitor;
  */
 public class CustomerAccountDaoTestHandler extends AbstractEntityDaoTestHandler<CustomerAccount> {
 
-	Currency currency;
-	Account account;
-	Customer customer;
-	Visitor visitor;
+	PrimaryKey<Currency> pkCurrency;
+	PrimaryKey<Account> pkAccount;
+	PrimaryKey<Customer> pkCustomer;
+	PrimaryKey<Visitor> pkVisitor;
 
 	@Override
 	public Class<CustomerAccount> entityClass() {
@@ -38,36 +39,40 @@ public class CustomerAccountDaoTestHandler extends AbstractEntityDaoTestHandler<
 
 	@Override
 	public void persistDependentEntities() {
-		currency = createAndPersist(Currency.class, true);
+		final Currency currency = createAndPersist(Currency.class, true);
 
-		account = create(Asp.class, true);
+		Account account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account.setParent(null);
 		account = persist(account);
+		pkAccount = new PrimaryKey<Account>(account);
+		pkCurrency = new PrimaryKey<Currency>(account.getCurrency());
 
-		customer = create(Customer.class, true);
+		Customer customer = create(Customer.class, true);
 		customer.setParent(null);
 		customer.setCurrency(currency);
 		customer = persist(customer);
+		pkCustomer = new PrimaryKey<Customer>(customer);
 
-		visitor = create(Visitor.class, true);
+		Visitor visitor = create(Visitor.class, true);
 		visitor.setAccount(account);
 		visitor = persist(visitor);
+		pkVisitor = new PrimaryKey<Visitor>(visitor);
 	}
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(visitor);
-		purge(customer);
-		purge(account);
-		purge(currency);
+		purge(pkVisitor);
+		purge(pkCustomer);
+		purge(pkAccount);
+		purge(pkCurrency);
 	}
 
 	@Override
 	public void assembleTestEntity(CustomerAccount e) throws Exception {
-		e.setCustomer(customer);
-		e.setAccount(account);
-		e.setInitialVisitorRecord(visitor);
+		e.setCustomer(load(pkCustomer));
+		e.setAccount(load(pkAccount));
+		e.setInitialVisitorRecord(load(pkVisitor));
 	}
 
 	@Override

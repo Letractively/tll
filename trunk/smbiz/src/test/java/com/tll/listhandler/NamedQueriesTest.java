@@ -28,9 +28,9 @@ import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.di.Db4oDaoModule;
-import com.tll.di.SmbizEntityServiceFactoryModule;
 import com.tll.di.SmbizDb4oDaoModule;
 import com.tll.di.SmbizEGraphModule;
+import com.tll.di.SmbizEntityServiceFactoryModule;
 import com.tll.di.SmbizModelModule;
 import com.tll.di.test.Db4oDbShellModule;
 import com.tll.model.IEntity;
@@ -53,33 +53,32 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 	static {
 		for(final SelectNamedQueries nq : SelectNamedQueries.values()) {
 			switch(nq) {
-				case ISP_LISTING:
-					querySortBindings.put(nq, new SortColumn("dateCreated"));
-					queryParamsBindings.put(nq, null);
-					break;
-				case MERCHANT_LISTING: {
-					querySortBindings.put(nq, new SortColumn("dateCreated"));
-					final List<IQueryParam> list = new ArrayList<IQueryParam>();
-					list.add(new QueryParam("ispId", PropertyType.INT, Integer.valueOf(2)));
-					queryParamsBindings.put(nq, list);
-					break;
-				}
-				case CUSTOMER_LISTING: {
-					querySortBindings.put(nq, new SortColumn("dateCreated", "c"));
-					final List<IQueryParam> list = new ArrayList<IQueryParam>();
-					list.add(new QueryParam("merchantId", PropertyType.INT, Integer.valueOf(2)));
-					queryParamsBindings.put(nq, list);
-					break;
-				}
-				case INTERFACE_SUMMARY_LISTING:
-				case INTERFACES:
-					querySortBindings.put(nq, new SortColumn("code", "intf"));
-					queryParamsBindings.put(nq, null);
-					break;
+			case ISP_LISTING:
+				querySortBindings.put(nq, new SortColumn("dateCreated"));
+				queryParamsBindings.put(nq, null);
+				break;
+			case MERCHANT_LISTING: {
+				querySortBindings.put(nq, new SortColumn("dateCreated"));
+				final List<IQueryParam> list = new ArrayList<IQueryParam>();
+				list.add(new QueryParam("ispId", PropertyType.INT, Integer.valueOf(2)));
+				queryParamsBindings.put(nq, list);
+				break;
+			}
+			case CUSTOMER_LISTING: {
+				querySortBindings.put(nq, new SortColumn("dateCreated", "c"));
+				final List<IQueryParam> list = new ArrayList<IQueryParam>();
+				list.add(new QueryParam("merchantId", PropertyType.INT, Integer.valueOf(2)));
+				queryParamsBindings.put(nq, list);
+				break;
+			}
+			case INTERFACE_SUMMARY_LISTING:
+				querySortBindings.put(nq, new SortColumn("code", "intf"));
+				queryParamsBindings.put(nq, null);
+				break;
 
-					// warn of unhandled defined named queries!
-				default:
-					throw new IllegalStateException("Unhandled named query: " + nq);
+				// warn of unhandled defined named queries!
+			default:
+				throw new IllegalStateException("Unhandled named query: " + nq);
 			}
 		}
 	}
@@ -152,23 +151,23 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 				IListHandler<SearchResult<?>> listHandler = null;
 				logger.debug("Validating '" + nq.toString() + "' query with " + lht.toString() + " list handling...");
 				switch(lht) {
-					case COLLECTION:
+				case COLLECTION:
+					listHandler = ListHandlerFactory.create(criteria, sorting, lht, dataProvider);
+					break;
+				case IDLIST:
+					try {
 						listHandler = ListHandlerFactory.create(criteria, sorting, lht, dataProvider);
-						break;
-					case IDLIST:
-						try {
-							listHandler = ListHandlerFactory.create(criteria, sorting, lht, dataProvider);
-							Assert.fail("Able to create id list based list handler for a scalar named query!");
-						}
-						catch(final InvalidCriteriaException e) {
-							// expected
-						}
-						break;
-					case PAGE:
-						listHandler = ListHandlerFactory.create(criteria, sorting, lht, dataProvider);
-						break;
-					default:
-						throw new Error("Unhandled list handler type: " + lht.toString());
+						Assert.fail("Able to create id list based list handler for a scalar named query!");
+					}
+					catch(final InvalidCriteriaException e) {
+						// expected
+					}
+					break;
+				case PAGE:
+					listHandler = ListHandlerFactory.create(criteria, sorting, lht, dataProvider);
+					break;
+				default:
+					throw new Error("Unhandled list handler type: " + lht.toString());
 				}
 				if(listHandler != null) {
 					validateListHandler(listHandler, sorting);

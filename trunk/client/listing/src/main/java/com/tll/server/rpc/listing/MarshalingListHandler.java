@@ -4,8 +4,14 @@
  */
 package com.tll.server.rpc.listing;
 
+import java.util.HashSet;
+
+import com.tll.common.model.CopyCriteria;
+import com.tll.common.model.IModelProperty;
 import com.tll.common.model.Model;
+import com.tll.common.model.NullNodeInPropPathException;
 import com.tll.common.model.PropertyPathException;
+import com.tll.common.model.UnsetPropertyException;
 import com.tll.dao.SearchResult;
 import com.tll.listhandler.DecoratedListHandler;
 import com.tll.listhandler.IListHandler;
@@ -50,20 +56,26 @@ public final class MarshalingListHandler extends DecoratedListHandler<SearchResu
 		if(propKeys == null) {
 			return model;
 		}
-		final int numCols = propKeys.length;
-		final Model xgrp = new Model(model.getEntityType());
-		for(int i = 0; i < numCols; i++) {
+		final int numProps = propKeys.length;
+		final HashSet<IModelProperty> whitelist = new HashSet<IModelProperty>(numProps);
+		for(int i = 0; i < numProps; i++) {
+			IModelProperty mp;
 			try {
-				xgrp.set(model.getModelProperty(propKeys[i]));
+				mp = model.getModelProperty(propKeys[i]);
+			}
+			catch(final NullNodeInPropPathException e) {
+				mp = null;
+			}
+			catch(final UnsetPropertyException e) {
+				mp = null;
 			}
 			catch(final PropertyPathException e) {
 				throw new IllegalStateException(e);
 			}
+			if(mp != null) whitelist.add(mp);
 		}
-		// ensure we have the id and version set
-		xgrp.setId(model.getId());
-		xgrp.setVersion(model.getVersion());
-		return xgrp;
+		final Model subset = model.copy(CopyCriteria.subset(whitelist));
+		return subset;
 	}
 
 	public final Model getDecoratedElement(SearchResult<?> element) {
