@@ -431,38 +431,38 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 
 			// set the type coercion validator
 			switch(metadata.getPropertyType()) {
-				case STRING:
-				case ENUM:
-					// no type coercion validator needed
-					break;
+			case STRING:
+			case ENUM:
+				// no type coercion validator needed
+				break;
 
-				case BOOL:
-					addValidator(BooleanValidator.INSTANCE);
-					break;
+			case BOOL:
+				addValidator(BooleanValidator.INSTANCE);
+				break;
 
-				case DATE:
-					addValidator(DateValidator.get(format == null ? GlobalFormat.DATE : format));
-					break;
+			case DATE:
+				addValidator(DateValidator.get(format == null ? GlobalFormat.DATE : format));
+				break;
 
-				case INT:
-					addValidator(IntegerValidator.INSTANCE);
-					break;
+			case INT:
+				addValidator(IntegerValidator.INSTANCE);
+				break;
 
-				case FLOAT:
-				case DOUBLE:
-					addValidator(new DecimalValidator(Fmt.getDecimalFormat(format == null ? GlobalFormat.DECIMAL : format)));
-					break;
+			case FLOAT:
+			case DOUBLE:
+				addValidator(new DecimalValidator(Fmt.getDecimalFormat(format == null ? GlobalFormat.DECIMAL : format)));
+				break;
 
-				case CHAR:
-					addValidator(CharacterValidator.INSTANCE);
-					break;
+			case CHAR:
+				addValidator(CharacterValidator.INSTANCE);
+				break;
 
-				case LONG:
-					// TODO handle - intentional fall through
-				case STRING_MAP:
-					// TODO handle string map type coercion - intentional fall through
-				default:
-					throw new IllegalStateException("Unhandled property type: " + metadata.getPropertyType().name());
+			case LONG:
+				// TODO handle - intentional fall through
+			case STRING_MAP:
+				// TODO handle string map type coercion - intentional fall through
+			default:
+				throw new IllegalStateException("Unhandled property type: " + metadata.getPropertyType().name());
 			}
 		}
 		// apply model new flag
@@ -620,6 +620,8 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 		oldValue = event.getValue();
 		if(!ObjectUtil.equals(old, oldValue)) {
 			ValueChangeEvent.fire(this, oldValue);
+			// we don't want auto-transfer!!!
+			//adapter.getChangeSupport().firePropertyChange(PROPERTY_VALUE, old, oldValue);
 		}
 	}
 

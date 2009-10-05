@@ -239,6 +239,15 @@ public class ModelTest {
 	}
 
 	@Test(enabled = true)
+	public void testCopyChangesNone() throws Exception {
+		final Model m = TestModelStubber.stubAccount(true);
+		final Model mcopy = m.copy(CopyCriteria.changes(null));
+		Assert.assertEquals(mcopy.size(), 2);
+		Assert.assertEquals(mcopy.asString(Model.ID_PROPERTY), m.asString(Model.ID_PROPERTY));
+		Assert.assertEquals(mcopy.asString(Model.VERSION_PROPERTY), m.asString(Model.VERSION_PROPERTY));
+	}
+
+	@Test(enabled = true)
 	public void testCopyChangesNewIndexModel() throws Exception {
 		final Model m = TestModelStubber.stubAccount(true);
 		RelatedManyProperty rmp = m.relatedMany("addresses");

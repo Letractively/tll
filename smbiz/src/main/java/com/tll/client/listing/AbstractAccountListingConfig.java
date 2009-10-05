@@ -11,10 +11,10 @@ import com.tll.common.model.Model;
 import com.tll.dao.Sorting;
 
 /**
- * AccountListingConfig
+ * AbstractAccountListingConfig
  * @author jpk
  */
-public abstract class AccountListingConfig extends AbstractListingConfig<Model> {
+public abstract class AbstractAccountListingConfig extends AbstractListingConfig<Model> {
 
 	/**
 	 * Constructor
@@ -25,7 +25,7 @@ public abstract class AccountListingConfig extends AbstractListingConfig<Model> 
 	 * @param defaultSorting
 	 * @param pageSize
 	 */
-	public AccountListingConfig(String caption, String listingElementName, String[] modelProps, Column[] cols,
+	public AbstractAccountListingConfig(String caption, String listingElementName, String[] modelProps, Column[] cols,
 			Sorting defaultSorting, int pageSize) {
 		super(caption, listingElementName, modelProps, cols, defaultSorting, pageSize);
 	}
@@ -38,7 +38,7 @@ public abstract class AccountListingConfig extends AbstractListingConfig<Model> 
 	 * @param cols
 	 * @param defaultSorting
 	 */
-	public AccountListingConfig(String caption, String listingElementName, String[] modelProps, Column[] cols,
+	public AbstractAccountListingConfig(String caption, String listingElementName, String[] modelProps, Column[] cols,
 			Sorting defaultSorting) {
 		super(caption, listingElementName, modelProps, cols, defaultSorting);
 	}

@@ -13,15 +13,17 @@
   </source>
 
   <source path="util">
-    <include name="StringUtil.java" />
-    <include name="ObjectUtil.java" />
-    <include name="DateRange.java" />
-    <include name="PropertyPath.java" />
-    <include name="FNum.java" />
-    <include name="DataPoint.java" />
-    <include name="RefSet.java" />
     <include name="Binding.java" />
     <include name="BindingRefSet.java" />
+    <include name="Comparator.java" />
+    <include name="DataPoint.java" />
+    <include name="DateRange.java" />
+    <include name="DBType.java" />
+    <include name="FNum.java" />
+    <include name="ObjectUtil.java" />
+    <include name="PropertyPath.java" />
+    <include name="RefSet.java" />
+    <include name="StringUtil.java" />
   </source>
 
   <source path="key">
@@ -29,12 +31,12 @@
   </source>
 
   <source path="model/schema">
-    <include name="PropertyType.java" />
-    <include name="ISchemaProperty.java" />
     <include name="AbstractSchemaProperty.java" />
-    <include name="PropertyMetadata.java" />
     <include name="IPropertyMetadataProvider.java" />
     <include name="IPropertyNameProvider.java" />
+    <include name="ISchemaProperty.java" />
+    <include name="PropertyMetadata.java" />
+    <include name="PropertyType.java" />
   </source>
 
   <source path="criteria">
@@ -54,12 +56,13 @@
   </source>
 
   <source path="listhandler">
-    <include name="ListHandlerType.java" />
-    <include name="IListHandler.java" />
     <include name="EmptyListException.java" />
+    <include name="IListHandler.java" />
     <include name="ListHandlerException.java" />
+    <include name="ListHandlerType.java" />
   </source>
-
-  <public path="public" />
-
+  
+  <source path="server">
+  	<include name="Stage.java" />
+  </source>
 </module>

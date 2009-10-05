@@ -44,7 +44,7 @@ public abstract class AbstractAccountDaoTestHandler<A extends Account> extends A
 	}
 
 	@Override
-	public void assembleTestEntity(Account e) throws Exception {
+	public void assembleTestEntity(A e) throws Exception {
 
 		e.setCurrency(currency);
 		e.setPaymentInfo(paymentInfo);
@@ -83,4 +83,11 @@ public abstract class AbstractAccountDaoTestHandler<A extends Account> extends A
 		"No account address collection loaded or invalid number of them");
 	}
 
+	@Override
+	public void verifyEntityAlteration(A e) throws Exception {
+		super.verifyEntityAlteration(e);
+		Assert.assertNotNull(e.getCurrency(), "No account currency loaded");
+		Assert.assertNotNull(e.getPaymentInfo(), "No account payment info loaded");
+		Assert.assertNotNull(e.getPaymentInfo().getPaymentData(), "No account payment info data loaded");
+	}
 }

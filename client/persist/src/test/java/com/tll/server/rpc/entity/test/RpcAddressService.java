@@ -9,16 +9,16 @@ import com.tll.server.rpc.entity.AbstractPersistServiceImpl;
 import com.tll.server.rpc.entity.PersistContext;
 
 /**
- * TestAddressService
+ * RpcAddressService
  * @author jpk
  */
-public class TestAddressService extends AbstractPersistServiceImpl {
+public class RpcAddressService extends AbstractPersistServiceImpl {
 
 	/**
 	 * Constructor
 	 * @param context
 	 */
-	public TestAddressService(PersistContext context) {
+	public RpcAddressService(PersistContext context) {
 		super(context);
 	}
 

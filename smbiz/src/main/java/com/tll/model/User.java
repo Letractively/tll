@@ -37,7 +37,7 @@ IUserRef {
 
 	private String emailAddress;
 
-	private transient String password;
+	private String password;
 
 	private boolean locked = true;
 

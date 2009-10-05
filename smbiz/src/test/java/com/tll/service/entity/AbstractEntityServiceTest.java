@@ -9,7 +9,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.db4o.ObjectContainer;
 import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -20,11 +19,12 @@ import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.IDbShell;
 import com.tll.dao.IDbTrans;
 import com.tll.dao.IEntityDao;
+import com.tll.dao.db4o.Db4oEntityDao;
 import com.tll.dao.db4o.test.Db4oTrans;
 import com.tll.di.Db4oDaoModule;
-import com.tll.di.SmbizEntityServiceFactoryModule;
 import com.tll.di.SmbizDb4oDaoModule;
 import com.tll.di.SmbizEGraphModule;
+import com.tll.di.SmbizEntityServiceFactoryModule;
 import com.tll.di.SmbizModelModule;
 import com.tll.di.test.Db4oDbShellModule;
 import com.tll.model.IEntity;
@@ -90,7 +90,7 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 	@Override
 	protected void beforeMethod() {
 		super.beforeMethod();
-		getDbShell().clear(injector.getInstance(ObjectContainer.class));
+		getDbShell().clear(injector.getInstance(Db4oEntityDao.class).getObjectContainer());
 	}
 
 	/**

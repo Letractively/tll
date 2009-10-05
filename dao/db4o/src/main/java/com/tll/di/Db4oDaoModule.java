@@ -36,7 +36,7 @@ import com.tll.dao.db4o.IDb4oNamedQueryTranslator;
  */
 public abstract class Db4oDaoModule extends AbstractModule implements IConfigAware {
 
-	public static final int DEFAULT_TRANS_TIMEOUT = 60;	// seconds
+	public static final int DEFAULT_TRANS_TIMEOUT = 60; // seconds
 
 	public static final String DEFAULT_DB4O_FILENAME = "db4o";
 
@@ -49,9 +49,10 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target( {
-		ElementType.FIELD, ElementType.PARAMETER })
-		@BindingAnnotation
-		public @interface Db4oFile {
+		ElementType.FIELD, ElementType.PARAMETER
+	})
+	@BindingAnnotation
+	public @interface Db4oFile {
 	}
 
 	/**
@@ -104,6 +105,16 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 	 */
 	protected abstract Class<? extends IDb4oNamedQueryTranslator> getNamedQueryTranslatorImpl();
 
+	/**
+	 * @return The desired db4o config instance to employ. May be overridden.
+	 */
+	protected Configuration getConfiguration() {
+		final Configuration c = Db4o.newConfiguration();
+		c.generateVersionNumbers(ConfigScope.GLOBALLY);
+		c.updateDepth(3);
+		return c;
+	}
+
 	@Override
 	protected final void configure() {
 		log.info("Loading db4o dao module...");
@@ -131,10 +142,7 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 
 			@Override
 			public Configuration get() {
-				final Configuration c = Db4o.newConfiguration();
-				c.generateVersionNumbers(ConfigScope.GLOBALLY);
-				c.updateDepth(3);
-				return c;
+				return getConfiguration();
 			}
 
 		});
@@ -159,7 +167,9 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 		// determine whether we do spring transactions
 		// this is necessary to avoid un-necessary instantiation of an ObjectContainer instance
 		// which locks the db4o db file which is problematic when working with the db4o db shell
-		final boolean dst = config == null ? DEFAULT_DB4O_EMPLOY_SPRING_TRANSACTIONS : config.getBoolean(ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), DEFAULT_DB4O_EMPLOY_SPRING_TRANSACTIONS);
+		final boolean dst =
+			config == null ? DEFAULT_DB4O_EMPLOY_SPRING_TRANSACTIONS : config.getBoolean(
+					ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), DEFAULT_DB4O_EMPLOY_SPRING_TRANSACTIONS);
 		if(dst) {
 			log.info("Binding Spring's Db4oTransactionManager to Spring's @Transactional annotation..");
 			// PlatformTransactionManager (for transactions)
@@ -173,7 +183,9 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 					final Db4oTransactionManager db4oTm = new Db4oTransactionManager(oc);
 
 					// set the transaction timeout
-					final int timeout = config == null ? DEFAULT_TRANS_TIMEOUT : config.getInteger(ConfigKeys.DB_TRANS_TIMEOUT.getKey(), DEFAULT_TRANS_TIMEOUT);
+					final int timeout =
+						config == null ? DEFAULT_TRANS_TIMEOUT : config.getInteger(ConfigKeys.DB_TRANS_TIMEOUT.getKey(),
+								DEFAULT_TRANS_TIMEOUT);
 					db4oTm.setDefaultTimeout(timeout);
 					log.info("Set DB4O default transaction timeout to: " + timeout);
 

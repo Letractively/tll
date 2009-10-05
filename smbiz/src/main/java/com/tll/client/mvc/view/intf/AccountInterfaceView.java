@@ -9,7 +9,6 @@ import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.data.rpc.IRpcCommand;
 import com.tll.client.mvc.view.AbstractRpcAndModelAwareView;
 import com.tll.client.mvc.view.ViewClass;
-import com.tll.client.ui.RpcUiHandler;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.intf.AccountMultiOptionInterfacePanel;
 import com.tll.client.ui.field.intf.AccountSwitchInterfacePanel;
@@ -82,19 +81,19 @@ public class AccountInterfaceView extends AbstractRpcAndModelAwareView<AccountIn
 	@Override
 	protected void doInitialization(final AccountInterfaceViewInitializer initializer) {
 		intfStack =
-			new InterfaceStack(gmp, new RpcUiHandler(getViewContainerRef()), auxDataRequest,
+			new InterfaceStack(gmp, auxDataRequest,
 					new InterfaceStack.IFieldPanelResolver() {
 
 				@Override
 				public FieldPanel<?> resolveFieldPanel(ModelKey intfKey) {
 					final SmbizEntityType type = (SmbizEntityType) intfKey.getEntityType();
 					switch(type) {
-						case INTERFACE_SWITCH:
-							return new AccountSwitchInterfacePanel();
-						case INTERFACE_SINGLE:
-							return new AccountMultiOptionInterfacePanel(true);
-						case INTERFACE_MULTI:
-							return new AccountMultiOptionInterfacePanel(false);
+					case INTERFACE_SWITCH:
+						return new AccountSwitchInterfacePanel();
+					case INTERFACE_SINGLE:
+						return new AccountMultiOptionInterfacePanel(true);
+					case INTERFACE_MULTI:
+						return new AccountMultiOptionInterfacePanel(false);
 					}
 					throw new IllegalArgumentException("Unhandled account interface type");
 				}
@@ -106,7 +105,7 @@ public class AccountInterfaceView extends AbstractRpcAndModelAwareView<AccountIn
 					c.load(new AccountInterfaceDataSearch(initializer.getAccountRef().getId(), intfKey.getId()), adr);
 					return c;
 				}
-			}, new CrudCommand());
+			});
 		addWidget(intfStack);
 	}
 

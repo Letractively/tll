@@ -23,7 +23,7 @@ public class PaymentInfo extends NamedEntity {
 	private static final long serialVersionUID = -8237732782824087760L;
 	public static final int MAXLEN_NAME = 64;
 
-	private transient PaymentData paymentData;
+	private PaymentData paymentData;
 
 	public Class<? extends IEntity> entityClass() {
 		return PaymentInfo.class;

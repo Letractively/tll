@@ -60,6 +60,9 @@ public final class MarshalingListHandler extends DecoratedListHandler<SearchResu
 				throw new IllegalStateException(e);
 			}
 		}
+		// ensure we have the id and version set
+		xgrp.setId(model.getId());
+		xgrp.setVersion(model.getVersion());
 		return xgrp;
 	}
 

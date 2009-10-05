@@ -71,13 +71,12 @@
     <module>mail</module>
     <module>refdata</module>
     <module>model</module>
-    <module>egraph</module>
     <module>dao</module>
     <module>service</module>
     <module>servlet</module>
     <module>security</module>
     <module>client</module>
-    <module>smbiz</module>
+    <!-- <module>smbiz</module> -->
   </modules>
 
   <build>

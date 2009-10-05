@@ -11,8 +11,10 @@ import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.bind.PropertyChangeEvent;
 import com.tll.common.model.CopyCriteria;
 import com.tll.common.model.IModelProperty;
+import com.tll.common.model.IPropertyValue;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
+import com.tll.model.schema.PropertyMetadata;
 
 /**
  * ModelChangeTracker - Tracks model properties whose value has changed (become
@@ -41,6 +43,10 @@ public final class ModelChangeTracker implements IPropertyChangeListener {
 	 * @param mp the model property ref
 	 */
 	public void addChange(IModelProperty mp) {
+		if(mp instanceof IPropertyValue) {
+			final PropertyMetadata pm = ((IPropertyValue)mp).getMetadata();
+			if(pm != null && pm.isManaged()) return;	// don't track managed props
+		}
 		if(propRefChanges == null) {
 			propRefChanges = new HashSet<IModelProperty>();
 		}
@@ -113,6 +119,16 @@ public final class ModelChangeTracker implements IPropertyChangeListener {
 	 */
 	public void setHandleChanges(boolean handleChanges) {
 		this.handleChanges = handleChanges;
+	}
+
+	/**
+	 * @return The total number of recorded changes.
+	 */
+	public int getNumChanges() {
+		int c = 0;
+		if(propRefChanges != null) c+= propRefChanges.size();
+		if(pathChanges != null) c+= pathChanges.size();
+		return c;
 	}
 
 	/**

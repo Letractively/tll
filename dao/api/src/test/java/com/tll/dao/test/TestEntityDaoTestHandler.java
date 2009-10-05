@@ -9,6 +9,7 @@ import org.testng.Assert;
 
 import com.tll.criteria.Criteria;
 import com.tll.dao.AbstractEntityDaoTestHandler;
+import com.tll.model.key.PrimaryKey;
 import com.tll.model.test.Account;
 import com.tll.model.test.AccountAddress;
 import com.tll.model.test.Address;
@@ -24,9 +25,13 @@ import com.tll.util.DateRange;
 public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Account> {
 
 	// dependent entities
-	NestedEntity nestedEntity;
-	Currency currency;
-	Account parent;
+	PrimaryKey<NestedEntity> pkNestedEntity;
+	PrimaryKey<Currency> pkCurrency;
+	PrimaryKey<Account> pkAccountParent;
+
+	//NestedEntity nestedEntity;
+	//Currency currency;
+	//Account parent;
 
 	@Override
 	public Class<Account> entityClass() {
@@ -35,37 +40,39 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 
 	@Override
 	public boolean supportsPaging() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public void persistDependentEntities() {
-		currency = create(Currency.class, true);
+		Currency currency = create(Currency.class, true);
 		currency = persist(currency);
+		pkCurrency = new PrimaryKey<Currency>(currency);
 
-		nestedEntity = create(NestedEntity.class, true);
+		NestedEntity nestedEntity = create(NestedEntity.class, true);
 		nestedEntity = persist(nestedEntity);
+		pkNestedEntity = new PrimaryKey<NestedEntity>(nestedEntity);
 
-		parent = create(Account.class, true);
+		Account parent = create(Account.class, true);
 		parent.setParent(null); // eliminate pointer chasing
 		parent.setCurrency(currency);
 		parent.setNestedEntity(nestedEntity);
 		parent = persist(parent);
+		pkAccountParent = new PrimaryKey<Account>(parent);
 	}
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(parent);
-		purge(nestedEntity);
-		purge(currency);
+		purge(pkAccountParent); pkAccountParent = null;
+		purge(pkNestedEntity); pkNestedEntity = null;
+		purge(pkCurrency); pkCurrency = null;
 	}
 
 	@Override
 	public void assembleTestEntity(Account e) throws Exception {
-
-		e.setCurrency(currency);
-		e.setNestedEntity(nestedEntity);
-		e.setParent(parent);
+		e.setCurrency(load(pkCurrency));
+		e.setNestedEntity(load(pkNestedEntity));
+		e.setParent(load(pkAccountParent));
 
 		final Address address1 = create(Address.class, true);
 		final Address address2 = create(Address.class, true);
@@ -95,6 +102,7 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 
 		Assert.assertNotNull(e.getCurrency(), "No account currency loaded");
 		Assert.assertNotNull(e.getNestedEntity(), "No account nested entity loaded");
+		Assert.assertNotNull(e.getNestedEntity().getNestedData(), "No account nested entity nested data loaded");
 		Assert.assertTrue(e.getAddresses() != null && e.getAddresses().size() == 2,
 		"No account address collection loaded or invalid number of them");
 	}

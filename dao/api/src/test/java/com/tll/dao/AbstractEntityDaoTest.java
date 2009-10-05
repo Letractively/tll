@@ -37,11 +37,12 @@ import com.tll.util.Comparator;
 
 /**
  * AbstractEntityDaoTest
+ * @param <R> the raw dao type
  * @param <D> the dao decorator type.
  * @author jpk
  */
 @Test(groups = { "dao" })
-public abstract class AbstractEntityDaoTest<D extends EntityDaoTestDecorator> extends AbstractDbAwareTest {
+public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends EntityDaoTestDecorator<R>> extends AbstractDbAwareTest {
 
 	/**
 	 * Compare a clc of entity ids and entites ensuring the id list is referenced
@@ -110,7 +111,7 @@ public abstract class AbstractEntityDaoTest<D extends EntityDaoTestDecorator> ex
 	/**
 	 * The current entity handler being tested.
 	 */
-	private IEntityDaoTestHandler<IEntity> entityHandler;
+	protected IEntityDaoTestHandler<IEntity> entityHandler;
 
 	/**
 	 * Stack of test entity pks that are retained for proper datastore cleanup at
@@ -156,6 +157,7 @@ public abstract class AbstractEntityDaoTest<D extends EntityDaoTestDecorator> ex
 		getDbShell().create();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected final void beforeClass() {
 
@@ -171,12 +173,7 @@ public abstract class AbstractEntityDaoTest<D extends EntityDaoTestDecorator> ex
 
 		doBeforeClass();
 
-		dao.setRawDao(injector.getInstance(IEntityDao.class));
-	}
-
-	@Override
-	protected void afterClass() {
-		super.afterClass();
+		dao.setRawDao((R)injector.getInstance(IEntityDao.class));
 	}
 
 	/**
@@ -212,14 +209,14 @@ public abstract class AbstractEntityDaoTest<D extends EntityDaoTestDecorator> ex
 	}
 
 	@Override
-	protected final void beforeMethod() {
+	protected void beforeMethod() {
 		super.beforeMethod();
 		// start a new transaction for convenience and brevity
 		startNewTransaction();
 	}
 
 	@Override
-	protected final void afterMethod() {
+	protected void afterMethod() {
 		super.afterMethod();
 
 		// kill an open transaction
@@ -272,7 +269,7 @@ public abstract class AbstractEntityDaoTest<D extends EntityDaoTestDecorator> ex
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	<E extends IEntity> E getTestEntity() throws Exception {
+	protected <E extends IEntity> E getTestEntity() throws Exception {
 		// logger.debug("Creating test entity..");
 		final E e = (E) getEntityBeanFactory().getEntityCopy(entityHandler.entityClass(), false);
 		entityHandler.assembleTestEntity(e);
@@ -322,20 +319,55 @@ public abstract class AbstractEntityDaoTest<D extends EntityDaoTestDecorator> ex
 
 			logger.debug("Testing entity dao for entity type: " + handler.entityClass() + "...");
 			beforeEntityType();
-			// run all tests
-			for(final Method method : AbstractEntityDaoTest.class.getDeclaredMethods()) {
-				if(method.getName().startsWith("dao")) {
-					beforeMethod();
-					logger.debug("Testing " + method.getName() + " for entity type: " + handler.entityClass() + "...");
-					method.invoke(this, (Object[]) null);
-					afterMethod();
+
+			// discover the dao test methods
+			final ArrayList<Method> testMethods = new ArrayList<Method>();
+			Class<?> clz = getClass();
+			do {
+				final Method[] dms = clz.getDeclaredMethods();
+				if(dms != null) {
+					for(final Method m : dms) {
+						if(m.getName().startsWith("dao")) {
+							testMethods.add(m);
+						}
+					}
 				}
+				clz = clz.getSuperclass();
+			} while(clz != null);
+
+			// run the dao test methods
+			for(final Method method : testMethods) {
+				beforeMethod();
+				logger.debug("Testing " + method.getName() + " for entity type: " + handler.entityClass() + "...");
+				method.setAccessible(true);
+				method.invoke(this, (Object[]) null);
+				afterMethod();
 			}
 			afterEntityType();
 		}
 	}
 
 	// ***TESTS***
+
+	/**
+	 * Tests the dao impls transaction integrity.
+	 * @throws Exception
+	 */
+	final void daoTransactionIntegrity() throws Exception {
+		IEntity e = getTestEntity();
+
+		e = dao.persist(e);
+		endTransaction();	// rollback
+
+		startNewTransaction();
+		try {
+			e = dao.load(new PrimaryKey<IEntity>(e));
+			Assert.fail("Loaded entity that should not have been committed into the db due to trans rollback");
+		}
+		catch(final EntityNotFoundException ex) {
+			//expected
+		}
+	}
 
 	/**
 	 * Test CRUD and find ops

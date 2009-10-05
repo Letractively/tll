@@ -31,9 +31,9 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 
 		@Override
 		protected void postCreateBindings(Binding binding) {
-			binding.getChildren().add(createBinding("options[0].name", "intfname"));
-			binding.getChildren().add(createBinding("options[0].code", "intfCode"));
-			binding.getChildren().add(createBinding("options[0].description", "intfDescription"));
+			//binding.getChildren().add(createBinding("options[0].name", "intfname"));
+			//binding.getChildren().add(createBinding("options[0].code", "intfCode"));
+			//binding.getChildren().add(createBinding("options[0].description", "intfDescription"));
 		}
 	} // Binding
 

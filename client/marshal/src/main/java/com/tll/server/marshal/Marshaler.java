@@ -431,10 +431,10 @@ public final class Marshaler {
 								// update existing indexed entity
 								marshalModel(indexedModel, indexedEntity, visited, depth + 1);
 							}
-							// satisify bi-di relationship
-							if(indexedEntity instanceof IChildEntity) {
-								((IChildEntity) indexedEntity).setParent(crntEntity);
-							}
+						}
+						// satisify bi-di relationship
+						if(indexedEntity instanceof IChildEntity) {
+							((IChildEntity) indexedEntity).setParent(crntEntity);
 						}
 					} // indexed model loop
 					val = newRmEntitySet;
@@ -464,6 +464,15 @@ public final class Marshaler {
 			}
 
 		}// for loop
+
+		if(crntEntity.getId() == null) {
+			// assume new and set generated id
+			if(crntEntity.getVersion() != null) {
+				throw new IllegalArgumentException("Encountered an entity (" + crntEntity.descriptor()
+						+ ") w/o an id having a non-null version.");
+			}
+			entityFactory.setGenerated(crntEntity);
+		}
 	}
 
 	/**
@@ -473,7 +482,7 @@ public final class Marshaler {
 	 */
 	private IEntity instantiateEntity(Class<? extends IEntity> entityClass) {
 		try {
-			return this.entityFactory.createEntity(entityClass, true);
+			return this.entityFactory.createEntity(entityClass, false);
 		}
 		catch(final Exception ie) {
 			throw new RuntimeException("Unable to instantiate entity of class: " + entityClass.getSimpleName());

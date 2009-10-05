@@ -19,11 +19,14 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.model.ModelChangeTracker;
 import com.tll.client.ui.FocusCommand;
+import com.tll.client.ui.Position;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.IFieldBoundWidget;
 import com.tll.client.ui.field.IFieldWidget;
+import com.tll.client.ui.field.NoChangesException;
 import com.tll.client.ui.msg.IMsgDisplay;
+import com.tll.client.ui.msg.Msgs;
 import com.tll.client.validate.Error;
 import com.tll.client.validate.ErrorClassifier;
 import com.tll.client.validate.ErrorDisplay;
@@ -32,6 +35,7 @@ import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.ValidationException;
 import com.tll.common.model.Model;
 import com.tll.common.msg.Msg;
+import com.tll.common.msg.Msg.MsgLevel;
 
 /**
  * EditPanel - Composite panel targeting a {@link FlowPanel} whose children
@@ -77,6 +81,11 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	 * Contains the actual edit fields.
 	 */
 	protected final IFieldBoundWidget fieldPanel;
+
+	/**
+	 * Ref to the optional message display which is gotten from the error handler when set.
+	 */
+	protected IMsgDisplay msgDisplay;
 
 	/**
 	 * The panel containing the edit buttons
@@ -141,7 +150,7 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 
 	private void setErrorHandler(ErrorHandlerDelegate errorHandler) {
 		fieldPanel.setErrorHandler(errorHandler);
-		final IMsgDisplay msgDisplay = errorHandler.getMsgDisplay();
+		msgDisplay = errorHandler.getMsgDisplay();
 		if(msgDisplay != null) {
 			panel.insert(msgDisplay.getDisplayWidget(), 0);
 		}
@@ -176,6 +185,10 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 
 	private boolean isAdd() {
 		return "Add".equals(btnSave.getText());
+	}
+
+	public final Model getModel() {
+		return fieldPanel.getModel();
 	}
 
 	/**
@@ -237,13 +250,16 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 				fieldPanel.updateModel();
 				if(isAdd()) {
 					EditEvent.fireAdd(this, fieldPanel.getModel());
-
 				}
 				else {
 					final Model medited = fieldPanel.getModel();
 					final Model mchanged = fieldPanel.getChangedModel();
 					EditEvent.fireUpdate(this, medited, mchanged);
 				}
+			}
+			catch(final NoChangesException e) {
+				// no field edits were made
+				Msgs.post(new Msg("No changes detected.", MsgLevel.INFO), this, Position.CENTER, 3000, true);
 			}
 			catch(final ValidationException e) {
 				// turn on incremental validation after first pass

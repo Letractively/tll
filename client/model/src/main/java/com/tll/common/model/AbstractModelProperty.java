@@ -4,7 +4,6 @@
  */
 package com.tll.common.model;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.bind.ISourcesPropertyChangeEvents;
 import com.tll.common.bind.PropertyChangeSupport;
@@ -32,7 +31,7 @@ public abstract class AbstractModelProperty implements IModelProperty {
 	 */
 	public AbstractModelProperty() {
 		super();
-		Log.debug("AbstractModelProperty() - default constructor!");
+		//Log.debug("AbstractModelProperty() - default constructor!");
 	}
 
 	/**

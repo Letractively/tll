@@ -21,7 +21,7 @@ import com.tll.model.schema.Nested;
 public class NestedEntity extends NamedEntity {
 	private static final long serialVersionUID = -4655882279629798747L;
 
-	private transient NestedData nestedData;
+	private NestedData nestedData;
 
 	public Class<? extends IEntity> entityClass() {
 		return NestedEntity.class;

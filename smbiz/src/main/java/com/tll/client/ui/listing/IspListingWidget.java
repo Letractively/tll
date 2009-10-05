@@ -5,23 +5,28 @@
  */
 package com.tll.client.ui.listing;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.App;
 import com.tll.client.SmbizAdmin;
+import com.tll.client.data.rpc.CrudCommand;
+import com.tll.client.listing.AbstractAccountListingConfig;
+import com.tll.client.listing.AbstractRowOptions;
+import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IRowOptionsDelegate;
-import com.tll.client.listing.IspListingConfig;
-import com.tll.client.listing.ModelChangingRowHandler;
 import com.tll.client.listing.RemoteListingOperator;
 import com.tll.client.mvc.ViewManager;
+import com.tll.client.mvc.view.EditViewInitializer;
 import com.tll.client.mvc.view.ShowViewRequest;
-import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.account.AccountEditView;
 import com.tll.client.mvc.view.account.MerchantListingViewInitializer;
 import com.tll.client.ui.option.Option;
+import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.Model;
 import com.tll.common.model.SmbizEntityType;
 import com.tll.common.search.NamedQuerySearch;
+import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
 
 /**
@@ -32,7 +37,44 @@ public class IspListingWidget extends RemoteListingWidget {
 
 	static final Option mListing = new Option("Merchant Listing", App.imgs().arrow_sm_down().createImage());
 
-	class RowHandler extends ModelChangingRowHandler {
+	/**
+	 * IspListingConfig
+	 * @author jpk
+	 */
+	static class IspListingConfig extends AbstractAccountListingConfig {
+
+		private static final String listingElementName = SmbizEntityType.ISP.getName();
+
+		private static final Sorting defaultSorting = new Sorting("name");
+
+		private static final Column[] cols = new Column[] {
+			Column.ROW_COUNT_COLUMN,
+			new Column("Name", Model.NAME_PROPERTY, "i"),
+			new Column("Created", GlobalFormat.DATE, Model.DATE_CREATED_PROPERTY, "i"),
+			new Column("Modified", GlobalFormat.DATE, Model.DATE_MODIFIED_PROPERTY, "i"),
+			new Column("Status", "status", "i"),
+			new Column("Billing Model", "billingModel", "i"),
+			new Column("Billing Cycle", "billingCycle", "i"),
+		};
+
+		private static final String[] mprops = new String[] {
+			Model.NAME_PROPERTY,
+			Model.DATE_CREATED_PROPERTY,
+			Model.DATE_MODIFIED_PROPERTY,
+			"status",
+			"billingModel",
+			"billingCycle",
+		};
+
+		/**
+		 * Constructor
+		 */
+		public IspListingConfig() {
+			super(null, listingElementName, mprops, cols, defaultSorting);
+		}
+	}
+
+	class RowHandler extends AbstractRowOptions {
 
 		@Override
 		protected Option[] getCustomRowOps(int rowIndex) {
@@ -43,21 +85,28 @@ public class IspListingWidget extends RemoteListingWidget {
 		protected void handleRowOp(String optionText, int rowIndex) {
 			if(mListing.getText().equals(optionText)) {
 				ViewManager.get().dispatch(
-						new ShowViewRequest(new MerchantListingViewInitializer(listingWidget.getRowKey(rowIndex))));
+						new ShowViewRequest(new MerchantListingViewInitializer(getRowKey(rowIndex))));
 			}
 			else if(App.OPTION_SET_CURRENT.getText().equals(optionText)) {
-				SmbizAdmin.getAdminContextCmd().changeCurrentAccount(listingWidget.getRowKey(rowIndex));
+				SmbizAdmin.getAdminContextCmd().changeCurrentAccount(getRowKey(rowIndex));
 			}
-		}
-
-		@Override
-		protected ViewClass getEditViewClass() {
-			return AccountEditView.klas;
 		}
 
 		@Override
 		protected String getListingElementName() {
 			return config.getListingElementName();
+		}
+
+		@Override
+		protected void doEditRow(int rowIndex) {
+			Log.debug("doEditRow - rowIndex: " + rowIndex);
+			ViewManager.get().dispatch(
+					new ShowViewRequest(new EditViewInitializer(AccountEditView.klas, getRowKey(rowIndex))));
+		}
+
+		@Override
+		protected void doDeleteRow(int rowIndex) {
+			CrudCommand.deleteModel(IspListingWidget.this, getRowKey(rowIndex)).execute();
 		}
 	} // Row Handler
 

@@ -7,7 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.DataAccessException;
 
-import com.db4o.ext.ExtObjectContainer;
+import com.db4o.ObjectContainer;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
@@ -16,6 +16,7 @@ import com.tll.dao.IPageResult;
 import com.tll.dao.NonUniqueResultException;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
+import com.tll.dao.db4o.Db4oEntityDao;
 import com.tll.dao.test.EntityDaoTestDecorator;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
@@ -29,20 +30,21 @@ import com.tll.model.key.PrimaryKey;
  * currently referenceable in the JVM!
  * @author jpk
  */
-public class Db4oTestDaoDecorator extends EntityDaoTestDecorator {
+public class Db4oTestDaoDecorator extends EntityDaoTestDecorator<Db4oEntityDao> {
 
+	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(Db4oTestDaoDecorator.class);
 
-	private ExtObjectContainer oc;
-
-	public void setDb4oSession(ExtObjectContainer oc) {
-		this.oc = oc;
+	private void hook() {
+		// we currently don't do anything
 	}
 
-	private void purge() {
-		log.debug("Purging db4o session..");
-		oc.purge();
-		log.debug("db4o session purged");
+	public ObjectContainer getObjectContainer() {
+		return rawDao.getObjectContainer();
+	}
+
+	public void setObjectContainer(ObjectContainer oc) {
+		rawDao.setObjectContainer(oc);
 	}
 
 	@Override
@@ -54,14 +56,14 @@ public class Db4oTestDaoDecorator extends EntityDaoTestDecorator {
 	public <E extends IEntity> List<SearchResult<?>> find(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
 		final List<SearchResult<?>> r = super.find(criteria, sorting);
-		purge();
+		hook();
 		return r;
 	}
 
 	@Override
 	public <E extends IEntity> List<E> findByIds(Class<E> entityType, Collection<String> ids, Sorting sorting) {
 		final List<E> r = super.findByIds(entityType, ids, sorting);
-		purge();
+		hook();
 		return r;
 	}
 
@@ -69,7 +71,7 @@ public class Db4oTestDaoDecorator extends EntityDaoTestDecorator {
 	public <E extends IEntity> List<E> findEntities(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
 		final List<E> r = super.findEntities(criteria, sorting);
-		purge();
+		hook();
 		return r;
 	}
 
@@ -77,7 +79,7 @@ public class Db4oTestDaoDecorator extends EntityDaoTestDecorator {
 	public <E extends IEntity> E findEntity(Criteria<E> criteria) throws InvalidCriteriaException,
 	EntityNotFoundException, NonUniqueResultException, DataAccessException {
 		final E r = super.findEntity(criteria);
-		purge();
+		hook();
 		return r;
 	}
 
@@ -85,7 +87,7 @@ public class Db4oTestDaoDecorator extends EntityDaoTestDecorator {
 	public <E extends IEntity> List<String> getIds(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
 		final List<String> r = super.getIds(criteria, sorting);
-		purge();
+		hook();
 		return r;
 	}
 
@@ -93,14 +95,14 @@ public class Db4oTestDaoDecorator extends EntityDaoTestDecorator {
 	public <E extends IEntity> IPageResult<SearchResult<?>> getPage(Criteria<E> criteria, Sorting sorting, int offset,
 			int pageSize) throws InvalidCriteriaException {
 		final IPageResult<SearchResult<?>> r = super.getPage(criteria, sorting, offset, pageSize);
-		purge();
+		hook();
 		return r;
 	}
 
 	@Override
 	public <E extends IEntity> E load(IBusinessKey<E> key) throws EntityNotFoundException, DataAccessException {
 		final E r =super.load(key);
-		purge();
+		hook();
 		return r;
 	}
 
@@ -108,48 +110,54 @@ public class Db4oTestDaoDecorator extends EntityDaoTestDecorator {
 	public <N extends INamedEntity> N load(NameKey<N> nameKey) throws EntityNotFoundException,
 	NonUniqueResultException, DataAccessException {
 		final N r = super.load(nameKey);
-		purge();
+		hook();
 		return r;
 	}
 
 	@Override
 	public <E extends IEntity> E load(PrimaryKey<E> key) throws EntityNotFoundException, DataAccessException {
 		final E r = super.load(key);
-		purge();
+		hook();
 		return r;
 	}
 
 	@Override
 	public <E extends IEntity> List<E> loadAll(Class<E> entityType) throws DataAccessException {
 		final List<E> r = super.loadAll(entityType);
-		purge();
+		hook();
 		return r;
 	}
 
 	@Override
 	public <E extends IEntity> E persist(E entity) throws DataAccessException {
 		final E r = super.persist(entity);
-		purge();
+		hook();
 		return r;
 	}
 
 	@Override
 	public <E extends IEntity> Collection<E> persistAll(Collection<E> entities) throws DataAccessException {
 		final Collection<E> r = super.persistAll(entities);
-		purge();
+		hook();
 		return r;
 	}
 
 	@Override
 	public <E extends IEntity> void purge(E entity) throws DataAccessException {
 		super.purge(entity);
-		purge();
+		hook();
+	}
+
+	@Override
+	public <E extends IEntity> void purge(PrimaryKey<E> key) throws EntityNotFoundException, DataAccessException {
+		super.purge(key);
+		hook();
 	}
 
 	@Override
 	public <E extends IEntity> void purgeAll(Collection<E> entities) throws DataAccessException {
 		super.purgeAll(entities);
-		purge();
+		hook();
 	}
 
 }

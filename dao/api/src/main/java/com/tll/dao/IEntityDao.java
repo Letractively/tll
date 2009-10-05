@@ -104,6 +104,15 @@ public interface IEntityDao extends IDao {
 	<E extends IEntity> void purge(E entity) throws EntityNotFoundException, DataAccessException;
 
 	/**
+	 * Physical deletion of an entity identified by the given primary key.
+	 * @param <E> The entity type
+	 * @param key The primary key uniquely identifying the entity to be deleted
+	 * @throws EntityNotFoundException
+	 * @throws DataAccessException
+	 */
+	<E extends IEntity> void purge(PrimaryKey<E> key) throws EntityNotFoundException, DataAccessException;
+
+	/**
 	 * Physical deletion of all entities specified in the input. Use this method
 	 * with caution as the entities will be deleted forever!
 	 * @param <E> The entity type

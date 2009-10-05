@@ -153,7 +153,7 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 			break;
 		case ADD:
 		case UPDATE: {
-			cmd = CrudCommand.persistModel(this, model);
+			cmd = CrudCommand.persistModel(this, event.getChangedModel());
 			break;
 		}
 		case DELETE:

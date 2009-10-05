@@ -8,7 +8,6 @@ package com.tll.client.listing;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.tll.IMarshalable;
-import com.tll.client.data.rpc.IHasRpcHandlers;
 import com.tll.client.data.rpc.RpcCommand;
 import com.tll.common.data.ListingOp;
 import com.tll.common.data.ListingPayload;
@@ -133,9 +132,7 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 	private void execute() {
 		assert listingRequest != null;
 		final ListingCommand cmd = new ListingCommand();
-		if(sourcingWidget instanceof IHasRpcHandlers) {
-			cmd.setSource(sourcingWidget);
-		}
+		cmd.setSource(sourcingWidget);
 		cmd.execute();
 	}
 

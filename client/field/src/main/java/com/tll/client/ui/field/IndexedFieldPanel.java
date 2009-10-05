@@ -18,14 +18,13 @@ import com.tll.IProvider;
 import com.tll.client.convert.IConverter;
 import com.tll.client.ui.BindableWidgetAdapter;
 import com.tll.client.validate.ErrorClassifier;
-import com.tll.client.validate.ValidationException;
 import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
 import com.tll.util.PropertyPath;
 
 /**
- * TestIndexedFieldPanel - Caters to the display of indexed field collections.
+ * IndexedFieldPanel - Caters to the display of indexed field collections.
  * <p>
  * The {@link IndexedFieldPanel} is savagely different from its brethren
  * {@link FieldPanel} in that the value type is a raw reference to a model
@@ -104,13 +103,6 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	private final List<Index> indexPanels = new ArrayList<Index>();
 
 	/**
-	 * Internally held ref to the related many model collection to know whether to
-	 * re-bind or not. This avoids spurious re-binds when property change events
-	 * fire!
-	 */
-	private transient Collection<Model> value;
-
-	/**
 	 * Constructor
 	 * @param fieldGroupName The presentation worthy field group for the managed
 	 *        field group containing the indexable sub-field groups
@@ -133,20 +125,19 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 
 	@Override
 	public final Collection<Model> getValue() {
-		if(value == null) {
-			value = new ArrayList<Model>(indexPanels.size());
-			// update the model collection!
-			for(final Index index : indexPanels) {
-				try {
-					index.fieldPanel.updateModel();
-				}
-				catch(final ValidationException e) {
-					throw new RuntimeException(e);
-				}
-				catch(final Exception e) {
-					Log.error("Unable to get index model collection", e);
-				}
+		final ArrayList<Model> value = new ArrayList<Model>(indexPanels.size());
+		// update the model collection!
+		for(final Index index : indexPanels) {
+			try {
+				index.fieldPanel.updateModel();
 				value.add(index.fieldPanel.getModel());
+			}
+			catch(final Exception e) {
+				Log.debug("Unable to get index model collection (" + e.getMessage() + ")", e);
+				if(e instanceof RuntimeException) {
+					throw (RuntimeException) e;
+				}
+				throw new RuntimeException(e);
 			}
 		}
 		return value;
@@ -154,14 +145,11 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 
 	@Override
 	public void setValue(Collection<Model> value) {
-		if(this.value != value) {
-			Log.debug("Setting value: " + this);
-			this.value = null;
-			clearIndexed();
-			if(value != null) {
-				for(final Model m : value) {
-					add(m, false);
-				}
+		Log.debug("Setting value: " + this);
+		clearIndexed();
+		if(value != null) {
+			for(final Model m : value) {
+				add(m, false);
 			}
 		}
 	}
@@ -211,7 +199,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	 *         field in the underlying group.
 	 */
 	private void add(Model model, boolean isUiAdd) throws IllegalArgumentException {
-		Log.debug("TestIndexedFieldPanel.add() - START");
+		Log.debug("IndexedFieldPanel.add() - START");
 
 		final I ip = createIndexPanel();
 		//ip.setErrorHandler(getErrorHandler());
@@ -403,6 +391,6 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 
 	@Override
 	public String toString() {
-		return "TestIndexedFieldPanel [ " + indexedPropertyName + " ]";
+		return "IndexedFieldPanel [ " + indexedPropertyName + " ]";
 	}
 }

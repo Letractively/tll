@@ -7,12 +7,23 @@
   <inherits name="com.tll.Login" />
 
   <source path="model">
-    <include name="AdminRole.java" />
-    <include name="SmbizEntityType.java" />
-    <include name="InterfaceStatus.java" />
+    <include name="AccountSource.java" />
     <include name="AccountStatus.java" />
     <include name="AddressType.java" />
+    <include name="AdminRole.java" />
+    <include name="AuthorityRoles.java" />
     <include name="CreditCardType.java" />
+    <include name="OrderItemStatus.java" />
+    <include name="OrderItemTransOp.java" />
+    <include name="OrderStatus.java" />
+    <include name="OrderTransOp.java" />
+    <include name="OrderTransOpResult.java" />
+    <include name="PaymentItemStatus.java" />
+    <include name="PaymentOp.java" />
+    <include name="PaymentProcessor.java" />
+    <include name="PaymentType.java" />
+    <include name="ProductStatus.java" />
+    <include name="ShipModeType.java" />
   </source>
 
 </module>

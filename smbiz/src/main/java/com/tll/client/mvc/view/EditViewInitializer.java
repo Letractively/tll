@@ -13,8 +13,6 @@ public final class EditViewInitializer extends AbstractDynamicViewInitializer {
 	 * The entity model. May be <code>null</code> in which case, {@link #modelRef}
 	 * is expected to be non-<code>null</code>.
 	 */
-	// TODO do we want to drive edit view's from a model ref always? (i.e. remove
-	// this member?)
 	private final Model model;
 
 	/**

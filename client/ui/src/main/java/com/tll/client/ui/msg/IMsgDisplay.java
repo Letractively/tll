@@ -39,7 +39,7 @@ public interface IMsgDisplay {
 	void add(IWidgetRef wref, Iterable<Msg> msgs, Integer classifier);
 
 	/**
-	 * Add multiple of un-sourced messages with an optional classifier id.
+	 * Add multiple un-sourced messages with an optional classifier id.
 	 * @param msgs
 	 * @param classifier classifier id which may be <code>null</code>.
 	 */
