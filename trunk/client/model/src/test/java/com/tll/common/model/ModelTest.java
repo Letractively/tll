@@ -216,7 +216,7 @@ public class ModelTest {
 		mp = m.getModelProperty("paymentInfo.paymentData_bankAccountNo");
 		mpSet.add(mp);
 
-		m.getNestedModel("addresses[1]").setMarkedDeleted(true);
+		m.nestedModel("addresses[1]").setMarkedDeleted(true);
 
 		final Model subset = m.copy(CopyCriteria.subset(mpSet));
 
@@ -239,7 +239,7 @@ public class ModelTest {
 		mp = m.getModelProperty("paymentInfo.paymentData_bankAccountNo");
 		mpSet.add(mp);
 
-		m.getNestedModel("addresses[1]").setMarkedDeleted(true);
+		m.nestedModel("addresses[1]").setMarkedDeleted(true);
 
 		final Model mcopy = m.copy(CopyCriteria.changes(mpSet));
 
@@ -250,7 +250,7 @@ public class ModelTest {
 
 		// checked marked deleted
 		Assert.assertTrue(mcopy.propertyExists("addresses[1]"));
-		final Model aa = mcopy.getNestedModel("addresses[1]");
+		final Model aa = mcopy.nestedModel("addresses[1]");
 		Assert.assertTrue(aa.isMarkedDeleted());
 		Assert.assertTrue(aa.propertyExists(Model.ID_PROPERTY));
 		Assert.assertTrue(aa.propertyExists(Model.VERSION_PROPERTY));

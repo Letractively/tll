@@ -33,13 +33,13 @@ import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.RadioGroupField;
 import com.tll.client.ui.field.intf.MultiOptionInterfacePanel;
 import com.tll.client.ui.field.intf.SwitchInterfacePanel;
-import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.client.ui.view.ViewToolbar;
 import com.tll.common.data.AuxDataPayload;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 import com.tll.common.model.SmbizEntityType;
+import com.tll.common.search.NamedQuerySearch;
 import com.tll.common.search.PrimaryKeySearch;
 
 /**
@@ -99,7 +99,7 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 						assert m != null;
 						intfStack.addInterface(m, false);
 						IntfSlectDlg.this.hide();
-						intfStack.showStack(intfStack.getWidgetCount() - 1);
+						intfStack.showInterface(intfStack.getNumInterfaces() - 1);
 					}
 				});
 				fg.addField(f);
@@ -152,8 +152,6 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 		auxDataRequest.requestEntityPrototype(SmbizEntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
 	}
 
-	private final GlobalMsgPanel gmp = new GlobalMsgPanel();
-
 	private final PushButton btnAddIntf = new PushButton("Add Interface");
 
 	private IntfSlectDlg dlg;
@@ -166,7 +164,6 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 	public InterfacesView() {
 		super();
 		btnAddIntf.addClickHandler(this);
-		addWidget(gmp);
 	}
 
 	@Override
@@ -189,8 +186,8 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 		// now we are ready to create the intf stack as we have a valid view
 		// container ref
 		intfStack =
-			new InterfaceStack(gmp, auxDataRequest,
-					new InterfaceStack.IFieldPanelResolver() {
+			new InterfaceStack(new NamedQuerySearch(SmbizEntityType.INTERFACE, "interface.summaryList", true),
+					auxDataRequest, new InterfaceStack.IFieldPanelResolver() {
 
 				@Override
 				public FieldPanel<?> resolveFieldPanel(ModelKey mkey) {

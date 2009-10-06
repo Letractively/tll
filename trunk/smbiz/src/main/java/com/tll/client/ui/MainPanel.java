@@ -54,7 +54,6 @@ import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
 import com.tll.common.data.Status;
 import com.tll.common.model.Model;
-import com.tll.common.model.PropertyPathException;
 import com.tll.common.model.SmbizEntityType;
 import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgAttr;
@@ -342,12 +341,12 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			vlUsername.setText(user.asString("emailAddress"));
 			vlUsername.setViewInitializer(new EditViewInitializer(UserEditView.klas, user));
 			lblUserDateCreated.setText(Fmt.format(user.getDateCreated(), GlobalFormat.DATE));
-			try {
-				final Model account = user.relatedOne("account").getModel();
+			final Model account = user.nestedModel("account");
+			if(account != null) {
 				vlUserAccount.setText(account.getName());
 				vlUserAccount.setViewInitializer(new EditViewInitializer(AccountEditView.klas, account));
 			}
-			catch(final PropertyPathException e) {
+			else {
 				vlUserAccount.setText("-");
 				vlUserAccount.setViewInitializer(null);
 			}

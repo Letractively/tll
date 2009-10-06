@@ -7,9 +7,7 @@ package com.tll.client;
 
 import java.util.List;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.tll.common.model.Model;
-import com.tll.common.model.PropertyPathException;
 import com.tll.common.model.SmbizEntityType;
 import com.tll.model.AdminRole;
 
@@ -131,46 +129,35 @@ public final class AdminContext {
 	 */
 	public Model getUserAccount() {
 		assert user != null;
-		try {
-			return user.relatedOne("account").getModel();
-		}
-		catch(final PropertyPathException e) {
-			return null;
-		}
+		return user.nestedModel("account");
 	}
 
 	public AdminRole getUserRole() {
 		if(userRole == null) {
 			userRole = AdminRole.VISITOR; // default
-			try {
-				final List<Model> auths = user.relatedMany("authoritys").getModelList();
-				if(auths != null) {
-					int ordinal, highest = -1;
-					for(final Model auth : auths) {
-						final String role = auth.asString("authority");
-						if(AdminRole.ASP.name().equals(role)) {
-							ordinal = AdminRole.ASP.ordinal();
-						}
-						else if(AdminRole.ISP.name().equals(role)) {
-							ordinal = AdminRole.ISP.ordinal();
-						}
-						else if(AdminRole.MERCHANT.name().equals(role)) {
-							ordinal = AdminRole.MERCHANT.ordinal();
-						}
-						else if(AdminRole.CUSTOMER.name().equals(role)) {
-							ordinal = AdminRole.CUSTOMER.ordinal();
-						}
-						else {
-							ordinal = AdminRole.VISITOR.ordinal();
-						}
-						if(ordinal > highest) highest = ordinal;
+			final List<Model> auths = user.relatedMany("authoritys").getModelList();
+			if(auths != null) {
+				int ordinal, highest = -1;
+				for(final Model auth : auths) {
+					final String role = auth.asString("authority");
+					if(AdminRole.ASP.name().equals(role)) {
+						ordinal = AdminRole.ASP.ordinal();
 					}
-					userRole = AdminRole.values()[highest];
+					else if(AdminRole.ISP.name().equals(role)) {
+						ordinal = AdminRole.ISP.ordinal();
+					}
+					else if(AdminRole.MERCHANT.name().equals(role)) {
+						ordinal = AdminRole.MERCHANT.ordinal();
+					}
+					else if(AdminRole.CUSTOMER.name().equals(role)) {
+						ordinal = AdminRole.CUSTOMER.ordinal();
+					}
+					else {
+						ordinal = AdminRole.VISITOR.ordinal();
+					}
+					if(ordinal > highest) highest = ordinal;
 				}
-			}
-			catch(final PropertyPathException e) {
-				Log.error(e.getMessage());
-				userRole = AdminRole.VISITOR;
+				userRole = AdminRole.values()[highest];
 			}
 		}
 		return userRole;

@@ -324,10 +324,8 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	}
 
 	@Override
-	protected IFieldRenderer<W> getRenderer() {
-		// default is no renderer
-		// TODO revert to renderer impl strategy
-		return null;
+	protected final IFieldRenderer<W> getRenderer() {
+		return null; // indexed field panels don't employ IFieldRenderers
 	}
 
 	/**

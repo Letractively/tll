@@ -5,7 +5,6 @@
  */
 package com.tll.client.ui.field.user;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -20,7 +19,6 @@ import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.view.ViewLink;
 import com.tll.common.model.Model;
-import com.tll.common.model.PropertyPathException;
 
 /**
  * UserPanel
@@ -48,17 +46,12 @@ public class UserPanel extends FlowFieldPanel {
 			cmpsr.addField(fg.getFieldWidget("userExpires"));
 
 			// parent account ref link
-			try {
-				final Model parentAccount = getModel().getNestedModel("account");
-				final String paName = parentAccount.asString(Model.NAME_PROPERTY);
-				lnkAccount.setViewNames(paName, paName);
-				lnkAccount.setViewInitializer(new EditViewInitializer(AccountEditView.klas, parentAccount));
-				cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-				cmpsr.addWidget("Account", lnkAccount);
-			}
-			catch(final PropertyPathException e) {
-				Log.warn("No parent account for user", e);
-			}
+			final Model parentAccount = getModel().nestedModel("account");
+			final String paName = parentAccount.asString(Model.NAME_PROPERTY);
+			lnkAccount.setViewNames(paName, paName);
+			lnkAccount.setViewInitializer(new EditViewInitializer(AccountEditView.klas, parentAccount));
+			cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+			cmpsr.addWidget("Account", lnkAccount);
 
 			cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 			cmpsr.addField(fg.getFieldWidget("user" + Model.DATE_CREATED_PROPERTY));

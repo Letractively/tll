@@ -5,6 +5,7 @@
  */
 package com.tll.client.mvc.view.intf;
 
+import com.tll.client.SmbizAdmin;
 import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.data.rpc.IRpcCommand;
 import com.tll.client.mvc.view.AbstractRpcAndModelAwareView;
@@ -12,11 +13,12 @@ import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.intf.AccountMultiOptionInterfacePanel;
 import com.tll.client.ui.field.intf.AccountSwitchInterfacePanel;
-import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.common.data.AuxDataRequest;
+import com.tll.common.model.EnumPropertyValue;
 import com.tll.common.model.ModelKey;
 import com.tll.common.model.SmbizEntityType;
 import com.tll.common.search.AccountInterfaceDataSearch;
+import com.tll.common.search.NamedQuerySearch;
 
 /**
  * AccountInterfaceView - Manages account to interface option bindings.
@@ -51,17 +53,7 @@ public class AccountInterfaceView extends AbstractRpcAndModelAwareView<AccountIn
 		auxDataRequest.requestEntityPrototype(SmbizEntityType.ACCOUNT_INTERFACE_OPTION_PARAMETER);
 	}
 
-	private final GlobalMsgPanel gmp = new GlobalMsgPanel();
-
 	private InterfaceStack intfStack;
-
-	/**
-	 * Constructor
-	 */
-	public AccountInterfaceView() {
-		super();
-		addWidget(gmp);
-	}
 
 	@Override
 	protected ViewClass getViewClass() {
@@ -80,9 +72,12 @@ public class AccountInterfaceView extends AbstractRpcAndModelAwareView<AccountIn
 
 	@Override
 	protected void doInitialization(final AccountInterfaceViewInitializer initializer) {
+		final SmbizEntityType at = SmbizAdmin.getAdminContextCmd().getAdminContext().getAccountType();
+		final NamedQuerySearch nqs = new NamedQuerySearch(SmbizEntityType.INTERFACE, "acntIntf.smry", true);
+		nqs.addParam(new EnumPropertyValue("accountType", at));
 		intfStack =
-			new InterfaceStack(gmp, auxDataRequest,
-					new InterfaceStack.IFieldPanelResolver() {
+			new InterfaceStack(nqs,
+					auxDataRequest, new InterfaceStack.IFieldPanelResolver() {
 
 				@Override
 				public FieldPanel<?> resolveFieldPanel(ModelKey intfKey) {

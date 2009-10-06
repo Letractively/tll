@@ -13,8 +13,8 @@ import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.account.CustomerListingView;
 import com.tll.client.mvc.view.account.IspListingView;
 import com.tll.client.mvc.view.account.MerchantListingView;
-import com.tll.client.mvc.view.intf.InterfacesView;
 import com.tll.client.mvc.view.intf.AccountInterfaceView;
+import com.tll.client.mvc.view.intf.InterfacesView;
 import com.tll.client.mvc.view.user.UserEditView;
 import com.tll.client.rpc.AdminContextCommand;
 import com.tll.client.rpc.IAdminContextListener;
@@ -62,17 +62,17 @@ public final class SmbizAdmin implements EntryPoint, IAdminContextListener {
 		final ModelKey userAcntRef = ac.getUserAccount().getKey();
 		assert userAcntRef != null;
 		switch(targetAccountType) {
+		case ASP:
+		case ISP:
+			return (role == AdminRole.ASP);
+		case MERCHANT:
+			switch(role) {
 			case ASP:
+				return true;
 			case ISP:
-				return (role == AdminRole.ASP);
-			case MERCHANT:
-				switch(role) {
-					case ASP:
-						return true;
-					case ISP:
-						// verify the merchant is parent to the given merchant
-						return userAcntRef.equals(parentAccountRef);
-				}
+				// verify the user is parent to the given merchant
+				return userAcntRef.equals(parentAccountRef);
+			}
 		}
 		// default
 		return false;

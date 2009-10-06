@@ -13,7 +13,6 @@ import com.tll.criteria.CriteriaType;
 import com.tll.criteria.IQueryParam;
 import com.tll.util.StringUtil;
 
-
 /**
  * NamedQuerySearch
  * @author jpk
