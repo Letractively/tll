@@ -759,54 +759,89 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * @param propPath The property path that points to the desired model ref
 	 *        property. If <code>null</code> or empty, this {@link Model} is
 	 *        returned.
-	 * @return The resolved non-<code>null</code> {@link Model}
-	 * @throws PropertyPathException When the given property path can't be
+	 * @return The resolved {@link Model} or <code>null</code> if the model
+	 *         property doesn't exist or it does and the held model ref is
+	 *         <code>null</code>
+	 * @throws IllegalArgumentException When the given property path can't be
 	 *         resolved or does not map to an {@link IModelRefProperty}.
 	 */
-	public Model getNestedModel(String propPath) throws PropertyPathException {
-		final IModelProperty prop = getModelProperty(propPath);
-		assert prop != null;
-		if(!prop.getType().isModelRef()) {
-			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
-			"model reference");
+	public Model nestedModel(String propPath) throws IllegalArgumentException {
+		try {
+			final IModelProperty prop = getModelProperty(propPath);
+			assert prop != null;
+			if(!prop.getType().isModelRef()) {
+				throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
+				"model reference");
+			}
+			return ((IModelRefProperty) prop).getModel();
 		}
-		return ((IModelRefProperty) prop).getModel();
+		catch(final UnsetPropertyException e) {
+			return null;
+		}
+		catch(final NullNodeInPropPathException e) {
+			return null;
+		}
+		catch(final PropertyPathException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 	/**
 	 * Retrieves a related one property value from the model given a property
 	 * path.
 	 * @param propPath The property path (E.g.: "root.relatedModelPropName")
-	 * @return The non-<code>null</code> resolved related one property.
-	 * @throws PropertyPathException When the given property path can't be
+	 * @return The resolved related one property or <code>null</code> if it doesn't exist
+	 * @throws IllegalArgumentException When the given property path can't be
 	 *         resolved or does not map to related one property.
 	 */
-	public RelatedOneProperty relatedOne(String propPath) throws PropertyPathException {
-		final IModelProperty prop = getModelProperty(propPath);
-		assert prop != null;
-		if(prop.getType() != PropertyType.RELATED_ONE) {
-			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
-			"related one");
+	public RelatedOneProperty relatedOne(String propPath) throws IllegalArgumentException {
+		try {
+			final IModelProperty prop = getModelProperty(propPath);
+			assert prop != null;
+			if(prop.getType() != PropertyType.RELATED_ONE) {
+				throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
+				"related one");
+			}
+			return (RelatedOneProperty) prop;
 		}
-		return (RelatedOneProperty) prop;
+		catch(final UnsetPropertyException e) {
+			return null;
+		}
+		catch(final NullNodeInPropPathException e) {
+			return null;
+		}
+		catch(final PropertyPathException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 	/**
 	 * Retrieves a related many property value from the model given a property
 	 * path.
 	 * @param propPath The property path (E.g.: "root.listProperty")
-	 * @return The resolved non-<code>null</code> related many property.
-	 * @throws PropertyPathException When the given property path can't be
+	 * @return The resolved related many property or <code>null</code> if it doesn't exist
+	 * @throws IllegalArgumentException When the given property path can't be
 	 *         resolved or does not map to a related many property.
 	 */
-	public RelatedManyProperty relatedMany(String propPath) throws PropertyPathException {
-		final IModelProperty prop = getModelProperty(propPath);
-		assert prop != null;
-		if(prop.getType() != PropertyType.RELATED_MANY) {
-			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
-			"related many");
+	public RelatedManyProperty relatedMany(String propPath) throws IllegalArgumentException {
+		try {
+			final IModelProperty prop = getModelProperty(propPath);
+			assert prop != null;
+			if(prop.getType() != PropertyType.RELATED_MANY) {
+				throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
+				"related many");
+			}
+			return (RelatedManyProperty) prop;
 		}
-		return (RelatedManyProperty) prop;
+		catch(final UnsetPropertyException e) {
+			return null;
+		}
+		catch(final NullNodeInPropPathException e) {
+			return null;
+		}
+		catch(final PropertyPathException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 	/**
@@ -814,17 +849,28 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * This is a property value that wraps a nested Model that is a child of a
 	 * related many property.
 	 * @param propPath The property path. (E.g.: "root.listProperty[1]")
-	 * @return The resolved non-<code>null</code> indexed property.
-	 * @throws PropertyPathException When the given property path can't be
+	 * @return The resolved indexed property or <code>null</code> if it doesn't exist.
+	 * @throws IllegalArgumentException When the given property path can't be
 	 *         resolved or does not map to an indexed property.
 	 */
-	public IndexedProperty indexed(String propPath) throws PropertyPathException {
-		final IModelProperty prop = getModelProperty(propPath);
-		assert prop != null;
-		if(prop.getType() != PropertyType.INDEXED) {
-			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(), "indexed");
+	public IndexedProperty indexed(String propPath) throws IllegalArgumentException {
+		try {
+			final IModelProperty prop = getModelProperty(propPath);
+			assert prop != null;
+			if(prop.getType() != PropertyType.INDEXED) {
+				throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(), "indexed");
+			}
+			return (IndexedProperty) prop;
 		}
-		return (IndexedProperty) prop;
+		catch(final UnsetPropertyException e) {
+			return null;
+		}
+		catch(final NullNodeInPropPathException e) {
+			return null;
+		}
+		catch(final PropertyPathException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 	public PropertyMetadata getPropertyMetadata(String propPath) {

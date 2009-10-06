@@ -7,7 +7,6 @@ package com.tll.client.model;
 
 import com.tll.client.cache.AuxDataCache;
 import com.tll.common.model.Model;
-import com.tll.common.model.PropertyPathException;
 import com.tll.common.model.SmbizEntityType;
 
 /**
@@ -30,12 +29,7 @@ public abstract class ModelAssembler {
 		// handle special cases
 		if(type == SmbizEntityType.INTERFACE_SWITCH) {
 			final Model op = AuxDataCache.get().getEntityPrototype(SmbizEntityType.INTERFACE_OPTION);
-			try {
-				m.relatedMany("options").getModelList().add(op);
-			}
-			catch(final PropertyPathException e) {
-				throw new IllegalStateException(e);
-			}
+			m.relatedMany("options").getModelList().add(op);
 		}
 
 		return m;

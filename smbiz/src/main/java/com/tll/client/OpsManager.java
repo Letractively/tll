@@ -15,11 +15,10 @@ import com.tll.client.mvc.view.account.AccountEditView;
 import com.tll.client.mvc.view.account.CustomerListingViewInitializer;
 import com.tll.client.mvc.view.account.IspListingView;
 import com.tll.client.mvc.view.account.MerchantListingViewInitializer;
-import com.tll.client.mvc.view.intf.InterfacesView;
 import com.tll.client.mvc.view.intf.AccountInterfaceViewInitializer;
+import com.tll.client.mvc.view.intf.InterfacesView;
 import com.tll.client.ui.option.Option;
 import com.tll.common.model.Model;
-import com.tll.common.model.PropertyPathException;
 import com.tll.common.model.SmbizEntityType;
 import com.tll.model.AdminRole;
 
@@ -112,48 +111,48 @@ public final class OpsManager {
 
 		// add current user account related
 		switch(crntUserAccountType) {
+		case ASP:
+			options.addAll(Arrays.asList(CUAT_ASP));
+			// add current account related
+			switch(crntAccountType) {
 			case ASP:
-				options.addAll(Arrays.asList(CUAT_ASP));
-				// add current account related
-				switch(crntAccountType) {
-					case ASP:
-					case ISP:
-					case MERCHANT:
-					case CUSTOMER:
-				}
-				break;
 			case ISP:
-				options.addAll(Arrays.asList(CUAT_ISP));
-				// add current account related
-				switch(crntAccountType) {
-					case ASP:
-					case ISP:
-					case MERCHANT:
-					case CUSTOMER:
-				}
-				break;
 			case MERCHANT:
-				options.addAll(Arrays.asList(CUAT_MERCHANT));
-				// add current account related
-				switch(crntAccountType) {
-					case ASP:
-					case ISP:
-					case MERCHANT:
-					case CUSTOMER:
-				}
-				break;
 			case CUSTOMER:
-				options.addAll(Arrays.asList(CUAT_CUSOMER));
-				// add current account related
-				switch(crntAccountType) {
-					case ASP:
-					case ISP:
-					case MERCHANT:
-					case CUSTOMER:
-				}
-				break;
-			default:
-				throw new IllegalStateException("Unknown account type");
+			}
+			break;
+		case ISP:
+			options.addAll(Arrays.asList(CUAT_ISP));
+			// add current account related
+			switch(crntAccountType) {
+			case ASP:
+			case ISP:
+			case MERCHANT:
+			case CUSTOMER:
+			}
+			break;
+		case MERCHANT:
+			options.addAll(Arrays.asList(CUAT_MERCHANT));
+			// add current account related
+			switch(crntAccountType) {
+			case ASP:
+			case ISP:
+			case MERCHANT:
+			case CUSTOMER:
+			}
+			break;
+		case CUSTOMER:
+			options.addAll(Arrays.asList(CUAT_CUSOMER));
+			// add current account related
+			switch(crntAccountType) {
+			case ASP:
+			case ISP:
+			case MERCHANT:
+			case CUSTOMER:
+			}
+			break;
+		default:
+			throw new IllegalStateException("Unknown account type");
 		}
 
 		return options.toArray(new Option[options.size()]);
@@ -167,13 +166,7 @@ public final class OpsManager {
 	 * @return Newly created {@link IViewInitializer}.
 	 */
 	public static IViewInitializer resolveViewInitializer(String optionText, Model currentUser, Model currentAccount) {
-		Model crntUserAccount;
-		try {
-			crntUserAccount = currentUser.getNestedModel("account");
-		}
-		catch(final PropertyPathException e) {
-			throw new IllegalArgumentException(e);
-		}
+		final Model crntUserAccount = currentUser.nestedModel("account");
 
 		if(OP_ACCOUNT_DETAIL.getText().equals(optionText)) {
 			return new EditViewInitializer(AccountEditView.klas, crntUserAccount);

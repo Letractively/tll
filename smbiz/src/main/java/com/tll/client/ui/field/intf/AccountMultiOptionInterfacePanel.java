@@ -9,7 +9,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.tll.client.Style;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FlowFieldPanel;
@@ -18,6 +17,8 @@ import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.IIndexedFieldBoundWidget;
 import com.tll.client.ui.field.TabbedIndexedFieldPanel;
+import com.tll.client.util.Fmt;
+import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
 
@@ -34,14 +35,15 @@ public class AccountMultiOptionInterfacePanel extends AbstractAccountInterfacePa
 	 */
 	static class AccountOptionPanel extends FlowFieldPanel {
 
-		final InterfaceOptionSummary ioSmry = new InterfaceOptionSummary();
+		final Label lblDesc = new Label(null, false);
+		final Label lblDflt = new Label(null, false);
 		final AccountParamsPanel paramsPanel = new AccountParamsPanel("parameters");
 
 		@SuppressWarnings("unchecked")
 		@Override
 		protected FieldGroup generateFieldGroup() {
 			final FieldGroup fg = new FieldGroup("Account Interface Option");
-			fg.addField(FieldFactory.fcheckbox("subscribed", null, "Subscribed?", "Subscribed?"));
+			fg.addField(FieldFactory.fcheckbox("subscribed", "subscribed", "Subscribed?", "Subscribed?"));
 			fg.addField(FieldFactory.ftext("setUpPrice", "setUpPrice", "Set Up Price", "Set Up Price", 8));
 			fg.addField(FieldFactory.ftext("monthlyPrice", "monthlyPrice", "Monthly Price", "Monthly Price", 8));
 			fg.addField(FieldFactory.ftext("annualPrice", "annualPrice", "Annual Price", "Annual Price", 8));
@@ -67,23 +69,35 @@ public class AccountMultiOptionInterfacePanel extends AbstractAccountInterfacePa
 					final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 					cmpsr.setCanvas(widget);
 
-					cmpsr.addWidget(ioSmry);
-					cmpsr.newRow();
+					final Model m = getModel();
+					assert m != null;
+
 					cmpsr.addField(fg.getFieldWidget("subscribed"));
 					cmpsr.newRow();
+
+					lblDesc.setText(m.asString("description"));
+					cmpsr.addWidget("Description", lblDesc);
+					cmpsr.newRow();
+
+					try {
+						lblDflt.setText(Fmt.format(m.getPropertyValue("default").getValue(), GlobalFormat.BOOL_YESNO));
+					}
+					catch(final Exception e) {
+						throw new IllegalArgumentException(e);
+					}
+					cmpsr.addWidget("Default?", lblDflt);
+					cmpsr.newRow();
+
 					cmpsr.addField(fg.getFieldWidget("setUpPrice"));
 					cmpsr.addField(fg.getFieldWidget("monthlyPrice"));
 					cmpsr.addField(fg.getFieldWidget("annualPrice"));
-					cmpsr.newRow();
-					cmpsr.addWidget("Parameters", paramsPanel);
+
+					if(m.relatedMany("parameters").size() > 0) {
+						cmpsr.newRow();
+						cmpsr.addWidget("Parameters", paramsPanel);
+					}
 				}
 			};
-		}
-
-		@Override
-		public void setModel(Model model) {
-			super.setModel(model);
-			ioSmry.apply(model);
 		}
 
 		@Override
@@ -152,10 +166,6 @@ public class AccountMultiOptionInterfacePanel extends AbstractAccountInterfacePa
 			public void render(FlowPanel widget, FieldGroup fg) {
 				final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 				cmpsr.setCanvas(widget);
-				final Label l = new Label("Options");
-				l.setStyleName(Style.BOLD);
-				cmpsr.addWidget(l);
-				cmpsr.newRow();
 				cmpsr.addWidget(optionsPanel);
 			}
 		};

@@ -39,7 +39,6 @@ import com.tll.client.validate.ErrorHandlerBuilder;
 import com.tll.client.validate.ErrorHandlerDelegate;
 import com.tll.common.model.CopyCriteria;
 import com.tll.common.model.Model;
-import com.tll.common.model.PropertyPathException;
 import com.tll.common.model.RelatedManyProperty;
 import com.tll.common.model.test.TestModelStubber;
 
@@ -409,8 +408,8 @@ public final class UITests extends AbstractUITest {
 			mvchanged = new ModelViewer();
 			fp = new TestFieldPanel();
 			eh = ErrorHandlerBuilder.build(true, true, new GlobalMsgPanel());
-			ep =
-				new EditPanel(fp, false, false, eh);
+			ep = new EditPanel(fp, false, false);
+			ep.setErrorHandler(eh, true);
 
 			final CopyCriteria mcrit = CopyCriteria.all();
 
@@ -427,13 +426,7 @@ public final class UITests extends AbstractUITest {
 					mcopy.setVersion(version == null ? 0 : version++);
 					ArrayList<Model> alist = null;
 					List<Model> existing;
-					RelatedManyProperty ap;
-					try {
-						ap = mcopy.relatedMany("addresses");
-					}
-					catch(final PropertyPathException e) {
-						throw new RuntimeException(e);
-					}
+					final RelatedManyProperty ap = mcopy.relatedMany("addresses");
 					existing = ap.getModelList();
 					if(existing != null) {
 						alist = new ArrayList<Model>();

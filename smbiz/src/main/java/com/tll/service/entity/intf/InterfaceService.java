@@ -119,6 +119,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 		}
 
 		final AccountInterface ai = entityAssembler.assembleEntity(AccountInterface.class, null, false);
+		ai.setVersion(1); // mimic non-new entity
 		ai.setAccountId(accountId);
 		ai.setInterfaceId(interfaceId);
 		ai.setName(intf.getName());

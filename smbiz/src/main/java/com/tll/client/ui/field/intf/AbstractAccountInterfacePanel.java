@@ -5,13 +5,8 @@
  */
 package com.tll.client.ui.field.intf;
 
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
-import com.tll.client.Style;
-import com.tll.client.model.ModelAssembler;
-import com.tll.client.ui.Heading;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FlowFieldPanel;
@@ -19,92 +14,14 @@ import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.TabbedIndexedFieldPanel;
 import com.tll.client.ui.field.TextField;
-import com.tll.client.util.Fmt;
-import com.tll.common.model.DoublePropertyValue;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
-import com.tll.common.model.SmbizEntityType;
 
 /**
  * AbstractAccountInterfacePanel
  * @author jpk
  */
 abstract class AbstractAccountInterfacePanel extends FlowFieldPanel {
-
-	/**
-	 * InterfaceOptionSummary - Static text that summarizes an interface option.
-	 * @author jpk
-	 */
-	static class InterfaceOptionSummary extends Composite {
-
-		static final String[][] arrBasePricing = new String[][] {
-			{
-				"baseSetupPrice", "Setup" }, {
-					"baseMonthlyPrice", "Monthly" }, {
-						"baseAnnualPrice", "Annual" } };
-
-		final FlowPanel pnl = new FlowPanel();
-		final Grid desc, pricing;
-
-		/**
-		 * Constructor
-		 */
-		public InterfaceOptionSummary() {
-			Heading h;
-			h = new Heading(3, "Option Summary");
-			pnl.add(h);
-
-			// desc grid
-			desc = new Grid(4, 2);
-			Label lbl;
-			lbl = new Label("Name", false);
-			lbl.addStyleName(Style.BOLD);
-			desc.setWidget(0, 0, lbl);
-			lbl = new Label("Code", false);
-			lbl.addStyleName(Style.BOLD);
-			desc.setWidget(1, 0, lbl);
-			lbl = new Label("Description", false);
-			lbl.addStyleName(Style.BOLD);
-			desc.setWidget(2, 0, lbl);
-			lbl = new Label("Default?", false);
-			lbl.addStyleName(Style.BOLD);
-			desc.setWidget(3, 0, lbl);
-			pnl.add(desc);
-
-			// pricing grid
-			pricing = new Grid(3, 2);
-
-			h = new Heading(4, "Base Pricing");
-			pnl.add(h);
-			for(int i = 0; i < arrBasePricing.length; i++) {
-				pricing.setText(i, 0, arrBasePricing[i][1]);
-			}
-			pnl.add(pricing);
-			initWidget(pnl);
-		}
-
-		public void apply(Model option) {
-			try {
-				// desc
-				desc.setText(0, 1, option.asString("name"));
-				desc.setText(1, 1, option.asString("code"));
-				desc.setText(2, 1, option.asString("description"));
-				desc.setText(3, 1, option.getProperty("default") == Boolean.TRUE ? "Yes" : "No");
-
-				// pricing
-				DoublePropertyValue dpv;
-				String price;
-				for(int i = 0; i < arrBasePricing.length; i++) {
-					dpv = (DoublePropertyValue) option.getModelProperty(arrBasePricing[i][0]);
-					price = Fmt.currency(dpv.getDouble());
-					pricing.setText(i, 1, price);
-				}
-			}
-			catch(final PropertyPathException e) {
-				throw new IllegalArgumentException(e);
-			}
-		}
-	} // InterfaceOptionSummary
 
 	/**
 	 * AccountParameterPanel - Represents an interface option parameter that
@@ -198,7 +115,8 @@ abstract class AbstractAccountInterfacePanel extends FlowFieldPanel {
 
 		@Override
 		protected Model createPrototypeModel() {
-			return ModelAssembler.assemble(SmbizEntityType.ACCOUNT_INTERFACE_OPTION_PARAMETER);
+			//return ModelAssembler.assemble(SmbizEntityType.ACCOUNT_INTERFACE_OPTION_PARAMETER);
+			throw new UnsupportedOperationException();
 		}
 
 	} // ParametersPanel

@@ -12,7 +12,6 @@ import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.IIndexedFieldBoundWidget;
 import com.tll.common.model.Model;
-import com.tll.common.model.PropertyPathException;
 
 /**
  * AccountSwitchInterfacePanel - One option exists that is either on or off.
@@ -21,7 +20,6 @@ import com.tll.common.model.PropertyPathException;
 public final class AccountSwitchInterfacePanel extends AbstractAccountInterfacePanel {
 
 	private final AccountParamsPanel paramsPanel = new AccountParamsPanel("options[0].parameters");
-	private final InterfaceOptionSummary ioSmry = new InterfaceOptionSummary();
 
 	@Override
 	protected FieldGroup generateFieldGroup() {
@@ -48,7 +46,8 @@ public final class AccountSwitchInterfacePanel extends AbstractAccountInterfaceP
 				final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 				cmpsr.setCanvas(widget);
 
-				cmpsr.addWidget(ioSmry);
+				final Model m = getModel();
+				assert m != null;
 
 				cmpsr.newRow();
 				cmpsr.addField(fg.getFieldWidget("subscribed"));
@@ -56,21 +55,12 @@ public final class AccountSwitchInterfacePanel extends AbstractAccountInterfaceP
 				cmpsr.addField(fg.getFieldWidget("monthlyPrice"));
 				cmpsr.addField(fg.getFieldWidget("annualPrice"));
 
-				cmpsr.newRow();
-				cmpsr.addWidget(paramsPanel);
+				if(m.relatedMany("options[0].parameters").size() > 0) {
+					cmpsr.newRow();
+					cmpsr.addWidget(paramsPanel);
+				}
 			}
 		};
-	}
-
-	@Override
-	public void setModel(Model model) {
-		super.setModel(model);
-		try {
-			ioSmry.apply(model.getNestedModel("options[0]"));
-		}
-		catch(final PropertyPathException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	@Override

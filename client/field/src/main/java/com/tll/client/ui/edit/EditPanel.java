@@ -83,7 +83,8 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	protected final IFieldBoundWidget fieldPanel;
 
 	/**
-	 * Ref to the optional message display which is gotten from the error handler when set.
+	 * Ref to the optional message display which is gotten from the error handler
+	 * when set.
 	 */
 	protected IMsgDisplay msgDisplay;
 
@@ -111,7 +112,7 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 		this.fieldPanel = fieldPanel;
 
 		portal.setStyleName(Styles.PORTAL);
-		// we need to defer this until needed aux data is ready
+		// we need to defer this until needed model and aux data is loaded
 		// portal.setWidget(fieldPanel);
 
 		pnlButtonRow.setStyleName(Styles.BTN_ROW);
@@ -137,21 +138,15 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	}
 
 	/**
-	 * Constructor
-	 * @param fieldPanel
-	 * @param showCancelBtn
-	 * @param showDeleteBtn
-	 * @param errorHandler The error handler to employ.
+	 * Sets the error handler for field validation feedback and optionally adds
+	 * the message display to this panel.
+	 * @param errorHandler the error handler to set
+	 * @param addMsgDisplay add the held msg display to this panel?
 	 */
-	public EditPanel(FieldPanel<? extends Widget> fieldPanel, boolean showCancelBtn, boolean showDeleteBtn, ErrorHandlerDelegate errorHandler) {
-		this(fieldPanel, showCancelBtn, showDeleteBtn);
-		setErrorHandler(errorHandler);
-	}
-
-	private void setErrorHandler(ErrorHandlerDelegate errorHandler) {
+	public void setErrorHandler(ErrorHandlerDelegate errorHandler, boolean addMsgDisplay) {
 		fieldPanel.setErrorHandler(errorHandler);
 		msgDisplay = errorHandler.getMsgDisplay();
-		if(msgDisplay != null) {
+		if(addMsgDisplay && msgDisplay != null) {
 			panel.insert(msgDisplay.getDisplayWidget(), 0);
 		}
 	}
@@ -200,7 +195,7 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 		fieldPanel.setModel(model);
 		if(model != null) {
 			setEditMode(model.isNew());
-			// deferred attachment to guarantee needed aux data is available
+			// deferred attachment to guaranting model and aux data is available
 			final Widget w = (Widget) fieldPanel;
 			if(w.getParent() == null) {
 				Log.debug("EditPanel.setModel() attaching fieldPanel..");
