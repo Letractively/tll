@@ -84,6 +84,25 @@ class InterfaceStack extends Composite implements IRpcHandler, IListingHandler<M
 	}
 
 	/**
+	 * InterfacesPanel - Extended {@link StackPanel} to accommodate on demand
+	 * loading of the child panels.
+	 * @author jpk
+	 */
+	final class InterfacesPanel extends StackPanel {
+
+		@Override
+		public void showStack(int index) {
+			if(initialized) {
+				final InterfacePanel ir = list.get(index);
+				ir.loadIfNecessary();
+			}
+			gmp.clear();
+			super.showStack(index);
+		}
+
+	} // InterfacesPanel
+
+	/**
 	 * InterfacePanel - {@link EditPanel} for an interface w/in the
 	 * {@link InterfaceStack}.
 	 * @author jpk
@@ -133,7 +152,7 @@ class InterfaceStack extends Composite implements IRpcHandler, IListingHandler<M
 				crud.add(fieldPanel.getModel());
 				break;
 			case UPDATE:
-				crud.update(fieldPanel.getModel());
+				crud.update(fieldPanel.getChangedModel());
 				break;
 			case DELETE:
 				crud.purge(fieldPanel.getModel().getKey());
@@ -190,7 +209,7 @@ class InterfaceStack extends Composite implements IRpcHandler, IListingHandler<M
 
 	final FlowPanel flowPanel;
 
-	final StackPanel stackPanel;
+	final InterfacesPanel stackPanel;
 
 	final GlobalMsgPanel gmp;
 
@@ -202,15 +221,15 @@ class InterfaceStack extends Composite implements IRpcHandler, IListingHandler<M
 
 	final IFieldPanelResolver fldPnlResolver;
 
-	private final IListingOperator<Model> listHandler;
+	final IListingOperator<Model> listHandler;
 
-	private final List<InterfacePanel> list = new ArrayList<InterfacePanel>();
+	final List<InterfacePanel> list = new ArrayList<InterfacePanel>();
 
 	final IFieldPanelDataLoader loader;
 
 	final CrudCommand crud;
 
-	private boolean initialized;
+	boolean initialized;
 
 	/**
 	 * Constructor
@@ -225,7 +244,7 @@ class InterfaceStack extends Composite implements IRpcHandler, IListingHandler<M
 			IFieldPanelResolver fldPnlResolver, IFieldPanelDataLoader loader) {
 		super();
 		this.flowPanel = new FlowPanel();
-		this.stackPanel = new StackPanel();
+		this.stackPanel = new InterfacesPanel();
 		this.gmp = new GlobalMsgPanel();
 		this.errorHandler = ErrorHandlerBuilder.build(true, true, gmp);
 		this.rpcHandler = new RpcUiHandler(this);
@@ -264,11 +283,6 @@ class InterfaceStack extends Composite implements IRpcHandler, IListingHandler<M
 	}
 
 	public void showInterface(int index) {
-		if(initialized) {
-			final InterfacePanel ir = list.get(index);
-			ir.loadIfNecessary();
-		}
-		gmp.clear();
 		stackPanel.showStack(index);
 	}
 
@@ -301,7 +315,7 @@ class InterfaceStack extends Composite implements IRpcHandler, IListingHandler<M
 				addInterface(intfs[i], true);
 			}
 			initialized = true;
-			if(stackPanel.getWidgetCount() > 0) showInterface(0);
+			if(stackPanel.getWidgetCount() > 0) stackPanel.showStack(0);
 		}
 	}
 

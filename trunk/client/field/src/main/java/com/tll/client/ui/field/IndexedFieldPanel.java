@@ -130,7 +130,10 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 		for(final Index index : indexPanels) {
 			try {
 				index.fieldPanel.updateModel();
-				value.add(index.fieldPanel.getModel());
+			}
+			catch(final NoChangesException e) {
+				// ignore - since we're a nested field panel and there may be other nested panels
+				// w/ changes or the root panel may have changes!
 			}
 			catch(final Exception e) {
 				Log.debug("Unable to get index model collection (" + e.getMessage() + ")", e);
@@ -139,6 +142,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 				}
 				throw new RuntimeException(e);
 			}
+			value.add(index.fieldPanel.getModel());
 		}
 		return value;
 	}

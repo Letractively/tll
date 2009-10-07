@@ -88,14 +88,15 @@ public class AccountMultiOptionInterfacePanel extends AbstractAccountInterfacePa
 					cmpsr.addWidget("Default?", lblDflt);
 					cmpsr.newRow();
 
+					if(m.relatedMany("parameters").size() > 0) {
+						cmpsr.newRow();
+						cmpsr.addWidget(paramsPanel);
+					}
+
+					cmpsr.newRow();
 					cmpsr.addField(fg.getFieldWidget("setUpPrice"));
 					cmpsr.addField(fg.getFieldWidget("monthlyPrice"));
 					cmpsr.addField(fg.getFieldWidget("annualPrice"));
-
-					if(m.relatedMany("parameters").size() > 0) {
-						cmpsr.newRow();
-						cmpsr.addWidget("Parameters", paramsPanel);
-					}
 				}
 			};
 		}
