@@ -91,17 +91,22 @@ public final class ListingHandler<R> {
 			return;
 		}
 
+		// update sorting (irregardless of whether or not we have resultant elements)
+		this.sorting = srtg;
+
 		// query
 		final int psize = pageSize == -1 ? listHandler.size() : pageSize;
 		try {
 			page = listHandler.getElements(ofst, psize, srtg);
 		}
+		catch(final EmptyListException e) {
+			throw e;
+		}
 		catch(final ListHandlerException e) {
 			throw new ListingException(listingId, e.getMessage());
 		}
 
-		// update state
+		// update offset
 		this.offset = ofst;
-		this.sorting = srtg;
 	}
 }

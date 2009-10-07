@@ -9,35 +9,37 @@ import com.tll.common.model.ModelKey;
  */
 public final class CustomerListingViewInitializer extends AbstractDynamicViewInitializer {
 
-	final ModelKey merchantParentRef;
+	/**
+	 * The parent account's parent account ref.
+	 */
+	private final ModelKey grandParentAccountRef;
 
 	/**
-	 * The parent Merchant ref.
+	 * The parent account ref.
 	 */
-	final ModelKey mercRef;
+	private final ModelKey parentAccountRef;
 
 	/**
 	 * Constructor
-	 * @param mercRef The parent merchant ref
-	 * @param merchantParentRef optional
+	 * @param parentAccountRef The parent merchant ref
+	 * @param grandParentAccountRef optional
 	 */
-	public CustomerListingViewInitializer(ModelKey mercRef, ModelKey merchantParentRef) {
+	public CustomerListingViewInitializer(ModelKey parentAccountRef, ModelKey grandParentAccountRef) {
 		super(CustomerListingView.klas);
-		this.mercRef = mercRef;
-		this.merchantParentRef = merchantParentRef;
+		this.parentAccountRef = parentAccountRef;
+		this.grandParentAccountRef = grandParentAccountRef;
 	}
 
 	@Override
 	protected int getViewId() {
-		return mercRef.hashCode();
+		return parentAccountRef.hashCode();
 	}
 
-	public ModelKey getMerchantParentRef() {
-		return merchantParentRef;
+	public ModelKey getParentAccountRef() {
+		return parentAccountRef;
 	}
 
-	public ModelKey getMercRef() {
-		return mercRef;
+	public ModelKey getGrandParentAccountRef() {
+		return grandParentAccountRef;
 	}
-
 }
