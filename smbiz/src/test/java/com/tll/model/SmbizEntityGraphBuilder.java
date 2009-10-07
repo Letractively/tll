@@ -34,8 +34,8 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphPopulator 
 	protected void stub() {
 		try {
 			stubRudimentaryEntities();
-			stubAccounts();
 			stubInterfaces();
+			stubAccounts();
 			stubUsers();
 		}
 		catch(final Exception e) {

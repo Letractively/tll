@@ -246,7 +246,7 @@ implements SelectionHandler<Integer>, BeforeSelectionHandler<Integer> {
 			return t;
 		}
 
-		return new Label(labelText);
+		return new Label(labelText, false);
 	}
 
 	@Override
