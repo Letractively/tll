@@ -6,6 +6,7 @@ package com.tll.client.mvc.view.account;
 import com.tll.client.mvc.view.ListingView;
 import com.tll.client.ui.listing.CustomerListingWidget;
 import com.tll.client.ui.view.ViewLink;
+import com.tll.common.model.ModelKey;
 
 /**
  * CustomerListingView
@@ -43,15 +44,14 @@ public final class CustomerListingView extends ListingView<CustomerListingViewIn
 
 	@Override
 	public void doInitialization(CustomerListingViewInitializer r) {
-		assert r.mercRef != null && r.mercRef.isSet();
-
-		if(r.getMerchantParentRef() != null) {
-			parentLink.setViewInitializer(new MerchantListingViewInitializer(r.getMerchantParentRef()));
-			parentLink.setText(r.getMerchantParentRef().getName());
+		final ModelKey gpar = r.getGrandParentAccountRef();
+		if(gpar != null) {
+			parentLink.setText(r.getParentAccountRef().getName());
+			parentLink.setViewInitializer(new MerchantListingViewInitializer(gpar));
 		}
-		parentLink.setVisible(r.getMerchantParentRef() != null);
+		parentLink.setVisible(gpar != null);
 
-		setListingWidget(new CustomerListingWidget(r.mercRef));
+		setListingWidget(new CustomerListingWidget(r.getParentAccountRef()));
 	}
 
 	@Override

@@ -371,7 +371,7 @@ IListingHandler<R> {
 
 	public void onListingEvent(ListingEvent<R> event) {
 		if(event.getListingOp().isQuery()) {
-			hasRows = event.getPageElements() != null;
+			hasRows = event.getPageElements() != null && event.getPageElements().length > 0;
 			if(hasRows) {
 				firstIndex = event.getOffset();
 				lastIndex = firstIndex + event.getPageElements().length - 1;

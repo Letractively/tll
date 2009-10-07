@@ -183,7 +183,8 @@ final class ListingProcessor {
 									MsgAttr.STATUS.flag);
 						}
 						catch(final EmptyListException e) {
-							throw new ListingException(listingId, "No matching rows exist.", e);
+							// we proceed to allow client to still show the listing
+							status.addMsg(e.getMessage(), MsgLevel.WARN, MsgAttr.STATUS.flag);
 						}
 						catch(final ListingException e) {
 							throw new ListingException(listingId, "An unexpected error occurred performing listing operation: "
@@ -240,7 +241,8 @@ final class ListingProcessor {
 		if(handler != null && !status.hasErrors() && (listingOp != null && !listingOp.isClear())) {
 			if(log.isDebugEnabled()) log.debug("Sending page data for '" + listingId + "'...");
 			final List<Model> list = handler.getElements();
-			p.setPageData(handler.size(), list.toArray(new Model[list.size()]), handler.getOffset(), handler.getSorting());
+			final Model[] arr = list == null ? new Model[0] : list.toArray(new Model[list.size()]);
+			p.setPageData(handler.size(), arr, handler.getOffset(), handler.getSorting());
 		}
 
 		return p;
