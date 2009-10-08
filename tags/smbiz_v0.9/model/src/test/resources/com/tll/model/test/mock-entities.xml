@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+  <description>This app context layer sets up the test classes</description>
+
+  <bean id="simpleDateFormat" class="java.text.SimpleDateFormat">
+    <constructor-arg value="MM/dd/yy"/>
+  </bean>
+  
+  <bean id="customEditorConfigurer"
+    class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+    <property name="customEditors">
+      <map>
+        <entry key="java.util.Date">
+          <bean class="org.springframework.beans.propertyeditors.CustomDateEditor">
+            <constructor-arg index="0" ref="simpleDateFormat" />
+            <constructor-arg index="1" value="true" />
+          </bean>
+        </entry>
+      </map>
+    </property>
+  </bean>
+  
+  <bean name="entityBase" class="com.tll.model.EntityBase" abstract="true" />
+
+	<bean name="Currency" class="com.tll.model.test.Currency" parent="entityBase" scope="prototype">
+		<property name="name">
+			<value>dollar</value>
+		</property>
+		<property name="iso4217">
+			<value>usd</value>
+		</property>
+		<property name="symbol">
+			<value>$</value>
+		</property>
+		<property name="usdExchangeRate">
+			<value>1.00</value>
+		</property>
+	</bean>
+
+	<bean name="Address" class="com.tll.model.test.Address" parent="entityBase" scope="prototype">
+		<property name="address1">
+			<value>address line 1</value>
+		</property>
+		<property name="address2">
+			<value>address line 2</value>
+		</property>
+		<property name="city">
+			<value>city</value>
+		</property>
+		<property name="country">
+			<value>us</value>
+		</property>
+		<property name="emailAddress">
+			<value>address_email@domain.com</value>
+		</property>
+		<property name="fax">
+			<value>2223334444</value>
+		</property>
+		<property name="firstName">
+			<value>firstname</value>
+		</property>
+		<property name="lastName">
+			<value>lastname</value>
+		</property>
+		<property name="mi">
+			<value>m</value>
+		</property>
+		<property name="phone">
+			<value>6667778888</value>
+		</property>
+		<property name="postalCode">
+			<value>94155</value>
+		</property>
+		<property name="province">
+			<value>VA</value>
+		</property>
+	</bean>
+
+	<bean name="NestedEntity" class="com.tll.model.test.NestedEntity" parent="entityBase" scope="prototype">
+		<property name="name">
+			<value>nested entity</value>
+		</property>
+    <property name="nestedData">
+		  <bean class="com.tll.model.test.NestedData">
+		    <property name="nested1">
+		      <value>nested 1</value>
+		    </property>
+		    <property name="nested2">
+		      <value>nested 2</value>
+		    </property>
+		  </bean>
+    </property>
+	</bean>
+	
+	<bean name="Account" class="com.tll.model.test.Account" parent="entityBase" scope="prototype">
+    <property name="name">
+      <value>asp</value>
+    </property>
+		<property name="status">
+			<value>OPEN</value>
+		</property>
+		<property name="billingModel">
+			<value>billing model</value>
+		</property>
+		<property name="dateLastCharged">
+			<value>1/1/2001</value>
+		</property>
+	</bean>
+
+	<bean name="AccountAddress" class="com.tll.model.test.AccountAddress" parent="entityBase" scope="prototype">
+		<property name="name">
+			<value>home</value>
+		</property>
+	</bean>
+
+</beans>
