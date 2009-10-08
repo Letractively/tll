@@ -123,6 +123,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		dockPanel.add(rightNav, DockPanel.EAST);
 		dockPanel.add(center, DockPanel.CENTER);
 		dockPanel.setStylePrimaryName(Styles.MAIN);
+		dockPanel.getElement().setAttribute("align", "center");
 
 		final Element headerTd = header.getElement().getParentElement();
 		final Element viewpathTd = viewpath.getElement().getParentElement();
