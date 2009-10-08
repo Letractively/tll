@@ -210,7 +210,7 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 					c.load(new PrimaryKeySearch(intfKey), adr);
 					return c;
 				}
-			});
+			}, true);
 		addWidget(intfStack);
 	}
 

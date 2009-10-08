@@ -100,7 +100,7 @@ public class AccountInterfaceView extends AbstractRpcAndModelAwareView<AccountIn
 					c.load(new AccountInterfaceDataSearch(initializer.getAccountRef().getId(), intfKey.getId()), adr);
 					return c;
 				}
-			});
+			}, false);
 		addWidget(intfStack);
 	}
 
