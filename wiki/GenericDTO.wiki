@@ -1,0 +1,7 @@
+#labels Phase-Design,Phase-Implementation
+A pattern I coin as the "Generic DTO" pattern gets around the issue of serializing server-side entities having adorned model data that are not "marshalable" through GWT RPC.  As background to the issue, check out:
+  * [http://groups.google.com/group/google-web-toolkit/browse_thread/thread/ed589d4e363d7f65/b3cd4993f6b539e5?lnk=gst&q=jdo+rpc#b3cd4993f6b539e5 GWT RPC (the problem)]
+  * [http://noon.gilead.free.fr/gilead/ Gilead (a solution)]
+
+
+TODO: finish
