@@ -56,6 +56,13 @@ public abstract class ListingView<I extends IViewInitializer, L extends ModelLis
 		}
 	}
 
+	@Override
+	protected boolean shouldHandleModelChangeEvent(ModelChangeEvent event) {
+		// we don't know if the listing contains a corres. row so we simply defer to
+		// the listing widget
+		return true;
+	}
+
 	public String getLongViewName() {
 		return null;
 	}

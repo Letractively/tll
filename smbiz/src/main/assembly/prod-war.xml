@@ -17,7 +17,7 @@
 
 		<!-- core -->
 		<fileSet>
-			<directory>target/war</directory>
+			<directory>target/${build.finalName}</directory>
 			<outputDirectory>/</outputDirectory>
 			<excludes>
 				<exclude>**/*.gwt.xml</exclude>
@@ -29,12 +29,20 @@
 				<exclude>**/common/**/*Async.class</exclude>
 				<exclude>**/public/**</exclude>
 				<exclude>**/lib/gwt-dev*</exclude>
-				<exclude>**/lib/gwt-user*</exclude>
-				<exclude>**/lib/gwt-incubator*</exclude>
 				<exclude>**/lib/tll-*</exclude>
 			</excludes>
 		</fileSet>
 
+		<!--  gwt compilation assets -->
+		<fileSet>
+			<directory>target/smbizAdmin</directory>
+			<outputDirectory>/smbizAdmin</outputDirectory>
+			<excludes>
+				<exclude>hosted.html</exclude>
+			</excludes>
+		</fileSet>
+
+		<!-- tll server jar -->
 		<fileSet>
 			<directory>target</directory>
 			<outputDirectory>/WEB-INF/lib</outputDirectory>
