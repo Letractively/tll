@@ -20,6 +20,7 @@ import com.tll.client.data.rpc.AuxDataCommand;
 import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.data.rpc.IRpcCommand;
 import com.tll.client.model.ModelAssembler;
+import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.mvc.view.AbstractRpcAndModelAwareView;
 import com.tll.client.mvc.view.StaticViewInitializer;
 import com.tll.client.mvc.view.ViewClass;
@@ -218,6 +219,12 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 	protected void decorateToolbar(ViewToolbar toolbar) {
 		// add add interface button
 		toolbar.addViewOpButton(this.btnAddIntf, "Add Interface");
+	}
+
+	@Override
+	protected boolean shouldHandleModelChangeEvent(ModelChangeEvent event) {
+		final SmbizEntityType set = (SmbizEntityType) event.getModelKey().getEntityType();
+		return set.isInterfaceType();
 	}
 
 	@Override

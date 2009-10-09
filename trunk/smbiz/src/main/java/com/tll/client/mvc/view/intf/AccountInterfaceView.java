@@ -8,6 +8,7 @@ package com.tll.client.mvc.view.intf;
 import com.tll.client.SmbizAdmin;
 import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.data.rpc.IRpcCommand;
+import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.mvc.view.AbstractRpcAndModelAwareView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.field.FieldPanel;
@@ -102,6 +103,12 @@ public class AccountInterfaceView extends AbstractRpcAndModelAwareView<AccountIn
 				}
 			}, false);
 		addWidget(intfStack);
+	}
+
+	@Override
+	protected boolean shouldHandleModelChangeEvent(ModelChangeEvent event) {
+		final SmbizEntityType set = (SmbizEntityType) event.getModelKey().getEntityType();
+		return set == SmbizEntityType.ACCOUNT_INTERFACE;
 	}
 
 	@Override

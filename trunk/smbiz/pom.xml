@@ -262,6 +262,7 @@
 								<loadfile property="gcp" srcFile="target/gwt-cp.txt" />
 								<property name="gwt.compile.classpath" value="${project.build.outputDirectory};${gcp}" />
 								<property name="gwt.compile.modules" value="${gwtTargetModule}" />
+								<property name="gwt.shell.warDir.path" value="target" />
 								<echo message="classpath: ${gwt.compile.classpath}" />
 								<ant antfile="${basedir}/../client/build-gwt.xml">
 									<target name="compile" />
