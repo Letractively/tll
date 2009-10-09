@@ -5,8 +5,9 @@
 		1) gwt.compile.modules
 		2) gwt.compile.style
 		3) gwt.compile.classpath
+		4) gwt.shell.warDir.path
 		
-	These properties must be *ADDITIONALLY* persent to run the build shell targets:
+	These properties must be *ADDITIONALLY* present to run the build shell targets:
 		1) gwt.shell.startupUrl
 		2) gwt.shell.entryModule
 	
@@ -70,7 +71,7 @@
 			<jvmarg value="-Xss1024k" />
 			<jvmarg value="-ea" />
 			<arg value="-war" />
-			<arg value="target/war" />
+			<arg value="${gwt.shell.warDir.path}" />
 			<arg value="-localWorkers" />
 			<arg value="2" />
 			<arg value="-style" />
