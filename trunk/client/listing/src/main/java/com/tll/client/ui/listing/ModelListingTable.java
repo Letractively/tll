@@ -19,7 +19,8 @@ import com.tll.common.model.ModelKey;
 public final class ModelListingTable extends ListingTable<Model> {
 
 	/**
-	 * {@link Model}s for each listing element row.
+	 * The row data comprised of . {@link Model} instances for each listing
+	 * element row.
 	 */
 	protected final List<Model> rowDataList = new ArrayList<Model>();
 
@@ -56,14 +57,26 @@ public final class ModelListingTable extends ListingTable<Model> {
 	 *         given row key is present in the table.
 	 */
 	int getRowIndex(ModelKey rowKey) {
-		final int i = rowDataList.indexOf(rowKey);
-		return i == -1 ? -1 : i + 1; // account for header row
+		for(int i = 0; i < rowDataList.size(); i++) {
+			final ModelKey rdlKey = rowDataList.get(i).getKey();
+			if(rdlKey.equals(rowKey)) return i + 1; // account for header row
+		}
+		// can't find
+		return -1;
 	}
 
 	@Override
 	protected void setRowData(int rowIndex, int rowNum, Model rowData, boolean overwriteOnNull) {
+		assert rowIndex >= 1;	// min index is one after the header row!
 		super.setRowData(rowIndex, rowNum, rowData, overwriteOnNull);
-		rowDataList.add(rowData);
+		final int dindex = rowIndex - 1;
+		if(dindex == rowDataList.size()) {
+			rowDataList.add(rowData);
+		}
+		else {
+			assert dindex < rowDataList.size();
+			rowDataList.set(dindex, rowData);
+		}
 	}
 
 	@Override
@@ -82,5 +95,14 @@ public final class ModelListingTable extends ListingTable<Model> {
 	void deleteRow(int rowIndex) {
 		rowDataList.remove(rowIndex - 1);
 		super.deleteRow(rowIndex);
+	}
+
+	/**
+	 * Applies model data to a given row in the UI only and does not alter the
+	 * underlying row data.
+	 */
+	void applyModeltoUi(int rowIndex, Model mdata) {
+		super.setRowData(rowIndex, -1, mdata, true);
+		getRowFormatter().addStyleName(rowIndex, Styles.UPDATED);
 	}
 }

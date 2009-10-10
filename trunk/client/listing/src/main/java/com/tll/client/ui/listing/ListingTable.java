@@ -309,7 +309,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 
 	/**
 	 * Sets row data.
-	 * @param rowIndex
+	 * @param rowIndex 0-based index that considers the header row
 	 * @param rowNum The page related row number. If its value is -1, then it is
 	 *        not set in the table.
 	 * @param rowData The data by which the row's cells are populated
@@ -375,21 +375,21 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 
 		switch(event.getTypeInt()) {
 
-			case Event.ONMOUSEOVER:
-				final Element td = getEventTargetCell(event);
-				if(td == null) return;
-				final Element tr = td.getParentElement();
-				final Element tbody = tr.getParentElement();
-				setActiveRow(DOM.getChildIndex((com.google.gwt.user.client.Element) tbody.cast(),
-						(com.google.gwt.user.client.Element) tr.cast()));
-				break;
+		case Event.ONMOUSEOVER:
+			final Element td = getEventTargetCell(event);
+			if(td == null) return;
+			final Element tr = td.getParentElement();
+			final Element tbody = tr.getParentElement();
+			setActiveRow(DOM.getChildIndex((com.google.gwt.user.client.Element) tbody.cast(),
+					(com.google.gwt.user.client.Element) tr.cast()));
+			break;
 
-			case Event.ONMOUSEOUT:
-				if(actvRowIndex >= 0) {
-					getRowFormatter().removeStyleName(actvRowIndex, Styles.ACTIVE);
-					actvRowIndex = -1;
-				}
-				break;
+		case Event.ONMOUSEOUT:
+			if(actvRowIndex >= 0) {
+				getRowFormatter().removeStyleName(actvRowIndex, Styles.ACTIVE);
+				actvRowIndex = -1;
+			}
+			break;
 		}
 	}
 
