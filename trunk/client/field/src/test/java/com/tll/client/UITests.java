@@ -28,7 +28,9 @@ import com.tll.client.ui.edit.IEditHandler;
 import com.tll.client.ui.field.FieldErrorHandler;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
+import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.GridFieldComposer;
+import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.RadioGroupField.GridStyles;
 import com.tll.client.ui.msg.GlobalMsgPanel;
@@ -56,8 +58,115 @@ public final class UITests extends AbstractUITest {
 	@Override
 	protected UITestCase[] getTestCases() {
 		return new UITestCase[] {
-			new FieldWidgetTest(), new FieldBindingLifecycleTest() };
+			new FieldWidgetTest(), new FlowPanelFieldComposerTest(), new FieldBindingLifecycleTest()
+		};
 	}
+
+	/**
+	 * TestEnum
+	 * @author jpk
+	 */
+	static enum TestEnum {
+		ENUM_1,
+		ENUM_2,
+		ENUM_3,
+		ENUM_4,
+		ENUM_5,
+		ENUM_6,
+		ENUM_7,
+		ENUM_8;
+	}
+
+	/**
+	 * FieldProvider
+	 * @author jpk
+	 */
+	static class FieldProvider implements IFieldGroupProvider {
+
+		@Override
+		public FieldGroup getFieldGroup() {
+			final FieldGroup group = new FieldGroup("Test Fields");
+
+			final Map<String, String> data = new LinkedHashMap<String, String>();
+			data.put("valueA", "Key1");
+			data.put("valueB", "Key2");
+			data.put("valueC", "Key3");
+			data.put("valueD", "Key4");
+			data.put("valueE", "Key5");
+			data.put("valueF", "Key6");
+			data.put("valueG", "Key7");
+			data.put("valueH", "Key8");
+			data.put("valueI", "Key9");
+			data.put("valueJ", "Key10");
+
+			IFieldWidget<String> sfw;
+			IFieldWidget<Boolean> bfw;
+			IFieldWidget<Date> dfw;
+			IFieldWidget<TestEnum> efw;
+			IFieldWidget<Collection<String>> cfw;
+
+			sfw = FieldFactory.ftext("ftext", "ftext", "TextField", "TextField", 8);
+			sfw.setValue("ival");
+			sfw.setRequired(true);
+			group.addField(sfw);
+
+			sfw = FieldFactory.ftextarea("ftextarea", "ftextarea", "Textarea", "Textarea", 5, 10);
+			sfw.setValue("ival");
+			sfw.setRequired(true);
+			group.addField(sfw);
+
+			sfw = FieldFactory.fpassword("fpassword", "fpassword", "Password", "Password", 8);
+			sfw.setValue("ival");
+			sfw.setRequired(true);
+			group.addField(sfw);
+
+			dfw = FieldFactory.fdate("fdate", "fdate", "DateField", "DateField", GlobalFormat.DATE);
+			dfw.setValue(new Date());
+			dfw.setRequired(true);
+			group.addField(dfw);
+
+			bfw = FieldFactory.fcheckbox("fcheckbox", "fcheckbox", "Checkbox", "Checkbox");
+			bfw.setValue(Boolean.TRUE);
+			bfw.setRequired(true);
+			group.addField(bfw);
+
+			sfw = FieldFactory.fselect("fselect", "fselect", "Select", "Select", data);
+			sfw.setValue("valueC");
+			sfw.setRequired(true);
+			group.addField(sfw);
+
+			cfw = FieldFactory.fmultiselect("fmultiselect", "fmultiselect", "Multi-select", "Multi-select", data);
+			final ArrayList<String> ival = new ArrayList<String>();
+			ival.add("valueA");
+			ival.add("valueE");
+			ival.add("valueJ");
+			cfw.setValue(ival);
+			cfw.setRequired(true);
+			group.addField(cfw);
+
+			sfw =
+				FieldFactory.fradiogroup("fradiogroup", "fradiogroup", "Radio Group", "Radio Group", data, new GridRenderer(
+						3, GridStyles.GRID));
+			sfw.setValue("valueB");
+			sfw.setRequired(true);
+			group.addField(sfw);
+
+			sfw = FieldFactory.fsuggest("fsuggest", "fsuggest", "Suggest", "Suggest", data);
+			sfw.setValue("valueB");
+			sfw.setRequired(true);
+			group.addField(sfw);
+
+			efw =
+				FieldFactory.fenumradio("fenumradio", "fenumradio", "Enum Radio", "Enum Radio", TestEnum.class,
+						new GridRenderer(3, GridStyles.GRID));
+			efw.setValue(TestEnum.ENUM_7);
+			efw.setRequired(true);
+			group.addField(efw);
+
+			return group;
+		}
+
+	} // FieldProvider
 
 	/**
 	 * FieldWidgetTest - tests the rendering of fields and their value change
@@ -65,17 +174,6 @@ public final class UITests extends AbstractUITest {
 	 * @author jpk
 	 */
 	static final class FieldWidgetTest extends DefaultUITestCase {
-
-		enum TestEnum {
-			ENUM_1,
-			ENUM_2,
-			ENUM_3,
-			ENUM_4,
-			ENUM_5,
-			ENUM_6,
-			ENUM_7,
-			ENUM_8;
-		}
 
 		HorizontalPanel context;
 		FlowPanel pfields;
@@ -145,154 +243,19 @@ public final class UITests extends AbstractUITest {
 			}
 		}
 
+		@SuppressWarnings("unchecked")
 		private void generateFields() {
-			group = new FieldGroup("group");
-
-			final Map<String, String> data = new LinkedHashMap<String, String>();
-			data.put("valueA", "Key1");
-			data.put("valueB", "Key2");
-			data.put("valueC", "Key3");
-			data.put("valueD", "Key4");
-			data.put("valueE", "Key5");
-			data.put("valueF", "Key6");
-			data.put("valueG", "Key7");
-			data.put("valueH", "Key8");
-			data.put("valueI", "Key9");
-			data.put("valueJ", "Key10");
-
-			IFieldWidget<String> sfw;
-			IFieldWidget<Boolean> bfw;
-			IFieldWidget<Date> dfw;
-			IFieldWidget<TestEnum> efw;
-			IFieldWidget<Collection<String>> cfw;
-
-			sfw = FieldFactory.ftext("ftext", "ftext", "TextField", "TextField", 8);
-			sfw.setValue("ival");
-			sfw.setRequired(true);
-			group.addField(sfw);
-			sfw.addValueChangeHandler(new ValueChangeHandler<String>() {
+			group = new FieldProvider().getFieldGroup();
+			final ValueChangeHandler vch = new ValueChangeHandler() {
 
 				@Override
-				public void onValueChange(ValueChangeEvent<String> event) {
+				public void onValueChange(ValueChangeEvent event) {
 					vcd.addRow(event);
 				}
-			});
-
-			sfw = FieldFactory.ftextarea("ftextarea", "ftextarea", "Textarea", "Textarea", 5, 10);
-			sfw.setValue("ival");
-			sfw.setRequired(true);
-			group.addField(sfw);
-			sfw.addValueChangeHandler(new ValueChangeHandler<String>() {
-
-				@Override
-				public void onValueChange(ValueChangeEvent<String> event) {
-					vcd.addRow(event);
-				}
-			});
-
-			sfw = FieldFactory.fpassword("fpassword", "fpassword", "Password", "Password", 8);
-			sfw.setValue("ival");
-			sfw.setRequired(true);
-			group.addField(sfw);
-			sfw.addValueChangeHandler(new ValueChangeHandler<String>() {
-
-				@Override
-				public void onValueChange(ValueChangeEvent<String> event) {
-					vcd.addRow(event);
-				}
-			});
-
-			dfw = FieldFactory.fdate("fdate", "fdate", "DateField", "DateField", GlobalFormat.DATE);
-			dfw.setValue(new Date());
-			dfw.setRequired(true);
-			group.addField(dfw);
-			dfw.addValueChangeHandler(new ValueChangeHandler<Date>() {
-
-				@Override
-				public void onValueChange(ValueChangeEvent<Date> event) {
-					vcd.addRow(event);
-				}
-			});
-
-			bfw = FieldFactory.fcheckbox("fcheckbox", "fcheckbox", "Checkbox", "Checkbox");
-			bfw.setValue(Boolean.TRUE);
-			bfw.setRequired(true);
-			group.addField(bfw);
-			bfw.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-
-				@Override
-				public void onValueChange(ValueChangeEvent<Boolean> event) {
-					vcd.addRow(event);
-				}
-			});
-
-			sfw = FieldFactory.fselect("fselect", "fselect", "Select", "Select", data);
-			sfw.setValue("valueC");
-			sfw.setRequired(true);
-			group.addField(sfw);
-			sfw.addValueChangeHandler(new ValueChangeHandler<String>() {
-
-				@Override
-				public void onValueChange(ValueChangeEvent<String> event) {
-					vcd.addRow(event);
-				}
-			});
-
-			cfw = FieldFactory.fmultiselect("fmultiselect", "fmultiselect", "Multi-select", "Multi-select", data);
-			final ArrayList<String> ival = new ArrayList<String>();
-			ival.add("valueA");
-			ival.add("valueE");
-			ival.add("valueJ");
-			cfw.setValue(ival);
-			cfw.setRequired(true);
-			group.addField(cfw);
-			cfw.addValueChangeHandler(new ValueChangeHandler<Collection<String>>() {
-
-				@Override
-				public void onValueChange(ValueChangeEvent<Collection<String>> event) {
-					vcd.addRow(event);
-				}
-			});
-
-			sfw =
-				FieldFactory.fradiogroup("fradiogroup", "fradiogroup", "Radio Group", "Radio Group", data, new GridRenderer(
-						3, GridStyles.GRID));
-			sfw.setValue("valueB");
-			sfw.setRequired(true);
-			group.addField(sfw);
-			sfw.addValueChangeHandler(new ValueChangeHandler<String>() {
-
-				@Override
-				public void onValueChange(ValueChangeEvent<String> event) {
-					vcd.addRow(event);
-				}
-			});
-
-			sfw = FieldFactory.fsuggest("fsuggest", "fsuggest", "Suggest", "Suggest", data);
-			sfw.setValue("valueB");
-			sfw.setRequired(true);
-			group.addField(sfw);
-			sfw.addValueChangeHandler(new ValueChangeHandler<String>() {
-
-				@Override
-				public void onValueChange(ValueChangeEvent<String> event) {
-					vcd.addRow(event);
-				}
-			});
-
-			efw =
-				FieldFactory.fenumradio("fenumradio", "fenumradio", "Enum Radio", "Enum Radio", TestEnum.class,
-						new GridRenderer(3, GridStyles.GRID));
-			efw.setValue(TestEnum.ENUM_7);
-			efw.setRequired(true);
-			group.addField(efw);
-			efw.addValueChangeHandler(new ValueChangeHandler<TestEnum>() {
-
-				@Override
-				public void onValueChange(ValueChangeEvent<TestEnum> event) {
-					vcd.addRow(event);
-				}
-			});
+			};
+			for(final IFieldWidget<?> fw : group.getFieldWidgets(null)) {
+				fw.addValueChangeHandler(vch);
+			}
 
 			// set error handler for all fields to test error handling
 			mregistry = new MsgPopupRegistry();
@@ -330,7 +293,8 @@ public final class UITests extends AbstractUITest {
 					public void onClick(ClickEvent event) {
 						group.setVisible(!group.isVisible());
 					}
-				}) };
+				})
+			};
 		}
 
 		@Override
@@ -368,6 +332,97 @@ public final class UITests extends AbstractUITest {
 		}
 
 	} // FieldWidgetTest
+
+	static class FlowPanelFieldComposerTest extends DefaultUITestCase {
+
+		FlowPanel context;
+		MsgPopupRegistry mregistry;
+		FieldGroup group;
+		Button[] testActions;
+
+		/**
+		 * Constructor
+		 */
+		public FlowPanelFieldComposerTest() {
+			super("FlowPanelFieldComposerTest", "Test the css/styling of laying out fields using the FlowPanelFieldComposer");
+		}
+
+		@Override
+		protected Button[] getTestActions() {
+			return testActions;
+		}
+
+		private void stubTestActions() {
+			assert testActions == null;
+			testActions = new Button[] {
+				new Button("enable/disable", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						group.setEnabled(!group.isEnabled());
+					}
+				}), new Button("editable/read-only", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						group.setReadOnly(!group.isReadOnly());
+					}
+				}), new Button("visible/not visible", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						group.setVisible(!group.isVisible());
+					}
+				})
+			};
+		}
+
+		@Override
+		public void init() {
+			context = new FlowPanel();
+			context.getElement().getStyle().setProperty("margin", "1em");
+			context.getElement().getStyle().setProperty("padding", "1em");
+			context.getElement().getStyle().setProperty("border", "1px solid gray");
+
+			final FlowPanelFieldComposer composer = new FlowPanelFieldComposer();
+			composer.setCanvas(context);
+
+			group = new FieldProvider().getFieldGroup();
+			composer.addField(group.getFieldWidget("ftext"));
+			composer.addField(group.getFieldWidget("fselect"));
+			composer.addField(group.getFieldWidget("fcheckbox"));
+			composer.newRow();
+			composer.addField(group.getFieldWidget("ftextarea"));
+			composer.addField(group.getFieldWidget("fpassword"));
+			composer.addField(group.getFieldWidget("fdate"));
+			composer.newRow();
+			composer.addField(group.getFieldWidget("fmultiselect"));
+			composer.addField(group.getFieldWidget("fradiogroup"));
+			composer.addField(group.getFieldWidget("fsuggest"));
+			composer.addField(group.getFieldWidget("fenumradio"));
+
+			// set error handler for all fields to test error handling
+			mregistry = new MsgPopupRegistry();
+			group.setErrorHandler(new FieldErrorHandler(mregistry));
+
+			stubTestActions();
+		}
+
+		@Override
+		public void teardown() {
+			testActions = null;
+			group = null;
+			mregistry.clear();
+			mregistry = null;
+			context = null;
+		}
+
+		@Override
+		protected Widget getContext() {
+			return context;
+		}
+
+	} // FlowPanelFieldComposerTest
 
 	/**
 	 * FieldBindingLifecycleTest - Tests field/model binding functionality through

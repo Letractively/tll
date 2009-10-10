@@ -61,6 +61,16 @@ IValidator {
 		 */
 		public static final String DISABLED = "disabled";
 
+		/**
+		 * Style for indicating read-only.
+		 */
+		public static final String READ_ONLY = "ro";
+
+		/**
+		 * Style for indicating a field has focus.
+		 */
+		public static final String ACTIVE = "active";
+
 	} // Styles
 
 	/**

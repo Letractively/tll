@@ -36,7 +36,7 @@ public final class TextField extends AbstractField<String> implements IHasMaxLen
 	}
 
 	private final Impl tb;
-	
+
 	/**
 	 * Optional format direcive.
 	 */
@@ -55,6 +55,7 @@ public final class TextField extends AbstractField<String> implements IHasMaxLen
 		tb = new Impl();
 		setVisibleLen(visibleLength);
 		tb.addValueChangeHandler(this);
+		tb.addFocusHandler(this);
 		tb.addBlurHandler(this);
 		setConverter(ToStringConverter.INSTANCE);
 		addHandler(new KeyPressHandler() {
@@ -66,7 +67,7 @@ public final class TextField extends AbstractField<String> implements IHasMaxLen
 				}
 			}
 		}, KeyPressEvent.getType());
-		
+
 	}
 
 	@Override

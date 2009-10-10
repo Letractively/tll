@@ -8,6 +8,8 @@ import java.util.Map;
 
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
@@ -80,10 +82,15 @@ public final class SuggestField extends AbstractDataField<String, String> {
 		}
 
 		@Override
+		public HandlerRegistration addFocusHandler(FocusHandler handler) {
+			return addDomHandler(handler, FocusEvent.getType());
+		}
+
+		@Override
 		public HandlerRegistration addBlurHandler(BlurHandler handler) {
 			return addDomHandler(handler, BlurEvent.getType());
 		}
-		
+
 		@Override
 		public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
 			return addDomHandler(handler, MouseOverEvent.getType());
@@ -96,7 +103,7 @@ public final class SuggestField extends AbstractDataField<String, String> {
 	}
 
 	private final Impl sb;
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -110,7 +117,7 @@ public final class SuggestField extends AbstractDataField<String, String> {
 		sb = new Impl();
 		// fires when suggest box is manually edited
 		sb.addValueChangeHandler(this);
-		
+
 		// fires when, you guessed it, a selection is clicked
 		sb.addSelectionHandler(new SelectionHandler<Suggestion>() {
 
@@ -120,11 +127,12 @@ public final class SuggestField extends AbstractDataField<String, String> {
 				ValueChangeEvent.fire(sb, getDataValue(event.getSelectedItem().getReplacementString()));
 			}
 		});
+		sb.addFocusHandler(this);
 		sb.addBlurHandler(this);
 		setConverter(ToStringConverter.INSTANCE);
 		setData(data);
 	}
-	
+
 	private void buildOracle() {
 		final MultiWordSuggestOracle oracle = sb.getOracle();
 		oracle.clear();

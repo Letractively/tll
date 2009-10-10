@@ -9,6 +9,8 @@ import java.util.List;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -47,7 +49,7 @@ import com.tll.util.StringUtil;
  * @param <V> the value type
  * @author jpk
  */
-public abstract class AbstractField<V> extends Composite implements IFieldWidget<V>, ValueChangeHandler<V>, Focusable, BlurHandler {
+public abstract class AbstractField<V> extends Composite implements IFieldWidget<V>, ValueChangeHandler<V>, Focusable, BlurHandler, FocusHandler {
 
 	/**
 	 * Reflects the number of instantiated {@link AbstractField}s. This is
@@ -546,17 +548,25 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 			sval = StringUtil.isEmpty(sval) ? dfltReadOnlyEmptyValue : sval;
 			rof.setText(sval);
 		}
+		if(fldLbl != null) fldLbl.setFor(readOnly ? "" : domId);
 
 		// set readonly/editable display
 		if(rof != null) rof.setVisible(readOnly);
 		formWidget.setVisible(!readOnly);
 
-		// apply disabled property
-		// formWidget.getElement().setPropertyBoolean(Styles.DISABLED, !enabled);
-
 		// resolve the containers
 		final Widget fldContainer = container == null ? this : container;
 		final Widget lblContainer = fldLbl == null ? null : labelContainer == null ? fldLbl : labelContainer;
+
+		// apply readOnly property to "containing" widget
+		if(readOnly) {
+			fldContainer.addStyleName(Styles.READ_ONLY);
+			if(lblContainer != null) lblContainer.addStyleName(Styles.READ_ONLY);
+		}
+		else {
+			fldContainer.removeStyleName(Styles.READ_ONLY);
+			if(lblContainer != null) lblContainer.removeStyleName(Styles.READ_ONLY);
+		}
 
 		// apply enabled property to "containing" widget
 		if(enabled) {
@@ -600,7 +610,13 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	}
 
 	@Override
+	public void onFocus(FocusEvent event) {
+		addStyleName(Styles.ACTIVE);
+	}
+
+	@Override
 	public void onBlur(BlurEvent event) {
+		removeStyleName(Styles.ACTIVE);
 		if(incrValFlag) {
 			resolveError(ErrorDisplay.LOCAL.flag());	// clear out old first
 			try {

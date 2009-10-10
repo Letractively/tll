@@ -8,6 +8,8 @@ import java.util.Date;
 
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
@@ -57,6 +59,11 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 		public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
 			return addDomHandler(handler, MouseOutEvent.getType());
 		}
+
+		@Override
+		public HandlerRegistration addFocusHandler(FocusHandler handler) {
+			return addDomHandler(handler, FocusEvent.getType());
+		}
 	}
 
 	/**
@@ -100,6 +107,7 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 		super(name, propName, labelText, helpText);
 		dbox = new Impl();
 		dbox.addValueChangeHandler(this);
+		dbox.addFocusHandler(this);
 		dbox.addBlurHandler(this);
 		setFormat(format);
 	}

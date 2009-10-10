@@ -16,9 +16,13 @@ label {
 }
 
 .fld .tbox {
-	padding: 0;
+	padding: 1px;
 	margin: 0 1px 0 0;
 	border: 1px solid gray;
+}
+
+.fld .get-ListBox {
+		padding: 0 !important; /* this makes it equal in height to text boxes! */
 }
 
 /* checkbox and radio specific label styling */
@@ -29,6 +33,11 @@ label {
 label .rqd {
 	color: red;
 	font-size: 14px;
+}
+
+.active input, .active select, .active textarea {
+	border-color: purple !important;
+	background-color: white !important;
 }
 
 .error input, .error select, .error textarea {
@@ -44,6 +53,10 @@ label .rqd {
 .fld .icon {
 	cursor: pointer;
 	display: inline;
+}
+
+label.ro {
+	cursor: default;
 }
 
 /* radio field grid styling (GridRenderer grid style) */
@@ -76,6 +89,10 @@ label .rqd {
   /*width: 100%;*/
 }
 
+.frow .cbrb input {
+		margin: 3px 0 0 6px;
+}
+
 /* GridFieldComposer styles */
 .fgrid {
 }
@@ -85,7 +102,7 @@ label .rqd {
 }
 
 .fgrid .cell-fld {
-  padding: 2px;
+  padding: 0 0 2px 10px;
 }
 
 /* TabbedIndexedFieldPanel */

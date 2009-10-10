@@ -60,6 +60,7 @@ public final class CheckboxField extends AbstractField<Boolean> {
 		setConverter(ToBooleanConverter.DEFAULT);
 		this.cblabelText = labelText;
 		cb = new Impl(cblabelText);
+		cb.addFocusHandler(this);
 		cb.addBlurHandler(this);
 		cb.addValueChangeHandler(this);
 	}
@@ -85,7 +86,7 @@ public final class CheckboxField extends AbstractField<Boolean> {
 
 	@Override
 	public void setReadOnly(boolean readOnly) {
-		setLabelText(readOnly ? cblabelText : null);
+		if(cb != null) cb.setText(readOnly ? "" : cblabelText);
 		super.setReadOnly(readOnly);
 	}
 

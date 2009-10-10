@@ -100,6 +100,7 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 		super(name, propName, labelText, helpText);
 		lb = new Impl();
 		lb.addValueChangeHandler(this);
+		lb.addFocusHandler(this);
 		lb.addBlurHandler(this);
 		setData(data);
 	}
