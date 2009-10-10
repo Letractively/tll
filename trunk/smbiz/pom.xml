@@ -252,7 +252,6 @@
 							</tasks>
 						</configuration>
 					</execution>
-					<!--
 					<execution>
 						<id>gwt-compile</id>
 						<phase>prepare-package</phase>
@@ -271,7 +270,6 @@
 							</tasks>
 						</configuration>
 					</execution>
-					-->
 				</executions>
 			</plugin>
 
