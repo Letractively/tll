@@ -70,7 +70,7 @@ implements IModelChangeHandler {
 			final int rowIndex = getRowIndex(mkey);
 			if(rowIndex != -1) {
 				assert rowIndex > 0; // header row
-				updateRow(rowIndex, event.getModel());
+				table.applyModeltoUi(rowIndex, event.getModel());
 			}
 			break;
 		}

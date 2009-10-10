@@ -176,20 +176,38 @@ Focusable, KeyDownHandler, IListingHandler<R>, IHasModelChangeHandlers {
 		return table.getRowCount();
 	}
 
+	/**
+	 * Physically adds a row.
+	 * @param rowData The row data to add
+	 */
 	public final void addRow(R rowData) {
 		table.addRow(rowData);
 		if(navBar != null) navBar.increment();
 	}
 
+	/**
+	 * Updates a row at the given rowIndex.
+	 * @param rowIndex 0-based row index
+	 * @param rowData
+	 */
 	public final void updateRow(int rowIndex, R rowData) {
 		table.updateRow(rowIndex, rowData);
 	}
 
+	/**
+	 * Physically deletes a row from the listing.
+	 * @param rowIndex the 0-based index
+	 */
 	public final void deleteRow(int rowIndex) {
 		table.deleteRow(rowIndex);
 		if(navBar != null) navBar.decrement();
 	}
 
+	/**
+	 * Marks a row as deleted or un-deleted.
+	 * @param rowIndex the 0-based index
+	 * @param markDeleted true/false
+	 */
 	public final void markRowDeleted(int rowIndex, boolean markDeleted) {
 		table.markRowDeleted(rowIndex, markDeleted);
 	}
