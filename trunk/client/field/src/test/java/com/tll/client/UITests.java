@@ -58,7 +58,7 @@ public final class UITests extends AbstractUITest {
 	@Override
 	protected UITestCase[] getTestCases() {
 		return new UITestCase[] {
-			new FieldWidgetTest(), new FlowPanelFieldComposerTest(), new FieldBindingLifecycleTest()
+			new GridFieldComposerTest(), new FlowPanelFieldComposerTest(), new FieldBindingLifecycleTest()
 		};
 	}
 
@@ -169,11 +169,10 @@ public final class UITests extends AbstractUITest {
 	} // FieldProvider
 
 	/**
-	 * FieldWidgetTest - tests the rendering of fields and their value change
-	 * event handling for all defined field widget types.
+	 * GridFieldComposerTest - tests the rendering of fields using the {@link GridFieldComposer}.
 	 * @author jpk
 	 */
-	static final class FieldWidgetTest extends DefaultUITestCase {
+	static final class GridFieldComposerTest extends DefaultUITestCase {
 
 		HorizontalPanel context;
 		FlowPanel pfields;
@@ -185,8 +184,8 @@ public final class UITests extends AbstractUITest {
 		/**
 		 * Constructor
 		 */
-		public FieldWidgetTest() {
-			super("Field widget test", "Renders all defined field widgets verifying their operation");
+		public GridFieldComposerTest() {
+			super("GridFieldComposer Test", "Renders fields using the GridFieldComposer");
 		}
 
 		static class ValueChangeDisplay extends Composite {
@@ -331,8 +330,12 @@ public final class UITests extends AbstractUITest {
 			context = null;
 		}
 
-	} // FieldWidgetTest
+	} // GridFieldComposerTest
 
+	/**
+	 * FlowPanelFieldComposerTest - Renders fields using the {@link FlowPanelFieldComposer}.
+	 * @author jpk
+	 */
 	static class FlowPanelFieldComposerTest extends DefaultUITestCase {
 
 		FlowPanel context;
@@ -344,7 +347,7 @@ public final class UITests extends AbstractUITest {
 		 * Constructor
 		 */
 		public FlowPanelFieldComposerTest() {
-			super("FlowPanelFieldComposerTest", "Test the css/styling of laying out fields using the FlowPanelFieldComposer");
+			super("FlowPanelFieldComposer Test", "Renders fields using the FlowPanelFieldComposer");
 		}
 
 		@Override

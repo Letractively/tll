@@ -1,28 +1,29 @@
 @CHARSET "ISO-8859-1";
 
 label {
-	color: blue;
-	cursor: pointer;
-	cursor: hand;
-	white-space: nowrap;
+  color: blue;
+  cursor: pointer;
+  cursor: hand;
+  white-space: nowrap;
 }
 
 .fld {
+  
 }
 
 .fldtitle {
-	font-weight: bold;
-	white-space: nowrap;
+  font-weight: bold;
+  white-space: nowrap;
 }
 
 .fld .tbox {
-	padding: 1px;
-	margin: 0 1px 0 0;
-	border: 1px solid gray;
+  padding: 1px;
+  margin: 0 1px 0 0;
+  border: 1px solid gray;
 }
 
-.fld .get-ListBox {
-		padding: 0 !important; /* this makes it equal in height to text boxes! */
+.fld .gwt-ListBox {
+  padding: 0 !important; /* this makes it equal in height to text boxes! */
 }
 
 /* checkbox and radio specific label styling */
@@ -31,36 +32,41 @@ label {
 }
 
 label .rqd {
-	color: red;
-	font-size: 14px;
+  color: red;
+  font-size: 14px;
 }
 
-.active input, .active select, .active textarea {
-	border-color: purple !important;
-	background-color: white !important;
+.active input,.active select,.active textarea {
+  border-color: purple !important;
+  background-color: white !important;
 }
 
-.error input, .error select, .error textarea {
-	border-color: red !important;
-	background-color: #FFDFDF;
+.error input,.error select,.error textarea {
+  border-color: red !important;
+  background-color: #FFDFDF;
 }
 
-.dirty input, .dirty select, .dirty textarea {
-	border-color: #007BBF !important;
-	background-color: #DFF4FF;
+.dirty input,.dirty select,.dirty textarea {
+  border-color: #007BBF !important;
+  background-color: #DFF4FF;
 }
 
 .fld .icon {
-	cursor: pointer;
-	display: inline;
+  cursor: pointer;
+  display: inline;
 }
 
-label.ro {
-	cursor: default;
+label.ro, .ro label {
+  cursor: default !important;
 }
+
+.ro .fld, .ro label {
+  margin-right: 10px;
+ }
 
 /* radio field grid styling (GridRenderer grid style) */
 .fradioGrid {
+  
 }
 
 .fradioGrid td {
@@ -69,16 +75,18 @@ label.ro {
 
 /* field panel styles */
 .fpnl {
+  
 }
 
 .fpnl .gwt-DisclosurePanel .header td {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 /* FlowPanelFieldComposer styles */
 .fldc {
   margin: 1px;
 }
+
 .fldc a {
   display: block;
 }
@@ -90,11 +98,12 @@ label.ro {
 }
 
 .frow .cbrb input {
-		margin: 3px 0 0 6px;
+  margin: 3px 0 0 6px;
 }
 
 /* GridFieldComposer styles */
 .fgrid {
+  
 }
 
 .fgrid .cell-lbl {
@@ -107,6 +116,7 @@ label.ro {
 
 /* TabbedIndexedFieldPanel */
 .tifp {
+  
 }
 
 .tifp .empty {
@@ -114,47 +124,51 @@ label.ro {
 }
 
 .tifp .gwt-TabBar .gwt-TabBarItem .delbtn {
-	display: none;
+  display: none;
 }
 
 .tifp .gwt-TabBar .gwt-TabBarItem-selected .delbtn {
-	background-color: transparent !important;
-	display: block;
+  background-color: transparent !important;
+  display: block;
 }
+
 .tifp .gwt-TabBar .gwt-TabBarItem-selected * {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 .tifp .toolbar {
-	background-color: transparent;
-	height: inherit !important;
+  background-color: transparent;
+  height: inherit !important;
 }
-.tifp .button-up,
-.tifp .button-up-hovering,
-.tifp .button-up-disabled {
+
+.tifp .button-up,.tifp .button-up-hovering,.tifp .button-up-disabled {
   padding: 0;
 }
-.tifp .button-down,
-.tifp .button-down-hovering,
-.tifp .button-down-disabled {
+
+.tifp .button-down,.tifp .button-down-hovering,.tifp .button-down-disabled {
   padding: 0;
 }
 
 .tifp .button-up {
   border-color: transparent;
 }
+
 .tifp .button-up-hovering {
-	background-color: white;
+  background-color: white;
 }
+
 .tifp .button-up-disabled {
   border-color: transparent;
 }
+
 .tifp .button-down {
   border-color: transparent;
 }
+
 .tifp .button-down-hovering {
   border-color: transparent;
 }
+
 .tifp .button-down-disabled {
   border-color: transparent;
 }
