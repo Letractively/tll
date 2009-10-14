@@ -584,7 +584,7 @@ public final class BuildTools {
 	    ant.mkdir(dir: tgtDir)
 	    def gwtProps = new HashMap();
 	    gwtProps.put("appVersion", project.version)
-	    def f = new File(tgtDir, 'Constants.properties')
+	    def f = new File(tgtDir, 'SmbizConstants.properties')
 	    f.createNewFile()
 	    StringBuilder sbuf = new StringBuilder(1024)
 	    gwtProps.each() {key, value -> 
