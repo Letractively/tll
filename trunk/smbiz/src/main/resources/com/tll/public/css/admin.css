@@ -6,11 +6,13 @@ body {
 }
 
 a, a:visited {
-	color: #4F4F4F;
+	color: navy;
 }
-
+a:hover {
+	color: #66CCFF; /* sky blue */
+	text-decoration: underline;
+}
 a:active {
-	color: #5F5F5F;
 }
 
 /* smbiz admin discolsure panel styling */ 
@@ -24,12 +26,11 @@ a:active {
 	color: white;
 	white-space: nowrap;
 }
-
 .sb-dp .header {
 	padding: 1px;
 }
-.sb-dp .content {
-	/*padding: 2px;*/
+.sb-dp a.header:hover {
+	text-decoration: none;
 }
 
 .sb-dp-open {
@@ -75,6 +76,7 @@ a:active {
 
 .sb-Header {
 	width: 100%;
+	margin-left: 10px;
 	background-color: #EAEAEA;
 	color: silver;
 	overflow: hidden;
@@ -99,26 +101,18 @@ a:active {
 }
 
 .sb-RightNav {
-	width: 13em;
+	width: 175px;
 	background-color: white;
 }
 
 .sb-RightNav .lbl {
-	color: silver;
+	color: #8F8F8F;
+	padding-left: 3px;
+	padding-right: 6px;
 }
 
 .sb-RightNav .recentviews .gwt-Hyperlink * {
 	white-space: nowrap;
-}
-
-#currentUser {
-	border: 2px solid silver;
-	padding: 2px;
-	margin-bottom: 1em;
-}
-
-#currentAccount .content {
-	padding: 2px;
 }
 
 .sb-RightNav .sb-dp {
@@ -128,11 +122,40 @@ a:active {
 .sb-RightNav .sb-dp .content {
 	border: 2px solid silver;
 	border-top-width: 0;
-	/*width: 100%;*/
 }
 
 .sb-RightNav .sb-dp .content table {
-	width: 13em;
+	width: 175px;
+}
+
+.sb-Center {
+	width: 100%;
+}
+
+.gmsg {
+	margin-bottom: 2px;
+}
+
+#currentUser {
+	border: 2px solid silver;
+	padding: 2px;
+	margin-bottom: 1em;
+}
+
+#currentUser table {
+	width: 95%;
+}
+
+#currentAccount .content {
+	padding: 2px;
+}
+
+#operations .option {
+	padding: 1px 4px;
+}
+#operations .active {
+	color: blue;
+	background-color: #D0E4F6;
 }
 
 #dpOpsDisplay {
@@ -144,12 +167,13 @@ a:active {
 	height: 150px;
 }
 
-.sb-Center {
-	width: 100%;
+#dpOpsDisplay .statusDisplay table {
+	width: 95%;
 }
 
-.gmsg {
-	margin-bottom: 2px;
+#dpOpsDisplay .statusDisplay div {
+	/* (175 - 4) forces overflow to work so the RHC doesn't widen when text is long enough w/ no whitespace break chars */
+	width: 171px;
 }
 
 /* view css theme */

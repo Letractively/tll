@@ -9,7 +9,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -104,7 +103,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 	private final DockPanel dockPanel = new DockPanel();
 	private final Header header = new Header();
-	private final ViewPathPanel viewpath = new ViewPathPanel(4);
+	private final ViewPathPanel viewpath = new ViewPathPanel("&nbsp;&nbsp;&nbsp;", 4);
 	private final RightNav rightNav = new RightNav();
 	private final Footer footer = new Footer();
 	private final Center center = new Center();
@@ -131,11 +130,11 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		final Element rightNavTd = rightNav.getElement().getParentElement();
 		final Element footerTd = footer.getElement().getParentElement();
 
-		headerTd.setPropertyString("id", "headerTd");
-		viewpathTd.setPropertyString("id", "viewpathTd");
-		centerTd.setPropertyString("id", "centerTd");
-		rightNavTd.setPropertyString("id", "rightNavTd");
-		footerTd.setPropertyString("id", "footerTd");
+		headerTd.setId("headerTd");
+		viewpathTd.setId("viewpathTd");
+		centerTd.setId("centerTd");
+		rightNavTd.setId("rightNavTd");
+		footerTd.setId("footerTd");
 
 		initWidget(dockPanel);
 
@@ -189,7 +188,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		public Header() {
 			super();
 			setStylePrimaryName(Styles.HEADER);
-			add(new HTML("<h1>smbiz Admin</h1>"));
+			add(new HTML("<h1>smbiz admin</h1>"));
 		}
 	}
 
@@ -249,7 +248,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			frmLogout.addSubmitCompleteHandler(this);
 
 			SimplePanel simplePanel = new SimplePanel();
-			DOM.setElementAttribute(simplePanel.getElement(), "id", "currentUser");
+			simplePanel.getElement().setId("currentUser");
 			simplePanel.add(frmLogout);
 			add(simplePanel);
 
@@ -273,7 +272,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			g.setWidget(2, 1, lblCrntAcntDateCreated);
 
 			simplePanel = new SimplePanel();
-			DOM.setElementAttribute(simplePanel.getElement(), "id", "currentAccount");
+			simplePanel.getElement().setId("currentAccount");
 			simplePanel.add(g);
 
 			dpCrntAccount = new DisclosurePanel("Current Account", true);
@@ -285,6 +284,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			dpOps = new DisclosurePanel("Operations", true);
 			dpOps.setStylePrimaryName(Styles.DISCLOSURE_PANEL);
 			opsPanel = new OptionsPanel();
+			opsPanel.getElement().setId("operations");
 			opsPanel.addOptionHandler(this);
 			dpOps.add(opsPanel);
 			add(dpOps);
@@ -295,7 +295,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			simplePanel.add(cmdDisplay);
 			dpOpsDisplay = new DisclosurePanel("Command History", false);
 			dpOpsDisplay.setStylePrimaryName(Styles.DISCLOSURE_PANEL);
-			DOM.setElementAttribute(dpOpsDisplay.getElement(), "id", "dpOpsDisplay");
+			dpOpsDisplay.getElement().setId("dpOpsDisplay");
 			dpOpsDisplay.add(simplePanel);
 			add(dpOpsDisplay);
 		}

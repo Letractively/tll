@@ -105,7 +105,6 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 */
 	public static void initialize(Panel parentViewPanel, int cacheCapacity) {
 		instance = new ViewManager(parentViewPanel, cacheCapacity);
-		// ModelChangeDispatcher.get().addModelChangeHandler(instance);
 	}
 
 	/**
@@ -113,7 +112,6 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 */
 	public static void shutdown() {
 		if(instance != null) {
-			// ModelChangeDispatcher.get().removeModelChangeHandler(instance);
 			instance.clear();
 			instance = null;
 		}

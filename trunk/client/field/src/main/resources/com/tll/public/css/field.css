@@ -37,8 +37,8 @@ label .rqd {
 }
 
 .active input,.active select,.active textarea {
-  border-color: purple !important;
-  background-color: white !important;
+	border-color: blue !important;
+  background-color: #EFF3FF;
 }
 
 .error input,.error select,.error textarea {
@@ -47,8 +47,8 @@ label .rqd {
 }
 
 .dirty input,.dirty select,.dirty textarea {
-  border-color: #007BBF !important;
-  background-color: #DFF4FF;
+  border-color: #CC6600 !important;
+  background-color: #FFFFCF !important;
 }
 
 .fld .icon {

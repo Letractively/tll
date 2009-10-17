@@ -31,10 +31,15 @@ public class ViewPathPanel extends Composite implements IViewChangeHandler {
 	}
 
 	/**
-	 * Spacer HTML.
+	 * Default spacer html token.
 	 */
-	private static final String SPACER_HTML = "&raquo;";
-	
+	private static final String DEFAULT_SPACER_HTML = "&raquo;";
+
+	/**
+	 * The spacer html token
+	 */
+	private final String spacerHtml;
+
 	private final int capacity;
 
 	/**
@@ -52,6 +57,16 @@ public class ViewPathPanel extends Composite implements IViewChangeHandler {
 	 * @param capacity the max number of view links to display
 	 */
 	public ViewPathPanel(int capacity) {
+		this(DEFAULT_SPACER_HTML, capacity);
+	}
+
+	/**
+	 * Constructor
+	 * @param spacerHtml The html text to use for the spacer token
+	 * @param capacity the max number of view links to display
+	 */
+	public ViewPathPanel(String spacerHtml, int capacity) {
+		this.spacerHtml = spacerHtml;
 		this.capacity = capacity;
 		container.addStyleName(Styles.HNAV);
 		container.addStyleName(Styles.VIEWPATH);
@@ -71,7 +86,7 @@ public class ViewPathPanel extends Composite implements IViewChangeHandler {
 				// add spacer
 				final P p = new P();
 				p.setStyleName(Styles.SPACER);
-				p.getElement().setInnerHTML(SPACER_HTML);
+				p.getElement().setInnerHTML(spacerHtml);
 				ulPanel.append(p);
 			}
 		}
