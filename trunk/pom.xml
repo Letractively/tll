@@ -21,7 +21,7 @@
     <springVersion>2.5.6.SEC01</springVersion>
     <slfVersion>1.5.6</slfVersion>
 
-    <gwtVersion>1.7.0</gwtVersion>
+    <gwtVersion>2.0.0-ms1</gwtVersion>
     <gwtIncubatorVersion>1.7</gwtIncubatorVersion>
     <gwtLogVersion>2.6.2</gwtLogVersion>
 
@@ -150,6 +150,11 @@
 					<artifactId>aspectj-maven-plugin</artifactId>
 					<version>1.2</version>
         </plugin>
+				<plugin>
+          <groupId>net.sf.alchim</groupId>
+          <artifactId>yuicompressor-maven-plugin</artifactId>
+          <version>0.8</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -226,39 +231,6 @@
             </goals>
             <configuration>
               <excludeResources>true</excludeResources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <!--  Use the dependency plugin to unpack gwt-dev-PLATFORM-libs.zip -->
-      <!--
-        (this is a replacement for the old "automatic" mode - useful if
-        you don't have GWT installed already, or you just want a maven
-        way to handle gwt deps)
-      -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>unpack</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>com.google.gwt</groupId>
-                  <artifactId>gwt-dev</artifactId>
-                  <version>${gwtVersion}</version>
-                  <classifier>${platform}-libs</classifier>
-                  <type>zip</type>
-                  <overWrite>false</overWrite>
-                  <outputDirectory>${settings.localRepository}/com/google/gwt/gwt-dev/${gwtVersion}</outputDirectory>
-                </artifactItem>
-              </artifactItems>
             </configuration>
           </execution>
         </executions>
