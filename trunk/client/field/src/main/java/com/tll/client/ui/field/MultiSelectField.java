@@ -118,6 +118,7 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 				lb.addItem(e.getValue());
 			}
 		}
+		lb.setSelectedIndex(-1);
 	}
 
 	@Override

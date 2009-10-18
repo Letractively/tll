@@ -70,7 +70,7 @@ public class UserPanel extends FlowFieldPanel {
 	}
 
 	private final ViewLink lnkAccount = new ViewLink();
-	private final DisclosurePanel dpAddress = new DisclosurePanel("Address", false);
+	private final DisclosurePanel dpAddress = new DisclosurePanel("Address");
 
 	@Override
 	protected FieldGroup generateFieldGroup() {

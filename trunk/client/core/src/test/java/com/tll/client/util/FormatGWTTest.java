@@ -19,7 +19,7 @@ public class FormatGWTTest extends GWTTestCase {
 
 	@Override
 	public String getModuleName() {
-		return "com.tll.Core";
+		return "com.tll.ClientCore";
 	}
 
 	public void testDecimalFormatting() {

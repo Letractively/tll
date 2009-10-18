@@ -109,14 +109,8 @@
     </dependency>
     
     <dependency>
-      <groupId>com.google.code.gwt-incubator</groupId>
-      <artifactId>gwt-incubator</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-common</artifactId>
+      <artifactId>tll-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -201,13 +195,6 @@
       <groupId>com.tll</groupId>
       <artifactId>tll-refdata</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-common</artifactId>
-      <version>${project.version}</version>
-      <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>

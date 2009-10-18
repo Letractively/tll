@@ -45,7 +45,7 @@
 	</path>
 	
 	<!--
-	Google Web Toolkit 1.7.0
+	Google Web Toolkit 2.0.0
 	Compiler [-logLevel level] [-treeLogger] [-workDir dir] [-gen dir] 
 		[-style style] [-ea] [-validateOnly] [-localWorkers count] [-war dir] [-extra dir] module[s]
 	
@@ -85,8 +85,8 @@
 	</target>
 	
 	<!--
-	Google Web Toolkit 1.7.0
-	HostedMode [-noserver] [-port port-number | "auto"] [-whitelist whitelist-string
+	Google Web Toolkit 2.0.0
+	DevMode [-noserver] [-port port-number | "auto"] [-whitelist whitelist-string
 	] [-blacklist blacklist-string] [-logLevel level] [-gen dir] [-style style] [-ea
 	] [-server servletContainerLauncher] [-startupUrl url] [-war dir] [-extra dir] [
 	-workDir dir] [-localWorkers count] module[s]
@@ -110,11 +110,11 @@
 	  module[s]      Specifies the name(s) of the module(s) to host
   -->
 	<target name="build-shell-exec-file" description="Builds a batch file to invoke the gwt shell.">
-		<echo file="shell.bat" message="java -Xss1024k -Xms128m -Xmx512m -ea -cp ${gwt.compile.classpath} com.google.gwt.dev.HostedMode -war target/war -style ${gwt.compile.style} -logLevel INFO -startupUrl ${gwt.shell.startupUrl} ${gwt.shell.entryModule}" />
+		<echo file="shell.bat" message="java -Xss1024k -Xms128m -Xmx512m -ea -cp ${gwt.compile.classpath} com.google.gwt.dev.DevMode -war target/war -style ${gwt.compile.style} -logLevel INFO -startupUrl ${gwt.shell.startupUrl} ${gwt.shell.entryModule}" />
 	</target>
 
 	<target name="build-shell-debug-exec-file" description="Builds a batch file to invoke the gwt shell with a jvm debug hook at port 8000.">
-		<echo file="debug.bat" message="java -Xss1024k -Xms128m -Xmx512m -ea -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,address=8000 -Djava.compiler=NONE -cp ${gwt.compile.classpath} com.google.gwt.dev.HostedMode -war target/war -style ${gwt.compile.style} -logLevel INFO -startupUrl ${gwt.shell.startupUrl} ${gwt.shell.entryModule}" />
+		<echo file="debug.bat" message="java -Xss1024k -Xms128m -Xmx512m -ea -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,address=8000 -Djava.compiler=NONE -cp ${gwt.compile.classpath} com.google.gwt.dev.DevMode -war target/war -style ${gwt.compile.style} -logLevel INFO -startupUrl ${gwt.shell.startupUrl} ${gwt.shell.entryModule}" />
 	</target>
 
 </project>

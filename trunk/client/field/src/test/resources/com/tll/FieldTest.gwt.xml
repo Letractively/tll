@@ -8,7 +8,7 @@
   <set-property name="log_RemoteLogger" value="DISABLED" />
   <set-property name="log_WindowLogger" value="DISABLED" />
   
-  <inherits name="com.tll.CommonTest" />
+  <inherits name="com.tll.ModelTest" />
   <inherits name="com.tll.Field" />
 
   <source path="common/model">

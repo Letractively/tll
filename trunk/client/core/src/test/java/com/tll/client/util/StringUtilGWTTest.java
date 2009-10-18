@@ -18,7 +18,7 @@ public class StringUtilGWTTest extends GWTTestCase {
 
 	@Override
 	public String getModuleName() {
-		return "com.tll.Core";
+		return "com.tll.ClientCore";
 	}
 
 	public void testAbbr() {
@@ -43,7 +43,7 @@ public class StringUtilGWTTest extends GWTTestCase {
 		Assert.assertEquals("camelCase", StringUtil.enumStyleToCamelCase("CAMEL_CASE", false));
 		Assert.assertEquals("CamelCase", StringUtil.enumStyleToCamelCase("CAMEL_CASE", true));
 	}
-	
+
 	public void testOgnlToPresentation() {
 		Assert.assertEquals("The One Thing", StringUtil.ognlToPresentation("the.one.thing"));
 	}

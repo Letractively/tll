@@ -1,5 +1,5 @@
 <module>
-  <inherits name="com.tll.Core" />
+  <inherits name="com.tll.ClientCore" />
   
   <!-- css reset (based on YUI) -->
   <stylesheet src="css/reset.css" />
@@ -12,5 +12,36 @@
   <stylesheet src="css/options.css" />
   <stylesheet src="css/toolbar.css" />
 
-  <inherits name='com.google.gwt.widgetideas.GlassPanel' />
+  <replace-with class="com.tll.client.ui.impl.GlassPanelImplStandard">
+    <when-type-is class="com.tll.client.ui.impl.GlassPanelImpl"/>
+  </replace-with>
+
+  <!-- 
+  <replace-with class="com.tll.client.ui.impl.GlassPanelImplOpera">
+    <when-type-is class="com.google.gwt.widgetideas.client.impl.GlassPanelImpl"/>
+    <when-property-is name="user.agent" value="opera"/>
+  </replace-with>
+
+  <replace-with class="com.google.gwt.widgetideas.client.impl.GlassPanelImplSafari">
+    <when-type-is class="com.google.gwt.widgetideas.client.impl.GlassPanelImpl"/>
+    <when-property-is name="user.agent" value="safari"/>
+  </replace-with>
+
+  <replace-with class="com.google.gwt.widgetideas.client.impl.GlassPanelImplIE6">
+    <when-type-is class="com.google.gwt.widgetideas.client.impl.GlassPanelImpl"/>
+    <any>
+      <when-property-is name="user.agent" value="ie6"/>
+      <when-property-is name="user.agent" value="ie8"/>
+    </any>
+  </replace-with>
+
+  <replace-with class="com.google.gwt.widgetideas.client.impl.GlassPanelImplMozilla">
+    <when-type-is class="com.google.gwt.widgetideas.client.impl.GlassPanelImpl"/>
+    <any>
+      <when-property-is name="user.agent" value="gecko1_8"/>
+      <when-property-is name="user.agent" value="gecko"/>
+    </any>
+  </replace-with>
+	-->
+
 </module>

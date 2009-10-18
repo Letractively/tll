@@ -5,7 +5,6 @@
  */
 package com.tll.model.key;
 
-import com.tll.key.IKey;
 import com.tll.model.IEntity;
 
 

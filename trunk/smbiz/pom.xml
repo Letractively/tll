@@ -186,13 +186,10 @@
 							<goal>build-classpath</goal>
 						</goals>
 						<configuration>
-							<includeScope></includeScope>
+							<includeScope>runtime</includeScope>
 							<includeGroupIds>
-								log4j,commons-logging,org.slf4j,com.tll,com.google.gwt,com.google.code.gwt-incubator,com.allen_sauer.gwt.log
+								log4j,commons-logging,org.slf4j,com.tll,com.google.gwt,com.allen_sauer.gwt.log
               </includeGroupIds>
-							<excludeArtifactIds>
-								gwt-servlet,hibernate-validator,tll-config,tll-core,tll-dao-api,tll-dao-db4o,tll-mail,tll-model,tll-refdata,tll-security,tll-service,tll-servlet
-              </excludeArtifactIds>
 							<excludeTypes>zip</excludeTypes>
 							<outputFile>target/gwt-cp.txt</outputFile>
 						</configuration>
@@ -442,17 +439,12 @@
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-user</artifactId>
-			<scope>provided</scope>
+			<!-- <scope>provided</scope> (only to have included in gwt-cp.txt) -->
 		</dependency>
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-servlet</artifactId>
 			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.gwt-incubator</groupId>
-			<artifactId>gwt-incubator</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.allen_sauer.gwt.log</groupId>
@@ -557,17 +549,17 @@
 
 		<dependency>
 			<groupId>com.tll</groupId>
-			<artifactId>tll-common</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.tll</groupId>
 			<artifactId>tll-core</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-config</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-refdata</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

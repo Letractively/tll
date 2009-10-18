@@ -45,7 +45,7 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 	 */
 	public SwitchInterfacePanel() {
 		paramsPanel = new ParamsPanel("options[0].parameters");
-		dpParams = new DisclosurePanel("Parameters", false);
+		dpParams = new DisclosurePanel("Parameters");
 		dpParams.add(paramsPanel);
 	}
 

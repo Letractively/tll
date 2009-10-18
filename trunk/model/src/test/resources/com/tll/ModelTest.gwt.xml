@@ -1,0 +1,7 @@
+<module>
+	<source path="model/test">
+		<include name="AccountStatus.java" />
+		<include name="AddressType.java" />
+		<include name="CreditCardType.java" />
+	</source>
+</module>

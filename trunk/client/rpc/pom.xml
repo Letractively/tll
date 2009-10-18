@@ -44,14 +44,16 @@
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
     </dependency>
+    <!-- 
     <dependency>
       <groupId>com.google.code.gwt-incubator</groupId>
       <artifactId>gwt-incubator</artifactId>
       <scope>provided</scope>
     </dependency>
+    -->
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-common</artifactId>
+      <artifactId>tll-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     

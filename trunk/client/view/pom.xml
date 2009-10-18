@@ -77,8 +77,21 @@
   <dependencies>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-common</artifactId>
+      <artifactId>tll-core</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-model</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-api</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
@@ -94,12 +107,6 @@
       <groupId>com.tll</groupId>
       <artifactId>tll-client-model</artifactId>
       <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.google.code.gwt-incubator</groupId>
-      <artifactId>gwt-incubator</artifactId>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>

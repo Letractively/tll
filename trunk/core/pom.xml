@@ -15,6 +15,34 @@
   <description>Core types used by tll projects.</description>
   
   <build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+			<!-- Source files needed for GWT compile -->
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/IProvider.java</include>
+					<include>**/INameValueProvider.java</include>
+					<include>**/IDescriptorProvider.java</include>
+					<include>**/IMarshalable.java</include>
+					<include>**/ApplicationException.java</include>
+			    <include>**/util/Binding.java</include>
+			    <include>**/util/BindingRefSet.java</include>
+			    <include>**/util/Comparator.java</include>
+			    <include>**/util/DataPoint.java</include>
+			    <include>**/util/DateRange.java</include>
+			    <include>**/util/DBType.java</include>
+			    <include>**/util/FNum.java</include>
+			    <include>**/util/ObjectUtil.java</include>
+			    <include>**/util/PropertyPath.java</include>
+			    <include>**/util/RefSet.java</include>
+			    <include>**/util/StringUtil.java</include>
+				</includes>
+			</resource>
+		</resources>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -69,12 +97,11 @@
     	<artifactId>spring-core</artifactId>
     </dependency>
     
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-common</artifactId>
-      <version>${project.version}</version>
+    <dependency><!-- soley for IsSerializable ref -->
+    	<groupId>com.google.gwt</groupId>
+    	<artifactId>gwt-servlet</artifactId>
     </dependency>
-    
+
     <dependency>
     	<groupId>com.tll</groupId>
     	<artifactId>tll-config</artifactId>

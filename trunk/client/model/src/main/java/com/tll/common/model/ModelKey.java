@@ -5,7 +5,7 @@
  */
 package com.tll.common.model;
 
-import com.tll.key.IKey;
+import com.tll.model.key.IKey;
 
 /**
  * ModelKey

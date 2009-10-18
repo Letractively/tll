@@ -275,13 +275,15 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			simplePanel.getElement().setId("currentAccount");
 			simplePanel.add(g);
 
-			dpCrntAccount = new DisclosurePanel("Current Account", true);
+			dpCrntAccount = new DisclosurePanel("Current Account");
+			dpCrntAccount.setOpen(true);
 			dpCrntAccount.setStylePrimaryName(Styles.DISCLOSURE_PANEL);
 			dpCrntAccount.add(simplePanel);
 			add(dpCrntAccount);
 
 			// operations
-			dpOps = new DisclosurePanel("Operations", true);
+			dpOps = new DisclosurePanel("Operations");
+			dpOps.setOpen(true);
 			dpOps.setStylePrimaryName(Styles.DISCLOSURE_PANEL);
 			opsPanel = new OptionsPanel();
 			opsPanel.getElement().setId("operations");
@@ -293,7 +295,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			cmdDisplay = new StatusDisplay(MsgAttr.EXCEPTION.flag | MsgAttr.STATUS.flag);
 			simplePanel = new SimplePanel();
 			simplePanel.add(cmdDisplay);
-			dpOpsDisplay = new DisclosurePanel("Command History", false);
+			dpOpsDisplay = new DisclosurePanel("Command History");
 			dpOpsDisplay.setStylePrimaryName(Styles.DISCLOSURE_PANEL);
 			dpOpsDisplay.getElement().setId("dpOpsDisplay");
 			dpOpsDisplay.add(simplePanel);

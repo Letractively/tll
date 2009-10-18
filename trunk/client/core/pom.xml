@@ -40,7 +40,7 @@
   <dependencies>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-common</artifactId>
+      <artifactId>tll-core</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

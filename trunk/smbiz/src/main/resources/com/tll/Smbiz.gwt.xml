@@ -1,5 +1,5 @@
 <module>
-  <inherits name="com.tll.Core" />
+  <inherits name="com.tll.ClientCore" />
   <inherits name="com.tll.View" />
   <inherits name="com.tll.Rpc" />
   <inherits name="com.tll.Field" />

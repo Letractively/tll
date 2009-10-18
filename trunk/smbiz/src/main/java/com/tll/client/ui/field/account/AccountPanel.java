@@ -111,10 +111,10 @@ public class AccountPanel extends FlowFieldPanel {
 
 	} // AddressesPanel
 
-	protected final DisclosurePanel dpPaymentInfo = new DisclosurePanel("Payment Info", false);
+	protected final DisclosurePanel dpPaymentInfo = new DisclosurePanel("Payment Info");
 	protected final PaymentInfoPanel paymentInfoPanel = new PaymentInfoPanel();
 
-	protected final DisclosurePanel dpAddresses = new DisclosurePanel("Addresses", false);
+	protected final DisclosurePanel dpAddresses = new DisclosurePanel("Addresses");
 	protected final AddressesPanel addressesPanel = new AddressesPanel();
 
 	@SuppressWarnings("unchecked")
