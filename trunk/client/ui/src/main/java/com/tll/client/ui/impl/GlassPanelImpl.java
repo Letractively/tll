@@ -11,11 +11,8 @@ import com.tll.client.ui.GlassPanel;
 
 
 /**
- * GlassPanelImpl
+ * GlassPanelImpl - Deferred binding implementation of {@link GlassPanel}.
  * @author jpk
- */
-/**
- * Deferred binding implementation of {@link GlassPanel}.
  */
 public abstract class GlassPanelImpl {
 
@@ -32,5 +29,7 @@ public abstract class GlassPanelImpl {
 	public void matchParentSize(GlassPanel glassPanel, AbsolutePanel parent) {
 		glassPanel.getElement().getStyle().setProperty("bottom", "0px");
 		glassPanel.getElement().getStyle().setProperty("right", "0px");
+		glassPanel.setWidth(parent.getOffsetWidth() + "px");
+		glassPanel.setHeight(parent.getOffsetHeight() + "px");
 	}
 }

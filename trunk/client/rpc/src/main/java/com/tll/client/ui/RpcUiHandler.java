@@ -20,7 +20,7 @@ public class RpcUiHandler implements IRpcHandler {
 
 	private final Widget overlayWidget;
 
-	private final BusyPanel busyPanel;
+	private final GlassPanel busyPanel;
 
 	private AbsolutePanel overlay;
 
@@ -48,7 +48,7 @@ public class RpcUiHandler implements IRpcHandler {
 					// add overlay
 					if(overlayWidget != null) {
 						// local overlay
-						overlay = BusyPanel.getAbsoluteOverlay(overlayWidget);
+						overlay = BusyPanel.createOverlay(overlayWidget);
 						overlay.add(busyPanel, 0, 0);
 					}
 					else {

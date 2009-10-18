@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.BusyPanel;
 import com.tll.client.ui.Dialog;
+import com.tll.client.ui.GlassPanel;
 import com.tll.client.ui.IWidgetRef;
 import com.tll.client.ui.Position;
 import com.tll.client.ui.msg.GlobalMsgPanel;
@@ -327,7 +328,7 @@ public final class UITests extends AbstractUITest {
 		VerticalPanel buttonPanel;
 		FlowPanel context;
 		AbsolutePanel localOverlay;
-		BusyPanel busyPanel;
+		GlassPanel busyPanel;
 
 		@Override
 		public String getName() {
@@ -357,7 +358,7 @@ public final class UITests extends AbstractUITest {
 					if(localOverlay != null) {
 						RootPanel.get().remove(localOverlay);
 					}
-					localOverlay = BusyPanel.getAbsoluteOverlay(context);
+					localOverlay = BusyPanel.createOverlay(context);
 					localOverlay.add(busyPanel, 0, 0);
 				}
 			}));

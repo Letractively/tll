@@ -18,14 +18,11 @@ package com.tll.client.ui;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * BusyPanel - Overlay panel used to prohibit ui interaction to serve as a
@@ -58,28 +55,15 @@ public class BusyPanel extends GlassPanel {
 	/**
 	 * The default throbber image ref.
 	 */
-	static final String THROBBER_URL = GWT.getModuleBaseURL() + "/images/throbber.gif";
+	static final String DEFAULT_THROBBER_URL = GWT.getModuleBaseURL() + "/images/throbber.gif";
 
 	/**
-	 * Creates an {@link AbsolutePanel} that overlays the given widget and is
-	 * added to the {@link RootPanel}.
-	 * @param w The target widget
-	 * @return Newly created {@link AbsolutePanel} added to the {@link RootPanel}.
-	 */
-	public static AbsolutePanel getAbsoluteOverlay(Widget w) {
-		final AbsolutePanel ap = new AbsolutePanel();
-		ap.setPixelSize(w.getOffsetWidth(), w.getOffsetHeight());
-		RootPanel.get().add(ap, w.getAbsoluteLeft(), w.getAbsoluteTop());
-		return ap;
-	}
-
-	/**
-	 * Constructor - Overlays the entire root panel
+	 * Constructor
 	 * @param autoHide
 	 */
 	public BusyPanel(boolean autoHide) {
 		super(autoHide);
-		setThrobImage(new Image(THROBBER_URL));
+		setThrobImage(new Image(DEFAULT_THROBBER_URL));
 	}
 
 	/**

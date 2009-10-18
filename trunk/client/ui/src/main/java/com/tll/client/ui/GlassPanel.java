@@ -6,7 +6,6 @@
 package com.tll.client.ui;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -17,7 +16,6 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.Event.NativePreviewHandler;
@@ -30,7 +28,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.impl.GlassPanelImpl;
 
 /**
- * GlassPanel
+ * GlassPanel - Clone of Fred Sauer's GlassPanel with upfitting for GWT 2.0
+ * <h3>CSS Style Rules</h3>
+ * <ul>
+ * <li>.tll-GlassPanel { the glass panel itself }</li>
+ * </ul>
  * @author jpk
  */
 public class GlassPanel extends Composite implements NativePreviewHandler {
@@ -70,12 +72,26 @@ public class GlassPanel extends Composite implements NativePreviewHandler {
 
 	static final GlassPanelImpl impl = GWT.create(GlassPanelImpl.class);
 
-	private HandlerRegistration resizeBus, nativePreview;
+	/**
+	 * Creates an {@link AbsolutePanel} that overlays the given widget and is
+	 * added to the {@link RootPanel}.
+	 * @param w The target widget
+	 * @return Newly created {@link AbsolutePanel} added to the {@link RootPanel}.
+	 */
+	public static AbsolutePanel createOverlay(Widget w) {
+		final AbsolutePanel ap = new AbsolutePanel();
+		ap.setPixelSize(w.getOffsetWidth(), w.getOffsetHeight());
+		RootPanel.get().add(ap, w.getAbsoluteLeft(), w.getAbsoluteTop());
+		return ap;
+	}
+
+	private HandlerRegistration hrResize, hrNp;
 
 	private final boolean autoHide;
 
-	private final SimplePanel mySimplePanel;
+	private final SimplePanel pnl;
 
+	/*
 	private final Timer timer = new Timer() {
 
 		@Override
@@ -83,6 +99,7 @@ public class GlassPanel extends Composite implements NativePreviewHandler {
 			impl.matchDocumentSize(GlassPanel.this, false);
 		}
 	};
+	 */
 
 	/**
 	 * Create a glass panel widget that can be attached to an AbsolutePanel via
@@ -93,19 +110,16 @@ public class GlassPanel extends Composite implements NativePreviewHandler {
 	 */
 	public GlassPanel(boolean autoHide) {
 		this.autoHide = autoHide;
-		mySimplePanel = new SimplePanel();
-		initWidget(mySimplePanel);
-		final Style style = getElement().getStyle();
-		style.setProperty("backgroundColor", "#000");
-		style.setProperty("filter", "alpha(opacity=50)");
-		style.setProperty("opacity", "0.5");
-		setStyleName("gwt-GlassPanel");
+		pnl = new SimplePanel();
+		initWidget(pnl);
+		setStyleName("tll-GlassPanel");
 	}
 
 	@Override
 	public void onPreviewNativeEvent(NativePreviewEvent event) {
 		switch(event.getTypeInt()) {
-		case Event.ONKEYPRESS: {
+		case Event.ONKEYDOWN: {
+			//case Event.ONKEYPRESS: {
 			if(event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
 				removeFromParent();
 				event.cancel();
@@ -122,7 +136,7 @@ public class GlassPanel extends Composite implements NativePreviewHandler {
 
 	@Override
 	public void setWidget(Widget widget) {
-		mySimplePanel.setWidget(widget);
+		pnl.setWidget(widget);
 	}
 
 	@Override
@@ -138,8 +152,8 @@ public class GlassPanel extends Composite implements NativePreviewHandler {
 
 		if(parent == RootPanel.get()) {
 			impl.matchDocumentSize(this, false);
-			timer.scheduleRepeating(100);
-			resizeBus = Window.addResizeHandler(new ResizeHandler() {
+			//timer.scheduleRepeating(100);
+			hrResize = Window.addResizeHandler(new ResizeHandler() {
 
 				@Override
 				public void onResize(ResizeEvent event) {
@@ -151,7 +165,7 @@ public class GlassPanel extends Composite implements NativePreviewHandler {
 			impl.matchParentSize(this, parent);
 		}
 		if(autoHide) {
-			nativePreview = Event.addNativePreviewHandler(this);
+			hrNp = Event.addNativePreviewHandler(this);
 		}
 
 		RootPanel.get().add(new FocusPanelImpl(), Window.getScrollLeft(), Window.getScrollTop());
@@ -160,13 +174,13 @@ public class GlassPanel extends Composite implements NativePreviewHandler {
 	@Override
 	protected void onDetach() {
 		super.onDetach();
-		timer.cancel();
-		if(resizeBus != null) {
-			resizeBus.removeHandler();
-			resizeBus = null;
+		//timer.cancel();
+		if(hrResize != null) {
+			hrResize.removeHandler();
+			hrResize = null;
 		}
-		if(nativePreview != null) {
-			nativePreview.removeHandler();
+		if(hrNp != null) {
+			hrNp.removeHandler();
 		}
 	}
 }
