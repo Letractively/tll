@@ -23,7 +23,8 @@
       <useProjectArtifact>false</useProjectArtifact>
       <useTransitiveDependencies>true</useTransitiveDependencies>
       <useTransitiveFiltering>true</useTransitiveFiltering>
-      <excludes><!-- list ALL tll-dao-* impl modules here -->
+      <excludes>
+        <exclude>com.google.gwt:gwt-user</exclude><!-- hack -->
         <exclude>com.tll:tll-dao-jdo</exclude>
       </excludes>
       <includes>

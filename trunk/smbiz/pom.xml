@@ -186,12 +186,14 @@
 							<goal>build-classpath</goal>
 						</goals>
 						<configuration>
-							<includeScope>runtime</includeScope>
+							<includeScope></includeScope>
 							<includeGroupIds>
-								log4j,commons-logging,org.slf4j,com.tll,com.google.gwt,com.allen_sauer.gwt.log
+								log4j,commons-logging,org.slf4j,com.google.gwt,com.google.gwt,com.allen_sauer.gwt.log,com.tll
               </includeGroupIds>
-							<excludeTypes>zip</excludeTypes>
+              <excludeArtifactIds>gwt-servlet,tll-config,tll-mail</excludeArtifactIds>
+              <excludeClassifiers>testassets</excludeClassifiers>
 							<outputFile>target/gwt-cp.txt</outputFile>
+							<regenerateFile>true</regenerateFile>
 						</configuration>
 					</execution>
 					<!-- copies libs to the target/war dir which is needed for gwt host mode -->
@@ -203,6 +205,8 @@
 						</goals>
 						<configuration>
 							<outputDirectory>target/war/WEB-INF/lib</outputDirectory>
+							<scope>runtime</scope>
+							<excludeClassifiers>testassets</excludeClassifiers>
 						</configuration>
 					</execution>
 				</executions>
@@ -228,6 +232,23 @@
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
 					<execution>
+						<id>gwt-shell-copy-classes</id>
+						<phase>process-classes</phase>
+						<goals><goal>run</goal></goals>
+						<configuration>	
+							<tasks>
+								<mkdir dir="target/war/WEB-INF/classes" />
+								<copy todir="target/war/WEB-INF/classes" preservelastmodified="true">
+									<fileset dir="target/classes">
+										<exclude name="**/client/**" />
+										<exclude name="**/*.java" />
+										<exclude name="**/*.gwt.xml" />
+									</fileset>
+								</copy>
+							</tasks>
+						</configuration>
+					</execution>
+					<execution>
 						<id>gwt-shell-batchfiles</id>
 						<phase>process-classes</phase>
 						<goals>
@@ -242,6 +263,7 @@
 								<property name="gwt.shell.entryModule" value="${gwtTargetModule}" />
 								<property name="gwt.shell.startupUrl" value="SmbizAdmin.html" />
 								<property name="gwt.shell.warDir.path" value="target/war" />
+								<echo message="classpath: ${gwt.compile.classpath}" />
 								<ant antfile="${basedir}/../client/build-gwt.xml">
 									<target name="build-shell-exec-file" />
 									<target name="build-shell-debug-exec-file" />
@@ -346,22 +368,6 @@
 									</descriptors>
 								</configuration>
 							</execution>
-							<!-- 
-							war dir (root) exclusions
-							=========================
-							smbizAdmin/hosted.html
-							work
-							
-							war/WEB-INF/classes exclusions
-							==============================
-							**/*.gwt.xml
-							**/*.java
-							**/mock-entities.xml
-							**/builddef.lst
-							**/client/**
-							**/common/**/*Async.class
-							**/public/**
-							-->
 							<execution>
 								<id>prod-war</id>
 								<goals>	
@@ -371,7 +377,6 @@
 								<configuration>
 									<finalName>smbiz</finalName>
 									<outputDirectory>target</outputDirectory>
-									<appendAssemblyId>false</appendAssemblyId>
 									<descriptors>
 										<descriptor>src/main/assembly/prod-war.xml</descriptor>
 									</descriptors>
@@ -439,12 +444,11 @@
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-user</artifactId>
-			<!-- <scope>provided</scope> (only to have included in gwt-cp.txt) -->
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-servlet</artifactId>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.allen_sauer.gwt.log</groupId>

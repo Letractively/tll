@@ -1,5 +1,6 @@
 package com.tll.model.test;
 
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -150,8 +151,7 @@ import com.tll.model.schema.BusinessObject;
 	 * @return Returns the emailAddress.
 	 */
 	@NotEmpty
-	// TODO re-instate email validation once hibernate-validation impls it
-	// @Email
+	@Email
 	@Length(max = MAXLEN_EMAIL_ADDRESS)
 	public String getEmailAddress() {
 		return emailAddress;

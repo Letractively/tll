@@ -30,26 +30,33 @@ public final class ConfigRef {
 	 */
 	private static ArrayList<URL> resolve(String name, boolean loadAll) throws IllegalArgumentException {
 		ArrayList<URL> list = new ArrayList<URL>();
-		final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		if(loadAll) {
 			Enumeration<URL> urls;
 			try {
-				urls = loader.getResources(name);
+				urls = Thread.currentThread().getContextClassLoader().getResources(name);
+				if(urls == null || !urls.hasMoreElements()) {
+					// try the other class loader..
+					urls = ConfigRef.class.getClassLoader().getResources(name);
+					if(urls == null || !urls.hasMoreElements()) {
+						throw new IllegalArgumentException("Unable to find any config resources named: " + name);
+					}
+				}
 			}
 			catch(IOException e) {
 				throw new IllegalArgumentException("Unable to resolve resources: " + e.getMessage(), e);
-			}
-			if(urls == null || !urls.hasMoreElements()) {
-				throw new IllegalArgumentException("Unable to find any config resources named: " + name);
 			}
 			while(urls.hasMoreElements()) {
 				list.add(urls.nextElement());
 			}
 		}
 		else {
-			URL url = loader.getResource(name);
+			URL url = Thread.currentThread().getContextClassLoader().getResource(name);
 			if(url == null) {
-				throw new IllegalArgumentException("Unable to find config resource named: " + name);
+				// try the other class loader..
+				url = ConfigRef.class.getClassLoader().getResource(name);
+				if(url == null) {
+					throw new IllegalArgumentException("Unable to find config resource named: " + name);
+				}
 			}
 			list.add(url);
 		}

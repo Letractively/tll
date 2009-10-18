@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.security.GrantedAuthority;
@@ -62,7 +63,7 @@ IUserRef {
 	}
 
 	@NotEmpty
-	// @Email
+	@Email
 	@Length(max = MAXLEN_EMAIL_ADDRESS)
 	public String getEmailAddress() {
 		return emailAddress;

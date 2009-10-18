@@ -7,7 +7,24 @@
     Creates the production war file. 
   -->
 
-	<id>prod-war</id>
+	<!-- 
+	war dir (root) exclusions
+	=========================
+	smbizAdmin/hosted.html
+	work
+	
+	war/WEB-INF/classes exclusions
+	==============================
+	**/*.gwt.xml
+	**/*.java
+	**/mock-entities.xml
+	**/builddef.lst
+	**/client/**
+	**/common/**/*Async.class
+	**/public/**
+	-->
+
+	<id>production</id>
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<formats>
 		<format>war</format>

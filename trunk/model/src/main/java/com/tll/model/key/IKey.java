@@ -1,5 +1,5 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.model.key;
 
@@ -14,7 +14,6 @@ import com.tll.IMarshalable;
  * @author jpk
  * @param <T> the type to which this key refers
  */
-// TODO move to com.tll.model.key package (de-generalize this construct)?
 public interface IKey<T> extends IDescriptorProvider, IMarshalable, Serializable {
 
 	/**

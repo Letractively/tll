@@ -1,5 +1,6 @@
 package com.tll.model;
 
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -153,7 +154,7 @@ public class Address extends EntityBase {
 	 * @return Returns the emailAddress.
 	 */
 	@NotEmpty
-	// @Email
+	@Email
 	@Length(max = MAXLEN_EMAIL_ADDRESS)
 	public String getEmailAddress() {
 		return emailAddress;
