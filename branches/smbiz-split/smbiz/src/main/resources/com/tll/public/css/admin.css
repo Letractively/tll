@@ -1,0 +1,253 @@
+/* specific smbiz CSS overrides for the admin app. */
+
+body {
+	margin: 20px;
+	background-color: #EAEAEA;
+}
+
+a, a:visited {
+	color: navy;
+}
+a:hover {
+	color: #66CCFF; /* sky blue */
+	text-decoration: underline;
+}
+a:active {
+}
+
+/* smbiz admin discolsure panel styling */ 
+.sb-dp .header {
+	background-color: silver;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.sb-dp .header * {
+	color: white;
+	white-space: nowrap;
+}
+.sb-dp .header {
+	padding: 1px;
+}
+.sb-dp a.header:hover {
+	text-decoration: none;
+}
+
+.sb-dp-open {
+	
+}
+
+.sb-dp-closed {
+}
+
+#headerTd {
+	border-bottom: 1px solid silver;
+}
+
+#viewpathTd {
+	border-left: 1px solid silver;
+	border-right: 1px solid silver;
+}
+
+#centerTd {
+	width: 800px;
+	border-left: 1px solid silver;
+	border-bottom: 1px solid silver;
+	padding: 0 0 1em 1em;
+	vertical-align: top;
+}
+
+#rightNavTd {
+	border: 1px solid silver;
+	border-top: 0;
+	border-left: 0;
+	padding: 0 1em 1em 1em;
+	background-color: white;
+	text-align: right;
+}
+
+#footerTd {
+	height: 1.5em;
+}
+
+.sb-mainPanel {
+	background-color: white;
+}
+
+.sb-Header {
+	width: 100%;
+	margin-left: 10px;
+	background-color: #EAEAEA;
+	color: silver;
+	overflow: hidden;
+}
+
+.sb-Header h1 {
+	font-size: 22px;
+	margin-bottom: -6px;
+}
+
+.sb-Footer {
+	background-color: #EAEAEA;
+	width: 100%;
+	height: 100%;
+	color: #8F8F8F;
+	font-size: 9px;
+}
+
+.sb-Footer p {
+	padding: 2px 2px;
+	text-align: center;
+}
+
+.sb-RightNav {
+	width: 175px;
+	background-color: white;
+}
+
+.sb-RightNav .lbl {
+	color: #8F8F8F;
+	padding-left: 3px;
+	padding-right: 6px;
+}
+
+.sb-RightNav .recentviews .gwt-Hyperlink * {
+	white-space: nowrap;
+}
+
+.sb-RightNav .sb-dp {
+	margin-bottom: 1em;
+	width: 100%;
+}
+.sb-RightNav .sb-dp .content {
+	border: 2px solid silver;
+	border-top-width: 0;
+}
+
+.sb-RightNav .sb-dp .content table {
+	width: 175px;
+}
+
+.sb-Center {
+	width: 100%;
+}
+
+.gmsg {
+	margin-bottom: 2px;
+}
+
+#currentUser {
+	border: 2px solid silver;
+	padding: 2px;
+	margin-bottom: 1em;
+}
+
+#currentUser table {
+	width: 95%;
+}
+
+#currentAccount .content {
+	padding: 2px;
+}
+
+#operations .option {
+	padding: 1px 4px;
+}
+#operations .active {
+	color: blue;
+	background-color: #D0E4F6;
+}
+
+#dpOpsDisplay {
+	margin-bottom: 0;
+	height: 150px;
+}
+
+#dpOpsDisplay .statusDisplay {
+	height: 150px;
+}
+
+#dpOpsDisplay .statusDisplay table {
+	width: 95%;
+}
+
+#dpOpsDisplay .statusDisplay div {
+	/* (175 - 4) forces overflow to work so the RHC doesn't widen when text is long enough w/ no whitespace break chars */
+	width: 171px;
+}
+
+/* view css theme */
+.view {
+	min-height: 300px;
+	/*border: 1px solid brown;*/ /*debug*/
+}
+.viewContainer-popped .view {
+	min-height: 10px;
+}
+
+/* tableview.css theme */
+.tableView .portal {
+	height: 271px; /* i.e. .view:height - (25 [nav panel height] + (2 + 2 [view border/padding/margin]) ) */
+}
+
+/* entity edit view theme */
+.entityEdit .portal {
+	/*height: 271px;*/
+	overflow: visible !important;
+}
+
+.entityEdit .btnRow {
+	text-align: center;
+}
+.entityEdit .btnRow .gwt-Button {
+	margin: .5em;
+}
+
+/* viewpath.css theme */
+.viewpath {
+	background-color: #fff;
+	color: #000;
+	margin: 0 0 0 1em;
+	height: 1.3em;
+}
+
+.viewpath a {
+	border: none;
+}
+
+.viewpath a:link,.viewpath a:visited,.viewpath .spacer {
+	background-color: #fff;
+}
+
+.viewpath .spacer {
+	color: #C0C0C0;
+}
+
+/*
+.viewpath a:hover {
+	background-color: #EAEAEA;
+}
+*/
+
+/* tableView overrides */
+.tvnav {
+	height: 27px;
+}
+
+/* interfaces view styling */
+.interfaces .gwt-StackPanel {
+	width: 100%;
+}
+
+.interfaces .tableView .portal {
+	height: inherit !important;
+}
+
+.addIntf {
+	margin: 5px;
+	width: 100%;
+}
+
+.addIntf td {
+	vertical-align: middle !important;
+}

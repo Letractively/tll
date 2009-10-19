@@ -1,0 +1,7 @@
+<module>
+
+	<source path="refdata">
+		<include name="RefDataType.java" />
+	</source>
+
+</module>
