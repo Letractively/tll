@@ -15,8 +15,81 @@
 	<description>The smbiz model module.</description>
 	
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/client/**</include>
+					<include>**/common/**</include>
+			    <include>**/model/AccountSource.java</include>
+			    <include>**/model/AccountStatus.java</include>
+			    <include>**/model/AddressType.java</include>
+			    <include>**/model/AdminRole.java</include>
+			    <include>**/model/AuthorityRoles.java</include>
+			    <include>**/model/CreditCardType.java</include>
+			    <include>**/model/OrderItemStatus.java</include>
+			    <include>**/model/OrderItemTransOp.java</include>
+			    <include>**/model/OrderStatus.java</include>
+			    <include>**/model/OrderTransOp.java</include>
+			    <include>**/model/OrderTransOpResult.java</include>
+			    <include>**/model/PaymentItemStatus.java</include>
+			    <include>**/model/PaymentOp.java</include>
+			    <include>**/model/PaymentProcessor.java</include>
+			    <include>**/model/PaymentType.java</include>
+			    <include>**/model/ProductStatus.java</include>
+			    <include>**/model/ShipModeType.java</include>
+				</includes>
+			</resource>
+		</resources>
 	</build>
 	
 	<dependencies>
+		<dependency>
+			<groupId>aopalliance</groupId>
+			<artifactId>aopalliance</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.guice</groupId>
+			<artifactId>guice</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-config</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-model</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+		</dependency>
+	
+			<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-core</artifactId>
+			<classifier>testassets</classifier>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-model</artifactId>
+			<classifier>testassets</classifier>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>
