@@ -7,6 +7,7 @@ package com.tll.di;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 import com.tll.di.test.EGraphModule;
 import com.tll.model.SmbizEntityGraphBuilder;
@@ -19,14 +20,21 @@ import com.tll.model.test.IEntityGraphPopulator;
  */
 public class SmbizEGraphModule extends EGraphModule {
 
+	private static final String ENTITY_DEFS_FILENAME = "mock-entities.xml";
+
 	@Override
 	protected URI getBeanDefRef() {
 		try {
-			return new URI("target/classes/mock-entities.xml");
+			URL url = Thread.currentThread().getContextClassLoader().getResource(ENTITY_DEFS_FILENAME);
+			if(url == null) {
+				url = SmbizEGraphModule.class.getResource(ENTITY_DEFS_FILENAME);
+			}
+			if(url != null) return url.toURI();
 		}
 		catch(final URISyntaxException e) {
-			throw new IllegalStateException("Can't find mock entities file", e);
+			// fall through
 		}
+		throw new IllegalStateException("Can't find '" + ENTITY_DEFS_FILENAME + "' on the classpath.");
 	}
 
 	@Override

@@ -6,6 +6,7 @@
 package com.tll.server.rpc.listing;
 
 import java.io.Serializable;
+import java.net.URL;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -19,9 +20,24 @@ import net.sf.ehcache.Element;
  */
 public final class ListingCache {
 
+	private static final String SMBIZ_WEB_CACHEMANAGER_FILENAME = "ehcache-smbiz-web.xml";
+
 	private static final String LIST_HANDLER_CACHE_NAME = "ListHandlerCache";
 
 	private static final String LISTING_STATE_CACHE_NAME = "ListingStateCache";
+
+	private static final ThreadLocal<CacheManager> tlCm;
+
+	static {
+		final URL url = Thread.currentThread().getContextClassLoader().getResource(SMBIZ_WEB_CACHEMANAGER_FILENAME);
+		final CacheManager cm = new CacheManager(url);
+		tlCm = new ThreadLocal<CacheManager>();
+		tlCm.set(cm);
+	}
+
+	private static CacheManager getCacheManager() {
+		return tlCm.get();
+	}
 
 	/**
 	 * Generates the hash that is http session and listing name dependent.
@@ -36,11 +52,11 @@ public final class ListingCache {
 	}
 
 	private static Cache handlerCache() {
-		return CacheManager.getInstance().getCache(LIST_HANDLER_CACHE_NAME);
+		return getCacheManager().getCache(LIST_HANDLER_CACHE_NAME);
 	}
 
 	private static Cache stateCache() {
-		return CacheManager.getInstance().getCache(LISTING_STATE_CACHE_NAME);
+		return getCacheManager().getCache(LISTING_STATE_CACHE_NAME);
 	}
 
 	/**

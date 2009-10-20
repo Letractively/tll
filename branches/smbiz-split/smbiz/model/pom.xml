@@ -44,51 +44,75 @@
 				</includes>
 			</resource>
 		</resources>
+
+    <plugins>
+    	<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/test-assets.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+    	</plugin>
+    </plugins>
+
 	</build>
 	
 	<dependencies>
+		<dependency>
+			<artifactId>commons-logging</artifactId>
+			<groupId>commons-logging</groupId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.code.guice</groupId>
+			<artifactId>guice</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>aopalliance</groupId>
 			<artifactId>aopalliance</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.google.code.guice</groupId>
-			<artifactId>guice</artifactId>
-		</dependency>
 
 		<dependency>
-			<groupId>com.tll</groupId>
-			<artifactId>tll-core</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.tll</groupId>
-			<artifactId>tll-config</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.tll</groupId>
-			<artifactId>tll-model</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
 		</dependency>
 	
-			<dependency>
+		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-core</artifactId>
-			<classifier>testassets</classifier>
 			<version>0.0.1-SNAPSHOT</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-model</artifactId>
-			<classifier>testassets</classifier>
 			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-model</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<classifier>testassets</classifier>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

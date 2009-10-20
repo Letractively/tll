@@ -3,10 +3,12 @@
  */
 package com.tll.di;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
 
 import org.apache.commons.logging.Log;
@@ -70,6 +72,8 @@ public class SmbizEntityServiceFactoryModule extends AbstractModule {
 
 	static final Log log = LogFactory.getLog(SmbizEntityServiceFactoryModule.class);
 
+	public static final String EHCACHE_SMBIZ_PERSIST_FILENAME = "ehcache-smbiz-persist.xml";
+
 	public static final String USER_DETAILS_CACHE_NAME = "acegiUserDetailsCache";
 
 	@Override
@@ -102,11 +106,18 @@ public class SmbizEntityServiceFactoryModule extends AbstractModule {
 		bind(UserCache.class).toProvider(new Provider<UserCache>() {
 
 			public UserCache get() {
-				final Cache cache = CacheManager.getInstance().getCache(USER_DETAILS_CACHE_NAME);
-				assert cache != null;
-				final EhCacheBasedUserCache uc = new EhCacheBasedUserCache();
-				uc.setCache(cache);
-				return uc;
+				try {
+					final URL url = Thread.currentThread().getContextClassLoader().getResource(EHCACHE_SMBIZ_PERSIST_FILENAME);
+					final CacheManager cm = new CacheManager(url);
+					final Cache cache = cm.getCache(USER_DETAILS_CACHE_NAME);
+					assert cache != null;
+					final EhCacheBasedUserCache uc = new EhCacheBasedUserCache();
+					uc.setCache(cache);
+					return uc;
+				}
+				catch(final CacheException e) {
+					throw new IllegalStateException(e);
+				}
 			}
 
 		}).in(Scopes.SINGLETON);

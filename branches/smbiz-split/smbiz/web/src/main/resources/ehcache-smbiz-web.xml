@@ -464,25 +464,6 @@
             memoryStoreEvictionPolicy="LRU"
             />
 
-  <!-- Acegi cache regions -->
-
-  <cache name="acegiUserDetailsCache" maxElementsInMemory="10" eternal="true" timeToIdleSeconds="0"
-    timeToLiveSeconds="0" overflowToDisk="false" />
-
-  <!-- Hibernate cache regions -->
-
-  <cache name="hbm.org.hibernate.cache.StandardQueryCache" maxElementsInMemory="2000" eternal="true" timeToIdleSeconds="0"
-    timeToLiveSeconds="0" overflowToDisk="false" />
-    
-  <cache name="hbm.org.hibernate.cache.UpdateTimestampsCache" maxElementsInMemory="2000" eternal="true" timeToIdleSeconds="0"
-    timeToLiveSeconds="0" overflowToDisk="false" />
-  
-  <cache name="hbm.com.tll.model.Currency" maxElementsInMemory="5" eternal="true" timeToIdleSeconds="0"
-    timeToLiveSeconds="0" overflowToDisk="false" />
-
-  <cache name="hbm.com.tll.model.Authority" maxElementsInMemory="5" eternal="true" timeToIdleSeconds="0"
-    timeToLiveSeconds="0" overflowToDisk="false" />
-
   <!-- listing service cache regions -->
   
   <!-- TODO ideally, this should be part of the webapp not the persist module as it is accessed from a servlet only -->

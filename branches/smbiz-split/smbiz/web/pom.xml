@@ -15,6 +15,20 @@
 	<description>The smbiz web application module.</description>
 	
 	<build>
+	
+		<plugins>
+			<!-- direct unit test invocations to the testng.xml file -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skip>true</skip><!-- TODO temp -->
+					<suiteXmlFiles>
+						<suiteXmlFile>${pom.basedir}/src/test/resources/test-server.xml</suiteXmlFile>
+					</suiteXmlFiles>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 
 	<dependencies>
@@ -53,17 +67,6 @@
 		<dependency>
 			<groupId>com.allen_sauer.gwt.log</groupId>
 			<artifactId>gwt-log</artifactId>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.tll</groupId>
-			<artifactId>smbiz-model</artifactId>
-			<version>0.9.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.tll</groupId>
-			<artifactId>smbiz-persist</artifactId>
-			<version>0.9.0-SNAPSHOT</version>
 		</dependency>
 		
 		<dependency>
@@ -137,6 +140,17 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>smbiz-model</artifactId>
+			<version>0.9.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>smbiz-persist</artifactId>
+			<version>0.9.0-SNAPSHOT</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>

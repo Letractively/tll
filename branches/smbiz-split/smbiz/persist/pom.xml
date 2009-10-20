@@ -15,9 +15,66 @@
 	<description>The smbiz persist module.</description>
 
 	<build>
+
+		<plugins>
+			<!-- AspectJ bind @Transactional to Spring's trans handling framework -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>aspectj-maven-plugin</artifactId>
+				<configuration>
+					<showWeaveInfo>false</showWeaveInfo>
+					<source>1.6</source>
+					<target>1.6</target>
+					<weaveDependencies>
+						<weaveDependency>
+							<groupId>com.tll</groupId>
+							<artifactId>tll-service</artifactId>
+						</weaveDependency>
+					</weaveDependencies>
+					<aspectLibraries>
+						<aspectLibrary>
+							<groupId>org.springframework</groupId>
+							<artifactId>spring-aspects</artifactId>
+						</aspectLibrary>
+					</aspectLibraries>
+				</configuration>
+				<executions>
+					<execution>
+						<id>aspectj-weave</id>
+						<goals>
+							<goal>compile</goal>
+							<goal>test-compile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- direct unit test invocations to the testng.xml file -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skip>true</skip><!-- TODO temp -->
+					<suiteXmlFiles>
+						<suiteXmlFile>${pom.basedir}/src/test/resources/test-dao.xml</suiteXmlFile>
+						<suiteXmlFile>${pom.basedir}/src/test/resources/test-namedqueries.xml</suiteXmlFile>
+						<suiteXmlFile>${pom.basedir}/src/test/resources/test-service.xml</suiteXmlFile>
+					</suiteXmlFiles>
+				</configuration>
+			</plugin>
+		</plugins>
+
 	</build>
 
 	<dependencies>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+		</dependency>
+	
 		<dependency>
 			<groupId>aopalliance</groupId>
 			<artifactId>aopalliance</artifactId>
@@ -26,6 +83,44 @@
 		<dependency>
 			<groupId>com.google.code.guice</groupId>
 			<artifactId>guice</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>spring-context</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-core</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aop</artifactId>
+				</exclusion>
+				<exclusion>
+					<artifactId>aopalliance</artifactId>
+					<groupId>aopalliance</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -37,9 +132,31 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>db4o</groupId>
 			<artifactId>db4o</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-config</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-model</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
@@ -56,16 +173,27 @@
 			<artifactId>tll-service</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+
 		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>smbiz-model</artifactId>
 			<version>0.9.0-SNAPSHOT</version>
 		</dependency>
-		<dependency>
-			<groupId>net.sf.ehcache</groupId>
-			<artifactId>ehcache</artifactId>
-		</dependency>
 
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<classifier>testassets</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-model</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<classifier>testassets</classifier>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-dao-api</artifactId>
@@ -80,16 +208,20 @@
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>smbiz-model</artifactId>
+			<classifier>testassets</classifier>
+			<version>0.9.0-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
 			<classifier>jdk15</classifier>
 			<version>${testNGVersion}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
