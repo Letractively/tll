@@ -59,7 +59,6 @@ public class Db4oEntityDaoTest extends AbstractDb4oEntityDaoTest {
 			new AspAccountDaoTestHandler(),
 			new MerchantDaoTestHandler(),
 			new CustomerAccountDaoTestHandler(),
-			new CustomerAccountDaoTestHandler(),
 			new InterfaceSingleDaoTestHandler(),
 			new InterfaceSwitchDaoTestHandler(),
 		};

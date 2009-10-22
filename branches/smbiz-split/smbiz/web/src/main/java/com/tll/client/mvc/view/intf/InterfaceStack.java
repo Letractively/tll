@@ -260,7 +260,7 @@ class InterfaceStack extends Composite implements IRpcHandler, IListingHandler<M
 			"name", "code", "description"
 		};
 		listHandler =
-			RemoteListingOperator.create(listingId, ListHandlerType.COLLECTION, criteria, propKeys, -1, defaultSorting);
+			RemoteListingOperator.create(listingId, ListHandlerType.IN_MEMORY, criteria, propKeys, -1, defaultSorting);
 		listHandler.setSourcingWidget(this);
 		this.loader = loader;
 		crud = new CrudCommand();

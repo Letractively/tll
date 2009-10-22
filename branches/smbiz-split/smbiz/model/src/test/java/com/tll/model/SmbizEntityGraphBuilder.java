@@ -47,16 +47,7 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphPopulator 
 		add(Currency.class, false);
 
 		// app properties
-		AppProperty ap;
-		ap = add(AppProperty.class, false);
-		ap.setName("locale");
-		ap.setValue("US");
-		ap = add(AppProperty.class, false);
-		ap.setName("default.iso4217");
-		ap.setValue("usd");
-		ap = add(AppProperty.class, false);
-		ap.setName("default.country");
-		ap.setValue("usa");
+		addAll(AppProperty.class);
 
 		// addresses
 		addN(Address.class, true, 10);

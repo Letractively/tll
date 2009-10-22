@@ -17,6 +17,7 @@ import org.testng.annotations.Test;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.tll.config.Config;
+import com.tll.config.ConfigRef;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
@@ -75,6 +76,10 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 				querySortBindings.put(nq, new SortColumn("code", "intf"));
 				queryParamsBindings.put(nq, null);
 				break;
+			case ACCOUNT_INTERFACE_SUMMARY_LISTING:
+				querySortBindings.put(nq, new SortColumn("code", "intf"));
+				queryParamsBindings.put(nq, null);
+				break;
 
 				// warn of unhandled defined named queries!
 			default:
@@ -121,6 +126,11 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 		return injector.getInstance(IEntityServiceFactory.class).instanceByEntityType(entityClass);
 	}
 
+	@Override
+	protected Config doGetConfig() {
+		return Config.load(new ConfigRef("test-config.properties"));
+	}
+
 	/**
 	 * Does simple validation on the given list handler.
 	 * @param <T>
@@ -130,8 +140,8 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 	 */
 	protected <T> void validateListHandler(IListHandler<T> listHandler, Sorting sorting) throws Exception {
 		assert listHandler != null : "The list handler is null";
-		assert listHandler.getElements(0, 1, sorting) != null : "Unable to obtain the first list handler element";
 		assert listHandler.size() > 0 : "No list handler elements exist";
+		assert listHandler.getElements(0, 1, sorting) != null : "Unable to obtain the first list handler element";
 	}
 
 	@SuppressWarnings("unchecked")
@@ -151,7 +161,7 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 				IListHandler<SearchResult<?>> listHandler = null;
 				logger.debug("Validating '" + nq.toString() + "' query with " + lht.toString() + " list handling...");
 				switch(lht) {
-				case COLLECTION:
+				case IN_MEMORY:
 					listHandler = ListHandlerFactory.create(criteria, sorting, lht, dataProvider);
 					break;
 				case IDLIST:

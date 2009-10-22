@@ -1,9 +1,7 @@
 package com.tll.model.test;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -13,10 +11,11 @@ import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
-import com.google.inject.BindingAnnotation;
-import com.google.inject.Inject;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
 import com.tll.model.key.BusinessKeyFactory;
@@ -30,6 +29,11 @@ import com.tll.model.key.IBusinessKeyDefinition;
  */
 public final class EntityBeanFactory {
 
+	/**
+	 * The default path file name of the [Spring] bean context file.
+	 */
+	private static final String DEFAULT_BEAN_DEF_FILENAME = "mock-entities.xml";
+
 	private static final Log log = LogFactory.getLog(EntityBeanFactory.class);
 
 	/**
@@ -37,6 +41,43 @@ public final class EntityBeanFactory {
 	 * ensure no collisions!
 	 */
 	private static int uniqueTokenCounter = 0;
+
+	/**
+	 * Loads a {@link ListableBeanFactory} given a {@link URI} ref to it.
+	 * @param beanDefRef May be <code>null</code> in which case the default bean
+	 *        def filename is used
+	 * @return newly created {@link ListableBeanFactory} impl instance
+	 */
+	public static ListableBeanFactory loadBeanDefinitions(URI beanDefRef) {
+		if(beanDefRef == null) try {
+			beanDefRef = new URI(DEFAULT_BEAN_DEF_FILENAME);
+		}
+		catch(final URISyntaxException e1) {
+			throw new IllegalStateException("Can't locate entity bean def file: " + DEFAULT_BEAN_DEF_FILENAME);
+		}
+
+		// NOTE: we revert to the system class loader as opposed to Spring's
+		// default current thread context class loader
+		// so gmaven invoked groovy scripts don't blow up
+		try {
+			final ClassPathXmlApplicationContext ac = new ClassPathXmlApplicationContext(new String[] {
+				beanDefRef.toString()
+			}, false);
+			ac.setClassLoader(AbstractEntityGraphPopulator.class.getClassLoader());
+			ac.refresh();
+			return ac;
+		}
+		catch(final BeanDefinitionStoreException e) {
+			// presume the file could't be found at root of classpath
+			// so fallback on a file-based class loader
+			final FileSystemXmlApplicationContext ac = new FileSystemXmlApplicationContext(new String[] {
+				beanDefRef.toString()
+			}, false);
+			ac.setClassLoader(AbstractEntityGraphPopulator.class.getClassLoader());
+			ac.refresh();
+			return ac;
+		}
+	}
 
 	/**
 	 * Makes the provided entity [quasi] business key unique by altering one of
@@ -106,16 +147,6 @@ public final class EntityBeanFactory {
 		return Integer.toString(nextUniqueInt());
 	}
 
-	/**
-	 * EntityBeanFactoryParam annotation
-	 */
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target( {
-		ElementType.FIELD, ElementType.PARAMETER })
-		@BindingAnnotation
-		public @interface EntityBeanFactoryParam {
-	}
-
 	private final ListableBeanFactory beanFactory;
 
 	private final IEntityFactory entityFactory;
@@ -125,8 +156,7 @@ public final class EntityBeanFactory {
 	 * @param beanFactory
 	 * @param entityFactory
 	 */
-	@Inject
-	public EntityBeanFactory(@EntityBeanFactoryParam ListableBeanFactory beanFactory, IEntityFactory entityFactory) {
+	public EntityBeanFactory(ListableBeanFactory beanFactory, IEntityFactory entityFactory) {
 		super();
 		assert beanFactory != null : "The beanFactory is null";
 		assert entityFactory != null : "The entityFactory is null";

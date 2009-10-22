@@ -6,7 +6,7 @@ package com.tll.listhandler;
  * @author jpk
  */
 public enum ListHandlerType {
-	COLLECTION,
+	IN_MEMORY,
 	IDLIST,
 	PAGE;
 

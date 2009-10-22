@@ -7,39 +7,32 @@ import com.tll.dao.SortColumnBeanComparator;
 import com.tll.dao.Sorting;
 
 /**
- * List handler implementation for a {@link java.util.Collection}.
+ * InMemoryListHandler - {@link IListHandler} implementation for a {@link java.util.List}.
  * @author jpk
- * @param <T>
+ * @param <T> the row element type
  */
-public class CollectionListHandler<T> extends AbstractListHandler<T> {
+public class InMemoryListHandler<T> extends AbstractListHandler<T> {
 
 	/**
-	 * The managed list.
+	 * The managed non-<code>null</code> list.
 	 */
-	private List<T> rows;
+	private final List<T> rows;
 
 	/**
 	 * Constructor
+	 * @param rows must not be <code>null</code> but may be empty.
+	 * @throws IllegalArgumentException When <code>rows</code> is <code>null</code>
 	 */
-	CollectionListHandler() {
+	InMemoryListHandler(List<T> rows) {
 		super();
-	}
-
-	/**
-	 * Constructor
-	 * @param rows
-	 * @throws EmptyListException
-	 */
-	CollectionListHandler(List<T> rows) throws EmptyListException {
-		this();
-		if(rows == null || rows.size() < 1) {
-			throw new EmptyListException("Unable to instantiate collection list handler: No rows specified");
+		if(rows == null) {
+			throw new IllegalArgumentException("Null row list");
 		}
 		this.rows = rows;
 	}
 
 	public final ListHandlerType getListHandlerType() {
-		return ListHandlerType.COLLECTION;
+		return ListHandlerType.IN_MEMORY;
 	}
 
 	public final int size() {
@@ -62,7 +55,7 @@ public class CollectionListHandler<T> extends AbstractListHandler<T> {
 	}
 
 	public List<T> getElements(int offset, int pageSize, Sorting sort) throws IndexOutOfBoundsException,
-			EmptyListException, ListHandlerException {
+	EmptyListException, ListHandlerException {
 		if(size() < 1) throw new EmptyListException("No collection list elements exist");
 		if(sort != null && !sort.equals(this.sorting)) {
 			sort(sort);

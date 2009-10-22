@@ -53,7 +53,7 @@ public class AbstractConfigAwareTest extends AbstractInjectedTest {
 	 * @return The test config instance that is lazily loaded if not config
 	 *         created upon construction.
 	 */
-	protected Config getConfig() {
+	protected final Config getConfig() {
 		if(config == null) {
 			config = doGetConfig();
 		}

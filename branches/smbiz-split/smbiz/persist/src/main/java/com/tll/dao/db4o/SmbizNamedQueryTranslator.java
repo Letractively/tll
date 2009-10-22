@@ -48,30 +48,20 @@ public class SmbizNamedQueryTranslator implements IDb4oNamedQueryTranslator {
 			q.constrain(Interface.class);
 		}
 		else if(SelectNamedQueries.ACCOUNT_INTERFACE_SUMMARY_LISTING.getQueryName().equals(qname)) {
-			// TODO eliminate dependency on SmbizEntityType !!!
-			// 1 param: accountType (SmbizEntityType)
-			/*
-			final SmbizEntityType et = (SmbizEntityType) params.get(0).getValue();
 			q.constrain(Interface.class);
+			final String et = (String) params.get(0).getValue();
 			Query sq;
-			switch(et) {
-			case ASP:
+			if("asp".equals(et))
 				sq = q.descend("isAvailableAsp");
-				break;
-			case ISP:
+			else if("isp".equals(et))
 				sq = q.descend("isAvailableIsp");
-				break;
-			case MERCHANT:
+			else if("merchant".equals(et))
 				sq = q.descend("isAvailableMerchant");
-				break;
-			case CUSTOMER:
+			else if("customer".equals(et))
 				sq = q.descend("isAvailableCustomer");
-				break;
-			default:
+			else
 				throw new InvalidCriteriaException();
-			}
 			sq.constrain(true);
-			 */
 		}
 
 		else throw new InvalidCriteriaException("Unhandled named query: " + qname);

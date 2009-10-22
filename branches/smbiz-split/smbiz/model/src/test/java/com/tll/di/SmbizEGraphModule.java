@@ -20,21 +20,21 @@ import com.tll.model.test.IEntityGraphPopulator;
  */
 public class SmbizEGraphModule extends EGraphModule {
 
-	private static final String ENTITY_DEFS_FILENAME = "mock-entities.xml";
+	private static final String ENTITY_DEFINITIONS_FILENAME = "core-entities.xml";
 
 	@Override
 	protected URI getBeanDefRef() {
 		try {
-			URL url = Thread.currentThread().getContextClassLoader().getResource(ENTITY_DEFS_FILENAME);
+			URL url = Thread.currentThread().getContextClassLoader().getResource(ENTITY_DEFINITIONS_FILENAME);
 			if(url == null) {
-				url = SmbizEGraphModule.class.getResource(ENTITY_DEFS_FILENAME);
+				url = SmbizEGraphModule.class.getResource(ENTITY_DEFINITIONS_FILENAME);
 			}
 			if(url != null) return url.toURI();
 		}
 		catch(final URISyntaxException e) {
 			// fall through
 		}
-		throw new IllegalStateException("Can't find '" + ENTITY_DEFS_FILENAME + "' on the classpath.");
+		throw new IllegalStateException("Can't find '" + ENTITY_DEFINITIONS_FILENAME + "' on the classpath.");
 	}
 
 	@Override

@@ -1,6 +1,8 @@
 package com.tll.listhandler;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
@@ -16,18 +18,23 @@ import com.tll.util.CollectionUtil;
 public abstract class ListHandlerFactory {
 
 	/**
-	 * Creates a collection based list handler.
-	 * @param <T>
-	 * @param c a collection
+	 * Creates an {@link InMemoryListHandler} given a {@link Collection} and
+	 * {@link Sorting} directive.
+	 * @param <T> the collection element type
+	 * @param c an arbitrary collection. If the collection isn't a {@link List}, a
+	 *        newly created {@link List} is created containing all collection
+	 *        elements whose element order is dicated by the collection's
+	 *        {@link Iterator}.
 	 * @param sorting the sorting directive. May be <code>null</code>.
 	 * @return IListHandler instance
-	 * @throws EmptyListException
-	 * @throws ListHandlerException When a sorting related occurrs.
+	 * @throws ListHandlerException When a sorting related occurs.
+	 * @throws IllegalArgumentException When the given collection is
+	 *         <code>null</code>
 	 */
-	public static <T> IListHandler<T> create(Collection<T> c, Sorting sorting) throws EmptyListException,
-	ListHandlerException {
+	public static <T> IListHandler<T> create(Collection<T> c, Sorting sorting) throws ListHandlerException,
+	IllegalArgumentException {
 		try {
-			final CollectionListHandler<T> listHandler = new CollectionListHandler<T>(CollectionUtil.listFromCollection(c));
+			final InMemoryListHandler<T> listHandler = new InMemoryListHandler<T>(CollectionUtil.listFromCollection(c));
 			if(sorting != null) {
 				listHandler.sort(sorting);
 			}
@@ -49,37 +56,36 @@ public abstract class ListHandlerFactory {
 	 * @throws InvalidCriteriaException When the criteria or the sorting directive
 	 *         is not specified.
 	 * @throws EmptyListException When the list handler type is
-	 *         {@link ListHandlerType#COLLECTION} and no matching results exist.
+	 *         {@link ListHandlerType#IN_MEMORY} and no matching results exist.
 	 * @throws ListHandlerException When the list handler type is
-	 *         {@link ListHandlerType#COLLECTION} and the sorting directive is
+	 *         {@link ListHandlerType#IN_MEMORY} and the sorting directive is
 	 *         specified but mal-formed.
 	 * @throws IllegalStateException when the list handler type is un-supported.
 	 */
 	public static <E extends IEntity> IListHandler<SearchResult<?>> create(Criteria<E> criteria, Sorting sorting,
-			ListHandlerType type, IListingDataProvider dataProvider) throws InvalidCriteriaException,
-			EmptyListException,
+			ListHandlerType type, IListingDataProvider dataProvider) throws InvalidCriteriaException, EmptyListException,
 			ListHandlerException, IllegalStateException {
 
 		SearchListHandler<E> slh = null;
 
 		switch(type) {
 
-			case COLLECTION:
-				return create(dataProvider.find(criteria, null), sorting);
+		case IN_MEMORY:
+			return create(dataProvider.find(criteria, null), sorting);
 
-			case IDLIST:
-				if(criteria.getCriteriaType().isQuery()) {
-					throw new InvalidCriteriaException("Id list handling does not support query based criteria");
-				}
-				slh = new IdListHandler<E>(dataProvider, criteria, sorting);
-				break;
+		case IDLIST:
+			if(criteria.getCriteriaType().isQuery()) {
+				throw new InvalidCriteriaException("Id list handling does not support query based criteria");
+			}
+			slh = new IdListHandler<E>(dataProvider, criteria, sorting);
+			break;
 
-			case PAGE:
-				slh = new PagingSearchListHandler<E>(dataProvider, criteria, sorting);
-				break;
+		case PAGE:
+			slh = new PagingSearchListHandler<E>(dataProvider, criteria, sorting);
+			break;
 
-			default:
-				throw new IllegalStateException("Unhandled list handler type: " + type);
+		default:
+			throw new IllegalStateException("Unhandled list handler type: " + type);
 		}
 
 		return slh;
