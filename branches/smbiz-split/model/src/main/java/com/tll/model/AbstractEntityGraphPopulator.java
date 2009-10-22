@@ -3,7 +3,7 @@
  * @author jpk
  * Jan 31, 2009 Jan 31, 2009
  */
-package com.tll.model.test;
+package com.tll.model;
 
 import java.util.Date;
 import java.util.Set;
@@ -12,8 +12,6 @@ import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.tll.model.IEntity;
-import com.tll.model.ITimeStampEntity;
 import com.tll.model.key.NonUniqueBusinessKeyException;
 
 

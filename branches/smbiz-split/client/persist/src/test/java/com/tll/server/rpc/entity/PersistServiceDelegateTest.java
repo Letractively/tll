@@ -44,9 +44,9 @@ import com.tll.di.test.Db4oDbShellModule;
 import com.tll.di.test.TestClientPersistModule;
 import com.tll.di.test.TestDb4oDaoModule;
 import com.tll.di.test.TestPersistenceUnitModelModule;
+import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
 import com.tll.model.test.Address;
-import com.tll.model.test.EntityBeanFactory;
 import com.tll.refdata.RefDataType;
 
 /**

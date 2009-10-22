@@ -9,9 +9,9 @@ import com.tll.model.Account;
 import com.tll.model.AccountAddress;
 import com.tll.model.Address;
 import com.tll.model.Currency;
+import com.tll.model.EntityBeanFactory;
 import com.tll.model.PaymentInfo;
 import com.tll.model.key.PrimaryKey;
-import com.tll.model.test.EntityBeanFactory;
 
 /**
  * AbstractAccountDaoTestHandler

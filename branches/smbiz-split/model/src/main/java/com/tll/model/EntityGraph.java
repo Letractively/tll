@@ -3,7 +3,7 @@
  * @author jpk
  * Jan 31, 2009
  */
-package com.tll.model.test;
+package com.tll.model;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -11,9 +11,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.tll.model.EntityUtil;
-import com.tll.model.IEntity;
-import com.tll.model.IEntityProvider;
 import com.tll.model.key.BusinessKeyPropertyException;
 import com.tll.model.key.BusinessKeyUtil;
 import com.tll.model.key.NonUniqueBusinessKeyException;

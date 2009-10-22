@@ -9,9 +9,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import com.tll.di.test.EGraphModule;
+import com.tll.model.IEntityGraphPopulator;
 import com.tll.model.SmbizEntityGraphBuilder;
-import com.tll.model.test.IEntityGraphPopulator;
 
 
 /**

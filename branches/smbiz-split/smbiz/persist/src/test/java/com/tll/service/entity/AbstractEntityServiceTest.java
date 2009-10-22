@@ -27,8 +27,8 @@ import com.tll.di.SmbizEGraphModule;
 import com.tll.di.SmbizEntityServiceFactoryModule;
 import com.tll.di.SmbizModelModule;
 import com.tll.di.test.Db4oDbShellModule;
+import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
-import com.tll.model.test.EntityBeanFactory;
 
 /**
  * AbstractEntityServiceTest - Base class for all entity service related testing

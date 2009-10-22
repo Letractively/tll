@@ -20,13 +20,13 @@ import com.tll.common.model.IModelProperty;
 import com.tll.common.model.Model;
 import com.tll.di.TestMarshalModule;
 import com.tll.di.test.TestPersistenceUnitModelModule;
+import com.tll.model.EntityBeanFactory;
+import com.tll.model.EntityGraph;
 import com.tll.model.IEntity;
 import com.tll.model.IScalar;
 import com.tll.model.test.Account;
 import com.tll.model.test.AccountAddress;
 import com.tll.model.test.AccountStatus;
-import com.tll.model.test.EntityBeanFactory;
-import com.tll.model.test.EntityGraph;
 import com.tll.model.test.NestedEntity;
 import com.tll.model.test.TestPersistenceUnitEntityGraphBuilder;
 

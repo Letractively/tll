@@ -17,9 +17,9 @@ import org.testng.annotations.Test;
 import com.google.inject.Module;
 import com.tll.AbstractConfigAwareTest;
 import com.tll.di.test.TestPersistenceUnitModelModule;
+import com.tll.model.EntityBeanFactory;
 import com.tll.model.test.Account;
 import com.tll.model.test.AccountAddress;
-import com.tll.model.test.EntityBeanFactory;
 
 /**
  * ClientizePropertyPathTest

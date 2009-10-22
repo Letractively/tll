@@ -13,7 +13,7 @@ import com.google.inject.Scopes;
 import com.tll.dao.IDbShell;
 import com.tll.dao.db4o.test.Db4oDbShell;
 import com.tll.di.Db4oDaoModule.Db4oFile;
-import com.tll.model.test.IEntityGraphPopulator;
+import com.tll.model.IEntityGraphPopulator;
 
 /**
  * Db4oDbShellModule - Db4o db shell impl module.

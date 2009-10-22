@@ -20,6 +20,7 @@ import org.testng.annotations.Test;
 import com.google.inject.Injector;
 import com.tll.criteria.Criteria;
 import com.tll.dao.test.EntityDaoTestDecorator;
+import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
 import com.tll.model.INamedEntity;
@@ -32,7 +33,6 @@ import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.IBusinessKeyDefinition;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
-import com.tll.model.test.EntityBeanFactory;
 import com.tll.util.Comparator;
 
 /**

@@ -10,9 +10,10 @@ import java.net.URISyntaxException;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import com.tll.di.EGraphModule;
 import com.tll.di.ModelModule;
 import com.tll.model.IEntityAssembler;
-import com.tll.model.test.IEntityGraphPopulator;
+import com.tll.model.IEntityGraphPopulator;
 import com.tll.model.test.TestPersistenceUnitEntityAssembler;
 import com.tll.model.test.TestPersistenceUnitEntityGraphBuilder;
 

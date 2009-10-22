@@ -3,7 +3,7 @@
  * @author jpk
  * Jan 31, 2009
  */
-package com.tll.model.test;
+package com.tll.model;
 
 /**
  * IEntityGraphPopulator - Populates a targeted {@link EntityGraph} instance.

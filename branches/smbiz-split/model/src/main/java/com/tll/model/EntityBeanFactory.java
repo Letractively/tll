@@ -1,4 +1,4 @@
-package com.tll.model.test;
+package com.tll.model;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -16,8 +16,6 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
-import com.tll.model.IEntity;
-import com.tll.model.IEntityFactory;
 import com.tll.model.key.BusinessKeyFactory;
 import com.tll.model.key.BusinessKeyNotDefinedException;
 import com.tll.model.key.IBusinessKeyDefinition;
