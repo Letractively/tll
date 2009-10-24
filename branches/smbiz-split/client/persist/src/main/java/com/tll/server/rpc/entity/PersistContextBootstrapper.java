@@ -40,8 +40,10 @@ public class PersistContextBootstrapper implements IBootstrapHandler {
 	public void shutdown(ServletContext servletContext) {
 		final PersistContext c =
 			(PersistContext) servletContext.getAttribute(PersistContext.KEY);
-		if(c != null) {
-			// no op
+		if(c != null && c.getPersistCache() != null) {
+			log.debug("Shutting down entity service factory..");
+			c.getPersistCache().shutdown();
+			log.info("Entity service factory shut down.");
 		}
 	}
 

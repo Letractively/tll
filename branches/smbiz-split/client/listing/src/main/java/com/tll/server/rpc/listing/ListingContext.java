@@ -30,6 +30,7 @@ public class ListingContext {
 	private final IMarshalOptionsResolver marshalOptionsResolver;
 	private final INamedQueryResolver namedQueryResolver;
 	private final IExceptionHandler exceptionHandler;
+	private final ListingCache listingCache;
 
 	/**
 	 * Constructor
@@ -39,12 +40,13 @@ public class ListingContext {
 	 * @param marshalOptionsResolver
 	 * @param namedQueryResolver
 	 * @param exceptionHandler
+	 * @param listingCache
 	 */
 	@Inject
 	public ListingContext(IListingSearchTranslator searchTranslator,
 			IListingDataProviderResolver listingDataProviderResolver, Marshaler marshaler,
 			IMarshalOptionsResolver marshalOptionsResolver, INamedQueryResolver namedQueryResolver,
-			IExceptionHandler exceptionHandler) {
+			IExceptionHandler exceptionHandler, ListingCache listingCache) {
 		super();
 		this.searchTranslator = searchTranslator;
 		this.listingDataProviderResolver = listingDataProviderResolver;
@@ -52,6 +54,7 @@ public class ListingContext {
 		this.marshalOptionsResolver = marshalOptionsResolver;
 		this.namedQueryResolver = namedQueryResolver;
 		this.exceptionHandler = exceptionHandler;
+		this.listingCache = listingCache;
 	}
 
 	public IListingSearchTranslator getSearchTranslator() {
@@ -78,4 +81,7 @@ public class ListingContext {
 		return namedQueryResolver;
 	}
 
+	public ListingCache getListingCache() {
+		return listingCache;
+	}
 }

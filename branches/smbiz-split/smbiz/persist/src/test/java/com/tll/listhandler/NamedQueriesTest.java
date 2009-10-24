@@ -6,14 +6,16 @@
 package com.tll.listhandler;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import net.sf.ehcache.CacheManager;
 
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.db4o.ObjectContainer;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.tll.config.Config;
@@ -25,6 +27,7 @@ import com.tll.criteria.QueryParam;
 import com.tll.criteria.SelectNamedQueries;
 import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.IDbShell;
+import com.tll.dao.IEntityDao;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
@@ -33,8 +36,11 @@ import com.tll.di.SmbizDb4oDaoModule;
 import com.tll.di.SmbizEGraphModule;
 import com.tll.di.SmbizEntityServiceFactoryModule;
 import com.tll.di.SmbizModelModule;
+import com.tll.di.TestCacheModule;
 import com.tll.di.test.Db4oDbShellModule;
+import com.tll.model.Asp;
 import com.tll.model.IEntity;
+import com.tll.model.Isp;
 import com.tll.model.schema.PropertyType;
 import com.tll.service.entity.IEntityServiceFactory;
 
@@ -45,52 +51,34 @@ import com.tll.service.entity.IEntityServiceFactory;
 @Test(groups = { "listhandler", "namedqueries" })
 public class NamedQueriesTest extends AbstractDbAwareTest {
 
-	private static final Map<SelectNamedQueries, SortColumn> querySortBindings =
-		new HashMap<SelectNamedQueries, SortColumn>();
+	/**
+	 * CriteriaAndSorting - Ad hoc encapsulation of {@link Criteria} and {@link Sorting}.
+	 * @author jpk
+	 */
+	static class CriteriaAndSorting {
+		final Criteria<IEntity> criteria;
+		final Sorting sorting;
 
-	private static final Map<SelectNamedQueries, List<IQueryParam>> queryParamsBindings =
-		new HashMap<SelectNamedQueries, List<IQueryParam>>();
-
-	static {
-		for(final SelectNamedQueries nq : SelectNamedQueries.values()) {
-			switch(nq) {
-			case ISP_LISTING:
-				querySortBindings.put(nq, new SortColumn("dateCreated"));
-				queryParamsBindings.put(nq, null);
-				break;
-			case MERCHANT_LISTING: {
-				querySortBindings.put(nq, new SortColumn("dateCreated"));
-				final List<IQueryParam> list = new ArrayList<IQueryParam>();
-				list.add(new QueryParam("ispId", PropertyType.INT, Integer.valueOf(2)));
-				queryParamsBindings.put(nq, list);
-				break;
-			}
-			case CUSTOMER_LISTING: {
-				querySortBindings.put(nq, new SortColumn("dateCreated", "c"));
-				final List<IQueryParam> list = new ArrayList<IQueryParam>();
-				list.add(new QueryParam("merchantId", PropertyType.INT, Integer.valueOf(2)));
-				queryParamsBindings.put(nq, list);
-				break;
-			}
-			case INTERFACE_SUMMARY_LISTING:
-				querySortBindings.put(nq, new SortColumn("code", "intf"));
-				queryParamsBindings.put(nq, null);
-				break;
-			case ACCOUNT_INTERFACE_SUMMARY_LISTING:
-				querySortBindings.put(nq, new SortColumn("code", "intf"));
-				queryParamsBindings.put(nq, null);
-				break;
-
-				// warn of unhandled defined named queries!
-			default:
-				throw new IllegalStateException("Unhandled named query: " + nq);
-			}
+		/**
+		 * Constructor
+		 * @param criteria
+		 * @param sorting
+		 */
+		public CriteriaAndSorting(Criteria<IEntity> criteria, Sorting sorting) {
+			super();
+			this.criteria = criteria;
+			this.sorting = sorting;
 		}
-	}
+	} // CriteriaAndSorting
 
 	@BeforeClass(alwaysRun = true)
 	public final void onBeforeClass() {
 		beforeClass();
+	}
+
+	@AfterClass(alwaysRun = true)
+	public final void onAfterClass() {
+		afterClass();
 	}
 
 	@Override
@@ -99,21 +87,30 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 		// file lock when objectcontainer is instantiated
 		final Config cfg = getConfig();
 		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
-		final Injector i = buildInjector(new SmbizDb4oDaoModule(cfg), new Db4oDbShellModule(), new SmbizModelModule(), new SmbizEGraphModule());
+		final Injector i = buildInjector(new SmbizModelModule(), new SmbizEGraphModule(), new SmbizDb4oDaoModule(cfg), new Db4oDbShellModule());
 		final IDbShell dbs = i.getInstance(IDbShell.class);
 		dbs.restub();
+		i.getInstance(ObjectContainer.class).close();
 
 		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), true);
 		super.beforeClass();
 	}
 
 	@Override
+	protected void afterClass() {
+		injector.getInstance(ObjectContainer.class).close();
+		injector.getInstance(CacheManager.class).shutdown();
+	}
+
+	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
+
+		// satisfy caching requirement for UserService
+		modules.add(new TestCacheModule("ehcache-smbiz-persist.xml"));
+
 		modules.add(new SmbizModelModule());
-		modules.add(new SmbizEGraphModule());
 		modules.add(new SmbizDb4oDaoModule(getConfig()));
-		modules.add(new Db4oDbShellModule());
 		modules.add(new SmbizEntityServiceFactoryModule());
 	}
 
@@ -140,21 +137,67 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 	 */
 	protected <T> void validateListHandler(IListHandler<T> listHandler, Sorting sorting) throws Exception {
 		assert listHandler != null : "The list handler is null";
-		assert listHandler.size() > 0 : "No list handler elements exist";
 		assert listHandler.getElements(0, 1, sorting) != null : "Unable to obtain the first list handler element";
+		assert listHandler.size() > 0 : "No list handler elements exist";	// NOTE: this must be called *after* .getElements(...)
+	}
+
+	private IEntityDao getEntityDao() {
+		return injector.getInstance(IEntityDao.class);
+	}
+
+	/**
+	 * Creates a new {@link Criteria} instance for the given named query def.
+	 * @param nq the named query def
+	 * @return newly created query params to employ
+	 */
+	private CriteriaAndSorting createCriteriaAndSorting(SelectNamedQueries nq) {
+		final ArrayList<IQueryParam> list = new ArrayList<IQueryParam>();
+		Sorting sorting;
+		switch(nq) {
+		case ISP_LISTING:
+			sorting = new Sorting("dateCreated");
+			break;
+		case MERCHANT_LISTING: {
+			sorting = new Sorting("dateCreated");
+			// find an isp..
+			final Isp anIsp = getEntityDao().loadAll(Isp.class).get(0);
+			final QueryParam qp = new QueryParam("ispId", PropertyType.STRING, anIsp.getId());
+			list.add(qp);
+			break;
+		}
+		case CUSTOMER_LISTING: {
+			sorting = new Sorting(new SortColumn("dateCreated", "c"));
+
+			// get the asp (to serve as the parent account)..
+			final Asp asp = getEntityDao().loadAll(Asp.class).get(0);
+			final QueryParam qp = new QueryParam("accountId", PropertyType.STRING, asp.getId());
+			list.add(qp);
+			break;
+		}
+		case INTERFACE_SUMMARY_LISTING:
+			sorting = new Sorting(new SortColumn("code", "intf"));
+			break;
+		case ACCOUNT_INTERFACE_SUMMARY_LISTING: {
+			sorting = new Sorting(new SortColumn("code", "intf"));
+
+			list.add(new QueryParam("", PropertyType.STRING, "asp"));
+			break;
+		}
+
+		// warn of unhandled defined named queries!
+		default:
+			throw new IllegalStateException("Unhandled named query: " + nq);
+		}
+		return new CriteriaAndSorting(new Criteria<IEntity>(nq, list), sorting);
 	}
 
 	@SuppressWarnings("unchecked")
 	public void test() throws Exception {
-
-		IListingDataProvider dataProvider;
-		Criteria<IEntity> criteria;
-
-		// iterator through all defined select named queries
-		for(final SelectNamedQueries nq : querySortBindings.keySet()) {
-			dataProvider = getListHandlerDataProvider((Class<IEntity>) nq.getEntityType());
-			criteria = new Criteria<IEntity>(nq, queryParamsBindings.get(nq));
-			final Sorting sorting = new Sorting(querySortBindings.get(nq));
+		for(final SelectNamedQueries nq : SelectNamedQueries.values()) {
+			final IListingDataProvider dataProvider = getListHandlerDataProvider((Class<IEntity>) nq.getEntityType());
+			final CriteriaAndSorting cas = createCriteriaAndSorting(nq);
+			final Criteria<IEntity> criteria = cas.criteria;
+			final Sorting sorting = cas.sorting;
 
 			// test for all list handler types
 			for(final ListHandlerType lht : ListHandlerType.values()) {

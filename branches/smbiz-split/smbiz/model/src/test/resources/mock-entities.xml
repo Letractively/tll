@@ -595,12 +595,14 @@
 		<property name="annualPrice">
 			<value>88.88</value>
 		</property>
+		<!-- 
 		<property name="parameters">
 			<props>
 				<prop key="verisignP1">param 1 value</prop>
 				<prop key="verisignP2">param 2 value</prop>
 			</props>
 		</property>
+		-->
 	</bean>
 	
 	<bean name="SalesTax" class="com.tll.model.SalesTax" parent="entityBase" scope="prototype">

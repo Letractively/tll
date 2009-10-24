@@ -14,7 +14,6 @@ import org.apache.commons.logging.LogFactory;
 
 import com.tll.model.key.NonUniqueBusinessKeyException;
 
-
 /**
  * AbstractEntityGraphPopulator
  * @author jpk
@@ -190,6 +189,30 @@ public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopula
 		}
 		throw new IllegalStateException(size + " entities exist of type " + entityType + " exist but number " + n
 				+ " was requested.");
+	}
+
+	/**
+	 * Attempts to retrive the Nth (1-based) entity of the given type.
+	 * @param <E>
+	 * @param entityType
+	 * @param name the entity name (entity type must be implement
+	 *        {@link INamedEntity}).
+	 * @return the matching entity or <code>null</code> if not found
+	 * @throws IllegalArgumentException When the given entity type does not implement {@link INamedEntity}
+	 */
+	protected final <E extends IEntity> E getEntityByName(Class<E> entityType, String name) throws IllegalArgumentException {
+		if(!INamedEntity.class.isAssignableFrom(entityType)) {
+			throw new IllegalArgumentException("Entity type: " + entityType + " is not a named entity type");
+		}
+		final Set<E> set = (Set<E>) graph.getEntitiesByType(entityType);
+		if(set != null) {
+			for(final E e : set) {
+				final String ename = ((INamedEntity)e).getName();
+				if(ename != null && ename.equals(name)) return e;
+			}
+		}
+		// not found
+		return null;
 	}
 
 	/**

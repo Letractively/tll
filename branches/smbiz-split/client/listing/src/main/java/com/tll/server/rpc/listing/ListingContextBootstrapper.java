@@ -31,5 +31,11 @@ public class ListingContextBootstrapper implements IBootstrapHandler {
 
 	@Override
 	public void shutdown(ServletContext servletContext) {
+		final ListingContext c = (ListingContext) servletContext.getAttribute(ListingContext.KEY);
+		if(c != null && c.getListingCache() != null) {
+			log.debug("Shutting down listing cache..");
+			c.getListingCache().shutdown();
+			log.info("Listing cache shut down.");
+		}
 	}
 }

@@ -19,7 +19,7 @@ import com.tll.model.SmbizEntityGraphBuilder;
  */
 public class SmbizEGraphModule extends EGraphModule {
 
-	private static final String ENTITY_DEFINITIONS_FILENAME = "core-entities.xml";
+	private static final String ENTITY_DEFINITIONS_FILENAME = "mock-entities.xml";
 
 	@Override
 	protected URI getBeanDefRef() {

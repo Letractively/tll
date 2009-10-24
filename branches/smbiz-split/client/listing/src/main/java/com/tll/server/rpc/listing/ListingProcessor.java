@@ -78,11 +78,13 @@ final class ListingProcessor {
 				status.addMsg("No session id specified.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 			}
 			else {
+				final ListingCache lcache = context.getListingCache();
+				assert lcache != null : "Null ListingCache";
 				Integer offset = request.getOffset();
 				Sorting sorting = request.getSorting();
 
 				// get listing state (if cached)
-				final ListingState state = ListingCache.getState(sessionId, listingId);
+				final ListingState state = lcache.getState(sessionId, listingId);
 				if(state != null) {
 					if(log.isDebugEnabled())
 						log.debug("Found cached state for listing '" + listingId + "': " + state.toString());
@@ -100,7 +102,7 @@ final class ListingProcessor {
 					}
 				}
 
-				handler = ListingCache.getHandler(sessionId, listingId);
+				handler = lcache.getHandler(sessionId, listingId);
 				listingStatus = (handler == null ? ListingStatus.NOT_CACHED : ListingStatus.CACHED);
 				if(log.isDebugEnabled()) log.debug("Listing status: " + listingStatus);
 
@@ -205,9 +207,9 @@ final class ListingProcessor {
 				if(listingOp == ListingOp.CLEAR) {
 					// clear
 					if(log.isDebugEnabled()) log.debug("Clearing listing '" + listingId + "'...");
-					ListingCache.clearHandler(sessionId, listingId);
+					lcache.clearHandler(sessionId, listingId);
 					if(!request.getRetainStateOnClear()) {
-						ListingCache.clearState(sessionId, listingId);
+						lcache.clearState(sessionId, listingId);
 					}
 					listingStatus = ListingStatus.NOT_CACHED;
 					status.addMsg("Cleared listing data for " + listingId, MsgLevel.INFO, MsgAttr.STATUS.flag);
@@ -215,9 +217,9 @@ final class ListingProcessor {
 				else if(listingOp == ListingOp.CLEAR_ALL) {
 					// clear all
 					if(log.isDebugEnabled()) log.debug("Clearing ALL listings...");
-					ListingCache.clearHandler(sessionId, listingId);
+					lcache.clearHandler(sessionId, listingId);
 					if(!request.getRetainStateOnClear()) {
-						ListingCache.clearAll(request.getRetainStateOnClear());
+						lcache.clearAll(request.getRetainStateOnClear());
 					}
 					listingStatus = ListingStatus.NOT_CACHED;
 					status.addMsg("Cleared ALL listing data", MsgLevel.INFO, MsgAttr.STATUS.flag);
@@ -225,10 +227,10 @@ final class ListingProcessor {
 				else if(handler != null && !status.hasErrors()) {
 					// cache listing handler
 					if(log.isDebugEnabled()) log.debug("[Re-]Caching listing '" + listingId + "'...");
-					ListingCache.storeHandler(sessionId, listingId, handler);
+					lcache.storeHandler(sessionId, listingId, handler);
 					// cache listing state
 					if(log.isDebugEnabled()) log.debug("[Re-]Caching listing state '" + listingId + "'...");
-					ListingCache.storeState(sessionId, listingId, new ListingState(handler.getOffset(), handler.getSorting()));
+					lcache.storeState(sessionId, listingId, new ListingState(handler.getOffset(), handler.getSorting()));
 					listingStatus = ListingStatus.CACHED;
 				}
 			}

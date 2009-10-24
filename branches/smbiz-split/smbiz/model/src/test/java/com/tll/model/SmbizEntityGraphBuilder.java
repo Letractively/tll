@@ -90,6 +90,13 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphPopulator 
 			}
 		}
 
+		// bind account to interface option(s)
+		final Interface intf = getEntityByName(Interface.class, "Payment Processor");
+		assert intf != null;
+		final InterfaceOptionAccount ioa = generateEntity(InterfaceOptionAccount.class, false);
+		ioa.setAccount(a);
+		ioa.setOption(intf.getOptions().iterator().next());
+
 		// create a product set for this account upto 5
 		final int numProducts = randomInt(6);
 		if(numProducts > 0) {

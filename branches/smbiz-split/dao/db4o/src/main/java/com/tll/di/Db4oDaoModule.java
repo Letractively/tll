@@ -203,7 +203,8 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 
 					return db4oTm;
 				}
-			}).in(Scopes.SINGLETON);
+			}).asEagerSingleton();
+			// IMPT: asEagerSingleton() to force binding trans manager to @Transactional!
 		}
 
 		// IDb4oNamedQueryTranslator

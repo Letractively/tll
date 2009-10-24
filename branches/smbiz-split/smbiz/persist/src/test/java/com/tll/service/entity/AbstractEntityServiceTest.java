@@ -5,10 +5,14 @@ package com.tll.service.entity;
 
 import java.util.List;
 
+import net.sf.ehcache.CacheManager;
+
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.db4o.ObjectContainer;
 import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -26,6 +30,7 @@ import com.tll.di.SmbizDb4oDaoModule;
 import com.tll.di.SmbizEGraphModule;
 import com.tll.di.SmbizEntityServiceFactoryModule;
 import com.tll.di.SmbizModelModule;
+import com.tll.di.TestCacheModule;
 import com.tll.di.test.Db4oDbShellModule;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
@@ -40,6 +45,10 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
+
+		// satisfy caching requirement for UserService
+		modules.add(new TestCacheModule("ehcache-smbiz-persist.xml"));
+
 		modules.add(new SmbizModelModule());
 		modules.add(new SmbizEGraphModule());
 		modules.add(new SmbizDb4oDaoModule(getConfig()));
@@ -64,6 +73,11 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 		beforeClass();
 	}
 
+	@AfterClass(alwaysRun = true)
+	public final void onAfterClass() {
+		afterClass();
+	}
+
 	@BeforeMethod
 	public void onBeforeMethod() {
 		beforeMethod();
@@ -85,6 +99,12 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 		dbs.delete();
 		dbs.create();
 		super.beforeClass();
+	}
+
+	@Override
+	protected void afterClass() {
+		injector.getInstance(ObjectContainer.class).close();
+		injector.getInstance(CacheManager.class).shutdown();
 	}
 
 	@Override

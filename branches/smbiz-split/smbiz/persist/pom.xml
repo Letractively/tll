@@ -25,6 +25,7 @@
 					<showWeaveInfo>false</showWeaveInfo>
 					<source>1.6</source>
 					<target>1.6</target>
+          <complianceLevel>1.6</complianceLevel>
 					<weaveDependencies>
 						<weaveDependency>
 							<groupId>com.tll</groupId>
@@ -91,7 +92,7 @@
 		</dependency>
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
-			<artifactId>ehcache</artifactId>
+			<artifactId>ehcache-core</artifactId>
 		</dependency>
 		
 		<dependency>

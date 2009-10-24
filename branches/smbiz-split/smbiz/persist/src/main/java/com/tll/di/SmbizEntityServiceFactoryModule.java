@@ -3,12 +3,10 @@
  */
 package com.tll.di;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
 
 import org.apache.commons.logging.Log;
@@ -66,19 +64,38 @@ import com.tll.service.entity.visitor.VisitorService;
 
 /**
  * SmbizEntityServiceFactoryModule
+ * <p>
+ * <b>NOTE: </b>This module depends on the presence of a {@link CacheManager}
+ * with user cache regions.
  * @author jpk
  */
 public class SmbizEntityServiceFactoryModule extends AbstractModule {
 
 	static final Log log = LogFactory.getLog(SmbizEntityServiceFactoryModule.class);
 
-	public static final String EHCACHE_SMBIZ_PERSIST_FILENAME = "ehcache-smbiz-persist.xml";
-
 	public static final String USER_DETAILS_CACHE_NAME = "acegiUserDetailsCache";
 
 	@Override
 	protected void configure() {
 		log.info("Employing Entity service module");
+
+		// UserCache (userCache)
+		bind(UserCache.class).toProvider(new Provider<UserCache>() {
+
+			@Inject
+			CacheManager cm;
+
+			@Override
+			public UserCache get() {
+				final EhCacheBasedUserCache uc = new EhCacheBasedUserCache();
+				final Cache userDetailsCache = cm.getCache(USER_DETAILS_CACHE_NAME);
+				if(userDetailsCache == null) throw new IllegalStateException("No user details cache found");
+				uc.setCache(userDetailsCache);
+				return uc;
+			}
+
+		}).in(Scopes.SINGLETON);
+
 		bind(IAuthorityService.class).to(AuthorityService.class).in(Scopes.SINGLETON);
 		bind(IAccountService.class).to(AccountService.class).in(Scopes.SINGLETON);
 		bind(ICustomerAccountService.class).to(CustomerAccountService.class).in(Scopes.SINGLETON);
@@ -101,26 +118,6 @@ public class SmbizEntityServiceFactoryModule extends AbstractModule {
 
 		// add account service
 		bind(AddAccountService.class).in(Scopes.SINGLETON);
-
-		// UserCache (userCache)
-		bind(UserCache.class).toProvider(new Provider<UserCache>() {
-
-			public UserCache get() {
-				try {
-					final URL url = Thread.currentThread().getContextClassLoader().getResource(EHCACHE_SMBIZ_PERSIST_FILENAME);
-					final CacheManager cm = new CacheManager(url);
-					final Cache cache = cm.getCache(USER_DETAILS_CACHE_NAME);
-					assert cache != null;
-					final EhCacheBasedUserCache uc = new EhCacheBasedUserCache();
-					uc.setCache(cache);
-					return uc;
-				}
-				catch(final CacheException e) {
-					throw new IllegalStateException(e);
-				}
-			}
-
-		}).in(Scopes.SINGLETON);
 
 		// EntityServiceFactory
 		bind(IEntityServiceFactory.class).toProvider(new Provider<IEntityServiceFactory>() {
@@ -192,7 +189,5 @@ public class SmbizEntityServiceFactoryModule extends AbstractModule {
 			}
 
 		}).in(Scopes.SINGLETON);
-
 	}
-
 }

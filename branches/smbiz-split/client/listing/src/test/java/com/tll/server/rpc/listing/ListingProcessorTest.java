@@ -5,12 +5,18 @@
  */
 package com.tll.server.rpc.listing;
 
+import java.net.URL;
 import java.util.List;
+
+import net.sf.ehcache.CacheManager;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.inject.Binder;
 import com.google.inject.Module;
+import com.google.inject.Provider;
+import com.google.inject.Scopes;
 import com.tll.common.data.ListingOp;
 import com.tll.common.data.ListingPayload;
 import com.tll.common.data.ListingRequest;
@@ -21,12 +27,13 @@ import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.Sorting;
-import com.tll.di.TestEntityServiceFactoryModule;
 import com.tll.di.LogExceptionHandlerModule;
 import com.tll.di.MailModule;
 import com.tll.di.RefDataModule;
+import com.tll.di.TestEntityServiceFactoryModule;
 import com.tll.di.TestListingModule;
 import com.tll.di.TestMarshalModule;
+import com.tll.di.ListingModule.ListingCacheAware;
 import com.tll.di.test.Db4oDbShellModule;
 import com.tll.di.test.TestDb4oDaoModule;
 import com.tll.di.test.TestPersistenceUnitModelModule;
@@ -61,6 +68,23 @@ public class ListingProcessorTest extends AbstractDbAwareTest {
 		modules.add(new TestEntityServiceFactoryModule());
 		modules.add(new LogExceptionHandlerModule());
 		modules.add(new TestMarshalModule());
+
+		// satisfy caching requirement for ListingCache
+		modules.add(new Module() {
+
+			@Override
+			public void configure(Binder binder) {
+				binder.bind(CacheManager.class).annotatedWith(ListingCacheAware.class).toProvider(new Provider<CacheManager>() {
+
+					@Override
+					public CacheManager get() {
+						final URL url = Thread.currentThread().getContextClassLoader().getResource("ehcache.xml");
+						return new CacheManager(url);
+					}
+				}).in(Scopes.SINGLETON);
+			}
+		});
+
 		modules.add(new TestListingModule());
 	}
 

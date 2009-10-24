@@ -21,6 +21,7 @@ import com.tll.server.rpc.IExceptionHandler;
 import com.tll.server.rpc.entity.IEntityTypeResolver;
 import com.tll.server.rpc.entity.IMarshalOptionsResolver;
 import com.tll.server.rpc.entity.IPersistServiceImplResolver;
+import com.tll.server.rpc.entity.PersistCache;
 import com.tll.server.rpc.entity.PersistContext;
 import com.tll.server.rpc.entity.PersistServiceDelegate;
 import com.tll.service.entity.IEntityServiceFactory;
@@ -77,11 +78,13 @@ public abstract class ClientPersistModule extends AbstractModule {
 			IEntityServiceFactory entityServiceFactory;
 			@Inject
 			IExceptionHandler exceptionHandler;
+			@Inject
+			PersistCache persistCache;
 
 			@Override
 			public PersistContext get() {
 				return new PersistContext(refData, mailManager, schemaInfo, marshaler, marshalOptionsResolver,
-						entityTypeResolver, entityAssembler, entityServiceFactory, exceptionHandler);
+						entityTypeResolver, entityAssembler, entityServiceFactory, exceptionHandler, persistCache);
 			}
 		}).in(Scopes.SINGLETON);
 

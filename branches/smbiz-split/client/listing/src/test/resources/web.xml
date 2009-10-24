@@ -17,6 +17,7 @@
       com.tll.di.TestEntityServiceFactoryModule
       com.tll.di.TestMarshalModule
       com.tll.di.LogExceptionHandlerModule
+      com.tll.di.TestCacheModule
       com.tll.di.TestListingModule
     </param-value>
 	</context-param>

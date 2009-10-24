@@ -54,6 +54,12 @@
 			<id>jboss</id>
 			<url>http://repository.jboss.com/maven2/</url>
 		</repository>
+		<!-- ehcache -->
+		<repository>
+			<id>sourceforge</id>
+	    <url>http://oss.sonatype.org/content/groups/sourceforge/</url>
+	    <releases><enabled>true</enabled></releases>
+		</repository>
 	</repositories>
 
   <pluginRepositories>
@@ -469,8 +475,8 @@
 
       <dependency>
         <groupId>net.sf.ehcache</groupId>
-        <artifactId>ehcache</artifactId>
-        <version>1.6.2</version>
+        <artifactId>ehcache-core</artifactId>
+        <version>1.7.0</version>
         <exclusions>
           <exclusion>
             <groupId>net.sf.jsr107cache</groupId>

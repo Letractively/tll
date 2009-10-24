@@ -39,6 +39,7 @@ public final class PersistContext {
 	private final IEntityAssembler entityAssembler;
 	private final IEntityServiceFactory entityServiceFactory;
 	private final IExceptionHandler exceptionHandler;
+	private final PersistCache persistCache;
 
 	/**
 	 * Constructor
@@ -51,12 +52,13 @@ public final class PersistContext {
 	 * @param entityAssembler
 	 * @param entityServiceFactory
 	 * @param exceptionHandler
+	 * @param persistCache
 	 */
 	@Inject
 	public PersistContext(RefData refData, MailManager mailManager, ISchemaInfo schemaInfo, Marshaler marshaler,
 			IMarshalOptionsResolver marshalOptionsResolver, IEntityTypeResolver entityTypeResolver,
 			IEntityAssembler entityAssembler, IEntityServiceFactory entityServiceFactory,
-			IExceptionHandler exceptionHandler) {
+			IExceptionHandler exceptionHandler, PersistCache persistCache) {
 		super();
 		this.refData = refData;
 		this.mailManager = mailManager;
@@ -67,6 +69,7 @@ public final class PersistContext {
 		this.entityAssembler = entityAssembler;
 		this.entityServiceFactory = entityServiceFactory;
 		this.exceptionHandler = exceptionHandler;
+		this.persistCache = persistCache;
 	}
 
 	public IEntityServiceFactory getEntityServiceFactory() {
@@ -103,5 +106,9 @@ public final class PersistContext {
 
 	public IMarshalOptionsResolver getMarshalOptionsResolver() {
 		return marshalOptionsResolver;
+	}
+
+	public PersistCache getPersistCache() {
+		return persistCache;
 	}
 }

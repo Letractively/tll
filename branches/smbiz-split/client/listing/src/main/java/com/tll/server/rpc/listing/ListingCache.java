@@ -6,11 +6,12 @@
 package com.tll.server.rpc.listing;
 
 import java.io.Serializable;
-import java.net.URL;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+
+import com.google.inject.Inject;
 
 /**
  * Dedicated cache implementation for table view processing. Stores, retrieves
@@ -20,23 +21,29 @@ import net.sf.ehcache.Element;
  */
 public final class ListingCache {
 
-	private static final String SMBIZ_WEB_CACHEMANAGER_FILENAME = "ehcache-smbiz-web.xml";
-
 	private static final String LIST_HANDLER_CACHE_NAME = "ListHandlerCache";
 
 	private static final String LISTING_STATE_CACHE_NAME = "ListingStateCache";
 
-	private static final ThreadLocal<CacheManager> tlCm;
+	private final CacheManager cm;
 
-	static {
-		final URL url = Thread.currentThread().getContextClassLoader().getResource(SMBIZ_WEB_CACHEMANAGER_FILENAME);
-		final CacheManager cm = new CacheManager(url);
-		tlCm = new ThreadLocal<CacheManager>();
-		tlCm.set(cm);
+	/**
+	 * Constructor
+	 * @param cm the required {@link CacheManager}
+	 */
+	@Inject
+	public ListingCache(CacheManager cm) {
+		if(cm == null) throw new IllegalArgumentException("Null CacheManager");
+		assert cm.getCache(LIST_HANDLER_CACHE_NAME) != null;
+		assert cm.getCache(LISTING_STATE_CACHE_NAME) != null;
+		this.cm = cm;
 	}
 
-	private static CacheManager getCacheManager() {
-		return tlCm.get();
+	/**
+	 * Life-cycle hook allowing ehcache to gracefully shutdown.
+	 */
+	public void shutdown() {
+		cm.shutdown();
 	}
 
 	/**
@@ -47,16 +54,16 @@ public final class ListingCache {
 	 * @return the corresponding hash key for the given listing name in the given
 	 *         http session.
 	 */
-	private static Integer key(String sessionId, String listingId) {
+	private Integer key(String sessionId, String listingId) {
 		return Integer.valueOf(sessionId.hashCode() + 37 * listingId.hashCode());
 	}
 
-	private static Cache handlerCache() {
-		return getCacheManager().getCache(LIST_HANDLER_CACHE_NAME);
+	private Cache handlerCache() {
+		return cm.getCache(LIST_HANDLER_CACHE_NAME);
 	}
 
-	private static Cache stateCache() {
-		return getCacheManager().getCache(LISTING_STATE_CACHE_NAME);
+	private Cache stateCache() {
+		return cm.getCache(LISTING_STATE_CACHE_NAME);
 	}
 
 	/**
@@ -67,7 +74,7 @@ public final class ListingCache {
 	 * @return listing handler
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> ListingHandler<T> getHandler(String sessionId, String listingId) {
+	public <T> ListingHandler<T> getHandler(String sessionId, String listingId) {
 		final Element e = handlerCache().get(key(sessionId, listingId));
 		return e == null ? null : (ListingHandler) e.getObjectValue();
 	}
@@ -79,7 +86,7 @@ public final class ListingCache {
 	 * @param listingId
 	 * @param handler
 	 */
-	public static <T> void storeHandler(String sessionId, String listingId, ListingHandler<T> handler) {
+	public <T> void storeHandler(String sessionId, String listingId, ListingHandler<T> handler) {
 		handlerCache().put(new Element(key(sessionId, listingId), handler));
 	}
 
@@ -91,7 +98,7 @@ public final class ListingCache {
 	 * @return the cleared handler. May be <code>null</code>.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> ListingHandler<T> clearHandler(String sessionId, String listingId) {
+	public <T> ListingHandler<T> clearHandler(String sessionId, String listingId) {
 		final Serializable key = key(sessionId, listingId);
 		final Cache c = handlerCache();
 		final Element e = c.get(key);
@@ -108,7 +115,7 @@ public final class ListingCache {
 	 * @param listingId name of the table view for which state is retrieved.
 	 * @return the cached listing state or null if not found.
 	 */
-	public static ListingState getState(String sessionId, String listingId) {
+	public ListingState getState(String sessionId, String listingId) {
 		final Element e = stateCache().get(key(sessionId, listingId));
 		return e == null ? null : (ListingState) e.getObjectValue();
 	}
@@ -119,7 +126,7 @@ public final class ListingCache {
 	 * @param listingId
 	 * @param state
 	 */
-	public static void storeState(String sessionId, String listingId, ListingState state) {
+	public void storeState(String sessionId, String listingId, ListingState state) {
 		stateCache().put(new Element(key(sessionId, listingId), state));
 	}
 
@@ -130,7 +137,7 @@ public final class ListingCache {
 	 * @param listingId
 	 * @return the cleared table mode state. May be <code>null</code>.
 	 */
-	public static ListingState clearState(String sessionId, String listingId) {
+	public ListingState clearState(String sessionId, String listingId) {
 		final Serializable key = key(sessionId, listingId);
 		final Cache c = stateCache();
 		final Element e = c.get(key);
@@ -146,16 +153,10 @@ public final class ListingCache {
 	 * caches.
 	 * @param retainState
 	 */
-	public static void clearAll(boolean retainState) {
+	public void clearAll(boolean retainState) {
 		handlerCache().removeAll();
 		if(!retainState) {
 			stateCache().removeAll();
 		}
-	}
-
-	/**
-	 * Constructor
-	 */
-	private ListingCache() {
 	}
 }
