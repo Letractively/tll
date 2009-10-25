@@ -1,0 +1,732 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+  <description>This app context layer sets up the test classes</description>
+
+  <bean id="simpleDateFormat" class="java.text.SimpleDateFormat">
+    <constructor-arg value="MM/dd/yy"/>
+  </bean>
+  
+  <bean id="customEditorConfigurer"
+    class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+    <property name="customEditors">
+      <map>
+        <entry key="java.util.Date">
+          <bean class="org.springframework.beans.propertyeditors.CustomDateEditor">
+            <constructor-arg index="0" ref="simpleDateFormat" />
+            <constructor-arg index="1" value="true" />
+          </bean>
+        </entry>
+      </map>
+    </property>
+  </bean>
+  
+  <bean name="entityBase" class="com.tll.model.EntityBase" abstract="true" />
+
+	<bean name="AppProperty" class="com.tll.model.AppProperty" scope="prototype">
+		<property name="name">
+			<value>app property name</value>
+		</property>
+		<property name="value">
+			<value>app property value</value>
+		</property>
+	</bean>
+
+	<bean name="Currency" class="com.tll.model.Currency" parent="entityBase" scope="prototype">
+		<property name="name">
+			<value>dollar</value>
+		</property>
+		<property name="iso4217">
+			<value>usd</value>
+		</property>
+		<property name="symbol">
+			<value>$</value>
+		</property>
+		<property name="usdExchangeRate">
+			<value>1.00</value>
+		</property>
+	</bean>
+
+	<bean name="Address" class="com.tll.model.Address" parent="entityBase" scope="prototype">
+		<property name="address1">
+			<value>address line 1</value>
+		</property>
+		<property name="address2">
+			<value>address line 2</value>
+		</property>
+		<property name="city">
+			<value>city</value>
+		</property>
+		<property name="country">
+			<value>us</value>
+		</property>
+		<property name="emailAddress">
+			<value>address_email@domain.com</value>
+		</property>
+		<property name="fax">
+			<value>2223334444</value>
+		</property>
+		<property name="firstName">
+			<value>firstname</value>
+		</property>
+		<property name="lastName">
+			<value>lastname</value>
+		</property>
+		<property name="mi">
+			<value>m</value>
+		</property>
+		<property name="phone">
+			<value>6667778888</value>
+		</property>
+		<property name="postalCode">
+			<value>94155</value>
+		</property>
+		<property name="province">
+			<value>VA</value>
+		</property>
+	</bean>
+
+	<bean name="PaymentInfo" class="com.tll.model.PaymentInfo" parent="entityBase" scope="prototype">
+		<property name="name">
+			<value>paymentinfo</value>
+		</property>
+    <property name="paymentData">
+		  <bean class="com.tll.model.PaymentData">
+		    <property name="bankAccountNo">
+		      <value>bank account num</value>
+		    </property>
+		    <property name="bankName">
+		      <value>bank name</value>
+		    </property>
+		    <property name="bankRoutingNo">
+		      <value>66778</value>
+		    </property>
+		    <property name="ccAddress1">
+		      <value>cc address 1</value>
+		    </property>
+		    <property name="ccAddress2">
+		      <value>cc address 2</value>
+		    </property>
+		    <property name="ccCity">
+		      <value>cc city</value>
+		    </property>
+		    <property name="ccCountry">
+		      <value>us</value>
+		    </property>
+		    <property name="ccCvv2">
+		      <value>861</value>
+		    </property>
+		    <property name="ccExpMonth">
+		      <value>2</value>
+		    </property>
+		    <property name="ccExpYear">
+		      <value>2007</value>
+		    </property>
+		    <property name="ccName">
+		      <value>cc name</value>
+		    </property>
+		    <property name="ccNum">
+		      <value>4111111111111111</value>
+		    </property>
+		    <property name="ccState">
+		      <value>CA</value>
+		    </property>
+		    <property name="ccType">
+		      <value>VISA</value>
+		    </property>
+		    <property name="ccZip">
+		      <value>99887</value>
+		    </property>
+		  </bean>
+    </property>
+	</bean>
+	
+	<bean name="PaymentTrans" class="com.tll.model.PaymentTrans" parent="entityBase" scope="prototype">
+		<property name="amount">
+			<value>22.22</value>
+		</property>
+		<property name="authNum">
+			<value>345</value>
+		</property>
+		<property name="refNum">
+			<value>123</value>
+		</property>
+		<property name="notes">
+			<value>these are some notes.</value>
+		</property>
+		<property name="paymentProcessor">
+			<value>PFP</value>
+		</property>
+		<property name="payOp">
+			<value>A</value>
+		</property>
+		<property name="payTransDate">
+			<value>1/31/2004</value>
+		</property>
+		<property name="payType">
+			<value>CC</value>
+		</property>
+		<property name="response">
+			<value>success</value>
+		</property>
+		<property name="responseMsg">
+			<value>a successful transaction</value>
+		</property>
+	</bean>
+
+	<bean name="accountBase" class="com.tll.model.Account" abstract="true" parent="entityBase">
+		<property name="persistPymntInfo">
+			<value>true</value>
+		</property>
+		<property name="status">
+			<value>OPEN</value>
+		</property>
+		<property name="billingCycle">
+			<value>billing cycle</value>
+		</property>
+		<property name="billingModel">
+			<value>billing model</value>
+		</property>
+		<property name="dateLastCharged">
+			<value>1/1/2001</value>
+		</property>
+		<property name="nextChargeDate">
+			<value>2/1/2001</value>
+		</property>
+	</bean>
+
+	<bean name="Asp" class="com.tll.model.Asp" parent="accountBase" scope="prototype">
+		<property name="name">
+			<value>asp</value>
+		</property>
+	</bean>
+
+	<bean name="Isp" class="com.tll.model.Isp" parent="accountBase" scope="prototype">
+		<property name="name">
+			<value>isp</value>
+		</property>
+	</bean>
+
+	<bean name="Merchant" class="com.tll.model.Merchant" parent="accountBase" scope="prototype">
+		<property name="name">
+			<value>merchant</value>
+		</property>
+		<property name="storeName">
+			<value>a store name</value>
+		</property>
+	</bean>
+
+	<bean name="Customer" class="com.tll.model.Customer" parent="accountBase" scope="prototype">
+		<property name="name">
+			<value>customer</value>
+		</property>
+	</bean>
+
+	<bean name="CustomerAccount" class="com.tll.model.CustomerAccount" parent="entityBase" scope="prototype">
+		<property name="source">
+			<value>ADMIN</value>
+		</property>
+		<property name="status">
+			<value>NEW</value>
+		</property>
+	</bean>
+	
+	<bean name="Visitor" class="com.tll.model.Visitor" parent="entityBase" scope="prototype">
+		<property name="mc">
+			<value>mc</value>
+		</property>
+		<property name="remoteAddr">
+			<value>remote address</value>
+		</property>
+		<property name="remoteHost">
+			<value>remote host</value>
+		</property>
+		<property name="remoteUser">
+			<value>remote user</value>
+		</property>
+	</bean>
+
+	<bean name="AccountAddress" class="com.tll.model.AccountAddress" parent="entityBase" scope="prototype">
+		<property name="name">
+			<value>home</value>
+		</property>
+		<property name="type">
+			<value>HOME</value>
+		</property>
+	</bean>
+
+	<bean name="AccountHistory" class="com.tll.model.AccountHistory" parent="entityBase" scope="prototype">
+		<property name="transDate">
+			<value>3/3/2005</value>
+		</property>
+		<property name="status">
+			<value>OPEN</value>
+		</property>
+    <property name="notes" value="some notes" />
+	</bean>
+
+	<bean name="ROLE_ASP" class="com.tll.model.Authority" parent="entityBase" scope="prototype">
+		<property name="authority">
+			<value>ASP</value>
+		</property>
+	</bean>
+	
+  <bean name="ROLE_ISP" class="com.tll.model.Authority" parent="entityBase" scope="prototype">
+    <property name="authority">
+      <value>ISP</value>
+    </property>
+  </bean>
+  
+  <bean name="ROLE_MERCHANT" class="com.tll.model.Authority" parent="entityBase" scope="prototype">
+    <property name="authority">
+      <value>MERCHANT</value>
+    </property>
+  </bean>
+  
+  <bean name="ROLE_CUSTOMER" class="com.tll.model.Authority" parent="entityBase" scope="prototype">
+    <property name="authority">
+      <value>CUSTOMER</value>
+    </property>
+  </bean>
+  
+	<bean name="ROLE_VISITOR" class="com.tll.model.Authority" parent="entityBase" scope="prototype">
+		<property name="authority">
+			<value>VISITOR</value>
+		</property>
+	</bean>
+	
+	<bean name="User" class="com.tll.model.User" parent="entityBase" scope="prototype">
+		<property name="name">
+			<value>jpk</value>
+		</property>
+		<property name="emailAddress">
+			<value>jopaki@gmail.com</value>
+		</property>
+		<property name="password">
+			<value>0b3bbae8eb5a9d2e9bd1043611a9be38</value>
+		</property>
+		<property name="enabled">
+			<value>true</value>
+		</property>
+		<property name="locked">
+			<value>false</value>
+		</property>
+		<property name="expires">
+			<value>1/1/2020</value>
+		</property>
+	</bean>
+  
+	<bean name="interfaceBase" class="com.tll.model.Interface" parent="entityBase" abstract="true">
+		<property name="isAvailableAsp">
+			<value>true</value>
+		</property>
+		<property name="isAvailableIsp">
+			<value>true</value>
+		</property>
+		<property name="isAvailableMerchant">
+			<value>true</value>
+		</property>
+		<property name="isAvailableCustomer">
+			<value>true</value>
+		</property>
+		<property name="isRequiredAsp">
+			<value>true</value>
+		</property>
+		<property name="isRequiredIsp">
+			<value>true</value>
+		</property>
+		<property name="isRequiredMerchant">
+			<value>true</value>
+		</property>
+		<property name="isRequiredCustomer">
+			<value>true</value>
+		</property>
+	</bean>
+	
+	<bean name="payment_processor" class="com.tll.model.InterfaceSingle" parent="interfaceBase" scope="prototype">
+		<property name="name"><value>Payment Processor</value></property>
+		<property name="code"><value>pymntproc</value></property>
+		<property name="description"><value>Gateway for online payments.</value></property>
+	</bean>
+
+	<bean name="shipping_method" class="com.tll.model.InterfaceSingle" parent="interfaceBase" scope="prototype">
+		<property name="name"><value>Shipping Method</value></property>
+		<property name="code"><value>shipmethod</value></property>
+		<property name="description"><value>Method of product delivery.</value></property>
+	</bean>
+
+	<bean name="sales_tax" class="com.tll.model.InterfaceSingle" parent="interfaceBase" scope="prototype">
+		<property name="name"><value>Sales Tax</value></property>
+		<property name="code"><value>salestax</value></property>
+		<property name="description"><value>Sales Tax model.</value></property>
+	</bean>
+
+	<bean name="pay_method" class="com.tll.model.InterfaceMulti" parent="interfaceBase" scope="prototype">
+		<property name="name"><value>Payment Method</value></property>
+		<property name="code"><value>pymntmethod</value></property>
+		<property name="description"><value>Supported payment methods.</value></property>
+	</bean>
+
+	<bean name="cross_selling" class="com.tll.model.InterfaceSwitch" parent="interfaceBase" scope="prototype">
+		<property name="name"><value>Cross Selling</value></property>
+		<property name="code"><value>crosssell</value></property>
+		<property name="description"><value>Merchant product cross selling.</value></property>
+		<property name="isAvailableAsp">
+			<value>false</value>
+		</property>
+		<property name="isAvailableIsp">
+			<value>false</value>
+		</property>
+		<property name="isAvailableCustomer">
+			<value>false</value>
+		</property>
+		<property name="isRequiredAsp">
+			<value>false</value>
+		</property>
+		<property name="isRequiredIsp">
+			<value>false</value>
+		</property>
+		<property name="isRequiredMerchant">
+			<value>false</value>
+		</property>
+		<property name="isRequiredCustomer">
+			<value>false</value>
+		</property>
+	</bean>
+	
+	<bean name="ioBase" class="com.tll.model.InterfaceOption" parent="entityBase" scope="prototype" abstract="true">
+		<property name="default">
+			<value>false</value>
+		</property>
+		<property name="setUpCost">
+			<value>10.00</value>
+		</property>
+		<property name="monthlyCost">
+			<value>20.00</value>
+		</property>
+		<property name="annualCost">
+			<value>50.00</value>
+		</property>
+		<property name="baseSetupPrice">
+			<value>1.00</value>
+		</property>
+		<property name="baseMonthlyPrice">
+			<value>2.00</value>
+		</property>
+		<property name="baseAnnualPrice">
+			<value>5.00</value>
+		</property>
+	</bean>
+
+	<bean name="native_payproc" class="com.tll.model.InterfaceOption" parent="ioBase" scope="prototype">
+		<property name="code">
+			<value>native_payproc</value>
+		</property>
+		<property name="name">
+			<value>Native payment processor</value>
+		</property>
+		<property name="description">
+			<value>Native payment processor.</value>
+		</property>
+		<property name="default">
+			<value>true</value>
+		</property>
+	</bean>
+	
+	<bean name="verisign_payproc" class="com.tll.model.InterfaceOption" parent="ioBase" scope="prototype">
+		<property name="code">
+			<value>verisign_payproc</value>
+		</property>
+		<property name="name">
+			<value>VeriSign</value>
+		</property>
+		<property name="description">
+			<value>VeriSign payment processor.</value>
+		</property>
+		<property name="default">
+			<value>false</value>
+		</property>
+	</bean>
+	
+	<bean name="native_shipmethod" class="com.tll.model.InterfaceOption" parent="ioBase" scope="prototype">
+		<property name="code">
+			<value>native_shipmethod</value>
+		</property>
+		<property name="name">
+			<value>Native Shipping Method</value>
+		</property>
+		<property name="description">
+			<value>Native method of shipment.</value>
+		</property>
+		<property name="default">
+			<value>false</value>
+		</property>
+	</bean>
+	
+	<bean name="native_salestax" class="com.tll.model.InterfaceOption" parent="ioBase" scope="prototype">
+		<property name="code">
+			<value>native_salestax</value>
+		</property>
+		<property name="name">
+			<value>Native Sales Tax</value>
+		</property>
+		<property name="description">
+			<value>Native sales tax model.</value>
+		</property>
+		<property name="default">
+			<value>false</value>
+		</property>
+	</bean>
+	
+	<bean name="visa" class="com.tll.model.InterfaceOption" parent="ioBase" scope="prototype">
+		<property name="code">
+			<value>visa</value>
+		</property>
+		<property name="name">
+			<value>VISA</value>
+		</property>
+		<property name="description">
+			<value>Visa credit card</value>
+		</property>
+		<property name="default">
+			<value>true</value>
+		</property>
+	</bean>
+	
+	<bean name="mc" class="com.tll.model.InterfaceOption" parent="ioBase" scope="prototype">
+		<property name="code">
+			<value>mc</value>
+		</property>
+		<property name="name">
+			<value>MasterCard</value>
+		</property>
+		<property name="description">
+			<value>MasterCard credit card.</value>
+		</property>
+		<property name="default">
+			<value>false</value>
+		</property>
+	</bean>
+	
+	<bean name="crosssell-switch" class="com.tll.model.InterfaceOption" parent="ioBase" scope="prototype">
+		<property name="code">
+			<value>crosssell-switch</value>
+		</property>
+		<property name="name">
+			<value>Cross Selling</value>
+		</property>
+		<property name="description">
+			<value></value>
+		</property>
+		<property name="default">
+			<value>false</value>
+		</property>
+	</bean>
+
+	<bean name="crosssell-switch-p1" class="com.tll.model.InterfaceOptionParameterDefinition" parent="entityBase" scope="prototype">
+		<property name="code">
+			<value>crosssellP1</value>
+		</property>
+		<property name="name">
+			<value>Cross Selling Parameter 1</value>
+		</property>
+		<property name="description">
+			<value>Cross Selling Parameter 1 desc</value>
+		</property>
+	</bean>
+	
+	<bean name="crosssell-switch-p2" class="com.tll.model.InterfaceOptionParameterDefinition" parent="entityBase" scope="prototype">
+		<property name="code">
+			<value>crosssellP2</value>
+		</property>
+		<property name="name">
+			<value>Cross Selling Parameter 2</value>
+		</property>
+		<property name="description">
+			<value>Cross Selling Parameter 2 desc</value>
+		</property>
+	</bean>
+	
+	<bean name="crosssell-switch-p3" class="com.tll.model.InterfaceOptionParameterDefinition" parent="entityBase" scope="prototype">
+		<property name="code">
+			<value>crosssellP3</value>
+		</property>
+		<property name="name">
+			<value>Cross Selling Parameter 3</value>
+		</property>
+		<property name="description">
+			<value>Cross Selling Parameter 3 desc</value>
+		</property>
+	</bean>
+	
+	<bean name="verisignP1" class="com.tll.model.InterfaceOptionParameterDefinition" parent="entityBase" scope="prototype">
+		<property name="code">
+			<value>verisignP1</value>
+		</property>
+		<property name="name">
+			<value>VeriSign Parameter 1</value>
+		</property>
+		<property name="description">
+			<value>VeriSign Parameter 1 desc</value>
+		</property>
+	</bean>
+	
+	<bean name="verisignP2" class="com.tll.model.InterfaceOptionParameterDefinition" parent="entityBase" scope="prototype">
+		<property name="code">
+			<value>verisignP2</value>
+		</property>
+		<property name="name">
+			<value>VeriSign Parameter 2</value>
+		</property>
+		<property name="description">
+			<value>VeriSign Parameter 2 desc</value>
+		</property>
+	</bean>
+	
+	<bean name="InterfaceOptionAccount" class="com.tll.model.InterfaceOptionAccount" parent="entityBase" scope="prototype">
+		<property name="setUpPrice">
+			<value>22.22</value>
+		</property>
+		<property name="monthlyPrice">
+			<value>44.44</value>
+		</property>
+		<property name="annualPrice">
+			<value>88.88</value>
+		</property>
+		<!-- 
+		<property name="parameters">
+			<props>
+				<prop key="verisignP1">param 1 value</prop>
+				<prop key="verisignP2">param 2 value</prop>
+			</props>
+		</property>
+		-->
+	</bean>
+	
+	<bean name="SalesTax" class="com.tll.model.SalesTax" parent="entityBase" scope="prototype">
+		<property name="province"><value>MI</value></property>
+		<property name="county"><value>county</value></property>
+		<property name="postalCode"><value>33007</value></property>
+		<property name="tax"><value>0.08</value></property>
+	</bean>
+	
+	<bean name="ProductGeneral" class="com.tll.model.ProductGeneral" parent="entityBase" scope="prototype">
+		<property name="d1"><value>d1</value></property>
+		<property name="d2"><value>d2</value></property>
+		<property name="d3"><value>d3</value></property>
+		<property name="image1"><value>image1</value></property>
+		<property name="image2"><value>image2</value></property>
+	</bean>
+		
+	<bean name="ProductInventory" class="com.tll.model.ProductInventory" parent="entityBase" scope="prototype">
+		<property name="sku"><value>sku</value></property>
+		<property name="status"><value>A</value></property>
+		<property name="retailPrice"><value>2.22</value></property>
+		<property name="salesPrice"><value>3.33</value></property>
+		<property name="weight"><value>1.23</value></property>
+		<property name="onSale"><value>true</value></property>
+		<property name="auxDescriptor"><value>aux descriptor</value></property>
+		<property name="invInStock"><value>22</value></property>
+		<property name="invCommitted"><value>20</value></property>
+		<property name="invReorderLevel"><value>5</value></property>
+	</bean>
+	
+	<bean name="ProductCategory" class="com.tll.model.ProductCategory" parent="entityBase" scope="prototype">
+		<property name="name"><value>category A</value></property>
+		<property name="description"><value>description</value></property>
+		<property name="image"><value>image</value></property>
+	</bean>
+	
+	<bean name="ProdCat" class="com.tll.model.ProdCat" parent="entityBase" scope="prototype">
+		<property name="isFeaturedProduct"><value>true</value></property>
+	</bean>
+  
+  <!-- 
+  <bean name="PCH.1" class="com.tll.model.PCH" parent="entityBase" scope="prototype">
+    <property name="parent" ref="ProductCategory.1" />
+    <property name="child" ref="ProductCategory.2" />
+  </bean>
+	-->
+	
+	<bean name="ShipMode" class="com.tll.model.ShipMode" parent="entityBase" scope="prototype">
+		<property name="name"><value>ups ship mode</value></property>
+		<property name="type"><value>UPS</value></property>
+		<property name="surcharge"><value>0.11</value></property>
+		<property name="srcZip"><value>93321</value></property>
+	</bean>
+	
+	<bean name="ShipBoundCost1" class="com.tll.model.ShipBoundCost" parent="entityBase" scope="prototype">
+		<property name="lbound"><value>0</value></property>
+		<property name="ubound"><value>10</value></property>
+		<property name="cost"><value>5.01</value></property>
+	</bean>
+	
+	<bean name="ShipBoundCost2" class="com.tll.model.ShipBoundCost" parent="entityBase" scope="prototype">
+		<property name="lbound"><value>11</value></property>
+		<property name="ubound"><value>1000</value></property>
+		<property name="cost"><value>20.01</value></property>
+	</bean>
+  
+  <bean name="SiteCode" class="com.tll.model.SiteCode" parent="entityBase" scope="prototype">
+    <property name="code"><value>11</value></property>
+    <property name="name"><value>1000</value></property>
+    <property name="expirationDate"><value>7/7/2010</value></property>
+  </bean>
+	
+	<bean name="Order" class="com.tll.model.Order" parent="entityBase" scope="prototype">
+		<!-- 
+    <property name="account" ref="Merchant" />
+		<property name="customer" ref="Customer" />
+		<property name="visitor" ref="Visitor" />
+		<property name="currency" ref="Currency" />
+		<property name="paymentInfo" ref="PaymentInfo" />
+		<property name="billToAddress" ref="Address.1" />
+		<property name="shipToAddress" ref="Address.2" />
+    -->
+		<property name="status"><value>N</value></property>
+		<property name="notes"><value>notes</value></property>
+		<property name="siteCode"><value>site-code</value></property>
+	</bean>
+	
+	<bean name="OrderItem1" class="com.tll.model.OrderItem" parent="entityBase" scope="prototype">
+		<property name="sku"><value>sku</value></property>
+		<property name="itemStatus"><value>O</value></property>
+		<property name="payStatus"><value>A</value></property>
+		<property name="qty"><value>2</value></property>
+		<property name="price"><value>11.34</value></property>
+		<property name="weight"><value>1.23</value></property>
+		<property name="name"><value>item name</value></property>
+		<property name="description"><value>item description</value></property>
+		<property name="image"><value>image.gif</value></property>
+	</bean>
+
+	<bean name="OrderItem2" class="com.tll.model.OrderItem" parent="OrderItem1" scope="prototype">
+    <property name="name"><value>item name1</value></property>
+		<property name="sku"><value>sku2</value></property>
+	</bean>
+	
+	<bean name="OrderTrans" class="com.tll.model.OrderTrans" parent="entityBase" scope="prototype">
+		<property name="username"><value>jopaki@gmail.com</value></property>
+		<property name="orderTransOp"><value>AI</value></property>
+		<property name="orderTransResult"><value>S</value></property>
+		<property name="shipModeName"><value>UPS</value></property>
+		<property name="shipRoutingNum"><value>srn-num</value></property>
+		<property name="itemTotal"><value>22.01</value></property>
+		<property name="salesTax"><value>0.33</value></property>
+		<property name="shipCost"><value>2.25</value></property>
+		<property name="total"><value>26.78</value></property>
+	</bean>
+	
+	<bean name="OrderItemTrans1" class="com.tll.model.OrderItemTrans" parent="entityBase" scope="prototype">
+		<property name="orderItemTransOp"><value>A</value></property>
+		<property name="amount"><value>22.01</value></property>
+	</bean>
+
+	<bean name="OrderItemTrans2" class="com.tll.model.OrderItemTrans" parent="entityBase" scope="prototype">
+		<property name="orderItemTransOp"><value>C</value></property>
+		<property name="amount"><value>11.33</value></property>
+	</bean>
+  
+</beans>
