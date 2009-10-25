@@ -30,7 +30,6 @@ import com.tll.service.entity.NamedEntityService;
  * InterfaceService - {@link IInterfaceService} impl
  * @author jpk
  */
-@Transactional
 public class InterfaceService extends NamedEntityService<Interface> implements IInterfaceService {
 
 	/**
@@ -91,6 +90,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 		return aio;
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public AccountInterface loadAccountInterface(String accountId, String interfaceId) {
 		IBusinessKey<InterfaceOptionAccount> bk;
@@ -138,6 +138,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 		return ai;
 	}
 
+	@Transactional
 	@Override
 	public void setAccountInterface(AccountInterface accountInterface) {
 
@@ -186,6 +187,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 
 	}
 
+	@Transactional
 	@Override
 	public void setAccountInterfaces(Collection<AccountInterface> accountInterfaces) {
 		if(accountInterfaces == null || accountInterfaces.size() < 1) {
@@ -196,6 +198,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 		}
 	}
 
+	@Transactional
 	@Override
 	public void purgeAccountInterface(String accountId, String interfaceId) {
 		Interface intf;
@@ -228,6 +231,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 		}
 	}
 
+	@Transactional
 	@Override
 	public void purgeAccountInterfacess(String accountId) {
 		final Collection<Interface> intfs = dao.loadAll(Interface.class);

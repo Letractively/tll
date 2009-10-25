@@ -33,11 +33,11 @@ import com.tll.di.RefDataModule;
 import com.tll.di.TestEntityServiceFactoryModule;
 import com.tll.di.TestListingModule;
 import com.tll.di.TestMarshalModule;
-import com.tll.di.ListingModule.ListingCacheAware;
 import com.tll.di.test.Db4oDbShellModule;
 import com.tll.di.test.TestDb4oDaoModule;
 import com.tll.di.test.TestPersistenceUnitModelModule;
 import com.tll.listhandler.ListHandlerType;
+import com.tll.server.rpc.listing.ListingCache.ListingCacheAware;
 
 /**
  * ListingProcessorTest - Tests the {@link ListingProcessor}.

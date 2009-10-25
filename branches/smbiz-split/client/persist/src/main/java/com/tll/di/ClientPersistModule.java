@@ -48,7 +48,7 @@ public abstract class ClientPersistModule extends AbstractModule {
 	protected abstract Class<? extends IPersistServiceImplResolver> getPersistServiceImplResolverType();
 
 	@Override
-	protected final void configure() {
+	protected void configure() {
 		log.info("Employing Client Persistence module");
 
 		// IPersistServiceImplResolver

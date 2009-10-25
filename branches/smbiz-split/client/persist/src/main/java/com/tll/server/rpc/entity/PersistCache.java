@@ -5,8 +5,14 @@
  */
 package com.tll.server.rpc.entity;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 import net.sf.ehcache.CacheManager;
 
+import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 
 /**
@@ -16,6 +22,18 @@ import com.google.inject.Inject;
  */
 public class PersistCache {
 
+	/**
+	 * PersistCacheAware<br>
+	 * Annotation indicating a {@link CacheManager} instance that supports persist related caching.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target( {
+		ElementType.FIELD,
+		ElementType.PARAMETER })
+		@BindingAnnotation
+		public @interface PersistCacheAware {
+	}
+
 	private final CacheManager cacheManager;
 
 	/**
@@ -24,7 +42,7 @@ public class PersistCache {
 	 *        related cache regions
 	 */
 	@Inject
-	public PersistCache(CacheManager cacheManager) {
+	public PersistCache(@PersistCacheAware CacheManager cacheManager) {
 		super();
 		this.cacheManager = cacheManager;
 	}

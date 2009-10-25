@@ -46,7 +46,6 @@ import com.tll.service.entity.NamedEntityService;
  * UserService - {@link IUserService} impl
  * @author jpk
  */
-@Transactional
 public class UserService extends NamedEntityService<User> implements IUserService {
 
 	private static PasswordEncoder passwordEncoder = new Md5PasswordEncoder();
@@ -133,6 +132,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 		return user;
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public IUserRef getUserRef(String username) throws EntityNotFoundException {
 		// NOTE: the username is the email address
@@ -146,6 +146,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 	 * @throws UsernameNotFoundException
 	 * @throws DataAccessException
 	 */
+	@Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
 		try {
 			return findByEmail(username);
@@ -155,6 +156,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 		}
 	}
 
+	@Transactional(readOnly = true)
 	private User findByEmail(String emailAddress) throws EntityNotFoundException {
 		User user;
 		try {
@@ -173,18 +175,21 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 		return user;
 	}
 
+	@Transactional
 	public void delete(User user) {
 		user.setLocked(true);
 		super.persist(user);
 		updateSecurityContextIfNecessary(user.getUsername(), null, null, true);
 	}
 
+	@Transactional
 	@Override
 	public void purge(User user) throws EntityNotFoundException {
 		super.purge(user);
 		updateSecurityContextIfNecessary(user.getUsername(), null, null, true);
 	}
 
+	@Transactional
 	private User getUserById(String userId) throws EntityNotFoundException {
 		final User user = dao.load(new PrimaryKey<User>(User.class, userId));
 		if(user == null) throw new EntityNotFoundException("User of id '" + userId + "' not found");

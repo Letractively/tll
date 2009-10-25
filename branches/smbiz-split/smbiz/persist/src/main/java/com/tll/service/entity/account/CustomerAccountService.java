@@ -22,7 +22,6 @@ import com.tll.service.entity.account.AccountHistoryContext.AccountHistoryOp;
  * CustomerAccountService - {@link ICustomerAccountService} impl
  * @author jpk
  */
-@Transactional
 public class CustomerAccountService extends EntityService<CustomerAccount> implements ICustomerAccountService {
 
 	/**
@@ -41,6 +40,7 @@ public class CustomerAccountService extends EntityService<CustomerAccount> imple
 		return CustomerAccount.class;
 	}
 
+	@Transactional
 	@Override
 	public void deleteAll(Collection<CustomerAccount> entities) {
 		if(entities != null && entities.size() > 0) {
@@ -55,6 +55,7 @@ public class CustomerAccountService extends EntityService<CustomerAccount> imple
 		}
 	}
 
+	@Transactional
 	@Override
 	public Collection<CustomerAccount> persistAll(Collection<CustomerAccount> entities) {
 		final Collection<CustomerAccount> pec = super.persistAll(entities);
@@ -68,6 +69,7 @@ public class CustomerAccountService extends EntityService<CustomerAccount> imple
 		return pec;
 	}
 
+	@Transactional
 	@Override
 	public CustomerAccount persist(CustomerAccount entity) throws EntityExistsException, ConstraintViolationException {
 		final CustomerAccount pe = super.persist(entity);
@@ -79,6 +81,7 @@ public class CustomerAccountService extends EntityService<CustomerAccount> imple
 		return pe;
 	}
 
+	@Transactional
 	@Override
 	public void purgeAll(Collection<CustomerAccount> entities) {
 		super.purgeAll(entities);
@@ -89,12 +92,14 @@ public class CustomerAccountService extends EntityService<CustomerAccount> imple
 		}
 	}
 
+	@Transactional
 	@Override
 	public void purge(CustomerAccount entity) {
 		super.purge(entity);
 		addHistoryRecord(new AccountHistoryContext(AccountHistoryOp.CUSTOMER_ACCOUNT_PURGED, entity));
 	}
 
+	@Transactional
 	public void delete(CustomerAccount e) {
 		e.setStatus(AccountStatus.DELETED);
 		super.persist(e);
@@ -109,41 +114,41 @@ public class CustomerAccountService extends EntityService<CustomerAccount> imple
 	private void addHistoryRecord(AccountHistoryContext context) {
 		switch(context.getOp()) {
 
-			// add customer account
-			case CUSTOMER_ACCOUNT_ADDED: {
-				AccountHistory ah =
-					entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
-							.getAccount()), true);
-				ah.setStatus(context.getCustomerAccount().getCustomer().getStatus());
-				ah.setNotes(context.getCustomerAccount().getCustomer().descriptor() + " bound");
-				dao.persist(ah);
+		// add customer account
+		case CUSTOMER_ACCOUNT_ADDED: {
+			AccountHistory ah =
+				entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
+						.getAccount()), true);
+			ah.setStatus(context.getCustomerAccount().getCustomer().getStatus());
+			ah.setNotes(context.getCustomerAccount().getCustomer().descriptor() + " bound");
+			dao.persist(ah);
 
-				ah =
-					entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
-							.getAccount()), true);
-				ah.setStatus(context.getCustomerAccount().getAccount().getStatus());
-				ah.setNotes("bound to account: " + context.getCustomerAccount().getAccount().descriptor());
-				dao.persist(ah);
-				break;
-			}
+			ah =
+				entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
+						.getAccount()), true);
+			ah.setStatus(context.getCustomerAccount().getAccount().getStatus());
+			ah.setNotes("bound to account: " + context.getCustomerAccount().getAccount().descriptor());
+			dao.persist(ah);
+			break;
+		}
 
-			// purge customer account
-			case CUSTOMER_ACCOUNT_PURGED: {
-				AccountHistory ah =
-					entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
-							.getAccount()), true);
-				ah.setStatus(context.getCustomerAccount().getCustomer().getStatus());
-				ah.setNotes(context.getCustomerAccount().getCustomer().descriptor() + " un-bound (removed)");
-				dao.persist(ah);
+		// purge customer account
+		case CUSTOMER_ACCOUNT_PURGED: {
+			AccountHistory ah =
+				entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
+						.getAccount()), true);
+			ah.setStatus(context.getCustomerAccount().getCustomer().getStatus());
+			ah.setNotes(context.getCustomerAccount().getCustomer().descriptor() + " un-bound (removed)");
+			dao.persist(ah);
 
-				ah =
-					entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
-							.getAccount()), true);
-				ah.setStatus(context.getCustomerAccount().getAccount().getStatus());
-				ah.setNotes("un-bound from account: " + context.getCustomerAccount().getAccount().descriptor());
-				dao.persist(ah);
-				break;
-			}
+			ah =
+				entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
+						.getAccount()), true);
+			ah.setStatus(context.getCustomerAccount().getAccount().getStatus());
+			ah.setNotes("un-bound from account: " + context.getCustomerAccount().getAccount().descriptor());
+			dao.persist(ah);
+			break;
+		}
 
 		}// switch
 

@@ -409,6 +409,18 @@
 			<groupId>org.apache.velocity</groupId>
 			<artifactId>velocity</artifactId>
 		</dependency>
+		
+		<!-- needed for Db4oBootstrapper -->
+		<dependency>
+			<groupId>db4o</groupId>
+			<artifactId>db4o</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+		</dependency>
+		<!-- END needed for Db4oBootstrapper -->
+
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
@@ -547,18 +559,16 @@
 			<groupId>com.tll</groupId>
 			<artifactId>smbiz-persist</artifactId>
 			<version>0.9.0-SNAPSHOT</version>
+			<classifier>${daoImpl}</classifier>
+		</dependency>
+		<dependency><!-- needed for GWT compile -->
+			<groupId>com.tll</groupId>
+			<artifactId>smbiz-persist</artifactId>
+			<version>0.9.0-SNAPSHOT</version>
+			<classifier>sources</classifier>
+			<scope>provided</scope>
 		</dependency>
 		
-		<dependency>
-			<groupId>db4o</groupId>
-			<artifactId>db4o</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-tx</artifactId>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-core</artifactId>

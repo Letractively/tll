@@ -30,7 +30,6 @@ import com.tll.service.entity.account.AccountHistoryContext.AccountHistoryOp;
  * AccountService - {@link IAccountService} impl
  * @author jpk
  */
-@Transactional
 public class AccountService extends NamedEntityService<Account> implements IAccountService {
 
 	/**
@@ -94,6 +93,7 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 	}
 
 	@Override
+	@Transactional
 	public void deleteAll(Collection<Account> entities) {
 		if(entities != null && entities.size() > 0) {
 			for(final Account e : entities) {
@@ -108,6 +108,7 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 	}
 
 	@Override
+	@Transactional
 	public Collection<Account> persistAll(Collection<Account> entities) {
 		final Collection<Account> pec = super.persistAll(entities);
 		if(pec != null && pec.size() > 0) {
@@ -120,6 +121,7 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 	}
 
 	@Override
+	@Transactional
 	public Account persist(Account entity) throws EntityExistsException, ConstraintViolationException {
 
 		// handle payment info
@@ -146,6 +148,7 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 	}
 
 	@Override
+	@Transactional
 	public void purgeAll(Collection<Account> entities) {
 		super.purgeAll(entities);
 		if(entities != null && entities.size() > 0) {
@@ -156,11 +159,13 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 	}
 
 	@Override
+	@Transactional
 	public void purge(Account entity) {
 		super.purge(entity);
 		addHistoryRecord(new AccountHistoryContext(AccountHistoryOp.ACCOUNT_PURGED, entity));
 	}
 
+	@Transactional
 	public void delete(Account e) {
 		e.setStatus(AccountStatus.CLOSED);
 		super.persist(e);
@@ -174,37 +179,37 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 	 */
 	private void addHistoryRecord(AccountHistoryContext context) {
 		switch(context.getOp()) {
-			// add account
-			case ACCOUNT_ADDED: {
-				final AccountHistory ah =
-					entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getAccount()), true);
-				ah.setNotes(context.getAccount().typeName() + " created");
-				ah.setStatus(AccountStatus.NEW);
-				dao.persist(ah);
-				break;
-			}
-			// delete account
-			case ACCOUNT_DELETED: {
-				final AccountHistory ah =
-					entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getAccount()), true);
+		// add account
+		case ACCOUNT_ADDED: {
+			final AccountHistory ah =
+				entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getAccount()), true);
+			ah.setNotes(context.getAccount().typeName() + " created");
+			ah.setStatus(AccountStatus.NEW);
+			dao.persist(ah);
+			break;
+		}
+		// delete account
+		case ACCOUNT_DELETED: {
+			final AccountHistory ah =
+				entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getAccount()), true);
+			ah.setStatus(AccountStatus.DELETED);
+			ah.setNotes(context.getAccount().typeName() + " marked as DELETED");
+			dao.persist(ah);
+			break;
+		}
+		// purge account
+		case ACCOUNT_PURGED: {
+			// add history record to parentAccount
+			final Account parent = context.getAccount().getParent();
+			if(parent != null) {
+				final AccountHistory ah = entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(parent), true);
 				ah.setStatus(AccountStatus.DELETED);
-				ah.setNotes(context.getAccount().typeName() + " marked as DELETED");
+				ah.setNotes("Child account: " + context.getAccount().typeName() + "'" + context.getAccount().descriptor()
+						+ "' DELETED");
 				dao.persist(ah);
-				break;
 			}
-			// purge account
-			case ACCOUNT_PURGED: {
-				// add history record to parentAccount
-				final Account parent = context.getAccount().getParent();
-				if(parent != null) {
-					final AccountHistory ah = entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(parent), true);
-					ah.setStatus(AccountStatus.DELETED);
-					ah.setNotes("Child account: " + context.getAccount().typeName() + "'" + context.getAccount().descriptor()
-							+ "' DELETED");
-					dao.persist(ah);
-				}
-				break;
-			}
+			break;
+		}
 
 		}// switch
 

@@ -10,10 +10,12 @@ import java.net.URL;
 import net.sf.ehcache.CacheManager;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
-import com.tll.di.ListingModule.ListingCacheAware;
 import com.tll.di.SmbizEntityServiceFactoryModule.UserCacheAware;
+import com.tll.server.rpc.entity.PersistCache.PersistCacheAware;
+import com.tll.server.rpc.listing.ListingCache.ListingCacheAware;
 import com.tll.util.ClassUtil;
 
 
@@ -48,6 +50,16 @@ public class SmbizCacheModule extends AbstractModule {
 			}
 		}).in(Scopes.SINGLETON);
 
+		bind(CacheManager.class).annotatedWith(PersistCacheAware.class).toProvider(new Provider<CacheManager>() {
+
+			@Inject @UserCacheAware
+			CacheManager cm;
+
+			@Override
+			public CacheManager get() {
+				return cm;
+			}
+		}).in(Scopes.SINGLETON);
 	}
 
 }

@@ -45,6 +45,7 @@
 				<exclude>**/public/**</exclude>
 				<exclude>**/lib/gwt-dev*</exclude>
 				<exclude>**/lib/tll-*</exclude>
+				<exclude>**/lib/smbiz-*</exclude>
 			</excludes>
 		</fileSet>
 

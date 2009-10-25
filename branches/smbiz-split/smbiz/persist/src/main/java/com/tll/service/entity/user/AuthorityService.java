@@ -7,8 +7,6 @@ package com.tll.service.entity.user;
 
 import javax.validation.ValidatorFactory;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.inject.Inject;
 import com.tll.dao.IEntityDao;
 import com.tll.model.Authority;
@@ -19,7 +17,6 @@ import com.tll.service.entity.NamedEntityService;
  * AuthorityService - {@link IAuthorityService} impl
  * @author jpk
  */
-@Transactional
 public class AuthorityService extends NamedEntityService<Authority> implements IAuthorityService {
 
 	/**

@@ -6,11 +6,16 @@
 package com.tll.server.rpc.listing;
 
 import java.io.Serializable;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 
 /**
@@ -20,6 +25,18 @@ import com.google.inject.Inject;
  * @author jpk
  */
 public final class ListingCache {
+
+	/**
+	 * ListingCacheAware<br>
+	 * Annotation indicating a {@link CacheManager} instance that supports listing caching.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target( {
+		ElementType.FIELD,
+		ElementType.PARAMETER })
+		@BindingAnnotation
+		public @interface ListingCacheAware {
+	}
 
 	private static final String LIST_HANDLER_CACHE_NAME = "ListHandlerCache";
 
@@ -32,7 +49,7 @@ public final class ListingCache {
 	 * @param cm the required {@link CacheManager}
 	 */
 	@Inject
-	public ListingCache(CacheManager cm) {
+	public ListingCache(@ListingCacheAware CacheManager cm) {
 		if(cm == null) throw new IllegalArgumentException("Null CacheManager");
 		assert cm.getCache(LIST_HANDLER_CACHE_NAME) != null;
 		assert cm.getCache(LISTING_STATE_CACHE_NAME) != null;

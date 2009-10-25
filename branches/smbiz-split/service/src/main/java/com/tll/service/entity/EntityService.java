@@ -31,7 +31,6 @@ import com.tll.model.key.PrimaryKey;
  * @param <E> The entity type
  * @author jpk
  */
-@Transactional
 public abstract class EntityService<E extends IEntity> implements IEntityService<E> {
 
 	protected final Log log;
@@ -107,20 +106,24 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 		}
 	}
 
+	@Transactional
 	public E persist(E entity) throws EntityExistsException, ConstraintViolationException {
 		validate(entity);
 		return dao.persist(entity);
 	}
 
+	@Transactional
 	public Collection<E> persistAll(Collection<E> entities) throws ConstraintViolationException {
 		validateAll(entities);
 		return dao.persistAll(entities);
 	}
 
+	@Transactional
 	public void purge(E entity) {
 		dao.purge(entity);
 	}
 
+	@Transactional
 	public void purgeAll(Collection<E> entities) {
 		dao.purgeAll(entities);
 	}

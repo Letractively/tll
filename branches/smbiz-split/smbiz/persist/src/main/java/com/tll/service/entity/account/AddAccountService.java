@@ -23,7 +23,6 @@ import com.tll.service.entity.user.IUserService;
  * {@link Account}s.
  * @author jpk
  */
-@Transactional
 public class AddAccountService {
 
 	private final IAccountService accountService;

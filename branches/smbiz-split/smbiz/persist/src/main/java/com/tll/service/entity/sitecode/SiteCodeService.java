@@ -2,8 +2,6 @@ package com.tll.service.entity.sitecode;
 
 import javax.validation.ValidatorFactory;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.inject.Inject;
 import com.tll.dao.IEntityDao;
 import com.tll.model.IEntityAssembler;
@@ -14,7 +12,6 @@ import com.tll.service.entity.NamedEntityService;
  * SiteCodeService - {@link ISiteCodeService} impl
  * @author jpk
  */
-@Transactional
 public class SiteCodeService extends NamedEntityService<SiteCode> implements ISiteCodeService {
 
 	/**

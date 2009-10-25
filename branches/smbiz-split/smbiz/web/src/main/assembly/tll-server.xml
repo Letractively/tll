@@ -16,7 +16,36 @@
 	<!-- groupId:artifactId:type:classifier -->
 	<dependencySets>
 
-		<!-- transitive tll deps for smbiz-persist (which *should* include smbiz-model by way of transitive dependencies) -->
+		<!--
+			we jar up all tll deps *including* those in smbiz-model/persist
+			which kills the separation between smbiz and dependent tll modules
+			but there is no workable alternative as i see it currently.. 
+		-->
+		<dependencySet>
+			<scope>runtime</scope>
+			<unpack>true</unpack>
+			<outputDirectory>/</outputDirectory>
+			<useProjectArtifact>false</useProjectArtifact>
+			<includes>
+				<include>com.tll:*</include>
+			</includes>
+			<unpackOptions>
+				<excludes>
+					<exclude>**/*.java</exclude>
+					<exclude>**/*.gwt.xml</exclude>
+					<exclude>**/client/**</exclude>
+					<exclude>**/common/**/*Async*</exclude>
+					<exclude>**/public/**</exclude>
+					<exclude>**/db/**</exclude>
+				</excludes>
+			</unpackOptions>
+		</dependencySet>
+		
+		<!--
+			Maven doesn't offer a viable way to extract tll deps *excluding* those in smbiz-model/persist 
+		-->
+		<!-- 
+		transitive tll deps for smbiz-persist (which *should* include smbiz-model by way of transitive dependencies)
 		<dependencySet>
 			<scope>runtime</scope>
 			<unpack>true</unpack>
@@ -25,7 +54,7 @@
 			<useTransitiveDependencies>true</useTransitiveDependencies>
 			<useTransitiveFiltering>true</useTransitiveFiltering>
 			<includes>
-				<include>com.tll:smbiz-persist</include>
+				<include>com.tll:smbiz-persist:jar:${daoImpl}</include>
 			</includes>
 			<unpackOptions>
 				<excludes>
@@ -41,7 +70,7 @@
 			</unpackOptions>
 		</dependencySet>
 
-		<!-- smbiz-web tll deps -->
+		smbiz-web tll deps
 		<dependencySet>
 			<scope>runtime</scope>
 			<unpack>true</unpack>
@@ -64,6 +93,7 @@
 				</includes>
 			</unpackOptions>
 		</dependencySet>
+		-->
 
 	</dependencySets>
 	

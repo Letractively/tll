@@ -17,7 +17,6 @@ import com.tll.service.entity.NamedEntityService;
  * CurrencyService - {@link ICurrencyService} impl
  * @author jpk
  */
-@Transactional
 public class CurrencyService extends NamedEntityService<Currency> implements ICurrencyService {
 
 	/**
@@ -36,6 +35,7 @@ public class CurrencyService extends NamedEntityService<Currency> implements ICu
 		return Currency.class;
 	}
 
+	@Transactional
 	public Currency loadByIso4217(String iso4217) throws EntityNotFoundException {
 		try {
 			final Criteria<Currency> criteria = new Criteria<Currency>(Currency.class);
