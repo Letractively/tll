@@ -16,8 +16,11 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.db4o.ObjectContainer;
+import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.Provider;
+import com.google.inject.Scopes;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.criteria.Criteria;
@@ -36,13 +39,14 @@ import com.tll.di.SmbizDb4oDaoModule;
 import com.tll.di.SmbizEGraphModule;
 import com.tll.di.SmbizEntityServiceFactoryModule;
 import com.tll.di.SmbizModelModule;
-import com.tll.di.TestCacheModule;
+import com.tll.di.SmbizEntityServiceFactoryModule.UserCacheAware;
 import com.tll.di.test.Db4oDbShellModule;
 import com.tll.model.Asp;
 import com.tll.model.IEntity;
 import com.tll.model.Isp;
 import com.tll.model.schema.PropertyType;
 import com.tll.service.entity.IEntityServiceFactory;
+import com.tll.util.ClassUtil;
 
 /**
  * NamedQueriesTest
@@ -107,7 +111,19 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 		super.addModules(modules);
 
 		// satisfy caching requirement for UserService
-		modules.add(new TestCacheModule("ehcache-smbiz-persist.xml"));
+		modules.add(new Module() {
+
+			@Override
+			public void configure(Binder binder) {
+				binder.bind(CacheManager.class).annotatedWith(UserCacheAware.class).toProvider(new Provider<CacheManager>() {
+
+					@Override
+					public CacheManager get() {
+						return new CacheManager(ClassUtil.getRootResourceRef("ehcache-smbiz-persist.xml"));
+					}
+				}).in(Scopes.SINGLETON);
+			}
+		});
 
 		modules.add(new SmbizModelModule());
 		modules.add(new SmbizDb4oDaoModule(getConfig()));

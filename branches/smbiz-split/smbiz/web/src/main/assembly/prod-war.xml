@@ -39,8 +39,6 @@
 			<excludes>
 				<exclude>**/*.gwt.xml</exclude>
 				<exclude>**/*.java</exclude>
-				<exclude>**/mock-entities.xml</exclude>
-				<exclude>**/builddef.lst</exclude>
 				<exclude>**/work/**</exclude>
 				<exclude>**/client/**</exclude>
 				<exclude>**/common/**/*Async.class</exclude>

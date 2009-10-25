@@ -208,14 +208,16 @@ public final class RefData {
 
 	private File[] getAppRefDataFiles() {
 
-		final ClassLoader cld = Thread.currentThread().getContextClassLoader();
+		ClassLoader cld = Thread.currentThread().getContextClassLoader();
 		if(cld == null) {
-			throw new IllegalStateException("Can't get class loader.");
+			cld = RefData.class.getClassLoader();
 		}
 		Enumeration<URL> resources;
 		try {
-			if((resources = cld.getResources("")) == null) {
-				throw new IllegalStateException("Unable to obtain root classpath resources.");
+			resources = cld.getResources("");
+			if(resources == null || !resources.hasMoreElements()) {
+				// try the root
+				resources = cld.getResources("/");
 			}
 		}
 		catch(final IOException e) {

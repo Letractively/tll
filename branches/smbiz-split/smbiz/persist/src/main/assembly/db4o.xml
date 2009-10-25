@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 
+  http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+
+	<!--
+    Packages the project filtering out dao impl assets that are NOT db4o related
+    classifying it as 'db4o'.
+  -->
+
+	<id>db4o</id>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<formats>
+		<format>jar</format>
+	</formats>
+
+	<!-- since we only have one dao impl (db4o) currently, we don't need to do any filtering -->
+	<fileSets>
+		<fileSet>
+			<directory>${project.build.outputDirectory}</directory>
+			<outputDirectory>/</outputDirectory>
+			<excludes>
+				<exclude>**/db/**</exclude><!-- exclude relational db assets -->
+				<!-- we need these to GWT compile smbiz-web!
+				<exclude>**/*.java</exclude>
+				<exclude>**/*.gwt.xml</exclude>
+				-->
+			</excludes>
+		</fileSet>
+	</fileSets>
+
+</assembly>
+

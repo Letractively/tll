@@ -52,6 +52,44 @@
 		</resources>
 	
 		<plugins>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>gwt-shell-cp</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>build-classpath</goal>
+						</goals>
+						<configuration>
+							<includeScope></includeScope>
+							<includeGroupIds>
+								log4j,commons-logging,org.slf4j,com.google.gwt,com.google.gwt,com.allen_sauer.gwt.log,com.tll
+							</includeGroupIds>
+							<excludeArtifactIds>gwt-servlet,tll-config,tll-mail</excludeArtifactIds>
+							<excludeClassifiers>testassets</excludeClassifiers>
+							<outputFile>target/gwt-cp.txt</outputFile>
+							<regenerateFile>true</regenerateFile>
+						</configuration>
+					</execution>
+					<!-- copies libs to the target/war dir which is needed for gwt host mode -->
+					<execution>
+						<id>libs-to-war</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>target/war/WEB-INF/lib</outputDirectory>
+							<scope>runtime</scope>
+							<excludeClassifiers>testassets</excludeClassifiers>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 			<!-- direct unit test invocations to the testng.xml file -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -102,34 +140,48 @@
 								<element>
 									<groupId>com.tll</groupId>
 									<artifactId>tll-config</artifactId>
-									<version>${project.parent.version}</version>
+									<version>0.0.1-SNAPSHOT</version>
 								</element>
 								<element>
 									<groupId>com.tll</groupId>
 									<artifactId>tll-model</artifactId>
-									<version>${project.parent.version}</version>
-									<classifier>testassets</classifier>
+									<version>0.0.1-SNAPSHOT</version>
 								</element>
 								<element>
 									<groupId>com.tll</groupId>
 									<artifactId>tll-dao-api</artifactId>
-									<version>${project.parent.version}</version>
+									<version>0.0.1-SNAPSHOT</version>
 									<classifier>testassets</classifier>
 								</element>
 								<element>
 									<groupId>com.tll</groupId>
 									<artifactId>tll-dao-db4o</artifactId>
-									<version>${project.parent.version}</version>
+									<version>0.0.1-SNAPSHOT</version>
 									<classifier>testassets</classifier>
+								</element>
+								<element>
+									<groupId>com.tll</groupId>
+									<artifactId>smbiz-model</artifactId>
+									<version>${project.version}</version>
+								</element>
+								<element>
+									<groupId>com.tll</groupId>
+									<artifactId>smbiz-model</artifactId>
+									<version>${project.version}</version>
+									<classifier>testassets</classifier>
+								</element>
+								<element>
+									<groupId>com.tll</groupId>
+									<artifactId>smbiz-persist</artifactId>
+									<version>${project.version}</version>
+									<classifier>${daoImpl}</classifier>
 								</element>
 							</classpath>
 							<scriptpath>
-								<element>${project.basedir}/../build-tools/src/main/scripts</element>
+								<element>${project.basedir}/../../build-tools/src/main/scripts</element>
 								<element>${project.basedir}/src/main/scripts</element>
 							</scriptpath>
-							<source><![CDATA[
-                com.tll.BuildTools.processWarResources(project, ant);
-              ]]></source>
+							<source><![CDATA[com.tll.BuildTools.processWarResources(project, ant);]]></source>
 						</configuration>
 					</execution>
 				</executions>
@@ -172,7 +224,7 @@
 								<property name="gwt.shell.startupUrl" value="SmbizAdmin.html" />
 								<property name="gwt.shell.warDir.path" value="target/war" />
 								<echo message="classpath: ${gwt.compile.classpath}" />
-								<ant antfile="${basedir}/../client/build-gwt.xml">
+								<ant antfile="${basedir}/../../client/build-gwt.xml">
 									<target name="build-shell-exec-file" />
 									<target name="build-shell-debug-exec-file" />
 								</ant>
@@ -191,7 +243,7 @@
 								<property name="gwt.compile.modules" value="${gwtTargetModule}" />
 								<property name="gwt.shell.warDir.path" value="target" />
 								<echo message="classpath: ${gwt.compile.classpath}" />
-								<ant antfile="${basedir}/../client/build-gwt.xml">
+								<ant antfile="${basedir}/../../client/build-gwt.xml">
 									<target name="compile" />
 								</ant>
 							</tasks>
@@ -200,23 +252,25 @@
 				</executions>
 			</plugin>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <webXml>target/war/WEB-INF/web.xml</webXml>
-        </configuration>
-        <executions>
-        	<execution>
-        		<id>fill-war-dir</id>
-        		<goals><goal>exploded</goal></goals>
-        		<phase>prepare-package</phase>
-        		<configuration>
-        			<webappDirectory>target/war</webappDirectory>
-        		</configuration>
-        	</execution>
-        </executions>
-      </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<webXml>target/war/WEB-INF/web.xml</webXml>
+				</configuration>
+				<executions>
+					<execution>
+						<id>fill-war-dir</id>
+						<goals>
+							<goal>exploded</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<webappDirectory>target/war</webappDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
 		</plugins>
 	</build>
@@ -271,7 +325,7 @@
 									<outputDirectory>target</outputDirectory>
 									<appendAssemblyId>false</appendAssemblyId>
 									<descriptors>
-										<descriptor>src/main/assembly/tll-server-${daoImpl}.xml</descriptor>
+										<descriptor>src/main/assembly/tll-server.xml</descriptor>
 									</descriptors>
 								</configuration>
 							</execution>
@@ -298,9 +352,6 @@
 		<!-- dao impl profiles -->
 		<profile>
 			<id>db4o</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
 			<properties>
 				<daoImpl>db4o</daoImpl>
 			</properties>
@@ -310,17 +361,6 @@
 			<properties>
 				<daoImpl>jdo</daoImpl>
 			</properties>
-			<build>
-				<resources>
-					<resource>
-						<directory>src/main/resources/db</directory>
-						<filtering>false</filtering>
-						<includes>
-							<include>*.*</include>
-						</includes>
-					</resource>
-				</resources>
-			</build>
 		</profile>
 
 		<!-- security impl profiles -->
@@ -344,13 +384,30 @@
 	
 	<dependencies>
 		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>aopalliance</groupId>
 			<artifactId>aopalliance</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.google.code.guice</groupId>
 			<artifactId>guice</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
@@ -368,6 +425,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-dev</artifactId>
+			<version>${gwtVersion}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-user</artifactId>
 			<scope>provided</scope>
 		</dependency>
@@ -382,12 +444,37 @@
 		
 		<dependency>
 			<groupId>com.tll</groupId>
+			<artifactId>tll-config</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
 			<artifactId>tll-refdata</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-mail</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-model</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-dao-api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-service</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
@@ -462,6 +549,37 @@
 			<version>0.9.0-SNAPSHOT</version>
 		</dependency>
 		
+		<dependency>
+			<groupId>db4o</groupId>
+			<artifactId>db4o</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<classifier>testassets</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-dao-api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<classifier>testassets</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-dao-db4o</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<classifier>testassets</classifier>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>

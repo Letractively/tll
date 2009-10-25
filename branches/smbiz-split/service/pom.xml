@@ -116,12 +116,10 @@
           <groupId>org.springframework</groupId>
           <artifactId>spring-beans</artifactId>
         </exclusion>
-        <!-- needed for aspectj compile time weave 
         <exclusion>
           <groupId>org.aspectj</groupId>
-          <artifactId>aspectjrt</artifactId>
+          <artifactId>aspectjweaver</artifactId>
         </exclusion>
-        -->
       </exclusions>
     </dependency>
     

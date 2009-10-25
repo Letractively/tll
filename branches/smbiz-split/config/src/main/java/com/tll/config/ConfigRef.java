@@ -29,17 +29,34 @@ public final class ConfigRef {
 	 *         resource name
 	 */
 	private static ArrayList<URL> resolve(String name, boolean loadAll) throws IllegalArgumentException {
+		assert name != null;
 		ArrayList<URL> list = new ArrayList<URL>();
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		if(loadAll) {
-			Enumeration<URL> urls;
+			Enumeration<URL> urls = null;
 			try {
-				urls = Thread.currentThread().getContextClassLoader().getResources(name);
+				if(cl != null) {
+					urls = cl.getResources(name);
+					if(urls == null || !urls.hasMoreElements()) {
+						// try the root name..
+						if(!name.startsWith("/")) {
+							urls = cl.getResources('/' + name);
+						}
+					}
+				}
 				if(urls == null || !urls.hasMoreElements()) {
 					// try the other class loader..
-					urls = ConfigRef.class.getClassLoader().getResources(name);
+					cl = ConfigRef.class.getClassLoader();
+					urls = cl.getResources(name);
 					if(urls == null || !urls.hasMoreElements()) {
-						throw new IllegalArgumentException("Unable to find any config resources named: " + name);
+						// try the root name..
+						if(!name.startsWith("/")) {
+							urls = cl.getResources('/' + name);
+						}
 					}
+				}
+				if(urls == null || !urls.hasMoreElements()) {
+					throw new IllegalArgumentException("Unable to find any config resources named: " + name);
 				}
 			}
 			catch(IOException e) {
@@ -50,12 +67,18 @@ public final class ConfigRef {
 			}
 		}
 		else {
-			URL url = Thread.currentThread().getContextClassLoader().getResource(name);
+			URL url = cl.getResource(name);
 			if(url == null) {
-				// try the other class loader..
-				url = ConfigRef.class.getClassLoader().getResource(name);
+				// try the root name..
+				if(!name.startsWith("/")) {
+					url = cl.getResource('/' + name);
+				}
 				if(url == null) {
-					throw new IllegalArgumentException("Unable to find config resource named: " + name);
+					// try the other class loader..
+					url = ConfigRef.class.getClassLoader().getResource(name);
+					if(url == null) {
+						throw new IllegalArgumentException("Unable to find config resource named: " + name);
+					}
 				}
 			}
 			list.add(url);

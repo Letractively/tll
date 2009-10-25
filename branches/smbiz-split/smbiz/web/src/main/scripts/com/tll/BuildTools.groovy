@@ -15,8 +15,8 @@ import com.tll.dao.IDbShell;
 import com.tll.di.SmbizDb4oDaoModule;
 import com.tll.di.test.Db4oDbShellModule;
 import com.tll.di.SmbizModelModule;
-import com.tll.model.test.IEntityGraphPopulator;
-import com.tll.di.test.EGraphModule;
+import com.tll.model.IEntityGraphPopulator;
+import com.tll.di.EGraphModule;
 
 // gmaven does't pick up test classes in the maven classpath 
 // so we need to re-define the smbiz test deps here tragically
@@ -25,8 +25,8 @@ import com.tll.di.SmbizEGraphModule;
 import com.tll.model.SmbizEntityGraphBuilder;
 import com.tll.model.*;
 import com.google.inject.Inject;
-import com.tll.model.test.AbstractEntityGraphPopulator;
-import com.tll.model.test.EntityBeanFactory;
+import com.tll.model.AbstractEntityGraphPopulator;
+import com.tll.model.EntityBeanFactory;
 import com.tll.util.EnumUtil;
 
 /**
@@ -74,8 +74,8 @@ public final class BuildTools {
 	  ['com.tll.di.EmailExceptionHandlerModule', FLAG_DB_JDO],
 	  ['com.tll.di.LogExceptionHandlerModule', FLAG_DB_DB4O],
 	  ['com.tll.di.SmbizModelModule', FLAG_ALL],
-	  ['com.tll.di.JdoDaoModule', FLAG_DB_JDO],
 	  ['com.tll.di.SmbizDb4oDaoModule', FLAG_DB_DB4O],
+	  ['com.tll.di.SmbizCacheModule', FLAG_ALL],
 	  ['com.tll.di.SmbizEntityServiceFactoryModule', FLAG_ALL],
 	  ['com.tll.di.SmbizMarshalModule', FLAG_ALL],
 	  ['com.tll.di.SmbizClientPersistModule', FLAG_ALL],
@@ -196,7 +196,7 @@ public final class BuildTools {
 		String sdir = basedir + '/src/main/webapp'
 		String tdir = basedir + '/target/war'
 		ant.mkdir(dir: tdir)
-		ant.copy(todir: tdir) {
+		ant.copy(todir: tdir, preservelastmodified:true) {
 			fileset(dir: sdir) {
 				exclude(name: '**/web.xml')
 			}

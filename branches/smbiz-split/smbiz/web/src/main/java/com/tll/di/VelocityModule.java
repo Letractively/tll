@@ -14,6 +14,7 @@ import org.apache.velocity.app.VelocityEngine;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
+import com.tll.util.ClassUtil;
 
 /**
  * VelocityModule
@@ -21,21 +22,21 @@ import com.google.inject.Provider;
  */
 public class VelocityModule extends AbstractModule {
 
-	public static final String VELOCITY_PROPS_FILENAME = "velocity.properties";
+	/**
+	 * The resource token for the velocity.properties expected to be at the ROOT
+	 * of the classpath.
+	 */
+	private static final String VELOCITY_PROPS_RESOURCE = "velocity.properties";
 
 	static final Log log = LogFactory.getLog(VelocityModule.class);
 
 	Properties loadProperties() {
 		try {
+			final URL url = ClassUtil.getRootResourceRef(VELOCITY_PROPS_RESOURCE);
+			if(url == null) return null;
 			final Properties props = new Properties();
-			URL url = Thread.currentThread().getContextClassLoader().getResource(VELOCITY_PROPS_FILENAME);
-			if(url == null) {
-				// try system classloader
-				url = VelocityModule.class.getClassLoader().getResource(VELOCITY_PROPS_FILENAME);
-				if(url == null) return null;
-			}
-			log.info("Velocity properties loaded from: " + url);
 			props.load(new FileReader(new File(url.toURI())));
+			log.info("Velocity properties loaded from: " + url);
 			return props;
 		}
 		catch(final Exception e) {

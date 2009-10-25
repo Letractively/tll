@@ -26,12 +26,14 @@
 					<source>1.6</source>
 					<target>1.6</target>
           <complianceLevel>1.6</complianceLevel>
+					<!-- NO: this places the tll-server classes into this project's target output dir!
 					<weaveDependencies>
 						<weaveDependency>
 							<groupId>com.tll</groupId>
 							<artifactId>tll-service</artifactId>
 						</weaveDependency>
 					</weaveDependencies>
+					-->
 					<aspectLibraries>
 						<aspectLibrary>
 							<groupId>org.springframework</groupId>
@@ -54,7 +56,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<skip>false</skip>
+					<skip>true</skip><!-- TODO debug -->
 					<suiteXmlFiles>
 						<suiteXmlFile>${pom.basedir}/src/test/resources/test-dao.xml</suiteXmlFile>
 						<suiteXmlFile>${pom.basedir}/src/test/resources/test-service.xml</suiteXmlFile>
@@ -62,9 +64,73 @@
 					</suiteXmlFiles>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>dao-impl-jar</id>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<outputDirectory>target</outputDirectory>
+							<appendAssemblyId>true</appendAssemblyId>
+							<descriptors>
+								<descriptor>src/main/assembly/${daoImpl}.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+					<execution>
+						<id>deps</id>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<outputDirectory>target</outputDirectory>
+							<appendAssemblyId>true</appendAssemblyId>
+							<descriptors>
+								<descriptor>src/main/assembly/deps-${daoImpl}.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 
 	</build>
+	
+	<profiles>
+		<!-- dao impl profiles -->
+		<profile>
+			<id>db4o</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<daoImpl>db4o</daoImpl>
+			</properties>
+		</profile>
+		<profile>
+			<id>jdo</id>
+			<properties>
+				<daoImpl>jdo</daoImpl>
+			</properties>
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources/db</directory>
+						<filtering>false</filtering>
+						<includes>
+							<include>*.*</include>
+						</includes>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+	</profiles>
 
 	<dependencies>
 		<dependency>

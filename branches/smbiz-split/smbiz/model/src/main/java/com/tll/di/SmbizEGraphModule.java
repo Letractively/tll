@@ -11,6 +11,7 @@ import java.net.URL;
 
 import com.tll.model.IEntityGraphPopulator;
 import com.tll.model.SmbizEntityGraphBuilder;
+import com.tll.util.ClassUtil;
 
 
 /**
@@ -24,10 +25,7 @@ public class SmbizEGraphModule extends EGraphModule {
 	@Override
 	protected URI getBeanDefRef() {
 		try {
-			URL url = Thread.currentThread().getContextClassLoader().getResource(ENTITY_DEFINITIONS_FILENAME);
-			if(url == null) {
-				url = SmbizEGraphModule.class.getResource(ENTITY_DEFINITIONS_FILENAME);
-			}
+			final URL url = ClassUtil.getRootResourceRef(ENTITY_DEFINITIONS_FILENAME);
 			if(url != null) return url.toURI();
 		}
 		catch(final URISyntaxException e) {

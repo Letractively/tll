@@ -3,6 +3,10 @@
  */
 package com.tll.di;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,8 +17,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.providers.dao.UserCache;
 import org.springframework.security.providers.dao.cache.EhCacheBasedUserCache;
+import org.springframework.security.userdetails.UserDetails;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
@@ -73,6 +79,18 @@ public class SmbizEntityServiceFactoryModule extends AbstractModule {
 
 	static final Log log = LogFactory.getLog(SmbizEntityServiceFactoryModule.class);
 
+	/**
+	 * UserCacheAware<br>
+	 * Annotation indicating a {@link CacheManager} instance that supports {@link UserDetails} caching.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target( {
+		ElementType.FIELD,
+		ElementType.PARAMETER })
+		@BindingAnnotation
+		public @interface UserCacheAware {
+	}
+
 	public static final String USER_DETAILS_CACHE_NAME = "acegiUserDetailsCache";
 
 	@Override
@@ -83,6 +101,7 @@ public class SmbizEntityServiceFactoryModule extends AbstractModule {
 		bind(UserCache.class).toProvider(new Provider<UserCache>() {
 
 			@Inject
+			@UserCacheAware
 			CacheManager cm;
 
 			@Override
