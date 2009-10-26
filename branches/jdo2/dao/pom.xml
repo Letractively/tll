@@ -17,6 +17,7 @@
 
   <modules>
     <module>api</module>
+    <module>jdo</module>
     <module>db4o</module>
   </modules>
 
