@@ -83,8 +83,3 @@ alter table account_address
 	add index fk_aadr_a (aid), 
 	add constraint fk_aadr_adr foreign key (address_id) references address (id) on delete cascade,
 	add constraint fk_aadr_a foreign key (aid) references account (id) on delete cascade;
-
-create table hibernate_unique_key (
-    next_hi integer 
-);
-insert into hibernate_unique_key values ( 0 );

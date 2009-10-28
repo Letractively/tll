@@ -8,16 +8,19 @@ import com.tll.model.EntityBase;
 import com.tll.model.IEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
+import com.tll.model.validate.PhoneNumber;
+import com.tll.model.validate.PhoneNumbers;
+import com.tll.model.validate.PostalCode;
 
 /**
  * @author jpk
  */
-//@PhoneNumbers(value = {
-//	@PhoneNumber(phonePropertyName = "phone"), @PhoneNumber(phonePropertyName = "fax") })
-//@PostalCode() temp disable
-@BusinessObject(businessKeys = @BusinessKeyDef(name = "Address 1 and Postal Code", properties = {
-	"address1", "postalCode" }))
-	public class Address extends EntityBase {
+@PhoneNumbers(value = {
+	@PhoneNumber(phonePropertyName = "phone"), @PhoneNumber(phonePropertyName = "fax") })
+	@PostalCode()
+	@BusinessObject(businessKeys = @BusinessKeyDef(name = "Address 1 and Postal Code", properties = {
+		"address1", "postalCode" }))
+		public class Address extends EntityBase {
 
 	private static final long serialVersionUID = 69385466934038047L;
 

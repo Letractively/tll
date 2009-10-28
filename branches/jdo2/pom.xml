@@ -21,6 +21,10 @@
     <springVersion>2.5.6.SEC01</springVersion>
     <slfVersion>1.5.6</slfVersion>
 
+		<jdo2apiVersion>2.3-eb</jdo2apiVersion>
+		<datanucleusVersion>1.1.5</datanucleusVersion>
+    <mysqlConnectorVersion>5.1.6</mysqlConnectorVersion>
+    
     <gwtVersion>0.0.0</gwtVersion>
     <!-- <gwtIncubatorVersion>1.7</gwtIncubatorVersion> -->
     <gwtLogVersion>2.6.2</gwtLogVersion>
@@ -153,12 +157,56 @@
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>aspectj-maven-plugin</artifactId>
 					<version>1.2</version>
-        </plugin>
+			  </plugin>
 				<plugin>
-          <groupId>net.sf.alchim</groupId>
-          <artifactId>yuicompressor-maven-plugin</artifactId>
-          <version>0.8</version>
-        </plugin>
+					<groupId>org.datanucleus</groupId>
+					<artifactId>maven-datanucleus-plugin</artifactId>
+					<version>${datanucleusVersion}</version>
+					<configuration>
+						<mappingIncludes>**/*.jdo,**/model/**.class</mappingIncludes>
+						<verbose>true</verbose>
+						<enhancerName>ASM</enhancerName>
+						<api>JDO</api>
+						<!-- <props>${basedir}/src/main/resources/config.properties</props> -->
+					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>log4j</groupId>
+							<artifactId>log4j</artifactId>
+							<version>1.2.14</version>
+						</dependency>
+						<dependency>
+							<groupId>asm</groupId>
+							<artifactId>asm</artifactId>
+							<version>3.1</version>
+						</dependency>
+						<dependency>
+							<groupId>javax.jdo</groupId>
+							<artifactId>jdo2-api</artifactId>
+							<version>${jdo2apiVersion}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.datanucleus</groupId>
+							<artifactId>datanucleus-core</artifactId>
+							<version>${datanucleusVersion}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.datanucleus</groupId>
+							<artifactId>datanucleus-enhancer</artifactId>
+							<version>${datanucleusVersion}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.datanucleus</groupId>
+							<artifactId>datanucleus-rdbms</artifactId>
+							<version>${datanucleusVersion}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.datanucleus</groupId>
+							<artifactId>datanucleus-jpa</artifactId>
+							<version>${datanucleusVersion}</version>
+						</dependency>
+					</dependencies>
+				</plugin>
       </plugins>
     </pluginManagement>
 
@@ -290,42 +338,6 @@
   </reporting>
 
   <profiles>
-
-    <!-- GWT unpacking profiles -->
-    <profile>
-      <id>gwt-dev-windows</id>
-      <properties>
-        <platform>windows</platform>
-      </properties>
-      <activation>
-        <os>
-          <family>windows</family>
-        </os>
-      </activation>
-    </profile>
-    <profile>
-      <id>gwt-dev-mac</id>
-      <properties>
-        <platform>mac</platform>
-      </properties>
-      <activation>
-        <os>
-          <family>mac</family>
-        </os>
-      </activation>
-    </profile>
-    <profile>
-      <id>gwt-dev-linux</id>
-      <properties>
-        <platform>linux</platform>
-      </properties>
-      <activation>
-        <os>
-          <name>linux</name>
-        </os>
-      </activation>
-    </profile>
-
   </profiles>
 
   <dependencyManagement>
@@ -466,6 +478,11 @@
         <artifactId>activation</artifactId>
         <version>[1.1,)</version>
       </dependency>
+			<dependency>
+        <groupId>javax.jdo</groupId>
+        <artifactId>jdo2-api</artifactId>
+        <version>${jdo2apiVersion}</version>
+      </dependency>
 
       <dependency>
         <groupId>backport-util-concurrent</groupId>
@@ -485,12 +502,53 @@
         </exclusions>
       </dependency>
 
+      <!-- db4o -->
 			<dependency>
 				<groupId>db4o</groupId>
 				<artifactId>db4o</artifactId>
 				<version>${db4oVersion}</version>
 			</dependency>
 
+			<dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>${mysqlConnectorVersion}</version>
+      </dependency>
+      
+      <!-- data nucleus -->
+      <dependency>
+        <groupId>org.datanucleus</groupId>
+        <artifactId>datanucleus-cache</artifactId>
+        <version>${datanucleusVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.datanucleus</groupId>
+        <artifactId>datanucleus-connectionpool</artifactId>
+        <version>1.0.2</version>
+      </dependency>
+      <dependency>
+        <groupId>org.datanucleus</groupId>
+        <artifactId>datanucleus-core</artifactId>
+        <version>${datanucleusVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.datanucleus</groupId>
+        <artifactId>datanucleus-enhancer</artifactId>
+        <version>${datanucleusVersion}</version>
+      </dependency>
+      <!-- 
+      <dependency>
+        <groupId>org.datanucleus</groupId>
+        <artifactId>datanucleus-management</artifactId>
+        <version>1.0.2</version>
+      </dependency>
+      -->
+      <dependency>
+        <groupId>org.datanucleus</groupId>
+        <artifactId>datanucleus-rdbms</artifactId>
+        <version>${datanucleusVersion}</version>
+      </dependency>
+      
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-validator</artifactId>

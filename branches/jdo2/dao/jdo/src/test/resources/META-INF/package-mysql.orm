@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<orm xmlns="http://java.sun.com/xml/ns/jdo/orm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/jdo/orm
+        http://java.sun.com/xml/ns/jdo/orm_2_0.xsd">
+
+	<package name="com.tll.model.test">
+
+		<class name="Address" table="address">
+			<primary-key>
+				<column name="id" jdbc-type="VARCHAR" length="32" allows-null="false" />
+			</primary-key>
+			<version strategy="version-number">
+				<column jdbc-type="INT" default-value="0"/>
+			</version>
+			<unique name="address1__postal_code">
+				<column name="address_1" />
+				<column name="postal_code" />
+			</unique>
+			<field name="firstName">
+				<column name="first_name" jdbc-type="VARCHAR" length="64" />
+			</field>
+			<field name="lastName">
+				<column name="last_name" jdbc-type="VARCHAR" length="64" />
+			</field>
+			<field name="mi">
+				<column name="mi" jdbc-type="CHAR" length="1" />
+			</field>
+			<field name="company">
+				<column name="company" jdbc-type="VARCHAR" length="64" />
+			</field>
+			<field name="attn">
+				<column name="attn" jdbc-type="VARCHAR" length="64" />
+			</field>
+			<field name="address1">
+				<column name="address_1" jdbc-type="VARCHAR" length="128" allows-null="false" />
+			</field>
+			<field name="address2">
+				<column name="address_1" jdbc-type="VARCHAR" length="128" />
+			</field>
+			<field name="city">
+				<column name="city" jdbc-type="VARCHAR" length="128" allows-null="false" />
+			</field>
+			<field name="province">
+				<column name="province" jdbc-type="VARCHAR" length="128" allows-null="false" />
+			</field>
+			<field name="postalCode">
+				<column name="postal_code" jdbc-type="VARCHAR" length="15" allows-null="false" />
+			</field>
+			<field name="country">
+				<column name="country" jdbc-type="VARCHAR" length="128" allows-null="false" />
+			</field>
+			<field name="phone">
+				<column name="phone" jdbc-type="VARCHAR" length="15" />
+			</field>
+			<field name="fax">
+				<column name="fax" jdbc-type="VARCHAR" length="15" />
+			</field>
+			<field name="emailAddress">
+				<column name="email_address" jdbc-type="VARCHAR" length="128" />
+			</field>
+		</class>
+		
+		<class name="Currency" table="currency">
+			<primary-key>
+				<column name="id" jdbc-type="VARCHAR" length="32" allows-null="false" />
+			</primary-key>
+			<version strategy="version-number">
+				<column jdbc-type="INT" default-value="0"/>
+			</version>
+			<unique>
+				<column name="iso_4217" />
+			</unique>
+			<field name="name" unique="true">
+				<column name="name" jdbc-type="VARCHAR" length="64" allows-null="false" />
+			</field>
+			<field name="symbol" unique="true">
+				<column name="symbol" jdbc-type="VARCHAR" length="8" allows-null="false" />
+			</field>
+			<field name="iso4217" unique="true">
+				<column name="iso_4217" jdbc-type="VARCHAR" length="16" allows-null="false" />
+			</field>
+			<field name="usdExchangeRate" unique="true">
+				<column name="usd_exchange_rate" jdbc-type="FLOAT" />
+			</field>
+		</class>
+		
+		<class name="NestedEntity" table="nested_entity">
+			<primary-key>
+				<column name="id" jdbc-type="VARCHAR" length="32" allows-null="false" />
+			</primary-key>
+			<version strategy="version-number">
+				<column jdbc-type="INT" default-value="0"/>
+			</version>
+			<unique>
+				<column name="name" />
+			</unique>
+			<field name="name">
+				<column name="name" jdbc-type="VARCHAR" length="64" allows-null="false" />
+			</field>
+			<field name="data">
+				<column name="data" jdbc-type="BLOB" allows-null="false" />
+			</field>
+		</class>
+
+		<class name="Account" table="account">
+			<primary-key>
+				<column name="id" jdbc-type="VARCHAR" length="32" allows-null="false" />
+			</primary-key>
+			<version strategy="version-number">
+				<column jdbc-type="INT" />
+			</version>
+			<unique>
+				<column name="name" />
+			</unique>
+			<column name="parent_aid" jdbc-type="VARCHAR" length="32" />
+			<column name="ne_aid" jdbc-type="VARCHAR" length="32" />
+			<column name="cur_aid" jdbc-type="VARCHAR" length="32" />
+			<field name="dateCreated">
+				<column name="date_created" jdbc-type="TIMESTAMP" allows-null="false" />
+			</field>
+			<field name="dateModified">
+				<column name="date_modified" jdbc-type="TIMESTAMP" allows-null="false" />
+			</field>
+			<field name="status">
+				<column name="status" jdbc-type="TINYINT" allows-null="false" />
+			</field>
+			<field name="name">
+				<column name="name" jdbc-type="VARCHAR" length="64" allows-null="false" />
+			</field>
+			<field name="billingModel">
+				<column name="billing_model" jdbc-type="VARCHAR" length="32" />
+			</field>
+			<field name="dateLastCharged">
+				<column name="date_last_charged" jdbc-type="TIMESTAMP" />
+			</field>
+		</class>
+		
+		<class name="AccountAddress" table="account_address">
+			<primary-key>
+				<column name="id" jdbc-type="VARCHAR" length="32" allows-null="false" />
+			</primary-key>
+			<version strategy="version-number">
+				<column jdbc-type="INT" default-value="0"/>
+			</version>
+			<unique>
+				<column name="aid" />
+				<column name="address_id" />
+			</unique>
+			<unique>
+				<column name="aid" />
+				<column name="name" />
+			</unique>
+			<column name="aid" jdbc-type="VARCHAR" length="32" />
+			<column name="address_id" jdbc-type="VARCHAR" length="32" />
+			<field name="name">
+				<column name="name" jdbc-type="VARCHAR" length="32" allows-null="false" />
+			</field>
+		</class>
+
+	</package>
+
+</orm>

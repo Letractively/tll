@@ -23,6 +23,8 @@
         <exclude>**/SimpleEntityDaoTest*</exclude><!-- hack -->
       </excludes>
       <includes>
+        <include>**/META-INF/**</include>
+        <include>**/db/**</include>
         <include>**/test/**</include>
         <include>**/I*</include><!-- include interfaces -->
         <include>**/Abstract*Test*</include>

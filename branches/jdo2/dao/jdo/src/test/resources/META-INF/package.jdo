@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jdo xmlns="http://java.sun.com/xml/ns/jdo/jdo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/jdo/jdo
+        http://java.sun.com/xml/ns/jdo/jdo_2_0.xsd">
+
+	<package name="com.tll.model.test">
+
+		<class name="Address" detachable="true" identity-type="application">
+			<version strategy="version-number">
+				<extension vendor-name="datanucleus" key="field-name" value="version" />
+			</version>
+      <field name="version" />
+      <field name="id" primary-key="true" />
+			<field name="firstName" />
+			<field name="lastName" />
+			<field name="mi" />
+			<field name="company" />
+			<field name="attn" />
+			<field name="address1" />
+			<field name="address2" />
+			<field name="city" />
+			<field name="province" />
+			<field name="postalCode" />
+			<field name="country" />
+			<field name="phone" />
+			<field name="fax" />
+			<field name="emailAddress" unique="true" />
+		</class>
+		
+		<class name="Currency">
+			<version strategy="version-number">
+				<extension vendor-name="datanucleus" key="field-name" value="version" />
+			</version>
+      <field name="version" />
+			<field name="id" primary-key="true" />
+			<field name="name" />
+			<field name="symbol" />
+			<field name="iso4217" />
+			<field name="usdExchangeRate" />
+		</class>
+
+		<class name="NestedEntity">
+			<version strategy="version-number">
+				<extension vendor-name="datanucleus" key="field-name" value="version" />
+			</version>
+      <field name="version" />
+			<field name="id" primary-key="true" />
+			<field name="name" />
+			<field name="data" />
+		</class>
+
+		<class name="Account">
+			<version strategy="version-number">
+				<extension vendor-name="datanucleus" key="field-name" value="version" />
+			</version>
+      <field name="version" />
+			<field name="id" primary-key="true" />
+			<field name="dateCreated" />
+			<field name="dateModified" />
+			<field name="parent" />
+			<field name="status" />
+			<field name="name" />
+			<field name="billingModel" />
+			<field name="dateLastCharged" />
+			<field name="nestedEntity" />
+			<field name="currency" />
+			<field name="addresses" mapped-by="account">
+				<collection element-type="Address" />
+			</field>
+		</class>
+		
+		<class name="AccountAddress">
+			<version strategy="version-number">
+				<extension vendor-name="datanucleus" key="field-name" value="version" />
+			</version>
+      <field name="version" />
+			<field name="id" primary-key="true" />
+			<field name="dateCreated" />
+			<field name="dateModified" />
+			<field name="name" />
+			<field name="account" />
+			<field name="address" />
+		</class>
+
+	</package>
+
+</jdo>
