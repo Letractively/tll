@@ -35,7 +35,7 @@ import com.tll.di.TestListingModule;
 import com.tll.di.TestMarshalModule;
 import com.tll.di.test.Db4oDbShellModule;
 import com.tll.di.test.TestDb4oDaoModule;
-import com.tll.di.test.TestPersistenceUnitModelModule;
+import com.tll.di.test.TestPersistenceUnitModule;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.server.rpc.listing.ListingCache.ListingCacheAware;
 
@@ -62,7 +62,7 @@ public class ListingProcessorTest extends AbstractDbAwareTest {
 		// as it implicitly binds at the MailModule constrctor
 		modules.add(new MailModule(Config.load(new ConfigRef("config-mail.properties"))));
 
-		modules.add(new TestPersistenceUnitModelModule());
+		modules.add(new TestPersistenceUnitModule());
 		modules.add(new TestDb4oDaoModule(getConfig()));
 		modules.add(new Db4oDbShellModule());
 		modules.add(new TestEntityServiceFactoryModule());

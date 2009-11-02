@@ -12,7 +12,7 @@ import com.tll.model.SmbizEntityAssembler;
  * SmbizModelModule
  * @author jpk
  */
-public class SmbizModelModule extends ModelModule {
+public class SmbizModelModule extends AbstractModelModule {
 
 	@Override
 	protected Class<? extends IEntityAssembler> getEntityAssemblerImplType() {

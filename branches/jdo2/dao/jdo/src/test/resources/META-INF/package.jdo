@@ -27,7 +27,7 @@
 			<field name="emailAddress" unique="true" />
 		</class>
 		
-		<class name="Currency">
+		<class name="Currency" detachable="true" identity-type="application">
 			<version strategy="version-number">
 				<extension vendor-name="datanucleus" key="field-name" value="version" />
 			</version>
@@ -39,7 +39,7 @@
 			<field name="usdExchangeRate" />
 		</class>
 
-		<class name="NestedEntity">
+		<class name="NestedEntity" detachable="true" identity-type="application">
 			<version strategy="version-number">
 				<extension vendor-name="datanucleus" key="field-name" value="version" />
 			</version>
@@ -49,7 +49,7 @@
 			<field name="data" />
 		</class>
 
-		<class name="Account">
+		<class name="Account" detachable="true" identity-type="application">
 			<version strategy="version-number">
 				<extension vendor-name="datanucleus" key="field-name" value="version" />
 			</version>
@@ -69,7 +69,7 @@
 			</field>
 		</class>
 		
-		<class name="AccountAddress">
+		<class name="AccountAddress" detachable="true" identity-type="application">
 			<version strategy="version-number">
 				<extension vendor-name="datanucleus" key="field-name" value="version" />
 			</version>

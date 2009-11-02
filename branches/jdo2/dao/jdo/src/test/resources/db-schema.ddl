@@ -65,6 +65,7 @@ create table account_address (
    name varchar(32) not null,
    aid int not null,
    address_id int not null,
+   type int not null,
    unique(aid,address_id),
    unique(aid,name),
    primary key (id)

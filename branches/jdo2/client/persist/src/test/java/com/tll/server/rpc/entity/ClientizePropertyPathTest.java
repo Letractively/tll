@@ -16,7 +16,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 import com.tll.AbstractConfigAwareTest;
-import com.tll.di.test.TestPersistenceUnitModelModule;
+import com.tll.di.test.TestPersistenceUnitModule;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.test.Account;
 import com.tll.model.test.AccountAddress;
@@ -32,7 +32,7 @@ public class ClientizePropertyPathTest extends AbstractConfigAwareTest {
 
 	@Override
 	protected void addModules(List<Module> modules) {
-		modules.add(new TestPersistenceUnitModelModule());
+		modules.add(new TestPersistenceUnitModule());
 	}
 
 	private Account getTestEntity() {

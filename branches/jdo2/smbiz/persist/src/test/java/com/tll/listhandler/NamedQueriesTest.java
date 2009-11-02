@@ -119,7 +119,7 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 
 					@Override
 					public CacheManager get() {
-						return new CacheManager(ClassUtil.getRootResourceRef("ehcache-smbiz-persist.xml"));
+						return new CacheManager(ClassUtil.getResource("ehcache-smbiz-persist.xml"));
 					}
 				}).in(Scopes.SINGLETON);
 			}

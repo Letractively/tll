@@ -35,7 +35,7 @@ import com.tll.dao.db4o.test.Db4oTrans;
 import com.tll.di.Db4oDaoModule;
 import com.tll.di.test.Db4oDbShellModule;
 import com.tll.di.test.TestDb4oDaoModule;
-import com.tll.di.test.TestPersistenceUnitModelModule;
+import com.tll.di.test.TestPersistenceUnitModule;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.test.Address;
@@ -43,11 +43,10 @@ import com.tll.service.entity.EntityService;
 import com.tll.service.entity.IEntityService;
 
 /**
- * PagingSearchListHandlerTest
+ * AbstractPagingSearchListHandlerTest
  * @author jpk
  */
-@Test(groups = "listhandler")
-public class PagingSearchListHandlerTest extends AbstractDbAwareTest {
+public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwareTest {
 
 	/**
 	 * TestEntityService
@@ -107,7 +106,7 @@ public class PagingSearchListHandlerTest extends AbstractDbAwareTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new TestPersistenceUnitModelModule());
+		modules.add(new TestPersistenceUnitModule());
 		modules.add(new TestDb4oDaoModule(getConfig()));
 		modules.add(new Db4oDbShellModule());
 		modules.add(new Module() {

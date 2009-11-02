@@ -37,6 +37,19 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 		super(Db4oTestDaoDecorator.class);
 	}
 
+	/*
+	 * We have to reverse the order of operations for db4o dao test prep
+	 * as the Db4oDbShell is dependent on the ObjectContainer!
+	 */
+	@Override
+	protected void prepare() {
+		// build the test injector
+		buildTestInjector();
+
+		// reset the db
+		resetDb();
+	}
+
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);

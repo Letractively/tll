@@ -11,7 +11,7 @@
 		<param-value>
       com.tll.di.RefDataModule
       com.tll.di.MailModule
-      com.tll.di.test.TestPersistenceUnitModelModule
+      com.tll.di.test.TestPersistenceUnitModule
       com.tll.di.test.TestDb4oDaoModule
       com.tll.di.test.Db4oDbShellModule
       com.tll.di.TestEntityServiceFactoryModule

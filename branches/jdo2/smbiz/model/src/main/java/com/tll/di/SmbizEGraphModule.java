@@ -25,7 +25,7 @@ public class SmbizEGraphModule extends EGraphModule {
 	@Override
 	protected URI getBeanDefRef() {
 		try {
-			final URL url = ClassUtil.getRootResourceRef(ENTITY_DEFINITIONS_FILENAME);
+			final URL url = ClassUtil.getResource(ENTITY_DEFINITIONS_FILENAME);
 			if(url != null) return url.toURI();
 		}
 		catch(final URISyntaxException e) {

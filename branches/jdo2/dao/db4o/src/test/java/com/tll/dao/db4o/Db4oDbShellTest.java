@@ -14,11 +14,10 @@ import com.google.inject.Module;
 import com.tll.config.Config;
 import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.IDbShell;
-import com.tll.dao.db4o.test.Db4oDbShell;
 import com.tll.di.Db4oDaoModule.Db4oFile;
 import com.tll.di.test.Db4oDbShellModule;
 import com.tll.di.test.TestDb4oDaoModule;
-import com.tll.di.test.TestPersistenceUnitModelModule;
+import com.tll.di.test.TestPersistenceUnitModule;
 
 /**
  * Db4oDbShellTest
@@ -34,7 +33,7 @@ public class Db4oDbShellTest extends AbstractDbAwareTest {
 		super();
 		// kill the existing db4o file if present
 		final Config cfg = Config.load();
-		final Injector i = buildInjector(new TestPersistenceUnitModelModule(), new TestDb4oDaoModule(cfg));
+		final Injector i = buildInjector(new TestPersistenceUnitModule(), new TestDb4oDaoModule(cfg));
 		final File f = new File(i.getInstance(Key.get(URI.class, Db4oFile.class)));
 		f.delete();
 	}
@@ -47,7 +46,7 @@ public class Db4oDbShellTest extends AbstractDbAwareTest {
 
 	@Override
 	protected void addModules(List<Module> modules) {
-		modules.add(new TestPersistenceUnitModelModule());
+		modules.add(new TestPersistenceUnitModule());
 		modules.add(new TestDb4oDaoModule(getConfig()));
 		modules.add(new Db4oDbShellModule());
 	}

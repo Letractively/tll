@@ -8,16 +8,16 @@ import com.google.inject.Module;
 import com.tll.dao.IEntityDaoTestHandler;
 import com.tll.dao.test.TestEntityDaoTestHandler;
 import com.tll.di.test.TestDb4oDaoModule;
-import com.tll.di.test.TestPersistenceUnitModelModule;
+import com.tll.di.test.TestPersistenceUnitModule;
 
 /**
- * SimpleEntityDaoTest
+ * Db4oEntityDaoTest
  * @author jpk
  */
 @Test(groups = {
 	"dao", "db4o"
 })
-public class SimpleEntityDaoTest extends AbstractDb4oEntityDaoTest {
+public class Db4oEntityDaoTest extends AbstractDb4oEntityDaoTest {
 
 	@Override
 	protected IEntityDaoTestHandler<?>[] getDaoTestHandlers() {
@@ -29,7 +29,7 @@ public class SimpleEntityDaoTest extends AbstractDb4oEntityDaoTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new TestPersistenceUnitModelModule());
+		modules.add(new TestPersistenceUnitModule());
 		modules.add(new TestDb4oDaoModule(getConfig()));
 	}
 

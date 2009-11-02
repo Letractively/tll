@@ -13,6 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import com.db4o.ObjectContainer;
 import com.google.inject.Injector;
 import com.tll.dao.IDbShell;
+import com.tll.dao.db4o.Db4oDbShell;
 
 
 /**
@@ -38,7 +39,7 @@ public class UITestsBootstrapper extends ListingContextBootstrapper {
 		log.info("re-stubbing test db..");
 		final ObjectContainer dbref = injector.getInstance(ObjectContainer.class);
 		final IDbShell dbs = injector.getInstance(IDbShell.class);
-		dbs.restub(dbref);
+		((Db4oDbShell)dbs).restub(dbref);
 	}
 
 	@Override

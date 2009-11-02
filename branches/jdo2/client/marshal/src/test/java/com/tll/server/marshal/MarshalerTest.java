@@ -19,7 +19,7 @@ import com.tll.AbstractConfigAwareTest;
 import com.tll.common.model.IModelProperty;
 import com.tll.common.model.Model;
 import com.tll.di.TestMarshalModule;
-import com.tll.di.test.TestPersistenceUnitModelModule;
+import com.tll.di.test.TestPersistenceUnitModule;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.EntityGraph;
 import com.tll.model.IEntity;
@@ -57,7 +57,7 @@ public class MarshalerTest extends AbstractConfigAwareTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new TestPersistenceUnitModelModule());
+		modules.add(new TestPersistenceUnitModule());
 		modules.add(new TestMarshalModule());
 	}
 

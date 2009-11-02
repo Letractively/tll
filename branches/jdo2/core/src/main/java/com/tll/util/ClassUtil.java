@@ -17,8 +17,12 @@ import java.util.Enumeration;
 public class ClassUtil {
 
 	/**
-	 * Provides the {@link URL} for a classpath root resource supporting those
-	 * contained in JARs in addition to those that aren't.
+	 * Provides the {@link URL} for a classpath resource supporting those
+	 * contained in JARs in addition to those that aren't in to following order:
+	 * <ol>
+	 * <li>package-level (no forward '/' char in the path string)
+	 * <li>root level ('/' char prefix in the path string)
+	 * </ol>
 	 * @param name the non-path name of a resource expected to be at the root of
 	 *        the classpath
 	 * @return The {@link URL} guaranteed to resolve to an existing resource or
@@ -26,24 +30,25 @@ public class ClassUtil {
 	 * @throws IllegalArgumentException When the given name is <code>null</code>
 	 *         or empty
 	 */
-	public static URL getRootResourceRef(String name) throws IllegalArgumentException {
+	public static URL getResource(String name) throws IllegalArgumentException {
 		if(name == null || name.length() < 1) throw new IllegalArgumentException("Null or empty name");
 		URL url = null;
-		final String rootizedName = name.charAt(0) == '/' ? name : '/' + name;
+		final String rootPath = name.charAt(0) == '/' ? name : '/' + name;
+		final String packagePath = name.charAt(0) == '/' ? name.substring(1) : name;
 		final ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		if(cl != null) {
-			url = cl.getResource(name);
+			url = cl.getResource(packagePath);
 			if(url == null) {
-				url = cl.getResource(rootizedName);
+				url = cl.getResource(rootPath);
 			}
 		}
 		if(url == null) {
 			// fallback on the other classloader..
 			final ClassLoader ocl = ClassUtil.class.getClassLoader();
 			if(ocl != cl) {
-				url = ocl.getResource(name);
+				url = ocl.getResource(packagePath);
 				if(url == null) {
-					url = ocl.getResource(rootizedName);
+					url = ocl.getResource(rootPath);
 				}
 			}
 		}
@@ -61,20 +66,27 @@ public class ClassUtil {
 	 * @throws IllegalArgumentException When the given name is <code>null</code>
 	 *         or empty
 	 */
-	public static URL[] getRootResourceRefs(String name) throws IllegalArgumentException {
+	public static URL[] getResources(String name) throws IllegalArgumentException {
 		if(name == null || name.length() < 1) throw new IllegalArgumentException("Null or empty name");
 		Enumeration<URL> urls = null;
 		try {
-			final String rootizedName = name.charAt(0) == '/' ? name : '/' + name;
+			final String packagePath = name.charAt(0) == '/' ? name.substring(1) : '/' + name;
+			final String rootPath = name.charAt(0) == '/' ? name : '/' + name;
 			final ClassLoader cl = Thread.currentThread().getContextClassLoader();
 			if(cl != null) {
-				urls = cl.getResources(rootizedName);
+				urls = cl.getResources(packagePath);
+				if(urls == null) {
+					urls = cl.getResources(rootPath);
+				}
 			}
 			if(urls == null) {
 				// fallback on the other classloader..
 				final ClassLoader ocl = ClassUtil.class.getClassLoader();
 				if(ocl != cl) {
-					urls = ocl.getResources(rootizedName);
+					urls = ocl.getResources(packagePath);
+					if(urls == null) {
+						ocl.getResources(rootPath);
+					}
 				}
 			}
 		}

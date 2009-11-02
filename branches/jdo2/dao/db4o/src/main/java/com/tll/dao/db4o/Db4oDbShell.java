@@ -3,7 +3,7 @@
  * @author jpk
  * @since Aug 29, 2009
  */
-package com.tll.dao.db4o.test;
+package com.tll.dao.db4o;
 
 import java.io.File;
 import java.net.URI;
@@ -132,7 +132,15 @@ public class Db4oDbShell implements IDbShell {
 		return true;
 	}
 
-	@Override
+	/**
+	 * Clears the database targeted by the given db session ref of all data. If
+	 * the db doesn't exist, nothing happens.
+	 * @param dbSession The session that targets the desired db to clear
+	 * @return <code>true</code> if the db was actually cleared as a result of
+	 *         calling this method and
+	 *         <code>false<code> if the db is <code>not</code> cleared by way of
+	 *         this method.
+	 */
 	public boolean clear(Object dbSession) {
 		if(dbSession instanceof ObjectContainer) {
 			log.info("Clearing db4o db for session: " + dbSession);
@@ -180,7 +188,13 @@ public class Db4oDbShell implements IDbShell {
 		}
 	}
 
-	@Override
+	/**
+	 * Adds data to the db targeted by the given db sesssion ref serving to stub
+	 * the db. The db <em>must</em> already exist else an error is raised.
+	 * @param dbSession The session that targets the desired db to stub
+	 * @return <code>true</code> if the db was actually stubbed with the stub data
+	 *         as a result of calling this method.
+	 */
 	public boolean stub(Object dbSession) {
 		if(dbSession instanceof ObjectContainer) {
 			log.info("Stubbing db4o db for session: " + dbSession);
@@ -226,7 +240,11 @@ public class Db4oDbShell implements IDbShell {
 		stub();
 	}
 
-	@Override
+	/**
+	 * Stubs or re-stubs the data in the targeted db creating the db if not already created
+	 * and/or clearing the the db if it contains existing data.
+	 * @param dbSession The session that targets the desired db
+	 */
 	public void restub(Object dbSession) {
 		clear(dbSession);
 		stub(dbSession);

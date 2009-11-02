@@ -32,7 +32,7 @@ public class VelocityModule extends AbstractModule {
 
 	Properties loadProperties() {
 		try {
-			final URL url = ClassUtil.getRootResourceRef(VELOCITY_PROPS_RESOURCE);
+			final URL url = ClassUtil.getResource(VELOCITY_PROPS_RESOURCE);
 			if(url == null) return null;
 			final Properties props = new Properties();
 			props.load(new FileReader(new File(url.toURI())));

@@ -36,7 +36,7 @@ public class SmbizCacheModule extends AbstractModule {
 
 			@Override
 			public CacheManager get() {
-				final URL url = ClassUtil.getRootResourceRef(EHCACHE_WEB_FILENAME);
+				final URL url = ClassUtil.getResource(EHCACHE_WEB_FILENAME);
 				return new CacheManager(url);
 			}
 		}).in(Scopes.SINGLETON);
@@ -45,7 +45,7 @@ public class SmbizCacheModule extends AbstractModule {
 
 			@Override
 			public CacheManager get() {
-				final URL url = ClassUtil.getRootResourceRef(EHCACHE_PERSIST_FILENAME);
+				final URL url = ClassUtil.getResource(EHCACHE_PERSIST_FILENAME);
 				return new CacheManager(url);
 			}
 		}).in(Scopes.SINGLETON);

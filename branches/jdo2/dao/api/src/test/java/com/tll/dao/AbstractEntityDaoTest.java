@@ -17,7 +17,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.inject.Injector;
 import com.tll.criteria.Criteria;
 import com.tll.dao.test.EntityDaoTestDecorator;
 import com.tll.model.EntityBeanFactory;
@@ -41,7 +40,9 @@ import com.tll.util.Comparator;
  * @param <D> the dao decorator type.
  * @author jpk
  */
-@Test(groups = { "dao" })
+@Test(groups = {
+	"dao"
+})
 public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends EntityDaoTestDecorator<R>> extends AbstractDbAwareTest {
 
 	/**
@@ -150,11 +151,25 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	}
 
 	/**
-	 * This method is invoked <em>after</em> the test {@link Injector} instance is created.
+	 * Called before any tests are run ensuring the db is in a test-ready state.
+	 * Extended classes may override to tweak the behavior.
 	 */
-	protected void doBeforeClass() {
-		getDbShell().delete();
-		getDbShell().create();
+	protected void resetDb() {
+		// default way to reset the db
+		if(!getDbShell().create()) getDbShell().clear();
+	}
+
+	/**
+	 * Responsible for setting the test db in a test-ready state and for building
+	 * the test dependency injector. Extended classes may need to tweak this
+	 * behavior and therefore it is overrideable.
+	 */
+	protected void prepare() {
+		// reset the db
+		resetDb();
+
+		// build the test injector
+		buildTestInjector();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -167,13 +182,10 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 			throw new IllegalStateException("No entity dao handlers specified");
 		}
 
-		// build the injector
-		buildTestInjector();
-		assert injector != null;
+		// prep the test db and build the test injector..
+		prepare();
 
-		doBeforeClass();
-
-		dao.setRawDao((R)injector.getInstance(IEntityDao.class));
+		dao.setRawDao((R) injector.getInstance(IEntityDao.class));
 	}
 
 	/**
@@ -357,7 +369,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		IEntity e = getTestEntity();
 
 		e = dao.persist(e);
-		endTransaction();	// rollback
+		endTransaction(); // rollback
 
 		startNewTransaction();
 		try {
@@ -687,7 +699,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	@SuppressWarnings("unchecked")
 	final void daoFindEntityByCriteria() throws Exception {
 		final Criteria c = entityHandler.getTestCriteria();
-		if(c == null) return;	// ok
+		if(c == null) return; // ok
 
 		// persist the target test entity
 		IEntity e = getTestEntity();

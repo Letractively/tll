@@ -24,6 +24,7 @@ import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.IDbShell;
 import com.tll.dao.IDbTrans;
 import com.tll.dao.IEntityDao;
+import com.tll.dao.db4o.Db4oDbShell;
 import com.tll.dao.db4o.Db4oEntityDao;
 import com.tll.dao.db4o.test.Db4oTrans;
 import com.tll.di.Db4oDaoModule;
@@ -57,7 +58,7 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 
 					@Override
 					public CacheManager get() {
-						return new CacheManager(ClassUtil.getRootResourceRef("ehcache-smbiz-persist.xml"));
+						return new CacheManager(ClassUtil.getResource("ehcache-smbiz-persist.xml"));
 					}
 				}).in(Scopes.SINGLETON);
 			}
@@ -124,7 +125,7 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 	@Override
 	protected void beforeMethod() {
 		super.beforeMethod();
-		getDbShell().clear(injector.getInstance(Db4oEntityDao.class).getObjectContainer());
+		((Db4oDbShell)getDbShell()).clear(injector.getInstance(Db4oEntityDao.class).getObjectContainer());
 	}
 
 	/**
