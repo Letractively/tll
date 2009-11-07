@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jdo xmlns="http://java.sun.com/xml/ns/jdo/jdo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/jdo/jdo
+        http://java.sun.com/xml/ns/jdo/jdo_2_0.xsd">
+
+	<package name="com.tll.model">
+
+		<class name="EntityBase" identity-type="application">
+			<inheritance strategy="subclass-table"/>
+			<version strategy="version-number">
+				<extension vendor-name="datanucleus" key="field-name" value="version" />
+			</version>
+      <field name="id" primary-key="true" />
+      <field name="generated" persistence-modifier="none" />
+		</class>
+		
+		<class name="NamedEntity">
+			<inheritance strategy="subclass-table"/>
+      <field name="name" />
+		</class>
+		
+		<class name="TimeStampEntity">
+			<inheritance strategy="subclass-table"/>
+      <field name="dateCreated" />
+      <field name="dateModified" />
+		</class>
+		
+		<class name="NamedTimeStampEntity">
+			<inheritance strategy="subclass-table"/>
+      <field name="name" />
+		</class>
+		
+	</package>
+
+</jdo>

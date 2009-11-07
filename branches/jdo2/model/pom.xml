@@ -1,143 +1,211 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>com.tll</groupId>
-    <artifactId>tll</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-  </parent>
+	<parent>
+		<groupId>com.tll</groupId>
+		<artifactId>tll</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
 
-  <groupId>com.tll</groupId>
-  <artifactId>tll-model</artifactId>
-  <name>tll-model</name>
-  <version>0.0.1-SNAPSHOT</version>
-  <description>IEntity and ORM related definitions.</description>
-  <packaging>jar</packaging>
+	<groupId>com.tll</groupId>
+	<artifactId>tll-model</artifactId>
+	<name>tll-model</name>
+	<version>0.0.1-SNAPSHOT</version>
+	<description>IEntity and ORM related definitions.</description>
+	<packaging>jar</packaging>
 
-  <build>
-  	<resources>	
-  		<resource>
-  			<directory>src/main/java</directory>
-  			<includes>
-  				<include>**/model/key/IKey.java</include>
-			    <include>**/model/schema/AbstractSchemaProperty.java</include>
-			    <include>**/model/schema/IPropertyMetadataProvider.java</include>
-			    <include>**/model/schema/IPropertyNameProvider.java</include>
-			    <include>**/model/schema/ISchemaProperty.java</include>
-			    <include>**/model/schema/PropertyMetadata.java</include>
-			    <include>**/model/schema/PropertyType.java</include>
-  			</includes>
-  		</resource>
-  		<resource>
-  			<directory>src/main/resources</directory>
-  		</resource>
-  	</resources>
-    
-    <testResources>
-    	<testResource>
-    		<directory>src/test/java</directory>
-    		<includes>
-    			<include>**/model/test/AccountStatus.java</include>
-    			<include>**/model/test/AddressType.java</include>
-    			<include>**/model/test/CreditCardType.java</include>
-    		</includes>
-    	</testResource>
-    	<testResource>
-    		<directory>src/test/resources</directory>
-    	</testResource>
-    </testResources>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/model/key/IKey.java</include>
+					<include>**/model/schema/AbstractSchemaProperty.java</include>
+					<include>**/model/schema/IPropertyMetadataProvider.java</include>
+					<include>**/model/schema/IPropertyNameProvider.java</include>
+					<include>**/model/schema/ISchemaProperty.java</include>
+					<include>**/model/schema/PropertyMetadata.java</include>
+					<include>**/model/schema/PropertyType.java</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
 
-    <plugins>
-    	<plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <descriptors>
-                <descriptor>test-assets.xml</descriptor>
-              </descriptors>
-            </configuration>
-          </execution>
-        </executions>
-    	</plugin>
-    </plugins>
-  </build>
+		<testResources>
+			<testResource>
+				<directory>src/test/java</directory>
+				<includes>
+					<include>**/model/test/AccountStatus.java</include>
+					<include>**/model/test/AddressType.java</include>
+					<include>**/model/test/CreditCardType.java</include>
+				</includes>
+			</testResource>
+			<testResource>
+				<directory>src/test/resources</directory>
+			</testResource>
+		</testResources>
 
-  <dependencies>
-    <dependency>
-      <groupId>oro</groupId>
-      <artifactId>oro</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-    </dependency>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>test-assets.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
-    <dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>validation-api</artifactId>
-    </dependency>
+	<profiles>
+		<profile>
+			<id>jdo</id>
+			<build>
+				<plugins>
+		      <plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-antrun-plugin</artifactId>
+		        <executions>
+		          <execution>
+		            <id>jdo-enhance</id>
+		            <phase>process-classes</phase>
+		            <goals>
+		              <goal>run</goal>
+		            </goals>
+		            <configuration>
+		              <tasks>
+		                <property name="enhancer.classpath" refid="maven.compile.classpath" />
+		                <property name="jdo.files" value="/META-INF/package.jdo" />
+		                <echo message="enhancer classpath: ${enhancer.classpath}" />
+		                <ant antfile="${basedir}/build-jdo.xml">
+		                  <target name="enhance" />
+		                </ant>
+		              </tasks>
+		            </configuration>
+		          </execution>
+		          <execution>
+		            <id>jdo-enhance-test</id>
+		            <phase>process-test-classes</phase>
+		            <goals>
+		              <goal>run</goal>
+		            </goals>
+		            <configuration>
+		              <tasks>
+		                <property name="enhancer.classpath" refid="maven.test.classpath" />
+		                <property name="jdo.files" value="${basedir}/target/test-classes/META-INF/package.jdo"/>
+		                <echo message="enhancer classpath: ${enhancer.classpath}" />
+		                <ant antfile="${basedir}/build-jdo.xml">
+		                  <target name="enhance" />
+		                </ant>
+		              </tasks>
+		            </configuration>
+		          </execution>
+		        </executions>
+		      </plugin>
+				</plugins>
+			</build>
+			<dependencies>
+				<dependency>
+					<groupId>javax.jdo</groupId>
+					<artifactId>jdo2-api</artifactId>
+					<scope>provided</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.datanucleus</groupId>
+					<artifactId>datanucleus-core</artifactId>
+					<scope>provided</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.datanucleus</groupId>
+					<artifactId>datanucleus-enhancer</artifactId>
+					<scope>provided</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-validator</artifactId>
-    </dependency>
+	<dependencies>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>oro</groupId>
+			<artifactId>oro</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>com.google.code.guice</groupId>
-      <artifactId>guice</artifactId>
-    </dependency>
-    <!-- for guice 2.0 -->
-    <dependency>
-      <groupId>aopalliance</groupId>
-      <artifactId>aopalliance</artifactId>
-      <scope>runtime</scope>
-    </dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.google.code.guice</groupId>
+			<artifactId>guice</artifactId>
+		</dependency>
+		<!-- for guice 2.0 -->
+		<dependency>
+			<groupId>aopalliance</groupId>
+			<artifactId>aopalliance</artifactId>
+			<scope>runtime</scope>
+		</dependency>
 
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>runtime</scope>
-    </dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <version>${testNGVersion}</version>
-      <classifier>jdk15</classifier>
-      <scope>test</scope>
-    </dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
-  </dependencies>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>${testNGVersion}</version>
+			<classifier>jdk15</classifier>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
 
 </project>

@@ -6,11 +6,6 @@
 	<package name="com.tll.model.test">
 
 		<class name="Address" detachable="true" identity-type="application">
-			<version strategy="version-number">
-				<extension vendor-name="datanucleus" key="field-name" value="version" />
-			</version>
-      <field name="version" />
-      <field name="id" primary-key="true" />
 			<field name="firstName" />
 			<field name="lastName" />
 			<field name="mi" />
@@ -28,38 +23,18 @@
 		</class>
 		
 		<class name="Currency" detachable="true" identity-type="application">
-			<version strategy="version-number">
-				<extension vendor-name="datanucleus" key="field-name" value="version" />
-			</version>
-      <field name="version" />
-			<field name="id" primary-key="true" />
-			<field name="name" />
 			<field name="symbol" />
 			<field name="iso4217" />
 			<field name="usdExchangeRate" />
 		</class>
 
 		<class name="NestedEntity" detachable="true" identity-type="application">
-			<version strategy="version-number">
-				<extension vendor-name="datanucleus" key="field-name" value="version" />
-			</version>
-      <field name="version" />
-			<field name="id" primary-key="true" />
-			<field name="name" />
-			<field name="data" />
+			<field name="nestedData" />
 		</class>
 
 		<class name="Account" detachable="true" identity-type="application">
-			<version strategy="version-number">
-				<extension vendor-name="datanucleus" key="field-name" value="version" />
-			</version>
-      <field name="version" />
-			<field name="id" primary-key="true" />
-			<field name="dateCreated" />
-			<field name="dateModified" />
 			<field name="parent" />
 			<field name="status" />
-			<field name="name" />
 			<field name="billingModel" />
 			<field name="dateLastCharged" />
 			<field name="nestedEntity" />
@@ -70,14 +45,7 @@
 		</class>
 		
 		<class name="AccountAddress" detachable="true" identity-type="application">
-			<version strategy="version-number">
-				<extension vendor-name="datanucleus" key="field-name" value="version" />
-			</version>
-      <field name="version" />
-			<field name="id" primary-key="true" />
-			<field name="dateCreated" />
-			<field name="dateModified" />
-			<field name="name" />
+			<field name="type" />
 			<field name="account" />
 			<field name="address" />
 		</class>
