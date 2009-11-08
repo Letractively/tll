@@ -55,9 +55,16 @@ svn checkout http://tll.googlecode.com/svn/trunk/ {TLL_ROOT}
 
   * Install non-standard tll dependencies to your local maven repo by invoking the following commands from a shell window:
  {{{
+
+rem for jdo dao impl
 install-datanucleus
+
+rem for db4o dao impl
 install-db4o
-install-gwt (Only necessary if GWT is built from source locally.)
+install-springex-db4o
+
+rem for tll client projects (Only necessary if GWT is built from source locally.)
+install-gwt
 }}}
 
   * Install the tll modules into the local maven repository by invoking the following maven command from the tll root directory:
