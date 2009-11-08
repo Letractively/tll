@@ -35,12 +35,12 @@ The following software is required:
 {ANT_HOME}/bin
 {SVN_HOME}/bin
 {M2_HOME}/bin
-{TLL_ROOT}/bin
+{TLL_ROOT}/build-tools/bin
 }}}
 
  for Windows:
   {{{
-%JAVA_HOME%\bin;%GROOVY_HOME%\bin;%ANT_HOME%\bin;%SVN_HOME%\bin;%M2_HOME%\bin;%TLL_ROOT%\bin;
+%JAVA_HOME%\bin;%GROOVY_HOME%\bin;%ANT_HOME%\bin;%SVN_HOME%\bin;%M2_HOME%\bin;%TLL_ROOT%\build-tools\bin;
 }}}
 
   * Append these global ignores to the installed SVN config file:
