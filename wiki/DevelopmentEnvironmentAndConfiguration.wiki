@@ -9,30 +9,37 @@ The following software is required:
 || [http://maven.apache.org/ maven] || 2.2.1+|| ||
 || [http://ant.apache.org/ ant] || 1.7.1+ || Not strictly necessary as maven maintains its own instance. ||
 || [http://groovy.codehaus.org/ groovy] || 1.6+ || Use the windows installer download is possible. ||
-|| [http://subversion.tigris.org/ subversion client] || 1.6.0+ || Preferred windows client: [http://www.sliksvn.com/en/download silksvn] ||
+|| [http://subversion.tigris.org/ subversion client] || 1.6.0+ || Preferred windows client: [http://www.sliksvn.com/en/download sliksvn] ||
 || [http://www.eclipse.org/aspectj/downloads.php AspectJ] || 1.6.3+ || ||
 || [http://code.google.com/p/google-web-toolkit/ GWT] || 1.6.4+ || ||
 
 =environment=
 Ensure the following environment variables exist:
 || *Name* || *Description* ||
-|| JAVA_HOME || Points to the root Java install dir. ||
+|| JAVA_HOME || Points to the root *JDK* install dir. ||
+|| JDK_HOME || Alias for {{{JAVA_HOME}}} used by, for example, the GWT build routine. ||
+|| SVN_HOME || Points to the root svn client install dir. ||
 || M2_HOME || Points to the maven install dir. ||
 || M2_REPO || Points to your local maven repository dir. ||
-|| ASPECTJ_HOME || Points to the root AspectJ install dir. ||
 || GROOVY_HOME || Points to the root groovy install dir. ||
 || ANT_HOME || Points to the root Ant install dir. ||
+|| TLL_HOME || Points to the root tll dir. ||
+|| TLL_TOOLS || Points to the [ build-tools] dir. ||
 || GWT_HOME || Points to the root GWT _install_ dir. (Used for building GWT from source.) ||
 || GWT_TOOLS || Points to the root GWT Tools dir. (Used for building GWT from source.)||
 
   * Add the following paths to the system path:
  {{{
 {JAVA_HOME}/bin
-{M2_HOME}/bin
-{ASPECTJ_HOME/bin
 {GROOVY_HOME}/bin
 {ANT_HOME}/bin
-{GWT_HOME}
+{SVN_HOME}/bin
+{M2_HOME}/bin
+}}}
+
+ for Windows:
+  {{{
+%JAVA_HOME%\bin;%GROOVY_HOME%\bin;%ANT_HOME%\bin;%SVN_HOME%\bin;%M2_HOME%\bin;
 }}}
 
   * Append these global ignores to the installed SVN config file:
