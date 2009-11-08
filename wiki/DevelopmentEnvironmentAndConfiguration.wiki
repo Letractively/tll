@@ -60,7 +60,7 @@ install-db4o
 install-gwt (Only necessary if GWT is built from source locally.)
 }}}
 
-  * Install the tll modules into the local maven repository:
+  * Install the tll modules into the local maven repository by invoking the following maven command from the tll root directory:
  {{{
 mvn install
 }}}
