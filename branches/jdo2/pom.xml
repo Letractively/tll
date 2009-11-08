@@ -86,11 +86,7 @@
   </pluginRepositories>
 
   <modules>
-    <!--
-      Modules: - build-tools must be installed separately and before
-      hand since they are referenced as dependencies in this root build
-      file
-    -->
+    <module>build-tools</module><!-- creates tll-assemblies.jar containing global assemblies -->
     <module>core</module>
     <module>config</module>
     <module>mail</module>
