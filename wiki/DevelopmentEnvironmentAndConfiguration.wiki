@@ -10,11 +10,12 @@ The following software is required:
 || [http://ant.apache.org/ ant] || 1.7.1+ || Not strictly necessary as maven maintains its own instance. ||
 || [http://groovy.codehaus.org/ groovy] || 1.6+ || Use the windows installer download is possible. ||
 || [http://subversion.tigris.org/ subversion client] || 1.6.0+ || Preferred windows client: [http://www.sliksvn.com/en/download sliksvn] ||
-|| [http://www.eclipse.org/aspectj/downloads.php AspectJ] || 1.6.3+ || ||
 || [http://code.google.com/p/google-web-toolkit/ GWT] || 1.6.4+ || ||
 
 =environment=
-Ensure the following environment variables exist:
+  * Create the tll root directory in a desired location.  This will be the root dir of all tll source code.
+
+  * Ensure the following environment variables exist:
 || *Name* || *Description* ||
 || JAVA_HOME || Points to the root *JDK* install dir. ||
 || JDK_HOME || Alias for {{{JAVA_HOME}}} used by, for example, the GWT build routine. ||
@@ -23,8 +24,7 @@ Ensure the following environment variables exist:
 || M2_REPO || Points to your local maven repository dir. ||
 || GROOVY_HOME || Points to the root groovy install dir. ||
 || ANT_HOME || Points to the root Ant install dir. ||
-|| TLL_HOME || Points to the root tll dir. ||
-|| TLL_TOOLS || Points to the [ build-tools] dir. ||
+|| TLL_ROOT || Points to the root tll dir. ||
 || GWT_HOME || Points to the root GWT _install_ dir. (Used for building GWT from source.) ||
 || GWT_TOOLS || Points to the root GWT Tools dir. (Used for building GWT from source.)||
 
@@ -35,11 +35,12 @@ Ensure the following environment variables exist:
 {ANT_HOME}/bin
 {SVN_HOME}/bin
 {M2_HOME}/bin
+{TLL_ROOT}/bin
 }}}
 
  for Windows:
   {{{
-%JAVA_HOME%\bin;%GROOVY_HOME%\bin;%ANT_HOME%\bin;%SVN_HOME%\bin;%M2_HOME%\bin;
+%JAVA_HOME%\bin;%GROOVY_HOME%\bin;%ANT_HOME%\bin;%SVN_HOME%\bin;%M2_HOME%\bin;%TLL_ROOT%\bin;
 }}}
 
   * Append these global ignores to the installed SVN config file:
@@ -47,18 +48,19 @@ Ensure the following environment variables exist:
 global-ignores = war debug.bat shell.bat .metadata build classes bin bin-groovy dist Desktop.ini *.log *.tmp target .metadata .gwt-tmp test-output tomcat Constants.properties config-local.properties
 }}}
 
-  * Establish local working copies of the root tll project dir and tll tools dir:
+  * Checkout tll project:
  {{{
 svn checkout http://tll.googlecode.com/svn/trunk/ {TLL_ROOT}
-svn checkout http://tll.googlecode.com/svn/tools/ {TLL_TOOLS}
 }}}
 
-  * Install the {{{ {TLL_ROOT}/build-tools}}} project into the local maven repository:
+  * Install non-standard tll dependencies to your local maven repo by invoking the following commands from a shell window:
  {{{
-mvn install
+install-datanucleus
+install-db4o
+install-gwt (Only necessary if GWT is built from source locally.)
 }}}
 
-  * Install {{{ {TLL_ROOT} }}} project (including all tll child projects) into the local maven repository:
+  * Install the tll modules into the local maven repository:
  {{{
 mvn install
 }}}
