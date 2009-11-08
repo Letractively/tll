@@ -92,7 +92,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 
 	@Transactional(readOnly = true)
 	@Override
-	public AccountInterface loadAccountInterface(String accountId, String interfaceId) {
+	public AccountInterface loadAccountInterface(long accountId, long interfaceId) {
 		IBusinessKey<InterfaceOptionAccount> bk;
 		try {
 			bk = BusinessKeyFactory.create(InterfaceOptionAccount.class, "Option Id and Account Id");
@@ -200,7 +200,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 
 	@Transactional
 	@Override
-	public void purgeAccountInterface(String accountId, String interfaceId) {
+	public void purgeAccountInterface(long accountId, long interfaceId) {
 		Interface intf;
 		try {
 			intf = load(new PrimaryKey<Interface>(Interface.class, interfaceId));
@@ -233,7 +233,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 
 	@Transactional
 	@Override
-	public void purgeAccountInterfacess(String accountId) {
+	public void purgeAccountInterfacess(long accountId) {
 		final Collection<Interface> intfs = dao.loadAll(Interface.class);
 		for(final Interface i : intfs) {
 			purgeAccountInterface(accountId, i.getId());

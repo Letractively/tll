@@ -53,7 +53,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	 * @param entities
 	 * @return true/false
 	 */
-	protected static final <E extends IEntity> boolean entitiesAndIdsEquals(Collection<String> ids, Collection<E> entities) {
+	protected static final <E extends IEntity> boolean entitiesAndIdsEquals(Collection<Long> ids, Collection<E> entities) {
 		if(ids == null || entities == null) {
 			return false;
 		}
@@ -62,7 +62,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		}
 		for(final E e : entities) {
 			boolean found = false;
-			for(final String id : ids) {
+			for(final Long id : ids) {
 				if(id.equals(e.getId())) {
 					found = true;
 					break;
@@ -389,7 +389,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		IEntity e = getTestEntity();
 		Assert.assertTrue(e.isNew(), "The created test entity is not new and should be");
 
-		String persistentId = null;
+		long persistentId = -1;
 
 		// create
 		e = dao.persist(e);
@@ -517,8 +517,8 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 		startNewTransaction();
 		Assert.assertNotNull(e, "Null generated test entity");
-		final List<String> ids = new ArrayList<String>(1);
-		ids.add(e.getId());
+		final List<Long> ids = new ArrayList<Long>(1);
+		ids.add(Long.valueOf(e.getId()));
 		final List<IEntity> list = dao.findByIds(entityHandler.entityClass(), ids, null);
 		endTransaction();
 		Assert.assertTrue(list != null && list.size() == 1, "find by ids returned null list");
@@ -535,7 +535,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		}
 
 		final List<IEntity> entityList = getNUniqueTestEntities(entityHandler.entityClass(), 5);
-		final List<String> idList = new ArrayList<String>(5);
+		final List<Long> idList = new ArrayList<Long>(5);
 		for(IEntity e : entityList) {
 			e = dao.persist(e);
 			idList.add(e.getId());
@@ -547,7 +547,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 		// get ids
 		startNewTransaction();
-		final List<String> dbIdList = dao.getIds(criteria, simpleIdSorting);
+		final List<Long> dbIdList = dao.getIds(criteria, simpleIdSorting);
 		Assert.assertTrue(entitiesAndIdsEquals(dbIdList, entityList), "getIds list is empty or has incorrect ids");
 		endTransaction();
 
@@ -570,7 +570,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		}
 
 		final List<IEntity> entityList = getNUniqueTestEntities(entityHandler.entityClass(), 5);
-		final List<String> idList = new ArrayList<String>(5);
+		final List<Long> idList = new ArrayList<Long>(5);
 		for(IEntity e : entityList) {
 			e = dao.persist(e);
 			idList.add(e.getId());
@@ -653,7 +653,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		c.getPrimaryGroup().addCriterion(new PrimaryKey<IEntity>(entityHandler.entityClass(), e.getId()));
 		startNewTransaction();
 		final IEntity re = dao.findEntity(c);
-		assert re != null && re.getId().equals(e.getId());
+		assert re != null && re.getId() == e.getId();
 	}
 
 	final void daoFindEntityByBusinessKeyCriteria() throws Exception {
@@ -673,7 +673,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 				c.getPrimaryGroup().addCriterion(bk, true);
 			}
 			final IEntity re = dao.findEntity(c);
-			assert re != null && re.getId().equals(e.getId());
+			assert re != null && re.getId() == e.getId();
 
 		}
 		catch(final BusinessKeyNotDefinedException e) {

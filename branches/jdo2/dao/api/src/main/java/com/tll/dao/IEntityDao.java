@@ -176,7 +176,7 @@ public interface IEntityDao extends IDao {
 	 * @return List of entities or empty list if none found
 	 * @throws DataAccessException
 	 */
-	<E extends IEntity> List<E> findByIds(Class<E> entityType, Collection<String> ids, Sorting sorting)
+	<E extends IEntity> List<E> findByIds(Class<E> entityType, Collection<Long> ids, Sorting sorting)
 	throws DataAccessException;
 
 	/**
@@ -191,7 +191,7 @@ public interface IEntityDao extends IDao {
 	 *         found to be invalid.
 	 * @throws DataAccessException
 	 */
-	<E extends IEntity> List<String> getIds(Criteria<E> criteria, Sorting sorting)
+	<E extends IEntity> List<Long> getIds(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException,
 	DataAccessException;
 

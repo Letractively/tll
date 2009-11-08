@@ -170,8 +170,8 @@ import com.tll.util.PropertyPath;
 			final ObjectEventArgs queryArgs = ((ObjectEventArgs) args);
 			final Object o = queryArgs.object();
 			if(o instanceof IVersionSupport) {
-				final Integer cv = ((IVersionSupport) o).getVersion();
-				((IVersionSupport) o).setVersion(cv == null ? 0 : cv.intValue() + 1);
+				final long cv = ((IVersionSupport) o).getVersion();
+				((IVersionSupport) o).setVersion(cv + 1);
 				log.debug("Versioned entity: " + o);
 			}
 		}
@@ -222,7 +222,7 @@ import com.tll.util.PropertyPath;
 	}
 
 	@Override
-	public <E extends IEntity> List<E> findByIds(Class<E> entityType, final Collection<String> ids, Sorting sorting)
+	public <E extends IEntity> List<E> findByIds(Class<E> entityType, final Collection<Long> ids, Sorting sorting)
 	throws DataAccessException {
 		return getDb4oTemplate().query(new Predicate<E>(entityType) {
 
@@ -408,13 +408,13 @@ import com.tll.util.PropertyPath;
 	}
 
 	@Override
-	public <E extends IEntity> List<String> getIds(Criteria<E> criteria, Sorting sorting)
+	public <E extends IEntity> List<Long> getIds(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException, DataAccessException {
 		final List<E> list = findEntities(criteria, sorting);
 		if(list == null) {
 			return null;
 		}
-		final List<String> idlist = new ArrayList<String>();
+		final ArrayList<Long> idlist = new ArrayList<Long>();
 		for(final E e : list) {
 			idlist.add(e.getId());
 		}
@@ -485,7 +485,7 @@ import com.tll.util.PropertyPath;
 
 			@Override
 			public boolean match(E candidate) {
-				return candidate.getId().equals(key.getId());
+				return candidate.getId() == key.getId();
 			}
 		}, key);
 	}

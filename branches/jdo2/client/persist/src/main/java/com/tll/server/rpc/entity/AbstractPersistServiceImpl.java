@@ -179,7 +179,8 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 		final Class<IEntity> eclass = resolveEntityClass(modelChanges.getEntityType());
 
 		// load current state of this entity
-		IEntity e = svc.load(new PrimaryKey<IEntity>(eclass, modelChanges.getId()));
+		final long id = Long.parseLong(modelChanges.getId());
+		IEntity e = svc.load(new PrimaryKey<IEntity>(eclass, id));
 
 		// ensure versions match!
 		if(!ObjectUtil.equals(modelChanges.getVersion(), e.getVersion())) {
@@ -295,7 +296,8 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 			final IEntityType et = mkey.getEntityType();
 			final Class<IEntity> ec = (Class<IEntity>) context.getEntityTypeResolver().resolveEntityClass(et);
 			final IEntityService<IEntity> svc = getEntityService(et);
-			final IEntity e = svc.load(new PrimaryKey(ec, mkey.getId()));
+			final long id = Long.parseLong(mkey.getId());
+			final IEntity e = svc.load(new PrimaryKey(ec, id));
 			return e;
 		}
 		catch(final EntityNotFoundException e) {
@@ -398,7 +400,8 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 			final Class<IEntity> entityClass =
 				(Class<IEntity>) context.getEntityTypeResolver().resolveEntityClass(ref.getEntityType());
 			final IEntityService<IEntity> svc = context.getEntityServiceFactory().instanceByEntityType(entityClass);
-			final PrimaryKey pk = new PrimaryKey(entityClass, ref.getId());
+			final long id = Long.parseLong(ref.getId());
+			final PrimaryKey pk = new PrimaryKey(entityClass, id);
 			final IEntity e = svc.load(pk);
 			svc.purge(e);
 			payload.setRef(ref);

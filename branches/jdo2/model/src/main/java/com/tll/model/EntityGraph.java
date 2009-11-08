@@ -127,7 +127,7 @@ public final class EntityGraph implements IEntityProvider {
 		final Collection<E> clc = getEntitiesByType(key.getType());
 		if(clc != null) {
 			for(final E e : clc) {
-				if(key.getId().equals(e.getId())) {
+				if(key.getId() == e.getId()) {
 					return e;
 				}
 			}
@@ -146,7 +146,7 @@ public final class EntityGraph implements IEntityProvider {
 		final Set<E> set = (Set<E>) getRootEntitySet(pk.getType());
 		if(set != null) {
 			for(final E e : set) {
-				if(e.getId().equals(pk.getId())) return true;
+				if(e.getId() == pk.getId()) return true;
 			}
 		}
 		return false;

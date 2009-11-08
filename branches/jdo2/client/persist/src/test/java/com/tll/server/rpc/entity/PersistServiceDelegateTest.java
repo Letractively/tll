@@ -129,11 +129,11 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 
 		// add test entity to db first
 		final Address a = getEntityBeanFactory().getEntityCopy(Address.class, true);
-		final String id = a.getId();
+		final long id = a.getId();
 		addEntityToDb(a);
 
 		final PersistServiceDelegate delegate = getDelegate();
-		final PrimaryKeySearch search = new PrimaryKeySearch(new ModelKey(TestEntityType.ADDRESS, id, null));
+		final PrimaryKeySearch search = new PrimaryKeySearch(new ModelKey(TestEntityType.ADDRESS, Long.toString(id), null));
 		final LoadRequest<PrimaryKeySearch> request = new LoadRequest<PrimaryKeySearch>(search);
 		final ModelPayload p = delegate.load(request);
 
@@ -189,14 +189,14 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 	public void testUpdate() throws Exception {
 		// add test entity to db first
 		final Address a = getEntityBeanFactory().getEntityCopy(Address.class, true);
-		final String id = a.getId();
+		final long id = a.getId();
 		addEntityToDb(a);
 
 		final PersistServiceDelegate delegate = getDelegate();
 
 		Model m = new Model(TestEntityType.ADDRESS);
 		m.set(new IntPropertyValue(Model.VERSION_PROPERTY, 0));
-		m.set(new StringPropertyValue(Model.ID_PROPERTY, id));
+		m.set(new StringPropertyValue(Model.ID_PROPERTY, Long.toString(id)));
 		m.set(new StringPropertyValue("address1", "1 changed street"));
 		m.set(new StringPropertyValue("address2", "2 beechange"));
 		m.set(new StringPropertyValue("city", "change city"));
@@ -221,11 +221,11 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 	public void testDelete() throws Exception {
 		// add test entity to db first
 		final Address a = getEntityBeanFactory().getEntityCopy(Address.class, true);
-		final String id = a.getId();
+		final long id = a.getId();
 		addEntityToDb(a);
 
 		final PersistServiceDelegate delegate = getDelegate();
-		final ModelKey origMk = new ModelKey(TestEntityType.ADDRESS, id, null);
+		final ModelKey origMk = new ModelKey(TestEntityType.ADDRESS, Long.toString(id), null);
 		final ModelPayload p = delegate.purge(new PurgeRequest(origMk));
 		assert p != null;
 		final ModelKey mk = p.getRef();

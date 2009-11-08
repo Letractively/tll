@@ -348,7 +348,7 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> List<E> findByIds(Class<E> entityType, Collection<String> ids, Sorting sorting) {
+	public <E extends IEntity> List<E> findByIds(Class<E> entityType, Collection<Long> ids, Sorting sorting) {
 		final Query q = getPersistenceManager().newQuery(entityType);
 		final HashMap<String, Object> params = new HashMap<String, Object>();
 		params.put(IEntity.PK_FIELDNAME, ids);
@@ -365,7 +365,7 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> List<String> getIds(Criteria<E> criteria, Sorting sorting) throws InvalidCriteriaException {
+	public <E extends IEntity> List<Long> getIds(Criteria<E> criteria, Sorting sorting) throws InvalidCriteriaException {
 		if(criteria.getCriteriaType().isQuery()) {
 			throw new InvalidCriteriaException("Ids are not supplied for direct queries!");
 		}
@@ -377,7 +377,7 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 			q.setOrdering(sorting.toString());
 		}
 		q.setResult(IEntity.PK_FIELDNAME);
-		return (List<String>) getJdoTemplate().find(Query.JDOQL, q);
+		return (List<Long>) getJdoTemplate().find(Query.JDOQL, q);
 	}
 
 	@Override

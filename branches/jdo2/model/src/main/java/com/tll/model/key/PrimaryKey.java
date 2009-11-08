@@ -11,7 +11,7 @@ public final class PrimaryKey<E extends IEntity> extends AbstractEntityKey<E> {
 
 	private static final long serialVersionUID = 6971947122659535069L;
 
-	private String id;
+	private long id;
 
 	/**
 	 * Constructor
@@ -27,7 +27,7 @@ public final class PrimaryKey<E extends IEntity> extends AbstractEntityKey<E> {
 	 * @param entityClass
 	 */
 	public PrimaryKey(Class<E> entityClass) {
-		this(entityClass, null);
+		this(entityClass, -1);
 	}
 
 	/**
@@ -35,16 +35,16 @@ public final class PrimaryKey<E extends IEntity> extends AbstractEntityKey<E> {
 	 * @param entityClass
 	 * @param id
 	 */
-	public PrimaryKey(Class<E> entityClass, String id) {
+	public PrimaryKey(Class<E> entityClass, long id) {
 		super(entityClass);
 		setId(id);
 	}
 
-	public void setId(String id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
-	public String getId() {
+	public long getId() {
 		return id;
 	}
 
@@ -55,12 +55,12 @@ public final class PrimaryKey<E extends IEntity> extends AbstractEntityKey<E> {
 
 	@Override
 	public void clear() {
-		this.id = null;
+		this.id = -1;
 	}
 
 	@Override
 	public boolean isSet() {
-		return id != null;
+		return id != -1;
 	}
 
 	@Override
@@ -70,18 +70,14 @@ public final class PrimaryKey<E extends IEntity> extends AbstractEntityKey<E> {
 		if(obj == null || getClass() != obj.getClass()) return false;
 		final PrimaryKey other = (PrimaryKey) obj;
 		if(!typeCompatible(other.entityClass)) return false;
-		if(id == null) {
-			if(other.id != null) return false;
-		}
-		else if(!id.equals(other.id)) return false;
-		return true;
+		return id == other.id;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((entityClass == null) ? 0 : entityClass.toString().hashCode());
 		return result;
 	}

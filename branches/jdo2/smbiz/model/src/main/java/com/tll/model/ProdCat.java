@@ -79,31 +79,31 @@ public class ProdCat extends EntityBase implements IChildEntity<ProductInventory
 		setProduct(e);
 	}
 
-	public String accountId() {
+	public long accountId() {
 		try {
 			return getProduct().getAccount().getId();
 		}
 		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
-			return null;
+			return -1;
 		}
 	}
 
-	public String productId() {
+	public long productId() {
 		try {
 			return getProduct().getId();
 		}
 		catch(final NullPointerException npe) {
-			return null;
+			return -1;
 		}
 	}
 
-	public String categoryId() {
+	public long categoryId() {
 		try {
 			return getCategory().getId();
 		}
 		catch(final NullPointerException npe) {
-			return null;
+			return -1;
 		}
 	}
 }

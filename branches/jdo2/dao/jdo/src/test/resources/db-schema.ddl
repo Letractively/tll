@@ -1,7 +1,7 @@
 -- stand alone related
 create table address (   
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    last_name varchar(64),
    first_name varchar(64),
    mi char(1),
@@ -21,8 +21,8 @@ create table address (
 );
 
 create table currency (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    name varchar(32) not null unique,
    symbol varchar(8) not null unique,
    iso_4217 varchar(16) not null unique,
@@ -32,8 +32,8 @@ create table currency (
 );
 
 create table nested_entity (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    name varchar(64) not null,
    data blob not null,
    unique(name),
@@ -42,8 +42,8 @@ create table nested_entity (
 
 -- account related
 create table account (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    date_created datetime not null,
    date_last_modified datetime not null,
    parent_aid int,
@@ -58,8 +58,8 @@ create table account (
 );
 
 create table account_address (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    date_created datetime not null,
    date_last_modified datetime not null,
    name varchar(32) not null,

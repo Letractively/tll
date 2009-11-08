@@ -55,7 +55,7 @@ public class EntityDaoTestDecorator<T extends IEntityDao> implements IEntityDao 
 	}
 
 	@Override
-	public <E extends IEntity> List<E> findByIds(Class<E> entityType, Collection<String> ids, Sorting sorting) {
+	public <E extends IEntity> List<E> findByIds(Class<E> entityType, Collection<Long> ids, Sorting sorting) {
 		return rawDao.findByIds(entityType, ids, sorting);
 	}
 
@@ -72,7 +72,7 @@ public class EntityDaoTestDecorator<T extends IEntityDao> implements IEntityDao 
 	}
 
 	@Override
-	public <E extends IEntity> List<String> getIds(Criteria<E> criteria, Sorting sorting)
+	public <E extends IEntity> List<Long> getIds(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
 		return rawDao.getIds(criteria, sorting);
 	}

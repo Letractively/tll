@@ -96,31 +96,31 @@ public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTran
 		setOrderTrans(e);
 	}
 
-	public String accountId() {
+	public long accountId() {
 		try {
 			return getOrderItem().getOrder().getAccount().getId();
 		}
 		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
-			return null;
+			return -1;
 		}
 	}
 
-	public String orderItemId() {
+	public long orderItemId() {
 		try {
 			return getOrderItem().getId();
 		}
 		catch(final NullPointerException npe) {
-			return null;
+			return -1;
 		}
 	}
 
-	public String orderTransId() {
+	public long orderTransId() {
 		try {
 			return getOrderTrans().getId();
 		}
 		catch(final NullPointerException npe) {
-			return null;
+			return -1;
 		}
 	}
 }

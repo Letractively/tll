@@ -1,7 +1,7 @@
 -- stand alone related
 create table app_property (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    name varchar(128) not null,
    value varchar(255) not null,
    primary key (id),
@@ -9,8 +9,8 @@ create table app_property (
 );
 
 create table address (   
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    last_name varchar(64),
    first_name varchar(64),
    mi char(1),
@@ -30,8 +30,8 @@ create table address (
 );
 
 create table currency (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    name varchar(32) not null unique,
    symbol varchar(8) not null unique,
    iso_4217 varchar(16) not null unique,
@@ -41,8 +41,8 @@ create table currency (
 );
 
 create table payment_info (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    name varchar(64) not null,
    data blob not null,
    unique(name),
@@ -50,8 +50,8 @@ create table payment_info (
 );
 
 create table payment_trans (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    date_created datetime not null,
    date_last_modified datetime not null,
    pay_trans_date datetime not null,
@@ -70,12 +70,12 @@ create table payment_trans (
 
 -- account related
 create table account (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    account_type tinyint not null,
    date_created datetime not null,
    date_last_modified datetime not null,
-   parent_aid int,
+   parent_aid bigint,
    status tinyint not null,
    name varchar(64) not null,
    persist_pymnt_info boolean,
@@ -84,78 +84,78 @@ create table account (
    date_last_charged datetime,
    next_charge_date datetime,
    date_cancelled datetime,
-   pi_id int,
-   cur_id int,
+   pi_id bigint,
+   cur_id bigint,
    store_name varchar(128),
    unique(name),
    primary key (id)
 );
 
 create table account_address (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    date_created datetime not null,
    date_last_modified datetime not null,
    name varchar(32) not null,
    type tinyint not null,
-   aid int not null,
-   address_id int not null,
+   aid bigint not null,
+   address_id bigint not null,
    unique(aid,address_id),
    unique(aid,name),
    primary key (id)
 );
 
 create table customer_account (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    date_created datetime not null,
    date_last_modified datetime not null,
    source tinyint not null,
    status tinyint not null,
-   customer_id int not null,
-   aid int not null,
-   visitor_id int,
+   customer_id bigint not null,
+   aid bigint not null,
+   visitor_id bigint,
    unique(aid,customer_id),
    primary key (id)
 );
 
 create table account_history (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    date_created datetime not null,
    date_last_modified datetime not null,
    trans_date datetime not null,
    status tinyint not null,
    notes text,
-   aid int not null,
-   pt_id int,
+   aid bigint not null,
+   pt_id bigint,
    unique(aid, trans_date, status),
    primary key (id)
 );
 
 create table visitor (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    date_created datetime not null,
    date_last_modified datetime not null,
    remote_host varchar(64) not null,
    remote_addr varchar(64),
    remote_user varchar(64),
    mc varchar(16),
-   aid int not null,
+   aid bigint not null,
    unique(aid,date_created,remote_host),
    primary key (id)
 );
 
 -- user related
 create table user (
-	id int not null,
-	version int not null default 0,
+	id bigint not null,
+	version bigint not null default 0,
 	date_created datetime not null,
 	date_last_modified datetime not null,
 	name varchar(50),
-	aid int not null,
-	adr_id int,
+	aid bigint not null,
+	adr_id bigint,
 	email_address varchar(128) not null,
 	password varchar(255) not null,
 	enabled boolean not null,
@@ -166,16 +166,16 @@ create table user (
 );
 
 create table authority (
-	id int not null,
-	version int not null default 0,
+	id bigint not null,
+	version bigint not null default 0,
 	authority varchar(50) not null,
 	primary key(id)
 );
 alter table authority add unique index un_authority_authority (authority);
 
 create table user_authority (
-	uid int not null,
-	aid int not null,
+	uid bigint not null,
+	aid bigint not null,
 	primary key(uid,aid)
 );
 alter table user_authority 
@@ -184,8 +184,8 @@ alter table user_authority
 
 -- interface related
 create table interface (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    date_created datetime not null,
    date_last_modified datetime not null,
    type tinyint not null,
@@ -206,10 +206,10 @@ create table interface (
 
 -- (for both interface options and io param defs)
 create table iopd (
-   id int not null,
-   interface_id int default null,
-   option_id int default null,
-   version int not null default 0,
+   id bigint not null,
+   interface_id bigint default null,
+   option_id bigint default null,
+   version bigint not null default 0,
    date_created datetime not null,
    date_last_modified datetime not null,
    record_type varchar(16) not null,
@@ -234,15 +234,15 @@ alter table iopd
 	add constraint fk_io_iopd foreign key (option_id) references iopd (id) on delete cascade;
 
 create table ioa (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    date_created datetime not null,
    date_last_modified datetime not null,
    set_up_price float not null default 0,
    monthly_price float not null default 0,
    annual_price float not null default 0,
-   option_id int,
-   aid int not null,
+   option_id bigint,
+   aid bigint not null,
    unique(option_id, aid),
    primary key (id)
 );
@@ -256,7 +256,7 @@ alter table ioa
 
 -- interface option account parameter
 create table ioap (
-	ioaid int not null,
+	ioaid bigint not null,
 	name varchar(50) not null,
 	value varchar(255),
 	primary key (ioaid, name)
@@ -268,8 +268,8 @@ alter table ioap
 
 -- product related
 create table product_general (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    d1 varchar(255) not null,
    d2 varchar(255) not null,
    d3 varchar(255) not null,
@@ -280,8 +280,8 @@ create table product_general (
 );
 
 create table product_inventory (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    date_created datetime not null,
    date_last_modified datetime not null,
    sku varchar(64) not null,
@@ -294,127 +294,127 @@ create table product_inventory (
    inv_in_stock integer not null default 0,
    inv_committed integer not null default 0,
    inv_reorder_level integer not null default 0,
-   pg_id int,
-   aid int not null,
+   pg_id bigint,
+   aid bigint not null,
    unique(aid,sku),
    primary key (id)
 );
 
 create table product_category (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    date_created datetime not null,
    date_last_modified datetime not null,
    name varchar(128) not null,
    description varchar(255),
    image varchar(64),
-   aid int not null,
+   aid bigint not null,
    unique(aid,name),
    primary key (id)
 );
 
 create table prod_cat (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    is_featured_product boolean not null default false,
-   prodinv_id int,
-   prodcat_id int,
+   prodinv_id bigint,
+   prodcat_id bigint,
    unique(prodinv_id,prodcat_id),
    primary key (id)
 );
 
 create table pch (
-   id int not null,
-   version int not null default 0,
-   parent_id int,
-   child_id int,
+   id bigint not null,
+   version bigint not null default 0,
+   parent_id bigint,
+   child_id bigint,
    unique(parent_id,child_id),
    primary key (id)
 );
 
 -- merchant account related
 create table sales_tax (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    date_created datetime not null,
    date_last_modified datetime not null,
    province varchar(64) not null,
    county varchar(64) not null,
    postal_code varchar(16) not null,
    tax float not null,
-   aid int not null,
+   aid bigint not null,
    unique(aid,province,county,postal_code),
    primary key (id)
 );
 
 create table ship_mode (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    date_created datetime not null,
    date_last_modified datetime not null,
    name varchar(32) not null,
    type tinyint not null,
    surcharge float,
    src_zip varchar(16),
-   aid int not null,
+   aid bigint not null,
    unique(aid,name),
    primary key (id)
 );
 
 create table ship_bound_cost (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    date_created datetime not null,
    date_last_modified datetime not null,
    l_bound float not null,
    u_bound float not null,
    cost float not null default 0,
-   sm_id int not null,
+   sm_id bigint not null,
    unique(sm_id,l_bound,u_bound),
    primary key (id)
 );
 
 create table site_code (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    date_created datetime not null,
    date_last_modified datetime not null,
    code varchar(16) not null,
    name varchar(64),
    expiration_date datetime not null,
-   aid int not null,
+   aid bigint not null,
    unique(code),
    primary key (id)
 );
 
 -- order related
 create table orders (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    date_created datetime not null,
-   aid int not null,
-   cust_id int,
+   aid bigint not null,
+   cust_id bigint,
    date_last_modified datetime not null,
    status tinyint not null,
    notes varchar(255),
    site_code varchar(32),
-   visitor_id int,
-   crncy_id int,
-   pymntinfo_id int,
-   billto_adr_id int,
-   shipto_adr_id int,
+   visitor_id bigint,
+   crncy_id bigint,
+   pymntinfo_id bigint,
+   billto_adr_id bigint,
+   shipto_adr_id bigint,
    primary key (id)
    -- we can't guarantee this w/ enough certainty!!!
    --unique (date_created, aid, cust_id)
 );
 
 create table order_item (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    date_created datetime not null,
    date_last_modified datetime not null,
    sku varchar(64) not null,
-   o_id int not null,
+   o_id bigint not null,
    item_status tinyint not null,
    pay_status tinyint not null,
    qty integer,
@@ -428,8 +428,8 @@ create table order_item (
 );
 
 create table order_trans (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    date_created datetime not null,
    date_last_modified datetime not null,
    username varchar(32) not null,
@@ -441,22 +441,22 @@ create table order_trans (
    sales_tax float,
    ship_cost float,
    total float,
-   o_id int not null,
-   bta_id int,
-   sta_id int,
-   pi_id int,
-   pt_id int,
+   o_id bigint not null,
+   bta_id bigint,
+   sta_id bigint,
+   pi_id bigint,
+   pt_id bigint,
    unique(o_id, date_created, username),
    primary key (id)
 );
 
 create table order_item_trans (
-   id int not null,
-   version int not null default 0,
+   id bigint not null,
+   version bigint not null default 0,
    order_item_trans_op tinyint not null,
    amount float,
-   oi_id int not null,
-   ot_id int not null,
+   oi_id bigint not null,
+   ot_id bigint not null,
    unique(oi_id,ot_id),
    primary key (id)
 );

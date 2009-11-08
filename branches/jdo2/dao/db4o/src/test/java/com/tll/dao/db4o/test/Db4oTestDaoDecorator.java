@@ -61,7 +61,7 @@ public class Db4oTestDaoDecorator extends EntityDaoTestDecorator<Db4oEntityDao> 
 	}
 
 	@Override
-	public <E extends IEntity> List<E> findByIds(Class<E> entityType, Collection<String> ids, Sorting sorting) {
+	public <E extends IEntity> List<E> findByIds(Class<E> entityType, Collection<Long> ids, Sorting sorting) {
 		final List<E> r = super.findByIds(entityType, ids, sorting);
 		hook();
 		return r;
@@ -84,9 +84,9 @@ public class Db4oTestDaoDecorator extends EntityDaoTestDecorator<Db4oEntityDao> 
 	}
 
 	@Override
-	public <E extends IEntity> List<String> getIds(Criteria<E> criteria, Sorting sorting)
+	public <E extends IEntity> List<Long> getIds(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
-		final List<String> r = super.getIds(criteria, sorting);
+		final List<Long> r = super.getIds(criteria, sorting);
 		hook();
 		return r;
 	}

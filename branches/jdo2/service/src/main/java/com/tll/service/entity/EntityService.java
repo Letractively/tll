@@ -157,12 +157,12 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	}
 
 	@Transactional(readOnly = true)
-	public <ET extends IEntity> List<ET> getEntitiesFromIds(Class<ET> entityClass, Collection<String> ids, Sorting sorting) {
+	public <ET extends IEntity> List<ET> getEntitiesFromIds(Class<ET> entityClass, Collection<Long> ids, Sorting sorting) {
 		return dao.findByIds(entityClass, ids, sorting);
 	}
 
 	@Transactional(readOnly = true)
-	public List<String> getIds(Criteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException {
+	public List<Long> getIds(Criteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException {
 		return dao.getIds(criteria, sorting);
 	}
 

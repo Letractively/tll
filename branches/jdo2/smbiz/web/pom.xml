@@ -178,7 +178,7 @@
 								</element>
 							</classpath>
 							<scriptpath>
-								<element>${project.basedir}/../../build-tools/src/main/scripts</element>
+								<element>${project.basedir}/../../config/src/main/scripts</element>
 								<element>${project.basedir}/src/main/scripts</element>
 							</scriptpath>
 							<source><![CDATA[com.tll.BuildTools.processWarResources(project, ant);]]></source>

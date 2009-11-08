@@ -19,7 +19,7 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 	/**
 	 * The id list - list of entity ids matching the search criteria.
 	 */
-	private List<String> ids;
+	private List<Long> ids;
 
 	/**
 	 * Constructor
@@ -66,7 +66,7 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 		// adjust the end index if it exceeds the bounds of the id list
 		if(ei > size - 1) ei = size - 1;
 
-		final List<String> subids = ids.subList(offset, ei);
+		final List<Long> subids = ids.subList(offset, ei);
 
 		final List<E> list = dataProvider.getEntitiesFromIds(criteria.getEntityClass(), subids, sort);
 		if(list == null || list.size() != subids.size()) {

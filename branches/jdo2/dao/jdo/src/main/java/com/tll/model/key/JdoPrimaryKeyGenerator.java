@@ -31,8 +31,8 @@ public class JdoPrimaryKeyGenerator implements IPrimaryKeyGenerator {
 	}
 
 	@Override
-	public synchronized String generateIdentifier(Class<? extends IEntity> entityClass) {
+	public synchronized long generateIdentifier(Class<? extends IEntity> entityClass) {
 		final Object o = generator.next();
-		return o.toString();
+		return ((Long)o).longValue();
 	}
 }

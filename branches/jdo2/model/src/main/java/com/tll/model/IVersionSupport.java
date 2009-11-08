@@ -8,24 +8,19 @@
 package com.tll.model;
 
 /**
- * Allows persistence frameworks to distinguish between like entities for proper
- * persistence
- * 
- * <p>IMPT: the version property should be <code>Integer</code> as opposed to <code>int</code>
- * to ensure valid transient object checking!
- * 
+ * IVersionSupport - Versioning support to realize datastore level optimistic
+ * concurrency control.
  * @author jpk
  */
 public interface IVersionSupport {
 
-  /**
-   * @return the version number
-   */
-  Integer getVersion();
+	/**
+	 * @return the version
+	 */
+	long getVersion();
 
-  /**
-   * @param version
-   *          the version number
-   */
-  void setVersion(Integer version);
+	/**
+	 * @param version the version to set
+	 */
+	void setVersion(long version);
 }

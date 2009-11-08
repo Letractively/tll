@@ -6,12 +6,10 @@ package com.tll.model;
  * is the create/modify date and the create/modify user.
  * @author jpk
  */
-//@PersistenceCapable
 public abstract class NamedTimeStampEntity extends TimeStampEntity implements INamedTimeStampEntity {
 
 	private static final long serialVersionUID = 2186964556332599921L;
 
-	//@Persistent
 	protected String name;
 
 	/**

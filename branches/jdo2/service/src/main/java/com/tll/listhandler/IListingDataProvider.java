@@ -39,7 +39,7 @@ public interface IListingDataProvider {
 	 *         results are found.
 	 * @throws InvalidCriteriaException
 	 */
-	List<String> getIds(Criteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException;
+	List<Long> getIds(Criteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException;
 
 	/**
 	 * Retrieves entities from a collection of ids.
@@ -50,7 +50,7 @@ public interface IListingDataProvider {
 	 *        of the results is "undefined".
 	 * @return list of matching entities.
 	 */
-	<E extends IEntity> List<E> getEntitiesFromIds(Class<E> entityClass, Collection<String> ids, Sorting sorting);
+	<E extends IEntity> List<E> getEntitiesFromIds(Class<E> entityClass, Collection<Long> ids, Sorting sorting);
 
 	/**
 	 * Returns a page of matching results for the given criteria.

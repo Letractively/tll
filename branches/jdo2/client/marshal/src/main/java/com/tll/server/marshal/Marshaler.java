@@ -331,126 +331,133 @@ public final class Marshaler {
 			Object val = null;
 			log.debug("marshalModel - propName: " + propName);
 
-			switch(mprop.getType()) {
+			if(Model.ID_PROPERTY.equals(propName)) {
+				val = Long.valueOf((String) pval);
+			}
+			else {
+				switch(mprop.getType()) {
 
-			case STRING:
-			case LONG:
-			case INT:
-			case BOOL:
-			case DOUBLE:
-			case DATE:
-			case CHAR:
-			case ENUM:
-				val = pval;
-				break;
+				case STRING:
+				case LONG:
+				case INT:
+				case BOOL:
+				case DOUBLE:
+				case DATE:
+				case CHAR:
+				case ENUM:
+					val = pval;
+					break;
 
-			case FLOAT:
-				val = ((Double) pval).floatValue();
-				break;
+				case FLOAT:
+					val = ((Double) pval).floatValue();
+					break;
 
-			case RELATED_ONE: {
-				final Model rltdOne = (Model) pval;
-				final IEntityType rltdEntityType =
-					rltdOne == null ? ((RelatedOneProperty) mprop).getRelatedType() : rltdOne.getEntityType();
-					assert rltdEntityType != null;
-					IEntity toOne;
-					if(rltdOne == null || rltdOne.isMarkedDeleted()) {
-						toOne = null;
-					}
-					else {
-						final Class<? extends IEntity> rltdEntityClass =
-							(Class<? extends IEntity>) etResolver.resolveEntityClass(rltdEntityType);
-						try {
-							toOne = (IEntity) bw.getPropertyValue(propName);
-							if(toOne == null) toOne = instantiateEntity(rltdEntityClass);
-						}
-						catch(final RuntimeException re) {
-							log.warn("Unable to get related one entity ref", re);
+				case RELATED_ONE: {
+					final Model rltdOne = (Model) pval;
+					final IEntityType rltdEntityType =
+						rltdOne == null ? ((RelatedOneProperty) mprop).getRelatedType() : rltdOne.getEntityType();
+						assert rltdEntityType != null;
+						IEntity toOne;
+						if(rltdOne == null || rltdOne.isMarkedDeleted()) {
 							toOne = null;
 						}
-						log.debug("About to marshal related one [model: " + rltdOne + "] [entity: " + toOne + "]");
-						marshalModel(rltdOne, toOne, visited, depth + 1);
-					}
-					val = toOne;
-			}
-			break;
-
-			case NESTED:
-				// no-op since these are expressed as "{parent}_{nestedA}"
+						else {
+							final Class<? extends IEntity> rltdEntityClass =
+								(Class<? extends IEntity>) etResolver.resolveEntityClass(rltdEntityType);
+							try {
+								toOne = (IEntity) bw.getPropertyValue(propName);
+								if(toOne == null) toOne = instantiateEntity(rltdEntityClass);
+							}
+							catch(final RuntimeException re) {
+								log.warn("Unable to get related one entity ref", re);
+								toOne = null;
+							}
+							log.debug("About to marshal related one [model: " + rltdOne + "] [entity: " + toOne + "]");
+							marshalModel(rltdOne, toOne, visited, depth + 1);
+						}
+						val = toOne;
+				}
 				break;
 
-			case RELATED_MANY: {
-				if(pval != null) { // should always be non-null (see RelatedManyProperty)
-					final List<Model> rmModelList = (List<Model>) pval;
-					Set<IEntity> rmEntitySet = null;
-					//try {
-					rmEntitySet = (Set<IEntity>) bw.getPropertyValue(propName);
-					final LinkedHashSet<IEntity> newRmEntitySet = new LinkedHashSet<IEntity>(rmModelList.size());
-					if(rmEntitySet != null) {
-						newRmEntitySet.addAll(rmEntitySet); // fail fast so don't trap exception here
-					}
-					//if(rmEntitySet != null) {
-					// re-build the rm entity set
-					for(final Model indexedModel : rmModelList) {
-						assert indexedModel != null;
-						final IEntityType indexedEntityType = indexedModel.getEntityType();
-						final Class<IEntity> indexedEntityClass = (Class<IEntity>) etResolver.resolveEntityClass(indexedEntityType);
-						final PrimaryKey<IEntity> imodelPk = new PrimaryKey<IEntity>(indexedEntityClass, indexedModel.getId());
+				case NESTED:
+					// no-op since these are expressed as "{parent}_{nestedA}"
+					break;
 
-						IEntity indexedEntity = null;
+				case RELATED_MANY: {
+					if(pval != null) { // should always be non-null (see RelatedManyProperty)
+						final List<Model> rmModelList = (List<Model>) pval;
+						Set<IEntity> rmEntitySet = null;
+						//try {
+						rmEntitySet = (Set<IEntity>) bw.getPropertyValue(propName);
+						final LinkedHashSet<IEntity> newRmEntitySet = new LinkedHashSet<IEntity>(rmModelList.size());
+						if(rmEntitySet != null) {
+							newRmEntitySet.addAll(rmEntitySet); // fail fast so don't trap exception here
+						}
+						//if(rmEntitySet != null) {
+						// re-build the rm entity set
+						for(final Model indexedModel : rmModelList) {
+							assert indexedModel != null;
+							final IEntityType indexedEntityType = indexedModel.getEntityType();
+							final Class<IEntity> indexedEntityClass =
+								(Class<IEntity>) etResolver.resolveEntityClass(indexedEntityType);
+							final long id = Long.parseLong(indexedModel.getId());
+							final PrimaryKey<IEntity> imodelPk = new PrimaryKey<IEntity>(indexedEntityClass, id);
 
-						// existing indexed entity?
-						for(final IEntity ie : newRmEntitySet) {
-							final PrimaryKey<IEntity> iepk = new PrimaryKey<IEntity>(ie);
-							if(imodelPk.equals(iepk)) {
-								indexedEntity = ie;
-								break;
-							}
-						}
-						if(indexedEntity == null) {
-							// non-existing indexed entity
-							if(indexedModel.isNew()) {
-								assert indexedModel.isMarkedDeleted() == false;
-								// add indexed
-								indexedEntity = instantiateEntity(indexedEntityClass);
-								marshalModel(indexedModel, indexedEntity, visited, depth + 1);
-								newRmEntitySet.add(indexedEntity);
-							}
-							// else presume removed after it was initially sent to client by another web session..
-						}
-						else {
-							// existing indexed entity
-							if(indexedModel.isMarkedDeleted()) {
-								// remove existing indexed entity
-								if(!newRmEntitySet.remove(indexedEntity)) {
-									throw new IllegalStateException("Unable to remove indexed entity");
+							IEntity indexedEntity = null;
+
+							// existing indexed entity?
+							for(final IEntity ie : newRmEntitySet) {
+								final PrimaryKey<IEntity> iepk = new PrimaryKey<IEntity>(ie);
+								if(imodelPk.equals(iepk)) {
+									indexedEntity = ie;
+									break;
 								}
-								indexedEntity = null;
+							}
+							if(indexedEntity == null) {
+								// non-existing indexed entity
+								if(indexedModel.isNew()) {
+									assert indexedModel.isMarkedDeleted() == false;
+									// add indexed
+									indexedEntity = instantiateEntity(indexedEntityClass);
+									marshalModel(indexedModel, indexedEntity, visited, depth + 1);
+									newRmEntitySet.add(indexedEntity);
+								}
+								// else presume removed after it was initially sent to client by another web session..
 							}
 							else {
-								// update existing indexed entity
-								marshalModel(indexedModel, indexedEntity, visited, depth + 1);
+								// existing indexed entity
+								if(indexedModel.isMarkedDeleted()) {
+									// remove existing indexed entity
+									if(!newRmEntitySet.remove(indexedEntity)) {
+										throw new IllegalStateException("Unable to remove indexed entity");
+									}
+									indexedEntity = null;
+								}
+								else {
+									// update existing indexed entity
+									marshalModel(indexedModel, indexedEntity, visited, depth + 1);
+								}
 							}
-						}
-						// satisify bi-di relationship
-						if(indexedEntity instanceof IChildEntity) {
-							((IChildEntity) indexedEntity).setParent(crntEntity);
-						}
-					} // indexed model loop
-					val = newRmEntitySet;
-					//}
+							// satisify bi-di relationship
+							if(indexedEntity instanceof IChildEntity) {
+								((IChildEntity) indexedEntity).setParent(crntEntity);
+							}
+						} // indexed model loop
+						val = newRmEntitySet;
+						//}
+					}
 				}
-			}
-			break;
-
-			case STRING_MAP:
-				val = pval;
 				break;
 
-			default:
-				throw new RuntimeException("Unhandled Property Value type: " + mprop.getType());
+				case STRING_MAP:
+					val = pval;
+					break;
 
-			}// switch
+				default:
+					throw new RuntimeException("Unhandled Property Value type: " + mprop.getType());
+
+				}// switch
+			}
 
 			// translate nested property names
 			propName = propName.replace('_', '.');
@@ -465,9 +472,9 @@ public final class Marshaler {
 
 		}// for loop
 
-		if(crntEntity.getId() == null) {
+		if(crntEntity.getId() == -1L) {
 			// assume new and set generated id
-			if(crntEntity.getVersion() != null) {
+			if(crntEntity.getVersion() != -1L) {
 				throw new IllegalArgumentException("Encountered an entity (" + crntEntity.descriptor()
 						+ ") w/o an id having a non-null version.");
 			}
@@ -521,6 +528,12 @@ public final class Marshaler {
 
 		if(String.class == ptype) {
 			prop = new StringPropertyValue(pname, pdata, (String) obj);
+		}
+
+		// we convert server side ids to strings client-side
+		else if(IEntity.PK_FIELDNAME.equals(pname)) {
+			// TODO verify 'Long.toString((Long)obj)' is ok
+			prop = new StringPropertyValue(pname, pdata, Long.toString((Long) obj));
 		}
 
 		else if(Date.class == ptype) {

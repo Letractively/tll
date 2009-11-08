@@ -20,11 +20,15 @@ public abstract class EntityBase implements IEntity {
 
 	protected static final Log LOG = LogFactory.getLog(EntityBase.class);
 
-	private String id;
+	private long id;
 
 	private boolean generated;
 
-	private Integer version;
+	/**
+	 * At object creation, a version of <code>-1</code> is assigined indicating a
+	 * <em>transient</em> (not persisted yet) entity.
+	 */
+	private long version = -1;
 
 	/**
 	 * finds an entity of the given id in the set or null if not found. If the
@@ -159,7 +163,7 @@ public abstract class EntityBase implements IEntity {
 	 * Constructor
 	 * @param id
 	 */
-	public EntityBase(String id) {
+	public EntityBase(long id) {
 		this();
 		setId(id);
 	}
@@ -170,11 +174,11 @@ public abstract class EntityBase implements IEntity {
 	}
 
 	@NotNull
-	public String getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -187,7 +191,7 @@ public abstract class EntityBase implements IEntity {
 	 * id is generated. It will set the id and set the generated flag to true.
 	 * @param id the id to set
 	 */
-	public void setGenerated(String id) {
+	public void setGenerated(long id) {
 		setId(id);
 		generated = true;
 	}
@@ -196,12 +200,21 @@ public abstract class EntityBase implements IEntity {
 	 * @return the version
 	 */
 	@Managed
-	public Integer getVersion() {
+	public long getVersion() {
 		return version;
 	}
 
-	public void setVersion(Integer version) {
+	public void setVersion(long version) {
 		this.version = version;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + (int) (version ^ (version >>> 32));
+		return result;
 	}
 
 	@Override
@@ -210,19 +223,9 @@ public abstract class EntityBase implements IEntity {
 		if(obj == null) return false;
 		if(getClass() != obj.getClass()) return false;
 		final EntityBase other = (EntityBase) obj;
-		if(other.entityClass() != entityClass()) return false;
-		assert this.id != null && other.id != null;
-		if(!id.equals(other.id)) return false;
+		if(id != other.id) return false;
+		if(version != other.version) return false;
 		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + entityClass().toString().hashCode();
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
 	}
 
 	@Override
@@ -231,7 +234,7 @@ public abstract class EntityBase implements IEntity {
 	}
 
 	public final boolean isNew() {
-		return getVersion() == null;
+		return version == -1;
 	}
 
 	/*

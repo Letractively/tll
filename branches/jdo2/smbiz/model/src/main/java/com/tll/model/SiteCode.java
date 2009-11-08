@@ -87,13 +87,13 @@ public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Accou
 		setAccount(e);
 	}
 
-	public String accountId() {
+	public long accountId() {
 		try {
 			return getAccount().getId();
 		}
 		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
-			return null;
+			return -1;
 		}
 	}
 }

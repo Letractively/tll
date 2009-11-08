@@ -41,10 +41,9 @@ public class AccountInterfaceService extends AbstractPersistServiceImpl {
 			final AccountInterfaceDataSearch ais = (AccountInterfaceDataSearch) search;
 
 			final IInterfaceService isvc = context.getEntityServiceFactory().instance(IInterfaceService.class);
-			final AccountInterface ai = isvc.loadAccountInterface(ais.getAccountId(), ais.getInterfaceId());
-
-			// set the quasi-id
-			ai.setId(ais.getAccountId() + '|' + ais.getInterfaceId());
+			final long aid = Long.parseLong(ais.getAccountId());
+			final long iid = Long.parseLong(ais.getInterfaceId());
+			final AccountInterface ai = isvc.loadAccountInterface(aid, iid);
 
 			final Marshaler marshaler = context.getMarshaler();
 			final MarshalOptions moptions = context.getMarshalOptionsResolver().resolve(SmbizEntityType.ACCOUNT_INTERFACE);
@@ -68,10 +67,11 @@ public class AccountInterfaceService extends AbstractPersistServiceImpl {
 
 		final IInterfaceService isvc = context.getEntityServiceFactory().instance(IInterfaceService.class);
 
-		final String id = model.getId();
-		final String accountId = id.substring(0, id.indexOf('|'));
-		final String intfId = id.substring(id.indexOf('|')+1);
-		AccountInterface ai = isvc.loadAccountInterface(accountId, intfId);
+		final String said = model.asString("accountId");
+		final String siid = model.asString("interfaceId");
+		final long aid = Long.parseLong(said);
+		final long iid = Long.parseLong(siid);
+		AccountInterface ai = isvc.loadAccountInterface(aid, iid);
 
 		ai = marshaler.marshalModel(model, ai);
 		isvc.setAccountInterface(ai);

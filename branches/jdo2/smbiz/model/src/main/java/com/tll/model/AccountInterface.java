@@ -10,7 +10,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 import com.tll.model.schema.Transient;
 import com.tll.model.validate.BusinessKeyUniqueness;
@@ -25,7 +24,7 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 
 	private static final long serialVersionUID = 7903409644943150791L;
 
-	private String accountId, interfaceId;
+	private long accountId, interfaceId;
 
 	private String name, code, description;
 
@@ -47,21 +46,19 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 		super();
 	}
 
-	@NotNull
-	public String getAccountId() {
+	public long getAccountId() {
 		return accountId;
 	}
 
-	public void setAccountId(String accountId) {
+	public void setAccountId(long accountId) {
 		this.accountId = accountId;
 	}
 
-	@NotNull
-	public String getInterfaceId() {
+	public long getInterfaceId() {
 		return interfaceId;
 	}
 
-	public void setInterfaceId(String interfaceId) {
+	public void setInterfaceId(long interfaceId) {
 		this.interfaceId = interfaceId;
 	}
 
@@ -198,7 +195,7 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 	}
 
 	@Override
-	public String accountId() {
+	public long accountId() {
 		return accountId;
 	}
 }

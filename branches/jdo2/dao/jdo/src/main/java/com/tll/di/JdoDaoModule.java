@@ -32,36 +32,7 @@ import com.tll.dao.jdo.JdoEntityDao;
  */
 public class JdoDaoModule extends AbstractModule implements IConfigAware {
 
-	public static final String JDO_PMF_CLASS = "javax.jdo.PersistenceManagerFactoryClass";
-	public static final String JDO_CONN_DRIVER = "javax.jdo.option.ConnectionDriverName";
-	public static final String JDO_CONN_URL = "javax.jdo.option.ConnectionURL";
-	public static final String JDO_CONN_USERNAME = "javax.jdo.option.ConnectionUserName";
-	public static final String JDO_CONN_PASSWORD = "javax.jdo.option.ConnectionPassword";
-
 	protected static final Log log = LogFactory.getLog(JdoDaoModule.class);
-
-	/**
-	 * Generates a new {@link Properties} instance containing jdo specification
-	 * bootstrap properties from a {@link Config} instance containing
-	 * {@link JdbcConfigKeys}.
-	 * @param config a {@link Config} instance containing {@link JdbcConfigKeys}
-	 * @return Newly created {@link Properties} instance
-	 */
-	public static Properties generateJdoSpecPropertiesFromConfig(Config config) {
-		final Properties p = new Properties();
-		p.setProperty(JDO_PMF_CLASS, "org.datanucleus.jdo.JDOPersistenceManagerFactory");
-		final String dbType = config.getString(JdbcConfigKeys.DB_TYPE.getKey());
-		if("mysql".equals(dbType)) {
-			p.setProperty(JDO_CONN_DRIVER, "com.mysql.jdbc.Driver");
-		}
-		else
-			throw new IllegalStateException("Unhandled db type: " + dbType);
-		p.setProperty(JDO_CONN_URL, config.getString(JdbcConfigKeys.DB_URL.getKey()));
-		p.setProperty(JDO_CONN_USERNAME, config.getString(JdbcConfigKeys.DB_USERNAME.getKey()));
-		p.setProperty(JDO_CONN_PASSWORD, config.getString(JdbcConfigKeys.DB_PASSWORD.getKey()));
-
-		return p;
-	}
 
 	protected Config config;
 
@@ -111,7 +82,7 @@ public class JdoDaoModule extends AbstractModule implements IConfigAware {
 
 				@Override
 				public PersistenceManagerFactory get() {
-					final Properties jdoProps = generateJdoSpecPropertiesFromConfig(config);
+					final Properties jdoProps = config.asProperties(null);
 					final PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory(jdoProps);
 					return pmf;
 				}
