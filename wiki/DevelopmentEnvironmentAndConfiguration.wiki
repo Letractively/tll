@@ -48,6 +48,30 @@ The following software is required:
 global-ignores = war debug.bat shell.bat .metadata build classes bin bin-groovy dist Desktop.ini *.log *.tmp target .metadata .gwt-tmp test-output tomcat Constants.properties config-local.properties
 }}}
 
+  * Create a user-scoped maven {{{settings.xml}}} file under the {{{.m2}}} dir corresponding to the local maven install.  Here is the prototype:
+ {{{
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+	<localRepository>C:\mr</localRepository>
+
+	<activeProfiles>
+
+		<!-- stage profile ('dev' or 'prod') -->
+		<activeProfile>dev</activeProfile>
+
+		<!-- dao impl profile ('jdo' or 'db4o') -->
+		<activeProfile>jdo</activeProfile>
+
+		<!-- security profile ('acegi' or 'nosecurity') -->
+		<activeProfile>nosecurity</activeProfile>
+
+	</activeProfiles>
+
+</settings>
+}}}
+
   * Checkout tll project:
  {{{
 svn checkout http://tll.googlecode.com/svn/trunk/ {TLL_ROOT}
