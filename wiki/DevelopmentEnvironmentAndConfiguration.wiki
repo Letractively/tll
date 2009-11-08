@@ -11,6 +11,7 @@ The following software is required:
 || [http://groovy.codehaus.org/ groovy] || 1.6+ || Use the windows installer download is possible. ||
 || [http://subversion.tigris.org/ subversion client] || 1.6.0+ || Preferred windows client: [http://www.sliksvn.com/en/download sliksvn] ||
 || [http://code.google.com/p/google-web-toolkit/ GWT] || 1.6.4+ || ||
+|| [http://code.google.com/p/gwt-log/downloads/list gwt-log] || 2.6.2+ || ||
 
 =environment=
   * Create the tll root directory in a desired location.  This will be the root dir of all tll source code.
@@ -87,7 +88,11 @@ rem for db4o dao impl
 install-db4o
 install-springex-db4o
 
-rem for tll client projects (Only necessary if GWT is built from source locally.)
+rem needed for tll client projects
+install-gwt-log
+
+rem needed for tll client projects only if GWT is built from source
+rem otherwise maven should handle it.
 install-gwt
 }}}
 
