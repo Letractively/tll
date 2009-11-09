@@ -23,11 +23,13 @@ import com.tll.config.Config;
 import com.tll.config.IConfigAware;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.jdo.JdoEntityDao;
+import com.tll.dao.jdo.JdoTimestampListener;
+import com.tll.model.ITimeStampEntity;
 
 /**
  * JdoDaoModule <br>
- * <b>NOTE: </b>An <code>IPrimaryKeyGenerator</code> impl is <em>not</em> bound in
- * this module.
+ * <b>NOTE: </b>An <code>IPrimaryKeyGenerator</code> impl is <em>not</em> bound
+ * in this module.
  * @author jpk
  */
 public class JdoDaoModule extends AbstractModule implements IConfigAware {
@@ -84,6 +86,12 @@ public class JdoDaoModule extends AbstractModule implements IConfigAware {
 				public PersistenceManagerFactory get() {
 					final Properties jdoProps = config.asProperties(null);
 					final PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory(jdoProps);
+
+					// add timestamp listener only for timestamp type entities :)
+					pmf.addInstanceLifecycleListener(new JdoTimestampListener(), new Class<?>[] {
+						ITimeStampEntity.class
+					});
+
 					return pmf;
 				}
 			}).asEagerSingleton();

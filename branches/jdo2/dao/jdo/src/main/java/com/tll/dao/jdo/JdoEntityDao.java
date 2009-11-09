@@ -19,6 +19,7 @@ import javax.jdo.Query;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.ObjectRetrievalFailureException;
 import org.springframework.orm.jdo.JdoCallback;
+import org.springframework.orm.jdo.JdoObjectRetrievalFailureException;
 import org.springframework.orm.jdo.support.JdoDaoSupport;
 
 import com.google.inject.Inject;
@@ -71,8 +72,13 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <E extends IEntity> E load(PrimaryKey<E> key) {
-		final E e = (E) getJdoTemplate().getObjectById(key.getType(), key.getId());
-		return e;
+		try {
+			final E e = (E) getJdoTemplate().getObjectById(key.getType(), key.getId());
+			return e;
+		}
+		catch(final JdoObjectRetrievalFailureException ex) {
+			throw new EntityNotFoundException("Entity of primary key: '" + key + "' not found.", ex);
+		}
 	}
 
 	@Override

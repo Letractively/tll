@@ -29,7 +29,7 @@
 				<column name="address_1" jdbc-type="VARCHAR" length="128" allows-null="false" />
 			</field>
 			<field name="address2">
-				<column name="address_1" jdbc-type="VARCHAR" length="128" />
+				<column name="address_2" jdbc-type="VARCHAR" length="128" />
 			</field>
 			<field name="city">
 				<column name="city" jdbc-type="VARCHAR" length="128" allows-null="false" />
@@ -53,11 +53,8 @@
 				<column name="email_address" jdbc-type="VARCHAR" length="128" />
 			</field>
 		</class>
-		
+
 		<class name="Currency" table="currency">
-			<field name="name" unique="true">
-				<column name="name" jdbc-type="VARCHAR" length="32" allows-null="false" />
-			</field>
 			<field name="symbol" unique="true">
 				<column name="symbol" jdbc-type="VARCHAR" length="8" allows-null="false" />
 			</field>
@@ -68,13 +65,13 @@
 				<column name="usd_exchange_rate" jdbc-type="FLOAT" />
 			</field>
 		</class>
-		
+
 		<class name="NestedEntity" table="nested_entity">
 			<unique>
 				<column name="name" />
 			</unique>
 			<field name="nestedData">
-				<column name="data" jdbc-type="BLOB" allows-null="false" />
+				<column name="data" jdbc-type="BLOB" />
 			</field>
 		</class>
 
@@ -82,9 +79,18 @@
 			<unique>
 				<column name="name" />
 			</unique>
-			<column name="parent_aid" jdbc-type="VARCHAR" length="32" />
-			<column name="ne_aid" jdbc-type="VARCHAR" length="32" />
-			<column name="cur_aid" jdbc-type="VARCHAR" length="32" />
+			<field name="parent">
+				<column name="parent_aid" jdbc-type="BIGINT" />
+				<foreign-key name="fk_prnt_acnt" delete-action="null" />
+			</field>
+			<field name="nestedEntity">
+				<column name="ne_id" jdbc-type="BIGINT" />
+				<foreign-key name="fk_a_ne" delete-action="null" />
+			</field>
+			<field name="currency">
+				<column name="cur_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_a_c" delete-action="null" />
+			</field>
 			<field name="status">
 				<column name="status" jdbc-type="TINYINT" allows-null="false" />
 			</field>
@@ -95,7 +101,7 @@
 				<column name="date_last_charged" jdbc-type="TIMESTAMP" />
 			</field>
 		</class>
-		
+
 		<class name="AccountAddress" table="account_address">
 			<unique>
 				<column name="aid" />
@@ -105,8 +111,17 @@
 				<column name="aid" />
 				<column name="name" />
 			</unique>
-			<column name="aid" jdbc-type="VARCHAR" length="32" />
-			<column name="address_id" jdbc-type="VARCHAR" length="32" />
+			<field name="type">
+				<column name="type" jdbc-type="VARCHAR" length="32" allows-null="false" />
+			</field>
+			<field name="account">
+				<column name="aid" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_aadr_a" delete-action="cascade" />
+			</field>
+			<field name="address">
+				<column name="address_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_aadr_adr" delete-action="cascade" />
+			</field>
 		</class>
 
 	</package>

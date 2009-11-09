@@ -47,11 +47,11 @@ public class NestedEntity extends NamedEntity {
 		return nestedData;
 	}
 
-	public void setNestedData(NestedData paymentData) {
-		this.nestedData = paymentData;
+	public void setNestedData(NestedData nestedData) {
+		this.nestedData = nestedData;
 	}
 
-	public void clearPaymentData() {
+	public void clearNestedData() {
 		this.nestedData = null;
 	}
 }

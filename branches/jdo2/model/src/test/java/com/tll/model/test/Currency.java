@@ -17,8 +17,9 @@ import com.tll.model.schema.BusinessObject;
 @BusinessObject(businessKeys = {
 	@BusinessKeyDef(name = "Name", properties = { INamedEntity.NAME }),
 	@BusinessKeyDef(name = "Symbol", properties = { "symbol" }),
-	@BusinessKeyDef(name = "ISO4217", properties = { "iso4217" }) })
-	public class Currency extends NamedEntity {
+	@BusinessKeyDef(name = "ISO4217", properties = { "iso4217" })
+})
+public class Currency extends NamedEntity {
 	private static final long serialVersionUID = -6944161437125857044L;
 
 	/**

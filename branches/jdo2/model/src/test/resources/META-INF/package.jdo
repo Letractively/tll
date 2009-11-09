@@ -21,7 +21,7 @@
 			<field name="fax" />
 			<field name="emailAddress" unique="true" />
 		</class>
-		
+
 		<class name="Currency" detachable="true" identity-type="application">
 			<field name="symbol" />
 			<field name="iso4217" />
@@ -29,7 +29,7 @@
 		</class>
 
 		<class name="NestedEntity" detachable="true" identity-type="application">
-			<field name="nestedData" />
+			<field name="nestedData" serialized="true" />
 		</class>
 
 		<class name="Account" detachable="true" identity-type="application">
@@ -40,10 +40,10 @@
 			<field name="nestedEntity" />
 			<field name="currency" />
 			<field name="addresses" mapped-by="account">
-				<collection element-type="Address" />
+				<collection element-type="AccountAddress" />
 			</field>
 		</class>
-		
+
 		<class name="AccountAddress" detachable="true" identity-type="application">
 			<field name="type" />
 			<field name="account" />

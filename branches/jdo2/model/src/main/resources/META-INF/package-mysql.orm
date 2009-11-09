@@ -7,11 +7,9 @@
 
 		<class name="EntityBase">
 			<primary-key>
-				<column name="id" jdbc-type="BIGINT" length="32" allows-null="false" />
+				<column name="id" jdbc-type="BIGINT" allows-null="false" />
 			</primary-key>
-			<version strategy="version-number">
-				<column jdbc-type="BIGINT" default-value="0"/>
-			</version>
+			<column name="version" jdbc-type="BIGINT" default-value="0"/>
 		</class>
 		
 		<class name="NamedEntity">
@@ -25,7 +23,7 @@
 				<column name="date_created" jdbc-type="TIMESTAMP" allows-null="false" />
 			</field>
 			<field name="dateModified">
-				<column name="date_modified" jdbc-type="TIMESTAMP" />
+				<column name="date_modified" jdbc-type="TIMESTAMP" allows-null="false" />
 			</field>
 		</class>
 

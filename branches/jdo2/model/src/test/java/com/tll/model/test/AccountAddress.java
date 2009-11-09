@@ -20,7 +20,8 @@ import com.tll.model.schema.BusinessObject;
 @BusinessObject(businessKeys = {
 	@BusinessKeyDef(name = "Account Id and Address Id", properties = {
 		"account.id", "address.id"
-	}), @BusinessKeyDef(name = "Account Id and Name", properties = {
+	}),
+	@BusinessKeyDef(name = "Account Id and Name", properties = {
 		"account.id", INamedEntity.NAME
 	})
 })
@@ -34,7 +35,11 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 
 	private Address address;
 
-	private AddressType type;
+	/*
+	 * We set a default to avoid having to create a property editor for the Spring bean context
+	 * when loading mock entities!
+	 */
+	private AddressType type = AddressType.HOME;
 
 	public Class<? extends IEntity> entityClass() {
 		return AccountAddress.class;

@@ -59,6 +59,7 @@
 			<groupId>com.google.code.guice</groupId>
 			<artifactId>guice</artifactId>
 		</dependency>
+		
 		<!-- for guice 2.0 -->
 		<dependency>
 			<groupId>aopalliance</groupId>
@@ -84,6 +85,28 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.datanucleus</groupId>
+			<artifactId>datanucleus-connectionpool</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+    <dependency>
+      <groupId>c3p0</groupId>
+      <artifactId>c3p0</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+		
+		<dependency>
+			<groupId>org.datanucleus</groupId>
+			<artifactId>datanucleus-cache</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-core</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 
