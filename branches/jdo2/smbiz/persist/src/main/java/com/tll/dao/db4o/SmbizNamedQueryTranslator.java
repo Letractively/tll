@@ -61,7 +61,7 @@ public class SmbizNamedQueryTranslator implements IDb4oNamedQueryTranslator {
 				sq = q.descend("isAvailableCustomer");
 			else
 				throw new InvalidCriteriaException();
-			sq.constrain(true);
+			sq.constrain(Boolean.TRUE);
 		}
 
 		else throw new InvalidCriteriaException("Unhandled named query: " + qname);

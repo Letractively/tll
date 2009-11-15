@@ -69,9 +69,8 @@ import com.tll.util.PropertyPath;
  * Db4oEntityDao
  * @author jpk
  */
-@SuppressWarnings( {
-	"unchecked", "serial" })
-	public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
+@SuppressWarnings( { "unchecked", "serial" })
+public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 
 	static final Log log = LogFactory.getLog(Db4oEntityDao.class);
 

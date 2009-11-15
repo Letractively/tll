@@ -242,8 +242,9 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 				assert pk.getType() == entityHandler.entityClass();
 				startNewTransaction();
 				try {
-					// logger.debug("Tearing down test entity: " + e + "..");
-					entityHandler.teardownTestEntity(dao.load(pk));
+					final IEntity e = dao.load(pk);
+					logger.debug("Tearing down test entity: " + e + "..");
+					entityHandler.teardownTestEntity(e);
 					setComplete();
 				}
 				catch(final EntityNotFoundException e) {
@@ -282,13 +283,15 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	 */
 	@SuppressWarnings("unchecked")
 	protected <E extends IEntity> E getTestEntity() throws Exception {
-		// logger.debug("Creating test entity..");
+		logger.debug("Creating test entity..");
 		final E e = (E) getEntityBeanFactory().getEntityCopy(entityHandler.entityClass(), false);
 		entityHandler.assembleTestEntity(e);
 		if(BusinessKeyFactory.hasBusinessKeys(entityHandler.entityClass())) {
 			entityHandler.makeUnique(e);
 		}
-		testEntityRefStack.add(new PrimaryKey<IEntity>(e));
+		final PrimaryKey<IEntity> pk = new PrimaryKey<IEntity>(e);
+		testEntityRefStack.add(pk);
+		logger.debug("Test entity created: " + e);
 		return e;
 	}
 
@@ -395,7 +398,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		e = dao.persist(e);
 		setComplete();
 		endTransaction();
-		persistentId = e.getId();
+		persistentId = e.getId().longValue();
 		Assert.assertNotNull(e.getId(), "The created entities' id is null");
 		Assert.assertTrue(!e.isNew(), "The created entity is new and shouldn't be");
 
@@ -410,7 +413,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		// retrieve
 		startNewTransaction();
 		setComplete();	// we need to do this for JDO in order to ensure a detached copy is made
-		e = dao.load(new PrimaryKey<IEntity>(entityHandler.entityClass(), persistentId));
+		e = dao.load(new PrimaryKey<IEntity>(entityHandler.entityClass(), Long.valueOf(persistentId)));
 		Assert.assertNotNull(e, "The loaded entity is null");
 		entityHandler.verifyLoadedEntityState(e);
 		endTransaction();
@@ -424,6 +427,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 		// find (update verify)
 		startNewTransaction();
+		setComplete();
 		e = getEntityFromDb(new PrimaryKey<IEntity>(e));
 		Assert.assertNotNull(e, "The retrieved entity for update check is null");
 		endTransaction();
@@ -445,14 +449,15 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 		// verify purge
 		startNewTransaction();
+		setComplete();
 		try {
 			e = getEntityFromDb(new PrimaryKey<IEntity>(e));
+			endTransaction();
 			Assert.assertNull(e, "The entity was not purged");
 		}
 		catch(final EntityNotFoundException ex) {
 			// expected
 		}
-		endTransaction();
 	}
 
 	/**
@@ -519,7 +524,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		startNewTransaction();
 		Assert.assertNotNull(e, "Null generated test entity");
 		final List<Long> ids = new ArrayList<Long>(1);
-		ids.add(Long.valueOf(e.getId()));
+		ids.add(e.getId());
 		final List<IEntity> list = dao.findByIds(entityHandler.entityClass(), ids, null);
 		endTransaction();
 		Assert.assertTrue(list != null && list.size() == 1, "find by ids returned null list");

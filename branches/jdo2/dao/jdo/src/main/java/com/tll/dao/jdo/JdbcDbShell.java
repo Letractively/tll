@@ -119,7 +119,7 @@ public class JdbcDbShell implements IDbShell {
 		 */
 		protected Integer extractSqlErrorCode(Exception e) {
 			final SQLException sqle = extractSQLException(e);
-			return sqle == null ? null : sqle.getErrorCode();
+			return sqle == null ? null : Integer.valueOf(sqle.getErrorCode());
 		}
 
 		/**

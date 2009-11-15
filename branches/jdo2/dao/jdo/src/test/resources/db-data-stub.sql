@@ -18,7 +18,7 @@ values
 (3,'name3@domain.com','fname3','lname3','m','company3','attn3','adr1_3','adr2_3','city3','CA','00003','usa','3332220003','4445556668');
 
 insert into account
-(id,parent_aid,date_created,date_last_modified,status,name,billing_model,date_last_charged,ne_id,cur_id)
+(id,parent_aid,date_created,date_modified,status,name,billing_model,date_last_charged,ne_id,cur_id)
 values
 (1,null,'2005-02-13','2005-02-13',1,'asp','bm1',null,1,1),
 (2,1,'2005-02-13','2005-02-13',0,'isp1','bm1',null,2,1),
@@ -32,7 +32,7 @@ values
 (10,3,'2005-02-13','2005-02-13',3,'c4','bm1',null,1,1);
 
 insert into account_address
-(id,date_created,date_last_modified,name,type,aid,address_id)
+(id,date_created,date_modified,name,type,aid,address_id)
 values
 (1,'2005-02-02','2005-02-02','aaname1',0,1,1),
 (2,'2005-02-02','2005-02-02','aaname2',1,2,2),

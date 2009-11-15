@@ -191,7 +191,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 
 	@Transactional
 	private User getUserById(long userId) throws EntityNotFoundException {
-		final User user = dao.load(new PrimaryKey<User>(User.class, userId));
+		final User user = dao.load(new PrimaryKey<User>(User.class, Long.valueOf(userId)));
 		if(user == null) throw new EntityNotFoundException("User of id '" + userId + "' not found");
 		return user;
 	}
@@ -221,7 +221,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 
 	private void setCredentials(long userId, String newUsername, String encNewPassword) {
 		dao.executeQuery("user.setCredentials", new QueryParam[] {
-			new QueryParam(IEntity.PK_FIELDNAME, PropertyType.STRING, userId),
+			new QueryParam(IEntity.PK_FIELDNAME, PropertyType.STRING, Long.valueOf(userId)),
 			new QueryParam("username", PropertyType.STRING, newUsername),
 			new QueryParam("password", PropertyType.STRING, encNewPassword) });
 	}
@@ -241,7 +241,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 			final String encNewPassword = encodePassword(newRawPassword, newUsername);
 
 			// set the credentials
-			setCredentials(user.getId(), newUsername, encNewPassword);
+			setCredentials(user.getId().longValue(), newUsername, encNewPassword);
 
 			updateSecurityContextIfNecessary(user.getUsername(), newUsername, newRawPassword, false);
 		}
@@ -262,7 +262,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 
 		try {
 			// get the user
-			final User user = dao.load(new PrimaryKey<User>(User.class, userId));
+			final User user = dao.load(new PrimaryKey<User>(User.class, Long.valueOf(userId)));
 			final String username = user.getUsername();
 
 			// encode the new password

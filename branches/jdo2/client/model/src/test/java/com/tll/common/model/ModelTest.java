@@ -178,8 +178,8 @@ public class ModelTest {
 		Assert.assertTrue(model.getId() != null && model.getId().equals("6000"));
 
 		Assert.assertTrue(model.getVersion() == null);
-		model.setVersion(1);
-		Assert.assertTrue(model.getVersion() == 1);
+		model.setVersion("1");
+		Assert.assertTrue(model.getVersion() == "1");
 	}
 
 	/**

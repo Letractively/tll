@@ -179,12 +179,12 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 		final Class<IEntity> eclass = resolveEntityClass(modelChanges.getEntityType());
 
 		// load current state of this entity
-		final long id = Long.parseLong(modelChanges.getId());
+		final Long id = Long.valueOf(modelChanges.getId());
 		IEntity e = svc.load(new PrimaryKey<IEntity>(eclass, id));
 
 		// ensure versions match!
-		if(!ObjectUtil.equals(modelChanges.getVersion(), e.getVersion())) {
-			throw new VersionMismatchException(eclass, e.getVersion(), modelChanges.getVersion());
+		if(!ObjectUtil.equals(Long.valueOf(modelChanges.getVersion()), Long.valueOf(e.getVersion()))) {
+			throw new VersionMismatchException(eclass, Long.valueOf(e.getVersion()), Long.valueOf(modelChanges.getVersion()));
 		}
 
 		// marshal the changes only
@@ -296,7 +296,7 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 			final IEntityType et = mkey.getEntityType();
 			final Class<IEntity> ec = (Class<IEntity>) context.getEntityTypeResolver().resolveEntityClass(et);
 			final IEntityService<IEntity> svc = getEntityService(et);
-			final long id = Long.parseLong(mkey.getId());
+			final Long id = Long.valueOf(mkey.getId());
 			final IEntity e = svc.load(new PrimaryKey(ec, id));
 			return e;
 		}
@@ -400,7 +400,7 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 			final Class<IEntity> entityClass =
 				(Class<IEntity>) context.getEntityTypeResolver().resolveEntityClass(ref.getEntityType());
 			final IEntityService<IEntity> svc = context.getEntityServiceFactory().instanceByEntityType(entityClass);
-			final long id = Long.parseLong(ref.getId());
+			final Long id = Long.valueOf(ref.getId());
 			final PrimaryKey pk = new PrimaryKey(entityClass, id);
 			final IEntity e = svc.load(pk);
 			svc.purge(e);

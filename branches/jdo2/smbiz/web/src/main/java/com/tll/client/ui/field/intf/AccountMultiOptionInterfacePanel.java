@@ -53,7 +53,7 @@ public class AccountMultiOptionInterfacePanel extends AbstractAccountInterfacePa
 			.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
 				public void onValueChange(ValueChangeEvent<Boolean> event) {
-					paramsPanel.enable(event.getValue());
+					paramsPanel.enable(event.getValue().booleanValue());
 				}
 			});
 

@@ -184,7 +184,7 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 
 					// set the transaction timeout
 					final int timeout =
-						config == null ? DEFAULT_TRANS_TIMEOUT : config.getInteger(ConfigKeys.DB_TRANS_TIMEOUT.getKey(),
+						config == null ? DEFAULT_TRANS_TIMEOUT : config.getInt(ConfigKeys.DB_TRANS_TIMEOUT.getKey(),
 								DEFAULT_TRANS_TIMEOUT);
 					db4oTm.setDefaultTimeout(timeout);
 					log.info("Set DB4O default transaction timeout to: " + timeout);

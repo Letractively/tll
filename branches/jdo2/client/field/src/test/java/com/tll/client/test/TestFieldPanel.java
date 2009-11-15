@@ -231,7 +231,7 @@ public class TestFieldPanel extends FlowFieldPanel {
 		.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				indexedPanel.getFieldGroup().setEnabled(event.getValue());
+				indexedPanel.getFieldGroup().setEnabled(event.getValue().booleanValue());
 			}
 		});
 

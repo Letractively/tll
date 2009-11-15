@@ -45,20 +45,20 @@ public final class BillboardValidationFeedback extends AbstractErrorHandler impl
 	protected void doHandleError(Error error) {
 		assert error != null;
 		if(error.getTarget() == null) {
-			msgDisplayWidget.add(error.getMessages(), error.getClassifier() == null ? null : error.getClassifier().hashCode());
+			msgDisplayWidget.add(error.getMessages(), error.getClassifier() == null ? null :  Integer.valueOf(error.getClassifier().hashCode()));
 		}
 		else {
-			msgDisplayWidget.add(error.getTarget(), error.getMessages(), error.getClassifier() == null ? null : error.getClassifier().hashCode());
+			msgDisplayWidget.add(error.getTarget(), error.getMessages(), error.getClassifier() == null ? null : Integer.valueOf(error.getClassifier().hashCode()));
 		}
 	}
 
 	@Override
 	protected void doResolveError(IWidgetRef source, ErrorClassifier classifier) {
 		if(source == null) {
-			msgDisplayWidget.removeUnsourced(classifier == null ? null : classifier.hashCode());
+			msgDisplayWidget.removeUnsourced(classifier == null ? null : Integer.valueOf(classifier.hashCode()));
 		}
 		else {
-			msgDisplayWidget.remove(source, classifier == null ? null : classifier.hashCode());
+			msgDisplayWidget.remove(source, classifier == null ? null : Integer.valueOf(classifier.hashCode()));
 		}
 	}
 

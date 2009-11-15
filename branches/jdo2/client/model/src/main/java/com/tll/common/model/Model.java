@@ -608,13 +608,13 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * @return the {@link #VERSION_PROPERTY} value which may be <code>null</code>
 	 *         if this is scalar data.
 	 */
-	public Integer getVersion() {
-		final IntPropertyValue prop = (IntPropertyValue) get(VERSION_PROPERTY);
-		return prop == null ? null : prop.getInteger();
+	public String getVersion() {
+		final StringPropertyValue prop = (StringPropertyValue) get(VERSION_PROPERTY);
+		return prop == null ? null : prop.getString();
 	}
 
-	public void setVersion(Integer version) {
-		setPropertyNoPropertyPathException(VERSION_PROPERTY, version, PropertyType.INT);
+	public void setVersion(String version) {
+		setPropertyNoPropertyPathException(VERSION_PROPERTY, version, PropertyType.STRING);
 	}
 
 	/**

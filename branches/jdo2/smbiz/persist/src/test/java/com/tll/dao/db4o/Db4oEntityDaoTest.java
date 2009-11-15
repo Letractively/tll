@@ -75,7 +75,7 @@ public class Db4oEntityDaoTest extends AbstractDb4oEntityDaoTest {
 	@Override
 	protected Config doGetConfig() {
 		final Config c = Config.load(new ConfigRef("test-config.properties"));
-		c.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
+		c.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), Boolean.FALSE);
 		return c;
 	}
 

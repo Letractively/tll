@@ -22,7 +22,7 @@ public class VersionMismatchException extends ApplicationException {
 	 * @param entityVersion
 	 * @param modelVersion
 	 */
-	public VersionMismatchException(Class<? extends IEntity> entityClass, long entityVersion, long modelVersion) {
+	public VersionMismatchException(Class<? extends IEntity> entityClass, Long entityVersion, Long modelVersion) {
 		super("Version mis-match [model version: %0] [entity version: %1]", new Object[] {
 			modelVersion, entityVersion
 		});

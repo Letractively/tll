@@ -230,7 +230,7 @@ final class ListingProcessor {
 					lcache.storeHandler(sessionId, listingId, handler);
 					// cache listing state
 					if(log.isDebugEnabled()) log.debug("[Re-]Caching listing state '" + listingId + "'...");
-					lcache.storeState(sessionId, listingId, new ListingState(handler.getOffset(), handler.getSorting()));
+					lcache.storeState(sessionId, listingId, new ListingState(Integer.valueOf(handler.getOffset()), handler.getSorting()));
 					listingStatus = ListingStatus.CACHED;
 				}
 			}

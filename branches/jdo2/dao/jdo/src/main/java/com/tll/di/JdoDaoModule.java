@@ -25,11 +25,11 @@ import com.tll.dao.IEntityDao;
 import com.tll.dao.jdo.JdoEntityDao;
 import com.tll.dao.jdo.JdoTimestampListener;
 import com.tll.model.ITimeStampEntity;
+import com.tll.model.key.IPrimaryKeyGenerator;
+import com.tll.model.key.JdoPrimaryKeyGenerator;
 
 /**
- * JdoDaoModule <br>
- * <b>NOTE: </b>An <code>IPrimaryKeyGenerator</code> impl is <em>not</em> bound
- * in this module.
+ * JdoDaoModule
  * @author jpk
  */
 public class JdoDaoModule extends AbstractModule implements IConfigAware {
@@ -97,9 +97,6 @@ public class JdoDaoModule extends AbstractModule implements IConfigAware {
 			}).asEagerSingleton();
 		}
 
-		// IEntityDao
-		bind(IEntityDao.class).to(JdoEntityDao.class).in(Scopes.SINGLETON);
-
 		// create a PersistenceManager provider ensuring that we get the right one based on the current app state!
 		bind(PersistenceManager.class).toProvider(new Provider<PersistenceManager>() {
 
@@ -113,5 +110,11 @@ public class JdoDaoModule extends AbstractModule implements IConfigAware {
 		}).in(Scopes.NO_SCOPE);
 		// NOTE: we set NO_SCOPE so we always go through Spring's framework
 		// as it manages the life-cycle of PersistenceManagers
+
+		// IPrimaryKeyGenerator
+		bind(IPrimaryKeyGenerator.class).to(JdoPrimaryKeyGenerator.class).in(Scopes.SINGLETON);
+
+		// IEntityDao
+		bind(IEntityDao.class).to(JdoEntityDao.class).in(Scopes.SINGLETON);
 	}
 }

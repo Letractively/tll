@@ -151,7 +151,7 @@ public class AccountPanel extends FlowFieldPanel {
 		.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				paymentInfoPanel.enable(event.getValue());
+				paymentInfoPanel.enable(event.getValue().booleanValue());
 			}
 		});
 

@@ -72,8 +72,10 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <E extends IEntity> E load(PrimaryKey<E> key) {
+		if(logger.isDebugEnabled()) logger.debug("Loading by PK: " + key);
 		try {
 			final E e = (E) getJdoTemplate().getObjectById(key.getType(), key.getId());
+			if(logger.isDebugEnabled()) logger.debug(e + " loaded by PK");
 			return e;
 		}
 		catch(final JdoObjectRetrievalFailureException ex) {
@@ -83,8 +85,11 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 
 	@Override
 	public <E extends IEntity> E load(IBusinessKey<E> key) {
+		if(logger.isDebugEnabled()) logger.debug("Loading by BK: " + key);
 		try {
-			return findEntity(new Criteria<E>(key.getType()));
+			final E e = findEntity(new Criteria<E>(key.getType()));
+			if(logger.isDebugEnabled()) logger.debug(e + " loaded by BK");
+			return e;
 		}
 		catch(final InvalidCriteriaException e) {
 			throw new ObjectRetrievalFailureException(key.getType(), key);
@@ -93,10 +98,13 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 
 	@Override
 	public <N extends INamedEntity> N load(NameKey<N> nameKey) {
+		if(logger.isDebugEnabled()) logger.debug("Loading by NameKey: " + nameKey);
 		try {
 			final Criteria<N> nc = new Criteria<N>(nameKey.getType());
 			nc.getPrimaryGroup().addCriterion(nameKey, false);
-			return findEntity(nc);
+			final N e = findEntity(nc);
+			if(logger.isDebugEnabled()) logger.debug(e + " loaded by NameKey");
+			return e;
 		}
 		catch(final InvalidCriteriaException e) {
 			throw new ObjectRetrievalFailureException(nameKey.getType(), nameKey);
@@ -127,8 +135,13 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 
 	@SuppressWarnings("unchecked")
 	private <E extends IEntity> E persistInternal(E entity, boolean flush) {
+		if(logger.isDebugEnabled()) logger.debug("Persisting '" + entity + "'..");
 		final E saved = (E) getJdoTemplate().makePersistent(entity);
-		if(flush) getJdoTemplate().flush();
+		if(logger.isDebugEnabled()) logger.debug(saved + " persisted");
+		if(flush) {
+			if(logger.isDebugEnabled()) logger.debug("Flushing PersistenceManager after persist");
+			getJdoTemplate().flush();
+		}
 		return saved;
 	}
 
@@ -157,9 +170,13 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 		}
 	}
 
-	private <E extends IEntity> void purgeInternal(E entity, boolean flush) {
+	private <E extends IEntity> void purgeInternal(final E entity, boolean flush) {
+		if(logger.isDebugEnabled()) logger.debug("Purging " + entity);
 		getJdoTemplate().deletePersistent(entity);
-		if(flush) getJdoTemplate().flush();
+		if(flush) {
+			if(logger.isDebugEnabled()) logger.debug("Flushing PersistenceManager after purge");
+			getJdoTemplate().flush();
+		}
 	}
 
 	@Override
@@ -251,6 +268,7 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 	private <E extends IEntity> List<?> processCriteria(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
 		assert criteria != null;
+		if(logger.isDebugEnabled()) logger.debug("Processing criteria: " + criteria);
 
 		if(criteria.getCriteriaType().isQuery()) {
 			return findByNamedQuery(criteria, sorting);
@@ -321,7 +339,7 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 		if(criteria.isSet()) {
 			final CriterionGroup pg = criteria.getPrimaryGroup();
 			for(final ICriterion crit : pg) {
-				toFilter(sb, crit, pg.isConjunction());
+				toFilter(sb, crit, Boolean.valueOf(pg.isConjunction()));
 			}
 		}
 		return sb.substring(4);
@@ -348,6 +366,8 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 
 		// single (non-group) criterion
 		final String expression = comparatorTranslator.translate((Criterion) ctn);
+		if(logger.isDebugEnabled())
+			logger.debug("Criterion (" + ctn + ") translated to JDO query fragment: " + expression);
 		sb.append((conjunction == null || conjunction == Boolean.TRUE) ? " && " : " || ");
 		sb.append(expression);
 	}

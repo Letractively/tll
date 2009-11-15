@@ -54,7 +54,7 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 		final Account a = stub(Asp.class, true);
 		AccountInterface ai = stubAccountInterface(intf, a, true);
 
-		ai = getInterfaceService().loadAccountInterface(a.getId(), intf.getId());
+		ai = getInterfaceService().loadAccountInterface(a.getId().longValue(), intf.getId().longValue());
 
 		Assert.assertNotNull(ai);
 	}
@@ -63,7 +63,7 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 		final Interface intf = stubInterface(true);
 		InterfaceOptionAccount ioa = stubIoa(intf, true);
 
-		getInterfaceService().purgeAccountInterface(ioa.accountId(), intf.getId());
+		getInterfaceService().purgeAccountInterface(ioa.accountId().longValue(), intf.getId().longValue());
 
 		try {
 			ioa = getDao().load(new PrimaryKey<InterfaceOptionAccount>(InterfaceOptionAccount.class, ioa.getId()));
@@ -112,8 +112,8 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 	private AccountInterface stubAccountInterface(Interface intf, Account a, boolean persist) {
 		final IEntityFactory efactory = injector.getInstance(IEntityFactory.class);
 		final AccountInterface ai = efactory.createEntity(AccountInterface.class, false);
-		ai.setAccountId(a.getId());
-		ai.setInterfaceId(intf.getId());
+		ai.setAccountId(a.getId().longValue());
+		ai.setInterfaceId(intf.getId().longValue());
 		for(final InterfaceOption io : intf.getOptions()) {
 			final AccountInterfaceOption aio = efactory.createEntity(AccountInterfaceOption.class, false);
 			aio.setId(io.getId());

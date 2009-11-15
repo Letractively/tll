@@ -60,7 +60,7 @@ public class CharacterPropertyValue extends AbstractPropertyValue implements ISe
 	protected void doSetValue(Object obj) {
 		if(obj != null && obj instanceof Character == false) {
 			if(obj instanceof String && ((String) obj).length() == 1) {
-				this.value = ((String) obj).charAt(0);
+				this.value = Character.valueOf(((String) obj).charAt(0));
 				return;
 			}
 			throw new IllegalArgumentException("The value must be a Character");

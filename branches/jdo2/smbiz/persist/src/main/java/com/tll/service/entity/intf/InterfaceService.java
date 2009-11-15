@@ -100,9 +100,9 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 		catch(final BusinessKeyNotDefinedException e) {
 			throw new IllegalStateException(e);
 		}
-		bk.setPropertyValue("account.id", accountId);
+		bk.setPropertyValue("account.id", Long.valueOf(accountId));
 
-		final Interface intf = dao.load(new PrimaryKey<Interface>(Interface.class, interfaceId));
+		final Interface intf = dao.load(new PrimaryKey<Interface>(Interface.class, Long.valueOf(interfaceId)));
 
 		final LinkedHashSet<AccountInterfaceOption> aios = new LinkedHashSet<AccountInterfaceOption>();
 		InterfaceOptionAccount ioa;
@@ -142,8 +142,8 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 	@Override
 	public void setAccountInterface(AccountInterface accountInterface) {
 
-		final Account account = dao.load(new PrimaryKey<Account>(Account.class, accountInterface.getAccountId()));
-		final Interface intf = dao.load(new PrimaryKey<Interface>(Interface.class, accountInterface.getInterfaceId()));
+		final Account account = dao.load(new PrimaryKey<Account>(Account.class, Long.valueOf(accountInterface.getAccountId())));
+		final Interface intf = dao.load(new PrimaryKey<Interface>(Interface.class, Long.valueOf(accountInterface.getInterfaceId())));
 
 		// remove existing account subscribed options
 		IBusinessKey<InterfaceOptionAccount> bk;
@@ -153,7 +153,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 		catch(final BusinessKeyNotDefinedException e) {
 			throw new IllegalStateException(e);
 		}
-		bk.setPropertyValue("account.id", accountInterface.getAccountId());
+		bk.setPropertyValue("account.id", Long.valueOf(accountInterface.getAccountId()));
 
 		for(final InterfaceOption io : intf.getOptions()) {
 			try {
@@ -203,7 +203,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 	public void purgeAccountInterface(long accountId, long interfaceId) {
 		Interface intf;
 		try {
-			intf = load(new PrimaryKey<Interface>(Interface.class, interfaceId));
+			intf = load(new PrimaryKey<Interface>(Interface.class, Long.valueOf(interfaceId)));
 		}
 		catch(final EntityNotFoundException e) {
 			// ok
@@ -217,7 +217,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 		catch(final BusinessKeyNotDefinedException e) {
 			throw new IllegalStateException(e);
 		}
-		bk.setPropertyValue("account.id", accountId);
+		bk.setPropertyValue("account.id", Long.valueOf(accountId));
 
 		for(final InterfaceOption io : intf.getOptions()) {
 			bk.setPropertyValue("option.id", io.getId());
@@ -236,7 +236,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 	public void purgeAccountInterfacess(long accountId) {
 		final Collection<Interface> intfs = dao.loadAll(Interface.class);
 		for(final Interface i : intfs) {
-			purgeAccountInterface(accountId, i.getId());
+			purgeAccountInterface(accountId, i.getId().longValue());
 		}
 	}
 }

@@ -463,7 +463,8 @@
             diskExpiryThreadIntervalSeconds="120"
             memoryStoreEvictionPolicy="LRU"
             />
-            
+    
+    <!--         
     <jdol2cache 
             maxElementsInMemory="10000"
             eternal="false"
@@ -476,4 +477,5 @@
             diskExpiryThreadIntervalSeconds="120"
             memoryStoreEvictionPolicy="LRU"
     />
+    -->
 </ehcache>

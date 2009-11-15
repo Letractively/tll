@@ -62,6 +62,9 @@ public abstract class AbstractJdoEntityDaoTest extends AbstractEntityDaoTest<Jdo
 
 	@Override
 	protected final IEntity getEntityFromDb(PrimaryKey<IEntity> key) {
+		// we need to ensure we have a clear cache first
+		//dao.getPersistenceManagerFactory().getPersistenceManager()
+		// TODO finish
 		return dao.load(key);
 	}
 }

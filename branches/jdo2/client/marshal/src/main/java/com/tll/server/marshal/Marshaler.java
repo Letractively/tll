@@ -349,7 +349,7 @@ public final class Marshaler {
 					break;
 
 				case FLOAT:
-					val = ((Double) pval).floatValue();
+					val = Float.valueOf(((Double) pval).floatValue());
 					break;
 
 				case RELATED_ONE: {
@@ -400,7 +400,7 @@ public final class Marshaler {
 							final IEntityType indexedEntityType = indexedModel.getEntityType();
 							final Class<IEntity> indexedEntityClass =
 								(Class<IEntity>) etResolver.resolveEntityClass(indexedEntityType);
-							final long id = Long.parseLong(indexedModel.getId());
+							final Long id = Long.valueOf(indexedModel.getId());
 							final PrimaryKey<IEntity> imodelPk = new PrimaryKey<IEntity>(indexedEntityClass, id);
 
 							IEntity indexedEntity = null;
@@ -472,7 +472,7 @@ public final class Marshaler {
 
 		}// for loop
 
-		if(crntEntity.getId() == -1L) {
+		if(crntEntity.getId() == null) {
 			// assume new and set generated id
 			if(crntEntity.getVersion() != -1L) {
 				throw new IllegalArgumentException("Encountered an entity (" + crntEntity.descriptor()
@@ -532,8 +532,7 @@ public final class Marshaler {
 
 		// we convert server side ids to strings client-side
 		else if(IEntity.PK_FIELDNAME.equals(pname)) {
-			// TODO verify 'Long.toString((Long)obj)' is ok
-			prop = new StringPropertyValue(pname, pdata, Long.toString((Long) obj));
+			prop = new StringPropertyValue(pname, pdata, obj.toString());
 		}
 
 		else if(Date.class == ptype) {
@@ -566,7 +565,7 @@ public final class Marshaler {
 		}
 
 		else if(float.class == ptype || Float.class == ptype) {
-			prop = new DoublePropertyValue(pname, pdata, ((Float) obj).doubleValue());
+			prop = new DoublePropertyValue(pname, pdata, Double.valueOf(((Float) obj).doubleValue()));
 		}
 
 		else if(pdata != null && pdata.getPropertyType() == PropertyType.STRING_MAP) {

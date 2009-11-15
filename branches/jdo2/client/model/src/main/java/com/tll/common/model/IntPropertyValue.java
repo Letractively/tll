@@ -65,7 +65,7 @@ public class IntPropertyValue extends AbstractPropertyValue implements ISelfForm
 			this.value = (Integer) obj;
 		}
 		else if(obj instanceof Number) {
-			this.value = ((Number) obj).intValue();
+			this.value = Integer.valueOf(((Number) obj).intValue());
 		}
 		else {
 			throw new IllegalArgumentException("The value must be an Integer");

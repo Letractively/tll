@@ -10,13 +10,10 @@ import java.net.URISyntaxException;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import com.google.inject.Scopes;
 import com.tll.di.AbstractModelModule;
 import com.tll.di.EGraphModule;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.IEntityGraphPopulator;
-import com.tll.model.key.IPrimaryKeyGenerator;
-import com.tll.model.key.SimplePrimaryKeyGenerator;
 import com.tll.model.test.TestPersistenceUnitEntityAssembler;
 import com.tll.model.test.TestPersistenceUnitEntityGraphBuilder;
 import com.tll.util.ClassUtil;
@@ -30,15 +27,6 @@ public class TestPersistenceUnitModule implements Module {
 	private static final String DEFAULT_BEANDEF_FILENAME = "com/tll/model/test/mock-entities.xml";
 
 	/**
-	 * The default impl is {@link SimplePrimaryKeyGenerator}. Override as
-	 * necessary.
-	 * @return The {@link IPrimaryKeyGenerator} impl type.
-	 */
-	protected Class<? extends IPrimaryKeyGenerator> getPrimaryKeyGeneratorImplType() {
-		return SimplePrimaryKeyGenerator.class;
-	}
-
-	/**
 	 * @return The desired filename of the classpath resource holding the Spring
 	 *         bean factory entity definitions.
 	 */
@@ -47,15 +35,6 @@ public class TestPersistenceUnitModule implements Module {
 	}
 
 	private final Module[] mods = new Module[] {
-
-		// IPrimaryKeyGenerator
-		new Module() {
-
-			@Override
-			public void configure(Binder binder) {
-				binder.bind(IPrimaryKeyGenerator.class).to(getPrimaryKeyGeneratorImplType()).in(Scopes.SINGLETON);
-			}
-		},
 
 		new AbstractModelModule() {
 

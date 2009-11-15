@@ -108,14 +108,14 @@ IUserRef {
 	 * @return the locked
 	 */
 	@NotNull
-	public Boolean getLocked() {
+	public boolean getLocked() {
 		return locked;
 	}
 
 	/**
 	 * @param locked the locked to set
 	 */
-	public void setLocked(Boolean locked) {
+	public void setLocked(boolean locked) {
 		this.locked = locked;
 	}
 
@@ -213,13 +213,13 @@ IUserRef {
 		setAccount(e);
 	}
 
-	public long accountId() {
+	public Long accountId() {
 		try {
 			return getAccount().getId();
 		}
 		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
-			return -1;
+			return null;
 		}
 	}
 

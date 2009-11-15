@@ -84,7 +84,7 @@ public class BusinessKeyFactoryTest {
 
 	private TestEntity stubTestEntity() {
 		final TestEntity e = new TestEntity();
-		e.setId(1);
+		e.setId(Long.valueOf(1));
 		e.setName("name");
 		e.setCode(1);
 		e.setAuthNum("authNum");

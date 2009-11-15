@@ -114,22 +114,22 @@ public class CustomerAccount extends TimeStampEntity implements IChildEntity<Acc
 		setAccount(e);
 	}
 
-	public long accountId() {
+	public Long accountId() {
 		try {
 			return getAccount().getId();
 		}
 		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
-			return -1;
+			return null;
 		}
 	}
 
-	public long customerId() {
+	public Long customerId() {
 		try {
 			return getCustomer().getId();
 		}
 		catch(final NullPointerException npe) {
-			return -1;
+			return null;
 		}
 	}
 }

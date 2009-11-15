@@ -84,7 +84,9 @@ public final class EntityBeanFactory {
 	 * @param <E>
 	 * @param e the entity to be altered
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({
+		"unchecked", "boxing"
+	})
 	public static <E extends IEntity> void makeBusinessKeyUnique(E e) {
 		IBusinessKeyDefinition<E>[] bkdefs;
 		try {
@@ -210,6 +212,7 @@ public final class EntityBeanFactory {
 				makeBusinessKeyUnique(e);
 			}
 		}
+		log.debug("Entity copy created: " + e);
 		return e;
 	}
 

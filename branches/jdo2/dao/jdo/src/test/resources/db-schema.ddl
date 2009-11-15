@@ -26,7 +26,7 @@ create table currency (
    name varchar(64) not null unique,
    symbol varchar(8) not null unique,
    iso_4217 varchar(16) not null unique,
-   usd_exchange_rate float,
+   usd_exchange_rate float not null,
    unique(iso_4217),
    primary key (id)
 );

@@ -20,7 +20,7 @@ public abstract class EntityBase implements IEntity {
 
 	protected static final Log LOG = LogFactory.getLog(EntityBase.class);
 
-	private long id;
+	private Long id;
 
 	private boolean generated;
 
@@ -38,12 +38,13 @@ public abstract class EntityBase implements IEntity {
 	 * @param id the id of the entity to find
 	 * @return the found entity or null if not found
 	 */
-	protected final static <E extends IEntity> E findEntityInCollection(Collection<E> clc, Integer id) {
-		if(id == null || clc == null) {
+	protected final static <E extends IEntity> E findEntityInCollection(Collection<E> clc, long id) {
+		if(clc == null) {
 			return null;
 		}
 		for(final E e : clc) {
-			if(id.equals(e.getId())) {
+			final long eid = e.getId() == null ? -1 : e.getId().longValue();
+			if(id == eid) {
 				return e;
 			}
 		}
@@ -163,7 +164,7 @@ public abstract class EntityBase implements IEntity {
 	 * Constructor
 	 * @param id
 	 */
-	public EntityBase(long id) {
+	public EntityBase(Long id) {
 		this();
 		setId(id);
 	}
@@ -174,11 +175,11 @@ public abstract class EntityBase implements IEntity {
 	}
 
 	@NotNull
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -192,7 +193,7 @@ public abstract class EntityBase implements IEntity {
 	 * @param id the id to set
 	 */
 	public void setGenerated(long id) {
-		setId(id);
+		setId(Long.valueOf(id));
 		generated = true;
 	}
 
@@ -212,7 +213,7 @@ public abstract class EntityBase implements IEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + (int) (version ^ (version >>> 32));
 		return result;
 	}
@@ -223,7 +224,10 @@ public abstract class EntityBase implements IEntity {
 		if(obj == null) return false;
 		if(getClass() != obj.getClass()) return false;
 		final EntityBase other = (EntityBase) obj;
-		if(id != other.id) return false;
+		if(id == null) {
+			if(other.id != null) return false;
+		}
+		else if(!id.equals(other.id)) return false;
 		if(version != other.version) return false;
 		return true;
 	}

@@ -17,11 +17,9 @@ import com.tll.config.IConfigAware;
 import com.tll.dao.IDbTrans;
 import com.tll.dao.jdo.test.JdoTrans;
 import com.tll.di.JdoDaoModule;
-import com.tll.di.JdoRdbmsIdGeneratorModule;
 
 /**
- * TestJdoDaoModule - Binds the modules: {@link JdoDaoModule} and
- * {@link JdoRdbmsIdGeneratorModule}.
+ * TestJdoDaoModule - Binds JDO stuff necessary for testing.
  * @author jpk
  */
 public class TestJdoDaoModule implements Module, IConfigAware {
@@ -53,8 +51,7 @@ public class TestJdoDaoModule implements Module, IConfigAware {
 
 		new JdoDaoModule(config).configure(binder);
 
-		new JdoRdbmsIdGeneratorModule().configure(binder);
-
+		// ad hoc IDbTrans binding
 		(new Module() {
 
 			@Override

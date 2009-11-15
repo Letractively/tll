@@ -1,7 +1,5 @@
 package com.tll.model;
 
-//import javax.jdo.annotations.PersistenceAware;
-
 import com.google.inject.Inject;
 import com.tll.model.key.IPrimaryKeyGenerator;
 import com.tll.util.StringUtil;
@@ -11,7 +9,6 @@ import com.tll.util.StringUtil;
  * created for insert into the persistence store.
  * @author jpk
  */
-//@PersistenceAware
 public final class EntityFactory implements IEntityFactory {
 
 	/**

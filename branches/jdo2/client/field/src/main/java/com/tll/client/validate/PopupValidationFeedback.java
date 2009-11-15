@@ -47,7 +47,7 @@ public class PopupValidationFeedback extends AbstractErrorHandler implements IHa
 		if(error.getTarget() != null) {
 			final ErrorClassifier sourcing = error.getClassifier();
 			mregistry.getOrCreateOperator(error.getTarget().getWidget()).addMsgs((error).getMessages(),
-					sourcing == null ? null : sourcing.hashCode());
+					sourcing == null ? null : Integer.valueOf(sourcing.hashCode()));
 		}
 	}
 

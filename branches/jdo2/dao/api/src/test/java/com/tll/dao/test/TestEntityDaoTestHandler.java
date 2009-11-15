@@ -54,6 +54,7 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 		pkNestedEntity = new PrimaryKey<NestedEntity>(nestedEntity);
 
 		Account parent = create(Account.class, true);
+		parent.setName("parent account");
 		parent.setParent(null); // eliminate pointer chasing
 		parent.setCurrency(currency);
 		parent.setNestedEntity(nestedEntity);

@@ -22,7 +22,7 @@
     <slfVersion>1.5.6</slfVersion>
 
 		<jdo2apiVersion>2.3-eb</jdo2apiVersion>
-		<datanucleusVersion>1.1.6</datanucleusVersion>
+		<datanucleusVersion>2.0.0-m3</datanucleusVersion>
     <mysqlConnectorVersion>5.1.6</mysqlConnectorVersion>
     
     <gwtVersion>0.0.0</gwtVersion>
@@ -493,12 +493,12 @@
       <dependency>
         <groupId>org.datanucleus</groupId>
         <artifactId>datanucleus-cache</artifactId>
-        <version>1.1.1</version>
+        <version>2.0.0-m2</version>
       </dependency>
       <dependency>
         <groupId>org.datanucleus</groupId>
         <artifactId>datanucleus-connectionpool</artifactId>
-        <version>1.0.2</version>
+        <version>2.0.0-m1</version>
       </dependency>
       <dependency>
         <groupId>org.datanucleus</groupId>
@@ -508,7 +508,7 @@
       <dependency>
         <groupId>org.datanucleus</groupId>
         <artifactId>datanucleus-enhancer</artifactId>
-        <version>1.1.4</version>
+        <version>${datanucleusVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.datanucleus</groupId>

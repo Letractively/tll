@@ -19,7 +19,7 @@
 			<field name="country" />
 			<field name="phone" />
 			<field name="fax" />
-			<field name="emailAddress" unique="true" />
+			<field name="emailAddress" />
 		</class>
 
 		<class name="Currency" detachable="true" identity-type="application">

@@ -62,7 +62,7 @@
 				<column name="iso_4217" jdbc-type="VARCHAR" length="16" allows-null="false" />
 			</field>
 			<field name="usdExchangeRate" unique="true">
-				<column name="usd_exchange_rate" jdbc-type="FLOAT" />
+				<column name="usd_exchange_rate" jdbc-type="FLOAT" allows-null="false" />
 			</field>
 		</class>
 
@@ -88,7 +88,7 @@
 				<foreign-key name="fk_a_ne" delete-action="null" />
 			</field>
 			<field name="currency">
-				<column name="cur_id" jdbc-type="BIGINT" allows-null="false" />
+				<column name="cur_id" jdbc-type="BIGINT" />
 				<foreign-key name="fk_a_c" delete-action="null" />
 			</field>
 			<field name="status">

@@ -168,7 +168,7 @@ public class Account extends NamedTimeStampEntity implements IChildEntity<Accoun
 		this.addresses = addresses;
 	}
 
-	public AccountAddress getAccountAddress(int id) {
+	public AccountAddress getAccountAddress(long id) {
 		return findEntityInCollection(this.addresses, id);
 	}
 

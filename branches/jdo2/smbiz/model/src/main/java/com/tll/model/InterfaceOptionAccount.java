@@ -162,22 +162,22 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 		setAccount(e);
 	}
 
-	public long accountId() {
+	public Long accountId() {
 		try {
 			return getAccount().getId();
 		}
 		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
-			return -1;
+			return null;
 		}
 	}
 
-	public long optionId() {
+	public Long optionId() {
 		try {
 			return getOption().getId();
 		}
 		catch(final NullPointerException npe) {
-			return -1;
+			return null;
 		}
 	}
 }

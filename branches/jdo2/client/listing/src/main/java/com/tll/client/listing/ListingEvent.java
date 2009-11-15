@@ -63,7 +63,7 @@ public final class ListingEvent<R> extends GwtEvent<IListingHandler<R>> {
 		numPages =
 			(listSize % pageSize == 0) ? (int) (listSize / (double) pageSize) : (int) Math
 					.round(listSize
-						/ (double) pageSize + 0.5d);
+							/ (double) pageSize + 0.5d);
 	}
 
 	@Override
@@ -93,11 +93,11 @@ public final class ListingEvent<R> extends GwtEvent<IListingHandler<R>> {
 		return pageElements;
 	}
 
-	public Integer getListSize() {
+	public int getListSize() {
 		return listSize;
 	}
 
-	public Integer getOffset() {
+	public int getOffset() {
 		return offset;
 	}
 

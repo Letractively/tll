@@ -92,13 +92,13 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 		// create the db shell first (before test injector creation) to avoid db4o
 		// file lock when objectcontainer is instantiated
 		final Config cfg = getConfig();
-		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
+		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), Boolean.FALSE);
 		final Injector i = buildInjector(new TestDb4oDaoModule(cfg), new Db4oDbShellModule() );
 		final IDbShell dbs = i.getInstance(IDbShell.class);
 		dbs.delete();
 		dbs.create();
 
-		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), true);
+		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), Boolean.TRUE);
 		super.beforeClass();
 		injector.getInstance(PlatformTransactionManager.class);	// bind @Transactional
 	}

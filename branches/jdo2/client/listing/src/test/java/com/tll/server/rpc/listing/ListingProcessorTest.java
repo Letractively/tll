@@ -118,7 +118,7 @@ public class ListingProcessorTest extends AbstractDbAwareTest {
 	public void testRefresh() throws Exception {
 		final ListingContext context = getListingContext();
 
-		final ListingRequest request = new ListingRequest(listingId1, getListingDef(), ListingOp.REFRESH, 0, null);
+		final ListingRequest request = new ListingRequest(listingId1, getListingDef(), ListingOp.REFRESH, Integer.valueOf(0), null);
 
 		final ListingPayload<Model> p = processor.process(ssnId1, context, request);
 

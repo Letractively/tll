@@ -24,7 +24,8 @@ public class SimplePrimaryKeyGenerator implements IPrimaryKeyGenerator {
 		if(nextId == null) {
 			nextId = Long.valueOf(0);
 		}
-		idMap.put(rootEntityClass, ++nextId);
-		return nextId;
+		nextId = Long.valueOf(nextId.longValue()+1);
+		idMap.put(rootEntityClass, nextId);
+		return nextId.longValue();
 	}
 }

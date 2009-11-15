@@ -6,11 +6,15 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.inject.Binder;
 import com.google.inject.Module;
+import com.google.inject.Scopes;
 import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.IDbShell;
 import com.tll.di.test.JdbcDbShellModule;
 import com.tll.di.test.TestPersistenceUnitModule;
+import com.tll.model.key.IPrimaryKeyGenerator;
+import com.tll.model.key.SimplePrimaryKeyGenerator;
 
 /**
  * JdbcDbShellTest
@@ -27,6 +31,13 @@ public class JdbcDbShellTest extends AbstractDbAwareTest {
 
 	@Override
 	protected void addModules(List<Module> modules) {
+		modules.add(new Module() {
+
+			@Override
+			public void configure(Binder binder) {
+				binder.bind(IPrimaryKeyGenerator.class).to(SimplePrimaryKeyGenerator.class).in(Scopes.SINGLETON);
+			}
+		});
 		modules.add(new TestPersistenceUnitModule());
 		modules.add(new JdbcDbShellModule(getConfig()));
 	}

@@ -475,13 +475,14 @@ public final class UITests extends AbstractUITest {
 
 				@Override
 				public void onEdit(EditEvent event) {
-					Integer version;
+					String version;
 
 					// mimic model persist life-cycle
 					assert m != null;
 					final Model mcopy = m.copy(mcrit);
 					version = mcopy.getVersion();
-					mcopy.setVersion(version == null ? 0 : version++);
+					Integer iversion = Integer.valueOf(version);
+					mcopy.setVersion(version == null ? null : Integer.toString(iversion.intValue()+1));
 					ArrayList<Model> alist = null;
 					List<Model> existing;
 					final RelatedManyProperty ap = mcopy.relatedMany("addresses");
@@ -491,7 +492,8 @@ public final class UITests extends AbstractUITest {
 						for(final Model am : existing) {
 							if(!am.isMarkedDeleted()) {
 								version = am.getVersion();
-								am.setVersion(version == null ? 0 : version++);
+								iversion = Integer.valueOf(version);
+								am.setVersion(version == null ? null : Integer.toString(iversion.intValue()+1));
 								alist.add(am);
 							}
 						}

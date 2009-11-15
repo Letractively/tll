@@ -65,7 +65,7 @@ public class LongPropertyValue extends AbstractPropertyValue implements ISelfFor
 			this.value = Long.valueOf(((Integer) obj).longValue());
 		}
 		else if(obj instanceof Number) {
-			this.value = ((Number) obj).longValue();
+			this.value = Long.valueOf(((Number) obj).longValue());
 		}
 		else {
 			throw new IllegalArgumentException("The value must be a Long");

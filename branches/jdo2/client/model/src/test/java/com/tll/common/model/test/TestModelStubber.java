@@ -147,7 +147,7 @@ public class TestModelStubber {
 				"firstname " + num));
 		address.set(new StringPropertyValue("lastName", new PropertyMetadata(PropertyType.STRING, false, true, 32),
 				"lastname " + num));
-		address.set(new CharacterPropertyValue("mi", new PropertyMetadata(PropertyType.CHAR, false, false, 1), 'm'));
+		address.set(new CharacterPropertyValue("mi", new PropertyMetadata(PropertyType.CHAR, false, false, 1), Character.valueOf('m')));
 		address.set(new StringPropertyValue("address1", new PropertyMetadata(PropertyType.STRING, false, true, 32),
 				"address1 " + num));
 		address.set(new StringPropertyValue("address2", new PropertyMetadata(PropertyType.STRING, false, false, 32),
@@ -166,10 +166,10 @@ public class TestModelStubber {
 				Boolean.TRUE));
 
 		// test float prop types..
-		address.set(new DoublePropertyValue("float", new PropertyMetadata(PropertyType.FLOAT, false, true, 8), 33.33d));
+		address.set(new DoublePropertyValue("float", new PropertyMetadata(PropertyType.FLOAT, false, true, 8), Double.valueOf(33.33d)));
 
 		// test double prop types..
-		address.set(new DoublePropertyValue("double", new PropertyMetadata(PropertyType.DOUBLE, false, true, 8), 44.44d));
+		address.set(new DoublePropertyValue("double", new PropertyMetadata(PropertyType.DOUBLE, false, true, 8), Double.valueOf(44.44d)));
 
 		return address;
 	}
@@ -182,7 +182,7 @@ public class TestModelStubber {
 		final Model m = stubModel(TestEntityType.CURRENCY, null, false, null);
 		m.set(new StringPropertyValue("iso4217", new PropertyMetadata(PropertyType.STRING, false, true, 8), "usd"));
 		m.set(new StringPropertyValue("symbol", new PropertyMetadata(PropertyType.STRING, false, true, 8), "$"));
-		m.set(new DoublePropertyValue("usdExchangeRage", new PropertyMetadata(PropertyType.DOUBLE, false, true, -1), 1d));
+		m.set(new DoublePropertyValue("usdExchangeRage", new PropertyMetadata(PropertyType.DOUBLE, false, true, -1), Double.valueOf(1d)));
 		return m;
 	}
 
@@ -204,10 +204,10 @@ public class TestModelStubber {
 		"4111111111111111"));
 		m.set(new StringPropertyValue("paymentData_ccCvv2", new PropertyMetadata(PropertyType.STRING, false, false, 16),
 		"834"));
-		m.set(new IntPropertyValue("paymentData_ccExpMonth", new PropertyMetadata(PropertyType.INT, false, false, 16), 8));
+		m.set(new IntPropertyValue("paymentData_ccExpMonth", new PropertyMetadata(PropertyType.INT, false, false, 16), Integer.valueOf(8)));
 		m
 		.set(new IntPropertyValue("paymentData_ccExpYear", new PropertyMetadata(PropertyType.INT, false, false, 16),
-				2012));
+				Integer.valueOf(2012)));
 		m.set(new StringPropertyValue("paymentData_ccName", new PropertyMetadata(PropertyType.STRING, false, false, 16),
 		"cc name"));
 		m.set(new StringPropertyValue("paymentData_ccAddress1",

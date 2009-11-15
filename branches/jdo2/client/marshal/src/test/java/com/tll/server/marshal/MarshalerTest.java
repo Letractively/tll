@@ -208,7 +208,7 @@ public class MarshalerTest extends AbstractConfigAwareTest {
 		final Account rea = marshaler.marshalModel(m, e);
 		Assert.assertTrue(e == rea);
 		Assert.assertTrue(e.equals(rea));
-		Assert.assertEquals(rea.getVersion(), m.getProperty(Model.VERSION_PROPERTY));
+		Assert.assertEquals(Long.valueOf(rea.getVersion()), Long.valueOf(m.getVersion()));
 		Assert.assertTrue(e.getAddresses() != null);
 		Assert.assertTrue(e.getAddresses().size() == 1);
 		Assert.assertTrue(e.getAddresses().iterator().next().equals(aa2));

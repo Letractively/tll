@@ -7,6 +7,8 @@ package com.tll.dao;
 
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.testng.Assert;
 
 import com.tll.criteria.Criteria;
@@ -21,6 +23,8 @@ import com.tll.model.key.PrimaryKey;
  * @author jpk
  */
 public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements IEntityDaoTestHandler<E> {
+
+	protected final Log log = LogFactory.getLog(getClass());
 
 	private IEntityDao entityDao;
 	private EntityBeanFactory entityBeanFactory;
@@ -41,6 +45,7 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	 * @return New entity copy
 	 */
 	protected final <D extends IEntity> D create(Class<D> entityType, boolean makeUnique) {
+		log.debug("Creating " + (makeUnique ? "UNIQUE" : "NON-UNIQUE") + " entity of type: " + entityType);
 		return entityBeanFactory.getEntityCopy(entityType, makeUnique);
 	}
 
@@ -61,6 +66,7 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	 * @return the loaded entity
 	 */
 	protected final <D extends IEntity> D load(PrimaryKey<D> key) {
+		log.debug("Loading entity by primary key: " + key);
 		return entityDao.load(key);
 	}
 
@@ -71,6 +77,7 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	 * @return The persisted entity
 	 */
 	protected final <D extends IEntity> D persist(D entity) {
+		log.debug("Persisting entity: " + entity);
 		return entityDao.persist(entity);
 	}
 
@@ -80,6 +87,7 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	 * @param entity
 	 */
 	protected final <D extends IEntity> void purge(D entity) {
+		log.debug("Purging entity: " + entity);
 		entityDao.purge(entity);
 	}
 
@@ -89,6 +97,7 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	 * @param key
 	 */
 	protected final <D extends IEntity> void purge(PrimaryKey<D> key) {
+		log.debug("Purging entity by primary key: " + key);
 		entityDao.purge(key);
 	}
 
@@ -126,7 +135,7 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 
 	@Override
 	public final void teardownTestEntity(E e) {
-		entityDao.purge(e);
+		purge(e);
 	}
 
 	@Override

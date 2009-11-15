@@ -27,7 +27,7 @@ public final class ListingRequest implements IModelRelatedRequest {
 	private ListingOp listingOp;
 	private Integer offset;
 	private Sorting sorting;
-	private Boolean retainStateOnClear = Boolean.TRUE;
+	private boolean retainStateOnClear = true;
 
 	/**
 	 * Constructor
@@ -78,7 +78,7 @@ public final class ListingRequest implements IModelRelatedRequest {
 	 * @param retainStateOnClear Retain the server side state when the listing is
 	 *        cleared on the server?
 	 */
-	public ListingRequest(String listingId, Boolean retainStateOnClear) {
+	public ListingRequest(String listingId, boolean retainStateOnClear) {
 		super();
 		this.listingId = listingId;
 		this.listingOp = ListingOp.CLEAR;
@@ -131,7 +131,7 @@ public final class ListingRequest implements IModelRelatedRequest {
 	 * Retain the listing state upon clear?
 	 * @return true/false
 	 */
-	public Boolean getRetainStateOnClear() {
+	public boolean getRetainStateOnClear() {
 		return retainStateOnClear;
 	}
 }

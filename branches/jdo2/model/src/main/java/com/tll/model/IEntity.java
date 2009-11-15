@@ -23,7 +23,7 @@ public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvi
 	/**
 	 * @return The id of the entity
 	 */
-	long getId();
+	Long getId();
 
 	/**
 	 * True if the identifier for this object was assigned at creation.<br>

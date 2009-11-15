@@ -87,7 +87,7 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 				if(!payload.hasErrors()) {
 					// we need to re-create the listing on the server - the cache has
 					// expired
-					fetch(listingRequest.getOffset(), listingRequest.getSorting(), true);
+					fetch(listingRequest.getOffset().intValue(), listingRequest.getSorting(), true);
 				}
 			}
 			else {
@@ -146,7 +146,7 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 	 */
 	private void fetch(int ofst, Sorting srtg, boolean refresh) {
 		this.listingRequest =
-			new ListingRequest(listingId, listingDef, refresh ? ListingOp.REFRESH : ListingOp.FETCH, ofst, srtg);
+			new ListingRequest(listingId, listingDef, refresh ? ListingOp.REFRESH : ListingOp.FETCH, Integer.valueOf(ofst), srtg);
 		execute();
 	}
 
@@ -162,7 +162,7 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 	 */
 	@Override
 	protected void doFetch(int ofst, Sorting srtg) {
-		listingRequest = new ListingRequest(listingId, ofst, srtg);
+		listingRequest = new ListingRequest(listingId, Integer.valueOf(ofst), srtg);
 		execute();
 	}
 

@@ -260,7 +260,7 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 		return getCollectionSize(addresses);
 	}
 
-	public long accountId() {
+	public Long accountId() {
 		return super.getId();
 	}
 }

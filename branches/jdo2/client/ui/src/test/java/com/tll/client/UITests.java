@@ -237,7 +237,7 @@ public final class UITests extends AbstractUITest {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					registry.getOperator(refWidget, false).addMsgs(Arrays.asList(allCMsgs), classifier);
+					registry.getOperator(refWidget, false).addMsgs(Arrays.asList(allCMsgs), Integer.valueOf(classifier));
 				}
 			}));
 			buttonPanel.add(new Button("Remove classified Messages", new ClickHandler() {
@@ -615,10 +615,11 @@ public final class UITests extends AbstractUITest {
 
 					@Override
 					public void onClick(ClickEvent event) {
-						gmp.add(stubMsgs(MsgLevel.INFO, classifier, 1), classifier);
-						gmp.add(stubMsgs(MsgLevel.WARN, classifier, 1), classifier);
-						gmp.add(stubMsgs(MsgLevel.ERROR, classifier, 1), classifier);
-						gmp.add(stubMsgs(MsgLevel.FATAL, classifier, 1), classifier);
+						final Integer igr = Integer.valueOf(classifier);
+						gmp.add(stubMsgs(MsgLevel.INFO, igr, 1), igr);
+						gmp.add(stubMsgs(MsgLevel.WARN, igr, 1), igr);
+						gmp.add(stubMsgs(MsgLevel.ERROR, igr, 1), igr);
+						gmp.add(stubMsgs(MsgLevel.FATAL, igr, 1), igr);
 					}
 				}),
 				new Button("Show Size", new ClickHandler() {

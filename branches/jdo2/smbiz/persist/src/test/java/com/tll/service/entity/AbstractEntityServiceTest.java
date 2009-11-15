@@ -107,7 +107,7 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 				Db4oDaoModule.ConfigKeys.DB4O_FILENAME.getKey()));
 		cfg.addProperty(Db4oDaoModule.ConfigKeys.DB_TRANS_TIMEOUT.getKey(), getConfig().getProperty(
 				Db4oDaoModule.ConfigKeys.DB_TRANS_TIMEOUT.getKey()));
-		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
+		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), Boolean.FALSE);
 		final Injector i = buildInjector(new SmbizDb4oDaoModule(cfg), new Db4oDbShellModule());
 		final IDbShell dbs = i.getInstance(IDbShell.class);
 

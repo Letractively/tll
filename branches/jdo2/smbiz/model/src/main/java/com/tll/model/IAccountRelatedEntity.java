@@ -11,5 +11,5 @@ public interface IAccountRelatedEntity {
 	/**
 	 * @return The id of the account to which this entity is related.
 	 */
-	long accountId();
+	Long accountId();
 }

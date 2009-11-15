@@ -1,5 +1,5 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.dao;
 
@@ -66,7 +66,7 @@ public class ShipBoundCostDaoTestHandler extends AbstractEntityDaoTestHandler<Sh
 	@Override
 	public void verifyEntityAlteration(ShipBoundCost e) throws Exception {
 		super.verifyEntityAlteration(e);
-		Assert.assertEquals(e.getCost(), 44.44f);
+		Assert.assertTrue(e.getCost() == 44.44f);
 	}
 
 }

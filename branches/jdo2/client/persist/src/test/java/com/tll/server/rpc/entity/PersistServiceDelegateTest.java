@@ -21,7 +21,6 @@ import com.tll.common.data.ModelPayload;
 import com.tll.common.data.PersistRequest;
 import com.tll.common.data.PurgeRequest;
 import com.tll.common.model.CharacterPropertyValue;
-import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 import com.tll.common.model.StringPropertyValue;
@@ -86,7 +85,7 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 		// create the db shell first (before test injector creation) to avoid db4o
 		// file lock when objectcontainer is instantiated
 		final Config cfg = Config.load();
-		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), false);
+		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), Boolean.FALSE);
 		final Injector i = buildInjector(new TestDb4oDaoModule(cfg), new Db4oDbShellModule() );
 		final IDbShell dbs = i.getInstance(IDbShell.class);
 		dbs.delete();
@@ -129,11 +128,11 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 
 		// add test entity to db first
 		final Address a = getEntityBeanFactory().getEntityCopy(Address.class, true);
-		final long id = a.getId();
+		final Long id = a.getId();
 		addEntityToDb(a);
 
 		final PersistServiceDelegate delegate = getDelegate();
-		final PrimaryKeySearch search = new PrimaryKeySearch(new ModelKey(TestEntityType.ADDRESS, Long.toString(id), null));
+		final PrimaryKeySearch search = new PrimaryKeySearch(new ModelKey(TestEntityType.ADDRESS, id.toString(), null));
 		final LoadRequest<PrimaryKeySearch> request = new LoadRequest<PrimaryKeySearch>(search);
 		final ModelPayload p = delegate.load(request);
 
@@ -164,7 +163,7 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 		m.set(new StringPropertyValue("fax", "2223334444"));
 		m.set(new StringPropertyValue("firstName", "First"));
 		m.set(new StringPropertyValue("lastName", "Last"));
-		m.set(new CharacterPropertyValue("mi", 'm'));
+		m.set(new CharacterPropertyValue("mi", Character.valueOf('m')));
 		m.set(new StringPropertyValue("phone", "1112223333"));
 		m.set(new StringPropertyValue("postalCode", "48104"));
 		m.set(new StringPropertyValue("province", "MI"));
@@ -175,8 +174,8 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 		assert m != null;
 		assert m.getId() != null && m.getId().equals("10000") && m.getEntityType() != null
 		&& m.getEntityType().equals(TestEntityType.ADDRESS);
-		final Object ov = m.getProperty("version");
-		assert ov != null && ov.equals(0);
+		final String sov = m.getVersion();
+		assert sov != null && sov.equals("0");
 	}
 
 	/**
@@ -189,14 +188,14 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 	public void testUpdate() throws Exception {
 		// add test entity to db first
 		final Address a = getEntityBeanFactory().getEntityCopy(Address.class, true);
-		final long id = a.getId();
+		final Long id = a.getId();
 		addEntityToDb(a);
 
 		final PersistServiceDelegate delegate = getDelegate();
 
 		Model m = new Model(TestEntityType.ADDRESS);
-		m.set(new IntPropertyValue(Model.VERSION_PROPERTY, 0));
-		m.set(new StringPropertyValue(Model.ID_PROPERTY, Long.toString(id)));
+		m.set(new StringPropertyValue(Model.VERSION_PROPERTY, "0"));
+		m.set(new StringPropertyValue(Model.ID_PROPERTY, id.toString()));
 		m.set(new StringPropertyValue("address1", "1 changed street"));
 		m.set(new StringPropertyValue("address2", "2 beechange"));
 		m.set(new StringPropertyValue("city", "change city"));
@@ -207,8 +206,8 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 		assert m != null;
 		assert m.getId() != null && m.getId().equals(id) && m.getEntityType() != null
 		&& m.getEntityType().equals(TestEntityType.ADDRESS);
-		final Object ov = m.getProperty("version");
-		assert ov != null && ov.equals(1);
+		final String ov = m.getVersion();
+		assert ov != null && ov.equals("1");
 	}
 
 	/**
@@ -221,11 +220,11 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 	public void testDelete() throws Exception {
 		// add test entity to db first
 		final Address a = getEntityBeanFactory().getEntityCopy(Address.class, true);
-		final long id = a.getId();
+		final Long id = a.getId();
 		addEntityToDb(a);
 
 		final PersistServiceDelegate delegate = getDelegate();
-		final ModelKey origMk = new ModelKey(TestEntityType.ADDRESS, Long.toString(id), null);
+		final ModelKey origMk = new ModelKey(TestEntityType.ADDRESS, id.toString(), null);
 		final ModelPayload p = delegate.purge(new PurgeRequest(origMk));
 		assert p != null;
 		final ModelKey mk = p.getRef();

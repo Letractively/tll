@@ -195,7 +195,7 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 	}
 
 	@Override
-	public long accountId() {
-		return accountId;
+	public Long accountId() {
+		return Long.valueOf(accountId);
 	}
 }

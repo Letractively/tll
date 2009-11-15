@@ -1,5 +1,5 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.dao;
 
@@ -48,7 +48,7 @@ public class SalesTaxDaoTestHandler extends AbstractEntityDaoTestHandler<SalesTa
 	public void verifyLoadedEntityState(SalesTax e) throws Exception {
 		super.verifyLoadedEntityState(e);
 		Assert.assertNotNull(e.getAccount());
-		Assert.assertNotNull(e.getTax());
+		Assert.assertTrue(e.getTax() != 0f);
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class SalesTaxDaoTestHandler extends AbstractEntityDaoTestHandler<SalesTa
 	@Override
 	public void verifyEntityAlteration(SalesTax e) throws Exception {
 		super.verifyEntityAlteration(e);
-		Assert.assertEquals(e.getTax(), 33.33f);
+		Assert.assertTrue(e.getTax() == 33.33f);
 	}
 
 }

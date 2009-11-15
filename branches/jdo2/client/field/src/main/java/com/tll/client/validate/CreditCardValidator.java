@@ -31,13 +31,13 @@ public class CreditCardValidator implements IValidator {
 
 			final List<Integer> ints = new ArrayList<Integer>();
 			for(final char c : chars) {
-				if(Character.isDigit(c)) ints.add(c - '0');
+				if(Character.isDigit(c)) ints.add(Integer.valueOf(c - '0'));
 			}
 			final int length = ints.size();
 			int sum = 0;
 			boolean even = false;
 			for(int index = length - 1; index >= 0; index--) {
-				int digit = ints.get(index);
+				int digit = ints.get(index).intValue();
 				if(even) {
 					digit *= 2;
 				}
