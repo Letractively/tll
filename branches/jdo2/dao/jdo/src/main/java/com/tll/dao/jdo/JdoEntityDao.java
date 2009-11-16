@@ -16,6 +16,7 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
+import org.apache.commons.lang.math.NumberRange;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.ObjectRetrievalFailureException;
 import org.springframework.orm.jdo.JdoCallback;
@@ -43,6 +44,7 @@ import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
 import com.tll.util.CollectionUtil;
+import com.tll.util.DateRange;
 
 /**
  * JdoEntityDao
@@ -50,13 +52,9 @@ import com.tll.util.CollectionUtil;
  */
 public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 
-	/**
-	 * The comparator translator.
-	 * <p>
-	 * <strong>NOTE: </strong>To retain thread safety, do <pm>not</pm> publish
-	 * this member.
-	 */
-	private final JdoQueryComparatorTranslator comparatorTranslator;
+	private static final String Q_AND = " && ";
+
+	private static final String Q_OR = " || ";
 
 	/**
 	 * Constructor
@@ -66,7 +64,6 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 	public JdoEntityDao(PersistenceManagerFactory pmf) {
 		super();
 		setPersistenceManagerFactory(pmf);
-		comparatorTranslator = new JdoQueryComparatorTranslator();
 	}
 
 	@Override
@@ -137,16 +134,16 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 	private <E extends IEntity> E persistInternal(E entity, boolean flush) {
 		if(logger.isDebugEnabled()) logger.debug("Persisting '" + entity + "'..");
 		final E saved = (E) getJdoTemplate().makePersistent(entity);
-		if(logger.isDebugEnabled()) logger.debug(saved + " persisted");
 		if(flush) {
 			if(logger.isDebugEnabled()) logger.debug("Flushing PersistenceManager after persist");
 			getJdoTemplate().flush();
 		}
+		if(logger.isDebugEnabled()) logger.debug(saved + " persisted");
 		return saved;
 	}
 
 	@Override
-	public <E extends IEntity> void purge(E entity) {
+	public <E extends IEntity> void purge(E entity) throws EntityNotFoundException, DataAccessException {
 		purgeInternal(entity, true);
 	}
 
@@ -237,7 +234,7 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 			public Object doInJdo(PersistenceManager pm) throws JDOException {
 				final Query query = pm.newNamedQuery(entityClass, qname);
 				if(sorting != null) {
-					query.setOrdering(sorting.toString());
+					query.setOrdering(sorting.getJdoOrderingClause());
 				}
 				return query.executeWithMap(values);
 			}
@@ -276,10 +273,11 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 
 		// translate to a jdo query
 		final Query q = getPersistenceManager().newQuery(criteria.getEntityClass());
-		final String filter = toFilter(criteria);
+		final ArrayList<Object> params = new ArrayList<Object>();
+		final String filter = toFilter(criteria, params);
 		q.setFilter(filter);
 		if(sorting != null) {
-			q.setOrdering(sorting.toString());
+			q.setOrdering(sorting.getJdoOrderingClause());
 		}
 
 		return (List<?>) getJdoTemplate().executeFind(new JdoCallback() {
@@ -287,7 +285,7 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 			@Override
 			public Object doInJdo(PersistenceManager pm) throws JDOException {
 				try {
-					final List<?> list = (List<?>) q.execute();
+					final List<?> list = (List<?>) q.executeWithArray(params.toArray(new Object[] {}));
 					return getJdoTemplate().detachCopyAll(list);
 				}
 				finally {
@@ -328,21 +326,22 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 
 		// apply sorting (if specified)
 		if(sorting != null) {
-			q.setOrdering(sorting.toString());
+			q.setOrdering(sorting.getJdoOrderingClause());
 		}
 
 		return q;
 	}
 
-	private <E extends IEntity> String toFilter(Criteria<E> criteria) {
+	private <E extends IEntity> String toFilter(Criteria<E> criteria, final ArrayList<Object> params) {
 		final StringBuilder sb = new StringBuilder();
 		if(criteria.isSet()) {
 			final CriterionGroup pg = criteria.getPrimaryGroup();
 			for(final ICriterion crit : pg) {
-				toFilter(sb, crit, Boolean.valueOf(pg.isConjunction()));
+				toFilter(sb, crit, Boolean.valueOf(pg.isConjunction()), params);
 			}
 		}
-		return sb.substring(4);
+		if(sb.indexOf(Q_AND) == 0 || sb.indexOf(Q_OR) == 0) sb.delete(0, 4);
+		return sb.toString();
 	}
 
 	/**
@@ -351,41 +350,163 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 	 * @param ctn the criterion
 	 * @param conjunction <code>true</code> ==> (... 'AND' ...),
 	 *        <code>false</code> ==> (... 'OR' ..), <code>null</code> ==> 'AND'
+	 * @param params the ordered list of implicit params needed in some cases
 	 */
-	private <E extends IEntity> void toFilter(StringBuilder sb, ICriterion ctn, Boolean conjunction) {
+	private <E extends IEntity> void toFilter(StringBuilder sb, ICriterion ctn, Boolean conjunction, final ArrayList<Object> params) {
 		if(!ctn.isSet()) return;
 		if(ctn.isGroup()) {
 			final CriterionGroup g = (CriterionGroup) ctn;
 			sb.append(" (");
 			for(final ICriterion c : g) {
-				toFilter(sb, c, conjunction);
+				if(sb.indexOf(Q_AND) == 0 || sb.indexOf(Q_OR) == 0) sb.delete(0, 4);
+				toFilter(sb, c, conjunction, params);
 			}
 			sb.append(')');
 			return;
 		}
 
+		sb.append((conjunction == null || conjunction == Boolean.TRUE) ? Q_AND : Q_OR);
+
 		// single (non-group) criterion
-		final String expression = comparatorTranslator.translate((Criterion) ctn);
+		assert ctn instanceof Criterion;
+		final Criterion crtn = (Criterion) ctn;
+		final String name = crtn.getField();
+		final Object value = crtn.getValue();
+		switch(crtn.getComparator()) {
+		case BETWEEN: {
+			Object min, max;
+			if(value instanceof NumberRange) {
+				final NumberRange range = (NumberRange) value;
+				min = range.getMinimumNumber();
+				max = range.getMaximumNumber();
+			}
+			else if(value instanceof DateRange) {
+				final DateRange range = (DateRange) value;
+				min = range.getStartDate();
+				max = range.getEndDate();
+			}
+			else {
+				// presume an object array
+				final Object[] oarr = (Object[]) value;
+				min = oarr[0];
+				max = oarr[1];
+			}
+			if(min != null && max != null) {
+				sb.append(name);
+				sb.append(" >= ");
+				sb.append(min);
+				sb.append(" && ");
+				sb.append(name);
+				sb.append(" <= ");
+				sb.append(max);
+			}
+			break;
+		}
+		case CONTAINS:
+			if(value instanceof String) {
+				// NOTE: case sensitive clause
+				sb.append(name);
+				sb.append(".contains(\"");
+				sb.append(value);
+				sb.append("\")");
+			}
+			break;
+		case ENDS_WITH:
+			if(value instanceof String) {
+				// NOTE: case sensitive clause
+				sb.append(name);
+				sb.append(".endsWith(\"");
+				sb.append(value);
+				sb.append("\")");
+			}
+			break;
+		case EQUALS:
+			if(value instanceof String) {
+				sb.append(name);
+				sb.append(" == \"");
+				sb.append(value);
+				sb.append("\"");
+			}
+			else {
+				sb.append(name);
+				sb.append(" == ");
+				sb.append(value);
+			}
+			break;
+		case GREATER_THAN:
+			sb.append(name);
+			sb.append(" > ");
+			sb.append(value);
+			break;
+		case GREATER_THAN_EQUALS:
+			sb.append(name);
+			sb.append(" >= ");
+			sb.append(value);
+			break;
+		case IN:
+			if(value instanceof Collection<?>) {
+				sb.append(":");
+				// NOTE[TODO]: may need to ensure param name uniqueness in the query param namespace
+				sb.append(name);
+				sb.append(".contains(");
+				sb.append(name);
+				sb.append(")");
+				params.add(value);
+			}
+			break;
+		case IS:
+			// not supported
+			break;
+		case LESS_THAN:
+			sb.append(name);
+			sb.append(" < ");
+			sb.append(value);
+			break;
+		case LESS_THAN_EQUALS:
+			sb.append(name);
+			sb.append(" <= ");
+			sb.append(value);
+			break;
+		case LIKE:
+			// not supported
+			break;
+		case NOT_EQUALS:
+			if(value instanceof String) {
+				// NOTE: case sensitive clause
+				sb.append(name);
+				sb.append(" != \"");
+				sb.append(value);
+				sb.append("\"");
+			}
+			else {
+				sb.append(name);
+				sb.append(" == ");
+				sb.append(value);
+			}
+			break;
+		case STARTS_WITH:
+			if(value instanceof String) {
+				// NOTE: case sensitive clause
+				sb.append(name);
+				sb.append(".startsWith(\"");
+				sb.append(value);
+				sb.append("\"");
+			}
+			break;
+		}
+		if(sb.length() < 1) {
+			throw new UnsupportedOperationException("Un-supported criterion state: " + crtn);
+		}
 		if(logger.isDebugEnabled())
-			logger.debug("Criterion (" + ctn + ") translated to JDO query fragment: " + expression);
-		sb.append((conjunction == null || conjunction == Boolean.TRUE) ? " && " : " || ");
-		sb.append(expression);
+			logger.debug("Criterion (" + ctn + ") translated to JDO query fragment: " + sb.toString());
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> List<E> findByIds(Class<E> entityType, Collection<Long> ids, Sorting sorting) {
-		final Query q = getPersistenceManager().newQuery(entityType);
-		final HashMap<String, Object> params = new HashMap<String, Object>();
-		params.put(IEntity.PK_FIELDNAME, ids);
-		q.setOrdering(sorting.toString());
-		final List<E> rval = (List<E>) getJdoTemplate().executeFind(new JdoCallback() {
-
-			@Override
-			public Object doInJdo(PersistenceManager pm) throws JDOException {
-				return q.executeWithMap(params);
-			}
-		});
+	public <E extends IEntity> List<E> findByIds(Class<E> entityType, final Collection<Long> ids, Sorting sorting) {
+		final List<E> rval = (List<E>) getJdoTemplate().find(entityType, ":ids.contains(this.id)", null, new Object[] {
+			ids
+		}, sorting == null ? null : sorting.getJdoOrderingClause());
 		return rval;
 	}
 
@@ -397,13 +518,31 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 		}
 		final PersistenceManager pm = getPersistenceManager();
 		final Query q = pm.newQuery(criteria.getEntityClass());
-		final String filter = toFilter(criteria);
+		final ArrayList<Object> params = new ArrayList<Object>();
+		final String filter = toFilter(criteria, params);
 		q.setFilter(filter);
-		if(sorting != null) {
-			q.setOrdering(sorting.toString());
-		}
+		if(sorting != null) q.setOrdering(sorting.getJdoOrderingClause());
 		q.setResult(IEntity.PK_FIELDNAME);
-		return (List<Long>) getJdoTemplate().find(Query.JDOQL, q);
+		final List<Long> rval = (List<Long>) getJdoTemplate().executeFind(new JdoCallback() {
+
+			@Override
+			public Object doInJdo(PersistenceManager thePm) throws JDOException {
+				try {
+					final List<Long> list = (List<Long>) q.executeWithArray(params.toArray(new Object[] {}));
+					// we need to "detach" the result from the query else JDO bitches
+					// TODO: make more efficient
+					final ArrayList<Long> rlist = new ArrayList<Long>(list.size());
+					for(int i = 0; i < list.size(); i++) {
+						rlist.add(list.get(i));
+					}
+					return rlist;
+				}
+				finally {
+					q.closeAll();
+				}
+			}
+		});
+		return rval;
 	}
 
 	@Override
@@ -428,11 +567,11 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 			Query cq = null;
 			try {
 				cq = getPersistenceManager().newQuery(criteria.getEntityClass());
-				cq.setFilter(toFilter(criteria));
-				cq.setUnique(true);
-				cq.setGrouping("count(id)");
-				final Integer rowCount = (Integer) cq.execute();
-				assert rowCount != null;
+				final ArrayList<Object> params = new ArrayList<Object>();
+				cq.setFilter(toFilter(criteria, params));
+				cq.setResult("count(id)");
+				final Long rowCount = (Long) cq.executeWithArray(params.toArray(new Object[] {}));
+				assert rowCount != null && rowCount.longValue() <= Integer.MAX_VALUE;
 				totalCount = rowCount.intValue();
 			}
 			finally {
@@ -442,11 +581,11 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 			Query q = null;
 			try {
 				q = getPersistenceManager().newQuery(criteria.getEntityClass());
-				q.setFilter(toFilter(criteria));
+				final ArrayList<Object> params = new ArrayList<Object>();
+				q.setFilter(toFilter(criteria, params));
 				q.setRange(offset, offset + pageSize);
-				q.setResultClass(SearchResult.class);
-				final List<SearchResult<E>> list = (List<SearchResult<E>>) q.execute();
-				rlist = (List<SearchResult<E>>) getPersistenceManager().detachCopyAll(list);
+				final List<E> list = (List<E>) q.executeWithArray(params.toArray(new Object[] {}));
+				rlist = SearchResult.create(list);
 			}
 			finally {
 				if(q != null) q.closeAll();

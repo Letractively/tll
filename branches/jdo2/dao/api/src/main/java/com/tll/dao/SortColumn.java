@@ -9,7 +9,7 @@ import com.tll.model.schema.IPropertyNameProvider;
  * Represents a sort directive for a single "column".
  * @author jpk
  */
-public class SortColumn implements Serializable, IMarshalable, IPropertyNameProvider {
+public final class SortColumn implements Serializable, IMarshalable, IPropertyNameProvider {
 
 	private static final long serialVersionUID = -4966927388892147102L;
 
@@ -209,12 +209,29 @@ public class SortColumn implements Serializable, IMarshalable, IPropertyNameProv
 	}
 
 	/**
-	 * @return SQL valid order by sub-clause.
-	 *         <p>
+	 * @return SQL valid order by clause. <br>
 	 *         NOTE: Does NOT account for the ignoreCase flag.
+	 * @see #getSqlOrderByClause()
 	 */
 	@Override
 	public String toString() {
-		return (parentAlias == null ? "" : parentAlias + ".") + propertyName + " " + getDirection().getSqlclause();
+		return getSqlOrderByClause();
+	}
+
+	/**
+	 * @return The SQL compliant <code>ORDER BY</code> clause. <br>
+	 *         NOTE: Does NOT account for the <code>ignoreCase</code> flag.
+	 */
+	public String getSqlOrderByClause() {
+		return (parentAlias == null ? "" : parentAlias + ".") + propertyName + " " + getDirection().getSqlClause();
+	}
+
+	/**
+	 * @return The JDO2 compliant ordering clause <br>
+	 *         NOTE: Does NOT account for the ignoreCase flag. <br>
+	 *         NOTE: Ignores <code>parentAlias</code> (for now).
+	 */
+	public String getJdoOrderingClause() {
+		return propertyName + " " + getDirection().getJdoqlClause();
 	}
 }

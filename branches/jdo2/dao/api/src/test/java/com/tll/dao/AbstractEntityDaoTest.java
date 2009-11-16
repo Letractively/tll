@@ -342,7 +342,9 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 				final Method[] dms = clz.getDeclaredMethods();
 				if(dms != null) {
 					for(final Method m : dms) {
-						if(m.getName().startsWith("dao")) {
+						// TODO temp!
+						if(m.getName().equals("daoPage")) {
+							//if(m.getName().startsWith("dao")) {
 							testMethods.add(m);
 						}
 					}
@@ -452,11 +454,13 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		setComplete();
 		try {
 			e = getEntityFromDb(new PrimaryKey<IEntity>(e));
-			endTransaction();
 			Assert.assertNull(e, "The entity was not purged");
 		}
 		catch(final EntityNotFoundException ex) {
 			// expected
+		}
+		finally {
+			endTransaction();
 		}
 	}
 
@@ -478,7 +482,6 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		e = dao.persist(e);
 		setComplete();
 		endTransaction();
-		// final Integer persistentId = e.getId();
 
 		// retrieve by name key if applicable..
 		if(INamedEntity.class.isAssignableFrom(entityHandler.entityClass())) {
@@ -515,6 +518,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	 * Tests the find by ids method
 	 * @throws Exception
 	 */
+	@SuppressWarnings("null")
 	final void daoFindByIds() throws Exception {
 		IEntity e = getTestEntity();
 		e = dao.persist(e);
@@ -527,7 +531,8 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		ids.add(e.getId());
 		final List<IEntity> list = dao.findByIds(entityHandler.entityClass(), ids, null);
 		endTransaction();
-		Assert.assertTrue(list != null && list.size() == 1, "find by ids returned null list");
+		Assert.assertTrue(list != null, "find by ids returned null list");
+		Assert.assertTrue(list.size() == 1, "find by ids returned list of size: " + list.size());
 	}
 
 	/**

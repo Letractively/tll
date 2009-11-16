@@ -8,23 +8,29 @@ import com.tll.INameValueProvider;
  * @author jpk
  */
 public enum SortDir implements INameValueProvider<String>, IMarshalable {
-	ASC("Ascending", "asc"),
-	DESC("Descending", "desc");
+	ASC("Ascending", "asc", "ascending"),
+	DESC("Descending", "desc", "descending");
 
 	private final String name;
-	private final String sqlclause;
+	private final String sqlClause;
+	private final String jdoqlClause;
 
-	SortDir(String name, String sqlclause) {
+	SortDir(String name, String sqlclause, String jdoqlClause) {
 		this.name = name;
-		this.sqlclause = sqlclause;
+		this.sqlClause = sqlclause;
+		this.jdoqlClause = jdoqlClause;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public String getSqlclause() {
-		return sqlclause;
+	public String getSqlClause() {
+		return sqlClause;
+	}
+
+	public String getJdoqlClause() {
+		return jdoqlClause;
 	}
 
 	public String getValue() {
@@ -33,6 +39,6 @@ public enum SortDir implements INameValueProvider<String>, IMarshalable {
 
 	@Override
 	public String toString() {
-		return name().toLowerCase();
+		return name();
 	}
 }

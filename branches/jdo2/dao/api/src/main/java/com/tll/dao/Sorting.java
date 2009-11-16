@@ -128,19 +128,41 @@ public class Sorting implements IMarshalable {
 	}
 
 	/**
-	 * @return SQL valid order by clause.
-	 * @see SortColumn#toString()
+	 * @return SQL compliant <code>ORDER BY</code> clause.
 	 */
-	@Override
-	public String toString() {
+	public String getSqlOrderByClause() {
 		if(size() < 1) return "";
 		final StringBuilder sb = new StringBuilder();
 		for(int i = 0; i < columns.length; i++) {
-			sb.append(columns[i].toString());
+			sb.append(columns[i].getSqlOrderByClause());
 			if(i < columns.length - 1) {
 				sb.append(", ");
 			}
 		}
 		return sb.toString();
+	}
+
+	/**
+	 * @return JDO2 compliant <em>ordering</em> clause
+	 */
+	public String getJdoOrderingClause() {
+		if(size() < 1) return "";
+		final StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < columns.length; i++) {
+			sb.append(columns[i].getJdoOrderingClause());
+			if(i < columns.length - 1) {
+				sb.append(", ");
+			}
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * @return SQL valid order by clause.
+	 * @see SortColumn#toString()
+	 */
+	@Override
+	public String toString() {
+		return getSqlOrderByClause();
 	}
 }
