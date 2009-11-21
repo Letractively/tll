@@ -108,15 +108,15 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	 * @param inclusionProperties May be <code>null</code>
 	 * @return New list of transormed {@link SearchResult}s.
 	 */
-	private static <E extends IEntity> List<SearchResult<?>> transformEntityList(final List<E> entityList,
+	private static <E extends IEntity> List<SearchResult> transformEntityList(final List<E> entityList,
 			final Collection<String> inclusionProperties) {
-		final List<SearchResult<?>> slist = new ArrayList<SearchResult<?>>(entityList.size());
+		final List<SearchResult> slist = new ArrayList<SearchResult>(entityList.size());
 		for(final E e : entityList) {
 			if(inclusionProperties != null) {
-				slist.add(new SearchResult<IScalar>(scalarize(e, inclusionProperties)));
+				slist.add(new SearchResult(scalarize(e, inclusionProperties)));
 			}
 			else {
-				slist.add(new SearchResult<E>(e));
+				slist.add(new SearchResult(e));
 			}
 		}
 		return slist;
@@ -205,7 +205,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	}
 
 	@Override
-	public <E extends IEntity> List<SearchResult<?>> find(Criteria<E> criteria, Sorting sorting)
+	public <E extends IEntity> List<SearchResult> find(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException, DataAccessException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
@@ -421,11 +421,11 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	}
 
 	@Override
-	public <E extends IEntity> IPageResult<SearchResult<?>> getPage(Criteria<E> criteria, Sorting sorting, int offset,
+	public <E extends IEntity> IPageResult<SearchResult> getPage(Criteria<E> criteria, Sorting sorting, int offset,
 			int pageSize) throws InvalidCriteriaException, DataAccessException {
-		List<SearchResult<?>> elist = find(criteria, sorting);
+		List<SearchResult> elist = find(criteria, sorting);
 		if(elist == null) {
-			elist = new ArrayList<SearchResult<?>>();
+			elist = new ArrayList<SearchResult>();
 		}
 		final int size = elist.size();
 		if(size >= 1) {
@@ -439,11 +439,11 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 			}
 			elist = elist.subList(fi, li);
 		}
-		final List<SearchResult<?>> subList = elist;
-		return new IPageResult<SearchResult<?>>() {
+		final List<SearchResult> subList = elist;
+		return new IPageResult<SearchResult>() {
 
 			@Override
-			public List<SearchResult<?>> getPageList() {
+			public List<SearchResult> getPageList() {
 				return subList;
 			}
 

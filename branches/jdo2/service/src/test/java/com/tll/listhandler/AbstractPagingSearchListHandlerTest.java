@@ -153,10 +153,10 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 
 		final Criteria<Address> criteria = new Criteria<Address>(Address.class);
 		final Sorting sorting = new Sorting(new SortColumn("emailAddress"));
-		final IListHandler<SearchResult<?>> listHandler =
+		final IListHandler<SearchResult> listHandler =
 			ListHandlerFactory.create(criteria, sorting, ListHandlerType.PAGE, dataProvider);
 
-		List<SearchResult<?>> list;
+		List<SearchResult> list;
 
 		list = listHandler.getElements(0, pageSize, sorting);
 		assert (list != null && list.size() == pageSize) : "getElements() size mismatch";
@@ -167,7 +167,7 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 		list = listHandler.getElements(pageSize * 2, pageSize, sorting);
 		assert (list != null && list.size() == pageSize) : "getElements() size mismatch";
 
-		final List<SearchResult<?>> alist = listHandler.getElements(0, elements.size(), sorting);
+		final List<SearchResult> alist = listHandler.getElements(0, elements.size(), sorting);
 		assert alist.size() == elements.size();
 
 		for(int i = 0; i < elements.size(); i++) {

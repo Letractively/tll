@@ -29,6 +29,7 @@
 		</class>
 
 		<class name="NestedEntity" detachable="true" identity-type="application">
+			<!-- <field name="nestedData" serialized="true" /> -->
 			<field name="nestedData" serialized="true" />
 		</class>
 

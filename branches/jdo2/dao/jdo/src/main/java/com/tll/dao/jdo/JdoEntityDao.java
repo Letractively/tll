@@ -18,6 +18,7 @@ import javax.jdo.Query;
 
 import org.apache.commons.lang.math.NumberRange;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.ObjectRetrievalFailureException;
 import org.springframework.orm.jdo.JdoCallback;
 import org.springframework.orm.jdo.JdoObjectRetrievalFailureException;
@@ -25,13 +26,13 @@ import org.springframework.orm.jdo.support.JdoDaoSupport;
 
 import com.google.inject.Inject;
 import com.tll.criteria.Criteria;
-import com.tll.criteria.CriteriaType;
 import com.tll.criteria.Criterion;
 import com.tll.criteria.CriterionGroup;
 import com.tll.criteria.ICriterion;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.InvalidCriteriaException;
+import com.tll.dao.EntityExistsException;
 import com.tll.dao.EntityNotFoundException;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.IPageResult;
@@ -55,6 +56,44 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 	private static final String Q_AND = " && ";
 
 	private static final String Q_OR = " || ";
+
+	/**
+	 * QueryExec - Encapsulates the needed assets for executing a JDO
+	 * {@link Query}.
+	 * @author jpk
+	 */
+	static final class QueryExec {
+
+		final Query q;
+		final HashMap<String, Object> params;
+
+		/**
+		 * Constructor
+		 * @param q
+		 * @param params
+		 */
+		public QueryExec(Query q, HashMap<String, Object> params) {
+			super();
+			this.q = q;
+			this.params = params;
+		}
+	} // QueryExec
+
+	/**
+	 * Transforms an arbitrary collection to a list of wrapping
+	 * {@link SearchResult} instances.
+	 * @param clc The collection
+	 * @return Newly created list {@link SearchResult} instances where each is a
+	 *         wrapper around the corres. element in the given collection.
+	 */
+	private static List<SearchResult> toSearchResultList(Collection<?> clc) {
+		if(clc == null) return null;
+		final ArrayList<SearchResult> rlist = new ArrayList<SearchResult>(clc.size());
+		for(final Object o : clc) {
+			rlist.add(new SearchResult(o));
+		}
+		return rlist;
+	}
 
 	/**
 	 * Constructor
@@ -133,13 +172,18 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 	@SuppressWarnings("unchecked")
 	private <E extends IEntity> E persistInternal(E entity, boolean flush) {
 		if(logger.isDebugEnabled()) logger.debug("Persisting '" + entity + "'..");
-		final E saved = (E) getJdoTemplate().makePersistent(entity);
-		if(flush) {
-			if(logger.isDebugEnabled()) logger.debug("Flushing PersistenceManager after persist");
-			getJdoTemplate().flush();
+		try {
+			final E saved = (E) getJdoTemplate().makePersistent(entity);
+			if(flush) {
+				if(logger.isDebugEnabled()) logger.debug("Flushing PersistenceManager after persist");
+				getJdoTemplate().flush();
+			}
+			if(logger.isDebugEnabled()) logger.debug(saved + " persisted");
+			return saved;
 		}
-		if(logger.isDebugEnabled()) logger.debug(saved + " persisted");
-		return saved;
+		catch(final DataIntegrityViolationException e) {
+			throw new EntityExistsException("Entity '" + entity.descriptor() + "' is not-unique.", e);
+		}
 	}
 
 	@Override
@@ -169,10 +213,15 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 
 	private <E extends IEntity> void purgeInternal(final E entity, boolean flush) {
 		if(logger.isDebugEnabled()) logger.debug("Purging " + entity);
-		getJdoTemplate().deletePersistent(entity);
-		if(flush) {
-			if(logger.isDebugEnabled()) logger.debug("Flushing PersistenceManager after purge");
-			getJdoTemplate().flush();
+		try {
+			getJdoTemplate().deletePersistent(entity);
+			if(flush) {
+				if(logger.isDebugEnabled()) logger.debug("Flushing PersistenceManager after purge");
+				getJdoTemplate().flush();
+			}
+		}
+		catch(final JdoObjectRetrievalFailureException e) {
+			throw new EntityNotFoundException(entity.descriptor() + " not found.", e);
 		}
 	}
 
@@ -180,13 +229,8 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 	@SuppressWarnings("unchecked")
 	public <E extends IEntity> List<E> findEntities(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
-		if(criteria == null) {
-			throw new InvalidCriteriaException("No criteria specified.");
-		}
-		if(criteria.getCriteriaType() == null || criteria.getCriteriaType().isScalar()) {
-			throw new InvalidCriteriaException("A criteria type must be specified and be non-scalar.");
-		}
-		return (List<E>) processCriteria(criteria, sorting);
+		final List<E> rval = (List<E>) executeQueryClc(criteria2Query(criteria, sorting, null));
+		return rval;
 	}
 
 	@Override
@@ -205,134 +249,111 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> List<SearchResult<?>> find(Criteria<E> criteria, Sorting sorting)
+	public <E extends IEntity> List<SearchResult> find(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
+		return (List<SearchResult>) executeQueryClc(criteria2Query(criteria, sorting, null));
+	}
+
+	/**
+	 * Transforms a native {@link Criteria} instance to a JDO {@link Query}
+	 * instance wrapped in a {@link QueryExec} instance in order to provide query
+	 * parameters and declarations.
+	 * @param <E>
+	 * @param criteria
+	 * @param sorting
+	 * @param queryNameOverride Optional query name that overrides the given
+	 *        criteria's query name property
+	 * @return A new {@link QueryExec} instance.
+	 * @throws InvalidCriteriaException When the criteria is found to be invalid
+	 */
+	private <E extends IEntity> QueryExec criteria2Query(final Criteria<E> criteria, final Sorting sorting,
+			String queryNameOverride) throws InvalidCriteriaException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
 		}
 		if(criteria.getCriteriaType() == null) {
 			throw new InvalidCriteriaException("A criteria type must be specified.");
 		}
-		return (List<SearchResult<?>>) processCriteria(criteria, sorting);
-	}
+		if(logger.isDebugEnabled()) logger.debug("Transforming criteria: " + criteria);
 
-	@SuppressWarnings("unchecked")
-	private <E extends IEntity> List<SearchResult<E>> findByNamedQuery(final Criteria<E> criteria, final Sorting sorting)
-	throws DataAccessException {
-		final Class<E> entityClass = criteria.getEntityClass();
-		final ISelectNamedQueryDef qd = criteria.getNamedQueryDefinition();
-		final String qname = qd.getQueryName();
-		final HashMap<String, Object> values = new HashMap<String, Object>();
-		final Collection<IQueryParam> qps = criteria.getQueryParams();
-		if(qps != null) {
-			for(final IQueryParam qp : criteria.getQueryParams()) {
-				values.put(qp.getPropertyName(), qp.getValue());
-			}
-		}
-		final Collection<E> clc = (Collection<E>) getJdoTemplate().execute(new JdoCallback() {
-
-			public Object doInJdo(PersistenceManager pm) throws JDOException {
-				final Query query = pm.newNamedQuery(entityClass, qname);
-				if(sorting != null) {
-					query.setOrdering(sorting.getJdoOrderingClause());
-				}
-				return query.executeWithMap(values);
-			}
-		}, true);
-
-		if(clc == null) {
-			return null;
-		}
-
-		final ArrayList<SearchResult<E>> rval = new ArrayList<SearchResult<E>>();
-		for(final E e : clc) {
-			rval.add(new SearchResult<E>(e));
-		}
-		return rval;
-	}
-
-	/**
-	 * Process criteria instances providing a distinct list of matching results
-	 * whose elements are either {@link SearchResult} or {@link IEntity} instances
-	 * depending on the specified {@link CriteriaType}.
-	 * @param <E>
-	 * @param criteria Assumed non-<code>null</code>.
-	 * @param sorting The optional sorting directive
-	 * @return List of distinct matching results
-	 * @throws InvalidCriteriaException When the criteria type is invalid or
-	 *         otherwise.
-	 */
-	private <E extends IEntity> List<?> processCriteria(Criteria<E> criteria, Sorting sorting)
-	throws InvalidCriteriaException {
-		assert criteria != null;
-		if(logger.isDebugEnabled()) logger.debug("Processing criteria: " + criteria);
+		Query q = null;
+		final HashMap<String, Object> params = new HashMap<String, Object>();
 
 		if(criteria.getCriteriaType().isQuery()) {
-			return findByNamedQuery(criteria, sorting);
+			// named query?
+			final Class<E> entityClass = criteria.getEntityClass();
+			final ISelectNamedQueryDef qd = criteria.getNamedQueryDefinition();
+			final String qname = queryNameOverride == null ? qd.getQueryName() : queryNameOverride;
+			final List<IQueryParam> qps = criteria.getQueryParams();
+			if(qps != null) {
+				for(final IQueryParam qp : criteria.getQueryParams()) {
+					params.put(qp.getPropertyName(), qp.getValue());
+				}
+			}
+			q = getPersistenceManager().newNamedQuery(entityClass, qname);
+		}
+		else {
+			// dynamic query
+			q = getPersistenceManager().newQuery(criteria.getEntityClass());
+			final String filter = toFilter(criteria, params);
+			q.setFilter(filter);
 		}
 
-		// translate to a jdo query
-		final Query q = getPersistenceManager().newQuery(criteria.getEntityClass());
-		final ArrayList<Object> params = new ArrayList<Object>();
-		final String filter = toFilter(criteria, params);
-		q.setFilter(filter);
 		if(sorting != null) {
 			q.setOrdering(sorting.getJdoOrderingClause());
 		}
 
-		return (List<?>) getJdoTemplate().executeFind(new JdoCallback() {
+		if(logger.isDebugEnabled()) logger.debug("'" + criteria + "' transformed to JDO query: '" + q + "'");
+		return new QueryExec(q, params);
+	}
+
+	/**
+	 * Executes a query whose results are assumed to be a collection.
+	 * @param <E>
+	 * @param qe a {@link QueryExec} instance
+	 * @return newly created list of detached query result elements
+	 */
+	private <E extends IEntity> List<?> executeQueryClc(final QueryExec qe) {
+		final List<?> rval = (List<?>) getJdoTemplate().executeFind(new JdoCallback() {
 
 			@Override
 			public Object doInJdo(PersistenceManager pm) throws JDOException {
 				try {
-					final List<?> list = (List<?>) q.executeWithArray(params.toArray(new Object[] {}));
+					final List<?> list = (List<?>) qe.q.executeWithMap(qe.params);
 					return getJdoTemplate().detachCopyAll(list);
 				}
 				finally {
-					q.closeAll();
+					qe.q.closeAll();
 				}
 			}
 		});
+		return rval;
 	}
 
 	/**
-	 * Translates native criteria to a new jdo query instance.
-	 * @param entityClass
-	 * @param queryName
-	 * @param queryParams
-	 * @param sorting
-	 * @param cacheable Is this query cacheable?
-	 * @return New Query instance
-	 * @throws InvalidCriteriaException When no query name is specified in the
-	 *         given criteria.
+	 * Executes a query whose results are assumed to be a single object.
+	 * @param <E>
+	 * @param qe a {@link QueryExec} instance
+	 * @return the detached single query result object
 	 */
-	private Query assembleQuery(Class<? extends IEntity> entityClass, String queryName,
-			Collection<IQueryParam> queryParams, Sorting sorting, boolean cacheable) throws InvalidCriteriaException {
-		if(queryName == null) {
-			throw new InvalidCriteriaException("No query name specified.");
-		}
+	private <E extends IEntity> Object executeQuerySingle(final QueryExec qe) {
+		final Object rval = getJdoTemplate().executeFind(new JdoCallback() {
 
-		final Query q = getPersistenceManager().newNamedQuery(entityClass, queryName);
-
-		// fill the named params (if any)
-		if(queryParams != null && queryParams.size() > 0) {
-			final StringBuilder sb = new StringBuilder();
-			for(final IQueryParam queryParam : queryParams) {
-				sb.append(",");
-				sb.append(queryParam.getPropertyName());
+			@Override
+			public Object doInJdo(PersistenceManager pm) throws JDOException {
+				try {
+					final Object obj = qe.q.executeWithMap(qe.params);
+					return getJdoTemplate().detachCopy(obj);
+				}
+				finally {
+					qe.q.closeAll();
+				}
 			}
-			q.declareParameters(sb.substring(1));
-		}
-
-		// apply sorting (if specified)
-		if(sorting != null) {
-			q.setOrdering(sorting.getJdoOrderingClause());
-		}
-
-		return q;
+		});
+		return rval;
 	}
 
-	private <E extends IEntity> String toFilter(Criteria<E> criteria, final ArrayList<Object> params) {
+	private <E extends IEntity> String toFilter(Criteria<E> criteria, final HashMap<String, Object> params) {
 		final StringBuilder sb = new StringBuilder();
 		if(criteria.isSet()) {
 			final CriterionGroup pg = criteria.getPrimaryGroup();
@@ -350,9 +371,10 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 	 * @param ctn the criterion
 	 * @param conjunction <code>true</code> ==> (... 'AND' ...),
 	 *        <code>false</code> ==> (... 'OR' ..), <code>null</code> ==> 'AND'
-	 * @param params the ordered list of implicit params needed in some cases
+	 * @param params map of parameter declarations
 	 */
-	private <E extends IEntity> void toFilter(StringBuilder sb, ICriterion ctn, Boolean conjunction, final ArrayList<Object> params) {
+	private <E extends IEntity> void toFilter(StringBuilder sb, ICriterion ctn, Boolean conjunction,
+			final HashMap<String, Object> params) {
 		if(!ctn.isSet()) return;
 		if(ctn.isGroup()) {
 			final CriterionGroup g = (CriterionGroup) ctn;
@@ -372,6 +394,7 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 		final Criterion crtn = (Criterion) ctn;
 		final String name = crtn.getField();
 		final Object value = crtn.getValue();
+		String param;
 		switch(crtn.getComparator()) {
 		case BETWEEN: {
 			Object min, max;
@@ -393,12 +416,16 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 			}
 			if(min != null && max != null) {
 				sb.append(name);
-				sb.append(" >= ");
-				sb.append(min);
+				sb.append(" >= :");
+				param = "p_" + Math.abs(min.hashCode());
+				sb.append(param);
+				params.put(param, min);
 				sb.append(" && ");
 				sb.append(name);
-				sb.append(" <= ");
-				sb.append(max);
+				sb.append(" <= :");
+				param = "p_" + Math.abs(max.hashCode());
+				sb.append(param);
+				params.put(param, max);
 			}
 			break;
 		}
@@ -429,29 +456,35 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 			}
 			else {
 				sb.append(name);
-				sb.append(" == ");
-				sb.append(value);
+				sb.append(" == :");
+				param = "p_" + Math.abs(value.hashCode());
+				sb.append(param);
+				params.put(param, value);
 			}
 			break;
 		case GREATER_THAN:
 			sb.append(name);
-			sb.append(" > ");
-			sb.append(value);
+			sb.append(" > :");
+			param = "p_" + Math.abs(value.hashCode());
+			sb.append(param);
+			params.put(param, value);
 			break;
 		case GREATER_THAN_EQUALS:
 			sb.append(name);
-			sb.append(" >= ");
-			sb.append(value);
+			sb.append(" >= :");
+			param = "p_" + Math.abs(value.hashCode());
+			sb.append(param);
+			params.put(param, value);
 			break;
 		case IN:
 			if(value instanceof Collection<?>) {
+				param = "p_" + Math.abs(ctn.hashCode());
 				sb.append(":");
-				// NOTE[TODO]: may need to ensure param name uniqueness in the query param namespace
-				sb.append(name);
+				sb.append(param);
 				sb.append(".contains(");
 				sb.append(name);
 				sb.append(")");
-				params.add(value);
+				params.put(param, value);
 			}
 			break;
 		case IS:
@@ -459,16 +492,21 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 			break;
 		case LESS_THAN:
 			sb.append(name);
-			sb.append(" < ");
-			sb.append(value);
+			sb.append(" < :");
+			param = "p_" + Math.abs(value.hashCode());
+			sb.append(param);
+			params.put(param, value);
 			break;
 		case LESS_THAN_EQUALS:
 			sb.append(name);
-			sb.append(" <= ");
-			sb.append(value);
+			sb.append(" <= :");
+			param = "p_" + Math.abs(value.hashCode());
+			sb.append(param);
+			params.put(param, value);
 			break;
 		case LIKE:
-			// not supported
+			// currently not supported
+			// TODO implement
 			break;
 		case NOT_EQUALS:
 			if(value instanceof String) {
@@ -480,8 +518,10 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 			}
 			else {
 				sb.append(name);
-				sb.append(" == ");
-				sb.append(value);
+				sb.append(" == :");
+				param = "p_" + Math.abs(value.hashCode());
+				sb.append(param);
+				params.put(param, value);
 			}
 			break;
 		case STARTS_WITH:
@@ -518,7 +558,7 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 		}
 		final PersistenceManager pm = getPersistenceManager();
 		final Query q = pm.newQuery(criteria.getEntityClass());
-		final ArrayList<Object> params = new ArrayList<Object>();
+		final HashMap<String, Object> params = new HashMap<String, Object>();
 		final String filter = toFilter(criteria, params);
 		q.setFilter(filter);
 		if(sorting != null) q.setOrdering(sorting.getJdoOrderingClause());
@@ -528,7 +568,7 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 			@Override
 			public Object doInJdo(PersistenceManager thePm) throws JDOException {
 				try {
-					final List<Long> list = (List<Long>) q.executeWithArray(params.toArray(new Object[] {}));
+					final List<Long> list = (List<Long>) q.executeWithMap(params);
 					// we need to "detach" the result from the query else JDO bitches
 					// TODO: make more efficient
 					final ArrayList<Long> rlist = new ArrayList<Long>(list.size());
@@ -546,133 +586,71 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public <E extends IEntity> IPageResult<SearchResult<?>> getPage(Criteria<E> criteria, Sorting sorting, int offset,
+	public <E extends IEntity> IPageResult<SearchResult> getPage(Criteria<E> criteria, Sorting sorting, int offset,
 			int pageSize) throws InvalidCriteriaException {
 		if(criteria == null || criteria.getCriteriaType() == null) {
 			throw new InvalidCriteriaException("Empty or invalid criteria instance.");
 		}
-		List<SearchResult<E>> rlist = null;
+		List<SearchResult> rlist = null;
 		int totalCount = -1;
 		switch(criteria.getCriteriaType()) {
 
 		case ENTITY: {
 			if(sorting == null) {
 				// sorting is necessary in the case of IPage results due to
-				// necessary
-				// in memory manipulation to provide a distinct list of results
+				// necessary in memory manipulation to provide a distinct list of results
 				throw new InvalidCriteriaException("Paged results require a sorting directive");
 			}
+
 			// count query
-			Query cq = null;
-			try {
-				cq = getPersistenceManager().newQuery(criteria.getEntityClass());
-				final ArrayList<Object> params = new ArrayList<Object>();
-				cq.setFilter(toFilter(criteria, params));
-				cq.setResult("count(id)");
-				final Long rowCount = (Long) cq.executeWithArray(params.toArray(new Object[] {}));
-				assert rowCount != null && rowCount.longValue() <= Integer.MAX_VALUE;
-				totalCount = rowCount.intValue();
-			}
-			finally {
-				if(cq != null) cq.closeAll();
-			}
+			QueryExec qexec = null;
+			qexec = criteria2Query(criteria, null, null);
+			qexec.q.setResult("count(id)");
+			final Long rowCount = (Long) qexec.q.executeWithMap(qexec.params);
+			assert rowCount != null && rowCount.longValue() <= Integer.MAX_VALUE;
+			totalCount = rowCount.intValue();
+
 			// data (page) query
-			Query q = null;
-			try {
-				q = getPersistenceManager().newQuery(criteria.getEntityClass());
-				final ArrayList<Object> params = new ArrayList<Object>();
-				q.setFilter(toFilter(criteria, params));
-				q.setRange(offset, offset + pageSize);
-				final List<E> list = (List<E>) q.executeWithArray(params.toArray(new Object[] {}));
-				rlist = SearchResult.create(list);
-			}
-			finally {
-				if(q != null) q.closeAll();
-			}
+			qexec = criteria2Query(criteria, sorting, null);
+			qexec.q.setRange(offset, offset + pageSize);
+			@SuppressWarnings("unchecked")
+			final Collection<Object> rclc = (Collection<Object>) qexec.q.executeWithMap(qexec.params);
+			rlist = toSearchResultList(rclc);
 			break;
 		}
 
 		case ENTITY_NAMED_QUERY: {
 			// get the count by convention looking for a couter-part named query
-			// w/
-			// same name and additional suffix of .count
+			// with same name and additional suffix of .count
 			final ISelectNamedQueryDef snq = criteria.getNamedQueryDefinition();
 			if(!snq.isSupportsPaging()) {
 				throw new InvalidCriteriaException(snq.getQueryName() + " query does not support paging.");
 			}
-			final String queryName = snq.getQueryName();
-			final String countQueryName = snq.getQueryName() + ".count";
 			// count query
-			Query cq = null;
-			try {
-				cq = assembleQuery(criteria.getEntityClass(), countQueryName, null, null, false);
-				cq.setUnique(true);
-				final Collection clc = getJdoTemplate().find(Query.JDOQL, cq);
-				final Long count = (Long) clc.iterator().next();
-				assert count != null;
-				totalCount = count.intValue();
-			}
-			finally {
-				if(cq != null) cq.closeAll();
-			}
+			QueryExec qe = criteria2Query(criteria, sorting, snq.getQueryName() + ".count");
+			qe.q.setResultClass(Long.class);
+			final Long count = (Long) executeQuerySingle(qe);
+			assert count != null;
+			totalCount = count.intValue();
 			// data (page) query
-			Query q = null;
-			try {
-				q = assembleQuery(criteria.getEntityClass(), queryName, null, null, false);
-				q.setRange(offset, offset + pageSize);
-				q.setResultClass(SearchResult.class);
-				rlist = (List<SearchResult<E>>) getJdoTemplate().find(Query.JDOQL, q);
-			}
-			finally {
-				if(q != null) q.closeAll();
-			}
+			qe = criteria2Query(criteria, sorting, null);
+			@SuppressWarnings("unchecked")
+			final Collection<Object> rclc = (Collection<Object>) executeQueryClc(qe);
+			rlist = toSearchResultList(rclc);
 			break;
+		}
+		case SCALAR_NAMED_QUERY:
+			throw new UnsupportedOperationException("Scalar named queries are not supported in JDO DAO.");
 		}
 
-		case SCALAR_NAMED_QUERY: {
-			// get the count by convention looking for a couter-part named query
-			// w/
-			// same name and additional suffix of .count
-			final ISelectNamedQueryDef snq = criteria.getNamedQueryDefinition();
-			final String queryName = snq.getQueryName();
-			final String countQueryName = snq.getQueryName() + ".count";
-			// count query
-			Query cq = null;
-			try {
-				cq = assembleQuery(criteria.getEntityClass(), countQueryName, criteria.getQueryParams(), null, false);
-				cq.setUnique(true);
-				final Collection clc = getJdoTemplate().find(Query.JDOQL, cq);
-				final Long count = (Long) clc.iterator().next();
-				assert count != null;
-				totalCount = count.intValue();
-			}
-			finally {
-				if(cq != null) cq.closeAll();
-			}
-			// data (page) query
-			Query q = null;
-			try {
-				q = assembleQuery(criteria.getEntityClass(), queryName, null, null, false);
-				q.setRange(offset, offset + pageSize);
-				q.setResultClass(SearchResult.class);
-				final List<SearchResult<E>> list = (List<SearchResult<E>>) getJdoTemplate().find(Query.JDOQL, q);
-				rlist = (List<SearchResult<E>>) getPersistenceManager().detachCopyAll(list);
-			}
-			finally {
-				if(q != null) q.closeAll();
-			}
-			break;
-		}
-		}
 		if(rlist == null) {
 			throw new InvalidCriteriaException("Invalid paging criteria: " + criteria.getCriteriaType().name());
 		}
 
-		final List<SearchResult<E>> list = rlist;
+		final List<SearchResult> list = rlist;
 		final int count = totalCount;
 
-		return new IPageResult() {
+		return new IPageResult<SearchResult>() {
 
 			@Override
 			public int getResultCount() {
@@ -680,7 +658,7 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 			}
 
 			@Override
-			public List getPageList() {
+			public List<SearchResult> getPageList() {
 				return list;
 			}
 

@@ -151,7 +151,7 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	// IListHandlerDataProvider impl:
 
 	@Transactional(readOnly = true)
-	public List<SearchResult<?>> find(Criteria<? extends IEntity> criteria, Sorting sorting)
+	public List<SearchResult> find(Criteria<? extends IEntity> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
 		return dao.find(criteria, sorting);
 	}
@@ -167,7 +167,7 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	}
 
 	@Transactional(readOnly = true)
-	public IPageResult<SearchResult<?>> getPage(Criteria<? extends IEntity> criteria, Sorting sorting, int offset,
+	public IPageResult<SearchResult> getPage(Criteria<? extends IEntity> criteria, Sorting sorting, int offset,
 			int pageSize)
 			throws InvalidCriteriaException {
 		return dao.getPage(criteria, sorting, offset, pageSize);

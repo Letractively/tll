@@ -5,10 +5,6 @@
  */
 package com.tll.dao;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import com.tll.model.IEntity;
 import com.tll.model.IScalar;
 
@@ -16,36 +12,19 @@ import com.tll.model.IScalar;
  * SearchResult - Generic container for a single search result. Wraps either a
  * single entity or a single scalar element.
  * @author jpk
- * @param <T> the search result element type
  */
-public final class SearchResult<T> {
-
-	/**
-	 * Factory method to "wrap" a collection of like types.
-	 * @param <T>
-	 * @param clc The collection to transform
-	 * @return Newly created list of {@link SearchResult}s whose contained
-	 *         elements are the elements in the given collection.
-	 */
-	public static <T> List<SearchResult<T>> create(Collection<T> clc) {
-		if(clc == null) return null;
-		final ArrayList<SearchResult<T>> rval = new ArrayList<SearchResult<T>>(clc.size());
-		for(final T t : clc) {
-			rval.add(new SearchResult<T>(t));
-		}
-		return rval;
-	}
+public final class SearchResult {
 
 	/**
 	 * The raw search result element.
 	 */
-	private final T element;
+	private final Object element;
 
 	/**
 	 * Constructor
 	 * @param element
 	 */
-	public SearchResult(final T element) {
+	public SearchResult(final Object element) {
 		super();
 		if(element instanceof IEntity == false && element instanceof IScalar == false)
 			throw new IllegalArgumentException("Invalid search result element type");
@@ -55,7 +34,7 @@ public final class SearchResult<T> {
 	/**
 	 * @return the raw search result element.
 	 */
-	public T getElement() {
+	public Object getElement() {
 		return element;
 	}
 

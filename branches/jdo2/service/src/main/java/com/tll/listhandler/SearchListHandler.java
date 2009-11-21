@@ -14,7 +14,7 @@ import com.tll.model.IEntity;
  * @author jpk
  * @param <E>
  */
-public abstract class SearchListHandler<E extends IEntity> extends AbstractListHandler<SearchResult<?>> {
+public abstract class SearchListHandler<E extends IEntity> extends AbstractListHandler<SearchResult> {
 
 	protected final Log LOG = LogFactory.getLog(this.getClass());
 

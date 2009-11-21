@@ -163,7 +163,7 @@ public interface IEntityDao extends IDao {
 	 *         found to be invalid.
 	 * @throws DataAccessException
 	 */
-	<E extends IEntity> List<SearchResult<?>> find(Criteria<E> criteria, Sorting sorting)
+	<E extends IEntity> List<SearchResult> find(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException, DataAccessException;
 
 	/**
@@ -210,7 +210,7 @@ public interface IEntityDao extends IDao {
 	 *         <code>null</code>.
 	 * @throws DataAccessException
 	 */
-	<E extends IEntity> IPageResult<SearchResult<?>> getPage(Criteria<E> criteria, Sorting sorting,
+	<E extends IEntity> IPageResult<SearchResult> getPage(Criteria<E> criteria, Sorting sorting,
 			int offset, int pageSize)
 			throws InvalidCriteriaException, DataAccessException;
 

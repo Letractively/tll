@@ -143,7 +143,7 @@ final class ListingProcessor {
 							if(sorting == null) {
 								throw new ListingException(listingId, "No sorting directive specified.");
 							}
-							IListHandler<SearchResult<?>> listHandler = null;
+							IListHandler<SearchResult> listHandler = null;
 							try {
 								listHandler = ListHandlerFactory.create(criteria, sorting, lht, dataProvider);
 							}

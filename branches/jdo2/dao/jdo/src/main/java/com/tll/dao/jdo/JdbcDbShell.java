@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.sql.DataSource;
 
@@ -44,26 +45,43 @@ public class JdbcDbShell implements IDbShell {
 		/**
 		 * Determines if the given exception is due to an attempt to issue SQL
 		 * commands to an unknown (prob. non-existant) database.
-		 * @param re
+		 * @param e
 		 * @return true/false
 		 */
-		boolean isUnknownDatabase(Exception re);
+		boolean isUnknownDatabase(Exception e);
 
 		/**
 		 * Determines if the given exception is due to an attempt to create an
 		 * already created database.
-		 * @param re
+		 * @param e
 		 * @return true/false
 		 */
-		boolean isCreateAlreadyExist(Exception re);
+		boolean isCreateAlreadyExist(Exception e);
 
 		/**
 		 * Determines if the given exception is due to an attempt to drop an a
 		 * non-existant database.
-		 * @param re
+		 * @param e
 		 * @return true/false
 		 */
-		boolean isDropNonExistant(Exception re);
+		boolean isDropNonExistant(Exception e);
+
+		/**
+		 * Determines if the given exception is due to an attempt to drop a
+		 * non-existant table.
+		 * @param e
+		 * @return true/false
+		 */
+		boolean isTableNonExistant(Exception e);
+
+		/**
+		 * Determines if the given exception is due to an attempt to create an
+		 * already existant table.
+		 * @param e
+		 * @return true/false
+		 */
+		boolean isTableAlreadyExists(Exception e);
+
 	} // IDbDialectHandler
 
 	/**
@@ -82,6 +100,12 @@ public class JdbcDbShell implements IDbShell {
 		public static final int ER_BAD_DB_ERROR = 1049;
 
 		public static final int ER_DUP_ENTRY = 1062;
+
+		/**
+		 * Occurrs when a target table is attempted to be created but already
+		 * exists.
+		 */
+		public static final int ER_TABLE_EXISTS = 1050;
 
 		/**
 		 * Occurrs when a target table doesn't exist.
@@ -163,10 +187,43 @@ public class JdbcDbShell implements IDbShell {
 
 		public boolean isDropNonExistant(Exception e) {
 			return isErrorOfAType(e, new int[] {
-				ER_DB_DROP_NOEXIST, ER_TABLE_NO_EXIST
+				ER_DB_DROP_NOEXIST
 			});
 		}
-	}
+
+		@Override
+		public boolean isTableNonExistant(Exception e) {
+			return isErrorOfAType(e, new int[] {
+				ER_TABLE_NO_EXIST
+			});
+		}
+
+		@Override
+		public boolean isTableAlreadyExists(Exception e) {
+			return isErrorOfAType(e, new int[] {
+				ER_TABLE_EXISTS
+			});
+		}
+
+	} // MySqlDialectHandler
+
+	/**
+	 * ShellImpl
+	 * @author jpk
+	 */
+	private static final class ShellImpl extends JdbcDaoSupport {
+
+		/**
+		 * Constructor
+		 * @param dataSource
+		 */
+		public ShellImpl(DataSource dataSource) {
+			super();
+			assert dataSource != null;
+			setDataSource(dataSource);
+		}
+
+	} // ShellImpl
 
 	private static final Log log = LogFactory.getLog(JdbcDbShell.class);
 
@@ -177,24 +234,14 @@ public class JdbcDbShell implements IDbShell {
 	private static final char SQL_COMMAND_DELIM_CHAR = ';';
 
 	/**
-	 * Generic execution of SQL commands for the given data source.
-	 * @param theDataSource
-	 * @param sql The SQL command to be executed
-	 * @throws DataAccessException
+	 * Parses SQL commands from a given resource removing comments.
+	 * @param url the resource ref
+	 * @return Array of Strings where each element is a single sql command
 	 */
-	private static void executeSql(DataSource theDataSource, String sql) throws DataAccessException {
-		final ShellImpl shell = new ShellImpl(theDataSource);
-		final JdbcTemplate jdbc = shell.getJdbcTemplate();
-		jdbc.execute(sql);
-	}
-
-	/**
-	 * Executes sql/ddl commands held in the given resource against the given data
-	 * source.
-	 * @param dataSource
-	 * @param url The sql/ddl resource to load and invoke
-	 */
-	private static void executeDbCommandsFromResource(DataSource dataSource, URL url) {
+	private static String[] parseSqlCommandsFromResource(URL url) {
+		if(log.isDebugEnabled()) {
+			log.debug("Parsing SQL/DDL commands from: '" + url.getPath() + "'...");
+		}
 		String s;
 		try {
 			s = IOUtils.toString(url.openStream());
@@ -214,14 +261,30 @@ public class JdbcDbShell implements IDbShell {
 			}
 		}
 
-		if(log.isDebugEnabled()) {
-			log.debug("Executing SQL/DDL commands: " + url.getPath() + "...");
-		}
+		// consolidate by sql command by splitting at sql command delim occurrences
+		final ArrayList<String> rlist = new ArrayList<String>();
 		final String[] sqls = StringUtils.split(sb.toString(), SQL_COMMAND_DELIM_CHAR);
-		for(final String sql : sqls) {
-			final String cmd = StringUtils.trim(sql);
-			if(!cmd.isEmpty()) executeSql(dataSource, sql);
+		for(int i = 0; i < sqls.length; i++) {
+			final String sql = sqls[i].trim();
+			if(sql.length() > 0) {
+				rlist.add(sql);
+				if(log.isDebugEnabled()) log.debug("Ingested SQL command:" + sqls[i]);
+			}
 		}
+		return rlist.toArray(new String[] {});
+	}
+
+	/**
+	 * Generic execution of SQL commands for the given data source.
+	 * @param theDataSource
+	 * @param sql The SQL command to be executed
+	 * @throws DataAccessException
+	 */
+	private static void executeSql(DataSource theDataSource, String sql) throws DataAccessException {
+		final ShellImpl shell = new ShellImpl(theDataSource);
+		final JdbcTemplate jdbc = shell.getJdbcTemplate();
+		log.debug("SQL>: '" + sql + "'");
+		jdbc.execute(sql);
 	}
 
 	/**
@@ -236,6 +299,14 @@ public class JdbcDbShell implements IDbShell {
 	 * case of being contained within a jar file (or other some such).
 	 */
 	private final URL dbSchemaResource, dbStubResource, dbDelResource;
+
+	/**
+	 * Parsed SQL command tokens corresponding to {@link #dbSchemaResource},
+	 * {@link #dbStubResource} and {@link #dbDelResource} respectively. <br>
+	 * Lazily initialized and once initialized, they take precedence over their
+	 * corresponding resource from which they were generated.
+	 */
+	private String[] schemaSqls, stubSqls, deleteSqls;
 
 	/**
 	 * The data source pointing to the "root" database repository.
@@ -294,24 +365,6 @@ public class JdbcDbShell implements IDbShell {
 	}
 
 	/**
-	 * ShellImpl
-	 * @author jpk
-	 */
-	private static final class ShellImpl extends JdbcDaoSupport {
-
-		/**
-		 * Constructor
-		 * @param dataSource
-		 */
-		public ShellImpl(DataSource dataSource) {
-			super();
-			assert dataSource != null;
-			setDataSource(dataSource);
-		}
-
-	}
-
-	/**
 	 * Creates the database. If the db already exists, nothing happens.
 	 * @return <code>true</code> if the db was actually created as a result of
 	 *         calling this method and <code>false<code> if the db already exists.
@@ -328,13 +381,25 @@ public class JdbcDbShell implements IDbShell {
 			if(!dbDialectHandler.isCreateAlreadyExist(dae)) {
 				throw dae;
 			}
-			// presume we have already created the db
-			return false;
+			// presume we have already created the db - continue
 		}
 
 		// create db schema
-		executeDbCommandsFromResource(dataSource, dbSchemaResource);
+		if(schemaSqls == null) {
+			schemaSqls = parseSqlCommandsFromResource(dbSchemaResource);
+		}
+		for(final String sql : schemaSqls) {
+			try {
+				executeSql(dataSource, sql);
+			}
+			catch(final DataAccessException e) {
+				if(!dbDialectHandler.isTableAlreadyExists(e)) {
+					// ok - continue
+				}
+			}
+		}
 		if(log.isInfoEnabled()) log.info(dbName + " database schema created.");
+
 		return true;
 	}
 
@@ -368,17 +433,22 @@ public class JdbcDbShell implements IDbShell {
 	 */
 	@Override
 	public boolean clear() {
-		try {
-			executeDbCommandsFromResource(dataSource, dbDelResource);
-			if(log.isInfoEnabled()) log.info(dbName + " database cleared.");
-			return true;
+		if(deleteSqls == null) {
+			deleteSqls = parseSqlCommandsFromResource(dbDelResource);
 		}
-		catch(final DataAccessException dae) {
-			if(!dbDialectHandler.isDropNonExistant(dae)) {
-				throw dae;
+		for(final String sql : deleteSqls) {
+			try {
+				executeSql(dataSource, sql);
+			}
+			catch(final DataAccessException e) {
+				if(!dbDialectHandler.isTableNonExistant(e)) {
+					// ok - continue
+				}
+				return false;
 			}
 		}
-		return false;
+		if(log.isInfoEnabled()) log.info(dbName + " database cleared.");
+		return true;
 	}
 
 	/**
@@ -389,18 +459,22 @@ public class JdbcDbShell implements IDbShell {
 	 */
 	@Override
 	public boolean stub() {
-
-		try {
-			executeDbCommandsFromResource(dataSource, dbStubResource);
-			if(log.isInfoEnabled()) log.info(dbName + " database stubbed.");
-			return true;
+		if(stubSqls == null) {
+			stubSqls = parseSqlCommandsFromResource(dbStubResource);
 		}
-		catch(final DataAccessException dae) {
-			if(!dbDialectHandler.isUnknownDatabase(dae)) {
-				throw dae;
+		for(final String sql : stubSqls) {
+			try {
+				executeSql(dataSource, sql);
+			}
+			catch(final DataAccessException e) {
+				if(!dbDialectHandler.isUnknownDatabase(e)) {
+					throw e;
+				}
+				return false;
 			}
 		}
-		return false;
+		if(log.isInfoEnabled()) log.info(dbName + " database stubbed.");
+		return true;
 	}
 
 	/**

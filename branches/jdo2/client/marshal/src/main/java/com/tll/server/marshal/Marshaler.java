@@ -90,7 +90,7 @@ public final class Marshaler {
 	 * @throws IllegalArgumentException When neither an IEntity nor an IScalar is
 	 *         resolved from the given SearchResult.
 	 */
-	public Model marshalSearchResult(final SearchResult<?> searchResult, final MarshalOptions options) {
+	public Model marshalSearchResult(final SearchResult searchResult, final MarshalOptions options) {
 		assert searchResult != null;
 		assert options != null;
 		Model model;

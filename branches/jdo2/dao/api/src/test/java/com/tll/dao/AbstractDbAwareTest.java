@@ -68,7 +68,7 @@ public abstract class AbstractDbAwareTest extends AbstractConfigAwareTest {
 	 * @param criteria
 	 * @return the found entities satisfying the given criteria
 	 */
-	protected final static <E extends IEntity> List<SearchResult<?>> getEntitiesFromDb(IEntityDao dao,
+	protected final static <E extends IEntity> List<SearchResult> getEntitiesFromDb(IEntityDao dao,
 			Criteria<E> criteria) {
 		try {
 			return dao.find(criteria, null);

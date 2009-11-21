@@ -41,7 +41,7 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 	}
 
 	@Override
-	public List<SearchResult<?>> getElements(int offset, int pageSize, Sorting sort) throws IndexOutOfBoundsException,
+	public List<SearchResult> getElements(int offset, int pageSize, Sorting sort) throws IndexOutOfBoundsException,
 	EmptyListException, ListHandlerException {
 
 		assert this.sorting != null;
@@ -72,9 +72,9 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 		if(list == null || list.size() != subids.size()) {
 			throw new ListHandlerException("id and entity count mismatch");
 		}
-		final List<SearchResult<?>> slist = new ArrayList<SearchResult<?>>(list.size());
+		final List<SearchResult> slist = new ArrayList<SearchResult>(list.size());
 		for(final E e : list) {
-			slist.add(new SearchResult<E>(e));
+			slist.add(new SearchResult(e));
 		}
 		return slist;
 	}

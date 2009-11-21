@@ -29,7 +29,7 @@ public interface IListingDataProvider {
 	 * @return list of result elements or an empty list if no matches are found.
 	 * @throws InvalidCriteriaException
 	 */
-	List<SearchResult<?>> find(Criteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException;
+	List<SearchResult> find(Criteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException;
 
 	/**
 	 * Retrieves the ids of the entities that match the given criteria.
@@ -61,6 +61,6 @@ public interface IListingDataProvider {
 	 * @return the page result
 	 * @throws InvalidCriteriaException
 	 */
-	IPageResult<SearchResult<?>> getPage(Criteria<? extends IEntity> criteria, Sorting sorting, int offset, int pageSize)
+	IPageResult<SearchResult> getPage(Criteria<? extends IEntity> criteria, Sorting sorting, int offset, int pageSize)
 	throws InvalidCriteriaException;
 }

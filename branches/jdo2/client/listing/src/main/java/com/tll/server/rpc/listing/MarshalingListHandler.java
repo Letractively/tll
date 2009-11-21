@@ -23,7 +23,7 @@ import com.tll.server.marshal.Marshaler;
  * for use in client side list handling.
  * @author jpk
  */
-public final class MarshalingListHandler extends DecoratedListHandler<SearchResult<?>, Model> {
+public final class MarshalingListHandler extends DecoratedListHandler<SearchResult, Model> {
 
 	private final Marshaler marshaler;
 	private final MarshalOptions marshalOptions;
@@ -36,7 +36,7 @@ public final class MarshalingListHandler extends DecoratedListHandler<SearchResu
 	 * @param marshalOptions
 	 * @param propKeys
 	 */
-	public MarshalingListHandler(IListHandler<SearchResult<?>> listHandler, Marshaler marshaler,
+	public MarshalingListHandler(IListHandler<SearchResult> listHandler, Marshaler marshaler,
 			MarshalOptions marshalOptions, String[] propKeys) {
 		super(listHandler);
 		this.marshaler = marshaler;
@@ -78,7 +78,7 @@ public final class MarshalingListHandler extends DecoratedListHandler<SearchResu
 		return subset;
 	}
 
-	public final Model getDecoratedElement(SearchResult<?> element) {
+	public final Model getDecoratedElement(SearchResult element) {
 		return transform(marshaler.marshalSearchResult(element, marshalOptions));
 	}
 }

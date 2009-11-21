@@ -19,7 +19,7 @@ public final class PagingSearchListHandler<E extends IEntity> extends SearchList
 	/**
 	 * The current page of results
 	 */
-	private IPageResult<SearchResult<?>> page;
+	private IPageResult<SearchResult> page;
 
 	/**
 	 * Constructor
@@ -36,7 +36,7 @@ public final class PagingSearchListHandler<E extends IEntity> extends SearchList
 		return ListHandlerType.PAGE;
 	}
 
-	public List<SearchResult<?>> getElements(int offset, int pageSize, Sorting sort) throws IndexOutOfBoundsException,
+	public List<SearchResult> getElements(int offset, int pageSize, Sorting sort) throws IndexOutOfBoundsException,
 	EmptyListException, ListHandlerException {
 
 		try {

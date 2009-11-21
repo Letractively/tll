@@ -342,9 +342,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 				final Method[] dms = clz.getDeclaredMethods();
 				if(dms != null) {
 					for(final Method m : dms) {
-						// TODO temp!
-						if(m.getName().equals("daoPage")) {
-							//if(m.getName().startsWith("dao")) {
+						if(m.getName().startsWith("dao")) {
 							testMethods.add(m);
 						}
 					}
@@ -593,7 +591,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		crit.getPrimaryGroup().addCriterion(IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
 
 		startNewTransaction();
-		IPageResult<SearchResult<?>> page = dao.getPage(crit, simpleIdSorting, 0, 2);
+		IPageResult<SearchResult> page = dao.getPage(crit, simpleIdSorting, 0, 2);
 		Assert.assertTrue(page != null && page.getPageList() != null && page.getPageList().size() == 2,
 		"Empty or invalid number of initial page elements");
 		endTransaction();
@@ -638,18 +636,34 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		}
 		catch(final EntityExistsException de) {
 			// expected
+			logger.debug("Expected exception: " + de.getMessage());
 		}
 	}
 
-	final void daoPurgeNewEntity() throws Exception {
-		final IEntity e = getTestEntity();
+	final void daoPurgeNonExistantEntity() throws Exception {
+		IEntity e = getTestEntity();
 		final PrimaryKey<IEntity> pk = new PrimaryKey<IEntity>(e);
+
+		// save it first
+		e = dao.persist(e);
+
+		setComplete();
+		endTransaction();
+		startNewTransaction();
+
+		// delete it (with key)
+		dao.purge(pk);
+
+		setComplete();
+		endTransaction();
+		startNewTransaction();
+
 		try {
 			dao.purge(e);
 			Assert.fail("An EntityNotFoundException should have occurred (" + pk + ")");
 		}
 		catch(final EntityNotFoundException ex) {
-			// expected
+			logger.debug("Expected exception: " + ex.getMessage());
 		}
 	}
 
@@ -664,7 +678,8 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		c.getPrimaryGroup().addCriterion(new PrimaryKey<IEntity>(entityHandler.entityClass(), e.getId()));
 		startNewTransaction();
 		final IEntity re = dao.findEntity(c);
-		assert re != null && re.getId() == e.getId();
+		Assert.assertTrue(re != null);
+		if(re != null) Assert.assertEquals(re.getId(), e.getId());
 	}
 
 	final void daoFindEntityByBusinessKeyCriteria() throws Exception {
@@ -684,8 +699,8 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 				c.getPrimaryGroup().addCriterion(bk, true);
 			}
 			final IEntity re = dao.findEntity(c);
-			assert re != null && re.getId() == e.getId();
-
+			Assert.assertTrue(re != null);
+			if(re != null) Assert.assertEquals(re.getId(), e.getId());
 		}
 		catch(final BusinessKeyNotDefinedException e) {
 			// ok skip
@@ -704,6 +719,9 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 			startNewTransaction();
 			final Criteria<IEntity> c = new Criteria<IEntity>(entityHandler.entityClass());
 			c.getPrimaryGroup().addCriterion(new NameKey(e.entityClass(), e.getName()), true);
+			final IEntity re = dao.findEntity(c);
+			Assert.assertTrue(re != null);
+			if(re != null) Assert.assertEquals(re.getId(), e.getId());
 		}
 	}
 

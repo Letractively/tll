@@ -49,7 +49,7 @@ public class EntityDaoTestDecorator<T extends IEntityDao> implements IEntityDao 
 	}
 
 	@Override
-	public <E extends IEntity> List<SearchResult<?>> find(Criteria<E> criteria, Sorting sorting)
+	public <E extends IEntity> List<SearchResult> find(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
 		return rawDao.find(criteria, sorting);
 	}
@@ -78,7 +78,7 @@ public class EntityDaoTestDecorator<T extends IEntityDao> implements IEntityDao 
 	}
 
 	@Override
-	public <E extends IEntity> IPageResult<SearchResult<?>> getPage(Criteria<E> criteria, Sorting sorting, int offset,
+	public <E extends IEntity> IPageResult<SearchResult> getPage(Criteria<E> criteria, Sorting sorting, int offset,
 			int pageSize) throws InvalidCriteriaException {
 		return rawDao.getPage(criteria, sorting, offset, pageSize);
 	}

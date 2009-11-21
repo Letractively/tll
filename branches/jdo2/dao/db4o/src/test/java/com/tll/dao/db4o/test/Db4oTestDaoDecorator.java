@@ -53,9 +53,9 @@ public class Db4oTestDaoDecorator extends EntityDaoTestDecorator<Db4oEntityDao> 
 	}
 
 	@Override
-	public <E extends IEntity> List<SearchResult<?>> find(Criteria<E> criteria, Sorting sorting)
+	public <E extends IEntity> List<SearchResult> find(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
-		final List<SearchResult<?>> r = super.find(criteria, sorting);
+		final List<SearchResult> r = super.find(criteria, sorting);
 		hook();
 		return r;
 	}
@@ -92,9 +92,9 @@ public class Db4oTestDaoDecorator extends EntityDaoTestDecorator<Db4oEntityDao> 
 	}
 
 	@Override
-	public <E extends IEntity> IPageResult<SearchResult<?>> getPage(Criteria<E> criteria, Sorting sorting, int offset,
+	public <E extends IEntity> IPageResult<SearchResult> getPage(Criteria<E> criteria, Sorting sorting, int offset,
 			int pageSize) throws InvalidCriteriaException {
-		final IPageResult<SearchResult<?>> r = super.getPage(criteria, sorting, offset, pageSize);
+		final IPageResult<SearchResult> r = super.getPage(criteria, sorting, offset, pageSize);
 		hook();
 		return r;
 	}
