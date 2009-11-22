@@ -72,8 +72,6 @@ import com.tll.util.PropertyPath;
 @SuppressWarnings( { "unchecked", "serial" })
 public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 
-	static final Log log = LogFactory.getLog(Db4oEntityDao.class);
-
 	/**
 	 * Scalarizes an entity by first transforming the entity into a map of
 	 * property name/property value where the property names are those contained
@@ -136,6 +134,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	 * @author jpk
 	 */
 	static class Timestamper implements EventListener4 {
+		static final Log log = LogFactory.getLog(Timestamper.class);
 
 		private final boolean creating;
 
@@ -163,6 +162,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	 * @author jpk
 	 */
 	static class Versioner implements EventListener4 {
+		static final Log log = LogFactory.getLog(Versioner.class);
 
 		@Override
 		public void onEvent(Event4 e, EventArgs args) {
@@ -465,12 +465,12 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 		final List<E> list = getDb4oTemplate().query(p);
 		if(list == null || list.size() < 1) {
 			final String msg = "No matching entity found for key: [" + key +  ']';
-			log.debug(msg);
+			logger.debug(msg);
 			throw new EntityNotFoundException(msg);
 		}
 		if(list.size() > 1) {
 			final String msg = list.size() + " matching entities found (not one) for key: [" + key + ']';
-			log.debug(msg);
+			logger.debug(msg);
 			throw new EntityNotFoundException(msg);
 		}
 		assert list.size() == 1;
@@ -479,12 +479,12 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 
 	@Override
 	public <E extends IEntity> E load(final PrimaryKey<E> key) throws EntityNotFoundException, DataAccessException {
-		log.debug("Loading entity by PK: " + key);
+		logger.debug("Loading entity by PK: " + key);
 		return loadByPredicate(new Predicate<E>(key.getType()) {
 
 			@Override
 			public boolean match(E candidate) {
-				return candidate.getId() == key.getId();
+				return candidate.getId().equals(key.getId());
 			}
 		}, key);
 	}
@@ -526,7 +526,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 
 	@Override
 	public <E extends IEntity> E persist(E entity) throws EntityExistsException, DataAccessException {
-		log.debug("Persisting entity: " + entity);
+		logger.debug("Persisting entity: " + entity);
 		// must check for business key uniqueness first!
 		try {
 			final List<E> list = (List<E>) loadAll(entity.entityClass());
@@ -569,7 +569,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 
 	@Override
 	public <E extends IEntity> void purge(E entity) throws EntityNotFoundException, DataAccessException {
-		log.debug("Purging entity: " + entity);
+		logger.debug("Purging entity: " + entity);
 		purge(new PrimaryKey(entity));
 	}
 

@@ -7,6 +7,9 @@ package com.tll.listhandler;
 
 import org.testng.annotations.Test;
 
+import com.tll.config.Config;
+import com.tll.config.ConfigRef;
+
 
 /**
  * JdoPagingSearchListHandlerTest
@@ -16,5 +19,10 @@ import org.testng.annotations.Test;
 	"dao", "jdo"
 })
 public class JdoPagingSearchListHandlerTest extends AbstractPagingSearchListHandlerTest {
+
+	@Override
+	protected Config doGetConfig() {
+		return Config.load(new ConfigRef("jdo-config.properties"));
+	}
 
 }

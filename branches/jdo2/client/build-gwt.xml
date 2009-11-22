@@ -66,20 +66,12 @@
 	<target name="compile" description="Invokes the GWT compiler.">
 		<java failonerror="true" fork="true" classname="com.google.gwt.dev.Compiler">
 			<classpath refid="gwt.compile.classpath" />
-			<jvmarg value="-Xms128m" />
-			<jvmarg value="-Xmx768m" />
-			<jvmarg value="-Xss1024k" />
-			<jvmarg value="-ea" />
-			<arg value="-war" />
-			<arg value="${gwt.shell.warDir.path}" />
-			<arg value="-localWorkers" />
-			<arg value="2" />
-			<arg value="-style" />
-			<arg value="${gwt.compile.style}" />
-			<arg value="-logLevel" />
-			<arg value="INFO" />
-			<arg value="-workDir" />
-			<arg value="target/gwtc" />
+			<jvmarg value="-Xms128m -Xmx768m -Xss1024k -ea" />
+			<arg value="-war ${gwt.shell.warDir.path}" />
+			<arg value="-localWorkers 2" />
+			<arg value="-style ${gwt.compile.style}" />
+			<arg value="-logLevel INFO" />
+			<arg value="-workDir target/gwtc" />
 			<arg value="${gwt.compile.modules}" />
 		</java>
 	</target>

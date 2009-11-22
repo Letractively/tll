@@ -7,6 +7,9 @@ package com.tll.listhandler;
 
 import org.testng.annotations.Test;
 
+import com.tll.config.Config;
+import com.tll.config.ConfigRef;
+
 
 /**
  * Db4oPagingSearchListHandlerTest
@@ -17,4 +20,8 @@ import org.testng.annotations.Test;
 })
 public class Db4oPagingSearchListHandlerTest extends AbstractPagingSearchListHandlerTest {
 
+	@Override
+	protected Config doGetConfig() {
+		return Config.load(new ConfigRef("db4o-config.properties"));
+	}
 }

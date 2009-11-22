@@ -74,9 +74,43 @@
 			<id>jdo</id>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-compiler-plugin</artifactId>
+		        <configuration>
+		        	<!-- 
+		        		This tells datanucleus to NOT auto-enhance since the enhancer is on the classpath!
+		        		We do this manually as the maven datanucleus enhancer plugin 
+		        		IS UNABLE to ehnance both classes and test-classes! 
+		        	-->
+		        	<compilerArgument>-proc:none</compilerArgument>
+		        </configuration>
+		      </plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>jdo-ehnance-classpath</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>build-classpath</goal>
+								</goals>
+								<configuration>
+									<includeArtifactIds>log4j,asm,jdo2-api,datanucleus-core,datanucleus-enhancer</includeArtifactIds>
+									<outputFile>target/jdo-enhance-cp.txt</outputFile>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 		      <plugin>
 		        <groupId>org.apache.maven.plugins</groupId>
 		        <artifactId>maven-antrun-plugin</artifactId>
+		        <!-- 
+							NOTE: copy the classes to be enhanced into a distinct dir 
+							since datanucleus erroneously overwrites classes
+							when an outputDirectory (-d arg) is specified.
+						-->
 		        <executions>
 		          <execution>
 		            <id>jdo-enhance</id>
@@ -86,10 +120,14 @@
 		            </goals>
 		            <configuration>
 		              <tasks>
-		                <property name="enhancer.classpath" refid="maven.compile.classpath" />
-		                <property name="jdo.files" value="/META-INF/package.jdo" />
-		                <echo message="enhancer classpath: ${enhancer.classpath}" />
-		                <ant antfile="${basedir}/build-jdo.xml">
+										<copy todir="target/enhanced/classes" preservelastmodified="true">
+											<fileset dir="target/classes" />
+										</copy>
+										<loadfile property="ecp" srcFile="target/jdo-enhance-cp.txt" />
+		                <property name="enhancer.classpath" value="target/enhanced/classes;${ecp}" />
+		                <echo message="enhancer.classpath: ${enhancer.classpath}" />
+		                <property name="jdo.files" value="META-INF/package.jdo" />
+		                <ant antfile="build-jdo.xml">
 		                  <target name="enhance" />
 		                </ant>
 		              </tasks>
@@ -103,10 +141,13 @@
 		            </goals>
 		            <configuration>
 		              <tasks>
-		                <property name="enhancer.classpath" refid="maven.test.classpath" />
-		                <property name="jdo.files" value="${basedir}/target/test-classes/META-INF/package.jdo"/>
-		                <echo message="enhancer classpath: ${enhancer.classpath}" />
-		                <ant antfile="${basedir}/build-jdo.xml">
+										<copy todir="target/enhanced/test-classes">
+											<fileset dir="target/test-classes" />
+										</copy>
+										<loadfile property="ecp" srcFile="target/jdo-enhance-cp.txt" />
+		                <property name="enhancer.classpath" value="${ecp};./target/enhanced/test-classes/" />
+		                <property name="jdo.files" value="target/enhanced/test-classes/META-INF/package.jdo"/>
+		                <ant antfile="build-jdo.xml">
 		                  <target name="enhance" />
 		                </ant>
 		              </tasks>
@@ -135,7 +176,7 @@
 				<dependency>
 					<groupId>org.datanucleus</groupId>
 					<artifactId>datanucleus-enhancer</artifactId>
-					<scope>provided</scope>
+					<scope>optional</scope>
 				</dependency>
 			</dependencies>
 		</profile>
