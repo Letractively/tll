@@ -25,9 +25,8 @@
 		<datanucleusVersion>2.0.0-m3</datanucleusVersion>
     <mysqlConnectorVersion>5.1.6</mysqlConnectorVersion>
     
-    <gwtVersion>0.0.0</gwtVersion>
-    <!-- <gwtIncubatorVersion>1.7</gwtIncubatorVersion> -->
-    <gwtLogVersion>2.6.2</gwtLogVersion>
+    <gwtVersion>2.0.0-rc1</gwtVersion>
+    <gwtLogVersion>3.0.0</gwtLogVersion>
 
     <junitVersion>4.5</junitVersion>
     <testNGVersion>5.10</testNGVersion>
