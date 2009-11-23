@@ -56,7 +56,7 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 		}
 		 */
 
-		public List<SearchResult<?>> find(Criteria<? extends IEntity> criteria, Sorting sorting)
+		public List<SearchResult> find(Criteria<? extends IEntity> criteria, Sorting sorting)
 		throws InvalidCriteriaException {
 			return dao.find(criteria, sorting);
 		}
@@ -70,7 +70,7 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 			return dao.getIds(criteria, sorting);
 		}
 
-		public IPageResult<SearchResult<?>> getPage(Criteria<? extends IEntity> criteria, Sorting sorting,
+		public IPageResult<SearchResult> getPage(Criteria<? extends IEntity> criteria, Sorting sorting,
 				int offset, int pageSize) throws InvalidCriteriaException {
 			return dao.getPage(criteria, sorting, offset, pageSize);
 		}

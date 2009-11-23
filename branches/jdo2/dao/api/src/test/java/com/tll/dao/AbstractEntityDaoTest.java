@@ -752,12 +752,12 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 			final IQueryParam[] params = entityHandler.getParamsForTestQuery(qdef);
 			final List<IQueryParam> list = params == null ? null : Arrays.asList(params);
 			final Criteria<IEntity> c = new Criteria<IEntity>(qdef, list);
-			final List<SearchResult<?>> result = dao.find(c, entityHandler.getSortingForTestQuery(qdef));
+			final List<SearchResult> result = dao.find(c, entityHandler.getSortingForTestQuery(qdef));
 			// Assert.assertTrue(result != null && result.size() > 0, "No named query results");
 			// for now, since we can't guarantee results based on the varied nature of
 			// the query defs, we first check for resutls and pass if there aren't any
 			if(result != null && result.size() > 0) {
-				for(final SearchResult<?> sr : result) {
+				for(final SearchResult sr : result) {
 					if(qdef.isScalar()) {
 						Assert.assertTrue(sr.getElement() instanceof IScalar, "No scalar in scalar search result");
 					}

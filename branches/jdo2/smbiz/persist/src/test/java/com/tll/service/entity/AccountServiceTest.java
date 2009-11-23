@@ -51,7 +51,7 @@ public abstract class AccountServiceTest extends AccountRelatedServiceTest {
 			getDbTrans().startTrans();
 			final Criteria<AccountHistory> criteria = new Criteria<AccountHistory>(AccountHistory.class);
 			criteria.getPrimaryGroup().addCriterion("account", new PrimaryKey<Account>(Account.class, account.getId()));
-			final List<SearchResult<?>> list = AbstractDbAwareTest.getEntitiesFromDb(getDao(), criteria);
+			final List<SearchResult> list = AbstractDbAwareTest.getEntitiesFromDb(getDao(), criteria);
 			getDbTrans().endTrans();
 			assert list != null && list.size() == 1;
 		}
@@ -78,9 +78,9 @@ public abstract class AccountServiceTest extends AccountRelatedServiceTest {
 
 		final Sorting sorting = new Sorting("transDate");
 
-		final IListHandler<SearchResult<?>> lh =
+		final IListHandler<SearchResult> lh =
 			ListHandlerFactory.create(criteria, sorting, ListHandlerType.PAGE, dataProvider);
-		final List<SearchResult<?>> chunk = lh.getElements(0, 25, sorting);
+		final List<SearchResult> chunk = lh.getElements(0, 25, sorting);
 		Assert.assertTrue(chunk != null && chunk.size() == 1);
 	}
 }

@@ -217,7 +217,7 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 
 			// test for all list handler types
 			for(final ListHandlerType lht : ListHandlerType.values()) {
-				IListHandler<SearchResult<?>> listHandler = null;
+				IListHandler<SearchResult> listHandler = null;
 				logger.debug("Validating '" + nq.toString() + "' query with " + lht.toString() + " list handling...");
 				switch(lht) {
 				case IN_MEMORY:
