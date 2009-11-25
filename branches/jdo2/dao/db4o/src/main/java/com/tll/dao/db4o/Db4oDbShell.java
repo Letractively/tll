@@ -15,7 +15,6 @@ import org.apache.commons.logging.LogFactory;
 
 import com.db4o.Db4o;
 import com.db4o.ObjectContainer;
-import com.db4o.config.Configuration;
 import com.db4o.ext.ExtObjectContainer;
 import com.db4o.reflect.ReflectClass;
 import com.db4o.reflect.jdk.JdkClass;
@@ -66,22 +65,20 @@ public class Db4oDbShell implements IDbShell {
 	private final URI dbFile;
 	@Inject(optional = true)
 	private final IEntityGraphPopulator populator;
-	@Inject
-	private final Configuration c;
+	//@Inject
+	//private final Configuration c;
 
 	/**
 	 * Constructor
 	 * @param dbFile A ref to the db file
 	 * @param populator The entity graph populator that defines the db "schema"
 	 *        and content.
-	 * @param c the db4o configuration
 	 */
-	// @Inject
-	public Db4oDbShell(URI dbFile, IEntityGraphPopulator populator, Configuration c) {
+	public Db4oDbShell(URI dbFile, IEntityGraphPopulator populator/*, Configuration c*/) {
 		super();
 		this.dbFile = dbFile;
 		this.populator = populator;
-		this.c = c;
+		//this.c = c;
 	}
 
 	/**
@@ -96,12 +93,14 @@ public class Db4oDbShell implements IDbShell {
 	 * @return A newly created db4o session.
 	 */
 	private ObjectContainer createDbSession() {
-		if(c == null) {
+		//if(c == null) {
 			log.info("Instantiating db4o session for: " + dbFile + " with NO configuration");
 			return Db4o.openFile(dbFile.getPath());
+		/*
 		}
 		log.info("Instantiating db4o session for: " + dbFile + " with config: " + c);
 		return Db4o.openFile(c, dbFile.getPath());
+		*/
 	}
 
 	/**

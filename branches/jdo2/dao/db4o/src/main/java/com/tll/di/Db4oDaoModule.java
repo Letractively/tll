@@ -38,11 +38,11 @@ import com.tll.model.key.SimplePrimaryKeyGenerator;
  */
 public abstract class Db4oDaoModule extends AbstractModule implements IConfigAware {
 
-	public static final int DEFAULT_TRANS_TIMEOUT = 60; // seconds
+	private static final int DEFAULT_TRANS_TIMEOUT = 60; // seconds
 
-	public static final String DEFAULT_DB4O_FILENAME = "db4o";
+	private static final String DEFAULT_DB4O_FILENAME = "db4o";
 
-	public static final boolean DEFAULT_DB4O_EMPLOY_SPRING_TRANSACTIONS = false;
+	private static final boolean DEFAULT_EMPLOY_SPRING_TRANSACTIONS = false;
 
 	static final Log log = LogFactory.getLog(Db4oDaoModule.class);
 
@@ -51,8 +51,7 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target( {
-		ElementType.FIELD, ElementType.PARAMETER
-	})
+		ElementType.FIELD, ElementType.PARAMETER })
 	@BindingAnnotation
 	public @interface Db4oFile {
 	}
@@ -65,7 +64,7 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 
 		DB4O_FILENAME("db.db4o.filename"),
 		DB_TRANS_TIMEOUT("db.transaction.timeout"),
-		DB4O_EMPLOY_SPRING_TRANSACTIONS("db.db4o.springTransactions");
+		DB_TRANS_BINDTOSPRING("db.transaction.bindToSpringAtTransactional");
 
 		private final String key;
 
@@ -77,7 +76,7 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 		public String getKey() {
 			return key;
 		}
-	}
+	} // ConfigKeys
 
 	Config config;
 
@@ -107,23 +106,13 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 	 */
 	protected abstract Class<? extends IDb4oNamedQueryTranslator> getNamedQueryTranslatorImpl();
 
-	/**
-	 * @return The desired db4o config instance to employ. May be overridden.
-	 */
-	protected Configuration getConfiguration() {
-		final Configuration c = Db4o.newConfiguration();
-		c.generateVersionNumbers(ConfigScope.GLOBALLY);
-		c.updateDepth(3);
-		return c;
-	}
-
 	@Override
 	protected final void configure() {
 		log.info("Loading db4o dao module...");
 
 		// db40 db file URI
 		final String path = config == null ? DEFAULT_DB4O_FILENAME : config.getString(ConfigKeys.DB4O_FILENAME.getKey());
-		//if(path.indexOf('/') >= 0) thr
+		// if(path.indexOf('/') >= 0) thr
 		try {
 			// first attempt to load existing file
 			final URL url = Db4oDaoModule.class.getClassLoader().getResource(path);
@@ -144,7 +133,10 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 
 			@Override
 			public Configuration get() {
-				return getConfiguration();
+				Configuration c = Db4o.newConfiguration();
+				c.generateVersionNumbers(ConfigScope.GLOBALLY);
+				c.updateDepth(3);
+				return c;
 			}
 
 		});
@@ -167,11 +159,13 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 		}).in(Scopes.SINGLETON);
 
 		// determine whether we do spring transactions
-		// this is necessary to avoid un-necessary instantiation of an ObjectContainer instance
-		// which locks the db4o db file which is problematic when working with the db4o db shell
+		// this is necessary to avoid un-necessary instantiation of an
+		// ObjectContainer instance
+		// which locks the db4o db file which is problematic when working with the
+		// db4o db shell
 		final boolean dst =
-			config == null ? DEFAULT_DB4O_EMPLOY_SPRING_TRANSACTIONS : config.getBoolean(
-					ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), DEFAULT_DB4O_EMPLOY_SPRING_TRANSACTIONS);
+				config == null ? DEFAULT_EMPLOY_SPRING_TRANSACTIONS : config.getBoolean(
+						ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), DEFAULT_EMPLOY_SPRING_TRANSACTIONS);
 		if(dst) {
 			log.info("Binding Spring's Db4oTransactionManager to Spring's @Transactional annotation..");
 			// PlatformTransactionManager (for transactions)
@@ -186,8 +180,8 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 
 					// set the transaction timeout
 					final int timeout =
-						config == null ? DEFAULT_TRANS_TIMEOUT : config.getInt(ConfigKeys.DB_TRANS_TIMEOUT.getKey(),
-								DEFAULT_TRANS_TIMEOUT);
+							config == null ? DEFAULT_TRANS_TIMEOUT : config.getInt(ConfigKeys.DB_TRANS_TIMEOUT.getKey(),
+									DEFAULT_TRANS_TIMEOUT);
 					db4oTm.setDefaultTimeout(timeout);
 					log.info("Set DB4O default transaction timeout to: " + timeout);
 
@@ -206,7 +200,8 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 					return db4oTm;
 				}
 			}).asEagerSingleton();
-			// IMPT: asEagerSingleton() to force binding trans manager to @Transactional!
+			// IMPT: asEagerSingleton() to force binding trans manager to
+			// @Transactional!
 		}
 
 		// IPrimaryKeyGenerator

@@ -67,6 +67,7 @@
 				</executions>
 			</plugin>
 		</plugins>
+
 	</build>
 
 	<profiles>
@@ -76,85 +77,78 @@
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-compiler-plugin</artifactId>
-		        <configuration>
-		        	<!-- 
-		        		This tells datanucleus to NOT auto-enhance since the enhancer is on the classpath!
-		        		We do this manually as the maven datanucleus enhancer plugin 
-		        		IS UNABLE to ehnance both classes and test-classes! 
-		        	-->
-		        	<compilerArgument>-proc:none</compilerArgument>
-		        </configuration>
-		      </plugin>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<configuration>
+							<!--
+								This tells datanucleus to NOT auto-enhance since the enhancer is on the classpath! 
+								
+								We do this manually as the maven datanucleus enhancer plugin 
+								IS UNABLE to enhance both classes and test-classes!
+								
+								Also, we don't want the main tll-model jar to contain jdo enhanced classes 
+								rather we specify a classifier and create a SEPARATE jar containing enhanced classes!
+							-->
+							<compilerArgument>-proc:none</compilerArgument>
+						</configuration>
+					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-dependency-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>jdo-ehnance-classpath</id>
+								<id>jdo-enhance-classpath</id>
 								<phase>process-resources</phase>
 								<goals>
 									<goal>build-classpath</goal>
 								</goals>
 								<configuration>
-									<includeArtifactIds>log4j,asm,jdo2-api,datanucleus-core,datanucleus-enhancer</includeArtifactIds>
+									<includeArtifactIds>log4j,asm,commons-logging,gwt-servlet,tll-core,jdo2-api,datanucleus-core,datanucleus-enhancer</includeArtifactIds>
 									<outputFile>target/jdo-enhance-cp.txt</outputFile>
 								</configuration>
 							</execution>
 						</executions>
 					</plugin>
-		      <plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-antrun-plugin</artifactId>
-		        <!-- 
-							NOTE: copy the classes to be enhanced into a distinct dir 
-							since datanucleus erroneously overwrites classes
-							when an outputDirectory (-d arg) is specified.
-						-->
-		        <executions>
-		          <execution>
-		            <id>jdo-enhance</id>
-		            <phase>process-classes</phase>
-		            <goals>
-		              <goal>run</goal>
-		            </goals>
-		            <configuration>
-		              <tasks>
-										<copy todir="target/enhanced/classes" preservelastmodified="true">
-											<fileset dir="target/classes" />
-										</copy>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>jdo-enhance</id>
+								<phase>process-classes</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
 										<loadfile property="ecp" srcFile="target/jdo-enhance-cp.txt" />
-		                <property name="enhancer.classpath" value="target/enhanced/classes;${ecp}" />
-		                <echo message="enhancer.classpath: ${enhancer.classpath}" />
-		                <property name="jdo.files" value="META-INF/package.jdo" />
-		                <ant antfile="build-jdo.xml">
-		                  <target name="enhance" />
-		                </ant>
-		              </tasks>
-		            </configuration>
-		          </execution>
-		          <execution>
-		            <id>jdo-enhance-test</id>
-		            <phase>process-test-classes</phase>
-		            <goals>
-		              <goal>run</goal>
-		            </goals>
-		            <configuration>
-		              <tasks>
-										<copy todir="target/enhanced/test-classes">
-											<fileset dir="target/test-classes" />
-										</copy>
+										<property name="enhancer.classpath" value="target/classes;${ecp}" />
+										<echo message="enhancer.classpath: ${enhancer.classpath}" />
+										<property name="jdo.files" value="META-INF/package.jdo" />
+										<ant antfile="build-jdo.xml">
+											<target name="enhance" />
+										</ant>
+									</tasks>
+								</configuration>
+							</execution>
+							<execution>
+								<id>jdo-enhance-test</id>
+								<phase>process-test-classes</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
 										<loadfile property="ecp" srcFile="target/jdo-enhance-cp.txt" />
-		                <property name="enhancer.classpath" value="${ecp};./target/enhanced/test-classes/" />
-		                <property name="jdo.files" value="target/enhanced/test-classes/META-INF/package.jdo"/>
-		                <ant antfile="build-jdo.xml">
-		                  <target name="enhance" />
-		                </ant>
-		              </tasks>
-		            </configuration>
-		          </execution>
-		        </executions>
-		      </plugin>
+										<property name="enhancer.classpath" value="target/test-classes;target/classes;${ecp}" />
+										<property name="jdo.files" value="META-INF/package.jdo" />
+										<ant antfile="build-jdo.xml">
+											<target name="enhance" />
+										</ant>
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 				</plugins>
 			</build>
 			<dependencies>
@@ -176,7 +170,7 @@
 				<dependency>
 					<groupId>org.datanucleus</groupId>
 					<artifactId>datanucleus-enhancer</artifactId>
-					<scope>optional</scope>
+					<scope>provided</scope>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -191,7 +185,7 @@
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>oro</groupId>
 			<artifactId>oro</artifactId>
@@ -206,7 +200,7 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.google.code.guice</groupId>
 			<artifactId>guice</artifactId>

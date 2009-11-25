@@ -44,7 +44,6 @@ import com.tll.model.INamedEntity;
 import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
-import com.tll.util.CollectionUtil;
 import com.tll.util.DateRange;
 
 /**
@@ -165,7 +164,12 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 		for(final E e : entities) {
 			merged.add(persistInternal(e, false));
 		}
-		getJdoTemplate().flush();
+		try {
+			getJdoTemplate().flush();
+		}
+		catch(final DataIntegrityViolationException e) {
+			throw new EntityExistsException("Encountered not-unique entity: " + e.getMessage(), e);
+		}
 		return merged;
 	}
 
@@ -199,15 +203,15 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 
 	@Override
 	public <E extends IEntity> void purgeAll(Collection<E> entities) {
-		if(!CollectionUtil.isEmpty(entities)) {
-			try {
-				for(final E e : entities) {
-					purgeInternal(e, false);
-				}
-			}
-			finally {
-				getJdoTemplate().flush();
-			}
+		if(entities == null) return;
+		for(final E e : entities) {
+			purgeInternal(e, false);
+		}
+		try {
+			getJdoTemplate().flush();
+		}
+		catch(final JdoObjectRetrievalFailureException e) {
+			throw new EntityNotFoundException("Entity not found during batch purge: " + e.getMessage(), e);
 		}
 	}
 

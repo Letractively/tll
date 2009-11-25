@@ -135,6 +135,24 @@
 	    <scope>runtime</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aspects</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-beans</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.aspectj</groupId>
+          <artifactId>aspectjrt</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.aspectj</groupId>
+          <artifactId>aspectjweaver</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 		<dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
@@ -161,6 +179,7 @@
 		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-model</artifactId>
+			<classifier>jdo</classifier>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

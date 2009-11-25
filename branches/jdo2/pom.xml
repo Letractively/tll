@@ -14,7 +14,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<db4oVersion>7.4.88.12908</db4oVersion>
+		<db4oVersion>7.4.121.14026</db4oVersion>
 		<springextensions.db4o.version>1.0.0e</springextensions.db4o.version>
     
     <aspectjVersion>1.6.5</aspectjVersion>
@@ -74,6 +74,12 @@
 			<name>Java.Net legacy</name>
 			<url>http://download.java.net/maven/1/</url>
 			<layout>legacy</layout>
+		</repository>
+		<!-- db40 -->
+		<repository>
+			<id>db4o</id>
+			<name>db4o</name>
+			<url>https://source.db4o.com/maven</url>
 		</repository>
 	</repositories>
 

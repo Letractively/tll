@@ -9,7 +9,6 @@ import java.util.Set;
 
 import javax.validation.ValidatorFactory;
 
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -17,24 +16,16 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Binder;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
-import com.tll.config.Config;
 import com.tll.criteria.Criteria;
 import com.tll.dao.AbstractDbAwareTest;
-import com.tll.dao.IDbShell;
-import com.tll.dao.IDbTrans;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
-import com.tll.dao.db4o.test.Db4oTrans;
-import com.tll.di.Db4oDaoModule;
-import com.tll.di.test.Db4oDbShellModule;
-import com.tll.di.test.TestDb4oDaoModule;
 import com.tll.di.test.TestPersistenceUnitModule;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntityAssembler;
@@ -77,6 +68,19 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 	 */
 	private static final int NUM_LIST_ELEMENTS = 100;
 
+	@Override
+	protected void addModules(List<Module> modules) {
+		super.addModules(modules);
+		modules.add(new TestPersistenceUnitModule());
+		modules.add(new Module() {
+
+			@Override
+			public void configure(Binder binder) {
+				binder.bind(new TypeLiteral<IEntityService<Address>>() {}).to(TestEntityService.class).in(Scopes.SINGLETON);
+			}
+		});
+	}
+
 	@BeforeClass(alwaysRun = true)
 	public void onBeforeClass() {
 		beforeClass();
@@ -85,38 +89,6 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 	@AfterClass(alwaysRun = true)
 	public void onAfterClass() {
 		afterClass();
-	}
-
-	@Override
-	protected void beforeClass() {
-		// create the db shell first (before test injector creation) to avoid db4o
-		// file lock when objectcontainer is instantiated
-		final Config cfg = getConfig();
-		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), Boolean.FALSE);
-		final Injector i = buildInjector(new TestDb4oDaoModule(cfg), new Db4oDbShellModule() );
-		final IDbShell dbs = i.getInstance(IDbShell.class);
-		dbs.delete();
-		dbs.create();
-
-		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB4O_EMPLOY_SPRING_TRANSACTIONS.getKey(), Boolean.TRUE);
-		super.beforeClass();
-		injector.getInstance(PlatformTransactionManager.class);	// bind @Transactional
-	}
-
-	@Override
-	protected void addModules(List<Module> modules) {
-		super.addModules(modules);
-		modules.add(new TestPersistenceUnitModule());
-		modules.add(new TestDb4oDaoModule(getConfig()));
-		modules.add(new Db4oDbShellModule());
-		modules.add(new Module() {
-
-			@Override
-			public void configure(Binder binder) {
-				binder.bind(IDbTrans.class).to(Db4oTrans.class).in(Scopes.SINGLETON);
-				binder.bind(new TypeLiteral<IEntityService<Address>>() {}).to(TestEntityService.class).in(Scopes.SINGLETON);
-			}
-		});
 	}
 
 	protected final IEntityDao getEntityDao() {
