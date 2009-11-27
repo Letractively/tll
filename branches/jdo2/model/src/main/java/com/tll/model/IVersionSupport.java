@@ -15,6 +15,11 @@ package com.tll.model;
 public interface IVersionSupport {
 
 	/**
+	 * The name of the version field.
+	 */
+	public static final String VERSION_FIELDNAME = "version";
+
+	/**
 	 * @return the version
 	 */
 	long getVersion();

@@ -47,11 +47,11 @@ public class TestModelStubber {
 	 *        standard entity name property will be added.
 	 * @return the stubbed model
 	 */
-	public static Model stubModel(TestEntityType type, Integer version, boolean timestamping, String name) {
+	public static Model stubModel(TestEntityType type, String version, boolean timestamping, String name) {
 		final Model m = new Model(type);
 		m.set(new StringPropertyValue(Model.ID_PROPERTY, new PropertyMetadata(PropertyType.STRING, false, true, 10),
 				Integer.toString(++nextUniqueId)));
-		m.set(new IntPropertyValue(Model.VERSION_PROPERTY, version));
+		m.set(new StringPropertyValue(Model.VERSION_PROPERTY, version));
 		if(name != null) {
 			m.set(new StringPropertyValue(Model.NAME_PROPERTY, new PropertyMetadata(PropertyType.STRING, false, true, 32),
 					name));

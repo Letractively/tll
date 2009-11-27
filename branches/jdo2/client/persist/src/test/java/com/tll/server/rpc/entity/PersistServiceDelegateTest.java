@@ -139,7 +139,7 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 		assert p != null;
 		final Model m = p.getModel();
 		assert m != null;
-		assert m.getId() != null && m.getId().equals(id) && m.getEntityType() != null
+		assert m.getId() != null && m.getId().equals(id.toString()) && m.getEntityType() != null
 		&& m.getEntityType().equals(TestEntityType.ADDRESS);
 	}
 
@@ -204,7 +204,7 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 		assert p != null;
 		m = p.getModel();
 		assert m != null;
-		assert m.getId() != null && m.getId().equals(id) && m.getEntityType() != null
+		assert m.getId() != null && m.getId().equals(id.toString()) && m.getEntityType() != null
 		&& m.getEntityType().equals(TestEntityType.ADDRESS);
 		final String ov = m.getVersion();
 		assert ov != null && ov.equals("1");

@@ -37,6 +37,7 @@ import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
 import com.tll.model.IScalar;
+import com.tll.model.IVersionSupport;
 import com.tll.model.key.PrimaryKey;
 import com.tll.model.schema.ISchemaInfo;
 import com.tll.model.schema.ISchemaProperty;
@@ -334,6 +335,9 @@ public final class Marshaler {
 			if(Model.ID_PROPERTY.equals(propName)) {
 				val = Long.valueOf((String) pval);
 			}
+			else if(Model.VERSION_PROPERTY.equals(propName)) {
+				val = Long.valueOf((String) pval);
+			}
 			else {
 				switch(mprop.getType()) {
 
@@ -532,7 +536,12 @@ public final class Marshaler {
 
 		// we convert server side ids to strings client-side
 		else if(IEntity.PK_FIELDNAME.equals(pname)) {
-			prop = new StringPropertyValue(pname, pdata, obj.toString());
+			prop = new StringPropertyValue(pname, pdata, obj == null ? null : obj.toString());
+		}
+
+		// we convert server side version prop values to strings client-side
+		else if(IVersionSupport.VERSION_FIELDNAME.equals(pname)) {
+			prop = new StringPropertyValue(pname, pdata, obj == null ? null : obj.toString());
 		}
 
 		else if(Date.class == ptype) {
@@ -565,7 +574,7 @@ public final class Marshaler {
 		}
 
 		else if(float.class == ptype || Float.class == ptype) {
-			prop = new DoublePropertyValue(pname, pdata, Double.valueOf(((Float) obj).doubleValue()));
+			prop = new DoublePropertyValue(pname, pdata, obj == null ? null : Double.valueOf(((Float) obj).doubleValue()));
 		}
 
 		else if(pdata != null && pdata.getPropertyType() == PropertyType.STRING_MAP) {

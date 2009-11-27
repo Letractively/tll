@@ -2,10 +2,9 @@
 create table app_property (
    id bigint not null,
    version bigint not null default 0,
-   name varchar(128) not null,
+   name varchar(128) not null unique,
    value varchar(255) not null,
-   primary key (id),
-   unique name (name)
+   primary key (id)
 );
 
 create table address (   
@@ -36,7 +35,6 @@ create table currency (
    symbol varchar(8) not null unique,
    iso_4217 varchar(16) not null unique,
    usd_exchange_rate float,
-   unique(iso_4217),
    primary key (id)
 );
 
@@ -72,7 +70,7 @@ create table payment_trans (
 create table account (
    id bigint not null,
    version bigint not null default 0,
-   account_type tinyint not null,
+   account_type varchar(32) not null,
    date_created datetime not null,
    date_last_modified datetime not null,
    parent_aid bigint,
@@ -188,7 +186,7 @@ create table interface (
    version bigint not null default 0,
    date_created datetime not null,
    date_last_modified datetime not null,
-   type tinyint not null,
+   type varchar(20) not null,
    code varchar(50) not null,
    name varchar(50) not null,
    description varchar(128),

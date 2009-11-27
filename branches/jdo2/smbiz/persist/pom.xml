@@ -15,6 +15,17 @@
 	<description>The smbiz persist module.</description>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>db/**</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>src/main/resources/db</directory>
+			</resource>
+		</resources>
 
 		<plugins>
 			<!-- AspectJ bind @Transactional to Spring's trans handling framework -->
@@ -129,6 +140,13 @@
 					</resource>
 				</resources>
 			</build>
+  		<dependencies>
+  			<!-- required for resolution of JDO stuff in *enhanced* .class files tll-model testassets jar  -->
+  			<dependency>
+  				<groupId>javax.jdo</groupId>
+  				<artifactId>jdo2-api</artifactId>
+  			</dependency>
+  		</dependencies>
 		</profile>
 	</profiles>
 
