@@ -179,7 +179,6 @@
 		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-model</artifactId>
-			<classifier>jdo</classifier>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

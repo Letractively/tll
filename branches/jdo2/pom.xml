@@ -21,8 +21,26 @@
     <springVersion>2.5.6.SEC01</springVersion>
     <slfVersion>1.5.6</slfVersion>
 
+		<!-- datanucleus v1.1.6 -->
+		<!-- 
+		<jdo2apiVersion>2.3-eb</jdo2apiVersion>
+		<datanucleusVersion>1.1.6</datanucleusVersion>
+		<datanucleusCacheVersion>1.1.1</datanucleusCacheVersion>
+		<datanucleusPoolVersion>1.0.2</datanucleusPoolVersion>
+		<datanucleusDb4oVersion>1.1.2</datanucleusDb4oVersion>
+		<datanucleusEnhancerVersion>1.1.4</datanucleusEnhancerVersion>
+		<datanucleusRdbmsVersion>1.1.6</datanucleusRdbmsVersion>
+		-->
+
+		<!-- datanucleus v2.0.0-m3 -->
 		<jdo2apiVersion>2.3-eb</jdo2apiVersion>
 		<datanucleusVersion>2.0.0-m3</datanucleusVersion>
+		<datanucleusCacheVersion>2.0.0-m2</datanucleusCacheVersion>
+		<datanucleusPoolVersion>2.0.0-m1</datanucleusPoolVersion>
+		<datanucleusDb4oVersion>2.0.0-m2</datanucleusDb4oVersion>
+		<datanucleusEnhancerVersion>2.0.0-m3</datanucleusEnhancerVersion>
+		<datanucleusRdbmsVersion>2.0.0-m3</datanucleusRdbmsVersion>
+    
     <mysqlConnectorVersion>5.1.6</mysqlConnectorVersion>
     
     <gwtVersion>2.0.0-rc2</gwtVersion>
@@ -498,12 +516,12 @@
       <dependency>
         <groupId>org.datanucleus</groupId>
         <artifactId>datanucleus-cache</artifactId>
-        <version>2.0.0-m2</version>
+        <version>${datanucleusCacheVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.datanucleus</groupId>
         <artifactId>datanucleus-connectionpool</artifactId>
-        <version>2.0.0-m1</version>
+        <version>${datanucleusPoolVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.datanucleus</groupId>
@@ -513,12 +531,12 @@
       <dependency>
         <groupId>org.datanucleus</groupId>
         <artifactId>datanucleus-enhancer</artifactId>
-        <version>${datanucleusVersion}</version>
+        <version>${datanucleusEnhancerVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.datanucleus</groupId>
         <artifactId>datanucleus-rdbms</artifactId>
-        <version>${datanucleusVersion}</version>
+        <version>${datanucleusRdbmsVersion}</version>
       </dependency>
       
       <dependency>
