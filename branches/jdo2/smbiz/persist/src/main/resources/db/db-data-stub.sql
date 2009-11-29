@@ -24,16 +24,16 @@ values
 insert into account
 (id,account_type,date_created,date_last_modified,status,name,persist_pymnt_info,billing_model,billing_cycle,date_last_charged,next_charge_date,date_cancelled,pi_id,cur_id,store_name,parent_aid)
 values
-(1,0,'2005-02-13','2005-02-13',1,'asp',1,'billing_model','billing_cycle',null,null,null,null,1,null,null),
-(2,1,'2005-02-13','2005-02-13',1,'isp1',1,null,null,null,null,null,null,1,null,1),
-(3,1,'2005-02-13','2005-02-13',1,'isp2',1,null,null,null,null,null,null,1,null,1),
-(4,2,'2005-02-13','2005-02-13',1,'m1',1,null,null,null,null,null,null,1,'store1',1),
-(5,2,'2005-02-13','2005-02-13',1,'m2',1,null,null,null,null,null,null,1,'store2',2),
-(6,2,'2005-02-13','2005-02-13',1,'m3',1,null,null,null,null,null,null,1,'store3',3),
-(7,3,'2005-02-13','2005-02-13',1,'c1',1,null,null,null,null,null,null,1,null,null),
-(8,3,'2005-02-13','2005-02-13',1,'c2',1,null,null,null,null,null,null,1,null,null),
-(9,3,'2005-02-13','2005-02-13',1,'c3',1,null,null,null,null,null,null,1,null,null),
-(10,3,'2005-02-13','2005-02-13',1,'c4',1,null,null,null,null,null,null,1,null,null);
+(1,'asp','2005-02-13','2005-02-13',1,'asp',1,'billing_model','billing_cycle',null,null,null,null,1,null,null),
+(2,'isp','2005-02-13','2005-02-13',1,'isp1',1,null,null,null,null,null,null,1,null,1),
+(3,'isp','2005-02-13','2005-02-13',1,'isp2',1,null,null,null,null,null,null,1,null,1),
+(4,'merchant','2005-02-13','2005-02-13',1,'m1',1,null,null,null,null,null,null,1,'store1',1),
+(5,'merchant','2005-02-13','2005-02-13',1,'m2',1,null,null,null,null,null,null,1,'store2',2),
+(6,'merchant','2005-02-13','2005-02-13',1,'m3',1,null,null,null,null,null,null,1,'store3',3),
+(7,'customer','2005-02-13','2005-02-13',1,'c1',1,null,null,null,null,null,null,1,null,null),
+(8,'customer','2005-02-13','2005-02-13',1,'c2',1,null,null,null,null,null,null,1,null,null),
+(9,'customer','2005-02-13','2005-02-13',1,'c3',1,null,null,null,null,null,null,1,null,null),
+(10,'customer','2005-02-13','2005-02-13',1,'c4',1,null,null,null,null,null,null,1,null,null);
 
 insert into account_address
 (id,date_created,date_last_modified,name,type,aid,address_id)

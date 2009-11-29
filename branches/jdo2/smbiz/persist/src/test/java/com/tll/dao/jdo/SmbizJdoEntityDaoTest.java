@@ -3,7 +3,7 @@
  * @author jpk
  * Jan 28, 2009
  */
-package com.tll.dao.db4o;
+package com.tll.dao.jdo;
 
 import java.util.List;
 
@@ -12,27 +12,22 @@ import org.testng.annotations.Test;
 import com.google.inject.Module;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
-import com.tll.dao.AspAccountDaoTestHandler;
-import com.tll.dao.CustomerAccountDaoTestHandler;
 import com.tll.dao.IEntityDaoTestHandler;
-import com.tll.dao.InterfaceSingleDaoTestHandler;
-import com.tll.dao.InterfaceSwitchDaoTestHandler;
-import com.tll.dao.MerchantDaoTestHandler;
-import com.tll.di.Db4oDaoModule;
-import com.tll.di.SmbizDb4oDaoModule;
+import com.tll.di.JdoDaoModule;
 import com.tll.di.SmbizEGraphModule;
+import com.tll.di.SmbizJdoDaoModule;
 import com.tll.di.SmbizModelModule;
+import com.tll.util.CommonUtil;
 
 /**
- * Db4oEntityDaoTest
+ * JdoEntityDaoTest
  * @author jpk
  */
-@Test(groups = "dao")
-public class Db4oEntityDaoTest extends AbstractDb4oEntityDaoTest {
+@Test(groups = { "dao", "jdo" })
+public class SmbizJdoEntityDaoTest extends AbstractJdoEntityDaoTest {
 
 	@Override
 	protected IEntityDaoTestHandler<?>[] getDaoTestHandlers() {
-		/*
 		try {
 			final Class<?>[] handlerTypes =
 				CommonUtil.getClasses("com.tll.dao", IEntityDaoTestHandler.class, true, null, null);
@@ -54,7 +49,8 @@ public class Db4oEntityDaoTest extends AbstractDb4oEntityDaoTest {
 		catch(final IllegalAccessException e) {
 			throw new IllegalStateException("Unable to access an entity dao test handler: " + e.getMessage(), e);
 		}
-		 */
+
+		/*
 		return new IEntityDaoTestHandler<?>[] {
 			new AspAccountDaoTestHandler(),
 			new MerchantDaoTestHandler(),
@@ -62,6 +58,7 @@ public class Db4oEntityDaoTest extends AbstractDb4oEntityDaoTest {
 			new InterfaceSingleDaoTestHandler(),
 			new InterfaceSwitchDaoTestHandler(),
 		};
+		*/
 	}
 
 	@Override
@@ -69,13 +66,13 @@ public class Db4oEntityDaoTest extends AbstractDb4oEntityDaoTest {
 		super.addModules(modules);
 		modules.add(new SmbizModelModule());
 		modules.add(new SmbizEGraphModule());
-		modules.add(new SmbizDb4oDaoModule(getConfig()));
+		modules.add(new SmbizJdoDaoModule(getConfig()));
 	}
 
 	@Override
 	protected Config doGetConfig() {
-		final Config c = Config.load(new ConfigRef("test-config.properties"));
-		c.setProperty(Db4oDaoModule.ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), Boolean.FALSE);
+		final Config c = Config.load(new ConfigRef("jdo-config.properties"));
+		c.setProperty(JdoDaoModule.ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), Boolean.FALSE);
 		return c;
 	}
 

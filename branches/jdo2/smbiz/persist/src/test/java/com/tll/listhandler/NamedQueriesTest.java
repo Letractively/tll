@@ -141,7 +141,7 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 
 	@Override
 	protected Config doGetConfig() {
-		return Config.load(new ConfigRef("test-config.properties"));
+		return Config.load(new ConfigRef("db40-config.properties"));
 	}
 
 	/**

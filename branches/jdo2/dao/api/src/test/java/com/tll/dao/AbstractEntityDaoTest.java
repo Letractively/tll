@@ -223,6 +223,12 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	@Override
 	protected void beforeMethod() {
 		super.beforeMethod();
+		
+		// ensure a clean slate
+		if(testEntityRefStack.size() > 0) {
+			Assert.fail("Test entity ref stack is NOT empty!");
+		}
+		
 		// start a new transaction for convenience and brevity
 		startNewTransaction();
 	}
@@ -353,7 +359,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 			// run the dao test methods
 			for(final Method method : testMethods) {
 				beforeMethod();
-				logger.debug("Testing " + method.getName() + " for entity type: " + handler.entityClass() + "...");
+				logger.debug("\n ** Testing " + method.getName() + " for entity type: " + handler.entityClass() + "...");
 				method.setAccessible(true);
 				method.invoke(this, (Object[]) null);
 				afterMethod();

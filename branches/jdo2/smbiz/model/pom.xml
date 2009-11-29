@@ -77,13 +77,9 @@
 						<artifactId>maven-compiler-plugin</artifactId>
 						<configuration>
 							<!--
-								This tells datanucleus to NOT auto-enhance since the enhancer is on the classpath! 
-								
-								We do this manually as the maven datanucleus enhancer plugin 
-								IS UNABLE to enhance both classes and test-classes!
-								
-								Also, we don't want the main tll-model jar to contain jdo enhanced classes 
-								rather we specify a classifier and create a SEPARATE jar containing enhanced classes!
+								This tells datanucleus to NOT auto-enhance since the enhancer is on the classpath!
+								This is a manually driven process for various reasons but mainly since we have more 
+								than on dao impl option which means jdo enhancement is not necessary and clutters the classpath!
 							-->
 							<compilerArgument>-proc:none</compilerArgument>
 						</configuration>
@@ -99,7 +95,7 @@
 									<goal>build-classpath</goal>
 								</goals>
 								<configuration>
-									<includeArtifactIds>log4j,asm,commons-logging,gwt-servlet,tll-core,jdo2-api,datanucleus-core,datanucleus-enhancer</includeArtifactIds>
+									<includeArtifactIds>log4j,asm,commons-logging,gwt-servlet,spring-security-core,tll-core,tll-model,jdo2-api,datanucleus-core,datanucleus-enhancer</includeArtifactIds>
 									<outputFile>target/jdo-enhance-cp.txt</outputFile>
 								</configuration>
 							</execution>
@@ -118,7 +114,7 @@
 								<configuration>
 									<tasks>
 										<loadfile property="ecp" srcFile="target/jdo-enhance-cp.txt" />
-										<property name="enhancer.classpath" value="target/classes;${ecp}" />
+										<property name="enhancer.classpath" value="target/classes;src/test/resources;${ecp}" />
 										<echo message="enhancer.classpath: ${enhancer.classpath}" />
 										<property name="jdo.files" value="META-INF/package.jdo" />
 										<ant antfile="../../model/build-jdo.xml">

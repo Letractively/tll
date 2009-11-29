@@ -15,17 +15,6 @@
 	<description>The smbiz persist module.</description>
 
 	<build>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<excludes>
-					<exclude>db/**</exclude>
-				</excludes>
-			</resource>
-			<resource>
-				<directory>src/main/resources/db</directory>
-			</resource>
-		</resources>
 
 		<plugins>
 			<!-- AspectJ bind @Transactional to Spring's trans handling framework -->
@@ -123,30 +112,22 @@
 			<properties>
 				<daoImpl>db4o</daoImpl>
 			</properties>
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+						<excludes>
+							<exclude>db/**</exclude>
+						</excludes>
+					</resource>
+				</resources>
+			</build>
 		</profile>
 		<profile>
 			<id>jdo</id>
 			<properties>
 				<daoImpl>jdo</daoImpl>
 			</properties>
-			<build>
-				<resources>
-					<resource>
-						<directory>src/main/resources/db</directory>
-						<filtering>false</filtering>
-						<includes>
-							<include>*.*</include>
-						</includes>
-					</resource>
-				</resources>
-			</build>
-  		<dependencies>
-  			<!-- required for resolution of JDO stuff in *enhanced* .class files tll-model testassets jar  -->
-  			<dependency>
-  				<groupId>javax.jdo</groupId>
-  				<artifactId>jdo2-api</artifactId>
-  			</dependency>
-  		</dependencies>
 		</profile>
 	</profiles>
 
@@ -224,11 +205,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>db4o</groupId>
-			<artifactId>db4o</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
@@ -246,11 +222,6 @@
 		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-dao-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.tll</groupId>
-			<artifactId>tll-dao-db4o</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
@@ -286,13 +257,6 @@
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.tll</groupId>
-			<artifactId>tll-dao-db4o</artifactId>
-			<classifier>testassets</classifier>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>test</scope>
-		</dependency>
 
 		<dependency>
 			<groupId>com.tll</groupId>
@@ -301,7 +265,53 @@
 			<version>0.9.0-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
-		
+
+		<!-- jdo deps -->
+		<dependency>
+			<groupId>javax.jdo</groupId>
+			<artifactId>jdo2-api</artifactId>
+			<scope>optional</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-dao-jdo</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>optional</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-dao-jdo</artifactId>
+			<classifier>testassets</classifier>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency>
+	
+		<!-- db40 deps -->
+		<dependency>
+			<groupId>db4o</groupId>
+			<artifactId>db4o</artifactId>
+			<scope>optional</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springextensions.db4o</groupId>
+			<artifactId>org.springextensions.db4o</artifactId>
+			<version>${springextensions.db4o.version}</version>
+			<scope>optional</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-dao-db4o</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>optional</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-dao-db4o</artifactId>
+			<classifier>testassets</classifier>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
