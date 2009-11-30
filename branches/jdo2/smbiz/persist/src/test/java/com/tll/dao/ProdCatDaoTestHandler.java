@@ -1,5 +1,5 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.dao;
 
@@ -12,6 +12,7 @@ import com.tll.model.ProdCat;
 import com.tll.model.ProductCategory;
 import com.tll.model.ProductGeneral;
 import com.tll.model.ProductInventory;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * ProdCatDaoTestHandler
@@ -19,10 +20,10 @@ import com.tll.model.ProductInventory;
  */
 public class ProdCatDaoTestHandler extends AbstractEntityDaoTestHandler<ProdCat> {
 
-	Currency currency;
-	Account account;
-	ProductInventory product;
-	ProductCategory category;
+	private PrimaryKey<Currency> pkC;
+	private PrimaryKey<Account> pkA;
+	private PrimaryKey<ProductInventory> pkP;
+	private PrimaryKey<ProductCategory> pkCa;
 
 	@Override
 	public Class<ProdCat> entityClass() {
@@ -33,40 +34,44 @@ public class ProdCatDaoTestHandler extends AbstractEntityDaoTestHandler<ProdCat>
 	public boolean supportsPaging() {
 		// since we can't (currently) create unique multiple instances since the
 		// only bk
-		// is the binding between product/category only
+		// is the binding between pkP/pkCa only
 		return false;
 	}
 
 	@Override
 	public void persistDependentEntities() {
-		currency = createAndPersist(Currency.class, true);
+		final Currency currency = createAndPersist(Currency.class, true);
+		pkC = new PrimaryKey<Currency>(currency);
 
-		account = create(Asp.class, true);
+		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
+		pkA = new PrimaryKey<Account>(account);
 
-		product = create(ProductInventory.class, true);
+		ProductInventory product = create(ProductInventory.class, true);
 		product.setProductGeneral(create(ProductGeneral.class, true));
 		product.setParent(account);
 		product = persist(product);
+		pkP = new PrimaryKey<ProductInventory>(product);
 
-		category = create(ProductCategory.class, true);
+		ProductCategory category = create(ProductCategory.class, true);
 		category.setParent(account);
 		category = persist(category);
+		pkCa = new PrimaryKey<ProductCategory>(category);
 	}
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(category);
-		purge(product);
-		purge(account);
-		purge(currency);
+		purge(pkCa);
+		purge(pkP);
+		purge(pkA);
+		purge(pkC);
 	}
 
 	@Override
 	public void assembleTestEntity(ProdCat e) throws Exception {
-		e.setProduct(product);
-		e.setCategory(category);
+		e.setProduct(load(pkP));
+		e.setCategory(load(pkCa));
 	}
 
 	@Override

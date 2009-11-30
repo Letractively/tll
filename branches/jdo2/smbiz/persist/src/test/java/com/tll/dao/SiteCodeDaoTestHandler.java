@@ -1,5 +1,5 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.dao;
 
@@ -9,6 +9,7 @@ import com.tll.model.Account;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
 import com.tll.model.SiteCode;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * SiteCodeDaoTestHandler
@@ -16,8 +17,8 @@ import com.tll.model.SiteCode;
  */
 public class SiteCodeDaoTestHandler extends AbstractEntityDaoTestHandler<SiteCode> {
 
-	Currency currency;
-	Account account;
+	private PrimaryKey<Currency> pkC;
+	private PrimaryKey<Account> pkA;
 
 	@Override
 	public Class<SiteCode> entityClass() {
@@ -26,22 +27,24 @@ public class SiteCodeDaoTestHandler extends AbstractEntityDaoTestHandler<SiteCod
 
 	@Override
 	public void persistDependentEntities() {
-		currency = createAndPersist(Currency.class, true);
+		final Currency currency = createAndPersist(Currency.class, true);
+		pkC = new PrimaryKey<Currency>(currency);
 
-		account = create(Asp.class, true);
+		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
+		pkA = new PrimaryKey<Account>(account);
 	}
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(account);
-		purge(currency);
+		purge(pkA);
+		purge(pkC);
 	}
 
 	@Override
 	public void assembleTestEntity(SiteCode e) throws Exception {
-		e.setAccount(account);
+		e.setAccount(load(pkA));
 	}
 
 	@Override

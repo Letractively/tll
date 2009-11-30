@@ -1,11 +1,8 @@
 package com.tll.dao.jdo;
 
-import java.util.List;
-
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
-import com.google.inject.Module;
 import com.tll.dao.AbstractEntityDaoTest;
 import com.tll.dao.IDbShell;
 import com.tll.dao.IEntityDaoTestHandler;
@@ -36,12 +33,6 @@ public abstract class AbstractJdoEntityDaoTest extends AbstractEntityDaoTest<Jdo
 	}
 
 	@Override
-	protected void addModules(List<Module> modules) {
-		super.addModules(modules);
-		modules.add(new JdbcDbShellModule(getConfig()));
-	}
-
-	@Override
 	protected IEntityDaoTestHandler<?>[] getDaoTestHandlers() {
 		return null;
 	}
@@ -62,9 +53,7 @@ public abstract class AbstractJdoEntityDaoTest extends AbstractEntityDaoTest<Jdo
 
 	@Override
 	protected final IEntity getEntityFromDb(PrimaryKey<IEntity> key) {
-		// we need to ensure we have a clear cache first
-		//dao.getPersistenceManagerFactory().getPersistenceManager()
-		// TODO finish
+		// TODO verify we always hit the db
 		return dao.load(key);
 	}
 }

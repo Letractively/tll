@@ -1,5 +1,5 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.dao;
 
@@ -10,6 +10,7 @@ import com.tll.model.Address;
 import com.tll.model.AddressType;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * AccountAddressDaoTestHandler
@@ -17,9 +18,9 @@ import com.tll.model.Currency;
  */
 public class AccountAddressDaoTestHandler extends AbstractEntityDaoTestHandler<AccountAddress> {
 
-	Currency currency;
-	Asp account;
-	Address address;
+	private PrimaryKey<Currency> pkCurrency;
+	private PrimaryKey<Asp> pkAsp;
+	private PrimaryKey<Address> pkAddress;
 
 	@Override
 	public Class<AccountAddress> entityClass() {
@@ -33,28 +34,31 @@ public class AccountAddressDaoTestHandler extends AbstractEntityDaoTestHandler<A
 
 	@Override
 	public void persistDependentEntities() {
-		currency = createAndPersist(Currency.class, true);
+		final Currency currency = createAndPersist(Currency.class, true);
+		this.pkCurrency = new PrimaryKey<Currency>(currency);
 
-		account = create(Asp.class, true);
-		account.setCurrency(currency);
-		account.setPaymentInfo(null);
-		account.setParent(null);
-		account = persist(account);
-		
-		address = createAndPersist(Address.class, true);
+		Asp asp = create(Asp.class, true);
+		asp.setCurrency(currency);
+		asp.setPaymentInfo(null);
+		asp.setParent(null);
+		asp = persist(asp);
+		this.pkAsp = new PrimaryKey<Asp>(asp);
+
+		final Address address = createAndPersist(Address.class, true);
+		this.pkAddress = new PrimaryKey<Address>(address);
 	}
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(address);
-		purge(account);
-		purge(currency);
+		purge(pkAddress);
+		purge(pkAsp);
+		purge(pkCurrency);
 	}
 
 	@Override
 	public void assembleTestEntity(AccountAddress e) throws Exception {
-		e.setAccount(account);
-		e.setAddress(address);
+		e.setAccount(load(pkAsp));
+		e.setAddress(load(pkAddress));
 	}
 
 	@Override

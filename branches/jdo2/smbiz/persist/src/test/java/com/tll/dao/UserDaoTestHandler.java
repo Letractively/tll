@@ -1,5 +1,5 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.dao;
 
@@ -10,6 +10,7 @@ import com.tll.model.Asp;
 import com.tll.model.Authority;
 import com.tll.model.Currency;
 import com.tll.model.User;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * AbstractEntityDaoTest
@@ -17,9 +18,9 @@ import com.tll.model.User;
  */
 public class UserDaoTestHandler extends AbstractEntityDaoTestHandler<User> {
 
-	Currency currency;
-	Account account;
-	Authority auth;
+	private PrimaryKey<Currency> pkC;
+	private PrimaryKey<Account> pkA;
+	private PrimaryKey<Authority> pkT;
 
 	@Override
 	public Class<User> entityClass() {
@@ -28,26 +29,29 @@ public class UserDaoTestHandler extends AbstractEntityDaoTestHandler<User> {
 
 	@Override
 	public void persistDependentEntities() {
-		currency = createAndPersist(Currency.class, true);
+		final Currency currency = createAndPersist(Currency.class, true);
+		pkC = new PrimaryKey<Currency>(currency);
 
-		account = create(Asp.class, true);
+		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
+		pkA = new PrimaryKey<Account>(account);
 
-		auth = createAndPersist(Authority.class, true);
+		final Authority auth = createAndPersist(Authority.class, true);
+		pkT = new PrimaryKey<Authority>(auth);
 	}
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(auth);
-		purge(account);
-		purge(currency);
+		purge(pkT);
+		purge(pkA);
+		purge(pkC);
 	}
 
 	@Override
 	public void assembleTestEntity(User e) throws Exception {
-		e.setAccount(account);
-		e.addAuthority(auth);
+		e.setAccount(load(pkA));
+		e.addAuthority(load(pkT));
 	}
 
 	@Override

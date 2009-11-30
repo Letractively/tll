@@ -13,7 +13,6 @@ import org.apache.commons.logging.LogFactory;
 import com.db4o.ObjectContainer;
 import com.google.inject.Injector;
 import com.tll.dao.IDbShell;
-import com.tll.dao.db4o.Db4oDbShell;
 
 
 /**
@@ -30,16 +29,15 @@ public class UITestsBootstrapper extends ListingContextBootstrapper {
 	public void startup(Injector injector, ServletContext servletContext) {
 		super.startup(injector, servletContext);
 
+		// re-stub the db
+		log.info("re-stubbing test db..");
+		final IDbShell dbs = injector.getInstance(IDbShell.class);
+		dbs.restub();
+
 		// retain the db4o's object container ref
 		final Object oc = injector.getInstance(ObjectContainer.class);
 		if(oc == null) throw new Error("Unable to obtain db4o's object container");
 		servletContext.setAttribute(KEY, oc);
-
-		// re-stub the db
-		log.info("re-stubbing test db..");
-		final ObjectContainer dbref = injector.getInstance(ObjectContainer.class);
-		final IDbShell dbs = injector.getInstance(IDbShell.class);
-		((Db4oDbShell)dbs).restub(dbref);
 	}
 
 	@Override

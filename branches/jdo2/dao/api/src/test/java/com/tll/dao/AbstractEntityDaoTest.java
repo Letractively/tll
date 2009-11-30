@@ -155,8 +155,8 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	 * Extended classes may override to tweak the behavior.
 	 */
 	protected void resetDb() {
-		// default way to reset the db
-		if(!getDbShell().create()) getDbShell().clear();
+		getDbShell().create();
+		getDbShell().clear();
 	}
 
 	/**
@@ -223,12 +223,12 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	@Override
 	protected void beforeMethod() {
 		super.beforeMethod();
-		
+
 		// ensure a clean slate
 		if(testEntityRefStack.size() > 0) {
 			Assert.fail("Test entity ref stack is NOT empty!");
 		}
-		
+
 		// start a new transaction for convenience and brevity
 		startNewTransaction();
 	}
@@ -338,7 +338,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 			handler.init(dao, getEntityBeanFactory());
 			entityHandler = (IEntityDaoTestHandler<IEntity>) handler;
 
-			logger.debug("Testing entity dao for entity type: " + handler.entityClass() + "...");
+			logger.debug("\n\n ====== Testing entity dao for entity type: " + handler.entityClass() + "...");
 			beforeEntityType();
 
 			// discover the dao test methods

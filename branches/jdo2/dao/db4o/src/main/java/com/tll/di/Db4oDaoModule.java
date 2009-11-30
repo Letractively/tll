@@ -52,8 +52,8 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target( {
 		ElementType.FIELD, ElementType.PARAMETER })
-	@BindingAnnotation
-	public @interface Db4oFile {
+		@BindingAnnotation
+		public @interface Db4oFile {
 	}
 
 	/**
@@ -133,13 +133,13 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 
 			@Override
 			public Configuration get() {
-				Configuration c = Db4o.newConfiguration();
+				final Configuration c = Db4o.newConfiguration();
 				c.generateVersionNumbers(ConfigScope.GLOBALLY);
 				c.updateDepth(3);
 				return c;
 			}
 
-		});
+		}).in(Scopes.NO_SCOPE);
 
 		// ObjectContainer
 		bind(ObjectContainer.class).toProvider(new Provider<ObjectContainer>() {
@@ -164,8 +164,8 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 		// which locks the db4o db file which is problematic when working with the
 		// db4o db shell
 		final boolean dst =
-				config == null ? DEFAULT_EMPLOY_SPRING_TRANSACTIONS : config.getBoolean(
-						ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), DEFAULT_EMPLOY_SPRING_TRANSACTIONS);
+			config == null ? DEFAULT_EMPLOY_SPRING_TRANSACTIONS : config.getBoolean(
+					ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), DEFAULT_EMPLOY_SPRING_TRANSACTIONS);
 		if(dst) {
 			log.info("Binding Spring's Db4oTransactionManager to Spring's @Transactional annotation..");
 			// PlatformTransactionManager (for transactions)
@@ -180,8 +180,8 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 
 					// set the transaction timeout
 					final int timeout =
-							config == null ? DEFAULT_TRANS_TIMEOUT : config.getInt(ConfigKeys.DB_TRANS_TIMEOUT.getKey(),
-									DEFAULT_TRANS_TIMEOUT);
+						config == null ? DEFAULT_TRANS_TIMEOUT : config.getInt(ConfigKeys.DB_TRANS_TIMEOUT.getKey(),
+								DEFAULT_TRANS_TIMEOUT);
 					db4oTm.setDefaultTimeout(timeout);
 					log.info("Set DB4O default transaction timeout to: " + timeout);
 

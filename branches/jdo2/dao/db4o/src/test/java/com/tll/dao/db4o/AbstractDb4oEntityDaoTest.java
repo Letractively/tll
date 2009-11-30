@@ -37,6 +37,12 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 		super(Db4oTestDaoDecorator.class);
 	}
 
+	@Override
+	protected void resetDb() {
+		getDbShell().delete();
+		getDbShell().create();
+	}
+
 	/*
 	 * We have to reverse the order of operations for db4o dao test prep
 	 * as the Db4oDbShell is dependent on the ObjectContainer!

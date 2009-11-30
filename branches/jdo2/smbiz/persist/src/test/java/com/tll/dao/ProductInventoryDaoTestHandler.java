@@ -11,6 +11,7 @@ import com.tll.model.Currency;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.ProductGeneral;
 import com.tll.model.ProductInventory;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * ProductInventoryDaoTestHandler
@@ -18,8 +19,8 @@ import com.tll.model.ProductInventory;
  */
 public class ProductInventoryDaoTestHandler extends AbstractEntityDaoTestHandler<ProductInventory> {
 
-	Currency currency;
-	Account account;
+	private PrimaryKey<Currency> pkC;
+	private PrimaryKey<Account> pkA;
 
 	@Override
 	public Class<ProductInventory> entityClass() {
@@ -28,23 +29,25 @@ public class ProductInventoryDaoTestHandler extends AbstractEntityDaoTestHandler
 
 	@Override
 	public void persistDependentEntities() {
-		currency = createAndPersist(Currency.class, true);
+		final Currency currency = createAndPersist(Currency.class, true);
+		pkC = new PrimaryKey<Currency>(currency);
 
-		account = create(Asp.class, true);
+		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
+		pkA = new PrimaryKey<Account>(account);
 	}
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(account);
-		purge(currency);
+		purge(pkA);
+		purge(pkC);
 	}
 
 	@Override
 	public void assembleTestEntity(ProductInventory e) throws Exception {
 		e.setProductGeneral(create(ProductGeneral.class, true));
-		e.setAccount(account);
+		e.setAccount(load(pkA));
 
 	}
 

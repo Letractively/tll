@@ -5,6 +5,7 @@ import java.net.URI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.db4o.config.Configuration;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -33,15 +34,15 @@ public class Db4oDbShellModule extends AbstractModule {
 			@Db4oFile
 			URI db4oUri;
 
-			//@Inject(optional = true)
-			//Configuration c;
+			@Inject(optional = true)
+			Provider<Configuration> c;
 
 			@Inject(optional = true)
 			IEntityGraphPopulator populator;
 
 			@Override
 			public IDbShell get() {
-				return new Db4oDbShell(db4oUri, populator/*, c*/);
+				return new Db4oDbShell(db4oUri, populator, c);
 			}
 
 		}).in(Scopes.SINGLETON);

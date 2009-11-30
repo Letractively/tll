@@ -1,17 +1,18 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.dao;
 
 import org.testng.Assert;
 
-import com.tll.model.Account;
+import com.tll.model.Asp;
 import com.tll.model.Currency;
 import com.tll.model.Interface;
 import com.tll.model.InterfaceOption;
 import com.tll.model.InterfaceOptionAccount;
 import com.tll.model.InterfaceOptionParameterDefinition;
 import com.tll.model.InterfaceSwitch;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * InterfaceOptionAccountDaoTestHandler
@@ -19,11 +20,12 @@ import com.tll.model.InterfaceSwitch;
  */
 public class InterfaceOptionAccountDaoTestHandler extends AbstractEntityDaoTestHandler<InterfaceOptionAccount> {
 
-	Currency currency;
-	Account account;
-	Interface intf;
-	int numParameters = 0;
-	String removedParamName;
+	private PrimaryKey<Currency> pkC;
+	private PrimaryKey<Asp> pkA;
+	private PrimaryKey<Interface> pkI;
+
+	private int numParameters = 0;
+	private String removedParamName;
 
 	@Override
 	public Class<InterfaceOptionAccount> entityClass() {
@@ -33,21 +35,21 @@ public class InterfaceOptionAccountDaoTestHandler extends AbstractEntityDaoTestH
 	@Override
 	public boolean supportsPaging() {
 		// since we can't (currently) create unique multiple instances since the bk
-		// is the binding between account/interface option only
+		// is the binding between pkA/interface option only
 		return false;
 	}
 
 	@Override
 	public void persistDependentEntities() {
-		currency = createAndPersist(Currency.class, true);
+		final Currency currency = createAndPersist(Currency.class, true);
 
-		account = create(Account.class, true);
+		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
 
-		intf = create(InterfaceSwitch.class, true);
-		InterfaceOption option = create(InterfaceOption.class, true);
-		InterfaceOptionParameterDefinition param = create(InterfaceOptionParameterDefinition.class, true);
+		Interface intf = create(InterfaceSwitch.class, true);
+		final InterfaceOption option = create(InterfaceOption.class, true);
+		final InterfaceOptionParameterDefinition param = create(InterfaceOptionParameterDefinition.class, true);
 		option.addParameter(param);
 		intf.addOption(option);
 		intf = persist(intf);
@@ -55,16 +57,17 @@ public class InterfaceOptionAccountDaoTestHandler extends AbstractEntityDaoTestH
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(intf);
-		purge(account);
-		purge(currency);
+		purge(pkI);
+		purge(pkA);
+		purge(pkC);
 	}
 
 	@Override
 	public void assembleTestEntity(InterfaceOptionAccount e) throws Exception {
-		e.setAccount(account);
-		InterfaceOption option = intf.getOptions().iterator().next();
-		InterfaceOptionParameterDefinition param = option.getParameters().iterator().next();
+		e.setAccount(load(pkA));
+		final Interface inter = load(pkI);
+		final InterfaceOption option = inter.getOptions().iterator().next();
+		final InterfaceOptionParameterDefinition param = option.getParameters().iterator().next();
 		e.setOption(option);
 		e.setParameter(param.getName(), "ioa_pvalue");
 		numParameters = e.getNumParameters();

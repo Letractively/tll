@@ -1,5 +1,5 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.dao;
 
@@ -13,6 +13,7 @@ import com.tll.model.OrderItem;
 import com.tll.model.OrderItemTrans;
 import com.tll.model.OrderItemTransOp;
 import com.tll.model.OrderTrans;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * OrderItemTransDaoTestHandler
@@ -20,10 +21,10 @@ import com.tll.model.OrderTrans;
  */
 public class OrderItemTransDaoTestHandler extends AbstractEntityDaoTestHandler<OrderItemTrans> {
 
-	Currency currency;
-	Account account;
-	Order order;
-	OrderTrans orderTrans;
+	private PrimaryKey<Currency> pkC;
+	private PrimaryKey<Account> pkA;
+	private PrimaryKey<Order> pkO;
+	private PrimaryKey<OrderTrans> pkOt;
 
 	@Override
 	public Class<OrderItemTrans> entityClass() {
@@ -33,42 +34,46 @@ public class OrderItemTransDaoTestHandler extends AbstractEntityDaoTestHandler<O
 	@Override
 	public boolean supportsPaging() {
 		// since we can't (currently) create unique multiple instances since the
-		// only bk is the binding between order item/order trans only
+		// only bk is the binding between pkO item/pkO trans only
 		return false;
 	}
 
 	@Override
 	public void persistDependentEntities() {
-		currency = createAndPersist(Currency.class, true);
+		final Currency currency = createAndPersist(Currency.class, true);
+		pkC = new PrimaryKey<Currency>(currency);
 
-		account = create(Asp.class, true);
+		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
+		pkA = new PrimaryKey<Account>(account);
 
-		order = create(Order.class, false);
+		Order order = create(Order.class, false);
 		order.setCurrency(currency);
 		order.setAccount(account);
 		order.addOrderItem(create(OrderItem.class, true));
 		order = persist(order);
+		pkO = new PrimaryKey<Order>(order);
 
-		orderTrans = create(OrderTrans.class, true);
+		OrderTrans orderTrans = create(OrderTrans.class, true);
 		orderTrans.setOrder(order);
 		orderTrans.setPymntTrans(null);
 		orderTrans = persist(orderTrans);
+		pkOt = new PrimaryKey<OrderTrans>(orderTrans);
 	}
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(orderTrans);
-		purge(order);
-		purge(account);
-		purge(currency);
+		purge(pkOt);
+		purge(pkO);
+		purge(pkA);
+		purge(pkC);
 	}
 
 	@Override
 	public void assembleTestEntity(OrderItemTrans e) throws Exception {
-		e.setOrderItem(order.getOrderItems().iterator().next());
-		e.setOrderTrans(orderTrans);
+		e.setOrderItem(load(pkO).getOrderItems().iterator().next());
+		e.setOrderTrans(load(pkOt));
 	}
 
 	@Override

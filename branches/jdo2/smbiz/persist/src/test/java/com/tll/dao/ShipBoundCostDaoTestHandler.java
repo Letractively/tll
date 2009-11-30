@@ -10,6 +10,7 @@ import com.tll.model.Asp;
 import com.tll.model.Currency;
 import com.tll.model.ShipBoundCost;
 import com.tll.model.ShipMode;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * ShipBoundCostDaoTestHandler
@@ -17,9 +18,9 @@ import com.tll.model.ShipMode;
  */
 public class ShipBoundCostDaoTestHandler extends AbstractEntityDaoTestHandler<ShipBoundCost> {
 
-	Currency currency;
-	Account account;
-	ShipMode shipMode;
+	private PrimaryKey<Currency> pkC;
+	private PrimaryKey<Account> pkA;
+	private PrimaryKey<ShipMode> pkS;
 
 	@Override
 	public Class<ShipBoundCost> entityClass() {
@@ -28,27 +29,30 @@ public class ShipBoundCostDaoTestHandler extends AbstractEntityDaoTestHandler<Sh
 
 	@Override
 	public void persistDependentEntities() {
-		currency = createAndPersist(Currency.class, true);
+		final Currency currency = createAndPersist(Currency.class, true);
+		pkC = new PrimaryKey<Currency>(currency);
 
-		account = create(Asp.class, true);
+		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
+		pkA = new PrimaryKey<Account>(account);
 
-		shipMode = create(ShipMode.class, true);
+		ShipMode shipMode = create(ShipMode.class, true);
 		shipMode.setAccount(account);
 		shipMode = persist(shipMode);
+		pkS = new PrimaryKey<ShipMode>(shipMode);
 	}
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(shipMode);
-		purge(account);
-		purge(currency);
+		purge(pkS);
+		purge(pkA);
+		purge(pkC);
 	}
 
 	@Override
 	public void assembleTestEntity(ShipBoundCost e) throws Exception {
-		e.setShipMode(shipMode);
+		e.setShipMode(load(pkS));
 	}
 
 	@Override

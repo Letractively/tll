@@ -24,8 +24,6 @@ import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.IDbShell;
 import com.tll.dao.IDbTrans;
 import com.tll.dao.IEntityDao;
-import com.tll.dao.db4o.Db4oDbShell;
-import com.tll.dao.db4o.Db4oEntityDao;
 import com.tll.dao.db4o.test.Db4oTrans;
 import com.tll.di.Db4oDaoModule;
 import com.tll.di.SmbizDb4oDaoModule;
@@ -125,7 +123,7 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 	@Override
 	protected void beforeMethod() {
 		super.beforeMethod();
-		((Db4oDbShell)getDbShell()).clear(injector.getInstance(Db4oEntityDao.class).getObjectContainer());
+		getDbShell().restub();
 	}
 
 	/**

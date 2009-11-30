@@ -58,7 +58,6 @@ public class Db4oDbShellTest extends AbstractDbAwareTest {
 
 			Assert.assertTrue(db.create());
 			Assert.assertTrue(db.stub());
-			Assert.assertTrue(db.clear());
 			Assert.assertTrue(db.delete());
 
 			db.restub();

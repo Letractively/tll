@@ -1,5 +1,5 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.dao;
 
@@ -11,6 +11,7 @@ import com.tll.model.Currency;
 import com.tll.model.Order;
 import com.tll.model.OrderTrans;
 import com.tll.model.OrderTransOp;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * OrderTransDaoTestHandler
@@ -18,9 +19,9 @@ import com.tll.model.OrderTransOp;
  */
 public class OrderTransDaoTestHandler extends AbstractEntityDaoTestHandler<OrderTrans> {
 
-	Currency currency;
-	Account account;
-	Order order;
+	private PrimaryKey<Currency> pkC;
+	private PrimaryKey<Account> pkA;
+	private PrimaryKey<Order> pkO;
 
 	@Override
 	public Class<OrderTrans> entityClass() {
@@ -29,28 +30,31 @@ public class OrderTransDaoTestHandler extends AbstractEntityDaoTestHandler<Order
 
 	@Override
 	public void persistDependentEntities() {
-		currency = createAndPersist(Currency.class, true);
+		final Currency currency = createAndPersist(Currency.class, true);
+		pkC = new PrimaryKey<Currency>(currency);
 
-		account = create(Asp.class, true);
+		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
+		pkA = new PrimaryKey<Account>(account);
 
-		order = create(Order.class, false);
+		Order order = create(Order.class, false);
 		order.setCurrency(currency);
 		order.setAccount(account);
 		order = persist(order);
+		pkO = new PrimaryKey<Order>(order);
 	}
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(order);
-		purge(account);
-		purge(currency);
+		purge(pkO);
+		purge(pkA);
+		purge(pkC);
 	}
 
 	@Override
 	public void assembleTestEntity(OrderTrans e) throws Exception {
-		e.setOrder(order);
+		e.setOrder(load(pkO));
 	}
 
 	@Override
