@@ -1,5 +1,5 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.dao;
 
@@ -20,4 +20,10 @@ public class AuthorityDaoTestHandler extends AbstractEntityDaoTestHandler<Author
 	public void assembleTestEntity(Authority e) throws Exception {
 		// no-op
 	}
+
+	@Override
+	public String getActualNameProperty() {
+		return "authority";
+	}
+
 }

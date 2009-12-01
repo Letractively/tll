@@ -34,7 +34,7 @@ import com.tll.dao.IEntityDao;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
-import com.tll.di.Db4oDaoModule;
+import com.tll.di.AbstractDb4oDaoModule;
 import com.tll.di.SmbizDb4oDaoModule;
 import com.tll.di.SmbizEGraphModule;
 import com.tll.di.SmbizEntityServiceFactoryModule;
@@ -90,13 +90,13 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 		// create the db shell first (before test injector creation) to avoid db4o
 		// file lock when objectcontainer is instantiated
 		final Config cfg = getConfig();
-		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), Boolean.FALSE);
+		cfg.setProperty(AbstractDb4oDaoModule.ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), Boolean.FALSE);
 		final Injector i = buildInjector(new SmbizModelModule(), new SmbizEGraphModule(), new SmbizDb4oDaoModule(cfg), new Db4oDbShellModule());
 		final IDbShell dbs = i.getInstance(IDbShell.class);
 		dbs.restub();
 		i.getInstance(ObjectContainer.class).close();
 
-		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), Boolean.TRUE);
+		cfg.setProperty(AbstractDb4oDaoModule.ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), Boolean.TRUE);
 		super.beforeClass();
 	}
 

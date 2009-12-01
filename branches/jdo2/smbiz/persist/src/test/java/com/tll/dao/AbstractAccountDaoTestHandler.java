@@ -8,6 +8,7 @@ import org.testng.Assert;
 import com.tll.model.Account;
 import com.tll.model.AccountAddress;
 import com.tll.model.Address;
+import com.tll.model.Asp;
 import com.tll.model.Currency;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.PaymentInfo;
@@ -22,7 +23,7 @@ public abstract class AbstractAccountDaoTestHandler<A extends Account> extends A
 
 	PrimaryKey<PaymentInfo> pkPaymentInfo;
 	PrimaryKey<Currency> pkCurrency;
-	PrimaryKey<Account> pkAccountParent;
+	PrimaryKey<Asp> pkAccountParent;
 
 	@Override
 	public void persistDependentEntities() {
@@ -30,12 +31,12 @@ public abstract class AbstractAccountDaoTestHandler<A extends Account> extends A
 		final PaymentInfo paymentInfo = createAndPersist(PaymentInfo.class, true);
 		pkCurrency = new PrimaryKey<Currency>(currency);
 
-		Account parent = create(Account.class, true);
+		Asp parent = create(Asp.class, true);
 		parent.setParent(null); // eliminate pointer chasing
 		parent.setCurrency(currency);
 		parent.setPaymentInfo(paymentInfo);
 		parent = persist(parent);
-		pkAccountParent = new PrimaryKey<Account>(parent);
+		pkAccountParent = new PrimaryKey<Asp>(parent);
 		pkPaymentInfo = new PrimaryKey<PaymentInfo>(paymentInfo);
 	}
 

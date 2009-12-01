@@ -42,10 +42,12 @@ public class InterfaceOptionAccountDaoTestHandler extends AbstractEntityDaoTestH
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
+		pkC = new PrimaryKey<Currency>(currency);
 
 		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
+		pkA = new PrimaryKey<Asp>(account);
 
 		Interface intf = create(InterfaceSwitch.class, true);
 		final InterfaceOption option = create(InterfaceOption.class, true);
@@ -53,13 +55,14 @@ public class InterfaceOptionAccountDaoTestHandler extends AbstractEntityDaoTestH
 		option.addParameter(param);
 		intf.addOption(option);
 		intf = persist(intf);
+		pkI = new PrimaryKey<Interface>(intf);
 	}
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(pkI);
-		purge(pkA);
-		purge(pkC);
+		purge(pkI); pkI = null;
+		purge(pkA); pkA = null;
+		purge(pkC); pkC = null;
 	}
 
 	@Override

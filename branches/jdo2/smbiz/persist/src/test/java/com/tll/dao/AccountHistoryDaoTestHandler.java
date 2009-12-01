@@ -40,8 +40,8 @@ public class AccountHistoryDaoTestHandler extends AbstractEntityDaoTestHandler<A
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(pkA);
-		purge(pkC);
+		purge(pkA); pkA = null;
+		purge(pkC); pkC = null;
 	}
 
 	@Override

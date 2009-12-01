@@ -12,7 +12,7 @@ import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.dao.IDbShell;
 import com.tll.dao.db4o.Db4oDbShell;
-import com.tll.di.Db4oDaoModule.Db4oFile;
+import com.tll.di.AbstractDb4oDaoModule.Db4oFile;
 import com.tll.model.IEntityGraphPopulator;
 
 /**

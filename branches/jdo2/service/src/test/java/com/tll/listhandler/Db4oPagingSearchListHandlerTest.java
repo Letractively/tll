@@ -19,7 +19,7 @@ import com.tll.config.ConfigRef;
 import com.tll.dao.IDbShell;
 import com.tll.dao.IDbTrans;
 import com.tll.dao.db4o.test.Db4oTrans;
-import com.tll.di.Db4oDaoModule;
+import com.tll.di.AbstractDb4oDaoModule;
 import com.tll.di.test.Db4oDbShellModule;
 import com.tll.di.test.TestDb4oDaoModule;
 
@@ -57,13 +57,13 @@ public class Db4oPagingSearchListHandlerTest extends AbstractPagingSearchListHan
 		// create the db shell first (before test injector creation) to avoid db4o
 		// file lock when objectcontainer is instantiated
 		final Config cfg = getConfig();
-		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), Boolean.FALSE);
+		cfg.setProperty(AbstractDb4oDaoModule.ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), Boolean.FALSE);
 		final Injector i = buildInjector(new TestDb4oDaoModule(cfg), new Db4oDbShellModule() );
 		final IDbShell dbs = i.getInstance(IDbShell.class);
 		dbs.delete();
 		dbs.create();
 
-		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), Boolean.TRUE);
+		cfg.setProperty(AbstractDb4oDaoModule.ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), Boolean.TRUE);
 		super.beforeClass();
 		injector.getInstance(PlatformTransactionManager.class);	// bind @Transactional
 	}

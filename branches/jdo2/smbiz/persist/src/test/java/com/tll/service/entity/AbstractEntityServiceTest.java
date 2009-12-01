@@ -25,7 +25,7 @@ import com.tll.dao.IDbShell;
 import com.tll.dao.IDbTrans;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.db4o.test.Db4oTrans;
-import com.tll.di.Db4oDaoModule;
+import com.tll.di.AbstractDb4oDaoModule;
 import com.tll.di.SmbizDb4oDaoModule;
 import com.tll.di.SmbizEGraphModule;
 import com.tll.di.SmbizEntityServiceFactoryModule;
@@ -101,11 +101,11 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 		// create the db shell first (before test injector creation) to avoid db4o
 		// file lock when objectcontainer is instantiated
 		final Config cfg = new Config();
-		cfg.addProperty(Db4oDaoModule.ConfigKeys.DB4O_FILENAME.getKey(), getConfig().getProperty(
-				Db4oDaoModule.ConfigKeys.DB4O_FILENAME.getKey()));
-		cfg.addProperty(Db4oDaoModule.ConfigKeys.DB_TRANS_TIMEOUT.getKey(), getConfig().getProperty(
-				Db4oDaoModule.ConfigKeys.DB_TRANS_TIMEOUT.getKey()));
-		cfg.setProperty(Db4oDaoModule.ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), Boolean.FALSE);
+		cfg.addProperty(AbstractDb4oDaoModule.ConfigKeys.DB4O_FILENAME.getKey(), getConfig().getProperty(
+				AbstractDb4oDaoModule.ConfigKeys.DB4O_FILENAME.getKey()));
+		cfg.addProperty(AbstractDb4oDaoModule.ConfigKeys.DB_TRANS_TIMEOUT.getKey(), getConfig().getProperty(
+				AbstractDb4oDaoModule.ConfigKeys.DB_TRANS_TIMEOUT.getKey()));
+		cfg.setProperty(AbstractDb4oDaoModule.ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), Boolean.FALSE);
 		final Injector i = buildInjector(new SmbizDb4oDaoModule(cfg), new Db4oDbShellModule());
 		final IDbShell dbs = i.getInstance(IDbShell.class);
 

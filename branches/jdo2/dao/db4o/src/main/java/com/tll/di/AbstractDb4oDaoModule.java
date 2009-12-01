@@ -17,7 +17,6 @@ import org.springframework.transaction.aspectj.AnnotationTransactionAspect;
 
 import com.db4o.Db4o;
 import com.db4o.ObjectContainer;
-import com.db4o.config.ConfigScope;
 import com.db4o.config.Configuration;
 import com.google.inject.AbstractModule;
 import com.google.inject.BindingAnnotation;
@@ -33,10 +32,10 @@ import com.tll.model.key.IPrimaryKeyGenerator;
 import com.tll.model.key.SimplePrimaryKeyGenerator;
 
 /**
- * Db4oDaoModule - Db4o dao impl module.
+ * AbstractDb4oDaoModule - Db4o dao impl module.
  * @author jpk
  */
-public abstract class Db4oDaoModule extends AbstractModule implements IConfigAware {
+public abstract class AbstractDb4oDaoModule extends AbstractModule implements IConfigAware {
 
 	private static final int DEFAULT_TRANS_TIMEOUT = 60; // seconds
 
@@ -44,16 +43,17 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 
 	private static final boolean DEFAULT_EMPLOY_SPRING_TRANSACTIONS = false;
 
-	static final Log log = LogFactory.getLog(Db4oDaoModule.class);
+	static final Log log = LogFactory.getLog(AbstractDb4oDaoModule.class);
 
 	/**
 	 * Db4oFile annotation
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target( {
-		ElementType.FIELD, ElementType.PARAMETER })
-		@BindingAnnotation
-		public @interface Db4oFile {
+		ElementType.FIELD, ElementType.PARAMETER
+	})
+	@BindingAnnotation
+	public @interface Db4oFile {
 	}
 
 	/**
@@ -83,7 +83,7 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 	/**
 	 * Constructor
 	 */
-	public Db4oDaoModule() {
+	public AbstractDb4oDaoModule() {
 		super();
 	}
 
@@ -91,7 +91,7 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 	 * Constructor
 	 * @param config
 	 */
-	public Db4oDaoModule(Config config) {
+	public AbstractDb4oDaoModule(Config config) {
 		super();
 		this.config = config;
 	}
@@ -100,6 +100,14 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 	public void setConfig(Config config) {
 		this.config = config;
 	}
+
+	/**
+	 * Opportunity for concrete impls to tailor the Configuration on an entity
+	 * (object) level.<br>
+	 * E.g.: setting updateDepth(...) and/or cascadeOnUpdate(...).
+	 * @param c
+	 */
+	protected abstract void configureConfiguration(Configuration c);
 
 	/**
 	 * @return The db4o named query translator implmentation type.
@@ -115,7 +123,7 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 		// if(path.indexOf('/') >= 0) thr
 		try {
 			// first attempt to load existing file
-			final URL url = Db4oDaoModule.class.getClassLoader().getResource(path);
+			final URL url = AbstractDb4oDaoModule.class.getClassLoader().getResource(path);
 			URI uri = url == null ? null : url.toURI();
 			if(uri == null) {
 				// create in working dir
@@ -129,13 +137,14 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 		}
 
 		// Configuration (db4o)
+		// NOTE: we need to always generate a fresh instance to avoid db4o exception being thrown
 		bind(Configuration.class).toProvider(new Provider<Configuration>() {
 
 			@Override
 			public Configuration get() {
 				final Configuration c = Db4o.newConfiguration();
-				c.generateVersionNumbers(ConfigScope.GLOBALLY);
-				c.updateDepth(3);
+				// configure the db4o configuration
+				configureConfiguration(c);
 				return c;
 			}
 
@@ -164,8 +173,8 @@ public abstract class Db4oDaoModule extends AbstractModule implements IConfigAwa
 		// which locks the db4o db file which is problematic when working with the
 		// db4o db shell
 		final boolean dst =
-			config == null ? DEFAULT_EMPLOY_SPRING_TRANSACTIONS : config.getBoolean(
-					ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), DEFAULT_EMPLOY_SPRING_TRANSACTIONS);
+			config == null ? DEFAULT_EMPLOY_SPRING_TRANSACTIONS : config.getBoolean(ConfigKeys.DB_TRANS_BINDTOSPRING
+					.getKey(), DEFAULT_EMPLOY_SPRING_TRANSACTIONS);
 		if(dst) {
 			log.info("Binding Spring's Db4oTransactionManager to Spring's @Transactional annotation..");
 			// PlatformTransactionManager (for transactions)

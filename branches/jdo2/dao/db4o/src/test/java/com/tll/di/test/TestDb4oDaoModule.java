@@ -5,17 +5,18 @@
  */
 package com.tll.di.test;
 
+import com.db4o.config.Configuration;
 import com.tll.config.Config;
 import com.tll.dao.db4o.IDb4oNamedQueryTranslator;
 import com.tll.dao.db4o.test.LoadAllQueryTranslator;
-import com.tll.di.Db4oDaoModule;
+import com.tll.di.AbstractDb4oDaoModule;
 
 
 /**
  * TestDb4oDaoModule
  * @author jpk
  */
-public class TestDb4oDaoModule extends Db4oDaoModule {
+public class TestDb4oDaoModule extends AbstractDb4oDaoModule {
 
 	/**
 	 * Constructor
@@ -30,6 +31,11 @@ public class TestDb4oDaoModule extends Db4oDaoModule {
 	 */
 	public TestDb4oDaoModule(Config config) {
 		super(config);
+	}
+
+	@Override
+	protected void configureConfiguration(Configuration c) {
+		c.updateDepth(3);
 	}
 
 	@Override

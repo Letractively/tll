@@ -418,7 +418,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 		// retrieve
 		startNewTransaction();
-		setComplete();	// we need to do this for JDO in order to ensure a detached copy is made
+		setComplete(); // we need to do this for JDO in order to ensure a detached copy is made
 		e = dao.load(new PrimaryKey<IEntity>(entityHandler.entityClass(), Long.valueOf(persistentId)));
 		Assert.assertNotNull(e, "The loaded entity is null");
 		entityHandler.verifyLoadedEntityState(e);
@@ -724,7 +724,8 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 			startNewTransaction();
 			final Criteria<IEntity> c = new Criteria<IEntity>(entityHandler.entityClass());
-			c.getPrimaryGroup().addCriterion(new NameKey(e.entityClass(), e.getName()), true);
+			c.getPrimaryGroup().addCriterion(
+					new NameKey(e.entityClass(), e.getName(), entityHandler.getActualNameProperty()), true);
 			final IEntity re = dao.findEntity(c);
 			Assert.assertTrue(re != null);
 			if(re != null) Assert.assertEquals(re.getId(), e.getId());

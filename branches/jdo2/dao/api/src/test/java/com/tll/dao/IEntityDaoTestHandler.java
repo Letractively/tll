@@ -8,6 +8,7 @@ package com.tll.dao;
 import com.tll.criteria.Criteria;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
+import com.tll.model.INamedEntity;
 
 /**
  * IEntityDaoTestHandler - Encapsulates entity lifecycle behavior for testing
@@ -99,6 +100,17 @@ public interface IEntityDaoTestHandler<E extends IEntity> {
 	 *         criteria routine.
 	 */
 	Sorting getTestSorting();
+
+	/**
+	 * @return The actual entity object property that holds the entity name value
+	 *         if the entity implements {@link INamedEntity}. The default value is
+	 *         expected to be {@link INamedEntity#NAME} even if the impl's target
+	 *         entity type is not an {@link INamedEntity}. This method is a
+	 *         testing convenience only but is necessary for some dao impls as
+	 *         some query apis target the actual property names and NOT the bean
+	 *         property names (java bean convention).
+	 */
+	String getActualNameProperty();
 
 	/**
 	 * @return An array of select named query definitions to test.

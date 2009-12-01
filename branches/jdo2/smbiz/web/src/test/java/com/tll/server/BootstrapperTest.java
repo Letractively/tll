@@ -49,7 +49,7 @@ public class BootstrapperTest {
 		sb.append("com.tll.di.RefDataModule\r\n");
 		sb.append("com.tll.di.SmbizModelModule\r\n");
 		sb.append("com.tll.di.SmbizEGraphModule\r\n");
-		sb.append("com.tll.di.Db4oDaoModule\r\n");
+		sb.append("com.tll.di.AbstractDb4oDaoModule\r\n");
 		sb.append("com.tll.di.SmbizEntityServiceFactoryModule\r\n");
 		if(employSecurity) sb.append("com.tll.di.SmbizAcegiModule\r\n");
 		sb.append("com.tll.di.LogExceptionHandlerModule\r\n");

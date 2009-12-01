@@ -190,6 +190,12 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	}
 
 	@Override
+	public String getActualNameProperty() {
+		// default
+		return INamedEntity.NAME;
+	}
+
+	@Override
 	public String toString() {
 		return entityClass().toString();
 	}
