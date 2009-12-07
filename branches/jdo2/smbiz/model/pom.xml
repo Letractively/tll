@@ -77,9 +77,8 @@
 						<artifactId>maven-compiler-plugin</artifactId>
 						<configuration>
 							<!--
-								This tells datanucleus to NOT auto-enhance since the enhancer is on the classpath!
-								This is a manually driven process for various reasons but mainly since we have more 
-								than on dao impl option which means jdo enhancement is not necessary and clutters the classpath!
+								This tells datanucleus to NOT auto-enhance since the enhancer is on the classpath! This is a manually driven
+								process since the maven plugin is limited in its functionality and we have more control invoking it manually
 							-->
 							<compilerArgument>-proc:none</compilerArgument>
 						</configuration>
@@ -208,5 +207,6 @@
 			<classifier>testassets</classifier>
 			<scope>test</scope>
 		</dependency>
+
 	</dependencies>
 </project>

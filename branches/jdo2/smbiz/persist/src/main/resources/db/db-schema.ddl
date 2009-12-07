@@ -2,7 +2,7 @@
 create table app_property (
    id bigint not null,
    version bigint not null default 0,
-   name varchar(128) not null unique,
+   name varchar(255) not null unique,
    value varchar(255) not null,
    primary key (id)
 );
@@ -31,7 +31,7 @@ create table address (
 create table currency (
    id bigint not null,
    version bigint not null default 0,
-   name varchar(32) not null unique,
+   name varchar(255) not null unique,
    symbol varchar(8) not null unique,
    iso_4217 varchar(16) not null unique,
    usd_exchange_rate float,
@@ -41,9 +41,8 @@ create table currency (
 create table payment_info (
    id bigint not null,
    version bigint not null default 0,
-   name varchar(64) not null,
+   name varchar(255) not null unique,
    data blob not null,
-   unique(name),
    primary key (id)
 );
 
@@ -51,7 +50,7 @@ create table payment_trans (
    id bigint not null,
    version bigint not null default 0,
    date_created datetime not null,
-   date_last_modified datetime not null,
+   date_modified datetime not null,
    pay_trans_date datetime not null,
    pay_op tinyint not null,
    pay_type tinyint not null,
@@ -62,7 +61,7 @@ create table payment_trans (
    response varchar(32),
    response_msg varchar(128),
    notes text,
-   unique(pay_trans_date,pay_op,pay_type),
+   unique date__op__type (pay_trans_date,pay_op,pay_type),
    primary key (id)
 );
 
@@ -72,10 +71,10 @@ create table account (
    version bigint not null default 0,
    account_type varchar(32) not null,
    date_created datetime not null,
-   date_last_modified datetime not null,
+   date_modified datetime not null,
    parent_aid bigint,
    status tinyint not null,
-   name varchar(64) not null,
+   name varchar(255) not null unique,
    persist_pymnt_info boolean,
    billing_model varchar(32),
    billing_cycle varchar(32),
@@ -85,7 +84,6 @@ create table account (
    pi_id bigint,
    cur_id bigint,
    store_name varchar(128),
-   unique(name),
    primary key (id)
 );
 
@@ -93,13 +91,13 @@ create table account_address (
    id bigint not null,
    version bigint not null default 0,
    date_created datetime not null,
-   date_last_modified datetime not null,
-   name varchar(32) not null,
-   type tinyint not null,
+   date_modified datetime not null,
+   name varchar(255) not null,
+   type varchar(32) not null,
    aid bigint not null,
    address_id bigint not null,
-   unique(aid,address_id),
-   unique(aid,name),
+   unique account__address (aid,address_id),
+   unique account__adrsname (aid,name),
    primary key (id)
 );
 
@@ -107,13 +105,13 @@ create table customer_account (
    id bigint not null,
    version bigint not null default 0,
    date_created datetime not null,
-   date_last_modified datetime not null,
+   date_modified datetime not null,
    source tinyint not null,
    status tinyint not null,
    customer_id bigint not null,
    aid bigint not null,
    visitor_id bigint,
-   unique(aid,customer_id),
+   unique account__customer (aid,customer_id),
    primary key (id)
 );
 
@@ -121,13 +119,13 @@ create table account_history (
    id bigint not null,
    version bigint not null default 0,
    date_created datetime not null,
-   date_last_modified datetime not null,
+   date_modified datetime not null,
    trans_date datetime not null,
    status tinyint not null,
    notes text,
    aid bigint not null,
    pt_id bigint,
-   unique(aid, trans_date, status),
+   unique account__date__status (aid, trans_date, status),
    primary key (id)
 );
 
@@ -135,13 +133,13 @@ create table visitor (
    id bigint not null,
    version bigint not null default 0,
    date_created datetime not null,
-   date_last_modified datetime not null,
+   date_modified datetime not null,
    remote_host varchar(64) not null,
    remote_addr varchar(64),
    remote_user varchar(64),
    mc varchar(16),
    aid bigint not null,
-   unique(aid,date_created,remote_host),
+   unique aid__date_created__remote_host (aid,date_created,remote_host),
    primary key (id)
 );
 
@@ -150,45 +148,40 @@ create table user (
 	id bigint not null,
 	version bigint not null default 0,
 	date_created datetime not null,
-	date_last_modified datetime not null,
-	name varchar(50),
+	date_modified datetime not null,
+	name varchar(255),
 	aid bigint not null,
 	adr_id bigint,
-	email_address varchar(128) not null,
+	email_address varchar(128) not null unique,
 	password varchar(255) not null,
 	enabled boolean not null,
 	locked boolean not null,
 	expires datetime not null,
-	unique(email_address),
 	primary key (id)
 );
 
 create table authority (
 	id bigint not null,
 	version bigint not null default 0,
-	authority varchar(50) not null,
+	authority varchar(50) not null unique,
 	primary key(id)
 );
-alter table authority add unique index un_authority_authority (authority);
 
 create table user_authority (
 	uid bigint not null,
 	aid bigint not null,
 	primary key(uid,aid)
 );
-alter table user_authority 
-	add constraint fk_ua foreign key (uid) references user(id) on delete cascade,
-	add constraint fk_aa foreign key (aid) references authority(id) on delete cascade;
 
 -- interface related
 create table interface (
    id bigint not null,
    version bigint not null default 0,
    date_created datetime not null,
-   date_last_modified datetime not null,
+   date_modified datetime not null,
    type varchar(20) not null,
-   code varchar(50) not null,
-   name varchar(50) not null,
+   code varchar(50) not null unique,
+   name varchar(255) not null,
    description varchar(128),
    is_available_asp boolean not null default false,
    is_available_isp boolean not null default false,
@@ -198,7 +191,6 @@ create table interface (
    is_required_isp boolean not null default false,
    is_required_merchant boolean not null default false,
    is_required_customer boolean not null default false,
-   unique(code),
    primary key (id)
 );
 
@@ -209,10 +201,10 @@ create table iopd (
    option_id bigint default null,
    version bigint not null default 0,
    date_created datetime not null,
-   date_last_modified datetime not null,
+   date_modified datetime not null,
    record_type varchar(16) not null,
-   code varchar(50) not null,
-   name varchar(50) not null,
+   code varchar(50) not null unique,
+   name varchar(255) not null,
    description varchar(128),
    is_default boolean not null default false,
    set_up_cost float not null default 0,
@@ -221,48 +213,34 @@ create table iopd (
    base_setup_price float not null default 0,
    base_monthly_price float not null default 0,
    base_annual_price float not null default 0,
-   unique(code),
-   primary key (id)
-);
-
-alter table iopd
-	add index fk_io_i (interface_id), 
-	add constraint fk_io_i foreign key (interface_id) references interface (id) on delete cascade,
-	add index fk_io_iopd (option_id), 
-	add constraint fk_io_iopd foreign key (option_id) references iopd (id) on delete cascade;
-
-create table ioa (
-   id bigint not null,
-   version bigint not null default 0,
-   date_created datetime not null,
-   date_last_modified datetime not null,
-   set_up_price float not null default 0,
-   monthly_price float not null default 0,
-   annual_price float not null default 0,
-   option_id bigint,
-   aid bigint not null,
-   unique(option_id, aid),
    primary key (id)
 );
 
 -- interface option account
-alter table ioa
-	add index fk_ia_a (aid), 
-	add index fk_ia_i (option_id), 
-	add constraint fk_ia_a foreign key (aid) references account (id) on delete cascade,
-	add constraint fk_ia_i foreign key (option_id) references iopd (id) on delete cascade;
-
--- interface option account parameter
-create table ioap (
-	ioaid bigint not null,
-	name varchar(50) not null,
-	value varchar(255),
-	primary key (ioaid, name)
+create table ioa (
+   id bigint not null,
+   version bigint not null default 0,
+   date_created datetime not null,
+   date_modified datetime not null,
+   set_up_price float not null default 0,
+   monthly_price float not null default 0,
+   annual_price float not null default 0,
+   params blob,
+   option_id bigint,
+   aid bigint not null,
+   unique option__acccount (option_id, aid),
+   primary key (id)
 );
 
-alter table ioap 
-	add constraint fk_ioa_param foreign key (ioaid) references ioa(id) on delete cascade;
-
+-- interface option account parameter
+-- create table ioap (
+-- 	id bigint not null,
+-- 	ioaid bigint not null,
+-- 	name varchar(255) not null,
+-- 	value varchar(255),
+-- 	unique ioaid__name (ioaid, name),
+-- 	primary key (id)
+-- );
 
 -- product related
 create table product_general (
@@ -273,7 +251,7 @@ create table product_general (
    d3 varchar(255) not null,
    image1 varchar(64),
    image2 varchar(64),
-   unique(d1,d2),
+   unique d1__d2 (d1,d2),
    primary key (id)
 );
 
@@ -281,7 +259,7 @@ create table product_inventory (
    id bigint not null,
    version bigint not null default 0,
    date_created datetime not null,
-   date_last_modified datetime not null,
+   date_modified datetime not null,
    sku varchar(64) not null,
    status tinyint not null,
    retail_price float not null default 0,
@@ -294,7 +272,7 @@ create table product_inventory (
    inv_reorder_level integer not null default 0,
    pg_id bigint,
    aid bigint not null,
-   unique(aid,sku),
+   unique aid__sku (aid,sku),
    primary key (id)
 );
 
@@ -302,12 +280,12 @@ create table product_category (
    id bigint not null,
    version bigint not null default 0,
    date_created datetime not null,
-   date_last_modified datetime not null,
-   name varchar(128) not null,
+   date_modified datetime not null,
+   name varchar(255) not null,
    description varchar(255),
    image varchar(64),
    aid bigint not null,
-   unique(aid,name),
+   unique aid__name (aid,name),
    primary key (id)
 );
 
@@ -317,7 +295,7 @@ create table prod_cat (
    is_featured_product boolean not null default false,
    prodinv_id bigint,
    prodcat_id bigint,
-   unique(prodinv_id,prodcat_id),
+   unique prodinv_id__prodcat_id (prodinv_id,prodcat_id),
    primary key (id)
 );
 
@@ -326,7 +304,7 @@ create table pch (
    version bigint not null default 0,
    parent_id bigint,
    child_id bigint,
-   unique(parent_id,child_id),
+   unique parent_id__child_id (parent_id,child_id),
    primary key (id)
 );
 
@@ -335,13 +313,13 @@ create table sales_tax (
    id bigint not null,
    version bigint not null default 0,
    date_created datetime not null,
-   date_last_modified datetime not null,
+   date_modified datetime not null,
    province varchar(64) not null,
    county varchar(64) not null,
    postal_code varchar(16) not null,
    tax float not null,
    aid bigint not null,
-   unique(aid,province,county,postal_code),
+   unique aid__province__county__postal_code (aid,province,county,postal_code),
    primary key (id)
 );
 
@@ -349,13 +327,13 @@ create table ship_mode (
    id bigint not null,
    version bigint not null default 0,
    date_created datetime not null,
-   date_last_modified datetime not null,
-   name varchar(32) not null,
+   date_modified datetime not null,
+   name varchar(255) not null,
    type tinyint not null,
    surcharge float,
    src_zip varchar(16),
    aid bigint not null,
-   unique(aid,name),
+   unique aid__name (aid,name),
    primary key (id)
 );
 
@@ -363,12 +341,12 @@ create table ship_bound_cost (
    id bigint not null,
    version bigint not null default 0,
    date_created datetime not null,
-   date_last_modified datetime not null,
+   date_modified datetime not null,
    l_bound float not null,
    u_bound float not null,
    cost float not null default 0,
    sm_id bigint not null,
-   unique(sm_id,l_bound,u_bound),
+   unique sm_id__l_bound__u_bound (sm_id,l_bound,u_bound),
    primary key (id)
 );
 
@@ -376,12 +354,11 @@ create table site_code (
    id bigint not null,
    version bigint not null default 0,
    date_created datetime not null,
-   date_last_modified datetime not null,
-   code varchar(16) not null,
-   name varchar(64),
+   date_modified datetime not null,
+   code varchar(16) not null unique,
+   name varchar(255),
    expiration_date datetime not null,
    aid bigint not null,
-   unique(code),
    primary key (id)
 );
 
@@ -392,7 +369,7 @@ create table orders (
    date_created datetime not null,
    aid bigint not null,
    cust_id bigint,
-   date_last_modified datetime not null,
+   date_modified datetime not null,
    status tinyint not null,
    notes varchar(255),
    site_code varchar(32),
@@ -403,14 +380,14 @@ create table orders (
    shipto_adr_id bigint,
    primary key (id)
    -- we can't guarantee this w/ enough certainty!!!
-   --unique (date_created, aid, cust_id)
+   -- unique (date_created, aid, cust_id)
 );
 
 create table order_item (
    id bigint not null,
    version bigint not null default 0,
    date_created datetime not null,
-   date_last_modified datetime not null,
+   date_modified datetime not null,
    sku varchar(64) not null,
    o_id bigint not null,
    item_status tinyint not null,
@@ -418,18 +395,18 @@ create table order_item (
    qty integer,
    price float,
    weight float,
-   name varchar(128),
+   name varchar(255),
    description varchar(255),
    image varchar(32),
    primary key (id),
-   unique (sku, o_id)
+   unique sku__o_id (sku, o_id)
 );
 
 create table order_trans (
    id bigint not null,
    version bigint not null default 0,
    date_created datetime not null,
-   date_last_modified datetime not null,
+   date_modified datetime not null,
    username varchar(32) not null,
    order_trans_op tinyint not null,
    order_trans_result tinyint not null,
@@ -444,7 +421,7 @@ create table order_trans (
    sta_id bigint,
    pi_id bigint,
    pt_id bigint,
-   unique(o_id, date_created, username),
+   unique o_id__date_created__username (o_id,date_created,username),
    primary key (id)
 );
 
@@ -455,94 +432,78 @@ create table order_item_trans (
    amount float,
    oi_id bigint not null,
    ot_id bigint not null,
-   unique(oi_id,ot_id),
+   unique oi_id__ot_id (oi_id,ot_id),
    primary key (id)
 );
 
 alter table account 
-	add index fk_prnt_acnt (parent_aid), 
 	add constraint fk_prnt_acnt foreign key (parent_aid) references account (id) on delete set null,	
-	add index fk_a_pi (pi_id), 
 	add constraint fk_a_pi foreign key (pi_id) references payment_info (id) on delete set null,
-	add index fk_a_c (cur_id), 
 	add constraint fk_a_c foreign key (cur_id) references currency (id) on delete set null;
 
 alter table visitor 
-	add index fk_s_a (aid), 
 	add constraint fk_s_a foreign key (aid) references account (id) on delete cascade;
 
 alter table customer_account 
-	add index fk_ca_s (visitor_id), 
-	add index fk_ca_c (customer_id), 
-	add index fk_ca_a (aid), 
 	add constraint fk_ca_s foreign key (visitor_id) references visitor (id) on delete set null,
 	add constraint fk_ca_c foreign key (customer_id) references account (id) on delete cascade,
 	add constraint fk_ca_a foreign key (aid) references account (id) on delete cascade;
 
-alter table user 
-	add index fk_au_a (aid), 
-	add index fk_au_adr (adr_id), 
-	add constraint fk_au_a foreign key (aid) references account (id) on delete cascade,
-	add constraint fk_au_adr foreign key (adr_id) references address (id) on delete set null;
-
 alter table account_history 
-	add index fk_ah_pt (pt_id), 
-	add index fk_ah_a (aid), 
 	add constraint fk_ah_pt foreign key (pt_id) references payment_trans (id) on delete set null,
 	add constraint fk_ah_a foreign key (aid) references account (id) on delete cascade;
 
 alter table account_address 
-	add index fk_aadr_adr (address_id), 
-	add index fk_aadr_a (aid), 
 	add constraint fk_aadr_adr foreign key (address_id) references address (id) on delete cascade,
 	add constraint fk_aadr_a foreign key (aid) references account (id) on delete cascade;
 
+alter table user 
+	add constraint fk_au_a foreign key (aid) references account (id) on delete cascade,
+	add constraint fk_au_adr foreign key (adr_id) references address (id) on delete set null;
+
+alter table user_authority 
+	add constraint fk_ua foreign key (uid) references user(id) on delete cascade,
+	add constraint fk_aa foreign key (aid) references authority(id) on delete cascade;
+
 alter table sales_tax 
-	add index fk_st_a (aid), 
 	add constraint fk_st_a foreign key (aid) references account (id) on delete cascade;
 
 alter table site_code 
-	add index fk_sc_a (aid), 
 	add constraint fk_sc_a foreign key (aid) references account (id) on delete cascade;
 
 alter table ship_mode 
-	add index fk_sm_a (aid), 
 	add constraint fk_sm_a foreign key (aid) references account (id) on delete cascade;
 
 alter table ship_bound_cost 
-	add index fk_sbc_sm (sm_id), 
 	add constraint fk_sbc_sm foreign key (sm_id) references ship_mode (id) on delete cascade;
 
-alter table product_inventory 
-	add index fk_pi_pg (pg_id), 
-	add constraint fk_pi_pg foreign key (pg_id) references product_general (id) on delete set null,
-	add index fk_pi_a (aid), 
-	add constraint fk_pi_a foreign key (aid) references account (id) on delete cascade;
-
-alter table product_category 
-	add index fk_pc_a (aid), 
-	add constraint fk_pc_a foreign key (aid) references account (id) on delete cascade;
-	
-alter table prod_cat 
-	add index fk_prodcat_pc (prodcat_id), 
-	add index fk_prodcat_pi (prodinv_id), 
-	add constraint fk_prodcat_pc foreign key (prodcat_id) references product_category (id) on delete cascade,
-	add constraint fk_prodcat_pi foreign key (prodinv_id) references product_inventory (id) on delete cascade;
-
 alter table pch 
-	add index pch_child (child_id), 
-	add index pch_parent (parent_id), 
 	add constraint pch_child foreign key (child_id) references product_category (id) on delete cascade,
 	add constraint pch_parent foreign key (parent_id) references product_category (id) on delete cascade;
 
+alter table iopd
+	add constraint fk_io_i foreign key (interface_id) references interface (id) on delete cascade,
+	add constraint fk_io_iopd foreign key (option_id) references iopd (id) on delete cascade;
+
+alter table ioa
+	add constraint fk_ia_a foreign key (aid) references account (id) on delete cascade,
+	add constraint fk_ia_i foreign key (option_id) references iopd (id) on delete cascade;
+
+-- alter table ioap 
+--	add constraint fk_ioa_param foreign key (ioaid) references ioa(id) on delete cascade;
+
+alter table product_inventory 
+	add constraint fk_pi_pg foreign key (pg_id) references product_general (id) on delete set null,
+	add constraint fk_pi_a foreign key (aid) references account (id) on delete cascade;
+
+alter table product_category 
+	add constraint fk_pc_a foreign key (aid) references account (id) on delete cascade;
+	
+alter table prod_cat 
+	add constraint fk_prodcat_pc foreign key (prodcat_id) references product_category (id) on delete cascade,
+	add constraint fk_prodcat_pi foreign key (prodinv_id) references product_inventory (id) on delete cascade;
+
 alter table orders 
-	add index fk_o_crncy (crncy_id), 
-	add index fk_o_s (visitor_id), 
-	add index fk_o_pi (pymntinfo_id), 
-	add index fk_o_adr_ship (shipto_adr_id), 
-	add index fk_o_a (aid), 
-	add index fk_o_c (cust_id), 
-	add index fk_o_adr_bill (billto_adr_id), 
 	add constraint fk_o_a foreign key (aid) references account (id) on delete cascade,
 	add constraint fk_o_s foreign key (visitor_id) references visitor (id) on delete set null,
 	add constraint fk_o_pi foreign key (pymntinfo_id) references payment_info (id) on delete set null,
@@ -552,15 +513,9 @@ alter table orders
 	add constraint fk_o_crncy foreign key (crncy_id) references currency (id) on delete set null;
 
 alter table order_item 
-	add index fk_oi_o (o_id), 
 	add constraint fk_oi_o foreign key (o_id) references orders (id) on delete cascade;
 
 alter table order_trans 
-	add index fk_ot_adr_bill (bta_id), 
-	add index fk_ot_pi (pi_id), 
-	add index fk_ot_pt (pt_id), 
-	add index fk_ot_o (o_id), 
-	add index fk_ot_adr_ship (sta_id), 
 	add constraint fk_ot_o foreign key (o_id) references orders (id) on delete cascade,
 	add constraint fk_ot_adr_bill foreign key (bta_id) references address (id) on delete set null,
 	add constraint fk_ot_pi foreign key (pi_id) references payment_info (id) on delete set null,
@@ -568,13 +523,5 @@ alter table order_trans
 	add constraint fk_ot_adr_ship foreign key (sta_id) references address (id) on delete set null;
 
 alter table order_item_trans 
-	add index fk_oit_ot (ot_id), 
-	add index fk_oit_oi (oi_id), 
 	add constraint fk_oit_ot foreign key (ot_id) references order_trans (id) on delete cascade,
 	add constraint fk_oit_oi foreign key (oi_id) references order_item (id) on delete cascade;
-
-
-create table hibernate_unique_key (
-    next_hi integer 
-);
-insert into hibernate_unique_key values ( 0 );

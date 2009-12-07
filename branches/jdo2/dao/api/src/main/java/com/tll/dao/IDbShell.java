@@ -14,39 +14,25 @@ public interface IDbShell {
 
 	/**
 	 * Creates the database. If the db already exists, nothing happens.
-	 * @return <code>true</code> if the db was actually created as a result of
-	 *         calling this method and <code>false<code> if the db already exists.
+	 * @throws RuntimeException when the create operation fails
 	 */
-	boolean create();
+	void create() throws RuntimeException;
 
 	/**
-	 * Deletes the database. If the db doesn't exist, nothing happens.
-	 * @return <code>true</code> if the db was actually deleted as a result of
-	 *         calling this method and
-	 *         <code>false<code> if the db is found not to exist.
+	 * Drops the database. If the db doesn't exist, nothing happens.
+	 * @throws RuntimeException when the drop operation fails
 	 */
-	boolean delete();
+	void drop() throws RuntimeException;
 
 	/**
-	 * Clears the database of all data. If the db doesn't exist, nothing happens.
-	 * @return <code>true</code> if the db was actually cleared as a result of
-	 *         calling this method and
-	 *         <code>false<code> if the db is <code>not</code> cleared by way of
-	 *         this method.
+	 * Removes data from the datastore.
+	 * @throws RuntimeException when the clear data operation fails
 	 */
-	boolean clear();
+	void clearData() throws RuntimeException;
 
 	/**
-	 * Adds data to the db where serving to stub the db. The db <em>must</em>
-	 * already exist else an error is raised.
-	 * @return <code>true</code> if the db was actually stubbed with the stub data
-	 *         as a result of calling this method.
+	 * Inserts data to the db tables.
+	 * @throws RuntimeException when the add data operation fails
 	 */
-	boolean stub();
-
-	/**
-	 * Stubs or re-stubs the data in the db creating the db if not already created
-	 * and/or clearing the the db if it contains existing data.
-	 */
-	void restub();
+	void addData() throws RuntimeException;
 }

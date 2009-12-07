@@ -7,20 +7,27 @@ package com.tll.dao.jdo;
 
 import java.util.List;
 
+import javax.jdo.PersistenceManagerFactory;
+
 import org.testng.annotations.Test;
 
+import com.google.inject.Binder;
+import com.google.inject.Inject;
 import com.google.inject.Module;
+import com.google.inject.Provider;
+import com.google.inject.Scopes;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
+import com.tll.dao.IDbTrans;
 import com.tll.dao.IEntityDaoTestHandler;
-import com.tll.di.JdoDaoModule;
+import com.tll.dao.UserDaoTestHandler;
+import com.tll.dao.jdo.test.JdoTrans;
 import com.tll.di.SmbizEGraphModule;
 import com.tll.di.SmbizJdoDaoModule;
 import com.tll.di.SmbizModelModule;
-import com.tll.util.CommonUtil;
 
 /**
- * JdoEntityDaoTest
+ * SmbizJdoEntityDaoTest
  * @author jpk
  */
 @Test(groups = { "dao", "jdo" })
@@ -28,6 +35,7 @@ public class SmbizJdoEntityDaoTest extends AbstractJdoEntityDaoTest {
 
 	@Override
 	protected IEntityDaoTestHandler<?>[] getDaoTestHandlers() {
+		/*
 		try {
 			final Class<?>[] handlerTypes =
 				CommonUtil.getClasses("com.tll.dao", IEntityDaoTestHandler.class, true, null, null);
@@ -49,16 +57,10 @@ public class SmbizJdoEntityDaoTest extends AbstractJdoEntityDaoTest {
 		catch(final IllegalAccessException e) {
 			throw new IllegalStateException("Unable to access an entity dao test handler: " + e.getMessage(), e);
 		}
-
-		/*
+		 */
 		return new IEntityDaoTestHandler<?>[] {
-			new AspAccountDaoTestHandler(),
-			new MerchantDaoTestHandler(),
-			new CustomerAccountDaoTestHandler(),
-			new InterfaceSingleDaoTestHandler(),
-			new InterfaceSwitchDaoTestHandler(),
+			new UserDaoTestHandler(),
 		};
-		*/
 	}
 
 	@Override
@@ -67,13 +69,28 @@ public class SmbizJdoEntityDaoTest extends AbstractJdoEntityDaoTest {
 		modules.add(new SmbizModelModule());
 		modules.add(new SmbizEGraphModule());
 		modules.add(new SmbizJdoDaoModule(getConfig()));
+		// ad hoc IDbTrans binding
+		modules.add(new Module() {
+
+			@Override
+			public void configure(Binder theBinder) {
+				theBinder.bind(IDbTrans.class).toProvider(new Provider<IDbTrans>() {
+
+					@Inject
+					PersistenceManagerFactory pmf;
+
+					@Override
+					public IDbTrans get() {
+						return new JdoTrans(pmf);
+					}
+				}).in(Scopes.SINGLETON);
+			}
+		});
 	}
 
 	@Override
 	protected Config doGetConfig() {
-		final Config c = Config.load(new ConfigRef("jdo-config.properties"));
-		c.setProperty(JdoDaoModule.ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), Boolean.FALSE);
-		return c;
+		return Config.load(new ConfigRef("jdo-config.properties"));
 	}
 
 }

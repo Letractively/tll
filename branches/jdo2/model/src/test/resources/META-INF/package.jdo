@@ -5,7 +5,7 @@
 
 	<package name="com.tll.model.test">
 
-		<class name="Address" detachable="true" identity-type="application">
+		<class name="Address" detachable="true">
 			<field name="firstName" />
 			<field name="lastName" />
 			<field name="mi" />
@@ -22,18 +22,17 @@
 			<field name="emailAddress" />
 		</class>
 
-		<class name="Currency" detachable="true" identity-type="application">
+		<class name="Currency" detachable="true">
 			<field name="symbol" />
 			<field name="iso4217" />
 			<field name="usdExchangeRate" />
 		</class>
 
-		<class name="NestedEntity" detachable="true" identity-type="application">
-			<!-- <field name="nestedData" serialized="true" /> -->
-			<field name="nestedData" serialized="true" />
+		<class name="NestedEntity" detachable="true">
+			<field name="nestedData" serialized="true" persistence-modifier="persistent" />
 		</class>
 
-		<class name="Account" detachable="true" identity-type="application">
+		<class name="Account" detachable="true">
 			<field name="parent" />
 			<field name="status" />
 			<field name="billingModel" />
@@ -45,7 +44,7 @@
 			</field>
 		</class>
 
-		<class name="AccountAddress" detachable="true" identity-type="application">
+		<class name="AccountAddress" detachable="true">
 			<field name="type" />
 			<field name="account" />
 			<field name="address" />

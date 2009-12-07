@@ -35,86 +35,34 @@ import com.tll.dao.IDbShell;
 public class JdbcDbShell implements IDbShell {
 
 	/**
-	 * IDbDialectHandler - Handles dialect specific db ops mainly translating
-	 * dialect-specific db exceptions attempting to add detail to the unchecked
-	 * exception.
+	 * MySqlErrorCodeExtractor
 	 * @author jpk
 	 */
-	public interface IDbDialectHandler {
+	static class MySqlErrorCodeExtractor {
 
-		/**
-		 * Determines if the given exception is due to an attempt to issue SQL
-		 * commands to an unknown (prob. non-existant) database.
-		 * @param e
-		 * @return true/false
-		 */
-		boolean isUnknownDatabase(Exception e);
-
-		/**
-		 * Determines if the given exception is due to an attempt to create an
-		 * already created database.
-		 * @param e
-		 * @return true/false
-		 */
-		boolean isCreateAlreadyExist(Exception e);
-
-		/**
-		 * Determines if the given exception is due to an attempt to drop an a
-		 * non-existant database.
-		 * @param e
-		 * @return true/false
-		 */
-		boolean isDropNonExistant(Exception e);
-
-		/**
-		 * Determines if the given exception is due to an attempt to drop a
-		 * non-existant table.
-		 * @param e
-		 * @return true/false
-		 */
-		boolean isTableNonExistant(Exception e);
-
-		/**
-		 * Determines if the given exception is due to an attempt to create an
-		 * already existant table.
-		 * @param e
-		 * @return true/false
-		 */
-		boolean isTableAlreadyExists(Exception e);
-
-	} // IDbDialectHandler
-
-	/**
-	 * MySql implementation of {@link IDbDialectHandler}
-	 * @author jpk
-	 */
-	public static class MySqlDialectHandler implements IDbDialectHandler {
-
-		public static final int ER_DB_CREATE_EXISTS = 1007;
+		static final int ER_DB_CREATE_EXISTS = 1007;
 
 		/**
 		 * Occurrs when a target db doesn't exist for drop.
 		 */
-		public static final int ER_DB_DROP_NOEXIST = 1008;
+		static final int ER_DB_DROP_NOEXIST = 1008;
 
-		public static final int ER_BAD_DB_ERROR = 1049;
-
-		public static final int ER_DUP_ENTRY = 1062;
+		static final int ER_DUP_ENTRY = 1062;
 
 		/**
 		 * Occurrs when a target table is attempted to be created but already
 		 * exists.
 		 */
-		public static final int ER_TABLE_EXISTS = 1050;
+		static final int ER_TABLE_EXISTS = 1050;
 
 		/**
 		 * Occurrs when a target table doesn't exist.
 		 */
-		public static final int ER_TABLE_NO_EXIST = 1146;
+		static final int ER_TABLE_NO_EXIST = 1146;
 
-		public static final int ER_DUP_ENTRY_AUTOINCREMENT_CASE = 1559;
+		static final int ER_DUP_ENTRY_AUTOINCREMENT_CASE = 1559;
 
-		public static final int ER_DUP_ENTRY_WITH_KEY_NAME = 1582;
+		static final int ER_DUP_ENTRY_WITH_KEY_NAME = 1582;
 
 		/**
 		 * Attempts to extract an {@link SQLException} from the given exception
@@ -173,12 +121,6 @@ public class JdbcDbShell implements IDbShell {
 			return false;
 		}
 
-		public boolean isUnknownDatabase(Exception e) {
-			return isErrorOfAType(e, new int[] {
-				ER_BAD_DB_ERROR
-			});
-		}
-
 		public boolean isCreateAlreadyExist(Exception e) {
 			return isErrorOfAType(e, new int[] {
 				ER_DB_CREATE_EXISTS
@@ -191,21 +133,19 @@ public class JdbcDbShell implements IDbShell {
 			});
 		}
 
-		@Override
 		public boolean isTableNonExistant(Exception e) {
 			return isErrorOfAType(e, new int[] {
 				ER_TABLE_NO_EXIST
 			});
 		}
 
-		@Override
 		public boolean isTableAlreadyExists(Exception e) {
 			return isErrorOfAType(e, new int[] {
 				ER_TABLE_EXISTS
 			});
 		}
 
-	} // MySqlDialectHandler
+	} // MySqlErrorCodeExtractor
 
 	/**
 	 * ShellImpl
@@ -327,7 +267,7 @@ public class JdbcDbShell implements IDbShell {
 	/**
 	 * Db dialect specific exception translator used for handling exceptions.
 	 */
-	private final IDbDialectHandler dbDialectHandler;
+	private final MySqlErrorCodeExtractor errorHandler;
 
 	/**
 	 * Constructor
@@ -339,11 +279,10 @@ public class JdbcDbShell implements IDbShell {
 	 * @param dbSchemaResource
 	 * @param dbStubResource
 	 * @param dbDelResource
-	 * @param dbDialectHandler
 	 */
 	@Inject
 	public JdbcDbShell(String rootDbName, String dbName, String urlPrefix, String username, String password,
-			URL dbSchemaResource, URL dbStubResource, URL dbDelResource, IDbDialectHandler dbDialectHandler) {
+			URL dbSchemaResource, URL dbStubResource, URL dbDelResource) {
 		super();
 
 		final String rootUrl = urlPrefix + '/' + rootDbName;
@@ -357,31 +296,26 @@ public class JdbcDbShell implements IDbShell {
 		this.dbStubResource = dbStubResource;
 		this.dbDelResource = dbDelResource;
 
-		this.dbDialectHandler = dbDialectHandler;
+		this.errorHandler = new MySqlErrorCodeExtractor();
 
 		if(log.isInfoEnabled()) {
 			log.info("Jdbc shell instantiated for db: " + dbName);
 		}
 	}
 
-	/**
-	 * Creates the database. If the db already exists, nothing happens.
-	 * @return <code>true</code> if the db was actually created as a result of
-	 *         calling this method and <code>false<code> if the db already exists.
-	 */
 	@Override
-	public boolean create() {
-
+	public void create() {
 		// create the db
 		try {
 			executeSql(rootDataSource, "create database " + dbName);
 			if(log.isInfoEnabled()) log.info(dbName + " database created.");
 		}
-		catch(final DataAccessException dae) {
-			if(!dbDialectHandler.isCreateAlreadyExist(dae)) {
-				throw dae;
+		catch(final DataAccessException e) {
+			if(errorHandler.isCreateAlreadyExist(e)) {
+				if(log.isDebugEnabled()) log.debug("database already exists: " + dbName);
+				return;
 			}
-			// presume we have already created the db - continue
+			throw e;
 		}
 
 		// create db schema
@@ -393,46 +327,34 @@ public class JdbcDbShell implements IDbShell {
 				executeSql(dataSource, sql);
 			}
 			catch(final DataAccessException e) {
-				if(!dbDialectHandler.isTableAlreadyExists(e)) {
-					// ok - continue
+				if(errorHandler.isTableAlreadyExists(e)) {
+					if(log.isDebugEnabled()) log.debug("table already exists (skipping): " + sql);
+					continue;
 				}
+				throw e;
 			}
 		}
-		if(log.isInfoEnabled()) log.info(dbName + " database schema created.");
 
-		return true;
+		if(log.isInfoEnabled()) log.info(dbName + " database schema created.");
 	}
 
-	/**
-	 * Deletes the database. If the db doesn't exist, nothing happens.
-	 * @return <code>true</code> if the db was actually deleted as a result of
-	 *         calling this method and
-	 *         <code>false<code> if the db is found not to exist.
-	 */
 	@Override
-	public boolean delete() {
+	public void drop() {
 		try {
 			executeSql(rootDataSource, "drop database " + dbName);
 			if(log.isInfoEnabled()) log.info(dbName + " database dropped.");
-			return true;
 		}
-		catch(final DataAccessException dae) {
-			if(!dbDialectHandler.isDropNonExistant(dae)) {
-				throw dae;
+		catch(final DataAccessException e) {
+			if(errorHandler.isDropNonExistant(e)) {
+				if(log.isDebugEnabled()) log.debug("database doesn't exisst: " + dbName);
+				return;
 			}
+			throw e;
 		}
-		return false;
 	}
 
-	/**
-	 * Clears the database of all data. If the db doesn't exist, nothing happens.
-	 * @return <code>true</code> if the db was actually cleared as a result of
-	 *         calling this method and
-	 *         <code>false<code> if the db is <code>not</code> cleared by way of
-	 *         this method.
-	 */
 	@Override
-	public boolean clear() {
+	public void clearData() {
 		if(deleteSqls == null) {
 			deleteSqls = parseSqlCommandsFromResource(dbDelResource);
 		}
@@ -441,52 +363,25 @@ public class JdbcDbShell implements IDbShell {
 				executeSql(dataSource, sql);
 			}
 			catch(final DataAccessException e) {
-				if(!dbDialectHandler.isTableNonExistant(e)) {
-					// ok - continue
+				if(errorHandler.isTableNonExistant(e)) {
+					if(log.isDebugEnabled()) log.debug("table doesn't exist (skipping): " + sql);
+					continue;
 				}
-				return false;
+				throw e;
 			}
 		}
-		if(log.isInfoEnabled()) log.info(dbName + " database cleared.");
-		return true;
+		if(log.isInfoEnabled()) log.info(dbName + " database data cleared.");
 	}
 
-	/**
-	 * Adds data to the db with the data set gotten from loading the db stub
-	 * resource. The db <em>must</em> already exist else an error is raised.
-	 * @return <code>true</code> if the db was actually stubbed with the stub data
-	 *         as a result of calling this method.
-	 */
 	@Override
-	public boolean stub() {
+	public void addData() {
 		if(stubSqls == null) {
 			stubSqls = parseSqlCommandsFromResource(dbStubResource);
 		}
 		for(final String sql : stubSqls) {
-			try {
-				executeSql(dataSource, sql);
-			}
-			catch(final DataAccessException e) {
-				if(!dbDialectHandler.isUnknownDatabase(e)) {
-					throw e;
-				}
-				return false;
-			}
+			// no catching here - we are fail-fast
+			executeSql(dataSource, sql);
 		}
 		if(log.isInfoEnabled()) log.info(dbName + " database stubbed.");
-		return true;
-	}
-
-	/**
-	 * Stubs or re-stubs the data in the db creating the db if not already created
-	 * and/or clearing the the db if it contains existing data.
-	 */
-	@Override
-	public void restub() {
-		// fist try to clear
-		if(!clear()) {
-			create();
-		}
-		stub();
 	}
 }

@@ -12,7 +12,6 @@ import com.tll.config.Config;
 import com.tll.config.IConfigAware;
 import com.tll.dao.IDbShell;
 import com.tll.dao.jdo.JdbcDbShell;
-import com.tll.dao.jdo.JdbcDbShell.MySqlDialectHandler;
 import com.tll.di.JdbcConfigKeys;
 import com.tll.util.ClassUtil;
 
@@ -87,20 +86,7 @@ public class JdbcDbShellModule extends AbstractModule implements IConfigAware {
 
 				// mysql?
 				if("mysql".equals(dbType)) {
-
-					// instantiate MySql dialect handler
-					final MySqlDialectHandler dh;
-					try {
-						dh = MySqlDialectHandler.class.newInstance();
-					}
-					catch(final IllegalAccessException e) {
-						throw new IllegalStateException(e);
-					}
-					catch(final InstantiationException e) {
-						throw new IllegalStateException(e);
-					}
-
-					return new JdbcDbShell(rootDbName, dbName, urlPrefix, username, password, schema, stub, delete, dh);
+					return new JdbcDbShell(rootDbName, dbName, urlPrefix, username, password, schema, stub, delete);
 				}
 
 				throw new IllegalStateException("Unhandled db type: " + dbType);

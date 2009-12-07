@@ -12,12 +12,12 @@ import javax.jdo.PersistenceManager;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.datanucleus.ManagedConnection;
 import org.datanucleus.ObjectManager;
 import org.datanucleus.exceptions.NucleusException;
 import org.datanucleus.jdo.JDOPersistenceManager;
 import org.datanucleus.store.StoreManager;
-import org.datanucleus.store.connection.ManagedConnection;
-import org.datanucleus.store.rdbms.RDBMSStoreManager;
+import org.datanucleus.store.rdbms.RDBMSManager;
 import org.datanucleus.store.valuegenerator.ValueGenerationConnectionProvider;
 import org.datanucleus.store.valuegenerator.ValueGenerationManager;
 import org.datanucleus.store.valuegenerator.ValueGenerator;
@@ -75,11 +75,11 @@ public class JdoPrimaryKeyGenerator implements IPrimaryKeyGenerator {
 			mgr.createValueGenerator("MyGenerator", org.datanucleus.store.rdbms.valuegenerator.TableGenerator.class,
 					properties, sm, new ValueGenerationConnectionProvider() {
 
-				RDBMSStoreManager rdbmsManager = null;
+				RDBMSManager rdbmsManager = null;
 				ManagedConnection con;
 
 				public ManagedConnection retrieveConnection() {
-					rdbmsManager = (RDBMSStoreManager) sm;
+					rdbmsManager = (RDBMSManager) sm;
 					try {
 						// TODO verify NO TRANSACTION is correct!
 						con = rdbmsManager.getConnection(Connection.TRANSACTION_NONE);

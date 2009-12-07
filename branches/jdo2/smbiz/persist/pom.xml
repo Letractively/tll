@@ -272,6 +272,11 @@
 			<artifactId>jdo2-api</artifactId>
 			<scope>optional</scope>
 		</dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-orm</artifactId>
+			<scope>optional</scope>
+    </dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-dao-jdo</artifactId>

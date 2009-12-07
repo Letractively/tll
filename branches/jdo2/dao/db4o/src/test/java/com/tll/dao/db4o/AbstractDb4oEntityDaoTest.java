@@ -39,7 +39,7 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 
 	@Override
 	protected void resetDb() {
-		getDbShell().delete();
+		getDbShell().drop();
 		getDbShell().create();
 	}
 

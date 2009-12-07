@@ -109,7 +109,7 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 		final Injector i = buildInjector(new SmbizDb4oDaoModule(cfg), new Db4oDbShellModule());
 		final IDbShell dbs = i.getInstance(IDbShell.class);
 
-		dbs.delete();
+		dbs.drop();
 		dbs.create();
 		super.beforeClass();
 	}
@@ -123,7 +123,9 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 	@Override
 	protected void beforeMethod() {
 		super.beforeMethod();
-		getDbShell().restub();
+		// reset data
+		getDbShell().clearData();
+		getDbShell().addData();
 	}
 
 	/**

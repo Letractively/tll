@@ -46,8 +46,8 @@ public class JdoPagingSearchListHandlerTest extends AbstractPagingSearchListHand
 		final Injector i = buildInjector(new JdbcDbShellModule(cfg) );
 		final IDbShell dbs = i.getInstance(IDbShell.class);
 		dbs.create();
-		dbs.clear();
-		
+		dbs.clearData();
+
 		super.beforeClass();
 	}
 }

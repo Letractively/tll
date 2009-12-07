@@ -47,19 +47,19 @@ public class JdbcDbShellTest extends AbstractDbAwareTest {
 		try {
 			Assert.assertTrue(db instanceof JdbcDbShell);
 
-			// NOTE: db.create() will return false if the db already exists
-			// so don't require a true return value only that no exception occurrs.
 			db.create();
-
-			Assert.assertTrue(db.stub());
-			Assert.assertTrue(db.clear());
-			Assert.assertTrue(db.delete());
-
-			db.restub();
+			db.clearData();
+			db.addData();
+			db.drop();
 		}
 		finally {
 			// reset
-			Assert.assertTrue(db.delete());
+			try {
+				db.clearData();
+			}
+			catch(final Exception ex) {
+				// ok
+			}
 		}
 	}
 }

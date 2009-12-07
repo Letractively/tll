@@ -53,18 +53,9 @@ public class Db4oDbShellTest extends AbstractDbAwareTest {
 
 	public void test() throws Exception {
 		final IDbShell db = injector.getInstance(IDbShell.class);
-		try {
-			Assert.assertTrue(db instanceof Db4oDbShell);
-
-			Assert.assertTrue(db.create());
-			Assert.assertTrue(db.stub());
-			Assert.assertTrue(db.delete());
-
-			db.restub();
-		}
-		finally {
-			// reset
-			Assert.assertTrue(db.delete());
-		}
+		Assert.assertTrue(db instanceof Db4oDbShell);
+		db.create();
+		db.addData();
+		db.drop();
 	}
 }

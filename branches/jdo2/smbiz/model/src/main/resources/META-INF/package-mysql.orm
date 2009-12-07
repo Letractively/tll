@@ -65,22 +65,23 @@
 				<column name="symbol" jdbc-type="VARCHAR" length="8" allows-null="false" />
 			</field>
 			<field name="usdExchangeRate">
-				<column name="usd_exchange_rate" jdbc-type="FLOAT" length="8" />
+				<column name="usd_exchange_rate" jdbc-type="FLOAT" default-value="0" />
 			</field>
 		</class>
 
 		<class name="AppProperty" table="app_property">
-			<field name="name" unique="true">
-				<column name="name" jdbc-type="VARCHAR" length="128" allows-null="false" />
-			</field>
+			<unique>
+				<column name="name" />
+			</unique>
+			<column name="name" jdbc-type="VARCHAR" length="128" allows-null="false" />
 			<field name="value">
-				<column name="" jdbc-type="" />
+				<column name="value" jdbc-type="VARCHAR" length="255" allows-null="false" />
 			</field>
 		</class>
 
 		<class name="PaymentInfo" table="payment_info">
 			<field name="paymentData">
-				<column name="" jdbc-type="" />
+				<column name="data" jdbc-type="BLOB" allows-null="false" />
 			</field>
 		</class>
 
@@ -93,7 +94,7 @@
 		<class name="Account" table="account">
 			<inheritance strategy="new-table">
 				<discriminator strategy="value-map" value="ACCOUNT">
-					<column name="account_type" />
+					<column name="account_type" jdbc-type="VARCHAR" length="32" allows-null="false" />
 				</discriminator>
 			</inheritance>
 			<unique>
@@ -104,25 +105,25 @@
 				<foreign-key name="fk_prnt_acnt" delete-action="null" />
 			</field>
 			<field name="status">
-				<column name="" jdbc-type="TINYINT" allows-null="false" />
+				<column name="status" jdbc-type="TINYINT" allows-null="false" />
 			</field>
 			<field name="persistPymntInfo">
-				<column name="" jdbc-type="BOOLEAN" />
+				<column name="persist_pymnt_info" jdbc-type="BIT" />
 			</field>
 			<field name="billingModel">
-				<column name="" jdbc-type="VARCHAR" length="32" />
+				<column name="billing_model" jdbc-type="VARCHAR" length="32" />
 			</field>
 			<field name="billingCycle">
-				<column name="" jdbc-type="VARCHAR" length="32" />
+				<column name="billing_cycle" jdbc-type="VARCHAR" length="32" />
 			</field>
 			<field name="dateLastCharged">
-				<column name="" jdbc-type="TIMESTAMP" />
+				<column name="date_last_charged" jdbc-type="TIMESTAMP" />
 			</field>
 			<field name="nextChargeDate">
-				<column name="" jdbc-type="TIMESTAMP" />
+				<column name="next_charge_date" jdbc-type="TIMESTAMP" />
 			</field>
 			<field name="dateCancelled">
-				<column name="" jdbc-type="TIMESTAMP" />
+				<column name="date_cancelled" jdbc-type="TIMESTAMP" />
 			</field>
 			<field name="paymentInfo">
 				<column name="pi_id" jdbc-type="BIGINT" />
@@ -134,31 +135,19 @@
 			</field>
 		</class>
 
-		<class name="Asp" table="asp">
-			<inheritance strategy="superclass-table">
-				<discriminator value="ASP" />
-			</inheritance>
+		<class name="Asp">
 		</class>
 
-		<class name="Isp" table="isp">
-			<inheritance strategy="superclass-table">
-				<discriminator value="ISP" />
-			</inheritance>
+		<class name="Isp">
 		</class>
 
-		<class name="Merchant" table="merchant">
-			<inheritance strategy="superclass-table">
-				<discriminator value="MERCHANT" />
-			</inheritance>
+		<class name="Merchant">
 			<field name="storeName">
 				<column name="store_name" jdbc-type="VARCHAR" length="128" />
 			</field>
 		</class>
 
 		<class name="Customer" table="customer">
-			<inheritance strategy="superclass-table">
-				<discriminator value="CUSTOMER" />
-			</inheritance>
 		</class>
 
 		<class name="AccountAddress" table="account_address">
@@ -195,10 +184,10 @@
 				<column name="status" jdbc-type="TINYINT" allows-null="false" />
 			</field>
 			<field name="notes">
-				<column name="" jdbc-type="BLOB" />
+				<column name="notes" jdbc-type="LONGVARCHAR" />
 			</field>
 			<field name="pymntTrans">
-				<column name="pt_id" jdbc-type="BIGINT" allows-null="false" />
+				<column name="pt_id" jdbc-type="BIGINT" allows-null="true" />
 				<foreign-key name="fk_ah_pt" delete-action="null" />
 			</field>
 		</class>
@@ -213,7 +202,7 @@
 				<foreign-key name="fk_ca_a" delete-action="cascade" />
 			</field>
 			<field name="source">
-				<column name="" jdbc-type="TINYINT" allows-null="false" />
+				<column name="source" jdbc-type="TINYINT" allows-null="false" />
 			</field>
 			<field name="status">
 				<column name="status" jdbc-type="TINYINT" allows-null="false" />
@@ -240,7 +229,7 @@
 				<column name="remote_user" jdbc-type="VARCHAR" length="64" />
 			</field>
 			<field name="mc">
-				<column name="" jdbc-type="VARCHAR" length="16" />
+				<column name="mc" jdbc-type="VARCHAR" length="16" />
 			</field>
 			<field name="account">
 				<column name="aid" jdbc-type="BIGINT" allows-null="false" />
@@ -250,42 +239,39 @@
 
 		<class name="User" table="user">
 			<field name="emailAddress" unique="true">
-				<column name="email_address" jdbc-type="VARCHAR" />
+				<column name="email_address" jdbc-type="VARCHAR" length="128" />
 			</field>
 			<field name="password">
 				<column name="password" jdbc-type="VARCHAR" length="255" allows-null="false" />
 			</field>
 			<field name="locked">
-				<column name="locked" jdbc-type="BOOLEAN" allows-null="false" />
+				<column name="locked" jdbc-type="BIT" allows-null="false" />
 			</field>
 			<field name="enabled">
-				<column name="enabled" jdbc-type="BOOLEAN" allows-null="false" />
+				<column name="enabled" jdbc-type="BIT" allows-null="false" />
 			</field>
 			<field name="expires">
 				<column name="expires" jdbc-type="DATE" allows-null="false" />
 			</field>
-			<field name="authorities">
-				<element column="uid" />
+			<field name="authorities" table="user_authority">
+				<join>
+					<column name="uid" jdbc-type="BIGINT" allows-null="false" />
+				</join>
+				<element>
+					<column name="aid" jdbc-type="BIGINT" allows-null="false" />
+				</element>
 			</field>
 			<field name="account">
 				<column name="aid" jdbc-type="BIGINT" allows-null="false" />
 				<foreign-key name="fk_au_a" delete-action="cascade" />
 			</field>
 			<field name="address">
-				<column name="aid" jdbc-type="BIGINT" allows-null="false" />
+				<column name="adr_id" jdbc-type="BIGINT" allows-null="false" />
 				<foreign-key name="fk_au_adr" delete-action="null" />
 			</field>
 		</class>
 
 		<class name="Interface" table="interface">
-			<inheritance strategy="new-table">
-				<discriminator strategy="value-map" value="INTERFACE">
-					<column name="type" />
-				</discriminator>
-			</inheritance>
-			<field name="name">
-				<column name="name" jdbc-type="VARCHAR" length="50" />
-			</field>
 			<field name="code" unique="true">
 				<column name="code" jdbc-type="VARCHAR" length="50" allows-null="false" />
 			</field>
@@ -293,57 +279,51 @@
 				<column name="description" jdbc-type="VARCHAR" length="128" />
 			</field>
 			<field name="isAvailableAsp">
-				<column name="is_available_asp" jdbc-type="BOOLEAN" allows-null="false" default-value="false" />
+				<column name="is_available_asp" jdbc-type="BIT" allows-null="false" default-value="false" />
 			</field>
 			<field name="isAvailableIsp">
-				<column name="is_available_isp" jdbc-type="BOOLEAN" allows-null="false" default-value="false" />
+				<column name="is_available_isp" jdbc-type="BIT" allows-null="false" default-value="false" />
 			</field>
 			<field name="isAvailableMerchant">
-				<column name="is_available_merchant" jdbc-type="BOOLEAN" allows-null="false" default-value="false" />
+				<column name="is_available_merchant" jdbc-type="BIT" allows-null="false" default-value="false" />
 			</field>
 			<field name="isAvailableCustomer">
-				<column name="is_available_customer" jdbc-type="BOOLEAN" allows-null="false" default-value="false" />
+				<column name="is_available_customer" jdbc-type="BIT" allows-null="false" default-value="false" />
 			</field>
 			<field name="isRequiredAsp">
-				<column name="is_required_asp" jdbc-type="BOOLEAN" allows-null="false" default-value="false" />
+				<column name="is_required_asp" jdbc-type="BIT" allows-null="false" default-value="false" />
 			</field>
 			<field name="isRequiredIsp">
-				<column name="is_required_isp" jdbc-type="BOOLEAN" allows-null="false" default-value="false" />
+				<column name="is_required_isp" jdbc-type="BIT" allows-null="false" default-value="false" />
 			</field>
 			<field name="isRequiredMerchant">
-				<column name="is_required_merchant" jdbc-type="BOOLEAN" allows-null="false" default-value="false" />
+				<column name="is_required_merchant" jdbc-type="BIT" allows-null="false" default-value="false" />
 			</field>
 			<field name="isRequiredCustomer">
-				<column name="is_required_customer" jdbc-type="BOOLEAN" allows-null="false" default-value="false" />
+				<column name="is_required_customer" jdbc-type="BIT" allows-null="false" default-value="false" />
 			</field>
 			<field name="options">
+				<element column="interface_id" />
 			</field>
 		</class>
 
 		<class name="InterfaceMulti">
-			<inheritance strategy="superclass-table">
-				<discriminator value="INTERFACE_MULTI" />
-			</inheritance>
 		</class>
 
 		<class name="InterfaceSingle">
-			<inheritance strategy="superclass-table">
-				<discriminator value="INTERFACE_SINGLE" />
-			</inheritance>
 		</class>
 
 		<class name="InterfaceSwitch">
-			<inheritance strategy="superclass-table">
-				<discriminator value="INTERFACE_SWITCH" />
-			</inheritance>
 		</class>
 
 		<class name="InterfaceOptionBase" table="iopd">
 			<inheritance strategy="new-table">
 				<discriminator strategy="value-map">
-					<column name="record_type" />
+					<column name="record_type" jdbc-type="VARCHAR" length="32" allows-null="false" />
 				</discriminator>
 			</inheritance>
+			<column name="interface_id" jdbc-type="BIGINT" default-value="null" />
+			<column name="option_id" jdbc-type="BIGINT" default-value="null" />
 			<field name="code">
 				<column name="code" jdbc-type="VARCHAR" length="50" allows-null="false" />
 			</field>
@@ -353,11 +333,8 @@
 		</class>
 
 		<class name="InterfaceOption">
-			<inheritance strategy="superclass-table">
-				<discriminator value="OPTION" />
-			</inheritance>
 			<field name="isDefault">
-				<column name="is_default" jdbc-type="BOOLEAN" allows-null="false" default-value="false" />
+				<column name="is_default" jdbc-type="BIT" allows-null="false" default-value="false" />
 			</field>
 			<field name="setUpCost">
 				<column name="set_up_cost" jdbc-type="FLOAT" allows-null="false" default-value="0" />
@@ -375,13 +352,11 @@
 				<column name="base_annual_price" jdbc-type="FLOAT" allows-null="false" default-value="0" />
 			</field>
 			<field name="parameters">
+				<element column="option_id" />
 			</field>
 		</class>
 
-		<class name="InterfaceOptionParameterDefinition">
-			<inheritance strategy="superclass-table">
-				<discriminator value="PARAM" />
-			</inheritance>
+		<class name="InterfaceOptionParameterDefinition" table="iopd">
 		</class>
 
 		<class name="InterfaceOptionAccount" table="ioa">
@@ -407,6 +382,7 @@
 				<column name="annual_price" jdbc-type="FLOAT" allows-null="false" default-value="0" />
 			</field>
 			<field name="parameters">
+				<column name="params" jdbc-type="BLOB" />
 			</field>
 		</class>
 
@@ -418,7 +394,7 @@
 				<column name="notes" jdbc-type="VARCHAR" length="255" />
 			</field>
 			<field name="siteCode">
-				<column name="site_code" jdbc-type="VARCHAR" length="16" />
+				<column name="site_code" jdbc-type="VARCHAR" length="32" />
 			</field>
 			<field name="account">
 				<column name="aid" jdbc-type="BIGINT" allows-null="false" />
@@ -470,16 +446,16 @@
 				<column name="item_status" jdbc-type="TINYINT" allows-null="false" />
 			</field>
 			<field name="payStatus">
-				<column name="pay_status" jdbc-type="TINYINT" allows-null="false"/>
+				<column name="pay_status" jdbc-type="TINYINT" allows-null="false" />
 			</field>
 			<field name="qty">
 				<column name="qty" jdbc-type="INTEGER" />
 			</field>
 			<field name="price">
-				<column name="price" jdbc-type="FLOAT" />
+				<column name="price" jdbc-type="FLOAT" default-value="0" />
 			</field>
 			<field name="weight">
-				<column name="weight" jdbc-type="FLOAT" />
+				<column name="weight" jdbc-type="FLOAT" default-value="0" />
 			</field>
 			<field name="description">
 				<column name="description" jdbc-type="VARCHAR" length="255" />
@@ -515,16 +491,16 @@
 				<column name="ship_routing_num" jdbc-type="VARCHAR" length="64" />
 			</field>
 			<field name="itemTotal">
-				<column name="item_total" jdbc-type="FLOAT" />
+				<column name="item_total" jdbc-type="FLOAT" default-value="0" />
 			</field>
 			<field name="salesTax">
-				<column name="sales_tax" jdbc-type="FLOAT" />
+				<column name="sales_tax" jdbc-type="FLOAT" default-value="0" />
 			</field>
 			<field name="shipCost">
-				<column name="ship_cost" jdbc-type="FLOAT" />
+				<column name="ship_cost" jdbc-type="FLOAT" default-value="0" />
 			</field>
 			<field name="total">
-				<column name="total" jdbc-type="FLOAT" />
+				<column name="total" jdbc-type="FLOAT" default-value="0" />
 			</field>
 			<field name="billToAddress">
 				<column name="bta_id" jdbc-type="BIGINT" allows-null="false" />
@@ -563,7 +539,7 @@
 				<column name="order_item_trans_op" jdbc-type="TINYINT" allows-null="false" />
 			</field>
 			<field name="amount">
-				<column name="amount" jdbc-type="FLOAT" />
+				<column name="amount" jdbc-type="FLOAT" default-value="0" />
 			</field>
 		</class>
 
@@ -583,7 +559,7 @@
 				<column name="pay_type" jdbc-type="TINYINT" allows-null="false" />
 			</field>
 			<field name="amount">
-				<column name="amount" jdbc-type="FLOAT" />
+				<column name="amount" jdbc-type="FLOAT" default-value="0" />
 			</field>
 			<field name="paymentProcessor">
 				<column name="payment_processor" jdbc-type="TINYINT" />
@@ -601,7 +577,7 @@
 				<column name="response_msg" jdbc-type="VARCHAR" length="128" />
 			</field>
 			<field name="notes">
-				<column name="notes" jdbc-type="BLOB" />
+				<column name="notes" jdbc-type="LONGVARCHAR" />
 			</field>
 		</class>
 
@@ -611,7 +587,7 @@
 				<column name="prodcat_id" />
 			</unique>
 			<field name="isFeaturedProduct">
-				<column name="is_featured_product" jdbc-type="BOOLEAN" allows-null="false" default-value="false" />
+				<column name="is_featured_product" jdbc-type="BIT" allows-null="false" default-value="false" />
 			</field>
 			<field name="product">
 				<column name="prodinv_id" jdbc-type="BIGINT" allows-null="false" />
@@ -679,7 +655,7 @@
 				<column name="weight" jdbc-type="FLOAT" default-value="0" />
 			</field>
 			<field name="onSale">
-				<column name="on_sale" jdbc-type="BOOLEAN" allows-null="false" default-value="false" />
+				<column name="on_sale" jdbc-type="BIT" allows-null="false" default-value="false" />
 			</field>
 			<field name="auxDescriptor">
 				<column name="aux_descriptor" jdbc-type="VARCHAR" length="255" />
@@ -720,7 +696,7 @@
 				<column name="postal_code" jdbc-type="VARCHAR" length="16" allows-null="false" />
 			</field>
 			<field name="tax">
-				<column name="tax" jdbc-type="FLOAT" allows-null="false" />
+				<column name="tax" jdbc-type="FLOAT" allows-null="false" default-value="0" />
 			</field>
 			<field name="account">
 				<column name="aid" jdbc-type="BIGINT" allows-null="true" />
@@ -730,10 +706,10 @@
 
 		<class name="ShipMode" table="ship_mode">
 			<field name="type">
-				<column name="type" jdbc-type="TINYINT" allows-null="false"/>
+				<column name="type" jdbc-type="TINYINT" allows-null="false" />
 			</field>
 			<field name="surcharge">
-				<column name="surcharge" jdbc-type="FLOAT" />
+				<column name="surcharge" jdbc-type="FLOAT" default-value="0" />
 			</field>
 			<field name="srcZip">
 				<column name="src_zip" jdbc-type="VARCHAR" length="16" />
@@ -751,10 +727,10 @@
 				<column name="u_bound" />
 			</unique>
 			<field name="lbound">
-				<column name="l_bound" jdbc-type="FLOAT" allows-null="false"/>
+				<column name="l_bound" jdbc-type="FLOAT" allows-null="false" default-value="0" />
 			</field>
 			<field name="ubound">
-				<column name="u_bound" jdbc-type="FLOAT" allows-null="false"/>
+				<column name="u_bound" jdbc-type="FLOAT" allows-null="false" default-value="0" />
 			</field>
 			<field name="cost">
 				<column name="cost" jdbc-type="FLOAT" allows-null="false" default-value="0" />
@@ -767,7 +743,7 @@
 
 		<class name="SiteCode" table="site_code">
 			<field name="code" unique="true">
-				<column name="code" jdbc-type="VARCHAR" allows-null="false" />
+				<column name="code" jdbc-type="VARCHAR" length="16" allows-null="false" />
 			</field>
 			<field name="expirationDate">
 				<column name="expiration_date" jdbc-type="TIMESTAMP" allows-null="false" />

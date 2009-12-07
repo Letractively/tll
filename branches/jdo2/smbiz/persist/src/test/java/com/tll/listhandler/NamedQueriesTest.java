@@ -93,7 +93,12 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 		cfg.setProperty(AbstractDb4oDaoModule.ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), Boolean.FALSE);
 		final Injector i = buildInjector(new SmbizModelModule(), new SmbizEGraphModule(), new SmbizDb4oDaoModule(cfg), new Db4oDbShellModule());
 		final IDbShell dbs = i.getInstance(IDbShell.class);
-		dbs.restub();
+
+		// re-stub db
+		dbs.drop();
+		dbs.create();
+		dbs.addData();
+
 		i.getInstance(ObjectContainer.class).close();
 
 		cfg.setProperty(AbstractDb4oDaoModule.ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), Boolean.TRUE);

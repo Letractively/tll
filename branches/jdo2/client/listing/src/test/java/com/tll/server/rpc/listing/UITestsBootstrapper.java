@@ -32,7 +32,9 @@ public class UITestsBootstrapper extends ListingContextBootstrapper {
 		// re-stub the db
 		log.info("re-stubbing test db..");
 		final IDbShell dbs = injector.getInstance(IDbShell.class);
-		dbs.restub();
+		dbs.drop();
+		dbs.create();
+		dbs.addData();
 
 		// retain the db4o's object container ref
 		final Object oc = injector.getInstance(ObjectContainer.class);

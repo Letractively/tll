@@ -88,7 +88,7 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 		cfg.setProperty(AbstractDb4oDaoModule.ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), Boolean.FALSE);
 		final Injector i = buildInjector(new TestDb4oDaoModule(cfg), new Db4oDbShellModule() );
 		final IDbShell dbs = i.getInstance(IDbShell.class);
-		dbs.delete();
+		dbs.drop();
 		dbs.create();
 
 		super.beforeClass();

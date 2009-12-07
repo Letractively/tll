@@ -13,7 +13,6 @@ import com.google.inject.Module;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.dao.IEntityDaoTestHandler;
-import com.tll.di.AbstractDb4oDaoModule;
 import com.tll.di.SmbizDb4oDaoModule;
 import com.tll.di.SmbizEGraphModule;
 import com.tll.di.SmbizModelModule;
@@ -73,9 +72,7 @@ public class SmbizDb4oEntityDaoTest extends AbstractDb4oEntityDaoTest {
 
 	@Override
 	protected Config doGetConfig() {
-		final Config c = Config.load(new ConfigRef("db4o-config.properties"));
-		c.setProperty(AbstractDb4oDaoModule.ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), Boolean.FALSE);
-		return c;
+		return Config.load(new ConfigRef("db4o-config.properties"));
 	}
 
 }

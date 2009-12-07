@@ -86,14 +86,14 @@ public class Db4oDbShell implements IDbShell {
 	}
 
 	@Override
-	public boolean clear() {
+	public void clearData() {
 		throw new UnsupportedOperationException("Db4o db's can't be cleared.");
 	}
 
 	@Override
-	public boolean create() {
+	public void create() {
 		File f = getHandle();
-		if(f.exists()) return false;
+		if(f.exists()) return;
 		log.info("Creating db4o db: " + f.getPath());
 		f = null;
 		ObjectContainer db = null;
@@ -103,64 +103,47 @@ public class Db4oDbShell implements IDbShell {
 		finally {
 			killDbSession(db);
 		}
-		return true;
 	}
 
 	@Override
-	public boolean delete() {
+	public void drop() {
 		final File f = getHandle();
-		if(!f.exists()) return false;
+		if(!f.exists()) return;
 		log.info("Deleting db4o db: " + f.getPath());
 		if(!f.delete()) throw new IllegalStateException("Unable to delete db4o file: " + f.getAbsolutePath());
-		return true;
 	}
 
 	@Override
-	public boolean stub() {
+	public void addData() {
 		ObjectContainer dbSession = null;
 		try {
 			log.info("Stubbing db4o db for db4o db: " + dbFile);
 			dbSession = createDbSession();
-			return doStub(dbSession);
+			try {
+				if(populator == null) throw new IllegalStateException("No populator set");
+				populator.populateEntityGraph();
+				final EntityGraph eg = populator.getEntityGraph();
+				final Iterator<Class<? extends IEntity>> itr = eg.getEntityTypes();
+				while(itr.hasNext()) {
+					final Class<? extends IEntity> et = itr.next();
+					log.info("Storing entities of type: " + et.getSimpleName() + "...");
+					final Collection<? extends IEntity> ec = eg.getEntitiesByType(et);
+					for(final IEntity e : ec) {
+						log.info("Storing entity: " + et + "...");
+						dbSession.store(e);
+					}
+				}
+			}
+			catch(final Exception e) {
+				log.error("Unable to stub db: " + e.getMessage(), e);
+				if(e instanceof RuntimeException) {
+					throw (RuntimeException) e;
+				}
+				throw new RuntimeException(e);
+			}
 		}
 		finally {
 			killDbSession(dbSession);
 		}
-	}
-
-	/**
-	 * Stubs a targeted db.
-	 * @param dbSession the db session ref
-	 * @return true/false
-	 */
-	private boolean doStub(ObjectContainer dbSession) {
-		assert dbSession != null;
-		try {
-			if(populator == null) throw new IllegalStateException("No populator set");
-			populator.populateEntityGraph();
-			final EntityGraph eg = populator.getEntityGraph();
-			final Iterator<Class<? extends IEntity>> itr = eg.getEntityTypes();
-			while(itr.hasNext()) {
-				final Class<? extends IEntity> et = itr.next();
-				log.info("Storing entities of type: " + et.getSimpleName() + "...");
-				final Collection<? extends IEntity> ec = eg.getEntitiesByType(et);
-				for(final IEntity e : ec) {
-					log.info("Storing entity: " + et + "...");
-					dbSession.store(e);
-				}
-			}
-			return true;
-		}
-		catch(final Exception e) {
-			log.error("Unable to stub db: " + e.getMessage(), e);
-			return false;
-		}
-	}
-
-	@Override
-	public void restub() {
-		delete();
-		create();
-		stub();
 	}
 }

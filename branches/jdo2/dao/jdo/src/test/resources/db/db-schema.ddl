@@ -23,7 +23,7 @@ create table address (
 create table currency (
    id bigint not null,
    version bigint not null default 0,
-   name varchar(64) not null unique,
+   name varchar(255) not null unique,
    symbol varchar(8) not null unique,
    iso_4217 varchar(16) not null unique,
    usd_exchange_rate float not null,
@@ -34,7 +34,7 @@ create table currency (
 create table nested_entity (
    id bigint not null,
    version bigint not null default 0,
-   name varchar(64) not null,
+   name varchar(255) not null,
    data blob,
    unique(name),
    primary key (id)
@@ -48,7 +48,7 @@ create table account (
    date_modified datetime not null,
    parent_aid bigint,
    status tinyint not null,
-   name varchar(64) not null,
+   name varchar(255) not null,
    billing_model varchar(32),
    date_last_charged datetime,
    ne_id bigint,
@@ -62,7 +62,7 @@ create table account_address (
    version bigint not null default 0,
    date_created datetime not null,
    date_modified datetime not null,
-   name varchar(64) not null,
+   name varchar(255) not null,
    aid bigint not null,
    address_id bigint not null,
    type varchar(32) not null,

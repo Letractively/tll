@@ -156,7 +156,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	 */
 	protected void resetDb() {
 		getDbShell().create();
-		getDbShell().clear();
+		getDbShell().clearData();
 	}
 
 	/**

@@ -29,10 +29,6 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 	PrimaryKey<Currency> pkCurrency;
 	PrimaryKey<Account> pkAccountParent;
 
-	//NestedEntity nestedEntity;
-	//Currency currency;
-	//Account parent;
-
 	@Override
 	public Class<Account> entityClass() {
 		return Account.class;

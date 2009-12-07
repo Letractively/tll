@@ -13,8 +13,8 @@
 		</class>
 		
 		<class name="NamedEntity">
-			<field name="name" unique="true">
-				<column name="name" jdbc-type="VARCHAR" length="64" allows-null="false" />
+			<field name="name">
+				<column name="name" jdbc-type="VARCHAR" length="255" allows-null="false" />
 			</field>
 		</class>
 		
@@ -28,8 +28,8 @@
 		</class>
 
 		<class name="NamedTimeStampEntity">
-			<field name="name" unique="true">
-				<column name="name" jdbc-type="VARCHAR" length="64" allows-null="false" />
+			<field name="name">
+				<column name="name" jdbc-type="VARCHAR" length="255" allows-null="false" />
 			</field>
 		</class>
 		
