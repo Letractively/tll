@@ -18,9 +18,9 @@ import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
+import com.tll.dao.AccountAddressDaoTestHandler;
 import com.tll.dao.IDbTrans;
 import com.tll.dao.IEntityDaoTestHandler;
-import com.tll.dao.UserDaoTestHandler;
 import com.tll.dao.jdo.test.JdoTrans;
 import com.tll.di.SmbizEGraphModule;
 import com.tll.di.SmbizJdoDaoModule;
@@ -59,7 +59,7 @@ public class SmbizJdoEntityDaoTest extends AbstractJdoEntityDaoTest {
 		}
 		 */
 		return new IEntityDaoTestHandler<?>[] {
-			new UserDaoTestHandler(),
+			new AccountAddressDaoTestHandler(),
 		};
 	}
 

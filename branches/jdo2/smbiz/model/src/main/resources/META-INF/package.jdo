@@ -86,8 +86,8 @@
 
 		<class name="AccountAddress" detachable="true">
 			<field name="type" />
-			<field name="account" />
-			<field name="address" />
+			<field name="account" default-fetch-group="true" />
+			<field name="address" default-fetch-group="true" />
 		</class>
 
 		<class name="AccountHistory" detachable="true">

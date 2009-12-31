@@ -14,7 +14,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<asmVersion>3.2</asmVersion>
+		<asmVersion>[3.2,)</asmVersion>
 		<db4oVersion>7.4.121.14026</db4oVersion>
 		<springextensions.db4o.version>1.0.0e</springextensions.db4o.version>
 
@@ -22,15 +22,32 @@
 		<springVersion>2.5.6.SEC01</springVersion>
 		<slfVersion>1.5.6</slfVersion>
 
+		<!-- javax.* versions -->
+		<javaxTransactionVersion>1.1</javaxTransactionVersion>
+		<javaxServletVersion>2.5</javaxServletVersion>
+		
+		<!-- google app engine -->
+		<gaeVersion>1.3.0</gaeVersion>
+
+		<!-- datanucleus for gaej v1.3.0 -->
+		<jdo2apiVersion>2.3-eb</jdo2apiVersion>
+		<datanucleusVersion>1.1.5</datanucleusVersion>
+		<datanucleusEnhancerVersion>1.1.4</datanucleusEnhancerVersion>
+		<datanucleusAppengineVersion>1.0.4.1.final</datanucleusAppengineVersion>
+		<!-- the following are *not* part of the google app engine api -->
+		<datanucleusCacheVersion>1.1.1</datanucleusCacheVersion>
+		<datanucleusPoolVersion>1.0.2</datanucleusPoolVersion>
+		<datanucleusRdbmsVersion>1.1.5</datanucleusRdbmsVersion>
+
 		<!-- datanucleus v1.1.6 -->
+		<!-- 
 		<jdo2apiVersion>2.3-eb</jdo2apiVersion>
 		<datanucleusVersion>1.1.6</datanucleusVersion>
 		<datanucleusCacheVersion>1.1.1</datanucleusCacheVersion>
 		<datanucleusPoolVersion>1.0.2</datanucleusPoolVersion>
-		<datanucleusDb4oVersion>1.1.2</datanucleusDb4oVersion>
 		<datanucleusEnhancerVersion>1.1.4</datanucleusEnhancerVersion>
 		<datanucleusRdbmsVersion>1.1.6</datanucleusRdbmsVersion>
-		<datanucleusPluginVersion>1.1.4</datanucleusPluginVersion>
+		-->
 
 		<!-- datanucleus v2.0.0-m3 -->
 		<!-- 
@@ -38,17 +55,15 @@
 		<datanucleusVersion>2.0.0-m3</datanucleusVersion>
 		<datanucleusCacheVersion>2.0.0-m2</datanucleusCacheVersion>
 		<datanucleusPoolVersion>2.0.0-m1</datanucleusPoolVersion>
-		<datanucleusDb4oVersion>2.0.0-m2</datanucleusDb4oVersion>
 		<datanucleusEnhancerVersion>2.0.0-m3</datanucleusEnhancerVersion>
 		<datanucleusRdbmsVersion>2.0.0-m3</datanucleusRdbmsVersion>
-		<datanucleusPluginVersion>2.0.0.m1</datanucleusPluginVersion>
 		-->
 
 		<mysqlConnectorVersion>5.1.6</mysqlConnectorVersion>
 
-		<gwtVersion>2.0.0-rc2</gwtVersion>
+		<gwtVersion>2.0.0</gwtVersion>
 		<gwtLogVersion>3.0.0</gwtLogVersion>
-
+		
 		<junitVersion>4.5</junitVersion>
 		<testNGVersion>5.10</testNGVersion>
 	</properties>
@@ -96,7 +111,7 @@
 			<id>Java_Net_LEGACY</id>
 			<name>Java.Net legacy</name>
 			<url>http://download.java.net/maven/1/</url>
-			<layout>legacy</layout>
+			<!-- <layout>legacy</layout> (DEPRECATED as of maven v3) -->
 		</repository>
 		<!-- db40 -->
 		<repository>
@@ -198,11 +213,13 @@
 					<artifactId>aspectj-maven-plugin</artifactId>
 					<version>1.2</version>
 				</plugin>
+				<!-- 
 				<plugin>
 					<groupId>org.datanucleus</groupId>
 					<artifactId>maven-datanucleus-plugin</artifactId>
 					<version>${datanucleusPluginVersion}</version>
 				</plugin>
+				-->
 			</plugins>
 		</pluginManagement>
 
@@ -237,7 +254,7 @@
 						-->
 						<manifestEntries>
 							<mode>${mode}</mode>
-							<url>${pom.url}</url>
+							<url>${project.url}</url>
 						</manifestEntries>
 					</archive>
 					<excludes>
@@ -454,6 +471,17 @@
 				<version>1.0</version>
 			</dependency>
 
+			<!-- javax.* jars -->
+			<dependency>
+				<groupId>javax.transaction</groupId>
+				<artifactId>transaction-api</artifactId>
+				<version>${javaxTransactionVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.jdo</groupId>
+				<artifactId>jdo2-api</artifactId>
+				<version>${jdo2apiVersion}</version>
+			</dependency>
 			<dependency>
 				<groupId>javax.validation</groupId>
 				<artifactId>validation-api</artifactId>
@@ -462,7 +490,7 @@
 			<dependency>
 				<groupId>javax.servlet</groupId>
 				<artifactId>servlet-api</artifactId>
-				<version>2.5</version>
+				<version>${javaxServletVersion}</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.mail</groupId>
@@ -474,11 +502,6 @@
 				<groupId>javax.activation</groupId>
 				<artifactId>activation</artifactId>
 				<version>[1.1,)</version>
-			</dependency>
-			<dependency>
-				<groupId>javax.jdo</groupId>
-				<artifactId>jdo2-api</artifactId>
-				<version>${jdo2apiVersion}</version>
 			</dependency>
 
 			<dependency>
@@ -537,6 +560,11 @@
 				<groupId>org.datanucleus</groupId>
 				<artifactId>datanucleus-rdbms</artifactId>
 				<version>${datanucleusRdbmsVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.datanucleus</groupId>
+				<artifactId>datanucleus-appengine</artifactId>
+				<version>${datanucleusAppengineVersion}</version>
 			</dependency>
 
 			<dependency>
@@ -623,9 +651,34 @@
 
 			<!-- google app engine -->
 			<dependency>
-				<groupId>com.google.code.appengine</groupId>
-				<artifactId>appengine</artifactId>
-				<version>1.2.2</version>
+				<groupId>com.google</groupId>
+				<artifactId>appengine-tools</artifactId>
+				<version>${gaeVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google</groupId>
+				<artifactId>appengine-local-runtime-shared</artifactId>
+				<version>${gaeVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google</groupId>
+				<artifactId>appengine-sdk-api</artifactId>
+				<version>${gaeVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google</groupId>
+				<artifactId>appengine-api</artifactId>
+				<version>${gaeVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google</groupId>
+				<artifactId>appengine-api-stubs</artifactId>
+				<version>${gaeVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google</groupId>
+				<artifactId>appengine-local-runtime</artifactId>
+				<version>${gaeVersion}</version>
 			</dependency>
 
 			<!-- GWT -->

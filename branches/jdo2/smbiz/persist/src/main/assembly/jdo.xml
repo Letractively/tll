@@ -4,11 +4,11 @@
   http://maven.apache.org/xsd/assembly-1.1.0.xsd">
 
 	<!--
-    Packages the project filtering out dao impl assets that are NOT db4o related
-    classifying it as 'db4o'.
+    Packages the project filtering out dao impl assets that are NOT JDO related
+    classifying it as 'jdo'.
   -->
 
-	<id>db4o</id>
+	<id>jdo</id>
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<formats>
 		<format>jar</format>
@@ -19,9 +19,7 @@
 			<directory>${project.build.outputDirectory}</directory>
 			<outputDirectory>/</outputDirectory>
 			<excludes>
-				<exclude>**/*.sql</exclude>
-				<exclude>**/*.ddl</exclude>
-				<exclude>**/jdo/**</exclude>
+				<exclude>**/db4o/**</exclude>
 			</excludes>
 		</fileSet>
 	</fileSets>

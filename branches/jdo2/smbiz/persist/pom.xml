@@ -82,6 +82,7 @@
 							</descriptors>
 						</configuration>
 					</execution>
+					<!-- 
 					<execution>
 						<id>deps</id>
 						<goals>
@@ -96,6 +97,7 @@
 							</descriptors>
 						</configuration>
 					</execution>
+					-->
 				</executions>
 			</plugin>
 		</plugins>
@@ -266,22 +268,19 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- jdo deps -->
+		<!-- gae/j deps -->
 		<dependency>
 			<groupId>javax.jdo</groupId>
 			<artifactId>jdo2-api</artifactId>
-			<scope>optional</scope>
 		</dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-orm</artifactId>
-			<scope>optional</scope>
     </dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-dao-jdo</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<scope>optional</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
@@ -290,24 +289,39 @@
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
-	
+		<dependency>
+			<groupId>org.datanucleus</groupId>
+			<artifactId>datanucleus-appengine</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google</groupId>
+			<artifactId>appengine-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google</groupId>
+			<artifactId>appengine-api-stubs</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google</groupId>
+			<artifactId>appengine-local-runtime</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- db40 deps -->
 		<dependency>
 			<groupId>db4o</groupId>
 			<artifactId>db4o</artifactId>
-			<scope>optional</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springextensions.db4o</groupId>
 			<artifactId>org.springextensions.db4o</artifactId>
 			<version>${springextensions.db4o.version}</version>
-			<scope>optional</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-dao-db4o</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<scope>optional</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
@@ -316,7 +330,7 @@
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>

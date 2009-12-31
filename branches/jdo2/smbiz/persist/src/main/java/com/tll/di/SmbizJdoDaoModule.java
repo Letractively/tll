@@ -5,8 +5,11 @@
  */
 package com.tll.di;
 
-import com.tll.config.Config;
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManagerFactory;
 
+import com.google.inject.Provider;
+import com.tll.config.Config;
 
 /**
  * SmbizJdoDaoModule
@@ -27,6 +30,19 @@ public class SmbizJdoDaoModule extends JdoDaoModule {
 	 */
 	public SmbizJdoDaoModule(Config config) {
 		super(config);
+	}
+
+	@Override
+	protected void bindPmf() {
+		// we depend on jdoconfig.xml
+		bind(PersistenceManagerFactory.class).toProvider(new Provider<PersistenceManagerFactory>() {
+
+			@Override
+			public PersistenceManagerFactory get() {
+				final PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("transactions-optional");
+				return pmf;
+			}
+		}).asEagerSingleton();
 	}
 
 }

@@ -87,11 +87,11 @@ public class JdoDaoModule extends AbstractModule implements IConfigAware {
 	public void setConfig(Config config) {
 		this.config = config;
 	}
-
-	@Override
-	protected final void configure() {
-		log.info("Employing JDO dao module.");
-
+	
+	/**
+	 * Binds the {@link PersistenceManagerFactory} instance.
+	 */
+	protected void bindPmf() {
 		if(config == null) {
 			// we assume we have a jdoconfig.xml on the classpath under META-INF/
 
@@ -123,7 +123,14 @@ public class JdoDaoModule extends AbstractModule implements IConfigAware {
 				}
 			}).asEagerSingleton();
 		}
+	}
 
+	@Override
+	protected final void configure() {
+		log.info("Employing JDO dao module.");
+
+		bindPmf();
+		
 		// create a PersistenceManager provider ensuring that we get the right one
 		// based on the current app state!
 		bind(PersistenceManager.class).toProvider(new Provider<PersistenceManager>() {
