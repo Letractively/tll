@@ -17,7 +17,7 @@
 
   <modules>
     <module>api</module>
-    <module>jdo</module>
+    <module>jdo-rdbms</module>
     <module>db4o</module>
   </modules>
 

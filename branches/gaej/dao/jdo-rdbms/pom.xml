@@ -9,10 +9,10 @@
 	</parent>
 
 	<groupId>com.tll</groupId>
-	<artifactId>tll-dao-jdo</artifactId>
-	<name>tll-dao-jdo</name>
+	<artifactId>tll-dao-jdo-rdbms</artifactId>
+	<name>tll-dao-jdo-rdbms</name>
 	<version>0.0.1-SNAPSHOT</version>
-	<description>Jdo dao implementation</description>
+	<description>JDO RDBMS dao implementation.</description>
 
 	<build>
 		<plugins>
