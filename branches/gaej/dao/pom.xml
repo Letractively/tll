@@ -1,0 +1,24 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>tll</artifactId>
+    <groupId>com.tll</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+
+  <groupId>com.tll</groupId>
+  <artifactId>tll-dao</artifactId>
+  <name>tll-dao</name>
+  <version>0.0.1-SNAPSHOT</version>
+  <description>Houses the dao api and the respective implementation modules.</description>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>api</module>
+    <module>jdo</module>
+    <module>db4o</module>
+  </modules>
+
+</project>

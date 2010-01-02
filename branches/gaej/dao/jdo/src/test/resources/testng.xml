@@ -1,0 +1,15 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="jdo-dao-tests">
+
+	<test name="jdo-dao-tests" annotations="JDK">
+		<groups>
+			<run>
+				<include name="dao" />
+			</run>
+		</groups>
+		<packages>
+			<package name="com.tll.dao.jdo" />
+		</packages>
+	</test>
+
+</suite>

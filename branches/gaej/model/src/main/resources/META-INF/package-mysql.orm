@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<orm xmlns="http://java.sun.com/xml/ns/jdo/orm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/jdo/orm
+        http://java.sun.com/xml/ns/jdo/orm_2_0.xsd">
+
+	<package name="com.tll.model">
+
+		<class name="EntityBase">
+			<primary-key>
+				<column name="id" jdbc-type="BIGINT" allows-null="false" />
+			</primary-key>
+			<column name="version" jdbc-type="BIGINT" default-value="0"/>
+		</class>
+		
+		<class name="NamedEntity">
+			<field name="name">
+				<column name="name" jdbc-type="VARCHAR" length="255" allows-null="false" />
+			</field>
+		</class>
+		
+		<class name="TimeStampEntity">
+			<field name="dateCreated">
+				<column name="date_created" jdbc-type="TIMESTAMP" allows-null="false" />
+			</field>
+			<field name="dateModified">
+				<column name="date_modified" jdbc-type="TIMESTAMP" allows-null="false" />
+			</field>
+		</class>
+
+		<class name="NamedTimeStampEntity">
+			<field name="name">
+				<column name="name" jdbc-type="VARCHAR" length="255" allows-null="false" />
+			</field>
+		</class>
+		
+	</package>
+
+</orm>
