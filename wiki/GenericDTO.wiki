@@ -1,14 +1,31 @@
 #summary Design summary of the "Generic DTO" pattern.
 #labels Phase-Design,Phase-Implementation
 
+=Introduction=
 A pattern I coin the "Generic DTO" addresses the inability of serializing server-side entities having adorned data that isn't "marshalable" through GWT RPC.  
 For example, GWT RPC can't handle JPA or JDO entity annotations.  
+
 As background to the issue, check out:
   * [http://groups.google.com/group/google-web-toolkit-contributors/browse_thread/thread/3c768d8d33bfb1dc/5a38aa812c0ac52b?pli=1 GWT-RPC broken in GAE/J]
 
-A common solution is to adopt Data Transfer Objects (DTOs).  These objects are designed soley to transfer model data to and from the client and don't have the any persistence related directives.  But its a pain to have to create one for each use case.  What if DTO creation could be automated without having to create custom GWT serializers and without having to declare distinct DTO types?  This is the path taken in the Generic DTO pattern.
+A common solution is to adopt [http://en.wikipedia.org/wiki/Data_transfer_object Data Transfer Objects (DTOs)].  These objects are designed to transfer model data to and from the client.  The downside is having to create the DTO classes and, with GWT, specific serializers must be created for each of your defined DTOs.  
 
-A class named {{{Marshaler}}} transforms server-side entity instances to RPC-able instances of type: {{{Model}}}.  Before we get into detailing the functionality of the {{{Marshaler}}}, a description of the {{{Model}}} type is necessary.
+What if DTO object creation could be automated without having to create custom GWT serializers and without having to create DTO classes?  This is the path taken in the Generic DTO pattern.
+
+=Summary=
+First off, a class named {{{Model}}} is used client-side to hold server-side model data.  This class is basically a wrapper around a {{{LinkedHashMap}}} holding properties accessible by a property path.  So all server side model data is transformed into Model instances.  The {{{Model}}} class has full support for related one, many and indexed properties as well as deep-copy and property querying using prescribed accessor methods whose arguments serve to filter the results.  For example, if we wish to access the property:
+ {{{
+addresses[2].address.firstName
+}}}
+
+we do:
+ {{{
+model.getProperty("addresses[2].address.firstName")
+}}}
+
+A class named {{{Marshaler}}}, residing server-side, "marshals" (converts) server-side entity POJOs to {{{Model}}} instances which are GWT-RPC-able.
+
+=Class details=
 
 == Model ==
 The {{{Model}}} type is the _generic_ container for model data that is fully RPC-able.  All declared server-side entities are represented on the client as a {{{Model}}} instance.  It has the following members:
@@ -179,5 +196,3 @@ public Model marshalEntity(final IEntity entity, final MarshalOptions options)..
 
 public <E extends IEntity> E marshalModel(final Model model, final Class<E> entityClass)...
 }}}
-
-TODO: finish
