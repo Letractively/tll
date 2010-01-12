@@ -3,7 +3,7 @@
  * @author jpk
  * @since Dec 30, 2009
  */
-package com.tll.dao.jdo;
+package com.tll.dao.gaej;
 
 import java.util.HashMap;
 import java.util.Map;
