@@ -18,7 +18,7 @@ public interface IEntityAssembler {
 	 * @param entityType
 	 * @param entityProvider Contains related entities that are wired to the
 	 *        assembled entity. May be <code>null</code>.
-	 * @param generate Generate an id?
+	 * @param generate Generate a primary key for the entity?
 	 * @return The assembled IEntity of the specified type.
 	 * @throws IllegalArgumentException when the entity type is not supported
 	 */

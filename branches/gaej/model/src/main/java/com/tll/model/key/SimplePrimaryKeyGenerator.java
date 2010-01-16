@@ -18,8 +18,8 @@ public class SimplePrimaryKeyGenerator implements IPrimaryKeyGenerator {
 
 	private static final Map<Class<? extends IEntity>, Long> idMap = new HashMap<Class<? extends IEntity>, Long>();
 
-	public synchronized long generateIdentifier(Class<? extends IEntity> entityClass) {
-		final Class<? extends IEntity> rootEntityClass = EntityUtil.getRootEntityClass(entityClass);
+	public synchronized long generateIdentifier(IEntity entity) {
+		final Class<? extends IEntity> rootEntityClass = EntityUtil.getRootEntityClass(entity.entityClass());
 		Long nextId = idMap.get(rootEntityClass);
 		if(nextId == null) {
 			nextId = Long.valueOf(0);

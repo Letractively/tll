@@ -146,11 +146,11 @@ public class GaejDaoModule extends AbstractModule implements IConfigAware {
 		// NOTE: we set NO_SCOPE so we always go through Spring's framework
 		// as it manages the life-cycle of PersistenceManagers
 
-		// IPrimaryKeyGenerator
-		bind(IPrimaryKeyGenerator.class).to(GaejPrimaryKeyGenerator.class).in(Scopes.SINGLETON);
-
 		// IEntityDao
 		bind(IEntityDao.class).to(GaejEntityDao.class).in(Scopes.SINGLETON);
+
+		// IPrimaryKeyGenerator (depends on gaej dao)
+		bind(IPrimaryKeyGenerator.class).to(GaejPrimaryKeyGenerator.class).in(Scopes.SINGLETON);
 
 		final boolean dst =
 				config == null ? DEFAULT_EMPLOY_SPRING_TRANSACTIONS : config.getBoolean(ConfigKeys.DB_TRANS_BINDTOSPRING

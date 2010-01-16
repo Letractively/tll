@@ -9,26 +9,19 @@ package com.tll.model;
 public interface IEntityFactory {
 
 	/**
-	 * Creates an entity
+	 * Creates an entity of the given type.  No properties are set. 
 	 * @param <E>
-	 * @param entityClass
-	 * @param generate Generate an id? This is necessary in order to later persist
-	 *        the entity. Creating non-generated entities should only be used for
-	 *        prototyping and when it it guaranteed the created entity will not be
-	 *        subject to persistence.
-	 * @return The created entity
+	 * @param entityClass the type of entity to create
+	 * @return Newly created entity
 	 * @throws IllegalStateException when the entity can't be created for any
-	 *         reason.
+	 *         reason
 	 */
-	<E extends IEntity> E createEntity(Class<E> entityClass, boolean generate) throws IllegalStateException;
+	<E extends IEntity> E createEntity(Class<E> entityClass) throws IllegalStateException;
 
 	/**
-	 * Sets entity properties relating to generation. Specifically, sets the <code>IEntity#id</code>
-	 * and <code>IEntity#generated</code> properties. Also, sets the
-	 * <code>ITimeStampEntity#dateCreated</code> property if the entity implements
-	 * {@link ITimeStampEntity}. if the entity
+	 * Responsible for setting a datastore compliant primary key for the given entity instance. 
 	 * @param <E>
-	 * @param entity
+	 * @param entity the entity instance whose primary key is to be set
 	 */
-	<E extends IEntity> void setGenerated(E entity);
+	<E extends IEntity> void assignPrimaryKey(E entity);
 }

@@ -333,10 +333,10 @@ public final class Marshaler {
 			log.debug("marshalModel - propName: " + propName);
 
 			if(Model.ID_PROPERTY.equals(propName)) {
-				val = Long.valueOf((String) pval);
+				val = pval == null ? null : Long.valueOf((String) pval);
 			}
 			else if(Model.VERSION_PROPERTY.equals(propName)) {
-				val = Long.valueOf((String) pval);
+				val = pval == null ? null : Long.valueOf((String) pval);
 			}
 			else {
 				switch(mprop.getType()) {
@@ -353,7 +353,7 @@ public final class Marshaler {
 					break;
 
 				case FLOAT:
-					val = Float.valueOf(((Double) pval).floatValue());
+					val = pval == null ? null : Float.valueOf(((Double) pval).floatValue());
 					break;
 
 				case RELATED_ONE: {
@@ -482,7 +482,7 @@ public final class Marshaler {
 				throw new IllegalArgumentException("Encountered an entity (" + crntEntity.descriptor()
 						+ ") w/o an id having a non-null version.");
 			}
-			entityFactory.setGenerated(crntEntity);
+			entityFactory.assignPrimaryKey(crntEntity);
 		}
 	}
 
@@ -493,7 +493,7 @@ public final class Marshaler {
 	 */
 	private IEntity instantiateEntity(Class<? extends IEntity> entityClass) {
 		try {
-			return this.entityFactory.createEntity(entityClass, false);
+			return this.entityFactory.createEntity(entityClass);
 		}
 		catch(final Exception ie) {
 			throw new RuntimeException("Unable to instantiate entity of class: " + entityClass.getSimpleName());

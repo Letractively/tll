@@ -109,7 +109,7 @@ public class JdoPrimaryKeyGenerator implements IPrimaryKeyGenerator {
 
 	@Override
 	// NOTE: the internals of generator are synchronized
-	public /*synchronized*/ long generateIdentifier(Class<? extends IEntity> entityClass) {
+	public /*synchronized*/ long generateIdentifier(IEntity entity) {
 		final long id = generator.nextValue();
 		log.debug(">Generated id: " + id);
 		return id;

@@ -189,7 +189,7 @@ public final class EntityBeanFactory {
 		final E[] arr = getBeansOfType(entityClass);
 		if(arr != null && arr.length > 0) {
 			for(final E e : arr) {
-				entityFactory.setGenerated(e);
+				entityFactory.assignPrimaryKey(e);
 				set.add(e);
 			}
 		}
@@ -207,7 +207,7 @@ public final class EntityBeanFactory {
 	public <E extends IEntity> E getEntityCopy(Class<E> entityClass, boolean makeUnique) {
 		final E e = getBean(entityClass);
 		if(e != null) {
-			entityFactory.setGenerated(e);
+			entityFactory.assignPrimaryKey(e);
 			if(makeUnique) {
 				makeBusinessKeyUnique(e);
 			}

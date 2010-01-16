@@ -22,24 +22,23 @@ public final class EntityFactory implements IEntityFactory {
 		this.keyGenerator = keyGenerator;
 	}
 
-	public <E extends IEntity> E createEntity(Class<E> entityClass, boolean generate) {
+	public <E extends IEntity> E createEntity(Class<E> entityClass) {
 		E entity;
 		try {
 			entity = entityClass.newInstance();
 		}
 		catch(final IllegalAccessException iae) {
 			throw new IllegalStateException(StringUtil.replaceVariables(
-					"Could not access %1 constructor -- make sure it is public", entityClass.getName()), iae);
+					"Could not access default constructor for entity type: '%1'.", entityClass.getName()), iae);
 		}
 		catch(final InstantiationException ie) {
 			throw new IllegalStateException(StringUtil.replaceVariables("Unable to instantiate the entity: %1", entityClass
 					.getName()), ie);
 		}
-		if(generate) setGenerated(entity);
 		return entity;
 	}
 
-	public <E extends IEntity> void setGenerated(E entity) {
-		((EntityBase) entity).setGenerated(keyGenerator.generateIdentifier(entity.entityClass()));
+	public <E extends IEntity> void assignPrimaryKey(E entity) {
+		((EntityBase) entity).setGenerated(keyGenerator.generateIdentifier(entity));
 	}
 }

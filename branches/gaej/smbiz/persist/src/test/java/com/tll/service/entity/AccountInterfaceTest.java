@@ -111,11 +111,11 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 	 */
 	private AccountInterface stubAccountInterface(Interface intf, Account a, boolean persist) {
 		final IEntityFactory efactory = injector.getInstance(IEntityFactory.class);
-		final AccountInterface ai = efactory.createEntity(AccountInterface.class, false);
+		final AccountInterface ai = efactory.createEntity(AccountInterface.class);
 		ai.setAccountId(a.getId().longValue());
 		ai.setInterfaceId(intf.getId().longValue());
 		for(final InterfaceOption io : intf.getOptions()) {
-			final AccountInterfaceOption aio = efactory.createEntity(AccountInterfaceOption.class, false);
+			final AccountInterfaceOption aio = efactory.createEntity(AccountInterfaceOption.class);
 			aio.setId(io.getId());
 			aio.setName(io.getName());
 			aio.setCode(io.getCode());
@@ -125,7 +125,7 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 			aio.setSetUpPrice(1f);
 			for(final InterfaceOptionParameterDefinition iopd : io.getParameters()) {
 				final AccountInterfaceOptionParameter aiop =
-					efactory.createEntity(AccountInterfaceOptionParameter.class, false);
+					efactory.createEntity(AccountInterfaceOptionParameter.class);
 				aiop.setId(iopd.getId());
 				aiop.setName(iopd.getName());
 				aiop.setCode(iopd.getCode());
