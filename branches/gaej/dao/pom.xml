@@ -19,7 +19,7 @@
     <module>api</module>
     <module>jdo-rdbms</module>
     <module>db4o</module>
-    <module>gaej</module>
+    <module>gae</module>
   </modules>
 
 </project>

@@ -9,10 +9,10 @@
 	</parent>
 
 	<groupId>com.tll</groupId>
-	<artifactId>tll-dao-gaej</artifactId>
+	<artifactId>tll-dao-gae</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>tll-dao-gaej</name>
-	<description>Google App Engine for Java dao impl</description>
+	<name>tll-dao-gae</name>
+	<description>Google App Engine dao impl</description>
 
 	<build>
 	</build>

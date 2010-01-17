@@ -29,7 +29,7 @@
 		<!-- google app engine -->
 		<gaeVersion>1.3.0</gaeVersion>
 
-		<!-- datanucleus for gaej v1.3.0 -->
+		<!-- datanucleus for gae v1.3.0 -->
 		<jdo2apiVersion>2.3-eb</jdo2apiVersion>
 		<datanucleusVersion>1.1.5</datanucleusVersion>
 		<datanucleusEnhancerVersion>1.1.4</datanucleusEnhancerVersion>
