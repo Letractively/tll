@@ -102,6 +102,23 @@
     	<artifactId>gwt-servlet</artifactId>
     </dependency>
 
+		<!-- for now, we stick this here.  perhaps later, we put gae related test stuff into its own module? -->
+		<dependency>
+			<groupId>com.google</groupId>
+			<artifactId>appengine-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google</groupId>
+			<artifactId>appengine-api-stubs</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google</groupId>
+			<artifactId>appengine-local-runtime</artifactId>
+			<scope>test</scope>
+		</dependency>
+
     <dependency>
     	<groupId>com.tll</groupId>
     	<artifactId>tll-config</artifactId>

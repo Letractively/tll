@@ -40,9 +40,7 @@ import com.tll.util.Comparator;
  * @param <D> the dao decorator type.
  * @author jpk
  */
-@Test(groups = {
-	"dao"
-})
+@Test(groups = { "dao" })
 public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends EntityDaoTestDecorator<R>> extends AbstractDbAwareTest {
 
 	/**
@@ -175,6 +173,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	@SuppressWarnings("unchecked")
 	@Override
 	protected final void beforeClass() {
+		super.beforeClass();
 
 		// get the dao test handlers
 		entityHandlers = getDaoTestHandlers();
@@ -386,7 +385,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 			Assert.fail("Loaded entity that should not have been committed into the db due to trans rollback");
 		}
 		catch(final EntityNotFoundException ex) {
-			//expected
+			// expected
 		}
 	}
 
@@ -411,14 +410,15 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		if(e instanceof ITimeStampEntity) {
 			// verify time stamp
 			Assert.assertNotNull(((ITimeStampEntity) e).getDateCreated(),
-			"Created time stamp entity does not have a create date");
+					"Created time stamp entity does not have a create date");
 			Assert.assertNotNull(((ITimeStampEntity) e).getDateModified(),
-			"Created time stamp entity does not have a modify date");
+					"Created time stamp entity does not have a modify date");
 		}
 
 		// retrieve
 		startNewTransaction();
-		setComplete(); // we need to do this for JDO in order to ensure a detached copy is made
+		setComplete(); // we need to do this for JDO in order to ensure a detached
+										// copy is made
 		e = dao.load(new PrimaryKey<IEntity>(entityHandler.entityClass(), Long.valueOf(persistentId)));
 		Assert.assertNotNull(e, "The loaded entity is null");
 		entityHandler.verifyLoadedEntityState(e);
@@ -444,7 +444,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 			final ITimeStampEntity tse = (ITimeStampEntity) e;
 			Assert.assertTrue(tse.getDateModified() != null && tse.getDateCreated() != null
 					&& tse.getDateModified().getTime() >= tse.getDateCreated().getTime(),
-			"Updated time stamp entity does not an updated modify date");
+					"Updated time stamp entity does not an updated modify date");
 		}
 
 		// purge (delete)
@@ -599,19 +599,19 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		startNewTransaction();
 		IPageResult<SearchResult> page = dao.getPage(crit, simpleIdSorting, 0, 2);
 		Assert.assertTrue(page != null && page.getPageList() != null && page.getPageList().size() == 2,
-		"Empty or invalid number of initial page elements");
+				"Empty or invalid number of initial page elements");
 		endTransaction();
 
 		startNewTransaction();
 		page = dao.getPage(crit, simpleIdSorting, 2, 2);
 		Assert.assertTrue(page != null && page.getPageList() != null && page.getPageList().size() == 2,
-		"Empty or invalid number of subsequent page elements");
+				"Empty or invalid number of subsequent page elements");
 		endTransaction();
 
 		startNewTransaction();
 		page = dao.getPage(crit, simpleIdSorting, 4, 2);
 		Assert.assertTrue(page != null && page.getPageList() != null && page.getPageList().size() == 1,
-		"Empty or invalid number of last page elements");
+				"Empty or invalid number of last page elements");
 		endTransaction();
 	}
 

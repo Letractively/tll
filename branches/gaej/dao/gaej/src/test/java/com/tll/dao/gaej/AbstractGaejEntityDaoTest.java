@@ -3,7 +3,7 @@ package com.tll.dao.gaej;
 import org.testng.annotations.Test;
 
 import com.tll.dao.AbstractEntityDaoTest;
-import com.tll.dao.IEntityDaoTestHandler;
+import com.tll.dao.gaej.test.GaeDatastoreTestEnvironment;
 import com.tll.dao.gaej.test.GaejTestDaoDecorator;
 import com.tll.model.IEntity;
 import com.tll.model.key.PrimaryKey;
@@ -25,11 +25,8 @@ public abstract class AbstractGaejEntityDaoTest extends AbstractEntityDaoTest<Ga
 	 */
 	public AbstractGaejEntityDaoTest() {
 		super(GaejTestDaoDecorator.class);
-	}
-
-	@Override
-	protected IEntityDaoTestHandler<?>[] getDaoTestHandlers() {
-		return null;
+		// create the gae test env
+		setTestEnv(new GaeDatastoreTestEnvironment());
 	}
 
 	/*
@@ -53,4 +50,5 @@ public abstract class AbstractGaejEntityDaoTest extends AbstractEntityDaoTest<Ga
 		// TODO verify we always hit the db
 		return dao.load(key);
 	}
+	
 }

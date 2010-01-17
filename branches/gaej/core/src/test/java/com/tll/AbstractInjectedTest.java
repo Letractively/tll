@@ -10,6 +10,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Stage;
+import com.tll.test.ITestEnvironment;
 
 /**
  * AbstractInjectedTest - Abstract base class for tests wishing to leverge
@@ -30,6 +31,11 @@ public abstract class AbstractInjectedTest {
 	protected final Log logger = LogFactory.getLog(this.getClass());
 
 	/**
+	 * The optional test environment.
+	 */
+	protected ITestEnvironment testEnv;
+
+	/**
 	 * The dependency injector.
 	 */
 	protected Injector injector;
@@ -39,6 +45,15 @@ public abstract class AbstractInjectedTest {
 	 */
 	public AbstractInjectedTest() {
 		super();
+	}
+
+	/**
+	 * Sets the test environment.
+	 * <p>
+	 * This must be called before {@link #beforeClass()} is invoked.
+	 */
+	protected final void setTestEnv(ITestEnvironment testEnv) {
+		this.testEnv = testEnv;
 	}
 
 	/**
@@ -74,6 +89,9 @@ public abstract class AbstractInjectedTest {
 	 * Before class hook.
 	 */
 	protected void beforeClass() {
+		if(testEnv != null) {
+			testEnv.setupTestEnvironment();
+		}
 		buildTestInjector();
 	}
 
@@ -81,7 +99,9 @@ public abstract class AbstractInjectedTest {
 	 * After class hook.
 	 */
 	protected void afterClass() {
-		// no-op
+		if(testEnv != null) {
+			testEnv.teardownTestEnvironment();
+		}
 	}
 
 	/**

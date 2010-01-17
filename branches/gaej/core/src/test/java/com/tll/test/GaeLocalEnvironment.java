@@ -1,9 +1,4 @@
-/**
- * The Logic Lab
- * @author jpk
- * @since Dec 30, 2009
- */
-package com.tll.dao.gaej;
+package com.tll.test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,10 +6,10 @@ import java.util.Map;
 import com.google.apphosting.api.ApiProxy;
 
 /**
- * GaejTestEnvironment
+ * GaeLocalEnvironment
  * @author jpk
  */
-public class GaejTestEnvironment implements ApiProxy.Environment {
+public final class GaeLocalEnvironment implements ApiProxy.Environment {
 
 	public String getAppId() {
 		return "test";
