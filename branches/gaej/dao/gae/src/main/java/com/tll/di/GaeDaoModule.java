@@ -26,17 +26,17 @@ import com.tll.config.Config;
 import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
 import com.tll.dao.IEntityDao;
-import com.tll.dao.gaej.GaejEntityDao;
-import com.tll.dao.gaej.GaejTimestampListener;
+import com.tll.dao.gae.GaeEntityDao;
+import com.tll.dao.gae.GaeTimestampListener;
 import com.tll.model.ITimeStampEntity;
-import com.tll.model.key.GaejPrimaryKeyGenerator;
+import com.tll.model.key.GaePrimaryKeyGenerator;
 import com.tll.model.key.IPrimaryKeyGenerator;
 
 /**
- * GaejDaoModule
+ * GaeDaoModule
  * @author jpk
  */
-public class GaejDaoModule extends AbstractModule implements IConfigAware {
+public class GaeDaoModule extends AbstractModule implements IConfigAware {
 
 	/**
 	 * ConfigKeys.
@@ -63,14 +63,14 @@ public class GaejDaoModule extends AbstractModule implements IConfigAware {
 
 	private static final boolean DEFAULT_EMPLOY_SPRING_TRANSACTIONS = false;
 
-	protected static final Log log = LogFactory.getLog(GaejDaoModule.class);
+	protected static final Log log = LogFactory.getLog(GaeDaoModule.class);
 
 	protected Config config;
 
 	/**
 	 * Constructor
 	 */
-	public GaejDaoModule() {
+	public GaeDaoModule() {
 		super();
 	}
 
@@ -78,7 +78,7 @@ public class GaejDaoModule extends AbstractModule implements IConfigAware {
 	 * Constructor
 	 * @param config
 	 */
-	public GaejDaoModule(Config config) {
+	public GaeDaoModule(Config config) {
 		super();
 		setConfig(config);
 	}
@@ -117,7 +117,7 @@ public class GaejDaoModule extends AbstractModule implements IConfigAware {
 					final PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory(jdoProps);
 
 					// add timestamp listener only for timestamp type entities :)
-					pmf.addInstanceLifecycleListener(new GaejTimestampListener(), new Class<?>[] { ITimeStampEntity.class });
+					pmf.addInstanceLifecycleListener(new GaeTimestampListener(), new Class<?>[] { ITimeStampEntity.class });
 
 					return pmf;
 				}
@@ -147,10 +147,10 @@ public class GaejDaoModule extends AbstractModule implements IConfigAware {
 		// as it manages the life-cycle of PersistenceManagers
 
 		// IEntityDao
-		bind(IEntityDao.class).to(GaejEntityDao.class).in(Scopes.SINGLETON);
+		bind(IEntityDao.class).to(GaeEntityDao.class).in(Scopes.SINGLETON);
 
 		// IPrimaryKeyGenerator (depends on gaej dao)
-		bind(IPrimaryKeyGenerator.class).to(GaejPrimaryKeyGenerator.class).in(Scopes.SINGLETON);
+		bind(IPrimaryKeyGenerator.class).to(GaePrimaryKeyGenerator.class).in(Scopes.SINGLETON);
 
 		final boolean dst =
 				config == null ? DEFAULT_EMPLOY_SPRING_TRANSACTIONS : config.getBoolean(ConfigKeys.DB_TRANS_BINDTOSPRING

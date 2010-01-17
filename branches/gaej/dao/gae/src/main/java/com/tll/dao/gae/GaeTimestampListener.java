@@ -3,7 +3,7 @@
  * @author jpk
  * @since Nov 8, 2009
  */
-package com.tll.dao.gaej;
+package com.tll.dao.gae;
 
 import java.util.Date;
 
@@ -13,11 +13,11 @@ import javax.jdo.listener.StoreLifecycleListener;
 import com.tll.model.ITimeStampEntity;
 
 /**
- * GaejTimestampListener - Applies timestamping to {@link ITimeStampEntity}
+ * GaeTimestampListener - Applies timestamping to {@link ITimeStampEntity}
  * instances before they are persisted.
  * @author jpk
  */
-public class GaejTimestampListener implements StoreLifecycleListener {
+public class GaeTimestampListener implements StoreLifecycleListener {
 
 	@Override
 	public void preStore(InstanceLifecycleEvent event) {

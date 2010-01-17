@@ -1,19 +1,20 @@
-package com.tll.dao.gaej;
+package com.tll.dao.gae;
 
 import org.testng.annotations.Test;
 
 import com.tll.dao.AbstractEntityDaoTest;
-import com.tll.dao.gaej.test.GaeDatastoreTestEnvironment;
-import com.tll.dao.gaej.test.GaejTestDaoDecorator;
+import com.tll.dao.gae.GaeEntityDao;
+import com.tll.dao.gae.test.GaeDatastoreTestEnvironment;
+import com.tll.dao.gae.test.GaeTestDaoDecorator;
 import com.tll.model.IEntity;
 import com.tll.model.key.PrimaryKey;
 
 /**
- * AbstractGaejEntityDaoTest
+ * AbstractGaeEntityDaoTest
  * @author jpk
  */
-@Test(groups = { "dao", "gaej" })
-public abstract class AbstractGaejEntityDaoTest extends AbstractEntityDaoTest<GaejEntityDao, GaejTestDaoDecorator> {
+@Test(groups = { "dao", "gae" })
+public abstract class AbstractGaeEntityDaoTest extends AbstractEntityDaoTest<GaeEntityDao, GaeTestDaoDecorator> {
 
 	/**
 	 * A distinct db shell.
@@ -23,8 +24,8 @@ public abstract class AbstractGaejEntityDaoTest extends AbstractEntityDaoTest<Ga
 	/**
 	 * Constructor
 	 */
-	public AbstractGaejEntityDaoTest() {
-		super(GaejTestDaoDecorator.class);
+	public AbstractGaeEntityDaoTest() {
+		super(GaeTestDaoDecorator.class);
 		// create the gae test env
 		setTestEnv(new GaeDatastoreTestEnvironment());
 	}

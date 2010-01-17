@@ -3,7 +3,7 @@
  * @author jpk
  * @since Oct 27, 2009
  */
-package com.tll.dao.gaej;
+package com.tll.dao.gae;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,10 +47,10 @@ import com.tll.model.key.PrimaryKey;
 import com.tll.util.DateRange;
 
 /**
- * GaejEntityDao
+ * GaeEntityDao
  * @author jpk
  */
-public class GaejEntityDao extends JdoDaoSupport implements IEntityDao {
+public class GaeEntityDao extends JdoDaoSupport implements IEntityDao {
 
 	private static final String Q_AND = " && ";
 
@@ -99,7 +99,7 @@ public class GaejEntityDao extends JdoDaoSupport implements IEntityDao {
 	 * @param pmf
 	 */
 	@Inject
-	public GaejEntityDao(PersistenceManagerFactory pmf) {
+	public GaeEntityDao(PersistenceManagerFactory pmf) {
 		super();
 		setPersistenceManagerFactory(pmf);
 	}

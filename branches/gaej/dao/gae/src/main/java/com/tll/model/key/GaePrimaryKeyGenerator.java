@@ -10,27 +10,27 @@ import org.apache.commons.logging.LogFactory;
 import org.datanucleus.store.valuegenerator.ValueGenerator;
 
 import com.google.inject.Inject;
-import com.tll.dao.gaej.GaejEntityDao;
+import com.tll.dao.gae.GaeEntityDao;
 import com.tll.model.EntityBase;
 import com.tll.model.IEntity;
 
 /**
- * GaejPrimaryKeyGenerator - Generates unique id tokens based on DataNucleus'
+ * GaePrimaryKeyGenerator - Generates unique id tokens based on DataNucleus'
  * {@link ValueGenerator} UUID strategy.
  * @author jpk
  */
-public class GaejPrimaryKeyGenerator implements IPrimaryKeyGenerator {
+public class GaePrimaryKeyGenerator implements IPrimaryKeyGenerator {
 
-	static final Log log = LogFactory.getLog(GaejPrimaryKeyGenerator.class);
+	static final Log log = LogFactory.getLog(GaePrimaryKeyGenerator.class);
 
-	private final GaejEntityDao dao;
+	private final GaeEntityDao dao;
 
 	/**
 	 * Constructor
 	 * @param dao the required gaej dao impl instance
 	 */
 	@Inject
-	public GaejPrimaryKeyGenerator(GaejEntityDao dao) {
+	public GaePrimaryKeyGenerator(GaeEntityDao dao) {
 		super();
 		this.dao = dao;
 	}

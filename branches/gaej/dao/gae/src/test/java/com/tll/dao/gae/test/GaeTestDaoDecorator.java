@@ -3,18 +3,18 @@
  * @author jpk
  * @since Oct 29, 2009
  */
-package com.tll.dao.gaej.test;
+package com.tll.dao.gae.test;
 
 import javax.jdo.PersistenceManagerFactory;
 
-import com.tll.dao.gaej.GaejEntityDao;
+import com.tll.dao.gae.GaeEntityDao;
 import com.tll.dao.test.EntityDaoTestDecorator;
 
 /**
- * GaejTestDaoDecorator
+ * GaeTestDaoDecorator
  * @author jpk
  */
-public final class GaejTestDaoDecorator extends EntityDaoTestDecorator<GaejEntityDao> {
+public final class GaeTestDaoDecorator extends EntityDaoTestDecorator<GaeEntityDao> {
 
 	public PersistenceManagerFactory getPersistenceManagerFactory() {
 		return rawDao.getPersistenceManagerFactory();

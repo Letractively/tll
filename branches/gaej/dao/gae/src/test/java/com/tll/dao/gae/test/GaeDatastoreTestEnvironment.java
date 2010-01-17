@@ -3,7 +3,7 @@
  * @author jpk
  * @since Jan 16, 2010
  */
-package com.tll.dao.gaej.test;
+package com.tll.dao.gae.test;
 
 import com.google.appengine.api.datastore.dev.LocalDatastoreService;
 import com.google.appengine.tools.development.ApiProxyLocalImpl;

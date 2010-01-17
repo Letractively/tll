@@ -3,7 +3,7 @@
  * @author jpk
  * @since Jan 16, 2010
  */
-package com.tll.dao.gaej;
+package com.tll.dao.gae;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import org.testng.annotations.Test;
 import com.google.inject.Module;
 import com.tll.dao.IEntityDaoTestHandler;
 import com.tll.dao.test.TestEntityDaoTestHandler;
-import com.tll.di.GaejDaoModule;
+import com.tll.di.GaeDaoModule;
 import com.tll.di.test.TestPersistenceUnitModule;
 
 
@@ -21,7 +21,7 @@ import com.tll.di.test.TestPersistenceUnitModule;
  * @author jpk
  */
 @Test
-public class GaeEntityDaoTest extends AbstractGaejEntityDaoTest {
+public class GaeEntityDaoTest extends AbstractGaeEntityDaoTest {
 
 	@Override
 	protected IEntityDaoTestHandler<?>[] getDaoTestHandlers() {
@@ -34,6 +34,6 @@ public class GaeEntityDaoTest extends AbstractGaejEntityDaoTest {
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
 		modules.add(new TestPersistenceUnitModule());
-		modules.add(new GaejDaoModule(getConfig()));
+		modules.add(new GaeDaoModule(getConfig()));
 	}
 }
