@@ -24,7 +24,7 @@ import com.tll.dao.IEntityDaoTestHandler;
 import com.tll.dao.jdo.test.JdoTrans;
 import com.tll.di.SmbizEGraphModule;
 import com.tll.di.SmbizJdoDaoModule;
-import com.tll.di.SmbizModelModule;
+import com.tll.di.SmbizModelBuildModule;
 
 /**
  * SmbizJdoEntityDaoTest
@@ -66,7 +66,7 @@ public class SmbizJdoEntityDaoTest extends AbstractJdoEntityDaoTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new SmbizModelModule());
+		modules.add(new SmbizModelBuildModule());
 		modules.add(new SmbizEGraphModule());
 		modules.add(new SmbizJdoDaoModule(getConfig()));
 		// ad hoc IDbTrans binding

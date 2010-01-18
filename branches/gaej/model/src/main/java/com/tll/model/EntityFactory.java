@@ -16,9 +16,14 @@ public final class EntityFactory implements IEntityFactory {
 	 */
 	private final IPrimaryKeyGenerator keyGenerator;
 
+	/**
+	 * Constructor
+	 * @param keyGenerator Required primary key generator impl
+	 */
 	@Inject
 	public EntityFactory(IPrimaryKeyGenerator keyGenerator) {
 		super();
+		if(keyGenerator == null) throw new IllegalArgumentException("No primary key generator specified.");
 		this.keyGenerator = keyGenerator;
 	}
 

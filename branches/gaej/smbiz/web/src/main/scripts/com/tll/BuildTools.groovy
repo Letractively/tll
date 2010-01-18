@@ -14,7 +14,7 @@ import com.tll.ConfigProcessor;
 import com.tll.dao.IDbShell;
 import com.tll.di.SmbizDb4oDaoModule;
 import com.tll.di.test.Db4oDbShellModule;
-import com.tll.di.SmbizModelModule;
+import com.tll.di.SmbizModelBuildModule;
 import com.tll.model.IEntityGraphPopulator;
 import com.tll.di.EGraphModule;
 
@@ -73,7 +73,8 @@ public final class BuildTools {
 	  ['com.tll.di.RefDataModule', FLAG_ALL],
 	  ['com.tll.di.EmailExceptionHandlerModule', FLAG_DB_JDO],
 	  ['com.tll.di.LogExceptionHandlerModule', FLAG_DB_DB4O],
-	  ['com.tll.di.SmbizModelModule', FLAG_ALL],
+		['com.tll.di.ModelModule', FLAG_ALL],
+		['com.tll.di.SmbizModelBuildModule', FLAG_ALL],
 	  ['com.tll.di.SmbizCacheModule', FLAG_ALL],
 	  ['com.tll.di.SmbizDb4oDaoModule', FLAG_DB_DB4O],
 	  ['com.tll.di.SmbizEntityServiceFactoryModule', FLAG_ALL],

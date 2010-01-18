@@ -10,10 +10,18 @@
 			<version strategy="version-number">
 				<extension vendor-name="datanucleus" key="field-name" value="version" />
 			</version>
+
+			<!-- this is for jdo-rdbms -->
+			<!-- 
 			<field name="id" primary-key="true" value-strategy="increment">
-				<!-- CRITICAL: this ensures IPrimaryKeyGenerator id generation is NOT overridden by JDO internals!! -->
+				CRITICAL: this ensures IPrimaryKeyGenerator id generation is NOT overridden by JDO internals!!
 				<extension vendor-name="datanucleus" key="strategy-when-notnull" value="false" />
 			</field>
+			-->
+			
+			<!-- this is for gae -->
+			<field name="id" primary-key="true" value-strategy="identity" />
+
 			<field name="generated" persistence-modifier="none" />
 		</class>
 

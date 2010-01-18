@@ -1,9 +1,9 @@
 /**
  * The Logic Lab
  * @author jpk
- * @since Sep 16, 2009
+ * @since Jan 17, 2010
  */
-package com.tll.dao.jdo.test;
+package com.tll.dao.gae.test;
 
 import javax.jdo.PersistenceManagerFactory;
 
@@ -17,12 +17,12 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.tll.dao.IDbTrans;
 
 /**
- * JdoTrans
+ * GaeTrans
  * @author jpk
  */
-public class JdoTrans implements IDbTrans {
+public class GaeTrans implements IDbTrans {
 
-	private static final Log log = LogFactory.getLog(JdoTrans.class);
+	private static final Log log = LogFactory.getLog(GaeTrans.class);
 
 	private final PersistenceManagerFactory pmf;
 
@@ -53,7 +53,7 @@ public class JdoTrans implements IDbTrans {
 	 * Constructor
 	 * @param pmf the required persistence manager factory
 	 */
-	public JdoTrans(PersistenceManagerFactory pmf) {
+	public GaeTrans(PersistenceManagerFactory pmf) {
 		super();
 		if(pmf == null) throw new IllegalArgumentException("No PersistenceManagerFactory specified.");
 		this.pmf = pmf;
@@ -107,7 +107,7 @@ public class JdoTrans implements IDbTrans {
 			// set the transaction timeout
 			final int timeout = 60 * 4; // 4 mins
 			jdoTm.setDefaultTimeout(timeout);
-			log.info("Set JDO default transaction timeout to: " + timeout);
+			log.info("Set GAE default transaction timeout to: " + timeout);
 
 			// validate configuration
 			try {

@@ -17,26 +17,62 @@ import com.tll.model.EntityBeanFactory;
 import com.tll.model.EntityGraph;
 import com.tll.model.IEntityFactory;
 import com.tll.model.IEntityGraphPopulator;
+import com.tll.util.ClassUtil;
 
 /**
  * EGraphModule - Provides {@link EntityGraph} instances.
+ * <p>
+ * <em><b>IMPT</b>: Depends on an {@link IEntityFactory} implementation.</em>
  * @author jpk
  */
-public abstract class EGraphModule extends AbstractModule {
+public class EGraphModule extends AbstractModule {
 
 	private static final Log log = LogFactory.getLog(EGraphModule.class);
 
-	protected abstract Class<? extends IEntityGraphPopulator> getEntityGraphBuilderImplType();
+	private static final String DEFAULT_BEANDEF_FILENAME = "com/tll/model/test/mock-entities.xml";
 
 	/**
-	 * @return The location of the Spring xml file containing the desired entity
-	 *         declarations.
+	 * The {@link IEntityGraphPopulator} impl type.
 	 */
-	protected abstract URI getBeanDefRef();
+	protected final Class<? extends IEntityGraphPopulator> entityGraphPopulatorImplType;
+
+	/**
+	 * The location of the Spring xml file containing the desired entity
+	 * declarations.
+	 */
+	protected final URI beanDefRef;
+
+	/**
+	 * Constructor - Relies on a default location for the xml bean def file
+	 * @param entityGraphPopulatorImplType Required
+	 */
+	public EGraphModule(Class<? extends IEntityGraphPopulator> entityGraphPopulatorImplType) {
+		this(entityGraphPopulatorImplType, null);
+	}
+
+	/**
+	 * Constructor
+	 * @param entityGraphPopulatorImplType Required
+	 * @param beanDefFilePath Xml bean definition file path
+	 */
+	public EGraphModule(Class<? extends IEntityGraphPopulator> entityGraphPopulatorImplType, String beanDefFilePath) {
+		super();
+		this.entityGraphPopulatorImplType = entityGraphPopulatorImplType;
+		if(beanDefFilePath == null) {
+			log.info("Defaulting to bean def file path: " + DEFAULT_BEANDEF_FILENAME);
+			beanDefFilePath = DEFAULT_BEANDEF_FILENAME;
+		}
+		try {
+			this.beanDefRef = ClassUtil.getResource(beanDefFilePath).toURI();
+		}
+		catch(Exception e) {
+			throw new IllegalStateException(e);
+		}
+	}
 
 	@Override
 	protected void configure() {
-		log.info("Employing entity graph module.");
+		log.info("Employing entity graph module..");
 
 		bind(EntityBeanFactory.class).toProvider(new Provider<EntityBeanFactory>() {
 
@@ -45,14 +81,14 @@ public abstract class EGraphModule extends AbstractModule {
 
 			@Override
 			public EntityBeanFactory get() {
-				final URI uri = getBeanDefRef();
-				final ListableBeanFactory lbf = EntityBeanFactory.loadBeanDefinitions(uri);
+				
+				final ListableBeanFactory lbf = EntityBeanFactory.loadBeanDefinitions(beanDefRef);
 				return new EntityBeanFactory(lbf, efactory);
 			}
 		}).in(Scopes.SINGLETON);
 
 		// IEntityGraphPopulator
-		bind(IEntityGraphPopulator.class).to(getEntityGraphBuilderImplType()).in(Scopes.SINGLETON);
+		bind(IEntityGraphPopulator.class).to(entityGraphPopulatorImplType).in(Scopes.SINGLETON);
 
 		// EntityGraph
 		bind(EntityGraph.class).toProvider(new Provider<EntityGraph>() {

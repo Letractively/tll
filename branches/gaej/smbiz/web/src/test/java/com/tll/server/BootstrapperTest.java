@@ -47,7 +47,7 @@ public class BootstrapperTest {
 		sb.append("com.tll.di.VelocityModule\r\n");
 		sb.append("com.tll.di.MailModule\r\n");
 		sb.append("com.tll.di.RefDataModule\r\n");
-		sb.append("com.tll.di.SmbizModelModule\r\n");
+		sb.append("com.tll.di.SmbizModelBuildModule\r\n");
 		sb.append("com.tll.di.SmbizEGraphModule\r\n");
 		sb.append("com.tll.di.AbstractDb4oDaoModule\r\n");
 		sb.append("com.tll.di.SmbizEntityServiceFactoryModule\r\n");

@@ -84,14 +84,30 @@ public abstract class AbstractInjectedTest {
 	 */
 	protected void addModules(List<Module> modules) {
 	}
+	
+	/**
+	 * Sets up te test environment is one is specified.
+	 */
+	protected final void setupTestEnv() {
+		if(testEnv != null) {
+			testEnv.setupTestEnvironment();
+		}
+	}
+	
+	/**
+	 * Tears down the test environment if one is specified. 
+	 */
+	protected final void teardownTestEnv() {
+		if(testEnv != null) {
+			testEnv.teardownTestEnvironment();
+		}
+	}
 
 	/**
 	 * Before class hook.
 	 */
 	protected void beforeClass() {
-		if(testEnv != null) {
-			testEnv.setupTestEnvironment();
-		}
+		setupTestEnv();
 		buildTestInjector();
 	}
 
@@ -99,9 +115,7 @@ public abstract class AbstractInjectedTest {
 	 * After class hook.
 	 */
 	protected void afterClass() {
-		if(testEnv != null) {
-			testEnv.teardownTestEnvironment();
-		}
+		teardownTestEnv();
 	}
 
 	/**

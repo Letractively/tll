@@ -158,8 +158,8 @@ public final class EntityBeanFactory {
 	 */
 	public EntityBeanFactory(ListableBeanFactory beanFactory, IEntityFactory entityFactory) {
 		super();
-		assert beanFactory != null : "The beanFactory is null";
-		assert entityFactory != null : "The entityFactory is null";
+		if(beanFactory == null) throw new IllegalArgumentException("The beanFactory is null");
+		if(entityFactory == null) throw new IllegalArgumentException("The entityFactory is null");
 		this.beanFactory = beanFactory;
 		this.entityFactory = entityFactory;
 	}

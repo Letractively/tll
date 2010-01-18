@@ -7,31 +7,33 @@ package com.tll.model.key;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.datanucleus.store.valuegenerator.ValueGenerator;
 
 import com.google.inject.Inject;
+import com.tll.dao.IEntityDao;
 import com.tll.dao.gae.GaeEntityDao;
 import com.tll.model.EntityBase;
 import com.tll.model.IEntity;
 
 /**
- * GaePrimaryKeyGenerator - Generates unique id tokens based on DataNucleus'
- * {@link ValueGenerator} UUID strategy.
+ * GaePrimaryKeyGenerator - Generates unique id tokens by relying on the dao
+ * impl to persist entity instances.
  * @author jpk
  */
 public class GaePrimaryKeyGenerator implements IPrimaryKeyGenerator {
 
 	static final Log log = LogFactory.getLog(GaePrimaryKeyGenerator.class);
 
-	private final GaeEntityDao dao;
+	private final IEntityDao dao;
 
 	/**
 	 * Constructor
 	 * @param dao the required gaej dao impl instance
 	 */
 	@Inject
-	public GaePrimaryKeyGenerator(GaeEntityDao dao) {
+	public GaePrimaryKeyGenerator(IEntityDao dao) {
 		super();
+		if(dao instanceof GaeEntityDao == false)
+			throw new IllegalArgumentException("Null or non-gae entity dao argument.");
 		this.dao = dao;
 	}
 
@@ -40,7 +42,7 @@ public class GaePrimaryKeyGenerator implements IPrimaryKeyGenerator {
 		// sadly, for gae, we must persist to obtain the primary key!
 		dao.persist(entity);
 		final long id = entity.getId().longValue();
-		((EntityBase)entity).setGenerated(id);
+		((EntityBase) entity).setGenerated(id);
 		log.debug(">GAE generated id: " + id);
 		return id;
 	}

@@ -97,6 +97,9 @@
 		<repository>
 			<id>sourceforge</id>
 			<url>http://oss.sonatype.org/content/groups/sourceforge/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -516,7 +519,7 @@
 			<dependency>
 				<groupId>net.sf.ehcache</groupId>
 				<artifactId>ehcache-core</artifactId>
-				<version>1.7.0</version>
+				<version>1.7.2</version>
 				<exclusions>
 					<exclusion>
 						<groupId>net.sf.jsr107cache</groupId>

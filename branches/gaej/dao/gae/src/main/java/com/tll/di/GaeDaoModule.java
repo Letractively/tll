@@ -8,20 +8,17 @@ package com.tll.di;
 import java.util.Properties;
 
 import javax.jdo.JDOHelper;
-import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.orm.jdo.JdoTransactionManager;
-import org.springframework.orm.jdo.PersistenceManagerFactoryUtils;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.aspectj.AnnotationTransactionAspect;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.Scopes;
 import com.tll.config.Config;
 import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
@@ -87,11 +84,11 @@ public class GaeDaoModule extends AbstractModule implements IConfigAware {
 	public void setConfig(Config config) {
 		this.config = config;
 	}
-	
-	/**
-	 * Binds the {@link PersistenceManagerFactory} instance.
-	 */
-	protected void bindPmf() {
+
+	@Override
+	protected final void configure() {
+		log.info("Employing GAE dao module..");
+
 		if(config == null) {
 			// we assume we have a jdoconfig.xml on the classpath under META-INF/
 
@@ -123,16 +120,10 @@ public class GaeDaoModule extends AbstractModule implements IConfigAware {
 				}
 			}).asEagerSingleton();
 		}
-	}
 
-	@Override
-	protected final void configure() {
-		log.info("Employing JDO dao module.");
-
-		bindPmf();
-		
 		// create a PersistenceManager provider ensuring that we get the right one
 		// based on the current app state!
+		/*
 		bind(PersistenceManager.class).toProvider(new Provider<PersistenceManager>() {
 
 			@Inject
@@ -145,12 +136,13 @@ public class GaeDaoModule extends AbstractModule implements IConfigAware {
 		}).in(Scopes.NO_SCOPE);
 		// NOTE: we set NO_SCOPE so we always go through Spring's framework
 		// as it manages the life-cycle of PersistenceManagers
+		*/
 
 		// IEntityDao
-		bind(IEntityDao.class).to(GaeEntityDao.class).in(Scopes.SINGLETON);
+		bind(IEntityDao.class).to(GaeEntityDao.class).asEagerSingleton();
 
-		// IPrimaryKeyGenerator (depends on gaej dao)
-		bind(IPrimaryKeyGenerator.class).to(GaePrimaryKeyGenerator.class).in(Scopes.SINGLETON);
+		// IPrimaryKeyGenerator (depends on gae dao impl!)
+		bind(IPrimaryKeyGenerator.class).to(GaePrimaryKeyGenerator.class).asEagerSingleton();
 
 		final boolean dst =
 				config == null ? DEFAULT_EMPLOY_SPRING_TRANSACTIONS : config.getBoolean(ConfigKeys.DB_TRANS_BINDTOSPRING

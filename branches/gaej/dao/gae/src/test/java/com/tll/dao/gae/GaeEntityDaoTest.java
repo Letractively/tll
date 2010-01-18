@@ -13,6 +13,7 @@ import com.google.inject.Module;
 import com.tll.dao.IEntityDaoTestHandler;
 import com.tll.dao.test.TestEntityDaoTestHandler;
 import com.tll.di.GaeDaoModule;
+import com.tll.di.test.GaeTransModule;
 import com.tll.di.test.TestPersistenceUnitModule;
 
 
@@ -33,7 +34,8 @@ public class GaeEntityDaoTest extends AbstractGaeEntityDaoTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new TestPersistenceUnitModule());
 		modules.add(new GaeDaoModule(getConfig()));
+		modules.add(new TestPersistenceUnitModule());
+		modules.add(new GaeTransModule());
 	}
 }

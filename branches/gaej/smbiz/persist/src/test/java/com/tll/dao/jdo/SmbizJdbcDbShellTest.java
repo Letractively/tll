@@ -12,7 +12,7 @@ import com.google.inject.Scopes;
 import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.IDbShell;
 import com.tll.di.SmbizEGraphModule;
-import com.tll.di.SmbizModelModule;
+import com.tll.di.SmbizModelBuildModule;
 import com.tll.di.test.JdbcDbShellModule;
 import com.tll.model.key.IPrimaryKeyGenerator;
 import com.tll.model.key.SimplePrimaryKeyGenerator;
@@ -39,7 +39,7 @@ public class SmbizJdbcDbShellTest extends AbstractDbAwareTest {
 				binder.bind(IPrimaryKeyGenerator.class).to(SimplePrimaryKeyGenerator.class).in(Scopes.SINGLETON);
 			}
 		});
-		modules.add(new SmbizModelModule());
+		modules.add(new SmbizModelBuildModule());
 		modules.add(new SmbizEGraphModule());
 		modules.add(new JdbcDbShellModule(getConfig()));
 	}

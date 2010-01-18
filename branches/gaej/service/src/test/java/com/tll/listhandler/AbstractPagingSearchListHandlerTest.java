@@ -26,6 +26,7 @@ import com.tll.dao.IEntityDao;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
+import com.tll.di.test.TestDb4oDaoModule;
 import com.tll.di.test.TestPersistenceUnitModule;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntityAssembler;
@@ -71,6 +72,7 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
+		modules.add(new TestDb4oDaoModule());
 		modules.add(new TestPersistenceUnitModule());
 		modules.add(new Module() {
 

@@ -21,7 +21,7 @@ import com.tll.dao.AbstractDbAwareTest;
 import com.tll.di.SmbizDb4oDaoModule;
 import com.tll.di.SmbizEGraphModule;
 import com.tll.di.SmbizMarshalModule;
-import com.tll.di.SmbizModelModule;
+import com.tll.di.SmbizModelBuildModule;
 import com.tll.di.test.Db4oDbShellModule;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.EntityGraph;
@@ -55,7 +55,7 @@ public class SmbizMarshalerTest extends AbstractDbAwareTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new SmbizModelModule());
+		modules.add(new SmbizModelBuildModule());
 		modules.add(new SmbizEGraphModule());
 		modules.add(new SmbizDb4oDaoModule(getConfig()));
 		modules.add(new SmbizMarshalModule());

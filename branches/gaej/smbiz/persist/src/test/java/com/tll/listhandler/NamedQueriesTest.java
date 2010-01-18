@@ -38,7 +38,7 @@ import com.tll.di.AbstractDb4oDaoModule;
 import com.tll.di.SmbizDb4oDaoModule;
 import com.tll.di.SmbizEGraphModule;
 import com.tll.di.SmbizEntityServiceFactoryModule;
-import com.tll.di.SmbizModelModule;
+import com.tll.di.SmbizModelBuildModule;
 import com.tll.di.SmbizEntityServiceFactoryModule.UserCacheAware;
 import com.tll.di.test.Db4oDbShellModule;
 import com.tll.model.Asp;
@@ -91,7 +91,7 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 		// file lock when objectcontainer is instantiated
 		final Config cfg = getConfig();
 		cfg.setProperty(AbstractDb4oDaoModule.ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), Boolean.FALSE);
-		final Injector i = buildInjector(new SmbizModelModule(), new SmbizEGraphModule(), new SmbizDb4oDaoModule(cfg), new Db4oDbShellModule());
+		final Injector i = buildInjector(new SmbizModelBuildModule(), new SmbizEGraphModule(), new SmbizDb4oDaoModule(cfg), new Db4oDbShellModule());
 		final IDbShell dbs = i.getInstance(IDbShell.class);
 
 		// re-stub db
@@ -130,7 +130,7 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 			}
 		});
 
-		modules.add(new SmbizModelModule());
+		modules.add(new SmbizModelBuildModule());
 		modules.add(new SmbizDb4oDaoModule(getConfig()));
 		modules.add(new SmbizEntityServiceFactoryModule());
 	}

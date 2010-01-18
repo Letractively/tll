@@ -29,7 +29,7 @@ import com.tll.di.AbstractDb4oDaoModule;
 import com.tll.di.SmbizDb4oDaoModule;
 import com.tll.di.SmbizEGraphModule;
 import com.tll.di.SmbizEntityServiceFactoryModule;
-import com.tll.di.SmbizModelModule;
+import com.tll.di.SmbizModelBuildModule;
 import com.tll.di.SmbizEntityServiceFactoryModule.UserCacheAware;
 import com.tll.di.test.Db4oDbShellModule;
 import com.tll.model.EntityBeanFactory;
@@ -62,7 +62,7 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 			}
 		});
 
-		modules.add(new SmbizModelModule());
+		modules.add(new SmbizModelBuildModule());
 		modules.add(new SmbizEGraphModule());
 		modules.add(new SmbizDb4oDaoModule(getConfig()));
 		modules.add(new Db4oDbShellModule());

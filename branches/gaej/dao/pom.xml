@@ -17,9 +17,9 @@
 
   <modules>
     <module>api</module>
-    <module>jdo-rdbms</module>
     <module>db4o</module>
     <module>gae</module>
+    <module>jdo-rdbms</module>
   </modules>
 
 </project>

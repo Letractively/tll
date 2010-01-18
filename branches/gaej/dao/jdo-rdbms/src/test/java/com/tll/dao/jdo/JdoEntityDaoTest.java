@@ -7,7 +7,8 @@ import org.testng.annotations.Test;
 import com.google.inject.Module;
 import com.tll.dao.IEntityDaoTestHandler;
 import com.tll.dao.test.TestEntityDaoTestHandler;
-import com.tll.di.test.TestJdoDaoModule;
+import com.tll.di.JdoDaoModule;
+import com.tll.di.test.JdoTransModule;
 import com.tll.di.test.TestPersistenceUnitModule;
 
 /**
@@ -27,7 +28,8 @@ public class JdoEntityDaoTest extends AbstractJdoEntityDaoTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new TestJdoDaoModule(getConfig()));
+		modules.add(new JdoDaoModule(getConfig()));
+		modules.add(new JdoTransModule());
 		modules.add(new TestPersistenceUnitModule());
 	}
 
