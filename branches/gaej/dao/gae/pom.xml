@@ -82,6 +82,11 @@
 			<groupId>com.google</groupId>
 			<artifactId>appengine-api</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.google</groupId>
+			<artifactId>appengine-api-labs</artifactId>
+			<scope>test</scope>
+		</dependency>
 		
 		<dependency>
 			<groupId>org.datanucleus</groupId>

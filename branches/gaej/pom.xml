@@ -678,6 +678,11 @@
 			</dependency>
 			<dependency>
 				<groupId>com.google</groupId>
+				<artifactId>appengine-api-labs</artifactId>
+				<version>${gaeVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google</groupId>
 				<artifactId>appengine-api-stubs</artifactId>
 				<version>${gaeVersion}</version>
 			</dependency>
