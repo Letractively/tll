@@ -11,7 +11,6 @@ import org.apache.commons.logging.LogFactory;
 import com.google.inject.Inject;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.gae.GaeEntityDao;
-import com.tll.model.EntityBase;
 import com.tll.model.IEntity;
 
 /**
@@ -42,7 +41,7 @@ public class GaePrimaryKeyGenerator implements IPrimaryKeyGenerator {
 		// sadly, for gae, we must persist to obtain the primary key!
 		dao.persist(entity);
 		final long id = entity.getId().longValue();
-		((EntityBase) entity).setGenerated(id);
+		entity.setGenerated(id);
 		log.debug(">GAE generated id: " + id);
 		return id;
 	}
