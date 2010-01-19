@@ -118,14 +118,14 @@ public class CustomerAccountService extends EntityService<CustomerAccount> imple
 		case CUSTOMER_ACCOUNT_ADDED: {
 			AccountHistory ah =
 				entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
-						.getAccount()), true);
+						.getAccount()));
 			ah.setStatus(context.getCustomerAccount().getCustomer().getStatus());
 			ah.setNotes(context.getCustomerAccount().getCustomer().descriptor() + " bound");
 			dao.persist(ah);
 
 			ah =
 				entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
-						.getAccount()), true);
+						.getAccount()));
 			ah.setStatus(context.getCustomerAccount().getAccount().getStatus());
 			ah.setNotes("bound to account: " + context.getCustomerAccount().getAccount().descriptor());
 			dao.persist(ah);
@@ -136,14 +136,14 @@ public class CustomerAccountService extends EntityService<CustomerAccount> imple
 		case CUSTOMER_ACCOUNT_PURGED: {
 			AccountHistory ah =
 				entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
-						.getAccount()), true);
+						.getAccount()));
 			ah.setStatus(context.getCustomerAccount().getCustomer().getStatus());
 			ah.setNotes(context.getCustomerAccount().getCustomer().descriptor() + " un-bound (removed)");
 			dao.persist(ah);
 
 			ah =
 				entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
-						.getAccount()), true);
+						.getAccount()));
 			ah.setStatus(context.getCustomerAccount().getAccount().getStatus());
 			ah.setNotes("un-bound from account: " + context.getCustomerAccount().getAccount().descriptor());
 			dao.persist(ah);

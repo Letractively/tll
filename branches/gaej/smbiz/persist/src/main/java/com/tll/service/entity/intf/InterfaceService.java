@@ -56,7 +56,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 	 */
 	private AccountInterfaceOption generateAccountInterfaceOption(InterfaceOption io, InterfaceOptionAccount ioa) {
 		assert io != null;
-		final AccountInterfaceOption aio = entityAssembler.assembleEntity(AccountInterfaceOption.class, null, false);
+		final AccountInterfaceOption aio = entityAssembler.assembleEntity(AccountInterfaceOption.class, null);
 		aio.setId(io.getId());
 		aio.setVersion(1);	// mimic non-new entity
 		aio.setAnnualCost(io.getAnnualCost());
@@ -76,7 +76,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 		final LinkedHashSet<AccountInterfaceOptionParameter> aiops = new LinkedHashSet<AccountInterfaceOptionParameter>();
 		aio.setParameters(aiops);
 		for(final InterfaceOptionParameterDefinition iopd : io.getParameters()) {
-			final AccountInterfaceOptionParameter aiop = entityAssembler.assembleEntity(AccountInterfaceOptionParameter.class, null, false);
+			final AccountInterfaceOptionParameter aiop = entityAssembler.assembleEntity(AccountInterfaceOptionParameter.class, null);
 			aiop.setId(iopd.getId());
 			aiop.setVersion(1);	// mimic non-new entity
 			aiops.add(aiop);
@@ -118,7 +118,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 			aios.add(aio);
 		}
 
-		final AccountInterface ai = entityAssembler.assembleEntity(AccountInterface.class, null, false);
+		final AccountInterface ai = entityAssembler.assembleEntity(AccountInterface.class, null);
 		ai.setVersion(1); // mimic non-new entity
 		ai.setAccountId(accountId);
 		ai.setInterfaceId(interfaceId);
@@ -168,7 +168,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 
 		// add the replacement ioas
 		for(final AccountInterfaceOption aio : accountInterface.getOptions()) {
-			final InterfaceOptionAccount ioa = entityAssembler.assembleEntity(InterfaceOptionAccount.class, null, true);
+			final InterfaceOptionAccount ioa = entityAssembler.assembleEntity(InterfaceOptionAccount.class, null);
 			ioa.setAccount(account);
 			final InterfaceOption io = dao.load(new PrimaryKey<InterfaceOption>(InterfaceOption.class, aio.getId()));
 			ioa.setOption(io);

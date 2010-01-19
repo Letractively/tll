@@ -101,7 +101,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 	@Transactional
 	public User create(Account account, String emailAddress, String password) throws ValidationException,
 	EntityExistsException {
-		final User user = entityAssembler.assembleEntity(User.class, new EntityCache(account), true);
+		final User user = entityAssembler.assembleEntity(User.class, new EntityCache(account));
 
 		String encPassword = null;
 		try {

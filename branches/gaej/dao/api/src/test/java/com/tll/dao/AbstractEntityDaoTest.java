@@ -20,8 +20,8 @@ import org.testng.annotations.Test;
 import com.tll.criteria.Criteria;
 import com.tll.dao.test.EntityDaoTestDecorator;
 import com.tll.model.EntityBeanFactory;
+import com.tll.model.EntityFactory;
 import com.tll.model.IEntity;
-import com.tll.model.IEntityFactory;
 import com.tll.model.INamedEntity;
 import com.tll.model.ITimeStampEntity;
 import com.tll.model.key.BusinessKeyFactory;
@@ -266,10 +266,10 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	}
 
 	/**
-	 * @return The injected {@link IEntityFactory}
+	 * @return The injected {@link EntityFactory}
 	 */
-	protected final IEntityFactory getEntityFactory() {
-		return injector.getInstance(IEntityFactory.class);
+	protected final EntityFactory getEntityFactory() {
+		return injector.getInstance(EntityFactory.class);
 	}
 
 	/**

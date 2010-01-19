@@ -1,33 +1,53 @@
 package com.tll.model;
 
-import com.google.inject.Inject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.tll.model.key.IPrimaryKeyGenerator;
 import com.tll.util.StringUtil;
 
 /**
- * EntityFactory - This class generates the ids for the entities that are
- * created for insert into the persistence store.
+ * EntityFactory - Creates new {@link IEntity} instances and optionally sets the
+ * primary key.
  * @author jpk
  */
-public final class EntityFactory implements IEntityFactory {
+public final class EntityFactory {
+
+	private static final Log log = LogFactory.getLog(EntityFactory.class);
 
 	/**
-	 * The primary key generator.
+	 * The optional primary key generator.
 	 */
 	private final IPrimaryKeyGenerator keyGenerator;
 
 	/**
-	 * Constructor
-	 * @param keyGenerator Required primary key generator impl
+	 * Constructor - No primary key generator will be employed
 	 */
-	@Inject
+	public EntityFactory() {
+		this(null);
+	}
+
+	/**
+	 * Constructor
+	 * @param keyGenerator Optional primary key generator impl. If specified,
+	 *        primary keys are created and set for newly created entities
+	 */
 	public EntityFactory(IPrimaryKeyGenerator keyGenerator) {
 		super();
-		if(keyGenerator == null) throw new IllegalArgumentException("No primary key generator specified.");
 		this.keyGenerator = keyGenerator;
 	}
 
-	public <E extends IEntity> E createEntity(Class<E> entityClass) {
+	/**
+	 * The entity factory method.
+	 * @param <E>
+	 * @param entityClass entity type to create
+	 * @param generate set the primary key of the created entity?
+	 * @return newly created entity
+	 * @throws IllegalStateException Upon error instantiating the entity or when
+	 *         generate primary key is desired but not primary key generator was
+	 *         not set
+	 */
+	public <E extends IEntity> E createEntity(Class<E> entityClass, boolean generate) throws IllegalStateException {
 		E entity;
 		try {
 			entity = entityClass.newInstance();
@@ -40,10 +60,17 @@ public final class EntityFactory implements IEntityFactory {
 			throw new IllegalStateException(StringUtil.replaceVariables("Unable to instantiate the entity: %1", entityClass
 					.getName()), ie);
 		}
-		return entity;
-	}
 
-	public <E extends IEntity> void assignPrimaryKey(E entity) {
-		((EntityBase) entity).setGenerated(keyGenerator.generateIdentifier(entity));
+		if(log.isDebugEnabled()) log.debug("Created entity: " + entity);
+
+		if(generate) {
+			if(keyGenerator == null)
+				throw new IllegalStateException("Unable to generate entity primary key - no primary key generator set");
+			long id = keyGenerator.generateIdentifier(entity);
+			if(log.isDebugEnabled()) log.debug("Created entity ID: " + id);
+			entity.setGenerated(id);
+		}
+
+		return entity;
 	}
 }

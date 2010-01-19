@@ -19,6 +19,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 import com.tll.model.key.BusinessKeyFactory;
 import com.tll.model.key.BusinessKeyNotDefinedException;
 import com.tll.model.key.IBusinessKeyDefinition;
+import com.tll.model.key.IPrimaryKeyGenerator;
 
 /**
  * EntityBeanFactory - Provides prototype entity instances via a Spring bean
@@ -149,19 +150,18 @@ public final class EntityBeanFactory {
 
 	private final ListableBeanFactory beanFactory;
 
-	private final IEntityFactory entityFactory;
+	private final IPrimaryKeyGenerator pkGenerator;
 
 	/**
 	 * Constructor
 	 * @param beanFactory
-	 * @param entityFactory
+	 * @param pkGenerator Optional
 	 */
-	public EntityBeanFactory(ListableBeanFactory beanFactory, IEntityFactory entityFactory) {
+	public EntityBeanFactory(ListableBeanFactory beanFactory, IPrimaryKeyGenerator pkGenerator) {
 		super();
 		if(beanFactory == null) throw new IllegalArgumentException("The beanFactory is null");
-		if(entityFactory == null) throw new IllegalArgumentException("The entityFactory is null");
 		this.beanFactory = beanFactory;
-		this.entityFactory = entityFactory;
+		this.pkGenerator = pkGenerator;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -189,7 +189,9 @@ public final class EntityBeanFactory {
 		final E[] arr = getBeansOfType(entityClass);
 		if(arr != null && arr.length > 0) {
 			for(final E e : arr) {
-				entityFactory.assignPrimaryKey(e);
+				if(pkGenerator != null) {
+					e.setGenerated(pkGenerator.generateIdentifier(e));
+				}
 				set.add(e);
 			}
 		}
@@ -207,7 +209,9 @@ public final class EntityBeanFactory {
 	public <E extends IEntity> E getEntityCopy(Class<E> entityClass, boolean makeUnique) {
 		final E e = getBean(entityClass);
 		if(e != null) {
-			entityFactory.assignPrimaryKey(e);
+			if(pkGenerator != null) {
+				e.setGenerated(pkGenerator.generateIdentifier(e));
+			}
 			if(makeUnique) {
 				makeBusinessKeyUnique(e);
 			}

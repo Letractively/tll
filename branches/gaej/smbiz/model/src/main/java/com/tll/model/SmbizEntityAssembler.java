@@ -3,37 +3,32 @@ package com.tll.model;
 import com.google.inject.Inject;
 
 /**
- * EntityAssembler - Decorator around the {@link IEntityFactory} with additional
- * build functionality specific to the entity type.
+ * SmbizEntityAssembler
  * @author jpk
  */
-public final class SmbizEntityAssembler implements IEntityFactory, IEntityAssembler {
+public final class SmbizEntityAssembler implements IEntityAssembler {
 
 	/**
 	 * The decorated entity factory.
 	 */
-	private final IEntityFactory entityFactory;
+	private final EntityFactory entityFactory;
 
 	/**
 	 * Constructor
 	 * @param entityFactory
 	 */
 	@Inject
-	public SmbizEntityAssembler(IEntityFactory entityFactory) {
+	public SmbizEntityAssembler(EntityFactory entityFactory) {
 		super();
 		this.entityFactory = entityFactory;
 	}
 
-	public <E extends IEntity> E createEntity(Class<E> entityClass) {
-		return entityFactory.createEntity(entityClass);
-	}
-
-	public <E extends IEntity> void assignPrimaryKey(E entity) {
-		entityFactory.assignPrimaryKey(entity);
+	private <E extends IEntity> E createEntity(Class<E> entityClass) {
+		return entityFactory.createEntity(entityClass, true);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> E assembleEntity(Class<E> entityType, IEntityProvider entityProvider, boolean generate) {
+	public <E extends IEntity> E assembleEntity(Class<E> entityType, IEntityProvider entityProvider) {
 		E e = null;
 		if(AccountAddress.class.equals(entityType)) {
 			final AccountAddress ae = createEntity(AccountAddress.class);
@@ -43,7 +38,7 @@ public final class SmbizEntityAssembler implements IEntityFactory, IEntityAssemb
 			Address a = entityProvider == null ? null : entityProvider.getEntityByType(Address.class);
 			if(a == null) {
 				a = createEntity(Address.class);
-				if(generate) assignPrimaryKey(a);
+				//if(generate) assignPrimaryKey(a);
 			}
 			ae.setAddress(a);
 			e = (E) ae;
@@ -249,10 +244,6 @@ public final class SmbizEntityAssembler implements IEntityFactory, IEntityAssemb
 		else
 			throw new IllegalArgumentException("Unsupported entity type '" + entityType + "' for assembly");
 		
-		if(generate) {
-			assignPrimaryKey(e);
-		}
-
 		return e;
 	}
 }

@@ -118,7 +118,7 @@ public abstract class AuxDataHandler {
 			final IEntityType et = etitr.next();
 			final IEntity e =
 				context.getEntityAssembler().assembleEntity(
-						(Class<IEntity>) context.getEntityTypeResolver().resolveEntityClass(et), null, false);
+						(Class<IEntity>) context.getEntityTypeResolver().resolveEntityClass(et), null);
 			final MarshalOptions mo = getMarshalOptions(context, et, MarshalOptions.NO_REFERENCES);
 			final Model model = context.getMarshaler().marshalEntity(e, mo);
 			if(entityPrototypes == null) {

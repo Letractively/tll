@@ -24,6 +24,12 @@ public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvi
 	 * @return The id of the entity
 	 */
 	Long getId();
+	
+	/**
+	 * Sets the id.
+	 * @param id
+	 */
+	void setId(Long id);
 
 	/**
 	 * True if the identifier for this object was assigned at creation.<br>
@@ -35,6 +41,13 @@ public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvi
 	 * @return true/false
 	 */
 	boolean isGenerated();
+	
+	/**
+	 * This method <b>must only</b> be called when a new entity is created and the
+	 * id is generated. It will set the id and set the generated flag to true.
+	 * @param id the id to set
+	 */
+	void setGenerated(long id);
 
 	/**
 	 * @return A state independent UI presentable name of the entity type.

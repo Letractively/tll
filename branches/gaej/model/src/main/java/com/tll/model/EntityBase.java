@@ -175,24 +175,23 @@ public abstract class EntityBase implements IEntity {
 	}
 
 	@NotNull
-	public Long getId() {
+	@Override
+	public final Long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	@Override
+	public final void setId(Long id) {
 		this.id = id;
 	}
 
-	public boolean isGenerated() {
+	@Override
+	public final boolean isGenerated() {
 		return generated;
 	}
 
-	/**
-	 * This method <b>must only</b> be called when a new entity is created and the
-	 * id is generated. It will set the id and set the generated flag to true.
-	 * @param id the id to set
-	 */
-	public void setGenerated(long id) {
+	@Override
+	public final void setGenerated(long id) {
 		setId(Long.valueOf(id));
 		generated = true;
 	}
@@ -201,11 +200,13 @@ public abstract class EntityBase implements IEntity {
 	 * @return the version
 	 */
 	@Managed
-	public long getVersion() {
+	@Override
+	public final long getVersion() {
 		return version;
 	}
 
-	public void setVersion(long version) {
+	@Override
+	public final void setVersion(long version) {
 		this.version = version;
 	}
 
@@ -237,6 +238,7 @@ public abstract class EntityBase implements IEntity {
 		return typeName() + ", id: " + getId() + ", version: " + getVersion();
 	}
 
+	@Override
 	public final boolean isNew() {
 		return version == -1;
 	}
@@ -244,6 +246,7 @@ public abstract class EntityBase implements IEntity {
 	/*
 	 * May be overridden by sub-classes for a better descriptor.
 	 */
+	@Override
 	public String descriptor() {
 		return typeName() + " (Id: " + getId() + ")";
 	}

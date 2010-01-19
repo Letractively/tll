@@ -33,9 +33,9 @@ import com.tll.common.model.RelatedOneProperty;
 import com.tll.common.model.StringMapPropertyValue;
 import com.tll.common.model.StringPropertyValue;
 import com.tll.dao.SearchResult;
+import com.tll.model.EntityFactory;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
-import com.tll.model.IEntityFactory;
 import com.tll.model.IScalar;
 import com.tll.model.IVersionSupport;
 import com.tll.model.key.PrimaryKey;
@@ -65,7 +65,7 @@ public final class Marshaler {
 	private static final Log log = LogFactory.getLog(Marshaler.class);
 
 	private final IEntityTypeResolver etResolver;
-	private final IEntityFactory entityFactory;
+	private final EntityFactory entityFactory;
 	private final ISchemaInfo schemaInfo;
 
 	/**
@@ -75,7 +75,7 @@ public final class Marshaler {
 	 * @param schemaInfo
 	 */
 	@Inject
-	public Marshaler(final IEntityTypeResolver etResolver, final IEntityFactory entityFactory,
+	public Marshaler(final IEntityTypeResolver etResolver, final EntityFactory entityFactory,
 			final ISchemaInfo schemaInfo) {
 		this.etResolver = etResolver;
 		this.entityFactory = entityFactory;
@@ -476,6 +476,8 @@ public final class Marshaler {
 
 		}// for loop
 
+		// this shouldn't be necessary!
+		/*
 		if(crntEntity.getId() == null) {
 			// assume new and set generated id
 			if(crntEntity.getVersion() != -1L) {
@@ -484,6 +486,7 @@ public final class Marshaler {
 			}
 			entityFactory.assignPrimaryKey(crntEntity);
 		}
+		*/
 	}
 
 	/**
@@ -493,7 +496,7 @@ public final class Marshaler {
 	 */
 	private IEntity instantiateEntity(Class<? extends IEntity> entityClass) {
 		try {
-			return this.entityFactory.createEntity(entityClass);
+			return this.entityFactory.createEntity(entityClass, true);
 		}
 		catch(final Exception ie) {
 			throw new RuntimeException("Unable to instantiate entity of class: " + entityClass.getSimpleName());

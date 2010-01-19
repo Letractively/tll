@@ -182,7 +182,7 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 		// add account
 		case ACCOUNT_ADDED: {
 			final AccountHistory ah =
-				entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getAccount()), true);
+				entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getAccount()));
 			ah.setNotes(context.getAccount().typeName() + " created");
 			ah.setStatus(AccountStatus.NEW);
 			dao.persist(ah);
@@ -191,7 +191,7 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 		// delete account
 		case ACCOUNT_DELETED: {
 			final AccountHistory ah =
-				entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getAccount()), true);
+				entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getAccount()));
 			ah.setStatus(AccountStatus.DELETED);
 			ah.setNotes(context.getAccount().typeName() + " marked as DELETED");
 			dao.persist(ah);
@@ -202,7 +202,7 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 			// add history record to parentAccount
 			final Account parent = context.getAccount().getParent();
 			if(parent != null) {
-				final AccountHistory ah = entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(parent), true);
+				final AccountHistory ah = entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(parent));
 				ah.setStatus(AccountStatus.DELETED);
 				ah.setNotes("Child account: " + context.getAccount().typeName() + "'" + context.getAccount().descriptor()
 						+ "' DELETED");
