@@ -1,6 +1,0 @@
-<module>
-  <inherits name="com.tll.Model" />
-  
-  <stylesheet src="css/tableview.css" />
-
-</module>

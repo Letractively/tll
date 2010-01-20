@@ -1,7 +1,0 @@
-<module>
-  <inherits name="com.tll.ClientModel" />
-  <inherits name="com.tll.Service" />
-  
-  <stylesheet src="css/tableview.css" />
-
-</module>
