@@ -34,25 +34,31 @@ import com.tll.util.StringUtil;
  */
 public final class Model implements IMarshalable, IBindable, IPropertyMetadataProvider, IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 
-	@SuppressWarnings("serial")
-	static class ModelPropSet extends LinkedHashSet<IModelProperty> {
+	/**
+	 * ModelPropSet
+	 * @author jpk
+	 */
+	static class ModelPropSet implements Iterable<IModelProperty> {
+		
+		private final LinkedHashSet<IModelProperty> set = new LinkedHashSet<IModelProperty>();
 
 		/**
 		 * Ensures the given model prop is non-null and unique by name against the
 		 * existing child props (non-hierarchically).
+		 * @param mp the model property to add
+		 * @return true if the property was added
 		 */
-		@Override
 		public boolean add(IModelProperty mp) {
 			if(mp == null) return false;
 			if(mp.getPropertyName() == null) throw new IllegalArgumentException();
 			// we need to ensure the name is unique among the other model props (but
 			// not hierarchically)
-			for(final IModelProperty emp : this) {
+			for(final IModelProperty emp : set) {
 				if(emp.getPropertyName().equals(mp.getPropertyName())) {
 					return false;
 				}
 			}
-			return super.add(mp);
+			return set.add(mp);
 		}
 
 		/**
@@ -66,7 +72,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 			final IModelProperty prop = get(mp.getPropertyName());
 			if(prop != mp) {
 				if(prop != null) {
-					remove(prop);
+					set.remove(prop);
 				}
 				add(mp);
 			}
@@ -78,12 +84,24 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		 * @return The found model property or <code>null<code> if not found
 		 */
 		public IModelProperty get(String propName) {
-			for(final IModelProperty m : this) {
+			for(final IModelProperty m : set) {
 				if(m.getPropertyName().equals(propName)) return m;
 			}
 			return null;
 		}
 
+		@Override
+		public Iterator<IModelProperty> iterator() {
+			return set.iterator();
+		}
+
+		/**
+		 * @return The number of properties in the set.
+		 */
+		public int size() {
+			return set.size();
+		}
+		
 	} // ModelPropSet
 
 	/**
