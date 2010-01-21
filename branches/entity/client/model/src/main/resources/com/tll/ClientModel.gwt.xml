@@ -1,0 +1,6 @@
+<module>
+  <inherits name="com.tll.Refdata" />
+  <inherits name="com.tll.Model" />
+  <inherits name="com.tll.Dao" /><!-- for IQueryParam -->
+  <inherits name="com.tll.ClientCore" />
+</module>
