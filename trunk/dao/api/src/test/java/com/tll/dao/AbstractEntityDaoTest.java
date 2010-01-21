@@ -117,12 +117,19 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	 * the completion of dao testing for a particular entity type.
 	 */
 	private final Stack<PrimaryKey<IEntity>> testEntityRefStack;
+	
+	/**
+	 * Flag to indicate whether or not global transactions are supported.
+	 * <br>GAE does not support global transactions.
+	 */
+	private final boolean globalTransactions;
 
 	/**
 	 * Constructor
 	 * @param daoType
+	 * @param globalTransactions Global transactions supported?
 	 */
-	public AbstractEntityDaoTest(Class<D> daoType) {
+	public AbstractEntityDaoTest(Class<D> daoType, boolean globalTransactions) {
 		super();
 		try {
 			dao = daoType.newInstance();
@@ -131,6 +138,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 			throw new IllegalArgumentException(e);
 		}
 		testEntityRefStack = new Stack<PrimaryKey<IEntity>>();
+		this.globalTransactions = globalTransactions;
 	}
 
 	/**
@@ -195,13 +203,13 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	 */
 	private void beforeEntityType() {
 		// stub dependent entities for test entities of the current entity type
-		startNewTransaction();
+		if(globalTransactions) startNewTransaction();
 		try {
 			entityHandler.persistDependentEntities();
-			setComplete();
+			if(globalTransactions) setComplete();
 		}
 		finally {
-			endTransaction();
+			if(globalTransactions) endTransaction();
 		}
 	}
 
@@ -211,13 +219,13 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	 */
 	private void afterEntityType() {
 		// un-stub dependent entities for test entities of the current entity type
-		startNewTransaction();
+		if(globalTransactions) startNewTransaction();
 		try {
 			entityHandler.purgeDependentEntities();
-			setComplete();
+			if(globalTransactions) setComplete();
 		}
 		finally {
-			endTransaction();
+			if(globalTransactions) endTransaction();
 		}
 	}
 
@@ -247,18 +255,18 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		if(testEntityRefStack.size() > 0) {
 			for(final PrimaryKey<IEntity> pk : testEntityRefStack) {
 				assert pk.getType() == entityHandler.entityClass();
-				startNewTransaction();
+				if(globalTransactions) startNewTransaction();
 				try {
 					final IEntity e = dao.load(pk);
 					logger.debug("Tearing down test entity: " + e + "..");
 					entityHandler.teardownTestEntity(e);
-					setComplete();
+					if(globalTransactions) setComplete();
 				}
 				catch(final EntityNotFoundException e) {
 					// ok
 				}
 				finally {
-					endTransaction();
+					if(globalTransactions) endTransaction();
 				}
 			}
 			testEntityRefStack.clear();
@@ -336,7 +344,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	public final void test() throws Exception {
 
 		for(final IEntityDaoTestHandler<?> handler : entityHandlers) {
-			handler.init(dao, getEntityBeanFactory());
+			handler.init(dao, getEntityBeanFactory(), globalTransactions ? null : getDbTrans());
 			entityHandler = (IEntityDaoTestHandler<IEntity>) handler;
 
 			logger.debug("\n\n ====== Testing entity dao for entity type: " + handler.entityClass() + "...");
@@ -419,11 +427,10 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 		// retrieve
 		startNewTransaction();
-		setComplete(); // we need to do this for JDO in order to ensure a detached
-										// copy is made
 		e = dao.load(new PrimaryKey<IEntity>(entityHandler.entityClass(), Long.valueOf(persistentId)));
 		Assert.assertNotNull(e, "The loaded entity is null");
 		entityHandler.verifyLoadedEntityState(e);
+		setComplete(); // we need to do this for JDO in order to ensure a detached copy is made
 		endTransaction();
 
 		// update
@@ -435,9 +442,9 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 		// find (update verify)
 		startNewTransaction();
-		setComplete();
 		e = getEntityFromDb(new PrimaryKey<IEntity>(e));
 		Assert.assertNotNull(e, "The retrieved entity for update check is null");
+		setComplete();
 		endTransaction();
 		entityHandler.verifyEntityAlteration(e);
 

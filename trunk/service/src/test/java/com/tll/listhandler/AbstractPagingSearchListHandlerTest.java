@@ -107,11 +107,11 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 
 	protected final void stubListElements() {
 		// stub the list elements
-		getDbTrans().startTrans();
+		startNewTransaction();
 		final Set<Address> elements = getEntityBeanFactory().getNEntityCopies(Address.class, NUM_LIST_ELEMENTS, true);
 		getEntityDao().persistAll(elements);
-		getDbTrans().setComplete();
-		getDbTrans().endTrans();
+		setComplete();
+		endTransaction();
 	}
 
 	@Test

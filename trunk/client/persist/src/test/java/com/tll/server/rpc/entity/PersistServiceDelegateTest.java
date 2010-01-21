@@ -108,14 +108,13 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 
 	private void addEntityToDb(IEntity entity) {
 		// stub address first
-		final IDbTrans dbt = getDbTrans();
-		dbt.startTrans();
-		dbt.setComplete();
+		startNewTransaction();
 		try {
 			injector.getInstance(IEntityDao.class).persist(entity);
+			setComplete();
 		}
 		finally {
-			if(dbt.isTransStarted()) dbt.endTrans();
+			endTransaction();
 		}
 	}
 

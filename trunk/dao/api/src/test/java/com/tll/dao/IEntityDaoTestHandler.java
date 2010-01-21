@@ -22,8 +22,10 @@ public interface IEntityDaoTestHandler<E extends IEntity> {
 	 * Manual injection of dependencies.
 	 * @param entityDao
 	 * @param entityBeanFactory
+	 * @param dbTrans This is necessary for datastores that don't support global
+	 *        transactions (like GAE).
 	 */
-	void init(IEntityDao entityDao, EntityBeanFactory entityBeanFactory);
+	void init(IEntityDao entityDao, EntityBeanFactory entityBeanFactory, IDbTrans dbTrans);
 
 	/**
 	 * @return The entity type this handler supports.

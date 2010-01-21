@@ -29,10 +29,17 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	private IEntityDao entityDao;
 	private EntityBeanFactory entityBeanFactory;
 
+	/**
+	 * Necessary for datastore impls that do not support global transactions and a
+	 * more granular approach to transactions is required.
+	 */
+	private IDbTrans dbTrans;
+
 	@Override
-	public void init(IEntityDao anEntityDao, EntityBeanFactory anEntityBeanFactory) {
+	public void init(IEntityDao anEntityDao, EntityBeanFactory anEntityBeanFactory, IDbTrans aDbTrans) {
 		this.entityDao = anEntityDao;
 		this.entityBeanFactory = anEntityBeanFactory;
+		this.dbTrans = aDbTrans;
 	}
 
 	/**
@@ -58,6 +65,20 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	protected final <D extends IEntity> Set<D> getAll(Class<D> entityType) {
 		return entityBeanFactory.getAllEntityCopies(entityType);
 	}
+	
+	private void maybeStartTrans() {
+		if(dbTrans == null) return;
+		log.debug("Starting trans");
+		dbTrans.startTrans();
+		dbTrans.setComplete();
+	}
+	
+	private void endAnyTrans() {
+		if(dbTrans != null) {
+			log.debug("Ending trans");
+			dbTrans.endTrans();
+		}
+	}
 
 	/**
 	 * Loads an entity by primary key from the datastore.
@@ -66,8 +87,14 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	 * @return the loaded entity
 	 */
 	protected final <D extends IEntity> D load(PrimaryKey<D> key) {
-		log.debug("Loading entity by primary key: " + key);
-		return entityDao.load(key);
+		try {
+			maybeStartTrans();
+			log.debug("Loading entity by primary key: " + key);
+			return entityDao.load(key);
+		}
+		finally {
+			endAnyTrans();
+		}
 	}
 
 	/**
@@ -77,8 +104,14 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	 * @return The persisted entity
 	 */
 	protected final <D extends IEntity> D persist(D entity) {
-		log.debug("Persisting entity: " + entity);
-		return entityDao.persist(entity);
+		try {
+			maybeStartTrans();
+			log.debug("Persisting entity: " + entity);
+			return entityDao.persist(entity);
+		}
+		finally {
+			endAnyTrans();
+		}
 	}
 
 	/**
@@ -87,8 +120,14 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	 * @param entity
 	 */
 	protected final <D extends IEntity> void purge(D entity) {
-		log.debug("Purging entity: " + entity);
-		entityDao.purge(entity);
+		try {
+			maybeStartTrans();
+			log.debug("Purging entity: " + entity);
+			entityDao.purge(entity);
+		}
+		finally {
+			endAnyTrans();
+		}
 	}
 
 	/**
@@ -97,8 +136,14 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	 * @param key
 	 */
 	protected final <D extends IEntity> void purge(PrimaryKey<D> key) {
-		log.debug("Purging entity by primary key: " + key);
-		entityDao.purge(key);
+		try {
+			maybeStartTrans();
+			log.debug("Purging entity by primary key: " + key);
+			entityDao.purge(key);
+		}
+		finally {
+			endAnyTrans();
+		}
 	}
 
 	/**
@@ -110,7 +155,13 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	 * @return The created and persisted entity
 	 */
 	protected final <D extends IEntity> D createAndPersist(Class<D> entityType, boolean makeUnique) {
-		return entityDao.persist(entityBeanFactory.getEntityCopy(entityType, makeUnique));
+		try {
+			maybeStartTrans();
+			return entityDao.persist(entityBeanFactory.getEntityCopy(entityType, makeUnique));
+		}
+		finally {
+			endAnyTrans();
+		}
 	}
 
 	@Override

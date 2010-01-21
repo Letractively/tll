@@ -34,7 +34,7 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 	 * Constructor
 	 */
 	public AbstractDb4oEntityDaoTest() {
-		super(Db4oTestDaoDecorator.class);
+		super(Db4oTestDaoDecorator.class, true);
 	}
 
 	@Override

@@ -464,7 +464,7 @@
             memoryStoreEvictionPolicy="LRU"
             />
     
-    <!--         
+    <!-- raises exception when ehcache parses this file
     <jdol2cache 
             maxElementsInMemory="10000"
             eternal="false"
