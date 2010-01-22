@@ -1,12 +1,11 @@
 /*
  * The Logic Lab
  */
-package com.tll.model.key;
+package com.tll.model;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.tll.model.EntityUtil;
 
 /**
  * SimplePrimaryKeyGenerator - In memory map of integers classified by entity

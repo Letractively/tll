@@ -20,7 +20,7 @@ import org.testng.annotations.Test;
 
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.PrimaryKey;
 
 /**
  * AbstractValidatorTest

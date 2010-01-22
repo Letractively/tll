@@ -2,7 +2,7 @@ package com.tll.service.entity;
 
 import com.tll.dao.EntityNotFoundException;
 import com.tll.model.INamedEntity;
-import com.tll.model.key.NameKey;
+import com.tll.model.NameKey;
 
 /**
  * Interface for services that manage named Entities (implement INamedEntity

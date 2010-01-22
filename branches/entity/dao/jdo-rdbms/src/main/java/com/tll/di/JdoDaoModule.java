@@ -28,8 +28,8 @@ import com.tll.config.IConfigKey;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.jdo.JdoEntityDao;
 import com.tll.dao.jdo.JdoTimestampListener;
+import com.tll.model.IPrimaryKeyGenerator;
 import com.tll.model.ITimeStampEntity;
-import com.tll.model.key.IPrimaryKeyGenerator;
 import com.tll.model.key.JdoPrimaryKeyGenerator;
 
 /**

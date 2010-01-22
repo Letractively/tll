@@ -17,7 +17,7 @@ import com.tll.dao.db4o.test.Db4oTrans;
 import com.tll.di.AbstractDb4oDaoModule.Db4oFile;
 import com.tll.di.test.Db4oDbShellModule;
 import com.tll.model.IEntity;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.PrimaryKey;
 
 /**
  * AbstractDb4oEntityDaoTest

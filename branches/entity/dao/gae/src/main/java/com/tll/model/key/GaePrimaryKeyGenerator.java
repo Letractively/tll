@@ -12,6 +12,7 @@ import com.google.inject.Inject;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.gae.GaeEntityDao;
 import com.tll.model.GaePrimaryKey;
+import com.tll.model.IPrimaryKeyGenerator;
 
 /**
  * GaePrimaryKeyGenerator - Generates unique id tokens by relying on the dao

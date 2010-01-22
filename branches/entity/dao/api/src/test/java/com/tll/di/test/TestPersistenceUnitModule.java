@@ -10,7 +10,7 @@ import com.google.inject.Module;
 import com.tll.di.EGraphModule;
 import com.tll.di.ModelBuildModule;
 import com.tll.di.ModelModule;
-import com.tll.model.key.SimplePrimaryKeyGenerator;
+import com.tll.model.SimplePrimaryKeyGenerator;
 import com.tll.model.test.TestPersistenceUnitEntityAssembler;
 import com.tll.model.test.TestPersistenceUnitEntityGraphBuilder;
 

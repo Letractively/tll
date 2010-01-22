@@ -11,11 +11,10 @@ import java.util.List;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.tll.model.key.BusinessKeyFactory;
-import com.tll.model.key.BusinessKeyUtil;
-import com.tll.model.key.IBusinessKey;
-import com.tll.model.key.NonUniqueBusinessKeyException;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.bk.BusinessKeyFactory;
+import com.tll.model.bk.BusinessKeyUtil;
+import com.tll.model.bk.IBusinessKey;
+import com.tll.model.bk.NonUniqueBusinessKeyException;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 

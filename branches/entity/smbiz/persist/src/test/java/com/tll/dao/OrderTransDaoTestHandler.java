@@ -11,7 +11,7 @@ import com.tll.model.Currency;
 import com.tll.model.Order;
 import com.tll.model.OrderTrans;
 import com.tll.model.OrderTransOp;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.PrimaryKey;
 
 /**
  * OrderTransDaoTestHandler

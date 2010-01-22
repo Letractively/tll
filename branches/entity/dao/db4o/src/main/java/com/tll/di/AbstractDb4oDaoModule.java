@@ -28,8 +28,8 @@ import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.db4o.IDb4oNamedQueryTranslator;
-import com.tll.model.key.IPrimaryKeyGenerator;
-import com.tll.model.key.SimplePrimaryKeyGenerator;
+import com.tll.model.IPrimaryKeyGenerator;
+import com.tll.model.SimplePrimaryKeyGenerator;
 
 /**
  * AbstractDb4oDaoModule - Db4o dao impl module.

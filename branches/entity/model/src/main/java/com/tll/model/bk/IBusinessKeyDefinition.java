@@ -1,4 +1,4 @@
-package com.tll.model.key;
+package com.tll.model.bk;
 
 /**
  * IBusinessKeyDefinition - Defines a business key for given entity type.

@@ -11,8 +11,8 @@ import com.tll.dao.IEntityDao;
 import com.tll.model.Account;
 import com.tll.model.Authority;
 import com.tll.model.AuthorityRoles;
+import com.tll.model.PrimaryKey;
 import com.tll.model.User;
-import com.tll.model.key.PrimaryKey;
 import com.tll.service.entity.user.IUserService;
 import com.tll.service.entity.user.UserService;
 

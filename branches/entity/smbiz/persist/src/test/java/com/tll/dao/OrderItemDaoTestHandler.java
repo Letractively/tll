@@ -10,7 +10,7 @@ import com.tll.model.Asp;
 import com.tll.model.Currency;
 import com.tll.model.Order;
 import com.tll.model.OrderItem;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.PrimaryKey;
 
 /**
  * OrderItemDaoTestHandler

@@ -10,7 +10,7 @@ import com.tll.common.model.RelatedOneProperty;
 import com.tll.common.model.StringPropertyValue;
 import com.tll.common.model.test.TestEntityType;
 import com.tll.model.IEntity;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.PrimaryKey;
 import com.tll.model.test.Account;
 import com.tll.server.rpc.entity.AbstractPersistServiceImpl;
 import com.tll.server.rpc.entity.PersistContext;

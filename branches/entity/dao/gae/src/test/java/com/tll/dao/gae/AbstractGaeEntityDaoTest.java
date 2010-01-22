@@ -10,7 +10,7 @@ import com.tll.dao.IDbShell;
 import com.tll.dao.gae.test.GaeDatastoreTestEnvironment;
 import com.tll.dao.gae.test.GaeTestDaoDecorator;
 import com.tll.model.IEntity;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.PrimaryKey;
 
 /**
  * AbstractGaeEntityDaoTest

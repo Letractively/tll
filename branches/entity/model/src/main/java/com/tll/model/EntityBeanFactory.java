@@ -16,10 +16,9 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
-import com.tll.model.key.BusinessKeyFactory;
-import com.tll.model.key.BusinessKeyNotDefinedException;
-import com.tll.model.key.IBusinessKeyDefinition;
-import com.tll.model.key.IPrimaryKeyGenerator;
+import com.tll.model.bk.BusinessKeyFactory;
+import com.tll.model.bk.BusinessKeyNotDefinedException;
+import com.tll.model.bk.IBusinessKeyDefinition;
 
 /**
  * EntityBeanFactory - Provides prototype entity instances via a Spring bean

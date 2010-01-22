@@ -11,8 +11,8 @@ import com.tll.model.Asp;
 import com.tll.model.Currency;
 import com.tll.model.Customer;
 import com.tll.model.CustomerAccount;
+import com.tll.model.PrimaryKey;
 import com.tll.model.Visitor;
-import com.tll.model.key.PrimaryKey;
 
 /**
  * CustomerAccountDaoTestHandler

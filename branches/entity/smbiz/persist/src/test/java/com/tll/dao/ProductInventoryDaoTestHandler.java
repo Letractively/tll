@@ -9,9 +9,9 @@ import com.tll.model.Account;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
 import com.tll.model.EntityBeanFactory;
+import com.tll.model.PrimaryKey;
 import com.tll.model.ProductGeneral;
 import com.tll.model.ProductInventory;
-import com.tll.model.key.PrimaryKey;
 
 /**
  * ProductInventoryDaoTestHandler

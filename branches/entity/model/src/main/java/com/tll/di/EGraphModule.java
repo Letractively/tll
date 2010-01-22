@@ -16,7 +16,7 @@ import com.google.inject.Scopes;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.EntityGraph;
 import com.tll.model.IEntityGraphPopulator;
-import com.tll.model.key.IPrimaryKeyGenerator;
+import com.tll.model.IPrimaryKeyGenerator;
 import com.tll.util.ClassUtil;
 
 /**

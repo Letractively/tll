@@ -1,7 +1,6 @@
-package com.tll.model.key;
+package com.tll.model;
 
 import com.tll.key.AbstractKey;
-import com.tll.model.INamedEntity;
 
 /**
  * NameKey - Simple entity key that holds an entity name and also identifies the

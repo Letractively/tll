@@ -13,7 +13,7 @@ import com.tll.dao.Sorting;
 import com.tll.listhandler.IListingDataProvider;
 import com.tll.model.IEntity;
 import com.tll.model.IPrimaryKey;
-import com.tll.model.key.IBusinessKey;
+import com.tll.model.bk.IBusinessKey;
 import com.tll.service.IService;
 
 /**

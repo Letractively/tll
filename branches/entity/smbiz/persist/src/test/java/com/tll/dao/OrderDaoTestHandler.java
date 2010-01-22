@@ -12,8 +12,8 @@ import com.tll.model.Currency;
 import com.tll.model.Customer;
 import com.tll.model.Order;
 import com.tll.model.PaymentInfo;
+import com.tll.model.PrimaryKey;
 import com.tll.model.Visitor;
-import com.tll.model.key.PrimaryKey;
 
 /**
  * OrderDaoTestHandler

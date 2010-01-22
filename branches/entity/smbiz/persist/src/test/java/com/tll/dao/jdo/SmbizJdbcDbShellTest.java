@@ -14,8 +14,8 @@ import com.tll.dao.IDbShell;
 import com.tll.di.SmbizEGraphModule;
 import com.tll.di.SmbizModelBuildModule;
 import com.tll.di.test.JdbcDbShellModule;
-import com.tll.model.key.IPrimaryKeyGenerator;
-import com.tll.model.key.SimplePrimaryKeyGenerator;
+import com.tll.model.IPrimaryKeyGenerator;
+import com.tll.model.SimplePrimaryKeyGenerator;
 
 /**
  * SmbizJdbcDbShellTest

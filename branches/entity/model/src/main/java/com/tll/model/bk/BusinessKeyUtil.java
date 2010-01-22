@@ -3,7 +3,7 @@
  * @author jpk
  * Feb 1, 2009
  */
-package com.tll.model.key;
+package com.tll.model.bk;
 
 import java.util.Collection;
 

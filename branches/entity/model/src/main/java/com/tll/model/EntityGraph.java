@@ -11,9 +11,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.tll.model.key.BusinessKeyPropertyException;
-import com.tll.model.key.BusinessKeyUtil;
-import com.tll.model.key.NonUniqueBusinessKeyException;
+import com.tll.model.bk.BusinessKeyPropertyException;
+import com.tll.model.bk.BusinessKeyUtil;
+import com.tll.model.bk.NonUniqueBusinessKeyException;
 
 /**
  * EntityGraph - A really poor man's managed set of in memory entities.

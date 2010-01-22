@@ -3,7 +3,6 @@ package com.tll.model;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.tll.model.key.IPrimaryKeyGenerator;
 import com.tll.util.StringUtil;
 
 /**

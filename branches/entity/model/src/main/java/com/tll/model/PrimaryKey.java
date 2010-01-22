@@ -1,7 +1,6 @@
-package com.tll.model.key;
+package com.tll.model;
 
 import com.tll.key.AbstractKey;
-import com.tll.model.IPrimaryKey;
 
 /**
  * PrimaryKey - {@link IPrimaryKey} impl intended to support global transactions

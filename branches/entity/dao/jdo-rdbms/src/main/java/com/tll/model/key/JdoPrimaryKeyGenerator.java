@@ -24,6 +24,8 @@ import org.datanucleus.store.valuegenerator.ValueGenerator;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.tll.model.IPrimaryKeyGenerator;
+import com.tll.model.PrimaryKey;
 
 /**
  * JdoPrimaryKeyGenerator - Generates unique id tokens based on DataNucleus'

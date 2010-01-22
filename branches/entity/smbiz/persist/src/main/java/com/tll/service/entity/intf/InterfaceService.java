@@ -20,10 +20,10 @@ import com.tll.model.Interface;
 import com.tll.model.InterfaceOption;
 import com.tll.model.InterfaceOptionAccount;
 import com.tll.model.InterfaceOptionParameterDefinition;
-import com.tll.model.key.BusinessKeyFactory;
-import com.tll.model.key.BusinessKeyNotDefinedException;
-import com.tll.model.key.IBusinessKey;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.PrimaryKey;
+import com.tll.model.bk.BusinessKeyFactory;
+import com.tll.model.bk.BusinessKeyNotDefinedException;
+import com.tll.model.bk.IBusinessKey;
 import com.tll.service.entity.NamedEntityService;
 
 /**

@@ -11,7 +11,7 @@ import com.tll.dao.EntityNotFoundException;
 import com.tll.dao.IEntityDao;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.INamedEntity;
-import com.tll.model.key.NameKey;
+import com.tll.model.NameKey;
 
 /**
  * NamedEntityService

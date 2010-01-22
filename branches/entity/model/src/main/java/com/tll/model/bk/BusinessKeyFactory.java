@@ -3,7 +3,7 @@
  * @author jpk
  * Jun 26, 2008
  */
-package com.tll.model.key;
+package com.tll.model.bk;
 
 import java.util.HashMap;
 import java.util.HashSet;

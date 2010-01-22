@@ -9,7 +9,7 @@ import com.tll.model.AccountHistory;
 import com.tll.model.AccountStatus;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.PrimaryKey;
 
 /**
  * AccountHistoryDaoTestHandler

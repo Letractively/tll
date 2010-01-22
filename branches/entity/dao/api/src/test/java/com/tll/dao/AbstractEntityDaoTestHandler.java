@@ -15,7 +15,7 @@ import com.tll.criteria.Criteria;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.PrimaryKey;
 
 /**
  * AbstractEntityDaoTestHandler

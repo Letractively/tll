@@ -9,8 +9,8 @@ import com.tll.model.Account;
 import com.tll.model.Asp;
 import com.tll.model.Authority;
 import com.tll.model.Currency;
+import com.tll.model.PrimaryKey;
 import com.tll.model.User;
-import com.tll.model.key.PrimaryKey;
 
 /**
  * AbstractEntityDaoTest

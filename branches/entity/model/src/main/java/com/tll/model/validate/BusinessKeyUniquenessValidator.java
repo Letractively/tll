@@ -10,9 +10,9 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import com.tll.model.IEntity;
-import com.tll.model.key.BusinessKeyPropertyException;
-import com.tll.model.key.BusinessKeyUtil;
-import com.tll.model.key.NonUniqueBusinessKeyException;
+import com.tll.model.bk.BusinessKeyPropertyException;
+import com.tll.model.bk.BusinessKeyUtil;
+import com.tll.model.bk.NonUniqueBusinessKeyException;
 
 /**
  * BusinessKeyUniquenessValidator - Validates business key uniqueness.

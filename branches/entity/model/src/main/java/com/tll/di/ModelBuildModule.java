@@ -14,7 +14,7 @@ import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.model.EntityFactory;
 import com.tll.model.IEntityAssembler;
-import com.tll.model.key.IPrimaryKeyGenerator;
+import com.tll.model.IPrimaryKeyGenerator;
 
 /**
  * ModelBuildModule - Wires up {@link EntityFactory} and

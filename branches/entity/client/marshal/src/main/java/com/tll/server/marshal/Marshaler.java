@@ -38,7 +38,7 @@ import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.IScalar;
 import com.tll.model.IVersionSupport;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.PrimaryKey;
 import com.tll.model.schema.ISchemaInfo;
 import com.tll.model.schema.ISchemaProperty;
 import com.tll.model.schema.PropertyMetadata;

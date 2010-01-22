@@ -13,7 +13,7 @@ import com.tll.model.OrderItem;
 import com.tll.model.OrderItemTrans;
 import com.tll.model.OrderItemTransOp;
 import com.tll.model.OrderTrans;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.PrimaryKey;
 
 /**
  * OrderItemTransDaoTestHandler

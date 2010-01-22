@@ -1,6 +1,5 @@
-package com.tll.model.key;
+package com.tll.model;
 
-import com.tll.model.IPrimaryKey;
 
 /**
  * IPrimaryKeyGenerator - Contract for entity primary key generation.

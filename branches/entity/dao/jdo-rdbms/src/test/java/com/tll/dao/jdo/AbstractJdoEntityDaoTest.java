@@ -9,7 +9,7 @@ import com.tll.dao.IEntityDaoTestHandler;
 import com.tll.dao.jdo.test.JdoTestDaoDecorator;
 import com.tll.di.test.JdbcDbShellModule;
 import com.tll.model.IEntity;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.PrimaryKey;
 
 /**
  * AbstractJdoEntityDaoTest

@@ -8,8 +8,8 @@ import org.testng.Assert;
 import com.tll.model.Account;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
+import com.tll.model.PrimaryKey;
 import com.tll.model.SalesTax;
-import com.tll.model.key.PrimaryKey;
 
 /**
  * SalesTaxDaoTestHandler

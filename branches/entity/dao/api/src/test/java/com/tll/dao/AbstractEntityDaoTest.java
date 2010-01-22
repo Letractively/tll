@@ -25,14 +25,14 @@ import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.IPrimaryKey;
 import com.tll.model.ITimeStampEntity;
-import com.tll.model.key.BusinessKeyFactory;
-import com.tll.model.key.BusinessKeyNotDefinedException;
-import com.tll.model.key.BusinessKeyPropertyException;
-import com.tll.model.key.BusinessKeyUtil;
-import com.tll.model.key.IBusinessKey;
-import com.tll.model.key.IBusinessKeyDefinition;
-import com.tll.model.key.NameKey;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.NameKey;
+import com.tll.model.PrimaryKey;
+import com.tll.model.bk.BusinessKeyFactory;
+import com.tll.model.bk.BusinessKeyNotDefinedException;
+import com.tll.model.bk.BusinessKeyPropertyException;
+import com.tll.model.bk.BusinessKeyUtil;
+import com.tll.model.bk.IBusinessKey;
+import com.tll.model.bk.IBusinessKeyDefinition;
 import com.tll.util.Comparator;
 
 /**

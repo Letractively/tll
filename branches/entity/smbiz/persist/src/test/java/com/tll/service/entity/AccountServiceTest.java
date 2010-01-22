@@ -18,7 +18,7 @@ import com.tll.listhandler.ListHandlerFactory;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.model.Account;
 import com.tll.model.AccountHistory;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.PrimaryKey;
 import com.tll.service.entity.account.IAccountService;
 
 /**

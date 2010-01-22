@@ -12,7 +12,7 @@ import com.tll.model.InterfaceOption;
 import com.tll.model.InterfaceOptionAccount;
 import com.tll.model.InterfaceOptionParameterDefinition;
 import com.tll.model.InterfaceSwitch;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.PrimaryKey;
 
 /**
  * InterfaceOptionAccountDaoTestHandler
