@@ -21,7 +21,7 @@ import com.tll.model.InterfaceOption;
 import com.tll.model.InterfaceOptionAccount;
 import com.tll.model.InterfaceOptionParameterDefinition;
 import com.tll.model.InterfaceSwitch;
-import com.tll.model.PrimaryKey;
+import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.bk.IBusinessKey;
 import com.tll.service.entity.intf.IInterfaceService;
@@ -66,7 +66,7 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 		getInterfaceService().purgeAccountInterface(ioa.accountKey().longValue(), intf.getId().longValue());
 
 		try {
-			ioa = getDao().load(new PrimaryKey<InterfaceOptionAccount>(InterfaceOptionAccount.class, ioa.getId()));
+			ioa = getDao().load(new GlobalLongPrimaryKey<InterfaceOptionAccount>(InterfaceOptionAccount.class, ioa.getId()));
 			Assert.fail("Not purged: " + ioa);
 		}
 		catch(final EntityNotFoundException e) {

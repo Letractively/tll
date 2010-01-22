@@ -26,7 +26,7 @@ import com.tll.model.INamedEntity;
 import com.tll.model.IPrimaryKey;
 import com.tll.model.ITimeStampEntity;
 import com.tll.model.NameKey;
-import com.tll.model.PrimaryKey;
+import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.bk.BusinessKeyNotDefinedException;
 import com.tll.model.bk.BusinessKeyPropertyException;
@@ -138,7 +138,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		catch(final Exception e) {
 			throw new IllegalArgumentException(e);
 		}
-		testEntityRefStack = new Stack<PrimaryKey<IEntity>>();
+		testEntityRefStack = new Stack<GlobalLongPrimaryKey<IEntity>>();
 		this.globalTransactions = globalTransactions;
 	}
 
@@ -254,7 +254,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 		// teardown test entities..
 		if(testEntityRefStack.size() > 0) {
-			for(final PrimaryKey<IEntity> pk : testEntityRefStack) {
+			for(final GlobalLongPrimaryKey<IEntity> pk : testEntityRefStack) {
 				assert pk.getType() == entityHandler.entityClass();
 				if(globalTransactions) startNewTransaction();
 				try {
@@ -305,7 +305,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		if(BusinessKeyFactory.hasBusinessKeys(entityHandler.entityClass())) {
 			entityHandler.makeUnique(e);
 		}
-		final PrimaryKey<IEntity> pk = new PrimaryKey<IEntity>(e);
+		final GlobalLongPrimaryKey<IEntity> pk = new GlobalLongPrimaryKey<IEntity>(e);
 		testEntityRefStack.add(pk);
 		logger.debug("Test entity created: " + e);
 		return e;
@@ -334,7 +334,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	 * @param key The primary key
 	 * @return The sought entity direct from the datastore.
 	 */
-	protected abstract IEntity getEntityFromDb(PrimaryKey<IEntity> key);
+	protected abstract IEntity getEntityFromDb(GlobalLongPrimaryKey<IEntity> key);
 
 	/**
 	 * Run the dao test for all given entity types.
@@ -392,7 +392,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 		startNewTransaction();
 		try {
-			e = dao.load(new PrimaryKey<IEntity>(e));
+			e = dao.load(new GlobalLongPrimaryKey<IEntity>(e));
 			Assert.fail("Loaded entity that should not have been committed into the db due to trans rollback");
 		}
 		catch(final EntityNotFoundException ex) {
@@ -428,7 +428,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 		// retrieve
 		startNewTransaction();
-		e = dao.load(new PrimaryKey<IEntity>(entityHandler.entityClass(), Long.valueOf(persistentId)));
+		e = dao.load(new GlobalLongPrimaryKey<IEntity>(entityHandler.entityClass(), Long.valueOf(persistentId)));
 		Assert.assertNotNull(e, "The loaded entity is null");
 		entityHandler.verifyLoadedEntityState(e);
 		setComplete(); // we need to do this for JDO in order to ensure a detached copy is made
@@ -443,7 +443,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 		// find (update verify)
 		startNewTransaction();
-		e = getEntityFromDb(new PrimaryKey<IEntity>(e));
+		e = getEntityFromDb(new GlobalLongPrimaryKey<IEntity>(e));
 		Assert.assertNotNull(e, "The retrieved entity for update check is null");
 		setComplete();
 		endTransaction();
@@ -467,7 +467,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		startNewTransaction();
 		setComplete();
 		try {
-			e = getEntityFromDb(new PrimaryKey<IEntity>(e));
+			e = getEntityFromDb(new GlobalLongPrimaryKey<IEntity>(e));
 			Assert.assertNull(e, "The entity was not purged");
 		}
 		catch(final EntityNotFoundException ex) {
@@ -658,7 +658,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 	final void daoPurgeNonExistantEntity() throws Exception {
 		IEntity e = getTestEntity();
-		final PrimaryKey<IEntity> pk = new PrimaryKey<IEntity>(e);
+		final GlobalLongPrimaryKey<IEntity> pk = new GlobalLongPrimaryKey<IEntity>(e);
 
 		// save it first
 		e = dao.persist(e);
@@ -691,7 +691,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		endTransaction();
 
 		final Criteria<IEntity> c = new Criteria<IEntity>(entityHandler.entityClass());
-		c.getPrimaryGroup().addCriterion(new PrimaryKey<IEntity>(entityHandler.entityClass(), e.getId()));
+		c.getPrimaryGroup().addCriterion(new GlobalLongPrimaryKey<IEntity>(entityHandler.entityClass(), e.getId()));
 		startNewTransaction();
 		final IEntity re = dao.findEntity(c);
 		Assert.assertTrue(re != null);

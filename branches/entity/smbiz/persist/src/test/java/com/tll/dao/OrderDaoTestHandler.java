@@ -12,7 +12,7 @@ import com.tll.model.Currency;
 import com.tll.model.Customer;
 import com.tll.model.Order;
 import com.tll.model.PaymentInfo;
-import com.tll.model.PrimaryKey;
+import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.Visitor;
 
 /**
@@ -21,12 +21,12 @@ import com.tll.model.Visitor;
  */
 public class OrderDaoTestHandler extends AbstractEntityDaoTestHandler<Order> {
 
-	private PrimaryKey<Currency> pkC;
-	private PrimaryKey<Address> pkAdr1, pkAdr2;
-	private PrimaryKey<PaymentInfo> pkPI;
-	private PrimaryKey<Account> pkA;
-	private PrimaryKey<Visitor> pkV;
-	private PrimaryKey<Customer> pkCust;
+	private GlobalLongPrimaryKey<Currency> pkC;
+	private GlobalLongPrimaryKey<Address> pkAdr1, pkAdr2;
+	private GlobalLongPrimaryKey<PaymentInfo> pkPI;
+	private GlobalLongPrimaryKey<Account> pkA;
+	private GlobalLongPrimaryKey<Visitor> pkV;
+	private GlobalLongPrimaryKey<Customer> pkCust;
 
 	@Override
 	public Class<Order> entityClass() {
@@ -36,32 +36,32 @@ public class OrderDaoTestHandler extends AbstractEntityDaoTestHandler<Order> {
 	@Override
 	public void persistDependentEntities() {
 		final Currency c = createAndPersist(Currency.class, true);
-		pkC = new PrimaryKey<Currency>(c);
+		pkC = new GlobalLongPrimaryKey<Currency>(c);
 
 		final Address adr1 = createAndPersist(Address.class, true);
 		final Address adr2 = createAndPersist(Address.class, true);
-		pkAdr1 = new PrimaryKey<Address>(adr1);
-		pkAdr2 = new PrimaryKey<Address>(adr2);
+		pkAdr1 = new GlobalLongPrimaryKey<Address>(adr1);
+		pkAdr2 = new GlobalLongPrimaryKey<Address>(adr2);
 
 		final PaymentInfo pi = createAndPersist(PaymentInfo.class, true);
-		pkPI = new PrimaryKey<PaymentInfo>(pi);
+		pkPI = new GlobalLongPrimaryKey<PaymentInfo>(pi);
 
 		final Asp asp = create(Asp.class, true);
 		asp.setCurrency(c);
 		asp.setPaymentInfo(pi);
-		pkA = new PrimaryKey<Account>(asp);
+		pkA = new GlobalLongPrimaryKey<Account>(asp);
 
 		Visitor v = create(Visitor.class, true);
 		v.setAccount(asp);
 		v = persist(v);
-		pkV = new PrimaryKey<Visitor>(v);
+		pkV = new GlobalLongPrimaryKey<Visitor>(v);
 
 		Customer cust = create(Customer.class, true);
 		cust.setCurrency(c);
 		cust.setPaymentInfo(pi);
 		cust.setParent(asp);
 		cust = persist(cust);
-		pkCust = new PrimaryKey<Customer>(cust);
+		pkCust = new GlobalLongPrimaryKey<Customer>(cust);
 	}
 
 	@Override

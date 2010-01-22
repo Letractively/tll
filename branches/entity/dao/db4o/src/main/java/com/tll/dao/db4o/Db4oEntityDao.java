@@ -56,7 +56,7 @@ import com.tll.model.IScalar;
 import com.tll.model.ITimeStampEntity;
 import com.tll.model.IVersionSupport;
 import com.tll.model.NameKey;
-import com.tll.model.PrimaryKey;
+import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.Scalar;
 import com.tll.model.bk.BusinessKeyPropertyException;
 import com.tll.model.bk.BusinessKeyUtil;
@@ -228,7 +228,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 
 			@Override
 			public boolean match(E candidate) {
-				return ids.contains(((PrimaryKey)candidate.getPrimaryKey()).getId());
+				return ids.contains(((GlobalLongPrimaryKey)candidate.getPrimaryKey()).getId());
 			}
 		});
 	}
@@ -416,7 +416,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 		}
 		final ArrayList<Long> idlist = new ArrayList<Long>();
 		for(final E e : list) {
-			idlist.add(((PrimaryKey)e.getPrimaryKey()).getId());
+			idlist.add(((GlobalLongPrimaryKey)e.getPrimaryKey()).getId());
 		}
 		return idlist;
 	}

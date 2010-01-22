@@ -3,13 +3,12 @@ package com.tll.model;
 import com.tll.key.AbstractKey;
 
 /**
- * PrimaryKey - {@link IPrimaryKey} impl intended to support global transactions
+ * GlobalLongPrimaryKey - {@link IPrimaryKey} impl intended to support global transactions
  * (as opposed to transactions limited to "entity groups") and datastore primary
  * keys of numeric long type.
  * @author jpk
  */
-// TODO re-name to GlobalLongPrimaryKey
-public final class PrimaryKey extends AbstractKey implements IPrimaryKey {
+public final class GlobalLongPrimaryKey extends AbstractKey implements IPrimaryKey {
 
 	private static final long serialVersionUID = 6971947122659535069L;
 
@@ -19,7 +18,7 @@ public final class PrimaryKey extends AbstractKey implements IPrimaryKey {
 	 * Constructor
 	 * @param entityClass
 	 */
-	public PrimaryKey(Class<?> entityClass) {
+	public GlobalLongPrimaryKey(Class<?> entityClass) {
 		this(entityClass, null);
 	}
 
@@ -28,7 +27,7 @@ public final class PrimaryKey extends AbstractKey implements IPrimaryKey {
 	 * @param entityClass
 	 * @param id
 	 */
-	public PrimaryKey(Class<?> entityClass, Long id) {
+	public GlobalLongPrimaryKey(Class<?> entityClass, Long id) {
 		super(entityClass);
 		setId(id);
 	}
@@ -74,7 +73,7 @@ public final class PrimaryKey extends AbstractKey implements IPrimaryKey {
 		if(this == obj) return true;
 		if(!super.equals(obj)) return false;
 		if(getClass() != obj.getClass()) return false;
-		PrimaryKey other = (PrimaryKey) obj;
+		GlobalLongPrimaryKey other = (GlobalLongPrimaryKey) obj;
 		if(id == null) {
 			if(other.id != null) return false;
 		}

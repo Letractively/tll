@@ -13,7 +13,7 @@ import com.tll.model.OrderItem;
 import com.tll.model.OrderItemTrans;
 import com.tll.model.OrderItemTransOp;
 import com.tll.model.OrderTrans;
-import com.tll.model.PrimaryKey;
+import com.tll.model.GlobalLongPrimaryKey;
 
 /**
  * OrderItemTransDaoTestHandler
@@ -21,10 +21,10 @@ import com.tll.model.PrimaryKey;
  */
 public class OrderItemTransDaoTestHandler extends AbstractEntityDaoTestHandler<OrderItemTrans> {
 
-	private PrimaryKey<Currency> pkC;
-	private PrimaryKey<Account> pkA;
-	private PrimaryKey<Order> pkO;
-	private PrimaryKey<OrderTrans> pkOt;
+	private GlobalLongPrimaryKey<Currency> pkC;
+	private GlobalLongPrimaryKey<Account> pkA;
+	private GlobalLongPrimaryKey<Order> pkO;
+	private GlobalLongPrimaryKey<OrderTrans> pkOt;
 
 	@Override
 	public Class<OrderItemTrans> entityClass() {
@@ -41,25 +41,25 @@ public class OrderItemTransDaoTestHandler extends AbstractEntityDaoTestHandler<O
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
-		pkC = new PrimaryKey<Currency>(currency);
+		pkC = new GlobalLongPrimaryKey<Currency>(currency);
 
 		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
-		pkA = new PrimaryKey<Account>(account);
+		pkA = new GlobalLongPrimaryKey<Account>(account);
 
 		Order order = create(Order.class, false);
 		order.setCurrency(currency);
 		order.setAccount(account);
 		order.addOrderItem(create(OrderItem.class, true));
 		order = persist(order);
-		pkO = new PrimaryKey<Order>(order);
+		pkO = new GlobalLongPrimaryKey<Order>(order);
 
 		OrderTrans orderTrans = create(OrderTrans.class, true);
 		orderTrans.setOrder(order);
 		orderTrans.setPymntTrans(null);
 		orderTrans = persist(orderTrans);
-		pkOt = new PrimaryKey<OrderTrans>(orderTrans);
+		pkOt = new GlobalLongPrimaryKey<OrderTrans>(orderTrans);
 	}
 
 	@Override

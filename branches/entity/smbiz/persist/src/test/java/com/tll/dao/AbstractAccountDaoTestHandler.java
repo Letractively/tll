@@ -12,7 +12,7 @@ import com.tll.model.Asp;
 import com.tll.model.Currency;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.PaymentInfo;
-import com.tll.model.PrimaryKey;
+import com.tll.model.GlobalLongPrimaryKey;
 
 /**
  * AbstractAccountDaoTestHandler
@@ -21,23 +21,23 @@ import com.tll.model.PrimaryKey;
  */
 public abstract class AbstractAccountDaoTestHandler<A extends Account> extends AbstractEntityDaoTestHandler<A> {
 
-	PrimaryKey<PaymentInfo> pkPaymentInfo;
-	PrimaryKey<Currency> pkCurrency;
-	PrimaryKey<Asp> pkAccountParent;
+	GlobalLongPrimaryKey<PaymentInfo> pkPaymentInfo;
+	GlobalLongPrimaryKey<Currency> pkCurrency;
+	GlobalLongPrimaryKey<Asp> pkAccountParent;
 
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
 		final PaymentInfo paymentInfo = createAndPersist(PaymentInfo.class, true);
-		pkCurrency = new PrimaryKey<Currency>(currency);
+		pkCurrency = new GlobalLongPrimaryKey<Currency>(currency);
 
 		Asp parent = create(Asp.class, true);
 		parent.setParent(null); // eliminate pointer chasing
 		parent.setCurrency(currency);
 		parent.setPaymentInfo(paymentInfo);
 		parent = persist(parent);
-		pkAccountParent = new PrimaryKey<Asp>(parent);
-		pkPaymentInfo = new PrimaryKey<PaymentInfo>(paymentInfo);
+		pkAccountParent = new GlobalLongPrimaryKey<Asp>(parent);
+		pkPaymentInfo = new GlobalLongPrimaryKey<PaymentInfo>(paymentInfo);
 	}
 
 	@Override

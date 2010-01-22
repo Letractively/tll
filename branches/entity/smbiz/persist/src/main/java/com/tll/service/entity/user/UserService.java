@@ -36,7 +36,7 @@ import com.tll.model.IEntity;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.IUserRef;
 import com.tll.model.NameKey;
-import com.tll.model.PrimaryKey;
+import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.User;
 import com.tll.model.schema.PropertyType;
 import com.tll.service.ChangeUserCredentialsFailedException;
@@ -191,7 +191,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 
 	@Transactional
 	private User getUserById(long userId) throws EntityNotFoundException {
-		final User user = dao.load(new PrimaryKey<User>(User.class, Long.valueOf(userId)));
+		final User user = dao.load(new GlobalLongPrimaryKey<User>(User.class, Long.valueOf(userId)));
 		if(user == null) throw new EntityNotFoundException("User of id '" + userId + "' not found");
 		return user;
 	}
@@ -262,7 +262,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 
 		try {
 			// get the user
-			final User user = dao.load(new PrimaryKey<User>(User.class, Long.valueOf(userId)));
+			final User user = dao.load(new GlobalLongPrimaryKey<User>(User.class, Long.valueOf(userId)));
 			final String username = user.getUsername();
 
 			// encode the new password

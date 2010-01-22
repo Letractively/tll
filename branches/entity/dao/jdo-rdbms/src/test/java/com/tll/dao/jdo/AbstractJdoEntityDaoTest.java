@@ -9,7 +9,7 @@ import com.tll.dao.IEntityDaoTestHandler;
 import com.tll.dao.jdo.test.JdoTestDaoDecorator;
 import com.tll.di.test.JdbcDbShellModule;
 import com.tll.model.IEntity;
-import com.tll.model.PrimaryKey;
+import com.tll.model.GlobalLongPrimaryKey;
 
 /**
  * AbstractJdoEntityDaoTest
@@ -52,7 +52,7 @@ public abstract class AbstractJdoEntityDaoTest extends AbstractEntityDaoTest<Jdo
 	}
 
 	@Override
-	protected final IEntity getEntityFromDb(PrimaryKey<IEntity> key) {
+	protected final IEntity getEntityFromDb(GlobalLongPrimaryKey<IEntity> key) {
 		// TODO verify we always hit the db
 		return dao.load(key);
 	}

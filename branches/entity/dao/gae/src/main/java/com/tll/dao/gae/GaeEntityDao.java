@@ -43,7 +43,7 @@ import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.IPrimaryKey;
 import com.tll.model.NameKey;
-import com.tll.model.PrimaryKey;
+import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.bk.IBusinessKey;
 import com.tll.util.DateRange;
 

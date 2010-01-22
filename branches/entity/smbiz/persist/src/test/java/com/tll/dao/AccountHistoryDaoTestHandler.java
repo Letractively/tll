@@ -9,7 +9,7 @@ import com.tll.model.AccountHistory;
 import com.tll.model.AccountStatus;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
-import com.tll.model.PrimaryKey;
+import com.tll.model.GlobalLongPrimaryKey;
 
 /**
  * AccountHistoryDaoTestHandler
@@ -17,8 +17,8 @@ import com.tll.model.PrimaryKey;
  */
 public class AccountHistoryDaoTestHandler extends AbstractEntityDaoTestHandler<AccountHistory> {
 
-	private PrimaryKey<Currency> pkC;
-	private PrimaryKey<Asp> pkA;
+	private GlobalLongPrimaryKey<Currency> pkC;
+	private GlobalLongPrimaryKey<Asp> pkA;
 
 	@Override
 	public Class<AccountHistory> entityClass() {
@@ -28,14 +28,14 @@ public class AccountHistoryDaoTestHandler extends AbstractEntityDaoTestHandler<A
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
-		this.pkC = new PrimaryKey<Currency>(currency);
+		this.pkC = new GlobalLongPrimaryKey<Currency>(currency);
 
 		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account.setPaymentInfo(null);
 		account.setParent(null);
 		account = persist(account);
-		this.pkA = new PrimaryKey<Asp>(account);
+		this.pkA = new GlobalLongPrimaryKey<Asp>(account);
 	}
 
 	@Override

@@ -12,7 +12,7 @@ import com.tll.model.InterfaceOption;
 import com.tll.model.InterfaceOptionAccount;
 import com.tll.model.InterfaceOptionParameterDefinition;
 import com.tll.model.InterfaceSwitch;
-import com.tll.model.PrimaryKey;
+import com.tll.model.GlobalLongPrimaryKey;
 
 /**
  * InterfaceOptionAccountDaoTestHandler
@@ -20,9 +20,9 @@ import com.tll.model.PrimaryKey;
  */
 public class InterfaceOptionAccountDaoTestHandler extends AbstractEntityDaoTestHandler<InterfaceOptionAccount> {
 
-	private PrimaryKey<Currency> pkC;
-	private PrimaryKey<Asp> pkA;
-	private PrimaryKey<Interface> pkI;
+	private GlobalLongPrimaryKey<Currency> pkC;
+	private GlobalLongPrimaryKey<Asp> pkA;
+	private GlobalLongPrimaryKey<Interface> pkI;
 
 	private int numParameters = 0;
 	private String removedParamName;
@@ -42,12 +42,12 @@ public class InterfaceOptionAccountDaoTestHandler extends AbstractEntityDaoTestH
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
-		pkC = new PrimaryKey<Currency>(currency);
+		pkC = new GlobalLongPrimaryKey<Currency>(currency);
 
 		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
-		pkA = new PrimaryKey<Asp>(account);
+		pkA = new GlobalLongPrimaryKey<Asp>(account);
 
 		Interface intf = create(InterfaceSwitch.class, true);
 		final InterfaceOption option = create(InterfaceOption.class, true);
@@ -55,7 +55,7 @@ public class InterfaceOptionAccountDaoTestHandler extends AbstractEntityDaoTestH
 		option.addParameter(param);
 		intf.addOption(option);
 		intf = persist(intf);
-		pkI = new PrimaryKey<Interface>(intf);
+		pkI = new GlobalLongPrimaryKey<Interface>(intf);
 	}
 
 	@Override

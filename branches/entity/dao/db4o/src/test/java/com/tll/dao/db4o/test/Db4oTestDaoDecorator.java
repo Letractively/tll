@@ -21,7 +21,7 @@ import com.tll.dao.test.EntityDaoTestDecorator;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.NameKey;
-import com.tll.model.PrimaryKey;
+import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.bk.IBusinessKey;
 
 /**
@@ -115,7 +115,7 @@ public class Db4oTestDaoDecorator extends EntityDaoTestDecorator<Db4oEntityDao> 
 	}
 
 	@Override
-	public <E extends IEntity> E load(PrimaryKey<E> key) throws EntityNotFoundException, DataAccessException {
+	public <E extends IEntity> E load(GlobalLongPrimaryKey<E> key) throws EntityNotFoundException, DataAccessException {
 		final E r = super.load(key);
 		hook();
 		return r;
@@ -149,7 +149,7 @@ public class Db4oTestDaoDecorator extends EntityDaoTestDecorator<Db4oEntityDao> 
 	}
 
 	@Override
-	public <E extends IEntity> void purge(PrimaryKey<E> key) throws EntityNotFoundException, DataAccessException {
+	public <E extends IEntity> void purge(GlobalLongPrimaryKey<E> key) throws EntityNotFoundException, DataAccessException {
 		super.purge(key);
 		hook();
 	}

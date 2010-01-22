@@ -38,7 +38,7 @@ import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.IScalar;
 import com.tll.model.IVersionSupport;
-import com.tll.model.PrimaryKey;
+import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.schema.ISchemaInfo;
 import com.tll.model.schema.ISchemaProperty;
 import com.tll.model.schema.PropertyMetadata;
@@ -405,13 +405,13 @@ public final class Marshaler {
 							final Class<IEntity> indexedEntityClass =
 								(Class<IEntity>) etResolver.resolveEntityClass(indexedEntityType);
 							final Long id = Long.valueOf(indexedModel.getId());
-							final PrimaryKey<IEntity> imodelPk = new PrimaryKey<IEntity>(indexedEntityClass, id);
+							final GlobalLongPrimaryKey<IEntity> imodelPk = new GlobalLongPrimaryKey<IEntity>(indexedEntityClass, id);
 
 							IEntity indexedEntity = null;
 
 							// existing indexed entity?
 							for(final IEntity ie : newRmEntitySet) {
-								final PrimaryKey<IEntity> iepk = new PrimaryKey<IEntity>(ie);
+								final GlobalLongPrimaryKey<IEntity> iepk = new GlobalLongPrimaryKey<IEntity>(ie);
 								if(imodelPk.equals(iepk)) {
 									indexedEntity = ie;
 									break;

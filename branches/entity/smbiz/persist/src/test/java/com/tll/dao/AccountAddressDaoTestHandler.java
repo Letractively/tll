@@ -10,7 +10,7 @@ import com.tll.model.Address;
 import com.tll.model.AddressType;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
-import com.tll.model.PrimaryKey;
+import com.tll.model.GlobalLongPrimaryKey;
 
 /**
  * AccountAddressDaoTestHandler
@@ -18,9 +18,9 @@ import com.tll.model.PrimaryKey;
  */
 public class AccountAddressDaoTestHandler extends AbstractEntityDaoTestHandler<AccountAddress> {
 
-	private PrimaryKey<Currency> pkCurrency;
-	private PrimaryKey<Asp> pkAsp;
-	private PrimaryKey<Address> pkAddress;
+	private GlobalLongPrimaryKey<Currency> pkCurrency;
+	private GlobalLongPrimaryKey<Asp> pkAsp;
+	private GlobalLongPrimaryKey<Address> pkAddress;
 
 	@Override
 	public Class<AccountAddress> entityClass() {
@@ -35,17 +35,17 @@ public class AccountAddressDaoTestHandler extends AbstractEntityDaoTestHandler<A
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
-		this.pkCurrency = new PrimaryKey<Currency>(currency);
+		this.pkCurrency = new GlobalLongPrimaryKey<Currency>(currency);
 
 		Asp asp = create(Asp.class, true);
 		asp.setCurrency(currency);
 		asp.setPaymentInfo(null);
 		asp.setParent(null);
 		asp = persist(asp);
-		this.pkAsp = new PrimaryKey<Asp>(asp);
+		this.pkAsp = new GlobalLongPrimaryKey<Asp>(asp);
 
 		final Address address = createAndPersist(Address.class, true);
-		this.pkAddress = new PrimaryKey<Address>(address);
+		this.pkAddress = new GlobalLongPrimaryKey<Address>(address);
 	}
 
 	@Override

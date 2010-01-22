@@ -8,7 +8,7 @@ import org.testng.Assert;
 import com.tll.model.Account;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
-import com.tll.model.PrimaryKey;
+import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.ProdCat;
 import com.tll.model.ProductCategory;
 import com.tll.model.ProductGeneral;
@@ -20,10 +20,10 @@ import com.tll.model.ProductInventory;
  */
 public class ProdCatDaoTestHandler extends AbstractEntityDaoTestHandler<ProdCat> {
 
-	private PrimaryKey<Currency> pkC;
-	private PrimaryKey<Account> pkA;
-	private PrimaryKey<ProductInventory> pkP;
-	private PrimaryKey<ProductCategory> pkCa;
+	private GlobalLongPrimaryKey<Currency> pkC;
+	private GlobalLongPrimaryKey<Account> pkA;
+	private GlobalLongPrimaryKey<ProductInventory> pkP;
+	private GlobalLongPrimaryKey<ProductCategory> pkCa;
 
 	@Override
 	public Class<ProdCat> entityClass() {
@@ -41,23 +41,23 @@ public class ProdCatDaoTestHandler extends AbstractEntityDaoTestHandler<ProdCat>
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
-		pkC = new PrimaryKey<Currency>(currency);
+		pkC = new GlobalLongPrimaryKey<Currency>(currency);
 
 		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
-		pkA = new PrimaryKey<Account>(account);
+		pkA = new GlobalLongPrimaryKey<Account>(account);
 
 		ProductInventory product = create(ProductInventory.class, true);
 		product.setProductGeneral(create(ProductGeneral.class, true));
 		product.setParent(account);
 		product = persist(product);
-		pkP = new PrimaryKey<ProductInventory>(product);
+		pkP = new GlobalLongPrimaryKey<ProductInventory>(product);
 
 		ProductCategory category = create(ProductCategory.class, true);
 		category.setParent(account);
 		category = persist(category);
-		pkCa = new PrimaryKey<ProductCategory>(category);
+		pkCa = new GlobalLongPrimaryKey<ProductCategory>(category);
 	}
 
 	@Override

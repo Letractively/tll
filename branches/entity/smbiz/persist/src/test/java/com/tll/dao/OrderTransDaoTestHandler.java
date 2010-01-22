@@ -11,7 +11,7 @@ import com.tll.model.Currency;
 import com.tll.model.Order;
 import com.tll.model.OrderTrans;
 import com.tll.model.OrderTransOp;
-import com.tll.model.PrimaryKey;
+import com.tll.model.GlobalLongPrimaryKey;
 
 /**
  * OrderTransDaoTestHandler
@@ -19,9 +19,9 @@ import com.tll.model.PrimaryKey;
  */
 public class OrderTransDaoTestHandler extends AbstractEntityDaoTestHandler<OrderTrans> {
 
-	private PrimaryKey<Currency> pkC;
-	private PrimaryKey<Account> pkA;
-	private PrimaryKey<Order> pkO;
+	private GlobalLongPrimaryKey<Currency> pkC;
+	private GlobalLongPrimaryKey<Account> pkA;
+	private GlobalLongPrimaryKey<Order> pkO;
 
 	@Override
 	public Class<OrderTrans> entityClass() {
@@ -31,18 +31,18 @@ public class OrderTransDaoTestHandler extends AbstractEntityDaoTestHandler<Order
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
-		pkC = new PrimaryKey<Currency>(currency);
+		pkC = new GlobalLongPrimaryKey<Currency>(currency);
 
 		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
-		pkA = new PrimaryKey<Account>(account);
+		pkA = new GlobalLongPrimaryKey<Account>(account);
 
 		Order order = create(Order.class, false);
 		order.setCurrency(currency);
 		order.setAccount(account);
 		order = persist(order);
-		pkO = new PrimaryKey<Order>(order);
+		pkO = new GlobalLongPrimaryKey<Order>(order);
 	}
 
 	@Override

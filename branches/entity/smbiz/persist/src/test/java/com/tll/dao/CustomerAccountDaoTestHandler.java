@@ -11,7 +11,7 @@ import com.tll.model.Asp;
 import com.tll.model.Currency;
 import com.tll.model.Customer;
 import com.tll.model.CustomerAccount;
-import com.tll.model.PrimaryKey;
+import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.Visitor;
 
 /**
@@ -20,10 +20,10 @@ import com.tll.model.Visitor;
  */
 public class CustomerAccountDaoTestHandler extends AbstractEntityDaoTestHandler<CustomerAccount> {
 
-	PrimaryKey<Currency> pkCurrency;
-	PrimaryKey<Account> pkAccount;
-	PrimaryKey<Customer> pkCustomer;
-	PrimaryKey<Visitor> pkVisitor;
+	GlobalLongPrimaryKey<Currency> pkCurrency;
+	GlobalLongPrimaryKey<Account> pkAccount;
+	GlobalLongPrimaryKey<Customer> pkCustomer;
+	GlobalLongPrimaryKey<Visitor> pkVisitor;
 
 	@Override
 	public Class<CustomerAccount> entityClass() {
@@ -45,19 +45,19 @@ public class CustomerAccountDaoTestHandler extends AbstractEntityDaoTestHandler<
 		account.setCurrency(currency);
 		account.setParent(null);
 		account = persist(account);
-		pkAccount = new PrimaryKey<Account>(account);
-		pkCurrency = new PrimaryKey<Currency>(account.getCurrency());
+		pkAccount = new GlobalLongPrimaryKey<Account>(account);
+		pkCurrency = new GlobalLongPrimaryKey<Currency>(account.getCurrency());
 
 		Customer customer = create(Customer.class, true);
 		customer.setParent(null);
 		customer.setCurrency(currency);
 		customer = persist(customer);
-		pkCustomer = new PrimaryKey<Customer>(customer);
+		pkCustomer = new GlobalLongPrimaryKey<Customer>(customer);
 
 		Visitor visitor = create(Visitor.class, true);
 		visitor.setAccount(account);
 		visitor = persist(visitor);
-		pkVisitor = new PrimaryKey<Visitor>(visitor);
+		pkVisitor = new GlobalLongPrimaryKey<Visitor>(visitor);
 	}
 
 	@Override

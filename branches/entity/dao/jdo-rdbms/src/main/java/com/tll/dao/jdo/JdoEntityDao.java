@@ -42,7 +42,7 @@ import com.tll.dao.Sorting;
 import com.tll.model.IEntity;
 import com.tll.model.IPrimaryKey;
 import com.tll.model.NameKey;
-import com.tll.model.PrimaryKey;
+import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.bk.IBusinessKey;
 import com.tll.util.DateRange;
 
@@ -109,7 +109,7 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 	public <E extends IEntity> E load(IPrimaryKey key) {
 		if(logger.isDebugEnabled()) logger.debug("Loading by PK: " + key);
 		try {
-			final E e = (E) getJdoTemplate().getObjectById(key.getType(), ((PrimaryKey)key).getId());
+			final E e = (E) getJdoTemplate().getObjectById(key.getType(), ((GlobalLongPrimaryKey)key).getId());
 			if(logger.isDebugEnabled()) logger.debug(e + " loaded by PK");
 			return e;
 		}

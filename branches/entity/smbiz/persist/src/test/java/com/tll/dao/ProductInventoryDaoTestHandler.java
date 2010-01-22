@@ -9,7 +9,7 @@ import com.tll.model.Account;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
 import com.tll.model.EntityBeanFactory;
-import com.tll.model.PrimaryKey;
+import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.ProductGeneral;
 import com.tll.model.ProductInventory;
 
@@ -19,8 +19,8 @@ import com.tll.model.ProductInventory;
  */
 public class ProductInventoryDaoTestHandler extends AbstractEntityDaoTestHandler<ProductInventory> {
 
-	private PrimaryKey<Currency> pkC;
-	private PrimaryKey<Account> pkA;
+	private GlobalLongPrimaryKey<Currency> pkC;
+	private GlobalLongPrimaryKey<Account> pkA;
 
 	@Override
 	public Class<ProductInventory> entityClass() {
@@ -30,12 +30,12 @@ public class ProductInventoryDaoTestHandler extends AbstractEntityDaoTestHandler
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
-		pkC = new PrimaryKey<Currency>(currency);
+		pkC = new GlobalLongPrimaryKey<Currency>(currency);
 
 		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
-		pkA = new PrimaryKey<Account>(account);
+		pkA = new GlobalLongPrimaryKey<Account>(account);
 	}
 
 	@Override

@@ -8,7 +8,7 @@ import org.testng.Assert;
 import com.tll.model.Account;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
-import com.tll.model.PrimaryKey;
+import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.ShipMode;
 
 /**
@@ -17,8 +17,8 @@ import com.tll.model.ShipMode;
  */
 public class ShipModeDaoTestHandler extends AbstractEntityDaoTestHandler<ShipMode> {
 
-	private PrimaryKey<Currency> pkC;
-	private PrimaryKey<Account> pkA;
+	private GlobalLongPrimaryKey<Currency> pkC;
+	private GlobalLongPrimaryKey<Account> pkA;
 
 	@Override
 	public Class<ShipMode> entityClass() {
@@ -28,12 +28,12 @@ public class ShipModeDaoTestHandler extends AbstractEntityDaoTestHandler<ShipMod
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
-		pkC = new PrimaryKey<Currency>(currency);
+		pkC = new GlobalLongPrimaryKey<Currency>(currency);
 
 		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
-		pkA = new PrimaryKey<Account>(account);
+		pkA = new GlobalLongPrimaryKey<Account>(account);
 	}
 
 	@Override

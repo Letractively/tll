@@ -17,7 +17,7 @@ import com.tll.dao.db4o.test.Db4oTrans;
 import com.tll.di.AbstractDb4oDaoModule.Db4oFile;
 import com.tll.di.test.Db4oDbShellModule;
 import com.tll.model.IEntity;
-import com.tll.model.PrimaryKey;
+import com.tll.model.GlobalLongPrimaryKey;
 
 /**
  * AbstractDb4oEntityDaoTest
@@ -68,7 +68,7 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 	}
 
 	@Override
-	protected final IEntity getEntityFromDb(PrimaryKey<IEntity> key) {
+	protected final IEntity getEntityFromDb(GlobalLongPrimaryKey<IEntity> key) {
 		return dao.load(key);
 	}
 
@@ -97,7 +97,7 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 		dao.setObjectContainer(oc);
 		((Db4oTrans)getDbTrans()).setObjectContainer(oc);
 		startNewTransaction();
-		final IEntity eloaded = dao.load(new PrimaryKey<IEntity>(e));
+		final IEntity eloaded = dao.load(new GlobalLongPrimaryKey<IEntity>(e));
 		entityHandler.verifyLoadedEntityState(eloaded);
 		dao.purge(eloaded);
 		setComplete();

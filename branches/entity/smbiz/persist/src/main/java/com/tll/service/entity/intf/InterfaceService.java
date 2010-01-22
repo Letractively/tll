@@ -20,7 +20,7 @@ import com.tll.model.Interface;
 import com.tll.model.InterfaceOption;
 import com.tll.model.InterfaceOptionAccount;
 import com.tll.model.InterfaceOptionParameterDefinition;
-import com.tll.model.PrimaryKey;
+import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.bk.BusinessKeyNotDefinedException;
 import com.tll.model.bk.IBusinessKey;
@@ -102,7 +102,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 		}
 		bk.setPropertyValue("account.id", Long.valueOf(accountId));
 
-		final Interface intf = dao.load(new PrimaryKey<Interface>(Interface.class, Long.valueOf(interfaceId)));
+		final Interface intf = dao.load(new GlobalLongPrimaryKey<Interface>(Interface.class, Long.valueOf(interfaceId)));
 
 		final LinkedHashSet<AccountInterfaceOption> aios = new LinkedHashSet<AccountInterfaceOption>();
 		InterfaceOptionAccount ioa;
@@ -142,8 +142,8 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 	@Override
 	public void setAccountInterface(AccountInterface accountInterface) {
 
-		final Account account = dao.load(new PrimaryKey<Account>(Account.class, Long.valueOf(accountInterface.getAccountKey())));
-		final Interface intf = dao.load(new PrimaryKey<Interface>(Interface.class, Long.valueOf(accountInterface.getInterfaceId())));
+		final Account account = dao.load(new GlobalLongPrimaryKey<Account>(Account.class, Long.valueOf(accountInterface.getAccountKey())));
+		final Interface intf = dao.load(new GlobalLongPrimaryKey<Interface>(Interface.class, Long.valueOf(accountInterface.getInterfaceId())));
 
 		// remove existing account subscribed options
 		IBusinessKey<InterfaceOptionAccount> bk;
@@ -170,7 +170,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 		for(final AccountInterfaceOption aio : accountInterface.getOptions()) {
 			final InterfaceOptionAccount ioa = entityAssembler.assembleEntity(InterfaceOptionAccount.class, null);
 			ioa.setAccount(account);
-			final InterfaceOption io = dao.load(new PrimaryKey<InterfaceOption>(InterfaceOption.class, aio.getPrimaryKey()));
+			final InterfaceOption io = dao.load(new GlobalLongPrimaryKey<InterfaceOption>(InterfaceOption.class, aio.getPrimaryKey()));
 			ioa.setOption(io);
 			ioa.setSetUpPrice(aio.getSetUpPrice());
 			ioa.setMonthlyPrice(aio.getMonthlyPrice());
@@ -203,7 +203,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 	public void purgeAccountInterface(IPrimaryKey accountKey, IPrimaryKey interfaceKey) {
 		Interface intf;
 		try {
-			intf = load(new PrimaryKey<Interface>(Interface.class, Long.valueOf(interfaceId)));
+			intf = load(new GlobalLongPrimaryKey<Interface>(Interface.class, Long.valueOf(interfaceId)));
 		}
 		catch(final EntityNotFoundException e) {
 			// ok

@@ -12,11 +12,11 @@ import java.util.Map;
  * class that are incremented as primary keys are requested.
  * @author jpk
  */
-public class SimplePrimaryKeyGenerator implements IPrimaryKeyGenerator<PrimaryKey> {
+public class SimplePrimaryKeyGenerator implements IPrimaryKeyGenerator<GlobalLongPrimaryKey> {
 
 	private static final Map<Class<?>, Long> idMap = new HashMap<Class<?>, Long>();
 
-	public synchronized PrimaryKey generateIdentifier(Class<?> entityType) {
+	public synchronized GlobalLongPrimaryKey generateIdentifier(Class<?> entityType) {
 		final Class<?> rootEntityClass = EntityUtil.getRootEntityClass(entityType);
 		Long nextId = idMap.get(rootEntityClass);
 		if(nextId == null) {
@@ -24,6 +24,6 @@ public class SimplePrimaryKeyGenerator implements IPrimaryKeyGenerator<PrimaryKe
 		}
 		nextId = Long.valueOf(nextId.longValue()+1);
 		idMap.put(rootEntityClass, nextId);
-		return new PrimaryKey(entityType, nextId);
+		return new GlobalLongPrimaryKey(entityType, nextId);
 	}
 }
