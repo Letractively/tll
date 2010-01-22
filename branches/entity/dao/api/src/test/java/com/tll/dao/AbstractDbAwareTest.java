@@ -11,7 +11,7 @@ import com.tll.config.ConfigRef;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.model.IEntity;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.IPrimaryKey;
 
 /**
  * AbstractDbAwareTest
@@ -49,8 +49,9 @@ public abstract class AbstractDbAwareTest extends AbstractConfigAwareTest {
 	 * @param pk
 	 * @return the entity from the db
 	 */
-	protected final static <E extends IEntity> E getEntityFromDb(IEntityDao dao, PrimaryKey<E> pk) {
-		final Criteria<E> criteria = new Criteria<E>(pk.getType());
+	@SuppressWarnings("unchecked")
+	protected final static <E extends IEntity> E getEntityFromDb(IEntityDao dao, IPrimaryKey pk) {
+		final Criteria<E> criteria = new Criteria<E>((Class<E>) pk.getType());
 		criteria.getPrimaryGroup().addCriterion(pk);
 		try {
 			return dao.findEntity(criteria);

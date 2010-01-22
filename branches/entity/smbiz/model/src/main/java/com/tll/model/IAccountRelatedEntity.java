@@ -9,7 +9,7 @@ package com.tll.model;
 public interface IAccountRelatedEntity {
 
 	/**
-	 * @return The id of the account to which this entity is related.
+	 * @return The primary key of the account to which this entity is related.
 	 */
-	Long accountId();
+	IPrimaryKey accountKey();
 }

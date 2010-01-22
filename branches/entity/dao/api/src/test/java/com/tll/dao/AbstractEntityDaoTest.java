@@ -23,6 +23,7 @@ import com.tll.model.EntityBeanFactory;
 import com.tll.model.EntityFactory;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
+import com.tll.model.IPrimaryKey;
 import com.tll.model.ITimeStampEntity;
 import com.tll.model.key.BusinessKeyFactory;
 import com.tll.model.key.BusinessKeyNotDefinedException;
@@ -116,7 +117,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	 * Stack of test entity pks that are retained for proper datastore cleanup at
 	 * the completion of dao testing for a particular entity type.
 	 */
-	private final Stack<PrimaryKey<IEntity>> testEntityRefStack;
+	private final Stack<IPrimaryKey> testEntityRefStack;
 	
 	/**
 	 * Flag to indicate whether or not global transactions are supported.
@@ -737,7 +738,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 					new NameKey(e.entityClass(), e.getName(), entityHandler.getActualNameProperty()), true);
 			final IEntity re = dao.findEntity(c);
 			Assert.assertTrue(re != null);
-			if(re != null) Assert.assertEquals(re.getId(), e.getId());
+			if(re != null) Assert.assertEquals(re, e);
 		}
 	}
 

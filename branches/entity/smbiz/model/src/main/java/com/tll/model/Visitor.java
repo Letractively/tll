@@ -123,9 +123,9 @@ public class Visitor extends TimeStampEntity implements IChildEntity<Account>, I
 		setAccount(e);
 	}
 
-	public Long accountId() {
+	public IPrimaryKey accountKey() {
 		try {
-			return getAccount().getId();
+			return getAccount().getPrimaryKey();
 		}
 		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");

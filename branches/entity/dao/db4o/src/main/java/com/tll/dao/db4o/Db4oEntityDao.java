@@ -48,8 +48,10 @@ import com.tll.dao.NonUniqueResultException;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
+import com.tll.key.IKey;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
+import com.tll.model.IPrimaryKey;
 import com.tll.model.IScalar;
 import com.tll.model.ITimeStampEntity;
 import com.tll.model.IVersionSupport;
@@ -57,7 +59,6 @@ import com.tll.model.Scalar;
 import com.tll.model.key.BusinessKeyPropertyException;
 import com.tll.model.key.BusinessKeyUtil;
 import com.tll.model.key.IBusinessKey;
-import com.tll.model.key.IKey;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.NonUniqueBusinessKeyException;
 import com.tll.model.key.PrimaryKey;
@@ -227,7 +228,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 
 			@Override
 			public boolean match(E candidate) {
-				return ids.contains(candidate.getId());
+				return ids.contains(((PrimaryKey)candidate.getPrimaryKey()).getId());
 			}
 		});
 	}
@@ -415,7 +416,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 		}
 		final ArrayList<Long> idlist = new ArrayList<Long>();
 		for(final E e : list) {
-			idlist.add(e.getId());
+			idlist.add(((PrimaryKey)e.getPrimaryKey()).getId());
 		}
 		return idlist;
 	}
@@ -461,7 +462,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	 * @param key The key that identifies the entity to be loaded
 	 * @return All matching entities
 	 */
-	private <E extends IEntity> E loadByPredicate(Predicate<E> p, IKey<E> key) throws EntityNotFoundException, DataAccessException {
+	private <E extends IEntity> E loadByPredicate(Predicate<E> p, IKey key) throws EntityNotFoundException, DataAccessException {
 		final List<E> list = getDb4oTemplate().query(p);
 		if(list == null || list.size() < 1) {
 			final String msg = "No matching entity found for key: [" + key +  ']';
@@ -478,13 +479,13 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	}
 
 	@Override
-	public <E extends IEntity> E load(final PrimaryKey<E> key) throws EntityNotFoundException, DataAccessException {
+	public <E extends IEntity> E load(final IPrimaryKey key) throws EntityNotFoundException, DataAccessException {
 		logger.debug("Loading entity by PK: " + key);
-		return loadByPredicate(new Predicate<E>(key.getType()) {
+		return loadByPredicate(new Predicate<E>((Class<E>)key.getType()) {
 
 			@Override
 			public boolean match(E candidate) {
-				return candidate.getId().equals(key.getId());
+				return candidate.getPrimaryKey().equals(key);
 			}
 		}, key);
 	}
@@ -501,13 +502,13 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	}
 
 	@Override
-	public <N extends INamedEntity> N load(final NameKey<N> nameKey) throws EntityNotFoundException,
+	public <E extends IEntity> E load(final NameKey nameKey) throws EntityNotFoundException,
 	NonUniqueResultException, DataAccessException {
-		return loadByPredicate(new Predicate<N>(nameKey.getType()) {
+		return loadByPredicate(new Predicate<E>((Class<E>)nameKey.getType()) {
 
 			@Override
-			public boolean match(N candidate) {
-				return nameKey.getNameProperty().equals(candidate.getName());
+			public boolean match(E candidate) {
+				return nameKey.getNameProperty().equals(((INamedEntity)candidate).getName());
 			}
 		}, nameKey);
 	}
@@ -570,11 +571,11 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	@Override
 	public <E extends IEntity> void purge(E entity) throws EntityNotFoundException, DataAccessException {
 		logger.debug("Purging entity: " + entity);
-		purge(new PrimaryKey(entity));
+		purge(entity.getPrimaryKey());
 	}
 
 	@Override
-	public <E extends IEntity> void purge(PrimaryKey<E> key) throws EntityNotFoundException, DataAccessException {
+	public <E extends IEntity> void purge(IPrimaryKey key) throws EntityNotFoundException, DataAccessException {
 		final E existing = load(key);
 		if(existing == null) throw new EntityNotFoundException("Entity of primary key: " + key + " not found for purging");
 		getDb4oTemplate().delete(existing);

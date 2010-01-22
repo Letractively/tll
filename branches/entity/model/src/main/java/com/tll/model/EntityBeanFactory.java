@@ -25,8 +25,9 @@ import com.tll.model.key.IPrimaryKeyGenerator;
  * EntityBeanFactory - Provides prototype entity instances via a Spring bean
  * context.
  * @author jpk
+ * @param <I> primary key type
  */
-public final class EntityBeanFactory {
+public final class EntityBeanFactory<I extends IPrimaryKey> {
 
 	/**
 	 * The default path file name of the [Spring] bean context file.
@@ -150,14 +151,14 @@ public final class EntityBeanFactory {
 
 	private final ListableBeanFactory beanFactory;
 
-	private final IPrimaryKeyGenerator pkGenerator;
+	private final IPrimaryKeyGenerator<I> pkGenerator;
 
 	/**
 	 * Constructor
 	 * @param beanFactory
 	 * @param pkGenerator Optional
 	 */
-	public EntityBeanFactory(ListableBeanFactory beanFactory, IPrimaryKeyGenerator pkGenerator) {
+	public EntityBeanFactory(ListableBeanFactory beanFactory, IPrimaryKeyGenerator<I> pkGenerator) {
 		super();
 		if(beanFactory == null) throw new IllegalArgumentException("The beanFactory is null");
 		this.beanFactory = beanFactory;
@@ -190,7 +191,7 @@ public final class EntityBeanFactory {
 		if(arr != null && arr.length > 0) {
 			for(final E e : arr) {
 				if(pkGenerator != null) {
-					e.setGenerated(pkGenerator.generateIdentifier(e));
+					e.setPrimaryKey(pkGenerator.generateIdentifier(e.entityClass()));
 				}
 				set.add(e);
 			}
@@ -210,7 +211,7 @@ public final class EntityBeanFactory {
 		final E e = getBean(entityClass);
 		if(e != null) {
 			if(pkGenerator != null) {
-				e.setGenerated(pkGenerator.generateIdentifier(e));
+				e.setPrimaryKey(pkGenerator.generateIdentifier(entityClass));
 			}
 			if(makeUnique) {
 				makeBusinessKeyUnique(e);

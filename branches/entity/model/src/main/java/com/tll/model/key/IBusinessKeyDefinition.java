@@ -1,13 +1,12 @@
 package com.tll.model.key;
 
-import com.tll.model.IEntity;
-
 /**
  * IBusinessKeyDefinition - Defines a business key for given entity type.
  * @author jpk
- * @param <E>
+ * @param <E> the entity type to which this definition applies (not necessarily
+ *        an IEntity)
  */
-public interface IBusinessKeyDefinition<E extends IEntity> {
+public interface IBusinessKeyDefinition<E> {
 
 	/**
 	 * @return The entity type

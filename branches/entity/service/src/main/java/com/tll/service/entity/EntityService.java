@@ -23,8 +23,8 @@ import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityAssembler;
+import com.tll.model.IPrimaryKey;
 import com.tll.model.key.IBusinessKey;
-import com.tll.model.key.PrimaryKey;
 
 /**
  * EntityService - Base class for all entity service implementations.
@@ -129,8 +129,8 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	}
 
 	@Transactional(readOnly = true)
-	public E load(PrimaryKey<E> key) throws EntityNotFoundException {
-		return dao.load(key);
+	public E load(IPrimaryKey key) throws EntityNotFoundException {
+		return (E) dao.load(key);
 	}
 
 	@Transactional(readOnly = true)

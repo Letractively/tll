@@ -14,6 +14,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
+import com.tll.model.IPrimaryKey;
 import com.tll.model.NamedTimeStampEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
@@ -168,8 +169,8 @@ public class Account extends NamedTimeStampEntity implements IChildEntity<Accoun
 		this.addresses = addresses;
 	}
 
-	public AccountAddress getAccountAddress(long id) {
-		return findEntityInCollection(this.addresses, id);
+	public AccountAddress getAccountAddress(IPrimaryKey pk) {
+		return findEntityInCollection(this.addresses, pk);
 	}
 
 	public AccountAddress getAccountAddress(String accountName) {

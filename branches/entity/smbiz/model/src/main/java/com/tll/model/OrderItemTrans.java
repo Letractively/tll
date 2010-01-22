@@ -96,9 +96,9 @@ public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTran
 		setOrderTrans(e);
 	}
 
-	public Long accountId() {
+	public IPrimaryKey accountKey() {
 		try {
-			return getOrderItem().getOrder().getAccount().getId();
+			return getOrderItem().getOrder().getAccount().getPrimaryKey();
 		}
 		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
@@ -106,18 +106,18 @@ public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTran
 		}
 	}
 
-	public Long orderItemId() {
+	public IPrimaryKey orderItemId() {
 		try {
-			return getOrderItem().getId();
+			return getOrderItem().getPrimaryKey();
 		}
 		catch(final NullPointerException npe) {
 			return null;
 		}
 	}
 
-	public Long orderTransId() {
+	public IPrimaryKey orderTransId() {
 		try {
-			return getOrderTrans().getId();
+			return getOrderTrans().getPrimaryKey();
 		}
 		catch(final NullPointerException npe) {
 			return null;

@@ -41,6 +41,7 @@ import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
+import com.tll.model.IPrimaryKey;
 import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
@@ -106,7 +107,7 @@ public class GaeEntityDao extends JdoDaoSupport implements IEntityDao {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> E load(PrimaryKey<E> key) {
+	public <E extends IEntity> E load(IPrimaryKey key) {
 		if(logger.isDebugEnabled()) logger.debug("Loading by PK: " + key);
 		try {
 			final E e = (E) getJdoTemplate().getObjectById(key.getType(), key.getId());
@@ -131,13 +132,14 @@ public class GaeEntityDao extends JdoDaoSupport implements IEntityDao {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public <N extends INamedEntity> N load(NameKey<N> nameKey) {
+	public <E extends IEntity> E load(NameKey nameKey) {
 		if(logger.isDebugEnabled()) logger.debug("Loading by NameKey: " + nameKey);
 		try {
-			final Criteria<N> nc = new Criteria<N>(nameKey.getType());
+			final Criteria<E> nc = new Criteria<E>((Class<E>)nameKey.getType());
 			nc.getPrimaryGroup().addCriterion(nameKey, false);
-			final N e = findEntity(nc);
+			final E e = findEntity(nc);
 			if(logger.isDebugEnabled()) logger.debug(e + " loaded by NameKey");
 			return e;
 		}
@@ -196,7 +198,7 @@ public class GaeEntityDao extends JdoDaoSupport implements IEntityDao {
 	}
 
 	@Override
-	public <E extends IEntity> void purge(PrimaryKey<E> key) throws EntityNotFoundException, DataAccessException {
+	public <E extends IEntity> void purge(IPrimaryKey key) throws EntityNotFoundException, DataAccessException {
 		final E e = load(key);
 		purge(e);
 	}
@@ -548,45 +550,13 @@ public class GaeEntityDao extends JdoDaoSupport implements IEntityDao {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <E extends IEntity> List<E> findByIds(Class<E> entityType, final Collection<Long> ids, Sorting sorting) {
-		final List<E> rval = (List<E>) getJdoTemplate().find(entityType, ":ids.contains(this.id)", null, new Object[] {
-			ids
-		}, sorting == null ? null : sorting.getJdoOrderingClause());
-		return rval;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public <E extends IEntity> List<Long> getIds(Criteria<E> criteria, Sorting sorting) throws InvalidCriteriaException {
-		if(criteria.getCriteriaType().isQuery()) {
-			throw new InvalidCriteriaException("Ids are not supplied for direct queries!");
-		}
-		final PersistenceManager pm = getPersistenceManager();
-		final Query q = pm.newQuery(criteria.getEntityClass());
-		final HashMap<String, Object> params = new HashMap<String, Object>();
-		final String filter = toFilter(criteria, params);
-		q.setFilter(filter);
-		if(sorting != null) q.setOrdering(sorting.getJdoOrderingClause());
-		q.setResult(IEntity.PK_FIELDNAME);
-		final List<Long> rval = (List<Long>) getJdoTemplate().executeFind(new JdoCallback() {
-
-			@Override
-			public Object doInJdo(PersistenceManager thePm) throws JDOException {
-				try {
-					final List<Long> list = (List<Long>) q.executeWithMap(params);
-					// we need to "detach" the result from the query else JDO bitches
-					// TODO: make more efficient
-					final ArrayList<Long> rlist = new ArrayList<Long>(list.size());
-					for(int i = 0; i < list.size(); i++) {
-						rlist.add(list.get(i));
-					}
-					return rlist;
-				}
-				finally {
-					q.closeAll();
-				}
-			}
-		});
-		return rval;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

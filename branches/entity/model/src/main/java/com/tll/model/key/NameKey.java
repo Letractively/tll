@@ -1,14 +1,14 @@
 package com.tll.model.key;
 
+import com.tll.key.AbstractKey;
 import com.tll.model.INamedEntity;
 
 /**
  * NameKey - Simple entity key that holds an entity name and also identifies the
  * field by which that name is retrieved from the entity.
- * @param <N> The named entity type
  * @author jpk
  */
-public class NameKey<N extends INamedEntity> extends AbstractEntityKey<N> {
+public class NameKey extends AbstractKey {
 
 	private static final long serialVersionUID = -3217664978174156618L;
 
@@ -28,7 +28,7 @@ public class NameKey<N extends INamedEntity> extends AbstractEntityKey<N> {
 	 * Constructor
 	 * @param entityClass
 	 */
-	public NameKey(Class<N> entityClass) {
+	public NameKey(Class<? extends INamedEntity> entityClass) {
 		this(entityClass, null, DEFAULT_FIELDNAME);
 	}
 
@@ -37,7 +37,7 @@ public class NameKey<N extends INamedEntity> extends AbstractEntityKey<N> {
 	 * @param entityClass
 	 * @param name
 	 */
-	public NameKey(Class<N> entityClass, String name) {
+	public NameKey(Class<? extends INamedEntity> entityClass, String name) {
 		this(entityClass, name, DEFAULT_FIELDNAME);
 	}
 
@@ -47,7 +47,7 @@ public class NameKey<N extends INamedEntity> extends AbstractEntityKey<N> {
 	 * @param name
 	 * @param propertyName
 	 */
-	public NameKey(Class<N> entityClass, String name, String propertyName) {
+	public NameKey(Class<? extends INamedEntity> entityClass, String name, String propertyName) {
 		super(entityClass);
 		setName(name);
 		setNameProperty(propertyName);
@@ -78,8 +78,8 @@ public class NameKey<N extends INamedEntity> extends AbstractEntityKey<N> {
 	}
 
 	@Override
-	protected String keyDescriptor() {
-		return "Name";
+	public String descriptor() {
+		return getNameProperty() + ": " + getName();
 	}
 
 	@Override

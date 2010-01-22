@@ -76,7 +76,7 @@ public final class BusinessKeyUtil {
 			}
 			catch(BusinessKeyNotDefinedException e) {
 				// shouldn't happen
-				throw new IllegalArgumentException("No business keys defined for: " + entity.typeName()
+				throw new IllegalArgumentException("No business keys defined for: " + entity.typeDesc()
 						+ " yet a business key of that type was provided.");
 			}
 			catch(BusinessKeyPropertyException e) {

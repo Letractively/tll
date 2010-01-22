@@ -92,9 +92,9 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 		setAccount(e);
 	}
 
-	public Long accountId() {
+	public IPrimaryKey accountKey() {
 		try {
-			return getAccount().getId();
+			return getAccount().getPrimaryKey();
 		}
 		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
@@ -102,9 +102,9 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 		}
 	}
 
-	public Long addressId() {
+	public IPrimaryKey addressId() {
 		try {
-			return getAddress().getId();
+			return getAddress().getPrimaryKey();
 		}
 		catch(final NullPointerException npe) {
 			return null;

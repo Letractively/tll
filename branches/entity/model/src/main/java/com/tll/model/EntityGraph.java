@@ -14,7 +14,6 @@ import java.util.Set;
 import com.tll.model.key.BusinessKeyPropertyException;
 import com.tll.model.key.BusinessKeyUtil;
 import com.tll.model.key.NonUniqueBusinessKeyException;
-import com.tll.model.key.PrimaryKey;
 
 /**
  * EntityGraph - A really poor man's managed set of in memory entities.
@@ -89,8 +88,9 @@ public final class EntityGraph implements IEntityProvider {
 	 * @return The non-<code>null</code> entity set for the <em>root</em> entity
 	 *         type of the given entity type.
 	 */
+	@SuppressWarnings("unchecked")
 	Set<? extends IEntity> getNonNullEntitySet(Class<? extends IEntity> entityType) {
-		final Class<? extends IEntity> rootType = EntityUtil.getRootEntityClass(entityType);
+		final Class<? extends IEntity> rootType = (Class<? extends IEntity>) EntityUtil.getRootEntityClass(entityType);
 		LinkedHashSet<? extends IEntity> set = graph.get(rootType);
 		if(set == null) {
 			set = new LinkedHashSet<IEntity>();
@@ -120,14 +120,15 @@ public final class EntityGraph implements IEntityProvider {
 		throw new IllegalStateException("More than one entity exists of type: " + type.getName());
 	}
 
-	public <E extends IEntity> E getEntity(PrimaryKey<E> key) {
-		if(key == null || !key.isSet()) {
+	@SuppressWarnings("unchecked")
+	public <E extends IEntity> E getEntity(IPrimaryKey pk) {
+		if(pk == null || !pk.isSet()) {
 			throw new IllegalArgumentException("The key is not specified or is not set");
 		}
-		final Collection<E> clc = getEntitiesByType(key.getType());
+		final Collection<E> clc = getEntitiesByType((Class<E>) pk.getType());
 		if(clc != null) {
 			for(final E e : clc) {
-				if(key.getId() == e.getId()) {
+				if(pk.equals(e.getPrimaryKey())) {
 					return e;
 				}
 			}
@@ -142,11 +143,11 @@ public final class EntityGraph implements IEntityProvider {
 	 * @return true/false
 	 */
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> boolean contains(PrimaryKey<E> pk) {
-		final Set<E> set = (Set<E>) getRootEntitySet(pk.getType());
+	public <E extends IEntity> boolean contains(IPrimaryKey pk) {
+		final Set<E> set = (Set<E>) getRootEntitySet((Class<E>) pk.getType());
 		if(set != null) {
 			for(final E e : set) {
-				if(e.getId() == pk.getId()) return true;
+				if(pk.equals(e.getPrimaryKey())) return true;
 			}
 		}
 		return false;
@@ -193,7 +194,7 @@ public final class EntityGraph implements IEntityProvider {
 	 */
 	@SuppressWarnings("unchecked")
 	public <E extends IEntity> void setEntities(Collection<E> entities) throws IllegalStateException,
-	NonUniqueBusinessKeyException {
+			NonUniqueBusinessKeyException {
 		if(entities != null && entities.size() > 0) {
 			final Class<E> entityType = (Class<E>) entities.iterator().next().entityClass();
 			final Set<E> set = (Set<E>) getNonNullEntitySet(entityType);

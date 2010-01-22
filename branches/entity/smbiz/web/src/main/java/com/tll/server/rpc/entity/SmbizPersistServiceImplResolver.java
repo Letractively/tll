@@ -99,7 +99,7 @@ public class SmbizPersistServiceImplResolver implements IPersistServiceImplResol
 	private Class<? extends IPersistServiceImpl> resolve(IEntityType etype)
 	throws IllegalArgumentException {
 		final Class<? extends IEntity> entityClass = (Class<? extends IEntity>) etResolver.resolveEntityClass(etype);
-		final Class<? extends IEntity> rootEntityClass = EntityUtil.getRootEntityClass(entityClass);
+		final Class<?> rootEntityClass = EntityUtil.getRootEntityClass(entityClass);
 
 		if(User.class.isAssignableFrom(rootEntityClass)) {
 			return UserService.class;

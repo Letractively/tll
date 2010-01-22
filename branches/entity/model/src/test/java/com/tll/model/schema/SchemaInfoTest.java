@@ -182,7 +182,7 @@ public class SchemaInfoTest {
 		}
 
 		@Override
-		public String typeName() {
+		public String typeDesc() {
 			return "Test Entity";
 		}
 

@@ -1,7 +1,7 @@
 /*
  * The Logic Lab
  */
-package com.tll.model.key;
+package com.tll.key;
 
 import java.io.Serializable;
 
@@ -12,14 +12,13 @@ import com.tll.IMarshalable;
  * IKey - Abstraction serving as an identifier to a particular instance of a
  * particular type.
  * @author jpk
- * @param <T> the type to which this key refers
  */
-public interface IKey<T> extends IDescriptorProvider, IMarshalable, Serializable {
+public interface IKey extends IDescriptorProvider, IMarshalable, Serializable {
 
 	/**
 	 * @return The type of object to which this key refers.
 	 */
-	Class<T> getType();
+	Class<?> getType();
 
 	/**
 	 * @return <code>true</code> if the defining key properties have been set.

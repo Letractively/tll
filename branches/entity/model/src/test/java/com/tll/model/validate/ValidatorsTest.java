@@ -20,6 +20,7 @@ import org.testng.annotations.Test;
 
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * AbstractValidatorTest
@@ -107,14 +108,14 @@ public class ValidatorsTest {
 		}
 
 		@Override
-		public String typeName() {
+		public String typeDesc() {
 			return "Test Entity";
 		}
 	}
 
 	TestEntity getTestEntity() {
 		final TestEntity e = new TestEntity();
-		e.setId(Long.valueOf(1));
+		e.setPrimaryKey(new PrimaryKey(e.entityClass(), Long.valueOf(1)));
 		e.setName("name");
 		e.setPhoneNumber("x");
 		e.setPostalCode("y");

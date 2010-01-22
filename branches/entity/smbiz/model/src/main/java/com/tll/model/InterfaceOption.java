@@ -176,8 +176,8 @@ public class InterfaceOption extends InterfaceOptionBase {
 		this.parameters = parameters;
 	}
 
-	public InterfaceOptionParameterDefinition getParameter(int id) {
-		return findEntityInCollection(parameters, id);
+	public InterfaceOptionParameterDefinition getParameter(IPrimaryKey pk) {
+		return findEntityInCollection(parameters, pk);
 	}
 
 	public InterfaceOptionParameterDefinition getParameter(String nme) {

@@ -11,14 +11,14 @@ import org.apache.commons.logging.LogFactory;
 import com.google.inject.Inject;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.gae.GaeEntityDao;
-import com.tll.model.IEntity;
+import com.tll.model.GaePrimaryKey;
 
 /**
  * GaePrimaryKeyGenerator - Generates unique id tokens by relying on the dao
  * impl to persist entity instances.
  * @author jpk
  */
-public class GaePrimaryKeyGenerator implements IPrimaryKeyGenerator {
+public class GaePrimaryKeyGenerator implements IPrimaryKeyGenerator<GaePrimaryKey> {
 
 	static final Log log = LogFactory.getLog(GaePrimaryKeyGenerator.class);
 
@@ -37,12 +37,16 @@ public class GaePrimaryKeyGenerator implements IPrimaryKeyGenerator {
 	}
 
 	@Override
-	public long generateIdentifier(IEntity entity) {
+	public GaePrimaryKey generateIdentifier(Class<?> entityType) {
+		// TODO re-impl!
+		return null;
+		/*
 		// sadly, for gae, we must persist to obtain the primary key!
 		dao.persist(entity);
 		final long id = entity.getId().longValue();
 		entity.setGenerated(id);
 		log.debug(">GAE generated id: " + id);
 		return id;
+		*/
 	}
 }

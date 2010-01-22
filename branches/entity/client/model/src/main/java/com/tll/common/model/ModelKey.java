@@ -5,14 +5,14 @@
  */
 package com.tll.common.model;
 
-import com.tll.model.key.IKey;
+import com.tll.key.IKey;
 
 /**
  * ModelKey
  * @author jpk
  */
 @SuppressWarnings("serial")
-public class ModelKey implements IKey<Model>, IEntityTypeProvider {
+public class ModelKey implements IKey, IEntityTypeProvider {
 
 	/**
 	 * The entity type.

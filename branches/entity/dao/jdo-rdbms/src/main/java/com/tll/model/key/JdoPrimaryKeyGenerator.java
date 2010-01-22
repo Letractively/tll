@@ -24,14 +24,13 @@ import org.datanucleus.store.valuegenerator.ValueGenerator;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.tll.model.IEntity;
 
 /**
  * JdoPrimaryKeyGenerator - Generates unique id tokens based on DataNucleus'
  * {@link ValueGenerator} strategies.
  * @author jpk
  */
-public class JdoPrimaryKeyGenerator implements IPrimaryKeyGenerator {
+public class JdoPrimaryKeyGenerator implements IPrimaryKeyGenerator<PrimaryKey> {
 
 	static final Log log = LogFactory.getLog(JdoPrimaryKeyGenerator.class);
 
@@ -109,9 +108,9 @@ public class JdoPrimaryKeyGenerator implements IPrimaryKeyGenerator {
 
 	@Override
 	// NOTE: the internals of generator are synchronized
-	public /*synchronized*/ long generateIdentifier(IEntity entity) {
+	public /*synchronized*/ PrimaryKey generateIdentifier(Class<?> entityType) {
 		final long id = generator.nextValue();
 		log.debug(">Generated id: " + id);
-		return id;
+		return new PrimaryKey(entityType, id);
 	}
 }

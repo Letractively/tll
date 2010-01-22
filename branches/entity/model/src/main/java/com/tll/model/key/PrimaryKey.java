@@ -1,13 +1,16 @@
 package com.tll.model.key;
 
-import com.tll.model.IEntity;
+import com.tll.key.AbstractKey;
+import com.tll.model.IPrimaryKey;
 
 /**
- * Representation of primary keys within the application.
+ * PrimaryKey - {@link IPrimaryKey} impl intended to support global transactions
+ * (as opposed to transactions limited to "entity groups") and datastore primary
+ * keys of numeric long type.
  * @author jpk
- * @param <E>
  */
-public final class PrimaryKey<E extends IEntity> extends AbstractEntityKey<E> {
+// TODO re-name to GlobalLongPrimaryKey
+public final class PrimaryKey extends AbstractKey implements IPrimaryKey {
 
 	private static final long serialVersionUID = 6971947122659535069L;
 
@@ -15,18 +18,9 @@ public final class PrimaryKey<E extends IEntity> extends AbstractEntityKey<E> {
 
 	/**
 	 * Constructor
-	 * @param entity
-	 */
-	@SuppressWarnings("unchecked")
-	public PrimaryKey(E entity) {
-		this((Class<E>) entity.entityClass(), entity.getId());
-	}
-
-	/**
-	 * Constructor
 	 * @param entityClass
 	 */
-	public PrimaryKey(Class<E> entityClass) {
+	public PrimaryKey(Class<?> entityClass) {
 		this(entityClass, null);
 	}
 
@@ -35,7 +29,7 @@ public final class PrimaryKey<E extends IEntity> extends AbstractEntityKey<E> {
 	 * @param entityClass
 	 * @param id
 	 */
-	public PrimaryKey(Class<E> entityClass, Long id) {
+	public PrimaryKey(Class<?> entityClass, Long id) {
 		super(entityClass);
 		setId(id);
 	}
@@ -49,11 +43,6 @@ public final class PrimaryKey<E extends IEntity> extends AbstractEntityKey<E> {
 	}
 
 	@Override
-	protected String keyDescriptor() {
-		return "Id " + getId();
-	}
-
-	@Override
 	public void clear() {
 		this.id = null;
 	}
@@ -64,30 +53,34 @@ public final class PrimaryKey<E extends IEntity> extends AbstractEntityKey<E> {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public boolean equals(Object obj) {
-		if(this == obj) return true;
-		if(obj == null || getClass() != obj.getClass()) return false;
-		final PrimaryKey other = (PrimaryKey) obj;
-		if(!typeCompatible(other.entityClass)) return false;
-		if(id == null) {
-			if(other.id != null) return false;
-		}
-		return id.equals(other.id);
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((entityClass == null) ? 0 : entityClass.toString().hashCode());
-		return result;
+	public String descriptor() {
+		return "Id: " + getId();
 	}
 
 	@Override
 	public String toString() {
 		return descriptor();
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(!super.equals(obj)) return false;
+		if(getClass() != obj.getClass()) return false;
+		PrimaryKey other = (PrimaryKey) obj;
+		if(id == null) {
+			if(other.id != null) return false;
+		}
+		else if(!id.equals(other.id)) return false;
+		return true;
 	}
 
 }

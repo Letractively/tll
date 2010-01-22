@@ -29,6 +29,6 @@ public abstract class NamedTimeStampEntity extends TimeStampEntity implements IN
 
 	@Override
 	public String descriptor() {
-		return typeName() + " '" + getName() + "'";
+		return typeDesc() + " '" + getName() + "'";
 	}
 }

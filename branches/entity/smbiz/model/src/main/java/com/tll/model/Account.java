@@ -232,8 +232,8 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 		this.addresses = addresses;
 	}
 
-	public AccountAddress getAccountAddress(int id) {
-		return findEntityInCollection(this.addresses, id);
+	public AccountAddress getAccountAddress(IPrimaryKey pk) {
+		return findEntityInCollection(this.addresses, pk);
 	}
 
 	public AccountAddress getAccountAddress(String nme) {
@@ -260,7 +260,7 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 		return getCollectionSize(addresses);
 	}
 
-	public Long accountId() {
-		return super.getId();
+	public IPrimaryKey accountKey() {
+		return super.getPrimaryKey();
 	}
 }

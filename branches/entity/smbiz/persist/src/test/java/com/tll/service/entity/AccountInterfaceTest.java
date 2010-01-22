@@ -63,7 +63,7 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 		final Interface intf = stubInterface(true);
 		InterfaceOptionAccount ioa = stubIoa(intf, true);
 
-		getInterfaceService().purgeAccountInterface(ioa.accountId().longValue(), intf.getId().longValue());
+		getInterfaceService().purgeAccountInterface(ioa.accountKey().longValue(), intf.getId().longValue());
 
 		try {
 			ioa = getDao().load(new PrimaryKey<InterfaceOptionAccount>(InterfaceOptionAccount.class, ioa.getId()));

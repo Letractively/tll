@@ -97,9 +97,9 @@ public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipM
 		setShipMode(e);
 	}
 
-	public Long accountId() {
+	public IPrimaryKey accountKey() {
 		try {
-			return getShipMode().getAccount().getId();
+			return getShipMode().getAccount().getPrimaryKey();
 		}
 		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
@@ -107,9 +107,9 @@ public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipM
 		}
 	}
 
-	public Long shipModeId() {
+	public IPrimaryKey shipModeKey() {
 		try {
-			return getShipMode().getId();
+			return getShipMode().getPrimaryKey();
 		}
 		catch(final NullPointerException npe) {
 			return null;

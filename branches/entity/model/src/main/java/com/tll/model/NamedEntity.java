@@ -17,6 +17,6 @@ public abstract class NamedEntity extends EntityBase implements INamedEntity {
 
 	@Override
 	public String descriptor() {
-		return typeName() + " '" + getName() + "'";
+		return typeDesc() + " '" + getName() + "'";
 	}
 }

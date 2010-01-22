@@ -210,8 +210,8 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 		this.transactions = transactions;
 	}
 
-	public OrderItemTrans getItemTransaction(int id) {
-		return findEntityInCollection(transactions, id);
+	public OrderItemTrans getItemTransaction(IPrimaryKey pk) {
+		return findEntityInCollection(transactions, pk);
 	}
 
 	public void addItemTransaction(OrderItemTrans e) {
@@ -242,9 +242,9 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 		setOrder(e);
 	}
 
-	public Long accountId() {
+	public IPrimaryKey accountKey() {
 		try {
-			return getOrder().getAccount().getId();
+			return getOrder().getAccount().getPrimaryKey();
 		}
 		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
@@ -252,9 +252,9 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 		}
 	}
 
-	public Long orderId() {
+	public IPrimaryKey orderId() {
 		try {
-			return getOrder().getId();
+			return getOrder().getPrimaryKey();
 		}
 		catch(final NullPointerException npe) {
 			return null;

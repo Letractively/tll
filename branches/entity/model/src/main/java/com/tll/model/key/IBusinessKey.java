@@ -5,15 +5,14 @@
  */
 package com.tll.model.key;
 
-import com.tll.model.IEntity;
-
+import com.tll.key.IKey;
 
 /**
  * IBusinessKey
- * @param <E> The entity type
+ * @param <E> The entity type (not necessarily an IEntity)
  * @author jpk
  */
-public interface IBusinessKey<E extends IEntity> extends IBusinessKeyDefinition<E>, IKey<E> {
+public interface IBusinessKey<E> extends IBusinessKeyDefinition<E>, IKey {
 
 	/**
 	 * Get the property value given a property name.
@@ -21,7 +20,7 @@ public interface IBusinessKey<E extends IEntity> extends IBusinessKeyDefinition<
 	 * @return The property value
 	 */
 	Object getPropertyValue(String propertyName);
-	
+
 	/**
 	 * Get the property value given a property index.
 	 * @param index

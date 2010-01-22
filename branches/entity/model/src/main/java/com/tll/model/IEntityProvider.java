@@ -6,8 +6,6 @@ package com.tll.model;
 
 import java.util.Collection;
 
-import com.tll.model.key.PrimaryKey;
-
 /**
  * IEntityProvider - Definition for an object to provide entities of particular
  * type or key.
@@ -21,7 +19,7 @@ public interface IEntityProvider {
 	 * @param key The primary key
 	 * @return The entity if present or <code>null</code> if not.
 	 */
-	<E extends IEntity> E getEntity(PrimaryKey<E> key);
+	<E extends IEntity> E getEntity(IPrimaryKey key);
 
 	/**
 	 * Get all entities of the given type and all entities whose type derives from

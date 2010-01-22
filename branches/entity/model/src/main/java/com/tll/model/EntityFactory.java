@@ -18,7 +18,7 @@ public final class EntityFactory {
 	/**
 	 * The optional primary key generator.
 	 */
-	private final IPrimaryKeyGenerator keyGenerator;
+	private final IPrimaryKeyGenerator<?> keyGenerator;
 
 	/**
 	 * Constructor - No primary key generator will be employed
@@ -32,7 +32,7 @@ public final class EntityFactory {
 	 * @param keyGenerator Optional primary key generator impl. If specified,
 	 *        primary keys are created and set for newly created entities
 	 */
-	public EntityFactory(IPrimaryKeyGenerator keyGenerator) {
+	public EntityFactory(IPrimaryKeyGenerator<?> keyGenerator) {
 		super();
 		this.keyGenerator = keyGenerator;
 	}
@@ -66,9 +66,9 @@ public final class EntityFactory {
 		if(generate) {
 			if(keyGenerator == null)
 				throw new IllegalStateException("Unable to generate entity primary key - no primary key generator set");
-			long id = keyGenerator.generateIdentifier(entity);
-			if(log.isDebugEnabled()) log.debug("Created entity ID: " + id);
-			entity.setGenerated(id);
+			IPrimaryKey pk = keyGenerator.generateIdentifier(entityClass);
+			if(log.isDebugEnabled()) log.debug("Created entity PK: " + pk);
+			entity.setPrimaryKey(pk);
 		}
 
 		return entity;

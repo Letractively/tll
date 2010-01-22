@@ -4,13 +4,14 @@
 package com.tll;
 
 /**
- * Simply indicates the ability to provide a String-wise descriptor.
+ * IDescriptorProvider - Indicates the ability to provide a descriptor usually
+ * describing on object's state somehow.
  * @author jpk
  */
 public interface IDescriptorProvider {
 
 	/**
-	 * @return A descriptor.
+	 * @return UI presentable descriptor.
 	 */
 	String descriptor();
 }

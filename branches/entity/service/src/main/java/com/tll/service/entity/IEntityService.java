@@ -12,8 +12,8 @@ import com.tll.dao.EntityNotFoundException;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.IListingDataProvider;
 import com.tll.model.IEntity;
+import com.tll.model.IPrimaryKey;
 import com.tll.model.key.IBusinessKey;
-import com.tll.model.key.PrimaryKey;
 import com.tll.service.IService;
 
 /**
@@ -38,7 +38,7 @@ public interface IEntityService<E extends IEntity> extends IListingDataProvider,
 	 * @return the loaded entity
 	 * @throws EntityNotFoundException
 	 */
-	E load(PrimaryKey<E> key) throws EntityNotFoundException;
+	E load(IPrimaryKey key) throws EntityNotFoundException;
 
 	/**
 	 * Load by business key.

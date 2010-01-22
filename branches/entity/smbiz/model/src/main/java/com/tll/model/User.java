@@ -148,8 +148,8 @@ IUserRef {
 		this.authorities = authorities;
 	}
 
-	public Authority getAuthority(int id) {
-		return findEntityInCollection(authorities, id);
+	public Authority getAuthority(IPrimaryKey pk) {
+		return findEntityInCollection(authorities, pk);
 	}
 
 	public Authority getAuthority(String nme) {
@@ -213,9 +213,9 @@ IUserRef {
 		setAccount(e);
 	}
 
-	public Long accountId() {
+	public IPrimaryKey accountKey() {
 		try {
-			return getAccount().getId();
+			return getAccount().getPrimaryKey();
 		}
 		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");

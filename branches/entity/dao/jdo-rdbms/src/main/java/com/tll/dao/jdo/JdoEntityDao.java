@@ -40,7 +40,7 @@ import com.tll.dao.NonUniqueResultException;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
 import com.tll.model.IEntity;
-import com.tll.model.INamedEntity;
+import com.tll.model.IPrimaryKey;
 import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
@@ -106,10 +106,10 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> E load(PrimaryKey<E> key) {
+	public <E extends IEntity> E load(IPrimaryKey key) {
 		if(logger.isDebugEnabled()) logger.debug("Loading by PK: " + key);
 		try {
-			final E e = (E) getJdoTemplate().getObjectById(key.getType(), key.getId());
+			final E e = (E) getJdoTemplate().getObjectById(key.getType(), ((PrimaryKey)key).getId());
 			if(logger.isDebugEnabled()) logger.debug(e + " loaded by PK");
 			return e;
 		}
@@ -131,13 +131,14 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public <N extends INamedEntity> N load(NameKey<N> nameKey) {
+	public <E extends IEntity> E load(NameKey nameKey) {
 		if(logger.isDebugEnabled()) logger.debug("Loading by NameKey: " + nameKey);
 		try {
-			final Criteria<N> nc = new Criteria<N>(nameKey.getType());
+			final Criteria<E> nc = new Criteria<E>((Class<E>)nameKey.getType());
 			nc.getPrimaryGroup().addCriterion(nameKey, false);
-			final N e = findEntity(nc);
+			final E e = findEntity(nc);
 			if(logger.isDebugEnabled()) logger.debug(e + " loaded by NameKey");
 			return e;
 		}
@@ -196,7 +197,7 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 	}
 
 	@Override
-	public <E extends IEntity> void purge(PrimaryKey<E> key) throws EntityNotFoundException, DataAccessException {
+	public <E extends IEntity> void purge(IPrimaryKey key) throws EntityNotFoundException, DataAccessException {
 		final E e = load(key);
 		purge(e);
 	}

@@ -1,17 +1,18 @@
 package com.tll.model;
 
 import com.tll.IDescriptorProvider;
+import com.tll.ITypeDescriptorProvider;
 
 /**
- * Base interface for all entities.
+ * IEntity - Fundamental type for all [server side] entities.
  * @author jpk
  */
-public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvider {
+public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvider, ITypeDescriptorProvider {
 
 	/**
-	 * The name of the id primary key field
+	 * The name of the id primary key field.
 	 */
-	public static final String PK_FIELDNAME = "id";
+	static final String PK_FIELDNAME = "id";
 
 	/**
 	 * @return The <code>Class</code> of this entity. This method is preferred to
@@ -21,16 +22,16 @@ public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvi
 	Class<? extends IEntity> entityClass();
 
 	/**
-	 * @return The id of the entity
+	 * @return The primary key
 	 */
-	Long getId();
+	IPrimaryKey getPrimaryKey();
 	
 	/**
-	 * Sets the id.
-	 * @param id
+	 * Sets the primary key.
+	 * @param pk The primary key to set
 	 */
-	void setId(Long id);
-
+	void setPrimaryKey(IPrimaryKey pk);
+	
 	/**
 	 * True if the identifier for this object was assigned at creation.<br>
 	 * Note that generated entities are expected to provide a constructor that
@@ -40,17 +41,12 @@ public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvi
 	 * but are expected to be persisted shortly thereafter.
 	 * @return true/false
 	 */
-	boolean isGenerated();
+	//boolean isGenerated();
 	
 	/**
 	 * This method <b>must only</b> be called when a new entity is created and the
 	 * id is generated. It will set the id and set the generated flag to true.
-	 * @param id the id to set
+	 * @param pk the primary key to set
 	 */
-	void setGenerated(long id);
-
-	/**
-	 * @return A state independent UI presentable name of the entity type.
-	 */
-	String typeName();
+	//void setGenerated(IPrimaryKey pk);
 }

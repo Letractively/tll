@@ -15,7 +15,9 @@ import com.tll.model.schema.Root;
 public class EntityUtil {
 
 	/**
-	 * Obtains the "root" entity class given an entity class by reflection.
+	 * Obtains the "root" entity class given an entity class by checking for the
+	 * occurrence of either {@link Root} or {@link Extended} class level
+	 * annotations.
 	 * <p>
 	 * The root entity class is relevant when we have an ORM related inheritance
 	 * strategy applied to a family of like entities that extend from a common
@@ -26,12 +28,11 @@ public class EntityUtil {
 	 * @param entityClass
 	 * @return The root entity.
 	 */
-	@SuppressWarnings("unchecked")
-	public static Class<? extends IEntity> getRootEntityClass(Class<? extends IEntity> entityClass) {
+	public static Class<?> getRootEntityClass(Class<?> entityClass) {
 		if(entityClass.getAnnotation(Extended.class) != null) {
-			Class<? extends IEntity> ec = entityClass;
+			Class<?> ec = entityClass;
 			do {
-				ec = (Class<? extends IEntity>) ec.getSuperclass();
+				ec = ec.getSuperclass();
 			} while(ec != null && ec.getAnnotation(Root.class) == null);
 			if(ec != null) return ec;
 		}

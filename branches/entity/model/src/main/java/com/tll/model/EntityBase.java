@@ -2,8 +2,6 @@ package com.tll.model;
 
 import java.util.Collection;
 
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -20,9 +18,9 @@ public abstract class EntityBase implements IEntity {
 
 	protected static final Log LOG = LogFactory.getLog(EntityBase.class);
 
-	private Long id;
-
-	private boolean generated;
+	private IPrimaryKey pk;
+	
+	//private boolean generated;
 
 	/**
 	 * At object creation, a version of <code>-1</code> is assigined indicating a
@@ -35,16 +33,13 @@ public abstract class EntityBase implements IEntity {
 	 * given id is null, null is returned.
 	 * @param <E>
 	 * @param clc the collection to look in
-	 * @param id the id of the entity to find
+	 * @param pk the primary key of the entity to find
 	 * @return the found entity or null if not found
 	 */
-	protected final static <E extends IEntity> E findEntityInCollection(Collection<E> clc, long id) {
-		if(clc == null) {
-			return null;
-		}
+	protected final static <E extends IEntity> E findEntityInCollection(Collection<E> clc, IPrimaryKey pk) {
+		if(clc == null || pk == null) return null;
 		for(final E e : clc) {
-			final long eid = e.getId() == null ? -1 : e.getId().longValue();
-			if(id == eid) {
+			if(pk.equals(e.getPrimaryKey())) {
 				return e;
 			}
 		}
@@ -162,43 +157,28 @@ public abstract class EntityBase implements IEntity {
 
 	/**
 	 * Constructor
-	 * @param id
+	 * @param pk primary key
 	 */
-	public EntityBase(Long id) {
+	public EntityBase(IPrimaryKey pk) {
 		this();
-		setId(id);
+		setPrimaryKey(pk);
 	}
 
 	@Override
-	public String typeName() {
+	public String typeDesc() {
 		return StringUtil.camelCaseToPresentation(entityClass().getSimpleName());
 	}
 
-	@NotNull
 	@Override
-	public final Long getId() {
-		return id;
+	public IPrimaryKey getPrimaryKey() {
+		return pk;
 	}
 
 	@Override
-	public final void setId(Long id) {
-		this.id = id;
+	public void setPrimaryKey(IPrimaryKey pk) {
+		this.pk = pk;
 	}
 
-	@Override
-	public final boolean isGenerated() {
-		return generated;
-	}
-
-	@Override
-	public final void setGenerated(long id) {
-		setId(Long.valueOf(id));
-		generated = true;
-	}
-
-	/**
-	 * @return the version
-	 */
 	@Managed
 	@Override
 	public final long getVersion() {
@@ -209,12 +189,25 @@ public abstract class EntityBase implements IEntity {
 	public final void setVersion(long version) {
 		this.version = version;
 	}
+	
+	/*
+	@Override
+	public boolean isGenerated() {
+		return generated;
+	}
 
+	@Override
+	public void setGenerated(long id) {
+		this.id = Long.valueOf(id);
+		this.generated = true;
+	}
+	*/
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((pk == null) ? 0 : pk.hashCode());
 		result = prime * result + (int) (version ^ (version >>> 32));
 		return result;
 	}
@@ -225,17 +218,17 @@ public abstract class EntityBase implements IEntity {
 		if(obj == null) return false;
 		if(getClass() != obj.getClass()) return false;
 		final EntityBase other = (EntityBase) obj;
-		if(id == null) {
-			if(other.id != null) return false;
+		if(pk == null) {
+			if(other.pk != null) return false;
 		}
-		else if(!id.equals(other.id)) return false;
+		else if(!pk.equals(other.pk)) return false;
 		if(version != other.version) return false;
 		return true;
 	}
 
 	@Override
 	public final String toString() {
-		return typeName() + ", id: " + getId() + ", version: " + getVersion();
+		return typeDesc() + ", pk: " + getPrimaryKey() + ", version: " + getVersion();
 	}
 
 	@Override
@@ -248,6 +241,6 @@ public abstract class EntityBase implements IEntity {
 	 */
 	@Override
 	public String descriptor() {
-		return typeName() + " (Id: " + getId() + ")";
+		return typeDesc() + " (Pk: " + getPrimaryKey() + ")";
 	}
 }

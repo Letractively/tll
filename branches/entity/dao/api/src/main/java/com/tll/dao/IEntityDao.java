@@ -9,10 +9,9 @@ import com.tll.criteria.Criteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.model.IEntity;
-import com.tll.model.INamedEntity;
+import com.tll.model.IPrimaryKey;
 import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.NameKey;
-import com.tll.model.key.PrimaryKey;
 
 /**
  * IEntityDao - DAO definition for {@link IEntity}s.
@@ -31,7 +30,7 @@ public interface IEntityDao extends IDao {
 	 * @throws EntityNotFoundException
 	 * @throws DataAccessException
 	 */
-	<E extends IEntity> E load(PrimaryKey<E> key) throws EntityNotFoundException, DataAccessException;
+	<E extends IEntity> E load(IPrimaryKey key) throws EntityNotFoundException, DataAccessException;
 
 	/**
 	 * Loads a single entity specified by a business key.
@@ -45,7 +44,7 @@ public interface IEntityDao extends IDao {
 
 	/**
 	 * Loads the named entity by a given name.
-	 * @param <N> The named entity type
+	 * @param <E> the entity type
 	 * @param nameKey the name key
 	 * @return the never <code>null</code> named entity (unless an exception is
 	 *         thrown).
@@ -54,7 +53,7 @@ public interface IEntityDao extends IDao {
 	 *         given name key.
 	 * @throws DataAccessException
 	 */
-	<N extends INamedEntity> N load(NameKey<N> nameKey) throws EntityNotFoundException, NonUniqueResultException,
+	<E extends IEntity> E load(NameKey nameKey) throws EntityNotFoundException, NonUniqueResultException,
 	DataAccessException;
 
 	/**
@@ -110,7 +109,7 @@ public interface IEntityDao extends IDao {
 	 * @throws EntityNotFoundException
 	 * @throws DataAccessException
 	 */
-	<E extends IEntity> void purge(PrimaryKey<E> key) throws EntityNotFoundException, DataAccessException;
+	<E extends IEntity> void purge(IPrimaryKey key) throws EntityNotFoundException, DataAccessException;
 
 	/**
 	 * Physical deletion of all entities specified in the input. Use this method

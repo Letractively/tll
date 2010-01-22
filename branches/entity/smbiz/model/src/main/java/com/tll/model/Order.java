@@ -217,8 +217,8 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 		this.transactions = transactions;
 	}
 
-	public OrderTrans getTransaction(int id) {
-		return findEntityInCollection(transactions, id);
+	public OrderTrans getTransaction(IPrimaryKey pk) {
+		return findEntityInCollection(transactions, pk);
 	}
 
 	public void addTransaction(OrderTrans e) {
@@ -256,8 +256,8 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 		this.orderItems = orderItems;
 	}
 
-	public OrderItem getOrderItem(int id) {
-		return findEntityInCollection(orderItems, id);
+	public OrderItem getOrderItem(IPrimaryKey pk) {
+		return findEntityInCollection(orderItems, pk);
 	}
 
 	public void addOrderItem(OrderItem e) {
@@ -288,9 +288,9 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 		setAccount(e);
 	}
 
-	public Long accountId() {
+	public IPrimaryKey accountKey() {
 		try {
-			return getAccount().getId();
+			return getAccount().getPrimaryKey();
 		}
 		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
@@ -298,9 +298,9 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 		}
 	}
 
-	public Long customerId() {
+	public IPrimaryKey customerId() {
 		try {
-			return getCustomer().getId();
+			return getCustomer().getPrimaryKey();
 		}
 		catch(final NullPointerException npe) {
 			return null;

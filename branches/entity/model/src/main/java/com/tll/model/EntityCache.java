@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.tll.model.key.PrimaryKey;
-
 /**
  * EntityCache - Generic holder of an arbitrary set of entities. Used, in
  * particular, in the generic assembly of entities.
@@ -19,7 +17,7 @@ import com.tll.model.key.PrimaryKey;
  */
 public class EntityCache implements IEntityProvider {
 
-	private final Map<PrimaryKey<IEntity>, IEntity> map = new HashMap<PrimaryKey<IEntity>, IEntity>();
+	private final Map<IPrimaryKey, IEntity> map = new HashMap<IPrimaryKey, IEntity>();
 
 	/**
 	 * Constructor
@@ -38,11 +36,11 @@ public class EntityCache implements IEntityProvider {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> E getEntity(PrimaryKey<E> key) {
+	public <E extends IEntity> E getEntity(IPrimaryKey key) {
 		return (E) map.get(key);
 	}
 
-	public <E extends IEntity> boolean hasEntity(PrimaryKey<E> key) {
+	public <E extends IEntity> boolean hasEntity(IPrimaryKey key) {
 		return map.containsKey(key);
 	}
 
@@ -50,8 +48,8 @@ public class EntityCache implements IEntityProvider {
 	public <E extends IEntity> Collection<E> getEntitiesByType(Class<E> type) {
 		if(type == null) return null;
 		List<IEntity> list = new ArrayList<IEntity>();
-		for(PrimaryKey key : map.keySet()) {
-			Class<? extends IEntity> etype = key.getType();
+		for(IPrimaryKey key : map.keySet()) {
+			Class<? extends IEntity> etype = (Class<? extends IEntity>) key.getType();
 			if(type.isAssignableFrom(etype)) {
 				list.add(map.get(key));
 			}
@@ -72,7 +70,7 @@ public class EntityCache implements IEntityProvider {
 	}
 
 	public void addEntity(IEntity e) {
-		if(e != null) map.put(new PrimaryKey<IEntity>(e), e);
+		if(e != null) map.put(e.getPrimaryKey(), e);
 	}
 
 	public void addEntities(Collection<IEntity> entities) {

@@ -2,6 +2,7 @@ package com.tll.model.key;
 
 import java.util.Arrays;
 
+import com.tll.key.AbstractKey;
 import com.tll.model.IEntity;
 
 /**
@@ -9,7 +10,7 @@ import com.tll.model.IEntity;
  * @author jpk
  * @param <E>
  */
-final class BusinessKey<E extends IEntity> extends AbstractEntityKey<E> implements IBusinessKey<E> {
+final class BusinessKey<E extends IEntity> extends AbstractKey implements IBusinessKey<E> {
 
 	private static final long serialVersionUID = 2415120120614040086L;
 
@@ -37,19 +38,26 @@ final class BusinessKey<E extends IEntity> extends AbstractEntityKey<E> implemen
 		this(def);
 		copyValues(propertyValues);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Class<E> getType() {
+		return (Class<E>) super.getType();
+	}
 
 	public String getBusinessKeyName() {
 		return businessKeyName;
 	}
 
 	@Override
-	protected String keyDescriptor() {
-		return getBusinessKeyName();
+	public String descriptor() {
+		return getType().getName() + " " + getBusinessKeyName();
 	}
 
 	/**
 	 * @return The field names
 	 */
+	@Override
 	public String[] getPropertyNames() {
 		return propertyNames;
 	}
@@ -68,15 +76,18 @@ final class BusinessKey<E extends IEntity> extends AbstractEntityKey<E> implemen
 		return -1;
 	}
 
+	@Override
 	public Object getPropertyValue(String propertyName) {
 		final int index = propertyIndex(propertyName);
 		return (index == -1) ? null : propertyValues[index];
 	}
 
+	@Override
 	public Object getPropertyValue(int index) {
 		return propertyValues[index];
 	}
 
+	@Override
 	public void setPropertyValue(String propertyName, Object value) {
 		final int index = propertyIndex(propertyName);
 		if(index != -1) {
@@ -84,6 +95,7 @@ final class BusinessKey<E extends IEntity> extends AbstractEntityKey<E> implemen
 		}
 	}
 
+	@Override
 	public void setPropertyValue(int index, Object value) {
 		propertyValues[index] = value;
 	}
@@ -102,29 +114,28 @@ final class BusinessKey<E extends IEntity> extends AbstractEntityKey<E> implemen
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((businessKeyName == null) ? 0 : businessKeyName.hashCode());
+		result = prime * result + Arrays.hashCode(propertyNames);
+		result = prime * result + Arrays.hashCode(propertyValues);
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if(this == obj) return true;
-		if(obj == null) return false;
+		if(!super.equals(obj)) return false;
 		if(getClass() != obj.getClass()) return false;
-		final BusinessKey other = (BusinessKey) obj;
-		if(!typeCompatible(other.entityClass)) return false;
+		BusinessKey<?> other = (BusinessKey<?>) obj;
 		if(businessKeyName == null) {
 			if(other.businessKeyName != null) return false;
 		}
 		else if(!businessKeyName.equals(other.businessKeyName)) return false;
+		if(!Arrays.equals(propertyNames, other.propertyNames)) return false;
 		if(!Arrays.equals(propertyValues, other.propertyValues)) return false;
 		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((entityClass == null) ? 0 : entityClass.toString().hashCode());
-		result = prime * result + ((businessKeyName == null) ? 0 : businessKeyName.hashCode());
-		result = prime * result + Arrays.hashCode(propertyValues);
-		return result;
 	}
 
 	@Override

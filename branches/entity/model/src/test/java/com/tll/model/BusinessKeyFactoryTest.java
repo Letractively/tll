@@ -15,6 +15,7 @@ import com.tll.model.key.BusinessKeyFactory;
 import com.tll.model.key.BusinessKeyUtil;
 import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.NonUniqueBusinessKeyException;
+import com.tll.model.key.PrimaryKey;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 
@@ -84,7 +85,7 @@ public class BusinessKeyFactoryTest {
 
 	private TestEntity stubTestEntity() {
 		final TestEntity e = new TestEntity();
-		e.setId(Long.valueOf(1));
+		e.setPrimaryKey(new PrimaryKey(e.entityClass(), Long.valueOf(1)));
 		e.setName("name");
 		e.setCode(1);
 		e.setAuthNum("authNum");

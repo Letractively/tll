@@ -231,8 +231,8 @@ public abstract class Interface extends NamedTimeStampEntity {
 		this.options = options;
 	}
 
-	public InterfaceOption getOption(int id) {
-		return findEntityInCollection(options, id);
+	public InterfaceOption getOption(IPrimaryKey pk) {
+		return findEntityInCollection(options, pk);
 	}
 
 	public InterfaceOption getOption(String nme) {
