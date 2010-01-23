@@ -3,7 +3,7 @@
  * @author jpk
  * Jan 23, 2009
  */
-package com.tll.model;
+package com.tll.model.bk;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,6 +11,9 @@ import java.util.List;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.tll.model.EntityBase;
+import com.tll.model.GlobalLongPrimaryKey;
+import com.tll.model.IEntity;
 import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.bk.BusinessKeyUtil;
 import com.tll.model.bk.IBusinessKey;

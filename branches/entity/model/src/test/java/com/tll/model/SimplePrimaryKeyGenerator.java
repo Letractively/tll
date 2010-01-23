@@ -6,6 +6,10 @@ package com.tll.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.tll.model.EntityUtil;
+import com.tll.model.GlobalLongPrimaryKey;
+import com.tll.model.IPrimaryKeyGenerator;
+
 
 /**
  * SimplePrimaryKeyGenerator - In memory map of integers classified by entity

@@ -30,7 +30,7 @@
         <include>**/Abstract*Test*</include>
         <include>**/*Util*</include>
         <include>**/*Support*</include>
-        <include>**/Test*Module*.*</include>
+        <include>**/Test*.*</include>
         <include>**/*.gwt.xml</include>
       </includes>
       <outputDirectory>/</outputDirectory>
