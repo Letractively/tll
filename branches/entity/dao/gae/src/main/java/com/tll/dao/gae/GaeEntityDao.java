@@ -40,10 +40,8 @@ import com.tll.dao.NonUniqueResultException;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
 import com.tll.model.IEntity;
-import com.tll.model.INamedEntity;
 import com.tll.model.IPrimaryKey;
 import com.tll.model.NameKey;
-import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.bk.IBusinessKey;
 import com.tll.util.DateRange;
 
@@ -106,11 +104,10 @@ public class GaeEntityDao extends JdoDaoSupport implements IEntityDao {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public <E extends IEntity> E load(IPrimaryKey key) {
+	public IEntity load(IPrimaryKey key) {
 		if(logger.isDebugEnabled()) logger.debug("Loading by PK: " + key);
 		try {
-			final E e = (E) getJdoTemplate().getObjectById(key.getType(), key.getId());
+			final IEntity e = (IEntity) getJdoTemplate().getObjectById(key.getType(), key.toString());
 			if(logger.isDebugEnabled()) logger.debug(e + " loaded by PK");
 			return e;
 		}
@@ -134,12 +131,12 @@ public class GaeEntityDao extends JdoDaoSupport implements IEntityDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <E extends IEntity> E load(NameKey nameKey) {
+	public IEntity load(NameKey nameKey) {
 		if(logger.isDebugEnabled()) logger.debug("Loading by NameKey: " + nameKey);
 		try {
-			final Criteria<E> nc = new Criteria<E>((Class<E>)nameKey.getType());
+			final Criteria<IEntity> nc = new Criteria<IEntity>((Class<IEntity>)nameKey.getType());
 			nc.getPrimaryGroup().addCriterion(nameKey, false);
-			final E e = findEntity(nc);
+			final IEntity e = findEntity(nc);
 			if(logger.isDebugEnabled()) logger.debug(e + " loaded by NameKey");
 			return e;
 		}
@@ -198,8 +195,8 @@ public class GaeEntityDao extends JdoDaoSupport implements IEntityDao {
 	}
 
 	@Override
-	public <E extends IEntity> void purge(IPrimaryKey key) throws EntityNotFoundException, DataAccessException {
-		final E e = load(key);
+	public void purge(IPrimaryKey key) throws EntityNotFoundException, DataAccessException {
+		final IEntity e = load(key);
 		purge(e);
 	}
 
@@ -548,13 +545,11 @@ public class GaeEntityDao extends JdoDaoSupport implements IEntityDao {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public <E extends IEntity> List<E> findByIds(Class<E> entityType, final Collection<Long> ids, Sorting sorting) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public <E extends IEntity> List<Long> getIds(Criteria<E> criteria, Sorting sorting) throws InvalidCriteriaException {
 		throw new UnsupportedOperationException();
 	}

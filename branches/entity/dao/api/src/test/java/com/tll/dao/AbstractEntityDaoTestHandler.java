@@ -15,7 +15,7 @@ import com.tll.criteria.Criteria;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
-import com.tll.model.GlobalLongPrimaryKey;
+import com.tll.model.IPrimaryKey;
 
 /**
  * AbstractEntityDaoTestHandler
@@ -82,11 +82,10 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 
 	/**
 	 * Loads an entity by primary key from the datastore.
-	 * @param <D>
 	 * @param key
 	 * @return the loaded entity
 	 */
-	protected final <D extends IEntity> D load(GlobalLongPrimaryKey<D> key) {
+	protected final IEntity load(IPrimaryKey key) {
 		try {
 			maybeStartTrans();
 			log.debug("Loading entity by primary key: " + key);
@@ -132,10 +131,9 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 
 	/**
 	 * Purges the given entity from the datastore by primary key.
-	 * @param <D>
 	 * @param key
 	 */
-	protected final <D extends IEntity> void purge(GlobalLongPrimaryKey<D> key) {
+	protected final void purge(IPrimaryKey key) {
 		try {
 			maybeStartTrans();
 			log.debug("Purging entity by primary key: " + key);

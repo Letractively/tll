@@ -77,7 +77,7 @@ public class EGraphModule extends AbstractModule {
 		bind(EntityBeanFactory.class).toProvider(new Provider<EntityBeanFactory>() {
 
 			@Inject(optional = true)
-			IPrimaryKeyGenerator pkGenerator;
+			IPrimaryKeyGenerator<?> pkGenerator;
 
 			@Override
 			public EntityBeanFactory get() {

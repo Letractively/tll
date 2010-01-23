@@ -50,7 +50,7 @@ public class ModelBuildModule extends AbstractModule {
 		bind(EntityFactory.class).toProvider(new Provider<EntityFactory>() {
 
 			@Inject(optional = true)
-			IPrimaryKeyGenerator pkg;
+			IPrimaryKeyGenerator<?> pkg;
 
 			@Override
 			public EntityFactory get() {

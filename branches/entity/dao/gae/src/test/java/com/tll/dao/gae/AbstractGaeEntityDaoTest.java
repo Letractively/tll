@@ -9,8 +9,9 @@ import com.tll.dao.AbstractEntityDaoTest;
 import com.tll.dao.IDbShell;
 import com.tll.dao.gae.test.GaeDatastoreTestEnvironment;
 import com.tll.dao.gae.test.GaeTestDaoDecorator;
+import com.tll.model.GaePrimaryKey;
 import com.tll.model.IEntity;
-import com.tll.model.GlobalLongPrimaryKey;
+import com.tll.model.IPrimaryKey;
 
 /**
  * AbstractGaeEntityDaoTest
@@ -18,7 +19,7 @@ import com.tll.model.GlobalLongPrimaryKey;
  */
 @Test(groups = {
 	"dao", "gae" })
-public abstract class AbstractGaeEntityDaoTest extends AbstractEntityDaoTest<GaeEntityDao, GaeTestDaoDecorator> {
+public abstract class AbstractGaeEntityDaoTest extends AbstractEntityDaoTest<GaePrimaryKey, GaeEntityDao, GaeTestDaoDecorator> {
 
 	/**
 	 * A distinct db shell.
@@ -56,7 +57,7 @@ public abstract class AbstractGaeEntityDaoTest extends AbstractEntityDaoTest<Gae
 	}
 
 	@Override
-	protected final IEntity getEntityFromDb(GlobalLongPrimaryKey<IEntity> key) {
+	protected final IEntity getEntityFromDb(IPrimaryKey key) {
 		// TODO verify we always hit the db
 		return dao.load(key);
 	}

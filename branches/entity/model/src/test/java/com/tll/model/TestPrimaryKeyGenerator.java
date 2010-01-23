@@ -12,11 +12,11 @@ import com.tll.model.IPrimaryKeyGenerator;
 
 
 /**
- * SimplePrimaryKeyGenerator - In memory map of integers classified by entity
+ * TestPrimaryKeyGenerator - In memory map of integers classified by entity
  * class that are incremented as primary keys are requested.
  * @author jpk
  */
-public class SimplePrimaryKeyGenerator implements IPrimaryKeyGenerator<GlobalLongPrimaryKey> {
+public class TestPrimaryKeyGenerator implements IPrimaryKeyGenerator<GlobalLongPrimaryKey> {
 
 	private static final Map<Class<?>, Long> idMap = new HashMap<Class<?>, Long>();
 

@@ -27,7 +27,7 @@ import com.tll.model.EntityGraph;
 import com.tll.model.IEntity;
 import com.tll.model.IPrimaryKeyGenerator;
 import com.tll.model.IScalar;
-import com.tll.model.SimplePrimaryKeyGenerator;
+import com.tll.model.TestPrimaryKeyGenerator;
 import com.tll.model.test.Account;
 import com.tll.model.test.AccountAddress;
 import com.tll.model.test.AccountStatus;
@@ -65,7 +65,7 @@ public class MarshalerTest extends AbstractConfigAwareTest {
 			
 			@Override
 			public void configure(Binder binder) {
-				binder.bind(IPrimaryKeyGenerator.class).to(SimplePrimaryKeyGenerator.class).in(Scopes.SINGLETON);
+				binder.bind(IPrimaryKeyGenerator.class).to(TestPrimaryKeyGenerator.class).in(Scopes.SINGLETON);
 			}
 		});
 		modules.add(new TestPersistenceUnitModule());

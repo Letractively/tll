@@ -10,7 +10,7 @@ import com.google.inject.Module;
 import com.tll.di.EGraphModule;
 import com.tll.di.ModelBuildModule;
 import com.tll.di.ModelModule;
-import com.tll.model.SimplePrimaryKeyGenerator;
+import com.tll.model.TestPrimaryKeyGenerator;
 import com.tll.model.test.TestPersistenceUnitEntityAssembler;
 import com.tll.model.test.TestPersistenceUnitEntityGraphBuilder;
 
@@ -26,7 +26,7 @@ public final class TestPersistenceUnitModule implements Module {
 	 * Constructor - Defaults to employing:
 	 * <ul>
 	 * <li>Default xml bean def location
-	 * <li>{@link SimplePrimaryKeyGenerator}
+	 * <li>{@link TestPrimaryKeyGenerator}
 	 * </ul>
 	 * @see TestPersistenceUnitModule#TestPersistenceUnitModule(String)
 	 */

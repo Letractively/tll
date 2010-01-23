@@ -24,9 +24,8 @@ import com.tll.model.bk.IBusinessKeyDefinition;
  * EntityBeanFactory - Provides prototype entity instances via a Spring bean
  * context.
  * @author jpk
- * @param <I> primary key type
  */
-public final class EntityBeanFactory<I extends IPrimaryKey> {
+public final class EntityBeanFactory {
 
 	/**
 	 * The default path file name of the [Spring] bean context file.
@@ -150,14 +149,14 @@ public final class EntityBeanFactory<I extends IPrimaryKey> {
 
 	private final ListableBeanFactory beanFactory;
 
-	private final IPrimaryKeyGenerator<I> pkGenerator;
+	private final IPrimaryKeyGenerator<?> pkGenerator;
 
 	/**
 	 * Constructor
 	 * @param beanFactory
 	 * @param pkGenerator Optional
 	 */
-	public EntityBeanFactory(ListableBeanFactory beanFactory, IPrimaryKeyGenerator<I> pkGenerator) {
+	public EntityBeanFactory(ListableBeanFactory beanFactory, IPrimaryKeyGenerator<?> pkGenerator) {
 		super();
 		if(beanFactory == null) throw new IllegalArgumentException("The beanFactory is null");
 		this.beanFactory = beanFactory;

@@ -15,7 +15,7 @@ import com.tll.di.SmbizEGraphModule;
 import com.tll.di.SmbizModelBuildModule;
 import com.tll.di.test.JdbcDbShellModule;
 import com.tll.model.IPrimaryKeyGenerator;
-import com.tll.model.SimplePrimaryKeyGenerator;
+import com.tll.model.TestPrimaryKeyGenerator;
 
 /**
  * SmbizJdbcDbShellTest
@@ -36,7 +36,7 @@ public class SmbizJdbcDbShellTest extends AbstractDbAwareTest {
 
 			@Override
 			public void configure(Binder binder) {
-				binder.bind(IPrimaryKeyGenerator.class).to(SimplePrimaryKeyGenerator.class).in(Scopes.SINGLETON);
+				binder.bind(IPrimaryKeyGenerator.class).to(TestPrimaryKeyGenerator.class).in(Scopes.SINGLETON);
 			}
 		});
 		modules.add(new SmbizModelBuildModule());

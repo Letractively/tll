@@ -8,8 +8,9 @@ import com.tll.dao.IDbShell;
 import com.tll.dao.IEntityDaoTestHandler;
 import com.tll.dao.jdo.test.JdoTestDaoDecorator;
 import com.tll.di.test.JdbcDbShellModule;
-import com.tll.model.IEntity;
 import com.tll.model.GlobalLongPrimaryKey;
+import com.tll.model.IEntity;
+import com.tll.model.IPrimaryKey;
 
 /**
  * AbstractJdoEntityDaoTest
@@ -18,7 +19,7 @@ import com.tll.model.GlobalLongPrimaryKey;
 @Test(groups = {
 	"dao", "jdo"
 })
-public abstract class AbstractJdoEntityDaoTest extends AbstractEntityDaoTest<JdoEntityDao, JdoTestDaoDecorator> {
+public abstract class AbstractJdoEntityDaoTest extends AbstractEntityDaoTest<GlobalLongPrimaryKey, JdoEntityDao, JdoTestDaoDecorator> {
 
 	/**
 	 * A distinct db shell.
@@ -52,7 +53,7 @@ public abstract class AbstractJdoEntityDaoTest extends AbstractEntityDaoTest<Jdo
 	}
 
 	@Override
-	protected final IEntity getEntityFromDb(GlobalLongPrimaryKey<IEntity> key) {
+	protected final IEntity getEntityFromDb(IPrimaryKey key) {
 		// TODO verify we always hit the db
 		return dao.load(key);
 	}

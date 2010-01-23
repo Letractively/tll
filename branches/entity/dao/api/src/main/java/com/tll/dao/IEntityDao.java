@@ -24,13 +24,12 @@ public interface IEntityDao extends IDao {
 
 	/**
 	 * Loads a single entity specified by a primary key.
-	 * @param <E> The entity type
 	 * @param key the primary key
 	 * @return the entity
 	 * @throws EntityNotFoundException
 	 * @throws DataAccessException
 	 */
-	<E extends IEntity> E load(IPrimaryKey key) throws EntityNotFoundException, DataAccessException;
+	IEntity load(IPrimaryKey key) throws EntityNotFoundException, DataAccessException;
 
 	/**
 	 * Loads a single entity specified by a business key.
@@ -44,7 +43,6 @@ public interface IEntityDao extends IDao {
 
 	/**
 	 * Loads the named entity by a given name.
-	 * @param <E> the entity type
 	 * @param nameKey the name key
 	 * @return the never <code>null</code> named entity (unless an exception is
 	 *         thrown).
@@ -53,7 +51,7 @@ public interface IEntityDao extends IDao {
 	 *         given name key.
 	 * @throws DataAccessException
 	 */
-	<E extends IEntity> E load(NameKey nameKey) throws EntityNotFoundException, NonUniqueResultException,
+	IEntity load(NameKey nameKey) throws EntityNotFoundException, NonUniqueResultException,
 	DataAccessException;
 
 	/**
@@ -104,12 +102,11 @@ public interface IEntityDao extends IDao {
 
 	/**
 	 * Physical deletion of an entity identified by the given primary key.
-	 * @param <E> The entity type
 	 * @param key The primary key uniquely identifying the entity to be deleted
 	 * @throws EntityNotFoundException
 	 * @throws DataAccessException
 	 */
-	<E extends IEntity> void purge(IPrimaryKey key) throws EntityNotFoundException, DataAccessException;
+	void purge(IPrimaryKey key) throws EntityNotFoundException, DataAccessException;
 
 	/**
 	 * Physical deletion of all entities specified in the input. Use this method

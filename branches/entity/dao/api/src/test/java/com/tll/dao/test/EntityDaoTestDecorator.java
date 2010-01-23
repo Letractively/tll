@@ -15,9 +15,8 @@ import com.tll.dao.NonUniqueResultException;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
 import com.tll.model.IEntity;
-import com.tll.model.INamedEntity;
+import com.tll.model.IPrimaryKey;
 import com.tll.model.NameKey;
-import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.bk.IBusinessKey;
 
 /**
@@ -89,13 +88,13 @@ public class EntityDaoTestDecorator<T extends IEntityDao> implements IEntityDao 
 	}
 
 	@Override
-	public <N extends INamedEntity> N load(NameKey<N> nameKey) throws EntityNotFoundException,
+	public IEntity load(NameKey nameKey) throws EntityNotFoundException,
 	NonUniqueResultException, DataAccessException {
 		return rawDao.load(nameKey);
 	}
 
 	@Override
-	public <E extends IEntity> E load(GlobalLongPrimaryKey<E> key) throws EntityNotFoundException, DataAccessException {
+	public IEntity load(IPrimaryKey key) throws EntityNotFoundException, DataAccessException {
 		return rawDao.load(key);
 	}
 
@@ -120,7 +119,7 @@ public class EntityDaoTestDecorator<T extends IEntityDao> implements IEntityDao 
 	}
 
 	@Override
-	public <E extends IEntity> void purge(GlobalLongPrimaryKey<E> key) throws EntityNotFoundException, DataAccessException {
+	public void purge(IPrimaryKey key) throws EntityNotFoundException, DataAccessException {
 		rawDao.purge(key);
 	}
 

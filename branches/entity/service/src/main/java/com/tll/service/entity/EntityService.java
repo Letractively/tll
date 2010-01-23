@@ -128,6 +128,7 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 		dao.purgeAll(entities);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public E load(IPrimaryKey key) throws EntityNotFoundException {
 		return (E) dao.load(key);

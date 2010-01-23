@@ -26,7 +26,7 @@ public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopula
 	 * Responsible for generating prototypical entity instances that are subject
 	 * to addition to the entity graph.
 	 */
-	private final EntityBeanFactory<?> entityBeanFactory;
+	private final EntityBeanFactory entityBeanFactory;
 
 	/**
 	 * The entity graph.
@@ -35,9 +35,9 @@ public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopula
 
 	/**
 	 * Constructor
-	 * @param entityBeanFactory The mock entity factory
+	 * @param entityBeanFactory Required entity bean factory ref
 	 */
-	public AbstractEntityGraphPopulator(EntityBeanFactory<?> entityBeanFactory) {
+	public AbstractEntityGraphPopulator(EntityBeanFactory entityBeanFactory) {
 		this.log = LogFactory.getLog(getClass());
 		this.entityBeanFactory = entityBeanFactory;
 	}

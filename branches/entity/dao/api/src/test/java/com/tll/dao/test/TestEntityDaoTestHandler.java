@@ -10,7 +10,7 @@ import org.testng.Assert;
 import com.tll.criteria.Criteria;
 import com.tll.dao.AbstractEntityDaoTestHandler;
 import com.tll.model.EntityBeanFactory;
-import com.tll.model.GlobalLongPrimaryKey;
+import com.tll.model.IPrimaryKey;
 import com.tll.model.test.Account;
 import com.tll.model.test.AccountAddress;
 import com.tll.model.test.Address;
@@ -25,9 +25,9 @@ import com.tll.util.DateRange;
 public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Account> {
 
 	// dependent entities
-	GlobalLongPrimaryKey<NestedEntity> pkNestedEntity;
-	GlobalLongPrimaryKey<Currency> pkCurrency;
-	GlobalLongPrimaryKey<Account> pkAccountParent;
+	IPrimaryKey pkNestedEntity;
+	IPrimaryKey pkCurrency;
+	IPrimaryKey pkAccountParent;
 
 	@Override
 	public Class<Account> entityClass() {
@@ -43,11 +43,11 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 	public void persistDependentEntities() {
 		Currency currency = create(Currency.class, true);
 		currency = persist(currency);
-		pkCurrency = new GlobalLongPrimaryKey<Currency>(currency);
+		pkCurrency = currency.getPrimaryKey();
 
 		NestedEntity nestedEntity = create(NestedEntity.class, true);
 		nestedEntity = persist(nestedEntity);
-		pkNestedEntity = new GlobalLongPrimaryKey<NestedEntity>(nestedEntity);
+		pkNestedEntity = nestedEntity.getPrimaryKey();
 
 		Account parent = create(Account.class, true);
 		parent.setName("parent account");
@@ -55,7 +55,7 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 		parent.setCurrency(currency);
 		parent.setNestedEntity(nestedEntity);
 		parent = persist(parent);
-		pkAccountParent = new GlobalLongPrimaryKey<Account>(parent);
+		pkAccountParent = parent.getPrimaryKey();
 	}
 
 	@Override
@@ -67,9 +67,9 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 
 	@Override
 	public void assembleTestEntity(Account e) throws Exception {
-		e.setCurrency(load(pkCurrency));
-		e.setNestedEntity(load(pkNestedEntity));
-		e.setParent(load(pkAccountParent));
+		e.setCurrency((Currency)load(pkCurrency));
+		e.setNestedEntity((NestedEntity)load(pkNestedEntity));
+		e.setParent((Account)load(pkAccountParent));
 
 		final Address address1 = create(Address.class, true);
 		final Address address2 = create(Address.class, true);

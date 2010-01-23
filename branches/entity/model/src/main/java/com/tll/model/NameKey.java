@@ -27,7 +27,7 @@ public class NameKey extends AbstractKey {
 	 * Constructor
 	 * @param entityClass
 	 */
-	public NameKey(Class<? extends INamedEntity> entityClass) {
+	public NameKey(Class<?> entityClass) {
 		this(entityClass, null, DEFAULT_FIELDNAME);
 	}
 
@@ -36,7 +36,7 @@ public class NameKey extends AbstractKey {
 	 * @param entityClass
 	 * @param name
 	 */
-	public NameKey(Class<? extends INamedEntity> entityClass, String name) {
+	public NameKey(Class<?> entityClass, String name) {
 		this(entityClass, name, DEFAULT_FIELDNAME);
 	}
 
@@ -46,7 +46,7 @@ public class NameKey extends AbstractKey {
 	 * @param name
 	 * @param propertyName
 	 */
-	public NameKey(Class<? extends INamedEntity> entityClass, String name, String propertyName) {
+	public NameKey(Class<?> entityClass, String name, String propertyName) {
 		super(entityClass);
 		setName(name);
 		setNameProperty(propertyName);
