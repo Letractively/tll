@@ -124,7 +124,7 @@ public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, 
 		setAccount(e);
 	}
 
-	public IPrimaryKey accountKey() {
+	public Object accountKey() {
 		try {
 			return getAccount().getPrimaryKey();
 		}

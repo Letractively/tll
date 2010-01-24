@@ -176,7 +176,7 @@ public class InterfaceOption extends InterfaceOptionBase {
 		this.parameters = parameters;
 	}
 
-	public InterfaceOptionParameterDefinition getParameter(IPrimaryKey pk) {
+	public InterfaceOptionParameterDefinition getParameter(Object pk) {
 		return findEntityInCollection(parameters, pk);
 	}
 

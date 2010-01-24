@@ -21,12 +21,12 @@ public class EntityUtil {
 	 * <p>
 	 * The root entity class is relevant when we have an ORM related inheritance
 	 * strategy applied to a family of like entities that extend from a common
-	 * abstract base entity class.
+	 * entity class.
 	 * <p>
-	 * E.g.: Asp, Isp, Merchant and Customer all extend from the Account abstract
-	 * entity. Therefore, the root entity is Account.
-	 * @param entityClass
-	 * @return The root entity.
+	 * E.g.: Asp, Isp, Merchant and Customer all extend from the Account entity.
+	 * Therefore, the root entity is Account.
+	 * @param entityClass An entity type to check
+	 * @return The root entity type of the given entity type.
 	 */
 	public static Class<?> getRootEntityClass(Class<?> entityClass) {
 		if(entityClass.getAnnotation(Extended.class) != null) {

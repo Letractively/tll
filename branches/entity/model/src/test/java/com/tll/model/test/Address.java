@@ -17,10 +17,10 @@ import com.tll.model.validate.PostalCode;
  */
 @PhoneNumbers(value = {
 	@PhoneNumber(phonePropertyName = "phone"), @PhoneNumber(phonePropertyName = "fax") })
-	@PostalCode()
-	@BusinessObject(businessKeys = @BusinessKeyDef(name = "Address 1 and Postal Code", properties = {
-		"address1", "postalCode" }))
-		public class Address extends EntityBase {
+@PostalCode()
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Address 1 and Postal Code", properties = {
+	"address1", "postalCode" }))
+public class Address extends EntityBase {
 
 	private static final long serialVersionUID = 69385466934038047L;
 

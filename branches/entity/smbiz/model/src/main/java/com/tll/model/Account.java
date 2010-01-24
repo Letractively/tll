@@ -66,6 +66,11 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 		super();
 	}
 
+	@Override
+	public final Class<? extends IEntity> rootEntityClass() {
+		return Account.class;
+	}
+
 	@NotEmpty
 	@Length(max = MAXLEN_NAME)
 	@Override
@@ -232,7 +237,7 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 		this.addresses = addresses;
 	}
 
-	public AccountAddress getAccountAddress(IPrimaryKey pk) {
+	public AccountAddress getAccountAddress(Object pk) {
 		return findEntityInCollection(this.addresses, pk);
 	}
 
@@ -260,7 +265,7 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 		return getCollectionSize(addresses);
 	}
 
-	public IPrimaryKey accountKey() {
+	public Object accountKey() {
 		return super.getPrimaryKey();
 	}
 }

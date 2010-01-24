@@ -13,7 +13,6 @@ import com.tll.model.OrderItem;
 import com.tll.model.OrderItemTrans;
 import com.tll.model.OrderItemTransOp;
 import com.tll.model.OrderTrans;
-import com.tll.model.GlobalLongPrimaryKey;
 
 /**
  * OrderItemTransDaoTestHandler
@@ -21,10 +20,7 @@ import com.tll.model.GlobalLongPrimaryKey;
  */
 public class OrderItemTransDaoTestHandler extends AbstractEntityDaoTestHandler<OrderItemTrans> {
 
-	private GlobalLongPrimaryKey<Currency> pkC;
-	private GlobalLongPrimaryKey<Account> pkA;
-	private GlobalLongPrimaryKey<Order> pkO;
-	private GlobalLongPrimaryKey<OrderTrans> pkOt;
+	private Object pkC, pkA, pkO, pkOt;
 
 	@Override
 	public Class<OrderItemTrans> entityClass() {
@@ -41,39 +37,39 @@ public class OrderItemTransDaoTestHandler extends AbstractEntityDaoTestHandler<O
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
-		pkC = new GlobalLongPrimaryKey<Currency>(currency);
+		pkC = currency.getPrimaryKey();
 
 		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
-		pkA = new GlobalLongPrimaryKey<Account>(account);
+		pkA = account.getPrimaryKey();
 
 		Order order = create(Order.class, false);
 		order.setCurrency(currency);
 		order.setAccount(account);
 		order.addOrderItem(create(OrderItem.class, true));
 		order = persist(order);
-		pkO = new GlobalLongPrimaryKey<Order>(order);
+		pkO = order.getPrimaryKey();
 
 		OrderTrans orderTrans = create(OrderTrans.class, true);
 		orderTrans.setOrder(order);
 		orderTrans.setPymntTrans(null);
 		orderTrans = persist(orderTrans);
-		pkOt = new GlobalLongPrimaryKey<OrderTrans>(orderTrans);
+		pkOt = orderTrans.getPrimaryKey();
 	}
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(pkOt);
-		purge(pkO);
-		purge(pkA);
-		purge(pkC);
+		purge(OrderTrans.class, pkOt);
+		purge(Order.class, pkO);
+		purge(Account.class, pkA);
+		purge(Currency.class, pkC);
 	}
 
 	@Override
 	public void assembleTestEntity(OrderItemTrans e) throws Exception {
-		e.setOrderItem(load(pkO).getOrderItems().iterator().next());
-		e.setOrderTrans(load(pkOt));
+		e.setOrderItem(load(Order.class, pkO).getOrderItems().iterator().next());
+		e.setOrderTrans(load(OrderTrans.class, pkOt));
 	}
 
 	@Override

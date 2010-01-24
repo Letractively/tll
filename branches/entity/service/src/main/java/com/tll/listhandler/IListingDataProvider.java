@@ -32,25 +32,25 @@ public interface IListingDataProvider {
 	List<SearchResult> find(Criteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException;
 
 	/**
-	 * Retrieves the ids of the entities that match the given criteria.
+	 * Retrieves the primary keys of the entities that match the given criteria.
 	 * @param criteria
 	 * @param sorting
-	 * @return list of ids of matching elements or an empty list if no matching
+	 * @return list of matching primary keys or an empty list if no matching
 	 *         results are found.
 	 * @throws InvalidCriteriaException
 	 */
-	List<Long> getIds(Criteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException;
+	List<?> getPrimaryKeys(Criteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException;
 
 	/**
-	 * Retrieves entities from a collection of ids.
+	 * Retrieves entities from a collection of primary keys.
 	 * @param <E> the entity type
-	 * @param entityClass The entity class the ids represent.
-	 * @param ids List of ids of the entities to retrieve.
+	 * @param entityClass The entity class the primary keys represent.
+	 * @param pks List of primary key of the entities to retrieve.
 	 * @param sorting the sorting directive May be null in which case the sorting
 	 *        of the results is "undefined".
 	 * @return list of matching entities.
 	 */
-	<E extends IEntity> List<E> getEntitiesFromIds(Class<E> entityClass, Collection<Long> ids, Sorting sorting);
+	<E extends IEntity> List<E> getEntitiesFromIds(Class<E> entityClass, Collection<?> pks, Sorting sorting);
 
 	/**
 	 * Returns a page of matching results for the given criteria.
@@ -62,5 +62,5 @@ public interface IListingDataProvider {
 	 * @throws InvalidCriteriaException
 	 */
 	IPageResult<SearchResult> getPage(Criteria<? extends IEntity> criteria, Sorting sorting, int offset, int pageSize)
-	throws InvalidCriteriaException;
+			throws InvalidCriteriaException;
 }

@@ -162,7 +162,7 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 		setAccount(e);
 	}
 
-	public IPrimaryKey accountKey() {
+	public Object accountKey() {
 		try {
 			return getAccount().getPrimaryKey();
 		}
@@ -172,7 +172,7 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 		}
 	}
 
-	public IPrimaryKey optionKey() {
+	public Object optionKey() {
 		try {
 			return getOption().getPrimaryKey();
 		}

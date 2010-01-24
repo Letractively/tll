@@ -16,10 +16,11 @@ public interface IEntityProvider {
 	/**
 	 * Get the entity of the given type.
 	 * @param <E>
+	 * @param entityType The entity type
 	 * @param key The primary key
 	 * @return The entity if present or <code>null</code> if not.
 	 */
-	<E extends IEntity> E getEntity(IPrimaryKey key);
+	<E extends IEntity> E getEntity(Class<E> entityType, Object key);
 
 	/**
 	 * Get all entities of the given type and all entities whose type derives from

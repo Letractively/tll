@@ -6,7 +6,7 @@ package com.tll.model;
  */
 public interface IUserRef {
 
-	IPrimaryKey getPrimaryKey();
+	Object getPrimaryKey();
 
 	String getUsername();
 

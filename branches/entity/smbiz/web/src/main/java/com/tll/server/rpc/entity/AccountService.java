@@ -39,7 +39,7 @@ public class AccountService extends AbstractPersistServiceImpl {
 		assert m != null;
 		final Account a = (Account) e;
 		if(a.getParent() != null) {
-			final IPrimaryKey pk = new GlobalLongPrimaryKey(Account.class, a.getParent().getId());
+			final Object new GlobalLongPrimaryKey(Account.class, a.getParent().getId());
 			final IAccountService svc = context.getEntityServiceFactory().instance(IAccountService.class);
 			final Account parent = svc.load(pk);
 			final Model mparent = new Model(SmbizEntityType.ACCOUNT);

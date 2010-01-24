@@ -91,8 +91,9 @@ public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopula
 	 * @param entityType
 	 * @return The never <code>null</code> entity set.
 	 */
-	protected final Set<? extends IEntity> getNonNullEntitySet(Class<? extends IEntity> entityType) {
-		return graph.getNonNullEntitySet(entityType);
+	@SuppressWarnings("unchecked")
+	protected final <E extends IEntity> Set<E> getNonNullEntitySet(Class<E> entityType) {
+		return (Set<E>) graph.getNonNullEntitySet(entityType);
 	}
 
 	/**

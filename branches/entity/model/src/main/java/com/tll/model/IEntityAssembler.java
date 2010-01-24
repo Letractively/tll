@@ -5,7 +5,6 @@
  */
 package com.tll.model;
 
-
 /**
  * IEntityAssembler - Entity assembly definition.
  * @author jpk

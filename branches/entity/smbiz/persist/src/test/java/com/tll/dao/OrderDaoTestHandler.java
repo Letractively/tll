@@ -12,7 +12,6 @@ import com.tll.model.Currency;
 import com.tll.model.Customer;
 import com.tll.model.Order;
 import com.tll.model.PaymentInfo;
-import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.Visitor;
 
 /**
@@ -21,12 +20,7 @@ import com.tll.model.Visitor;
  */
 public class OrderDaoTestHandler extends AbstractEntityDaoTestHandler<Order> {
 
-	private GlobalLongPrimaryKey<Currency> pkC;
-	private GlobalLongPrimaryKey<Address> pkAdr1, pkAdr2;
-	private GlobalLongPrimaryKey<PaymentInfo> pkPI;
-	private GlobalLongPrimaryKey<Account> pkA;
-	private GlobalLongPrimaryKey<Visitor> pkV;
-	private GlobalLongPrimaryKey<Customer> pkCust;
+	private Object pkC, pkAdr1, pkAdr2, pkPI, pkA, pkV, pkCust;
 
 	@Override
 	public Class<Order> entityClass() {
@@ -36,54 +30,54 @@ public class OrderDaoTestHandler extends AbstractEntityDaoTestHandler<Order> {
 	@Override
 	public void persistDependentEntities() {
 		final Currency c = createAndPersist(Currency.class, true);
-		pkC = new GlobalLongPrimaryKey<Currency>(c);
+		pkC = c.getPrimaryKey();
 
 		final Address adr1 = createAndPersist(Address.class, true);
 		final Address adr2 = createAndPersist(Address.class, true);
-		pkAdr1 = new GlobalLongPrimaryKey<Address>(adr1);
-		pkAdr2 = new GlobalLongPrimaryKey<Address>(adr2);
+		pkAdr1 = adr1.getPrimaryKey();
+		pkAdr2 = adr2.getPrimaryKey();
 
 		final PaymentInfo pi = createAndPersist(PaymentInfo.class, true);
-		pkPI = new GlobalLongPrimaryKey<PaymentInfo>(pi);
+		pkPI = pi.getPrimaryKey();
 
 		final Asp asp = create(Asp.class, true);
 		asp.setCurrency(c);
 		asp.setPaymentInfo(pi);
-		pkA = new GlobalLongPrimaryKey<Account>(asp);
+		pkA = asp.getPrimaryKey();
 
 		Visitor v = create(Visitor.class, true);
 		v.setAccount(asp);
 		v = persist(v);
-		pkV = new GlobalLongPrimaryKey<Visitor>(v);
+		pkV = v.getPrimaryKey();
 
 		Customer cust = create(Customer.class, true);
 		cust.setCurrency(c);
 		cust.setPaymentInfo(pi);
 		cust.setParent(asp);
 		cust = persist(cust);
-		pkCust = new GlobalLongPrimaryKey<Customer>(cust);
+		pkCust = cust.getPrimaryKey();
 	}
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(pkCust);
-		purge(pkV);
-		purge(pkA);
-		purge(pkPI);
-		purge(pkAdr2);
-		purge(pkAdr1);
-		purge(pkC);
+		purge(Customer.class, pkCust);
+		purge(Visitor.class, pkV);
+		purge(Account.class,pkA);
+		purge(PaymentInfo.class, pkPI);
+		purge(Address.class, pkAdr2);
+		purge(Address.class, pkAdr1);
+		purge(Currency.class, pkC);
 	}
 
 	@Override
 	public void assembleTestEntity(Order e) throws Exception {
-		e.setCurrency(load(pkC));
-		e.setBillToAddress(load(pkAdr1));
-		e.setShipToAddress(load(pkAdr2));
-		e.setPaymentInfo(load(pkPI));
-		e.setAccount(load(pkA));
-		e.setVisitor(load(pkV));
-		e.setCustomer(load(pkCust));
+		e.setCurrency(load(Currency.class, pkC));
+		e.setBillToAddress(load(Address.class, pkAdr1));
+		e.setShipToAddress(load(Address.class, pkAdr2));
+		e.setPaymentInfo(load(PaymentInfo.class, pkPI));
+		e.setAccount(load(Account.class, pkA));
+		e.setVisitor(load(Visitor.class, pkV));
+		e.setCustomer(load(Customer.class, pkCust));
 	}
 
 	@Override

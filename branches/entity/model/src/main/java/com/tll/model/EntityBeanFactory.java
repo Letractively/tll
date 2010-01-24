@@ -189,7 +189,7 @@ public final class EntityBeanFactory {
 		if(arr != null && arr.length > 0) {
 			for(final E e : arr) {
 				if(pkGenerator != null) {
-					e.setPrimaryKey(pkGenerator.generateIdentifier(e.entityClass()));
+					pkGenerator.generateIdentifier(e);
 				}
 				set.add(e);
 			}
@@ -209,7 +209,7 @@ public final class EntityBeanFactory {
 		final E e = getBean(entityClass);
 		if(e != null) {
 			if(pkGenerator != null) {
-				e.setPrimaryKey(pkGenerator.generateIdentifier(entityClass));
+				pkGenerator.generateIdentifier(e);
 			}
 			if(makeUnique) {
 				makeBusinessKeyUnique(e);

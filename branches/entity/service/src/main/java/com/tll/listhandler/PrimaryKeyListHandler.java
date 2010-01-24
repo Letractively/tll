@@ -14,12 +14,12 @@ import com.tll.model.IEntity;
  * @author jpk
  * @param <E>
  */
-public final class IdListHandler<E extends IEntity> extends SearchListHandler<E> {
+public final class PrimaryKeyListHandler<E extends IEntity> extends SearchListHandler<E> {
 
 	/**
-	 * The id list - list of entity ids matching the search criteria.
+	 * The id list - list of entity pks matching the search criteria.
 	 */
-	private List<Long> ids;
+	private List<?> pks;
 
 	/**
 	 * Constructor
@@ -28,7 +28,7 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 	 * @param criteria The criteria used to generate the underlying list
 	 * @param sorting
 	 */
-	IdListHandler(IListingDataProvider dataProvider, Criteria<E> criteria, Sorting sorting) {
+	PrimaryKeyListHandler(IListingDataProvider dataProvider, Criteria<E> criteria, Sorting sorting) {
 		super(dataProvider, criteria, sorting);
 	}
 
@@ -37,7 +37,7 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 	}
 
 	public int size() {
-		return (ids == null) ? 0 : ids.size();
+		return (pks == null) ? 0 : pks.size();
 	}
 
 	@Override
@@ -49,24 +49,24 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 		// if sorting differs, re-execute search
 		if(sort != null && !sort.equals(this.sorting) || (sort == null && this.sorting != null)) {
 			try {
-				ids = dataProvider.getIds(criteria, sort);
+				pks = dataProvider.getPrimaryKeys(criteria, sort);
 			}
 			catch(final InvalidCriteriaException e) {
 				throw new ListHandlerException(e.getMessage());
 			}
 		}
 
-		if(ids == null || ids.size() < 1) {
+		if(pks == null || pks.size() < 1) {
 			throw new EmptyListException("No list elements exist");
 		}
 
-		final int size = ids.size();
+		final int size = pks.size();
 		int ei = offset + pageSize;
 
 		// adjust the end index if it exceeds the bounds of the id list
 		if(ei > size - 1) ei = size - 1;
 
-		final List<Long> subids = ids.subList(offset, ei);
+		final List<?> subids = pks.subList(offset, ei);
 
 		final List<E> list = dataProvider.getEntitiesFromIds(criteria.getEntityClass(), subids, sort);
 		if(list == null || list.size() != subids.size()) {

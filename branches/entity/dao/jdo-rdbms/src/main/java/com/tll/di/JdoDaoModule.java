@@ -146,7 +146,7 @@ public class JdoDaoModule extends AbstractModule implements IConfigAware {
 		// NOTE: we set NO_SCOPE so we always go through Spring's framework
 		// as it manages the life-cycle of PersistenceManagers
 
-		// IPrimaryKeyGenerator
+		// ObjecObject
 		bind(IPrimaryKeyGenerator.class).to(JdoPrimaryKeyGenerator.class).in(Scopes.SINGLETON);
 
 		// IEntityDao

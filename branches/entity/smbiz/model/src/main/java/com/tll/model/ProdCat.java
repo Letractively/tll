@@ -79,7 +79,7 @@ public class ProdCat extends EntityBase implements IChildEntity<ProductInventory
 		setProduct(e);
 	}
 
-	public IPrimaryKey accountKey() {
+	public Object accountKey() {
 		try {
 			return getProduct().getAccount().getPrimaryKey();
 		}
@@ -89,7 +89,7 @@ public class ProdCat extends EntityBase implements IChildEntity<ProductInventory
 		}
 	}
 
-	public IPrimaryKey productId() {
+	public Object productId() {
 		try {
 			return getProduct().getPrimaryKey();
 		}
@@ -98,7 +98,7 @@ public class ProdCat extends EntityBase implements IChildEntity<ProductInventory
 		}
 	}
 
-	public IPrimaryKey categoryKey() {
+	public Object categoryKey() {
 		try {
 			return getCategory().getPrimaryKey();
 		}

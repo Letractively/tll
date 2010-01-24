@@ -29,6 +29,7 @@ public final class TestPersistenceUnitEntityAssembler implements IEntityAssemble
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	public <E extends IEntity> E assembleEntity(Class<E> entityType, IEntityProvider entityProvider) {
 		E e = null;
 		if(AccountAddress.class.equals(entityType)) {

@@ -93,7 +93,7 @@ public class ProductCategory extends NamedTimeStampEntity implements IChildEntit
 		setAccount(e);
 	}
 
-	public IPrimaryKey accountKey() {
+	public Object accountKey() {
 		try {
 			return getAccount().getPrimaryKey();
 		}

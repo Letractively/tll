@@ -217,7 +217,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 		this.transactions = transactions;
 	}
 
-	public OrderTrans getTransaction(IPrimaryKey pk) {
+	public OrderTrans getTransaction(Object pk) {
 		return findEntityInCollection(transactions, pk);
 	}
 
@@ -256,7 +256,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 		this.orderItems = orderItems;
 	}
 
-	public OrderItem getOrderItem(IPrimaryKey pk) {
+	public OrderItem getOrderItem(Object pk) {
 		return findEntityInCollection(orderItems, pk);
 	}
 
@@ -288,7 +288,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 		setAccount(e);
 	}
 
-	public IPrimaryKey accountKey() {
+	public Object accountKey() {
 		try {
 			return getAccount().getPrimaryKey();
 		}
@@ -298,7 +298,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 		}
 	}
 
-	public IPrimaryKey customerId() {
+	public Object customerId() {
 		try {
 			return getCustomer().getPrimaryKey();
 		}

@@ -209,9 +209,8 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphPopulator 
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void stubInterfaces() throws Exception {
-		final Set<Interface> intfs = (Set<Interface>) getNonNullEntitySet(Interface.class);
+		final Set<Interface> intfs = getNonNullEntitySet(Interface.class);
 		intfs.addAll(addAll(InterfaceSingle.class));
 		intfs.addAll(addAll(InterfaceSwitch.class));
 		intfs.addAll(addAll(InterfaceMulti.class));

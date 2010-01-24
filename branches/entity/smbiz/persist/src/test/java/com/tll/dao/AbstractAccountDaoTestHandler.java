@@ -12,7 +12,6 @@ import com.tll.model.Asp;
 import com.tll.model.Currency;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.PaymentInfo;
-import com.tll.model.GlobalLongPrimaryKey;
 
 /**
  * AbstractAccountDaoTestHandler
@@ -21,37 +20,35 @@ import com.tll.model.GlobalLongPrimaryKey;
  */
 public abstract class AbstractAccountDaoTestHandler<A extends Account> extends AbstractEntityDaoTestHandler<A> {
 
-	GlobalLongPrimaryKey<PaymentInfo> pkPaymentInfo;
-	GlobalLongPrimaryKey<Currency> pkCurrency;
-	GlobalLongPrimaryKey<Asp> pkAccountParent;
+	Object pkPaymentInfo, pkCurrency, pkAccountParent;
 
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
 		final PaymentInfo paymentInfo = createAndPersist(PaymentInfo.class, true);
-		pkCurrency = new GlobalLongPrimaryKey<Currency>(currency);
+		pkCurrency = currency.getPrimaryKey();
 
 		Asp parent = create(Asp.class, true);
 		parent.setParent(null); // eliminate pointer chasing
 		parent.setCurrency(currency);
 		parent.setPaymentInfo(paymentInfo);
 		parent = persist(parent);
-		pkAccountParent = new GlobalLongPrimaryKey<Asp>(parent);
-		pkPaymentInfo = new GlobalLongPrimaryKey<PaymentInfo>(paymentInfo);
+		pkAccountParent = parent.getPrimaryKey();
+		pkPaymentInfo = paymentInfo.getPrimaryKey();
 	}
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(pkAccountParent); pkAccountParent = null;
-		purge(pkPaymentInfo); pkPaymentInfo = null;
-		purge(pkCurrency); pkCurrency = null;
+		purge(Account.class, pkAccountParent); pkAccountParent = null;
+		purge(PaymentInfo.class, pkPaymentInfo); pkPaymentInfo = null;
+		purge(Currency.class, pkCurrency); pkCurrency = null;
 	}
 
 	@Override
 	public void assembleTestEntity(A e) throws Exception {
-		e.setCurrency(load(pkCurrency));
-		e.setPaymentInfo(load(pkPaymentInfo));
-		e.setParent(load(pkAccountParent));
+		e.setCurrency(load(Currency.class, pkCurrency));
+		e.setPaymentInfo(load(PaymentInfo.class, pkPaymentInfo));
+		e.setParent(load(Account.class, pkAccountParent));
 
 		final Address address1 = create(Address.class, true);
 		final Address address2 = create(Address.class, true);

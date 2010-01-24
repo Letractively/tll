@@ -15,22 +15,27 @@ public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvi
 	static final String PK_FIELDNAME = "id";
 
 	/**
-	 * @return The <code>Class</code> of this entity. This method is preferred to
+	 * @return The class of this entity. This method is preferred to
 	 *         {@link Object#getClass()} method as the DAO layer may employ proxy
 	 *         entity objects.
 	 */
 	Class<? extends IEntity> entityClass();
+	
+	/**
+	 * @return The root entity class of this entity.
+	 */
+	Class<? extends IEntity> rootEntityClass();
 
 	/**
 	 * @return The primary key
 	 */
-	IPrimaryKey getPrimaryKey();
+	Object getPrimaryKey();
 	
 	/**
 	 * Sets the primary key.
 	 * @param pk The primary key to set
 	 */
-	void setPrimaryKey(IPrimaryKey pk);
+	void setPrimaryKey(Object pk);
 	
 	/**
 	 * True if the identifier for this object was assigned at creation.<br>
@@ -48,5 +53,5 @@ public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvi
 	 * id is generated. It will set the id and set the generated flag to true.
 	 * @param pk the primary key to set
 	 */
-	//void setGenerated(IPrimaryKey pk);
+	//void setGenerated(Object pk);
 }

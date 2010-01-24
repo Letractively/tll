@@ -18,7 +18,6 @@ import com.tll.listhandler.ListHandlerFactory;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.model.Account;
 import com.tll.model.AccountHistory;
-import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.service.entity.account.IAccountService;
 
 /**
@@ -50,7 +49,7 @@ public abstract class AccountServiceTest extends AccountRelatedServiceTest {
 
 			startNewTransaction();
 			final Criteria<AccountHistory> criteria = new Criteria<AccountHistory>(AccountHistory.class);
-			criteria.getPrimaryGroup().addCriterion("account", new GlobalLongPrimaryKey<Account>(Account.class, account.getId()));
+			criteria.getPrimaryGroup().addCriterion("account", Account.class, account.getPrimaryKey());
 			final List<SearchResult> list = AbstractDbAwareTest.getEntitiesFromDb(getDao(), criteria);
 			endTransaction();
 			assert list != null && list.size() == 1;
@@ -74,7 +73,7 @@ public abstract class AccountServiceTest extends AccountRelatedServiceTest {
 		final IListingDataProvider dataProvider = accountService.getAccountHistoryDataProvider();
 
 		final Criteria<AccountHistory> criteria = new Criteria<AccountHistory>(AccountHistory.class);
-		criteria.getPrimaryGroup().addCriterion("account", new GlobalLongPrimaryKey<Account>(Account.class, account.getId()));
+		criteria.getPrimaryGroup().addCriterion("account", Account.class, account.getPrimaryKey());
 
 		final Sorting sorting = new Sorting("transDate");
 

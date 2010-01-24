@@ -10,7 +10,6 @@ import com.tll.model.Asp;
 import com.tll.model.Currency;
 import com.tll.model.Order;
 import com.tll.model.OrderItem;
-import com.tll.model.GlobalLongPrimaryKey;
 
 /**
  * OrderItemDaoTestHandler
@@ -18,9 +17,7 @@ import com.tll.model.GlobalLongPrimaryKey;
  */
 public class OrderItemDaoTestHandler extends AbstractEntityDaoTestHandler<OrderItem> {
 
-	private GlobalLongPrimaryKey<Currency> pkC;
-	private GlobalLongPrimaryKey<Account> pkA;
-	private GlobalLongPrimaryKey<Order> pkO;
+	private Object pkC, pkA, pkO;
 
 	@Override
 	public Class<OrderItem> entityClass() {
@@ -30,30 +27,30 @@ public class OrderItemDaoTestHandler extends AbstractEntityDaoTestHandler<OrderI
 	@Override
 	public void persistDependentEntities() {
 		final Currency c = createAndPersist(Currency.class, true);
-		pkC = new GlobalLongPrimaryKey<Currency>(c);
+		pkC = c.getPrimaryKey();
 
 		Asp asp = create(Asp.class, true);
 		asp.setCurrency(c);
 		asp = persist(asp);
-		pkA = new GlobalLongPrimaryKey<Account>(asp);
+		pkA = asp.getPrimaryKey();
 
 		Order o = create(Order.class, false);
 		o.setCurrency(c);
 		o.setAccount(asp);
 		o = persist(o);
-		pkO = new GlobalLongPrimaryKey<Order>(o);
+		pkO = o.getPrimaryKey();
 	}
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(pkO);
-		purge(pkA);
-		purge(pkC);
+		purge(Order.class, pkO);
+		purge(Account.class, pkA);
+		purge(Currency.class, pkC);
 	}
 
 	@Override
 	public void assembleTestEntity(OrderItem e) throws Exception {
-		e.setOrder(load(pkO));
+		e.setOrder(load(Order.class, pkO));
 	}
 
 	@Override

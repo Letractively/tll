@@ -113,7 +113,7 @@ public class AccountHistory extends TimeStampEntity implements IChildEntity<Acco
 		setAccount(e);
 	}
 
-	public IPrimaryKey accountKey() {
+	public Object accountKey() {
 		try {
 			return getAccount().getPrimaryKey();
 		}

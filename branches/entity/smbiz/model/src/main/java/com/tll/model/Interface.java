@@ -56,6 +56,11 @@ public abstract class Interface extends NamedTimeStampEntity {
 
 	protected Set<InterfaceOption> options = new LinkedHashSet<InterfaceOption>();
 
+	@Override
+	public final Class<? extends IEntity> rootEntityClass() {
+		return Interface.class;
+	}
+
 	@NotEmpty
 	@Length(max = MAXLEN_NAME)
 	@Override
@@ -231,7 +236,7 @@ public abstract class Interface extends NamedTimeStampEntity {
 		this.options = options;
 	}
 
-	public InterfaceOption getOption(IPrimaryKey pk) {
+	public InterfaceOption getOption(Object pk) {
 		return findEntityInCollection(options, pk);
 	}
 

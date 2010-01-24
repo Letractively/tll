@@ -65,9 +65,8 @@ public final class EntityFactory {
 		if(generate) {
 			if(keyGenerator == null)
 				throw new IllegalStateException("Unable to generate entity primary key - no primary key generator set");
-			IPrimaryKey pk = keyGenerator.generateIdentifier(entityClass);
-			if(log.isDebugEnabled()) log.debug("Created entity PK: " + pk);
-			entity.setPrimaryKey(pk);
+			keyGenerator.generateIdentifier(entity);
+			if(log.isDebugEnabled()) log.debug("Created entity PK: " + entity.getPrimaryKey());
 		}
 
 		return entity;

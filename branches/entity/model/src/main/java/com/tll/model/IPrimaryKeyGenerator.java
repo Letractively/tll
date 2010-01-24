@@ -1,17 +1,17 @@
 package com.tll.model;
 
 /**
- * IPrimaryKeyGenerator - Contract for entity primary key generation
+ * ObjectGenerator - Contract for entity primary key generation
  * <em>independent</em> of an entity.
+ * @param <K> The primary key type
  * @author jpk
- * @param <I> The primay key impl type
  */
-public interface IPrimaryKeyGenerator<I extends IPrimaryKey> {
+public interface IPrimaryKeyGenerator<K> {
 
 	/**
-	 * Creates a new primary key for the given entity instance.
-	 * @param entityType The entity type for which to generate a primary key
-	 * @return A new unique primary key
+	 * Creates new primary key.
+	 * @param entity The required entity instance
+	 * @return the generated primary key
 	 */
-	I generateIdentifier(Class<?> entityType);
+	K generateIdentifier(IEntity entity);
 }

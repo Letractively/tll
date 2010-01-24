@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.tll.model.IEntity;
-import com.tll.model.IPrimaryKey;
 import com.tll.model.NameKey;
 import com.tll.model.bk.IBusinessKey;
 import com.tll.util.Comparator;
@@ -113,12 +112,13 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	}
 
 	/**
-	 * Adds a Primery Key criterion to this group.
-	 * @param key The primary key
+	 * Adds a primary key criterion.
+	 * @param entityType the entity type
+	 * @param pk the primary key
 	 * @return this for method chaining
 	 */
-	public CriterionGroup addCriterion(IPrimaryKey key) {
-		addCriterion(IEntity.PK_FIELDNAME, key, Comparator.EQUALS, true);
+	public CriterionGroup addCriterion(Class<? extends IEntity> entityType, Object pk) {
+		addCriterion(IEntity.PK_FIELDNAME, pk, Comparator.EQUALS, true);
 		return this;
 	}
 
@@ -141,19 +141,22 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	 * @param isCaseSensitive
 	 * @return this for method chaining
 	 */
-	public CriterionGroup addCriterion(NameKey nameKey, boolean isCaseSensitive) {
+	public CriterionGroup addCriterion(NameKey<?> nameKey, boolean isCaseSensitive) {
 		return addCriterion(nameKey.getNameProperty(), nameKey.getName(), Comparator.EQUALS, isCaseSensitive);
 	}
 
 	/**
 	 * Adds a Foreign Key criterion to this group.
 	 * @param relatedPropertyName The related property name
-	 * @param foreignKey The foreign key id
+	 * @param relatedEntityType the related entity type
+	 * @param foreignKey The foreign key. If <code>null</code>, a datastore-wise
+	 *        NULL identifier will be specified in the created criterion.
 	 * @return this for method chaining
 	 */
-	public CriterionGroup addCriterion(String relatedPropertyName, IPrimaryKey foreignKey) {
+	public CriterionGroup addCriterion(String relatedPropertyName, Class<? extends IEntity> relatedEntityType,
+			Object foreignKey) {
 		final String fkname = relatedPropertyName + "." + IEntity.PK_FIELDNAME;
-		if(!foreignKey.isSet()) {
+		if(foreignKey == null) {
 			return addCriterion(fkname, DBType.NULL, Comparator.IS, false);
 		}
 		return addCriterion(fkname, foreignKey, Comparator.EQUALS, false);

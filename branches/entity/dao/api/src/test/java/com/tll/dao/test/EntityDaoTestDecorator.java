@@ -15,7 +15,6 @@ import com.tll.dao.NonUniqueResultException;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
 import com.tll.model.IEntity;
-import com.tll.model.IPrimaryKey;
 import com.tll.model.NameKey;
 import com.tll.model.bk.IBusinessKey;
 
@@ -54,8 +53,8 @@ public class EntityDaoTestDecorator<T extends IEntityDao> implements IEntityDao 
 	}
 
 	@Override
-	public <E extends IEntity> List<E> findByIds(Class<E> entityType, Collection<Long> ids, Sorting sorting) {
-		return rawDao.findByIds(entityType, ids, sorting);
+	public <E extends IEntity> List<E> findByPrimaryKeys(Class<E> entityType, Collection<?> ids, Sorting sorting) {
+		return rawDao.findByPrimaryKeys(entityType, ids, sorting);
 	}
 
 	@Override
@@ -71,9 +70,9 @@ public class EntityDaoTestDecorator<T extends IEntityDao> implements IEntityDao 
 	}
 
 	@Override
-	public <E extends IEntity> List<Long> getIds(Criteria<E> criteria, Sorting sorting)
+	public <E extends IEntity> List<?> getPrimaryKeys(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
-		return rawDao.getIds(criteria, sorting);
+		return rawDao.getPrimaryKeys(criteria, sorting);
 	}
 
 	@Override
@@ -88,14 +87,14 @@ public class EntityDaoTestDecorator<T extends IEntityDao> implements IEntityDao 
 	}
 
 	@Override
-	public IEntity load(NameKey nameKey) throws EntityNotFoundException,
+	public <E extends IEntity> E load(NameKey<E> nameKey) throws EntityNotFoundException,
 	NonUniqueResultException, DataAccessException {
 		return rawDao.load(nameKey);
 	}
 
 	@Override
-	public IEntity load(IPrimaryKey key) throws EntityNotFoundException, DataAccessException {
-		return rawDao.load(key);
+	public <E extends IEntity> E load(Class<E> entityType, Object pk) throws EntityNotFoundException, DataAccessException {
+		return rawDao.load(entityType, pk);
 	}
 
 	@Override
@@ -119,8 +118,8 @@ public class EntityDaoTestDecorator<T extends IEntityDao> implements IEntityDao 
 	}
 
 	@Override
-	public void purge(IPrimaryKey key) throws EntityNotFoundException, DataAccessException {
-		rawDao.purge(key);
+	public <E extends IEntity> void purge(Class<E> entityType, Object pk) throws EntityNotFoundException, DataAccessException {
+		rawDao.purge(entityType, pk);
 	}
 
 	@Override

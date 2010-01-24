@@ -8,8 +8,8 @@ import com.tll.model.IEntity;
 /**
  * Criteria - Holds fairly versatile criterion for querying entity data through
  * the dao api.
+ * @param <E> entity type
  * @author jpk
- * @param <E> the entity type
  */
 public final class Criteria<E extends IEntity> {
 

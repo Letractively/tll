@@ -11,14 +11,15 @@ import com.tll.IMarshalable;
 /**
  * IKey - Abstraction serving as an identifier to a particular instance of a
  * particular type.
+ * @param <T> the key type
  * @author jpk
  */
-public interface IKey extends IDescriptorProvider, IMarshalable, Serializable {
+public interface IKey<T> extends IDescriptorProvider, IMarshalable, Serializable {
 
 	/**
 	 * @return The type of object to which this key refers.
 	 */
-	Class<?> getType();
+	Class<T> getType();
 
 	/**
 	 * @return <code>true</code> if the defining key properties have been set.

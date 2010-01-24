@@ -192,7 +192,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		this.username = username;
 	}
 
-	public OrderItemTrans getOrderItemTrans(IPrimaryKey pk) {
+	public OrderItemTrans getOrderItemTrans(Object pk) {
 		return findEntityInCollection(itemTransactions, pk);
 	}
 
@@ -220,7 +220,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		setOrder(e);
 	}
 
-	public IPrimaryKey accountKey() {
+	public Object accountKey() {
 		try {
 			return getOrder().getAccount().getPrimaryKey();
 		}
@@ -230,7 +230,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		}
 	}
 
-	public IPrimaryKey orderId() {
+	public Object orderId() {
 		try {
 			return getOrder().getPrimaryKey();
 		}

@@ -96,7 +96,7 @@ public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTran
 		setOrderTrans(e);
 	}
 
-	public IPrimaryKey accountKey() {
+	public Object accountKey() {
 		try {
 			return getOrderItem().getOrder().getAccount().getPrimaryKey();
 		}
@@ -106,7 +106,7 @@ public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTran
 		}
 	}
 
-	public IPrimaryKey orderItemId() {
+	public Object orderItemId() {
 		try {
 			return getOrderItem().getPrimaryKey();
 		}
@@ -115,7 +115,7 @@ public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTran
 		}
 	}
 
-	public IPrimaryKey orderTransId() {
+	public Object orderTransId() {
 		try {
 			return getOrderTrans().getPrimaryKey();
 		}

@@ -182,7 +182,7 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 			sorting = new Sorting("dateCreated");
 			// find an isp..
 			final Isp anIsp = getEntityDao().loadAll(Isp.class).get(0);
-			final QueryParam qp = new QueryParam("ispId", PropertyType.STRING, anIsp.getId());
+			final QueryParam qp = new QueryParam("ispId", PropertyType.STRING, anIsp.getPrimaryKey());
 			list.add(qp);
 			break;
 		}
@@ -191,7 +191,7 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 
 			// get the asp (to serve as the parent account)..
 			final Asp asp = getEntityDao().loadAll(Asp.class).get(0);
-			final QueryParam qp = new QueryParam("accountId", PropertyType.STRING, asp.getId());
+			final QueryParam qp = new QueryParam("accountId", PropertyType.STRING, asp.getPrimaryKey());
 			list.add(qp);
 			break;
 		}

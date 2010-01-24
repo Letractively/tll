@@ -12,12 +12,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.tll.model.EntityBase;
-import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.IEntity;
-import com.tll.model.bk.BusinessKeyFactory;
-import com.tll.model.bk.BusinessKeyUtil;
-import com.tll.model.bk.IBusinessKey;
-import com.tll.model.bk.NonUniqueBusinessKeyException;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 
@@ -87,7 +82,7 @@ public class BusinessKeyFactoryTest {
 
 	private TestEntity stubTestEntity() {
 		final TestEntity e = new TestEntity();
-		e.setPrimaryKey(new GlobalLongPrimaryKey(e.entityClass(), Long.valueOf(1)));
+		e.setPrimaryKey(Long.valueOf(1));
 		e.setName("name");
 		e.setCode(1);
 		e.setAuthNum("authNum");

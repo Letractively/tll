@@ -9,7 +9,6 @@ import com.tll.criteria.Criteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.model.IEntity;
-import com.tll.model.IPrimaryKey;
 import com.tll.model.NameKey;
 import com.tll.model.bk.IBusinessKey;
 
@@ -24,12 +23,14 @@ public interface IEntityDao extends IDao {
 
 	/**
 	 * Loads a single entity specified by a primary key.
-	 * @param key the primary key
+	 * @param <E> entity type
+	 * @param entityType the entity type class
+	 * @param pk the primary key
 	 * @return the entity
 	 * @throws EntityNotFoundException
 	 * @throws DataAccessException
 	 */
-	IEntity load(IPrimaryKey key) throws EntityNotFoundException, DataAccessException;
+	<E extends IEntity> E load(Class<E> entityType, Object pk) throws EntityNotFoundException, DataAccessException;
 
 	/**
 	 * Loads a single entity specified by a business key.
@@ -43,6 +44,7 @@ public interface IEntityDao extends IDao {
 
 	/**
 	 * Loads the named entity by a given name.
+	 * @param <E> entity type
 	 * @param nameKey the name key
 	 * @return the never <code>null</code> named entity (unless an exception is
 	 *         thrown).
@@ -51,7 +53,7 @@ public interface IEntityDao extends IDao {
 	 *         given name key.
 	 * @throws DataAccessException
 	 */
-	IEntity load(NameKey nameKey) throws EntityNotFoundException, NonUniqueResultException,
+	<E extends IEntity> E load(NameKey<E> nameKey) throws EntityNotFoundException, NonUniqueResultException,
 	DataAccessException;
 
 	/**
@@ -102,11 +104,13 @@ public interface IEntityDao extends IDao {
 
 	/**
 	 * Physical deletion of an entity identified by the given primary key.
-	 * @param key The primary key uniquely identifying the entity to be deleted
+	 * @param <E> entity type 
+	 * @param entityType entity class
+	 * @param pk The primary key uniquely identifying the entity to be deleted
 	 * @throws EntityNotFoundException
 	 * @throws DataAccessException
 	 */
-	void purge(IPrimaryKey key) throws EntityNotFoundException, DataAccessException;
+	<E extends IEntity> void purge(Class<E> entityType, Object pk) throws EntityNotFoundException, DataAccessException;
 
 	/**
 	 * Physical deletion of all entities specified in the input. Use this method
@@ -167,12 +171,12 @@ public interface IEntityDao extends IDao {
 	 * return an empty list if no entities match the criteria.
 	 * @param <E> The entity type
 	 * @param entityType The entity class type
-	 * @param ids the list id entity ids
+	 * @param ids list of primary keys
 	 * @param sorting
 	 * @return List of entities or empty list if none found
 	 * @throws DataAccessException
 	 */
-	<E extends IEntity> List<E> findByIds(Class<E> entityType, Collection<Long> ids, Sorting sorting)
+	<E extends IEntity> List<E> findByPrimaryKeys(Class<E> entityType, Collection<?> ids, Sorting sorting)
 	throws DataAccessException;
 
 	/**
@@ -181,13 +185,13 @@ public interface IEntityDao extends IDao {
 	 * @param <E> The entity type
 	 * @param criteria The criteria. May NOT be <code>null</code>.
 	 * @param sorting The sorting directive. May be <code>null</code>.
-	 * @return List of ids of matching entities, empty list if no matching
+	 * @return List of primary keys of matching entities, empty list if no matching
 	 *         entities are found.
 	 * @throws InvalidCriteriaException When the criteria is <code>null</code> or
 	 *         found to be invalid.
 	 * @throws DataAccessException
 	 */
-	<E extends IEntity> List<Long> getIds(Criteria<E> criteria, Sorting sorting)
+	<E extends IEntity> List<?> getPrimaryKeys(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException,
 	DataAccessException;
 

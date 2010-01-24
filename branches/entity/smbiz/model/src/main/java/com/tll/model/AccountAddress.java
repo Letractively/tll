@@ -92,7 +92,7 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 		setAccount(e);
 	}
 
-	public IPrimaryKey accountKey() {
+	public Object accountKey() {
 		try {
 			return getAccount().getPrimaryKey();
 		}
@@ -102,7 +102,7 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 		}
 	}
 
-	public IPrimaryKey addressId() {
+	public Object addressId() {
 		try {
 			return getAddress().getPrimaryKey();
 		}

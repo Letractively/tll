@@ -12,7 +12,7 @@ import com.tll.key.IKey;
  * @param <E> The entity type (not necessarily an IEntity)
  * @author jpk
  */
-public interface IBusinessKey<E> extends IBusinessKeyDefinition<E>, IKey {
+public interface IBusinessKey<E> extends IBusinessKeyDefinition<E>, IKey<E> {
 
 	/**
 	 * Get the property value given a property name.

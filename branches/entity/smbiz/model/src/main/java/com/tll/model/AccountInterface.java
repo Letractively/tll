@@ -24,7 +24,7 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 
 	private static final long serialVersionUID = 7903409644943150791L;
 
-	private IPrimaryKey accountKey, interfaceKey;
+	private Object accountKey, interfaceKey;
 
 	private String name, code, description;
 
@@ -46,19 +46,19 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 		super();
 	}
 
-	public IPrimaryKey getAccountKey() {
+	public Object getAccountKey() {
 		return accountKey;
 	}
 
-	public void setAccountKey(IPrimaryKey accountKey) {
+	public void setAccountKey(Object accountKey) {
 		this.accountKey = accountKey;
 	}
 
-	public IPrimaryKey getInterfaceKey() {
+	public Object getInterfaceKey() {
 		return interfaceKey;
 	}
 
-	public void setInterfaceKey(IPrimaryKey interfaceKey) {
+	public void setInterfaceKey(Object interfaceKey) {
 		this.interfaceKey = interfaceKey;
 	}
 
@@ -166,7 +166,7 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 		this.options = options;
 	}
 
-	public AccountInterfaceOption getOption(IPrimaryKey pk) {
+	public AccountInterfaceOption getOption(Object pk) {
 		return findEntityInCollection(options, pk);
 	}
 
@@ -195,7 +195,7 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 	}
 
 	@Override
-	public IPrimaryKey accountKey() {
+	public Object accountKey() {
 		return accountKey;
 	}
 }

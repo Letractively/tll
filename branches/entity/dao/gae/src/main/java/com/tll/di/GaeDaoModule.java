@@ -141,7 +141,7 @@ public class GaeDaoModule extends AbstractModule implements IConfigAware {
 		// IEntityDao
 		bind(IEntityDao.class).to(GaeEntityDao.class).asEagerSingleton();
 
-		// IPrimaryKeyGenerator (depends on gae dao impl!)
+		// ObjectGenerator (depends on gae dao impl!)
 		bind(IPrimaryKeyGenerator.class).to(GaePrimaryKeyGenerator.class).asEagerSingleton();
 
 		final boolean dst =

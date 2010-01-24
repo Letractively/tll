@@ -11,7 +11,6 @@ import com.tll.model.Asp;
 import com.tll.model.Currency;
 import com.tll.model.Customer;
 import com.tll.model.CustomerAccount;
-import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.Visitor;
 
 /**
@@ -20,10 +19,7 @@ import com.tll.model.Visitor;
  */
 public class CustomerAccountDaoTestHandler extends AbstractEntityDaoTestHandler<CustomerAccount> {
 
-	GlobalLongPrimaryKey<Currency> pkCurrency;
-	GlobalLongPrimaryKey<Account> pkAccount;
-	GlobalLongPrimaryKey<Customer> pkCustomer;
-	GlobalLongPrimaryKey<Visitor> pkVisitor;
+	Object pkCurrency, pkAccount, pkCustomer, pkVisitor;
 
 	@Override
 	public Class<CustomerAccount> entityClass() {
@@ -45,34 +41,34 @@ public class CustomerAccountDaoTestHandler extends AbstractEntityDaoTestHandler<
 		account.setCurrency(currency);
 		account.setParent(null);
 		account = persist(account);
-		pkAccount = new GlobalLongPrimaryKey<Account>(account);
-		pkCurrency = new GlobalLongPrimaryKey<Currency>(account.getCurrency());
+		pkAccount = account.getPrimaryKey();
+		pkCurrency = currency.getPrimaryKey();
 
 		Customer customer = create(Customer.class, true);
 		customer.setParent(null);
 		customer.setCurrency(currency);
 		customer = persist(customer);
-		pkCustomer = new GlobalLongPrimaryKey<Customer>(customer);
+		pkCustomer = customer.getPrimaryKey();
 
 		Visitor visitor = create(Visitor.class, true);
 		visitor.setAccount(account);
 		visitor = persist(visitor);
-		pkVisitor = new GlobalLongPrimaryKey<Visitor>(visitor);
+		pkVisitor = visitor.getPrimaryKey();
 	}
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(pkVisitor);
-		purge(pkCustomer);
-		purge(pkAccount);
-		purge(pkCurrency);
+		purge(Visitor.class, pkVisitor);
+		purge(Customer.class, pkCustomer);
+		purge(Account.class, pkAccount);
+		purge(Currency.class, pkCurrency);
 	}
 
 	@Override
 	public void assembleTestEntity(CustomerAccount e) throws Exception {
-		e.setCustomer(load(pkCustomer));
-		e.setAccount(load(pkAccount));
-		e.setInitialVisitorRecord(load(pkVisitor));
+		e.setCustomer(load(Customer.class, pkCustomer));
+		e.setAccount(load(Account.class, pkAccount));
+		e.setInitialVisitorRecord(load(Visitor.class, pkVisitor));
 	}
 
 	@Override

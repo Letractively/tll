@@ -15,7 +15,6 @@ import com.tll.criteria.Criteria;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
-import com.tll.model.IPrimaryKey;
 
 /**
  * AbstractEntityDaoTestHandler
@@ -82,14 +81,15 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 
 	/**
 	 * Loads an entity by primary key from the datastore.
-	 * @param key
+	 * @param entityType entity type
+	 * @param pk primary key
 	 * @return the loaded entity
 	 */
-	protected final IEntity load(IPrimaryKey key) {
+	protected final <E1 extends IEntity> E1 load(Class<E1> entityType, Object pk) {
 		try {
 			maybeStartTrans();
-			log.debug("Loading entity by primary key: " + key);
-			return entityDao.load(key);
+			log.debug("Loading entity by primary key: " + pk);
+			return entityDao.load(entityType, pk);
 		}
 		finally {
 			endAnyTrans();
@@ -133,11 +133,11 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	 * Purges the given entity from the datastore by primary key.
 	 * @param key
 	 */
-	protected final void purge(IPrimaryKey key) {
+	protected final void purge(Class<? extends IEntity> entityType, Object key) {
 		try {
 			maybeStartTrans();
 			log.debug("Purging entity by primary key: " + key);
-			entityDao.purge(key);
+			entityDao.purge(entityType, key);
 		}
 		finally {
 			endAnyTrans();

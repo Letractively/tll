@@ -10,7 +10,6 @@ import org.testng.Assert;
 import com.tll.criteria.Criteria;
 import com.tll.dao.AbstractEntityDaoTestHandler;
 import com.tll.model.EntityBeanFactory;
-import com.tll.model.IPrimaryKey;
 import com.tll.model.test.Account;
 import com.tll.model.test.AccountAddress;
 import com.tll.model.test.Address;
@@ -25,9 +24,7 @@ import com.tll.util.DateRange;
 public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Account> {
 
 	// dependent entities
-	IPrimaryKey pkNestedEntity;
-	IPrimaryKey pkCurrency;
-	IPrimaryKey pkAccountParent;
+	Object pkNestedEntity, pkCurrency, pkAccountParent;
 
 	@Override
 	public Class<Account> entityClass() {
@@ -60,16 +57,16 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(pkAccountParent); pkAccountParent = null;
-		purge(pkNestedEntity); pkNestedEntity = null;
-		purge(pkCurrency); pkCurrency = null;
+		purge(Account.class, pkAccountParent); pkAccountParent = null;
+		purge(NestedEntity.class, pkNestedEntity); pkNestedEntity = null;
+		purge(Currency.class, pkCurrency); pkCurrency = null;
 	}
 
 	@Override
 	public void assembleTestEntity(Account e) throws Exception {
-		e.setCurrency((Currency)load(pkCurrency));
-		e.setNestedEntity((NestedEntity)load(pkNestedEntity));
-		e.setParent((Account)load(pkAccountParent));
+		e.setCurrency(load(Currency.class, pkCurrency));
+		e.setNestedEntity(load(NestedEntity.class, pkNestedEntity));
+		e.setParent(load(Account.class, pkAccountParent));
 
 		final Address address1 = create(Address.class, true);
 		final Address address2 = create(Address.class, true);

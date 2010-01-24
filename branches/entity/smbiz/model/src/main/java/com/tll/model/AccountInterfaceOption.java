@@ -193,7 +193,7 @@ public class AccountInterfaceOption extends InterfaceOptionBase {
 		this.parameters = parameters;
 	}
 
-	public AccountInterfaceOptionParameter getParameter(IPrimaryKey pk) {
+	public AccountInterfaceOptionParameter getParameter(Object pk) {
 		return findEntityInCollection(parameters, pk);
 	}
 

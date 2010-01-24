@@ -87,7 +87,7 @@ public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Accou
 		setAccount(e);
 	}
 
-	public IPrimaryKey accountKey() {
+	public Object accountKey() {
 		try {
 			return getAccount().getPrimaryKey();
 		}

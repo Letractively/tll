@@ -148,7 +148,7 @@ IUserRef {
 		this.authorities = authorities;
 	}
 
-	public Authority getAuthority(IPrimaryKey pk) {
+	public Authority getAuthority(Object pk) {
 		return findEntityInCollection(authorities, pk);
 	}
 
@@ -213,7 +213,7 @@ IUserRef {
 		setAccount(e);
 	}
 
-	public IPrimaryKey accountKey() {
+	public Object accountKey() {
 		try {
 			return getAccount().getPrimaryKey();
 		}

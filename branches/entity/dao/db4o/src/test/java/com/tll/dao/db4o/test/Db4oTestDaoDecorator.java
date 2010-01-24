@@ -19,7 +19,6 @@ import com.tll.dao.Sorting;
 import com.tll.dao.db4o.Db4oEntityDao;
 import com.tll.dao.test.EntityDaoTestDecorator;
 import com.tll.model.IEntity;
-import com.tll.model.IPrimaryKey;
 import com.tll.model.NameKey;
 import com.tll.model.bk.IBusinessKey;
 
@@ -60,8 +59,8 @@ public class Db4oTestDaoDecorator extends EntityDaoTestDecorator<Db4oEntityDao> 
 	}
 
 	@Override
-	public <E extends IEntity> List<E> findByIds(Class<E> entityType, Collection<Long> ids, Sorting sorting) {
-		final List<E> r = super.findByIds(entityType, ids, sorting);
+	public <E extends IEntity> List<E> findByPrimaryKeys(Class<E> entityType, Collection<?> ids, Sorting sorting) {
+		final List<E> r = super.findByPrimaryKeys(entityType, ids, sorting);
 		hook();
 		return r;
 	}
@@ -83,9 +82,9 @@ public class Db4oTestDaoDecorator extends EntityDaoTestDecorator<Db4oEntityDao> 
 	}
 
 	@Override
-	public <E extends IEntity> List<Long> getIds(Criteria<E> criteria, Sorting sorting)
+	public <E extends IEntity> List<?> getPrimaryKeys(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
-		final List<Long> r = super.getIds(criteria, sorting);
+		final List<?> r = super.getPrimaryKeys(criteria, sorting);
 		hook();
 		return r;
 	}
@@ -106,16 +105,16 @@ public class Db4oTestDaoDecorator extends EntityDaoTestDecorator<Db4oEntityDao> 
 	}
 
 	@Override
-	public IEntity load(NameKey nameKey) throws EntityNotFoundException,
+	public <E extends IEntity> E load(NameKey<E> nameKey) throws EntityNotFoundException,
 	NonUniqueResultException, DataAccessException {
-		final IEntity r = super.load(nameKey);
+		final E r = super.load(nameKey);
 		hook();
 		return r;
 	}
 
 	@Override
-	public IEntity load(IPrimaryKey key) throws EntityNotFoundException, DataAccessException {
-		final IEntity r = super.load(key);
+	public <E extends IEntity> E load(Class<E> entityType, Object pk) throws EntityNotFoundException, DataAccessException {
+		final E r = super.load(entityType, pk);
 		hook();
 		return r;
 	}
@@ -148,8 +147,8 @@ public class Db4oTestDaoDecorator extends EntityDaoTestDecorator<Db4oEntityDao> 
 	}
 
 	@Override
-	public void purge(IPrimaryKey key) throws EntityNotFoundException, DataAccessException {
-		super.purge(key);
+	public <E extends IEntity> void purge(Class<E> entityType, Object pk) throws EntityNotFoundException, DataAccessException {
+		super.purge(entityType, pk);
 		hook();
 	}
 

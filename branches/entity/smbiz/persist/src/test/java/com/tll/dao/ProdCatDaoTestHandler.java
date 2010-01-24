@@ -8,7 +8,6 @@ import org.testng.Assert;
 import com.tll.model.Account;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
-import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.ProdCat;
 import com.tll.model.ProductCategory;
 import com.tll.model.ProductGeneral;
@@ -20,10 +19,7 @@ import com.tll.model.ProductInventory;
  */
 public class ProdCatDaoTestHandler extends AbstractEntityDaoTestHandler<ProdCat> {
 
-	private GlobalLongPrimaryKey<Currency> pkC;
-	private GlobalLongPrimaryKey<Account> pkA;
-	private GlobalLongPrimaryKey<ProductInventory> pkP;
-	private GlobalLongPrimaryKey<ProductCategory> pkCa;
+	private Object pkC, pkA, pkP, pkCa;
 
 	@Override
 	public Class<ProdCat> entityClass() {
@@ -41,37 +37,37 @@ public class ProdCatDaoTestHandler extends AbstractEntityDaoTestHandler<ProdCat>
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
-		pkC = new GlobalLongPrimaryKey<Currency>(currency);
+		pkC = currency.getPrimaryKey();
 
 		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
-		pkA = new GlobalLongPrimaryKey<Account>(account);
+		pkA = account.getPrimaryKey();
 
 		ProductInventory product = create(ProductInventory.class, true);
 		product.setProductGeneral(create(ProductGeneral.class, true));
 		product.setParent(account);
 		product = persist(product);
-		pkP = new GlobalLongPrimaryKey<ProductInventory>(product);
+		pkP = product.getPrimaryKey();
 
 		ProductCategory category = create(ProductCategory.class, true);
 		category.setParent(account);
 		category = persist(category);
-		pkCa = new GlobalLongPrimaryKey<ProductCategory>(category);
+		pkCa = category.getPrimaryKey();
 	}
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(pkCa);
-		purge(pkP);
-		purge(pkA);
-		purge(pkC);
+		purge(ProductCategory.class, pkCa);
+		purge(ProductInventory.class, pkP);
+		purge(Account.class, pkA);
+		purge(Currency.class, pkC);
 	}
 
 	@Override
 	public void assembleTestEntity(ProdCat e) throws Exception {
-		e.setProduct(load(pkP));
-		e.setCategory(load(pkCa));
+		e.setProduct(load(ProductInventory.class, pkP));
+		e.setCategory(load(ProductCategory.class, pkCa));
 	}
 
 	@Override

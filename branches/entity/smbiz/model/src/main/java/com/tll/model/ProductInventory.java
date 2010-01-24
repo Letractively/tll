@@ -251,7 +251,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 		setAccount(e);
 	}
 
-	public IPrimaryKey accountKey() {
+	public Object accountKey() {
 		try {
 			return getAccount().getPrimaryKey();
 		}

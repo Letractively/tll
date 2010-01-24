@@ -123,7 +123,7 @@ public class Visitor extends TimeStampEntity implements IChildEntity<Account>, I
 		setAccount(e);
 	}
 
-	public IPrimaryKey accountKey() {
+	public Object accountKey() {
 		try {
 			return getAccount().getPrimaryKey();
 		}

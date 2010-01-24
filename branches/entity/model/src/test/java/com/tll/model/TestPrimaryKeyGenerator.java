@@ -6,28 +6,25 @@ package com.tll.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.tll.model.EntityUtil;
-import com.tll.model.GlobalLongPrimaryKey;
-import com.tll.model.IPrimaryKeyGenerator;
-
 
 /**
  * TestPrimaryKeyGenerator - In memory map of integers classified by entity
  * class that are incremented as primary keys are requested.
  * @author jpk
  */
-public class TestPrimaryKeyGenerator implements IPrimaryKeyGenerator<GlobalLongPrimaryKey> {
+public class TestPrimaryKeyGenerator implements IPrimaryKeyGenerator<Long> {
 
 	private static final Map<Class<?>, Long> idMap = new HashMap<Class<?>, Long>();
 
-	public synchronized GlobalLongPrimaryKey generateIdentifier(Class<?> entityType) {
-		final Class<?> rootEntityClass = EntityUtil.getRootEntityClass(entityType);
+	public synchronized Long generateIdentifier(IEntity entity) {
+		final Class<?> rootEntityClass = EntityUtil.getRootEntityClass(entity.entityClass());
 		Long nextId = idMap.get(rootEntityClass);
 		if(nextId == null) {
 			nextId = Long.valueOf(0);
 		}
 		nextId = Long.valueOf(nextId.longValue()+1);
 		idMap.put(rootEntityClass, nextId);
-		return new GlobalLongPrimaryKey(entityType, nextId);
+		//entity.setPrimaryKey(nextId);
+		return nextId;
 	}
 }

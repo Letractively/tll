@@ -24,15 +24,15 @@ import org.datanucleus.store.valuegenerator.ValueGenerator;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.tll.model.IEntity;
 import com.tll.model.IPrimaryKeyGenerator;
-import com.tll.model.GlobalLongPrimaryKey;
 
 /**
  * JdoPrimaryKeyGenerator - Generates unique id tokens based on DataNucleus'
  * {@link ValueGenerator} strategies.
  * @author jpk
  */
-public class JdoPrimaryKeyGenerator implements IPrimaryKeyGenerator<GlobalLongPrimaryKey> {
+public class JdoPrimaryKeyGenerator implements IPrimaryKeyGenerator<Long> {
 
 	static final Log log = LogFactory.getLog(JdoPrimaryKeyGenerator.class);
 
@@ -110,9 +110,10 @@ public class JdoPrimaryKeyGenerator implements IPrimaryKeyGenerator<GlobalLongPr
 
 	@Override
 	// NOTE: the internals of generator are synchronized
-	public /*synchronized*/ GlobalLongPrimaryKey generateIdentifier(Class<?> entityType) {
+	public /*synchronized*/ Long generateIdentifier(IEntity entity) {
 		final long id = generator.nextValue();
 		log.debug(">Generated id: " + id);
-		return new GlobalLongPrimaryKey(entityType, id);
+		//entity.setPrimaryKey(id);
+		return id;
 	}
 }

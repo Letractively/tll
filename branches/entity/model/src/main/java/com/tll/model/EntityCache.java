@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class EntityCache implements IEntityProvider {
 
-	private final Map<IPrimaryKey, IEntity> map = new HashMap<IPrimaryKey, IEntity>();
+	private final Map<Object, IEntity> map = new HashMap<Object, IEntity>();
 
 	/**
 	 * Constructor
@@ -36,27 +36,25 @@ public class EntityCache implements IEntityProvider {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> E getEntity(IPrimaryKey key) {
+	@Override
+	public <E extends IEntity> E getEntity(Class<E> entityType, Object key) {
 		return (E) map.get(key);
 	}
 
-	public <E extends IEntity> boolean hasEntity(IPrimaryKey key) {
-		return map.containsKey(key);
-	}
-
 	@SuppressWarnings("unchecked")
+	@Override
 	public <E extends IEntity> Collection<E> getEntitiesByType(Class<E> type) {
 		if(type == null) return null;
-		List<IEntity> list = new ArrayList<IEntity>();
-		for(IPrimaryKey key : map.keySet()) {
-			Class<? extends IEntity> etype = (Class<? extends IEntity>) key.getType();
-			if(type.isAssignableFrom(etype)) {
-				list.add(map.get(key));
+		List<E> list = new ArrayList<E>();
+		for(IEntity e : map.values()) {
+			if(type.isAssignableFrom(e.entityClass())) {
+				list.add((E) e);
 			}
 		}
-		return (List<E>) list;
+		return list;
 	}
 
+	@Override
 	public <E extends IEntity> E getEntityByType(Class<E> type) throws IllegalStateException {
 		if(type == null) return null;
 		Collection<? extends E> clc = getEntitiesByType(type);

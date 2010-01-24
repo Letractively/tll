@@ -8,10 +8,9 @@ package com.tll.model.key;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.google.appengine.api.datastore.Key;
 import com.google.inject.Inject;
-import com.tll.dao.IEntityDao;
-import com.tll.dao.gae.GaeEntityDao;
-import com.tll.model.GaePrimaryKey;
+import com.tll.model.IEntity;
 import com.tll.model.IPrimaryKeyGenerator;
 
 /**
@@ -19,35 +18,25 @@ import com.tll.model.IPrimaryKeyGenerator;
  * impl to persist entity instances.
  * @author jpk
  */
-public class GaePrimaryKeyGenerator implements IPrimaryKeyGenerator<GaePrimaryKey> {
+public final class GaePrimaryKeyGenerator implements IPrimaryKeyGenerator<Key> {
 
 	static final Log log = LogFactory.getLog(GaePrimaryKeyGenerator.class);
 
-	private final IEntityDao dao;
+	private final IGaePrimaryKeyGeneratorImpl impl;
 
 	/**
 	 * Constructor
-	 * @param dao the required gaej dao impl instance
+	 * @param impl The required gae pk generator impl
 	 */
 	@Inject
-	public GaePrimaryKeyGenerator(IEntityDao dao) {
+	public GaePrimaryKeyGenerator(IGaePrimaryKeyGeneratorImpl impl) {
 		super();
-		if(dao instanceof GaeEntityDao == false)
-			throw new IllegalArgumentException("Null or non-gae entity dao argument.");
-		this.dao = dao;
+		if(impl == null) throw new NullPointerException();
+		this.impl = impl;
 	}
 
 	@Override
-	public GaePrimaryKey generateIdentifier(Class<?> entityType) {
-		// TODO re-impl!
-		return null;
-		/*
-		// sadly, for gae, we must persist to obtain the primary key!
-		dao.persist(entity);
-		final long id = entity.getId().longValue();
-		entity.setGenerated(id);
-		log.debug(">GAE generated id: " + id);
-		return id;
-		*/
+	public Key generateIdentifier(IEntity entity) {
+		return impl.generateKey(entity);
 	}
 }

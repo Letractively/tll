@@ -10,7 +10,7 @@ import com.tll.model.IEntity;
  * @author jpk
  * @param <E>
  */
-final class BusinessKey<E extends IEntity> extends AbstractKey implements IBusinessKey<E> {
+final class BusinessKey<E extends IEntity> extends AbstractKey<E> implements IBusinessKey<E> {
 
 	private static final long serialVersionUID = 2415120120614040086L;
 
@@ -39,12 +39,7 @@ final class BusinessKey<E extends IEntity> extends AbstractKey implements IBusin
 		copyValues(propertyValues);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	public Class<E> getType() {
-		return (Class<E>) super.getType();
-	}
-
 	public String getBusinessKeyName() {
 		return businessKeyName;
 	}

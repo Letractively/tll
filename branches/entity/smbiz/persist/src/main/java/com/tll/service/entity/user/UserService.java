@@ -36,7 +36,6 @@ import com.tll.model.IEntity;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.IUserRef;
 import com.tll.model.NameKey;
-import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.User;
 import com.tll.model.schema.PropertyType;
 import com.tll.service.ChangeUserCredentialsFailedException;
@@ -69,7 +68,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 	 * @throws IllegalArgumentException
 	 */
 	public static boolean isPasswordValid(String rawPasswordToCheck, String encPassword, Object salt)
-	throws IllegalArgumentException {
+			throws IllegalArgumentException {
 		if(StringUtils.isEmpty(rawPasswordToCheck)) throw new IllegalArgumentException("Empty raw password specified");
 		if(StringUtils.isEmpty(encPassword)) throw new IllegalArgumentException("Empty encoded password specified");
 		return passwordEncoder.isPasswordValid(encPassword, rawPasswordToCheck, salt);
@@ -100,7 +99,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 
 	@Transactional
 	public User create(Account account, String emailAddress, String password) throws ValidationException,
-	EntityExistsException {
+			EntityExistsException {
 		final User user = entityAssembler.assembleEntity(User.class, new EntityCache(account));
 
 		String encPassword = null;
@@ -191,15 +190,15 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 
 	@Transactional
 	private User getUserById(long userId) throws EntityNotFoundException {
-		final User user = dao.load(new GlobalLongPrimaryKey<User>(User.class, Long.valueOf(userId)));
+		final User user = dao.load(User.class, Long.valueOf(userId));
 		if(user == null) throw new EntityNotFoundException("User of id '" + userId + "' not found");
 		return user;
 	}
 
 	@Transactional(rollbackFor = {
 		ChangeUserCredentialsFailedException.class, RuntimeException.class })
-		public void setCredentialsById(long userId, String newUsername, String newRawPassword)
-	throws ChangeUserCredentialsFailedException {
+	public void setCredentialsById(long userId, String newUsername, String newRawPassword)
+			throws ChangeUserCredentialsFailedException {
 
 		try {
 			// get the old username
@@ -219,17 +218,17 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 		}
 	}
 
-	private void setCredentials(long userId, String newUsername, String encNewPassword) {
+	private void setCredentials(Object pk, String newUsername, String encNewPassword) {
 		dao.executeQuery("user.setCredentials", new QueryParam[] {
-			new QueryParam(IEntity.PK_FIELDNAME, PropertyType.STRING, Long.valueOf(userId)),
+			new QueryParam(IEntity.PK_FIELDNAME, PropertyType.STRING, pk),
 			new QueryParam("username", PropertyType.STRING, newUsername),
 			new QueryParam("password", PropertyType.STRING, encNewPassword) });
 	}
 
 	@Transactional(rollbackFor = {
 		ChangeUserCredentialsFailedException.class, RuntimeException.class })
-		public void setCredentialsByUsername(String username, String newUsername, String newRawPassword)
-	throws ChangeUserCredentialsFailedException {
+	public void setCredentialsByUsername(String username, String newUsername, String newRawPassword)
+			throws ChangeUserCredentialsFailedException {
 
 		try {
 			// get the user
@@ -241,14 +240,13 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 			final String encNewPassword = encodePassword(newRawPassword, newUsername);
 
 			// set the credentials
-			setCredentials(user.getId().longValue(), newUsername, encNewPassword);
+			setCredentials(user.getPrimaryKey(), newUsername, encNewPassword);
 
 			updateSecurityContextIfNecessary(user.getUsername(), newUsername, newRawPassword, false);
 		}
 		catch(final InvalidCriteriaException e) {
 			throw new IllegalArgumentException(
-					"Unable to chnage user credentials due to an unexpected invalid criteria exception: "
-					+ e.getMessage(), e);
+					"Unable to chnage user credentials due to an unexpected invalid criteria exception: " + e.getMessage(), e);
 		}
 		catch(final EntityNotFoundException nfe) {
 			throw new ChangeUserCredentialsFailedException("Unable to set user credentials: Username: '" + username
@@ -258,11 +256,11 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 
 	@Transactional(rollbackFor = {
 		ChangeUserCredentialsFailedException.class, RuntimeException.class })
-		public String resetPassword(long userId) throws ChangeUserCredentialsFailedException {
+	public String resetPassword(Object userPk) throws ChangeUserCredentialsFailedException {
 
 		try {
 			// get the user
-			final User user = dao.load(new GlobalLongPrimaryKey<User>(User.class, Long.valueOf(userId)));
+			final User user = dao.load(User.class, userPk);
 			final String username = user.getUsername();
 
 			// encode the new password
@@ -270,14 +268,14 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 			final String encNewPassword = encodePassword(random, username);
 
 			// set the credentials
-			setCredentials(userId, username, encNewPassword);
+			setCredentials(userPk, username, encNewPassword);
 
 			updateSecurityContextIfNecessary(username, username, random, false);
 
 			return random;
 		}
 		catch(final EntityNotFoundException nfe) {
-			throw new ChangeUserCredentialsFailedException("Unable to re-set user password: User of id: " + userId
+			throw new ChangeUserCredentialsFailedException("Unable to re-set user password: User of id: " + userPk
 					+ " not found");
 		}
 
@@ -305,7 +303,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 			}
 			else {
 				final UsernamePasswordAuthenticationToken token =
-					new UsernamePasswordAuthenticationToken(newUsername, newPassword);
+						new UsernamePasswordAuthenticationToken(newUsername, newPassword);
 				token.setDetails(authentication.getDetails());
 				SecurityContextHolder.getContext().setAuthentication(token);
 			}

@@ -114,7 +114,7 @@ public class CustomerAccount extends TimeStampEntity implements IChildEntity<Acc
 		setAccount(e);
 	}
 
-	public IPrimaryKey accountKey() {
+	public Object accountKey() {
 		try {
 			return getAccount().getPrimaryKey();
 		}
@@ -124,7 +124,7 @@ public class CustomerAccount extends TimeStampEntity implements IChildEntity<Acc
 		}
 	}
 
-	public IPrimaryKey customerId() {
+	public Object customerId() {
 		try {
 			return getCustomer().getPrimaryKey();
 		}

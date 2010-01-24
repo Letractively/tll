@@ -61,13 +61,13 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 			return dao.find(criteria, sorting);
 		}
 
-		public <E extends IEntity> List<E> getEntitiesFromIds(Class<E> entityClass, Collection<Long> ids,
+		public <E extends IEntity> List<E> getEntitiesFromIds(Class<E> entityClass, Collection<?> ids,
 				Sorting sorting) {
-			return dao.findByIds(entityClass, ids, sorting);
+			return dao.findByPrimaryKeys(entityClass, ids, sorting);
 		}
 
-		public List<Long> getIds(Criteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException {
-			return dao.getIds(criteria, sorting);
+		public List<?> getPrimaryKeys(Criteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException {
+			return dao.getPrimaryKeys(criteria, sorting);
 		}
 
 		public IPageResult<SearchResult> getPage(Criteria<? extends IEntity> criteria, Sorting sorting,

@@ -11,5 +11,5 @@ public interface IAccountRelatedEntity {
 	/**
 	 * @return The primary key of the account to which this entity is related.
 	 */
-	IPrimaryKey accountKey();
+	Object accountKey();
 }

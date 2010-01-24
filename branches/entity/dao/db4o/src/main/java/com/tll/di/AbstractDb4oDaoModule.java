@@ -213,7 +213,7 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 			// @Transactional!
 		}
 
-		// IPrimaryKeyGenerator
+		// ObjectGenerator
 		bind(IPrimaryKeyGenerator.class).to(Db4oPrimaryKeyGenerator.class).in(Scopes.SINGLETON);
 
 		// IDb4oNamedQueryTranslator

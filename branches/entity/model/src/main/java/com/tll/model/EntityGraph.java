@@ -99,6 +99,7 @@ public final class EntityGraph implements IEntityProvider {
 		return set;
 	}
 
+	@Override
 	public <E extends IEntity> Collection<E> getEntitiesByType(Class<E> type) {
 		final Set<? extends E> rootset = getRootEntitySet(type);
 		if(rootset == null) return null;
@@ -111,6 +112,7 @@ public final class EntityGraph implements IEntityProvider {
 		return set;
 	}
 
+	@Override
 	public <E extends IEntity> E getEntityByType(Class<E> type) throws IllegalStateException {
 		final Collection<E> clc = getEntitiesByType(type);
 		if(clc == null || clc.size() == 0) return null;
@@ -120,12 +122,10 @@ public final class EntityGraph implements IEntityProvider {
 		throw new IllegalStateException("More than one entity exists of type: " + type.getName());
 	}
 
-	@SuppressWarnings("unchecked")
-	public <E extends IEntity> E getEntity(IPrimaryKey pk) {
-		if(pk == null || !pk.isSet()) {
-			throw new IllegalArgumentException("The key is not specified or is not set");
-		}
-		final Collection<E> clc = getEntitiesByType((Class<E>) pk.getType());
+	@Override
+	public <E extends IEntity> E getEntity(Class<E> entityType, Object pk) {
+		if(pk == null) throw new IllegalArgumentException("No primary key specified");
+		final Collection<E> clc = getEntitiesByType(entityType);
 		if(clc != null) {
 			for(final E e : clc) {
 				if(pk.equals(e.getPrimaryKey())) {
@@ -134,23 +134,6 @@ public final class EntityGraph implements IEntityProvider {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Checks to see if the graph contains the given entity by primary key.
-	 * @param <E>
-	 * @param pk The primary key
-	 * @return true/false
-	 */
-	@SuppressWarnings("unchecked")
-	public <E extends IEntity> boolean contains(IPrimaryKey pk) {
-		final Set<E> set = (Set<E>) getRootEntitySet((Class<E>) pk.getType());
-		if(set != null) {
-			for(final E e : set) {
-				if(pk.equals(e.getPrimaryKey())) return true;
-			}
-		}
-		return false;
 	}
 
 	/**

@@ -46,7 +46,7 @@ public class ModelBuildModule extends AbstractModule {
 	protected void configure() {
 		log.info("Employing Model build module...");
 
-		// EntityFactory (optionally depends on IPrimaryKeyGenerator)
+		// EntityFactory (optionally depends on ObjectGenerator)
 		bind(EntityFactory.class).toProvider(new Provider<EntityFactory>() {
 
 			@Inject(optional = true)

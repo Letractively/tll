@@ -23,7 +23,6 @@ import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityAssembler;
-import com.tll.model.IPrimaryKey;
 import com.tll.model.bk.IBusinessKey;
 
 /**
@@ -128,10 +127,9 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 		dao.purgeAll(entities);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public E load(IPrimaryKey key) throws EntityNotFoundException {
-		return (E) dao.load(key);
+	public E load(Object pk) throws EntityNotFoundException {
+		return dao.load(getEntityClass(), pk);
 	}
 
 	@Transactional(readOnly = true)
@@ -158,13 +156,13 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	}
 
 	@Transactional(readOnly = true)
-	public <ET extends IEntity> List<ET> getEntitiesFromIds(Class<ET> entityClass, Collection<Long> ids, Sorting sorting) {
-		return dao.findByIds(entityClass, ids, sorting);
+	public <ET extends IEntity> List<ET> getEntitiesFromIds(Class<ET> entityClass, Collection<?> pks, Sorting sorting) {
+		return dao.findByPrimaryKeys(entityClass, pks, sorting);
 	}
 
 	@Transactional(readOnly = true)
-	public List<Long> getIds(Criteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException {
-		return dao.getIds(criteria, sorting);
+	public List<?> getPrimaryKeys(Criteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException {
+		return dao.getPrimaryKeys(criteria, sorting);
 	}
 
 	@Transactional(readOnly = true)

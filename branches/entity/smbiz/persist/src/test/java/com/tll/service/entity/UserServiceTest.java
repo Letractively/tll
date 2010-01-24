@@ -11,7 +11,6 @@ import com.tll.dao.IEntityDao;
 import com.tll.model.Account;
 import com.tll.model.Authority;
 import com.tll.model.AuthorityRoles;
-import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.User;
 import com.tll.service.entity.user.IUserService;
 import com.tll.service.entity.user.UserService;
@@ -69,7 +68,7 @@ public class UserServiceTest extends AccountRelatedServiceTest {
 			Assert.assertNotNull(user);
 
 			startNewTransaction();
-			final User dbUser = AbstractDbAwareTest.getEntityFromDb(getDao(), new GlobalLongPrimaryKey<User>(user));
+			final User dbUser = AbstractDbAwareTest.getEntityFromDb(getDao(), User.class, user);
 			endTransaction();
 			Assert.assertEquals(dbUser, user);
 		}

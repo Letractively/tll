@@ -9,7 +9,6 @@ import com.tll.model.AccountHistory;
 import com.tll.model.AccountStatus;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
-import com.tll.model.GlobalLongPrimaryKey;
 
 /**
  * AccountHistoryDaoTestHandler
@@ -17,8 +16,7 @@ import com.tll.model.GlobalLongPrimaryKey;
  */
 public class AccountHistoryDaoTestHandler extends AbstractEntityDaoTestHandler<AccountHistory> {
 
-	private GlobalLongPrimaryKey<Currency> pkC;
-	private GlobalLongPrimaryKey<Asp> pkA;
+	private Object pkC, pkA;
 
 	@Override
 	public Class<AccountHistory> entityClass() {
@@ -28,25 +26,25 @@ public class AccountHistoryDaoTestHandler extends AbstractEntityDaoTestHandler<A
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
-		this.pkC = new GlobalLongPrimaryKey<Currency>(currency);
+		this.pkC = currency.getPrimaryKey();
 
 		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account.setPaymentInfo(null);
 		account.setParent(null);
 		account = persist(account);
-		this.pkA = new GlobalLongPrimaryKey<Asp>(account);
+		this.pkA = account.getPrimaryKey();
 	}
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(pkA); pkA = null;
-		purge(pkC); pkC = null;
+		purge(Asp.class, pkA); pkA = null;
+		purge(Currency.class, pkC); pkC = null;
 	}
 
 	@Override
 	public void assembleTestEntity(AccountHistory e) throws Exception {
-		e.setAccount(load(pkA));
+		e.setAccount(load(Asp.class, pkA));
 		e.setPymntTrans(null);
 	}
 

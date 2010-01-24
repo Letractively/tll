@@ -12,7 +12,6 @@ import com.tll.model.InterfaceOption;
 import com.tll.model.InterfaceOptionAccount;
 import com.tll.model.InterfaceOptionParameterDefinition;
 import com.tll.model.InterfaceSwitch;
-import com.tll.model.GlobalLongPrimaryKey;
 
 /**
  * InterfaceOptionAccountDaoTestHandler
@@ -20,9 +19,7 @@ import com.tll.model.GlobalLongPrimaryKey;
  */
 public class InterfaceOptionAccountDaoTestHandler extends AbstractEntityDaoTestHandler<InterfaceOptionAccount> {
 
-	private GlobalLongPrimaryKey<Currency> pkC;
-	private GlobalLongPrimaryKey<Asp> pkA;
-	private GlobalLongPrimaryKey<Interface> pkI;
+	private Object pkC, pkA, pkI;
 
 	private int numParameters = 0;
 	private String removedParamName;
@@ -42,12 +39,12 @@ public class InterfaceOptionAccountDaoTestHandler extends AbstractEntityDaoTestH
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
-		pkC = new GlobalLongPrimaryKey<Currency>(currency);
+		pkC = currency.getPrimaryKey();
 
 		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
-		pkA = new GlobalLongPrimaryKey<Asp>(account);
+		pkA = account.getPrimaryKey();
 
 		Interface intf = create(InterfaceSwitch.class, true);
 		final InterfaceOption option = create(InterfaceOption.class, true);
@@ -55,20 +52,20 @@ public class InterfaceOptionAccountDaoTestHandler extends AbstractEntityDaoTestH
 		option.addParameter(param);
 		intf.addOption(option);
 		intf = persist(intf);
-		pkI = new GlobalLongPrimaryKey<Interface>(intf);
+		pkI = intf.getPrimaryKey();
 	}
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(pkI); pkI = null;
-		purge(pkA); pkA = null;
-		purge(pkC); pkC = null;
+		purge(Interface.class, pkI); pkI = null;
+		purge(Asp.class, pkA); pkA = null;
+		purge(Currency.class, pkC); pkC = null;
 	}
 
 	@Override
 	public void assembleTestEntity(InterfaceOptionAccount e) throws Exception {
-		e.setAccount(load(pkA));
-		final Interface inter = load(pkI);
+		e.setAccount(load(Asp.class, pkA));
+		final Interface inter = load(Interface.class, pkI);
 		final InterfaceOption option = inter.getOptions().iterator().next();
 		final InterfaceOptionParameterDefinition param = option.getParameters().iterator().next();
 		e.setOption(option);

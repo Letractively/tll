@@ -97,7 +97,7 @@ public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipM
 		setShipMode(e);
 	}
 
-	public IPrimaryKey accountKey() {
+	public Object accountKey() {
 		try {
 			return getShipMode().getAccount().getPrimaryKey();
 		}
@@ -107,7 +107,7 @@ public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipM
 		}
 	}
 
-	public IPrimaryKey shipModeKey() {
+	public Object shipModeKey() {
 		try {
 			return getShipMode().getPrimaryKey();
 		}

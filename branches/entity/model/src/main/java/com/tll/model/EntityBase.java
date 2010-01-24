@@ -18,7 +18,7 @@ public abstract class EntityBase implements IEntity {
 
 	protected static final Log LOG = LogFactory.getLog(EntityBase.class);
 
-	private IPrimaryKey pk;
+	private Object pk;
 	
 	//private boolean generated;
 
@@ -36,7 +36,7 @@ public abstract class EntityBase implements IEntity {
 	 * @param pk the primary key of the entity to find
 	 * @return the found entity or null if not found
 	 */
-	protected final static <E extends IEntity> E findEntityInCollection(Collection<E> clc, IPrimaryKey pk) {
+	protected final static <E extends IEntity> E findEntityInCollection(Collection<E> clc, Object pk) {
 		if(clc == null || pk == null) return null;
 		for(final E e : clc) {
 			if(pk.equals(e.getPrimaryKey())) {
@@ -159,9 +159,14 @@ public abstract class EntityBase implements IEntity {
 	 * Constructor
 	 * @param pk primary key
 	 */
-	public EntityBase(IPrimaryKey pk) {
+	public EntityBase(Object pk) {
 		this();
 		setPrimaryKey(pk);
+	}
+
+	@Override
+	public Class<? extends IEntity> rootEntityClass() {
+		return entityClass();
 	}
 
 	@Override
@@ -170,12 +175,12 @@ public abstract class EntityBase implements IEntity {
 	}
 
 	@Override
-	public IPrimaryKey getPrimaryKey() {
+	public Object getPrimaryKey() {
 		return pk;
 	}
 
 	@Override
-	public void setPrimaryKey(IPrimaryKey pk) {
+	public void setPrimaryKey(Object pk) {
 		this.pk = pk;
 	}
 

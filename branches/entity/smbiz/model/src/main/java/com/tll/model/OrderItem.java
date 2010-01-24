@@ -210,7 +210,7 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 		this.transactions = transactions;
 	}
 
-	public OrderItemTrans getItemTransaction(IPrimaryKey pk) {
+	public OrderItemTrans getItemTransaction(Object pk) {
 		return findEntityInCollection(transactions, pk);
 	}
 
@@ -242,7 +242,7 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 		setOrder(e);
 	}
 
-	public IPrimaryKey accountKey() {
+	public Object accountKey() {
 		try {
 			return getOrder().getAccount().getPrimaryKey();
 		}
@@ -252,7 +252,7 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 		}
 	}
 
-	public IPrimaryKey orderId() {
+	public Object orderId() {
 		try {
 			return getOrder().getPrimaryKey();
 		}

@@ -8,7 +8,6 @@ import org.testng.Assert;
 import com.tll.model.Account;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
-import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.ShipBoundCost;
 import com.tll.model.ShipMode;
 
@@ -18,9 +17,7 @@ import com.tll.model.ShipMode;
  */
 public class ShipBoundCostDaoTestHandler extends AbstractEntityDaoTestHandler<ShipBoundCost> {
 
-	private GlobalLongPrimaryKey<Currency> pkC;
-	private GlobalLongPrimaryKey<Account> pkA;
-	private GlobalLongPrimaryKey<ShipMode> pkS;
+	private Object pkC, pkA, pkS;
 
 	@Override
 	public Class<ShipBoundCost> entityClass() {
@@ -30,29 +27,29 @@ public class ShipBoundCostDaoTestHandler extends AbstractEntityDaoTestHandler<Sh
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
-		pkC = new GlobalLongPrimaryKey<Currency>(currency);
+		pkC = currency.getPrimaryKey();
 
 		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
-		pkA = new GlobalLongPrimaryKey<Account>(account);
+		pkA = account.getPrimaryKey();
 
 		ShipMode shipMode = create(ShipMode.class, true);
 		shipMode.setAccount(account);
 		shipMode = persist(shipMode);
-		pkS = new GlobalLongPrimaryKey<ShipMode>(shipMode);
+		pkS = shipMode.getPrimaryKey();
 	}
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(pkS);
-		purge(pkA);
-		purge(pkC);
+		purge(ShipMode.class, pkS);
+		purge(Account.class, pkA);
+		purge(Currency.class, pkC);
 	}
 
 	@Override
 	public void assembleTestEntity(ShipBoundCost e) throws Exception {
-		e.setShipMode(load(pkS));
+		e.setShipMode(load(ShipMode.class, pkS));
 	}
 
 	@Override

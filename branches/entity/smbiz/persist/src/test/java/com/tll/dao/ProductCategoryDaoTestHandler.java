@@ -8,7 +8,6 @@ import org.testng.Assert;
 import com.tll.model.Account;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
-import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.ProductCategory;
 
 /**
@@ -17,8 +16,7 @@ import com.tll.model.ProductCategory;
  */
 public class ProductCategoryDaoTestHandler extends AbstractEntityDaoTestHandler<ProductCategory> {
 
-	private GlobalLongPrimaryKey<Currency> pkC;
-	private GlobalLongPrimaryKey<Account> pkA;
+	private Object pkC, pkA;
 
 	@Override
 	public Class<ProductCategory> entityClass() {
@@ -28,23 +26,23 @@ public class ProductCategoryDaoTestHandler extends AbstractEntityDaoTestHandler<
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
-		pkC = new GlobalLongPrimaryKey<Currency>(currency);
+		pkC = currency.getPrimaryKey();
 
 		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
-		pkA = new GlobalLongPrimaryKey<Account>(account);
+		pkA = account.getPrimaryKey();
 	}
 
 	@Override
 	public void purgeDependentEntities() {
-		purge(pkA);
-		purge(pkC);
+		purge(Account.class, pkA);
+		purge(Currency.class, pkC);
 	}
 
 	@Override
 	public void assembleTestEntity(ProductCategory e) throws Exception {
-		e.setAccount(load(pkA));
+		e.setAccount(load(Account.class, pkA));
 	}
 
 	@Override

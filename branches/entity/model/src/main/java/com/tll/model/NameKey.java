@@ -5,9 +5,10 @@ import com.tll.key.AbstractKey;
 /**
  * NameKey - Simple entity key that holds an entity name and also identifies the
  * field by which that name is retrieved from the entity.
+ * @param <T> key type
  * @author jpk
  */
-public class NameKey extends AbstractKey {
+public class NameKey<T> extends AbstractKey<T> {
 
 	private static final long serialVersionUID = -3217664978174156618L;
 
@@ -27,7 +28,7 @@ public class NameKey extends AbstractKey {
 	 * Constructor
 	 * @param entityClass
 	 */
-	public NameKey(Class<?> entityClass) {
+	public NameKey(Class<T> entityClass) {
 		this(entityClass, null, DEFAULT_FIELDNAME);
 	}
 
@@ -36,7 +37,7 @@ public class NameKey extends AbstractKey {
 	 * @param entityClass
 	 * @param name
 	 */
-	public NameKey(Class<?> entityClass, String name) {
+	public NameKey(Class<T> entityClass, String name) {
 		this(entityClass, name, DEFAULT_FIELDNAME);
 	}
 
@@ -46,7 +47,7 @@ public class NameKey extends AbstractKey {
 	 * @param name
 	 * @param propertyName
 	 */
-	public NameKey(Class<?> entityClass, String name, String propertyName) {
+	public NameKey(Class<T> entityClass, String name, String propertyName) {
 		super(entityClass);
 		setName(name);
 		setNameProperty(propertyName);
