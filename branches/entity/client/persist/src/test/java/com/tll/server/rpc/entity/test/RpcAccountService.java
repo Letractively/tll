@@ -10,7 +10,6 @@ import com.tll.common.model.RelatedOneProperty;
 import com.tll.common.model.StringPropertyValue;
 import com.tll.common.model.test.TestEntityType;
 import com.tll.model.IEntity;
-import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.test.Account;
 import com.tll.server.rpc.entity.AbstractPersistServiceImpl;
 import com.tll.server.rpc.entity.PersistContext;
@@ -37,9 +36,8 @@ public class RpcAccountService extends AbstractPersistServiceImpl {
 		assert m != null;
 		final Account a = (Account) e;
 		if(a.getParent() != null) {
-			final GlobalLongPrimaryKey<Account> pk = new GlobalLongPrimaryKey<Account>(Account.class, a.getParent().getId());
 			final IAccountService svc = context.getEntityServiceFactory().instance(IAccountService.class);
-			final Account parent = svc.load(pk);
+			final Account parent = svc.load(a.getParent().getId());
 			final Model mparent = new Model(TestEntityType.ACCOUNT);
 			mparent.set(new StringPropertyValue(Model.ID_PROPERTY, parent.getId().toString()));
 			mparent.set(new StringPropertyValue(Model.NAME_PROPERTY, parent.getName()));

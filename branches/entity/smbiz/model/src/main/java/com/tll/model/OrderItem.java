@@ -244,7 +244,7 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 
 	public Object accountKey() {
 		try {
-			return getOrder().getAccount().getPrimaryKey();
+			return getOrder().getAccount().getId();
 		}
 		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
@@ -254,7 +254,7 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 
 	public Object orderId() {
 		try {
-			return getOrder().getPrimaryKey();
+			return getOrder().getId();
 		}
 		catch(final NullPointerException npe) {
 			return null;

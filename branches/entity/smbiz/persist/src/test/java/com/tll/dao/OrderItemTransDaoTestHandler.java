@@ -37,25 +37,25 @@ public class OrderItemTransDaoTestHandler extends AbstractEntityDaoTestHandler<O
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
-		pkC = currency.getPrimaryKey();
+		pkC = currency.getId();
 
 		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
-		pkA = account.getPrimaryKey();
+		pkA = account.getId();
 
 		Order order = create(Order.class, false);
 		order.setCurrency(currency);
 		order.setAccount(account);
 		order.addOrderItem(create(OrderItem.class, true));
 		order = persist(order);
-		pkO = order.getPrimaryKey();
+		pkO = order.getId();
 
 		OrderTrans orderTrans = create(OrderTrans.class, true);
 		orderTrans.setOrder(order);
 		orderTrans.setPymntTrans(null);
 		orderTrans = persist(orderTrans);
-		pkOt = orderTrans.getPrimaryKey();
+		pkOt = orderTrans.getId();
 	}
 
 	@Override

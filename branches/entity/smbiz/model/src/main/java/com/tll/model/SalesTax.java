@@ -126,7 +126,7 @@ public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, 
 
 	public Object accountKey() {
 		try {
-			return getAccount().getPrimaryKey();
+			return getAccount().getId();
 		}
 		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");

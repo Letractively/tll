@@ -41,19 +41,19 @@ public class CustomerAccountDaoTestHandler extends AbstractEntityDaoTestHandler<
 		account.setCurrency(currency);
 		account.setParent(null);
 		account = persist(account);
-		pkAccount = account.getPrimaryKey();
-		pkCurrency = currency.getPrimaryKey();
+		pkAccount = account.getId();
+		pkCurrency = currency.getId();
 
 		Customer customer = create(Customer.class, true);
 		customer.setParent(null);
 		customer.setCurrency(currency);
 		customer = persist(customer);
-		pkCustomer = customer.getPrimaryKey();
+		pkCustomer = customer.getId();
 
 		Visitor visitor = create(Visitor.class, true);
 		visitor.setAccount(account);
 		visitor = persist(visitor);
-		pkVisitor = visitor.getPrimaryKey();
+		pkVisitor = visitor.getId();
 	}
 
 	@Override

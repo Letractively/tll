@@ -25,9 +25,9 @@ import com.tll.config.IConfigKey;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.gae.GaeEntityDao;
 import com.tll.dao.gae.GaeTimestampListener;
-import com.tll.model.IPrimaryKeyGenerator;
+import com.tll.model.IEntityFactory;
 import com.tll.model.ITimeStampEntity;
-import com.tll.model.key.GaePrimaryKeyGenerator;
+import com.tll.model.key.GaeEntityFactory;
 
 /**
  * GaeDaoModule
@@ -141,8 +141,8 @@ public class GaeDaoModule extends AbstractModule implements IConfigAware {
 		// IEntityDao
 		bind(IEntityDao.class).to(GaeEntityDao.class).asEagerSingleton();
 
-		// ObjectGenerator (depends on gae dao impl!)
-		bind(IPrimaryKeyGenerator.class).to(GaePrimaryKeyGenerator.class).asEagerSingleton();
+		// IEntityFactory
+		bind(IEntityFactory.class).to(GaeEntityFactory.class).asEagerSingleton();
 
 		final boolean dst =
 				config == null ? DEFAULT_EMPLOY_SPRING_TRANSACTIONS : config.getBoolean(ConfigKeys.DB_TRANS_BINDTOSPRING

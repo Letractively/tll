@@ -16,7 +16,8 @@ public class SmbizModelBuildModule extends ModelBuildModule {
 	/**
 	 * Constructor
 	 */
+	// TODO fix SmbizModelBuildModule
 	public SmbizModelBuildModule() {
-		super(SmbizEntityAssembler.class);
+		super(null, SmbizEntityAssembler.class);
 	}
 }

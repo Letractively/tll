@@ -37,23 +37,23 @@ public class ProdCatDaoTestHandler extends AbstractEntityDaoTestHandler<ProdCat>
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
-		pkC = currency.getPrimaryKey();
+		pkC = currency.getId();
 
 		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
-		pkA = account.getPrimaryKey();
+		pkA = account.getId();
 
 		ProductInventory product = create(ProductInventory.class, true);
 		product.setProductGeneral(create(ProductGeneral.class, true));
 		product.setParent(account);
 		product = persist(product);
-		pkP = product.getPrimaryKey();
+		pkP = product.getId();
 
 		ProductCategory category = create(ProductCategory.class, true);
 		category.setParent(account);
 		category = persist(category);
-		pkCa = category.getPrimaryKey();
+		pkCa = category.getId();
 	}
 
 	@Override

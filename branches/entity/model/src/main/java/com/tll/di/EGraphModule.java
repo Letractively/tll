@@ -15,14 +15,12 @@ import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.EntityGraph;
+import com.tll.model.IEntityFactory;
 import com.tll.model.IEntityGraphPopulator;
-import com.tll.model.IPrimaryKeyGenerator;
 import com.tll.util.ClassUtil;
 
 /**
  * EGraphModule - Provides {@link EntityGraph} instances.
- * <p>
- * <em><b>IMPT</b>: Optionally depends on an {@link IPrimaryKeyGenerator} implementation.</em>
  * @author jpk
  */
 public class EGraphModule extends AbstractModule {
@@ -77,13 +75,13 @@ public class EGraphModule extends AbstractModule {
 		bind(EntityBeanFactory.class).toProvider(new Provider<EntityBeanFactory>() {
 
 			@Inject(optional = true)
-			IPrimaryKeyGenerator<?> pkGenerator;
+			IEntityFactory<?> entityFactory;
 
 			@Override
 			public EntityBeanFactory get() {
 				
 				final ListableBeanFactory lbf = EntityBeanFactory.loadBeanDefinitions(beanDefRef);
-				return new EntityBeanFactory(lbf, pkGenerator);
+				return new EntityBeanFactory(lbf, entityFactory);
 			}
 		}).in(Scopes.SINGLETON);
 

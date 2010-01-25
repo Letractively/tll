@@ -9,6 +9,7 @@ import javax.servlet.ServletContext;
 import com.google.inject.Inject;
 import com.tll.mail.MailManager;
 import com.tll.model.IEntityAssembler;
+import com.tll.model.IEntityFactory;
 import com.tll.model.schema.ISchemaInfo;
 import com.tll.refdata.RefData;
 import com.tll.server.marshal.Marshaler;
@@ -36,6 +37,7 @@ public final class PersistContext {
 	private final Marshaler marshaler;
 	private final IMarshalOptionsResolver marshalOptionsResolver;
 	private final IEntityTypeResolver entityTypeResolver;
+	private final IEntityFactory<?> entityFactory;
 	private final IEntityAssembler entityAssembler;
 	private final IEntityServiceFactory entityServiceFactory;
 	private final IExceptionHandler exceptionHandler;
@@ -49,6 +51,7 @@ public final class PersistContext {
 	 * @param marshaler
 	 * @param marshalOptionsResolver
 	 * @param entityTypeResolver
+	 * @param entityFactory
 	 * @param entityAssembler
 	 * @param entityServiceFactory
 	 * @param exceptionHandler
@@ -57,7 +60,7 @@ public final class PersistContext {
 	@Inject
 	public PersistContext(RefData refData, MailManager mailManager, ISchemaInfo schemaInfo, Marshaler marshaler,
 			IMarshalOptionsResolver marshalOptionsResolver, IEntityTypeResolver entityTypeResolver,
-			IEntityAssembler entityAssembler, IEntityServiceFactory entityServiceFactory,
+			IEntityFactory<?> entityFactory, IEntityAssembler entityAssembler, IEntityServiceFactory entityServiceFactory,
 			IExceptionHandler exceptionHandler, PersistCache persistCache) {
 		super();
 		this.refData = refData;
@@ -66,6 +69,7 @@ public final class PersistContext {
 		this.marshaler = marshaler;
 		this.marshalOptionsResolver = marshalOptionsResolver;
 		this.entityTypeResolver = entityTypeResolver;
+		this.entityFactory = entityFactory;
 		this.entityAssembler = entityAssembler;
 		this.entityServiceFactory = entityServiceFactory;
 		this.exceptionHandler = exceptionHandler;
@@ -78,6 +82,10 @@ public final class PersistContext {
 
 	public RefData getRefData() {
 		return refData;
+	}
+
+	public IEntityFactory<?> getEntityFactory() {
+		return entityFactory;
 	}
 
 	public IEntityAssembler getEntityAssembler() {

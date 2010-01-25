@@ -81,7 +81,7 @@ public class ProdCat extends EntityBase implements IChildEntity<ProductInventory
 
 	public Object accountKey() {
 		try {
-			return getProduct().getAccount().getPrimaryKey();
+			return getProduct().getAccount().getId();
 		}
 		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
@@ -91,7 +91,7 @@ public class ProdCat extends EntityBase implements IChildEntity<ProductInventory
 
 	public Object productId() {
 		try {
-			return getProduct().getPrimaryKey();
+			return getProduct().getId();
 		}
 		catch(final NullPointerException npe) {
 			return null;
@@ -100,7 +100,7 @@ public class ProdCat extends EntityBase implements IChildEntity<ProductInventory
 
 	public Object categoryKey() {
 		try {
-			return getCategory().getPrimaryKey();
+			return getCategory().getId();
 		}
 		catch(final NullPointerException npe) {
 			return null;

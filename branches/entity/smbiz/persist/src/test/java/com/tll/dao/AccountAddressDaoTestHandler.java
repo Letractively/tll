@@ -32,17 +32,17 @@ public class AccountAddressDaoTestHandler extends AbstractEntityDaoTestHandler<A
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
-		this.pkCurrency = currency.getPrimaryKey();
+		this.pkCurrency = currency.getId();
 
 		Asp asp = create(Asp.class, true);
 		asp.setCurrency(currency);
 		asp.setPaymentInfo(null);
 		asp.setParent(null);
 		asp = persist(asp);
-		this.pkAsp = asp.getPrimaryKey();
+		this.pkAsp = asp.getId();
 
 		final Address address = createAndPersist(Address.class, true);
-		this.pkAddress = address.getPrimaryKey();
+		this.pkAddress = address.getId();
 	}
 
 	@Override

@@ -68,7 +68,7 @@ public class EntityCache implements IEntityProvider {
 	}
 
 	public void addEntity(IEntity e) {
-		if(e != null) map.put(e.getPrimaryKey(), e);
+		if(e != null) map.put(e.getId(), e);
 	}
 
 	public void addEntities(Collection<IEntity> entities) {

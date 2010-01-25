@@ -28,9 +28,9 @@ import com.tll.config.IConfigKey;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.jdo.JdoEntityDao;
 import com.tll.dao.jdo.JdoTimestampListener;
-import com.tll.model.IPrimaryKeyGenerator;
+import com.tll.model.IEntityFactory;
 import com.tll.model.ITimeStampEntity;
-import com.tll.model.key.JdoPrimaryKeyGenerator;
+import com.tll.model.key.JdoRdbmsEntityFactory;
 
 /**
  * JdoDaoModule
@@ -146,8 +146,8 @@ public class JdoDaoModule extends AbstractModule implements IConfigAware {
 		// NOTE: we set NO_SCOPE so we always go through Spring's framework
 		// as it manages the life-cycle of PersistenceManagers
 
-		// ObjecObject
-		bind(IPrimaryKeyGenerator.class).to(JdoPrimaryKeyGenerator.class).in(Scopes.SINGLETON);
+		// IEntityFactory
+		bind(IEntityFactory.class).to(JdoRdbmsEntityFactory.class).in(Scopes.SINGLETON);
 
 		// IEntityDao
 		bind(IEntityDao.class).to(JdoEntityDao.class).in(Scopes.SINGLETON);

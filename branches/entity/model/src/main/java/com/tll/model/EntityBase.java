@@ -17,10 +17,10 @@ public abstract class EntityBase implements IEntity {
 	private static final long serialVersionUID = -4641847785797486723L;
 
 	protected static final Log LOG = LogFactory.getLog(EntityBase.class);
-
-	private Object pk;
 	
-	//private boolean generated;
+	private Long id;
+
+	private boolean generated;
 
 	/**
 	 * At object creation, a version of <code>-1</code> is assigined indicating a
@@ -39,7 +39,7 @@ public abstract class EntityBase implements IEntity {
 	protected final static <E extends IEntity> E findEntityInCollection(Collection<E> clc, Object pk) {
 		if(clc == null || pk == null) return null;
 		for(final E e : clc) {
-			if(pk.equals(e.getPrimaryKey())) {
+			if(pk.equals(e.getId())) {
 				return e;
 			}
 		}
@@ -155,15 +155,6 @@ public abstract class EntityBase implements IEntity {
 		super();
 	}
 
-	/**
-	 * Constructor
-	 * @param pk primary key
-	 */
-	public EntityBase(Object pk) {
-		this();
-		setPrimaryKey(pk);
-	}
-
 	@Override
 	public Class<? extends IEntity> rootEntityClass() {
 		return entityClass();
@@ -175,13 +166,13 @@ public abstract class EntityBase implements IEntity {
 	}
 
 	@Override
-	public Object getPrimaryKey() {
-		return pk;
+	public Long getId() {
+		return id;
 	}
 
 	@Override
-	public void setPrimaryKey(Object pk) {
-		this.pk = pk;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	@Managed
@@ -195,24 +186,25 @@ public abstract class EntityBase implements IEntity {
 		this.version = version;
 	}
 	
-	/*
 	@Override
-	public boolean isGenerated() {
+	public final boolean isGenerated() {
 		return generated;
 	}
 
 	@Override
-	public void setGenerated(long id) {
-		this.id = Long.valueOf(id);
+	public void setGenerated(Object id) {
+		if(id == null) throw new IllegalArgumentException("Generated primary keys can't be null.");
+		if(id instanceof Long == false) throw new IllegalStateException();
+		setId((Long)id);
 		this.generated = true;
 	}
-	*/
 	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((pk == null) ? 0 : pk.hashCode());
+		final Object sid = getId();
+		result = prime * result + ((sid == null) ? 0 : sid.hashCode());
 		result = prime * result + (int) (version ^ (version >>> 32));
 		return result;
 	}
@@ -223,17 +215,18 @@ public abstract class EntityBase implements IEntity {
 		if(obj == null) return false;
 		if(getClass() != obj.getClass()) return false;
 		final EntityBase other = (EntityBase) obj;
-		if(pk == null) {
-			if(other.pk != null) return false;
+		final Object sid = getId(), otherId = other.getId();
+		if(sid == null) {
+			if(otherId != null) return false;
 		}
-		else if(!pk.equals(other.pk)) return false;
+		else if(!sid.equals(otherId)) return false;
 		if(version != other.version) return false;
 		return true;
 	}
 
 	@Override
 	public final String toString() {
-		return typeDesc() + ", pk: " + getPrimaryKey() + ", version: " + getVersion();
+		return typeDesc() + ", pk: " + getId() + ", version: " + getVersion();
 	}
 
 	@Override
@@ -246,6 +239,6 @@ public abstract class EntityBase implements IEntity {
 	 */
 	@Override
 	public String descriptor() {
-		return typeDesc() + " (Pk: " + getPrimaryKey() + ")";
+		return typeDesc() + " (Pk: " + getId() + ")";
 	}
 }

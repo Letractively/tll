@@ -49,7 +49,7 @@ public abstract class AccountServiceTest extends AccountRelatedServiceTest {
 
 			startNewTransaction();
 			final Criteria<AccountHistory> criteria = new Criteria<AccountHistory>(AccountHistory.class);
-			criteria.getPrimaryGroup().addCriterion("account", Account.class, account.getPrimaryKey());
+			criteria.getPrimaryGroup().addCriterion("account", Account.class, account.getId());
 			final List<SearchResult> list = AbstractDbAwareTest.getEntitiesFromDb(getDao(), criteria);
 			endTransaction();
 			assert list != null && list.size() == 1;
@@ -73,7 +73,7 @@ public abstract class AccountServiceTest extends AccountRelatedServiceTest {
 		final IListingDataProvider dataProvider = accountService.getAccountHistoryDataProvider();
 
 		final Criteria<AccountHistory> criteria = new Criteria<AccountHistory>(AccountHistory.class);
-		criteria.getPrimaryGroup().addCriterion("account", Account.class, account.getPrimaryKey());
+		criteria.getPrimaryGroup().addCriterion("account", Account.class, account.getId());
 
 		final Sorting sorting = new Sorting("transDate");
 

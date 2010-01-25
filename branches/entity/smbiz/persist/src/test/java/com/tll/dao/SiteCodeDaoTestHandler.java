@@ -26,12 +26,12 @@ public class SiteCodeDaoTestHandler extends AbstractEntityDaoTestHandler<SiteCod
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
-		pkC = currency.getPrimaryKey();
+		pkC = currency.getId();
 
 		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
-		pkA = account.getPrimaryKey();
+		pkA = account.getId();
 	}
 
 	@Override

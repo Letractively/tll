@@ -290,7 +290,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 
 	public Object accountKey() {
 		try {
-			return getAccount().getPrimaryKey();
+			return getAccount().getId();
 		}
 		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
@@ -300,7 +300,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 
 	public Object customerId() {
 		try {
-			return getCustomer().getPrimaryKey();
+			return getCustomer().getId();
 		}
 		catch(final NullPointerException npe) {
 			return null;

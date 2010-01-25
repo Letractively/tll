@@ -51,7 +51,7 @@ public class ForgotPasswordService extends RpcServlet implements IForgotPassword
 			try {
 				final IForgotPasswordHandler handler = context.getForgotPasswordHandler();
 				final IUserRef user = handler.getUserRef(emailAddress);
-				final String rp = handler.resetPassword(user.getId().longValue());
+				final String rp = handler.resetPassword(user.getId());
 				data.put("username", user.getUsername());
 				data.put("emailAddress", user.getEmailAddress());
 				data.put("password", rp);

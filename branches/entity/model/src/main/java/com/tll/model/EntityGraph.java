@@ -128,7 +128,7 @@ public final class EntityGraph implements IEntityProvider {
 		final Collection<E> clc = getEntitiesByType(entityType);
 		if(clc != null) {
 			for(final E e : clc) {
-				if(pk.equals(e.getPrimaryKey())) {
+				if(pk.equals(e.getId())) {
 					return e;
 				}
 			}

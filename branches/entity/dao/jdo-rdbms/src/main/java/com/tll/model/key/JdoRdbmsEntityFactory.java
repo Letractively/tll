@@ -24,17 +24,17 @@ import org.datanucleus.store.valuegenerator.ValueGenerator;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.tll.model.AbstractEntityFactory;
 import com.tll.model.IEntity;
-import com.tll.model.IPrimaryKeyGenerator;
 
 /**
- * JdoPrimaryKeyGenerator - Generates unique id tokens based on DataNucleus'
+ * JdoRdbmsEntityFactory - Generates unique id tokens based on DataNucleus'
  * {@link ValueGenerator} strategies.
  * @author jpk
  */
-public class JdoPrimaryKeyGenerator implements IPrimaryKeyGenerator<Long> {
+public class JdoRdbmsEntityFactory extends AbstractEntityFactory<Long> {
 
-	static final Log log = LogFactory.getLog(JdoPrimaryKeyGenerator.class);
+	static final Log log = LogFactory.getLog(JdoRdbmsEntityFactory.class);
 
 	private ValueGenerator generator;
 
@@ -43,7 +43,7 @@ public class JdoPrimaryKeyGenerator implements IPrimaryKeyGenerator<Long> {
 	 * @param pmProvider the required {@link PersistenceManager} provider
 	 */
 	@Inject
-	public JdoPrimaryKeyGenerator(Provider<PersistenceManager> pmProvider) {
+	public JdoRdbmsEntityFactory(Provider<PersistenceManager> pmProvider) {
 		super();
 		if(pmProvider == null) throw new NullPointerException();
 
@@ -109,11 +109,26 @@ public class JdoPrimaryKeyGenerator implements IPrimaryKeyGenerator<Long> {
 	}
 
 	@Override
+	public <E extends IEntity> E createEntity(Class<E> entityClass, boolean generate) throws IllegalStateException {
+		return newEntity(entityClass);
+	}
+
+	@Override
+	public String primaryKeyToString(Long pk) {
+		return pk == null ? null : pk.toString();
+	}
+
+	@Override
+	public Long stringToPrimaryKey(String s) {
+		return s == null ? null : Long.valueOf(s);
+	}
+
+	@Override
 	// NOTE: the internals of generator are synchronized
-	public /*synchronized*/ Long generateIdentifier(IEntity entity) {
+	public /*synchronized*/ Long generatePrimaryKey(IEntity entity) {
 		final long id = generator.nextValue();
-		log.debug(">Generated id: " + id);
-		//entity.setPrimaryKey(id);
+		log.debug(">Generated jdo-rdbms id: " + id);
+		entity.setGenerated(id);
 		return id;
 	}
 }

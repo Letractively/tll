@@ -56,7 +56,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 	private AccountInterfaceOption generateAccountInterfaceOption(InterfaceOption io, InterfaceOptionAccount ioa) {
 		assert io != null;
 		final AccountInterfaceOption aio = entityAssembler.assembleEntity(AccountInterfaceOption.class, null);
-		aio.setPrimaryKey(io.getPrimaryKey());
+		aio.setId(io.getId());
 		aio.setVersion(1);	// mimic non-new entity
 		aio.setAnnualCost(io.getAnnualCost());
 		aio.setAnnualPrice(io.getBaseAnnualPrice());
@@ -76,7 +76,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 		aio.setParameters(aiops);
 		for(final InterfaceOptionParameterDefinition iopd : io.getParameters()) {
 			final AccountInterfaceOptionParameter aiop = entityAssembler.assembleEntity(AccountInterfaceOptionParameter.class, null);
-			aiop.setPrimaryKey(iopd.getPrimaryKey());
+			aiop.setId(iopd.getId());
 			aiop.setVersion(1);	// mimic non-new entity
 			aiops.add(aiop);
 			aiop.setCode(iopd.getCode());
@@ -106,7 +106,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 		final LinkedHashSet<AccountInterfaceOption> aios = new LinkedHashSet<AccountInterfaceOption>();
 		InterfaceOptionAccount ioa;
 		for(final InterfaceOption io : intf.getOptions()) {
-			bk.setPropertyValue("option.id", io.getPrimaryKey());
+			bk.setPropertyValue("option.id", io.getId());
 			try {
 				ioa = dao.load(bk);
 			}
@@ -156,7 +156,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 
 		for(final InterfaceOption io : intf.getOptions()) {
 			try {
-				bk.setPropertyValue("option.id", io.getPrimaryKey());
+				bk.setPropertyValue("option.id", io.getId());
 				final InterfaceOptionAccount ioa = dao.load(bk);
 				dao.purge(ioa);
 			}
@@ -169,7 +169,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 		for(final AccountInterfaceOption aio : accountInterface.getOptions()) {
 			final InterfaceOptionAccount ioa = entityAssembler.assembleEntity(InterfaceOptionAccount.class, null);
 			ioa.setAccount(account);
-			final InterfaceOption io = dao.load(InterfaceOption.class, aio.getPrimaryKey());
+			final InterfaceOption io = dao.load(InterfaceOption.class, aio.getId());
 			ioa.setOption(io);
 			ioa.setSetUpPrice(aio.getSetUpPrice());
 			ioa.setMonthlyPrice(aio.getMonthlyPrice());
@@ -219,7 +219,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 		bk.setPropertyValue("account.id", accountKey);
 
 		for(final InterfaceOption io : intf.getOptions()) {
-			bk.setPropertyValue("option.id", io.getPrimaryKey());
+			bk.setPropertyValue("option.id", io.getId());
 			try {
 				final InterfaceOptionAccount ioa = dao.load(bk);
 				dao.purge(ioa);
@@ -235,7 +235,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 	public void purgeAccountInterfacess(Object accountKey) {
 		final Collection<Interface> intfs = dao.loadAll(Interface.class);
 		for(final Interface i : intfs) {
-			purgeAccountInterface(accountKey, i.getPrimaryKey());
+			purgeAccountInterface(accountKey, i.getId());
 		}
 	}
 }

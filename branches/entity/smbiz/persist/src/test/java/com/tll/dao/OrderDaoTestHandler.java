@@ -30,32 +30,32 @@ public class OrderDaoTestHandler extends AbstractEntityDaoTestHandler<Order> {
 	@Override
 	public void persistDependentEntities() {
 		final Currency c = createAndPersist(Currency.class, true);
-		pkC = c.getPrimaryKey();
+		pkC = c.getId();
 
 		final Address adr1 = createAndPersist(Address.class, true);
 		final Address adr2 = createAndPersist(Address.class, true);
-		pkAdr1 = adr1.getPrimaryKey();
-		pkAdr2 = adr2.getPrimaryKey();
+		pkAdr1 = adr1.getId();
+		pkAdr2 = adr2.getId();
 
 		final PaymentInfo pi = createAndPersist(PaymentInfo.class, true);
-		pkPI = pi.getPrimaryKey();
+		pkPI = pi.getId();
 
 		final Asp asp = create(Asp.class, true);
 		asp.setCurrency(c);
 		asp.setPaymentInfo(pi);
-		pkA = asp.getPrimaryKey();
+		pkA = asp.getId();
 
 		Visitor v = create(Visitor.class, true);
 		v.setAccount(asp);
 		v = persist(v);
-		pkV = v.getPrimaryKey();
+		pkV = v.getId();
 
 		Customer cust = create(Customer.class, true);
 		cust.setCurrency(c);
 		cust.setPaymentInfo(pi);
 		cust.setParent(asp);
 		cust = persist(cust);
-		pkCust = cust.getPrimaryKey();
+		pkCust = cust.getId();
 	}
 
 	@Override

@@ -26,15 +26,15 @@ public abstract class AbstractAccountDaoTestHandler<A extends Account> extends A
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
 		final PaymentInfo paymentInfo = createAndPersist(PaymentInfo.class, true);
-		pkCurrency = currency.getPrimaryKey();
+		pkCurrency = currency.getId();
 
 		Asp parent = create(Asp.class, true);
 		parent.setParent(null); // eliminate pointer chasing
 		parent.setCurrency(currency);
 		parent.setPaymentInfo(paymentInfo);
 		parent = persist(parent);
-		pkAccountParent = parent.getPrimaryKey();
-		pkPaymentInfo = paymentInfo.getPrimaryKey();
+		pkAccountParent = parent.getId();
+		pkPaymentInfo = paymentInfo.getId();
 	}
 
 	@Override

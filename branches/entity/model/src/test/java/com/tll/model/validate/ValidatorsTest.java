@@ -114,7 +114,7 @@ public class ValidatorsTest {
 
 	TestEntity getTestEntity() {
 		final TestEntity e = new TestEntity();
-		e.setPrimaryKey(Long.valueOf(1));
+		e.setId(Long.valueOf(1));
 		e.setName("name");
 		e.setPhoneNumber("x");
 		e.setPostalCode("y");

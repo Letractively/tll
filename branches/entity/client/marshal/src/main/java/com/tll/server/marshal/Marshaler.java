@@ -33,9 +33,9 @@ import com.tll.common.model.RelatedOneProperty;
 import com.tll.common.model.StringMapPropertyValue;
 import com.tll.common.model.StringPropertyValue;
 import com.tll.dao.SearchResult;
-import com.tll.model.EntityFactory;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
+import com.tll.model.IEntityFactory;
 import com.tll.model.IScalar;
 import com.tll.model.IVersionSupport;
 import com.tll.model.schema.ISchemaInfo;
@@ -64,7 +64,7 @@ public final class Marshaler {
 	private static final Log log = LogFactory.getLog(Marshaler.class);
 
 	private final IEntityTypeResolver etResolver;
-	private final EntityFactory entityFactory;
+	private final IEntityFactory<Object> entityFactory;
 	private final ISchemaInfo schemaInfo;
 
 	/**
@@ -74,7 +74,7 @@ public final class Marshaler {
 	 * @param schemaInfo
 	 */
 	@Inject
-	public Marshaler(final IEntityTypeResolver etResolver, final EntityFactory entityFactory,
+	public Marshaler(final IEntityTypeResolver etResolver, final IEntityFactory<Object> entityFactory,
 			final ISchemaInfo schemaInfo) {
 		this.etResolver = etResolver;
 		this.entityFactory = entityFactory;
@@ -332,7 +332,7 @@ public final class Marshaler {
 			log.debug("marshalModel - propName: " + propName);
 
 			if(Model.ID_PROPERTY.equals(propName)) {
-				val = pval == null ? null : Long.valueOf((String) pval);
+				val = pval == null ? null : entityFactory.stringToPrimaryKey(pval.toString());
 			}
 			else if(Model.VERSION_PROPERTY.equals(propName)) {
 				val = pval == null ? null : Long.valueOf((String) pval);
@@ -396,24 +396,24 @@ public final class Marshaler {
 						if(rmEntitySet != null) {
 							newRmEntitySet.addAll(rmEntitySet); // fail fast so don't trap exception here
 						}
-						//if(rmEntitySet != null) {
 						// re-build the rm entity set
 						for(final Model indexedModel : rmModelList) {
 							assert indexedModel != null;
 							final IEntityType indexedEntityType = indexedModel.getEntityType();
 							final Class<IEntity> indexedEntityClass =
 								(Class<IEntity>) etResolver.resolveEntityClass(indexedEntityType);
-							final Long id = Long.valueOf(indexedModel.getId());
-							final Object imodelPk = new GlobalLongPrimaryKey<IEntity>(indexedEntityClass, id);
 
 							IEntity indexedEntity = null;
 
 							// existing indexed entity?
-							for(final IEntity ie : newRmEntitySet) {
-								final GlobalLongPrimaryKey<IEntity> iepk = new GlobalLongPrimaryKey<IEntity>(ie);
-								if(imodelPk.equals(iepk)) {
-									indexedEntity = ie;
-									break;
+							final String imid = indexedModel.getId();
+							if(imid != null) { // may be null (gae)
+								for(final IEntity ie : newRmEntitySet) {
+									assert ie.getId() != null;
+									if(entityFactory.primaryKeyToString(ie.getId()).equals(imid)) {
+										indexedEntity = ie;
+										break;
+									}
 								}
 							}
 							if(indexedEntity == null) {
@@ -447,7 +447,6 @@ public final class Marshaler {
 							}
 						} // indexed model loop
 						val = newRmEntitySet;
-						//}
 					}
 				}
 				break;
@@ -536,12 +535,13 @@ public final class Marshaler {
 			prop = new StringPropertyValue(pname, pdata, (String) obj);
 		}
 
-		// we convert server side ids to strings client-side
+		// convert server side ids to strings client-side
 		else if(IEntity.PK_FIELDNAME.equals(pname)) {
-			prop = new StringPropertyValue(pname, pdata, obj == null ? null : obj.toString());
+			String mid = entityFactory.primaryKeyToString(obj);
+			prop = new StringPropertyValue(pname, pdata, obj == null ? null : mid);
 		}
 
-		// we convert server side version prop values to strings client-side
+		// convert server side version prop values to strings client-side
 		else if(IVersionSupport.VERSION_FIELDNAME.equals(pname)) {
 			prop = new StringPropertyValue(pname, pdata, obj == null ? null : obj.toString());
 		}

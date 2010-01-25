@@ -15,7 +15,7 @@ import com.tll.model.AccountInterface;
 import com.tll.model.AccountInterfaceOption;
 import com.tll.model.AccountInterfaceOptionParameter;
 import com.tll.model.Asp;
-import com.tll.model.EntityFactory;
+import com.tll.model.IEntityFactory;
 import com.tll.model.Interface;
 import com.tll.model.InterfaceOption;
 import com.tll.model.InterfaceOptionAccount;
@@ -42,8 +42,8 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 		getInterfaceService().setAccountInterface(ai);
 
 		final IBusinessKey<InterfaceOptionAccount> bk = BusinessKeyFactory.create(InterfaceOptionAccount.class, "Option Id and Account Id");
-		bk.setPropertyValue("option.id", io.getPrimaryKey());
-		bk.setPropertyValue("account.id", a.getPrimaryKey());
+		bk.setPropertyValue("option.id", io.getId());
+		bk.setPropertyValue("account.id", a.getId());
 		final InterfaceOptionAccount ioa = getDao().load(bk);
 		Assert.assertNotNull(ioa);
 	}
@@ -53,7 +53,7 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 		final Account a = stub(Asp.class, true);
 		AccountInterface ai = stubAccountInterface(intf, a, true);
 
-		ai = getInterfaceService().loadAccountInterface(a.getPrimaryKey(), intf.getPrimaryKey());
+		ai = getInterfaceService().loadAccountInterface(a.getId(), intf.getId());
 
 		Assert.assertNotNull(ai);
 	}
@@ -62,10 +62,10 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 		final Interface intf = stubInterface(true);
 		InterfaceOptionAccount ioa = stubIoa(intf, true);
 
-		getInterfaceService().purgeAccountInterface(ioa.accountKey(), intf.getPrimaryKey());
+		getInterfaceService().purgeAccountInterface(ioa.accountKey(), intf.getId());
 
 		try {
-			ioa = getDao().load(InterfaceOptionAccount.class, ioa.getPrimaryKey());
+			ioa = getDao().load(InterfaceOptionAccount.class, ioa.getId());
 			Assert.fail("Not purged: " + ioa);
 		}
 		catch(final EntityNotFoundException e) {
@@ -109,13 +109,13 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 	 * @param persist
 	 */
 	private AccountInterface stubAccountInterface(Interface intf, Account a, boolean persist) {
-		final EntityFactory efactory = injector.getInstance(EntityFactory.class);
+		final IEntityFactory<?> efactory = injector.getInstance(IEntityFactory.class);
 		final AccountInterface ai = efactory.createEntity(AccountInterface.class, false);
-		ai.setAccountKey(a.getPrimaryKey());
-		ai.setInterfaceKey(intf.getPrimaryKey());
+		ai.setAccountKey(a.getId());
+		ai.setInterfaceKey(intf.getId());
 		for(final InterfaceOption io : intf.getOptions()) {
 			final AccountInterfaceOption aio = efactory.createEntity(AccountInterfaceOption.class, false);
-			aio.setPrimaryKey(io.getPrimaryKey());
+			aio.setId(io.getId());
 			aio.setName(io.getName());
 			aio.setCode(io.getCode());
 			aio.setDescription(io.getDescription());
@@ -125,7 +125,7 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 			for(final InterfaceOptionParameterDefinition iopd : io.getParameters()) {
 				final AccountInterfaceOptionParameter aiop =
 					efactory.createEntity(AccountInterfaceOptionParameter.class, false);
-				aiop.setPrimaryKey(iopd.getPrimaryKey());
+				aiop.setId(iopd.getId());
 				aiop.setName(iopd.getName());
 				aiop.setCode(iopd.getCode());
 				aiop.setDescription(iopd.getDescription());

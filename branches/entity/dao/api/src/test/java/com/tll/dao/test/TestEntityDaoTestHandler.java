@@ -40,11 +40,11 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 	public void persistDependentEntities() {
 		Currency currency = create(Currency.class, true);
 		currency = persist(currency);
-		pkCurrency = currency.getPrimaryKey();
+		pkCurrency = currency.getId();
 
 		NestedEntity nestedEntity = create(NestedEntity.class, true);
 		nestedEntity = persist(nestedEntity);
-		pkNestedEntity = nestedEntity.getPrimaryKey();
+		pkNestedEntity = nestedEntity.getId();
 
 		Account parent = create(Account.class, true);
 		parent.setName("parent account");
@@ -52,7 +52,7 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 		parent.setCurrency(currency);
 		parent.setNestedEntity(nestedEntity);
 		parent = persist(parent);
-		pkAccountParent = parent.getPrimaryKey();
+		pkAccountParent = parent.getId();
 	}
 
 	@Override

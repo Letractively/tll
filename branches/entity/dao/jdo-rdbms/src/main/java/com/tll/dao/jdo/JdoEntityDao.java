@@ -564,7 +564,7 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 		final String filter = toFilter(criteria, params);
 		q.setFilter(filter);
 		if(sorting != null) q.setOrdering(sorting.getJdoOrderingClause());
-		q.setResult(IEntity.PK_FIELDNAME);
+		q.setResult("id");	// the datastore pk field name
 		final List<Long> rval = (List<Long>) getJdoTemplate().executeFind(new JdoCallback() {
 
 			@Override

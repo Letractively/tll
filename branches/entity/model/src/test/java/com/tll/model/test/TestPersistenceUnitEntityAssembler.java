@@ -1,9 +1,9 @@
 package com.tll.model.test;
 
 import com.google.inject.Inject;
-import com.tll.model.EntityFactory;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityAssembler;
+import com.tll.model.IEntityFactory;
 import com.tll.model.IEntityProvider;
 
 /**
@@ -12,14 +12,14 @@ import com.tll.model.IEntityProvider;
  */
 public final class TestPersistenceUnitEntityAssembler implements IEntityAssembler {
 
-	private final EntityFactory entityFactory;
+	private final IEntityFactory<?> entityFactory;
 
 	/**
 	 * Constructor
 	 * @param entityFactory required
 	 */
 	@Inject
-	public TestPersistenceUnitEntityAssembler(EntityFactory entityFactory) {
+	public TestPersistenceUnitEntityAssembler(IEntityFactory<?> entityFactory) {
 		super();
 		this.entityFactory = entityFactory;
 	}

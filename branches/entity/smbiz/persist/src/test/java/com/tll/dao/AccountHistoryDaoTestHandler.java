@@ -26,14 +26,14 @@ public class AccountHistoryDaoTestHandler extends AbstractEntityDaoTestHandler<A
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
-		this.pkC = currency.getPrimaryKey();
+		this.pkC = currency.getId();
 
 		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account.setPaymentInfo(null);
 		account.setParent(null);
 		account = persist(account);
-		this.pkA = account.getPrimaryKey();
+		this.pkA = account.getId();
 	}
 
 	@Override

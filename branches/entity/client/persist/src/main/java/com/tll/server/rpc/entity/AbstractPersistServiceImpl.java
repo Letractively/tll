@@ -24,7 +24,6 @@ import com.tll.dao.EntityExistsException;
 import com.tll.dao.EntityNotFoundException;
 import com.tll.model.IEntity;
 import com.tll.model.NameKey;
-import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.bk.BusinessKeyNotDefinedException;
 import com.tll.model.bk.IBusinessKey;
@@ -179,8 +178,8 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 		final Class<IEntity> eclass = resolveEntityClass(modelChanges.getEntityType());
 
 		// load current state of this entity
-		final Long id = Long.valueOf(modelChanges.getId());
-		IEntity e = svc.load(new GlobalLongPrimaryKey<IEntity>(eclass, id));
+		final Object id = context.getEntityFactory().stringToPrimaryKey(modelChanges.getId());
+		IEntity e = svc.load(id);
 
 		// ensure versions match!
 		if(!ObjectUtil.equals(Long.valueOf(modelChanges.getVersion()), Long.valueOf(e.getVersion()))) {
@@ -289,15 +288,13 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	 * @param search guaranteed non-<code>null</code> search criteria
 	 * @param status the status to which messages are posted
 	 */
-	@SuppressWarnings("unchecked")
 	protected IEntity loadEntityByPrimaryKey(PrimaryKeySearch search, Status status) {
 		try {
 			final ModelKey mkey = search.getKey();
 			final IEntityType et = mkey.getEntityType();
-			final Class<IEntity> ec = (Class<IEntity>) context.getEntityTypeResolver().resolveEntityClass(et);
 			final IEntityService<IEntity> svc = getEntityService(et);
-			final Long id = Long.valueOf(mkey.getId());
-			final IEntity e = svc.load(new GlobalLongPrimaryKey(ec, id));
+			final Object id = context.getEntityFactory().stringToPrimaryKey(mkey.getId());
+			final IEntity e = svc.load(id);
 			return e;
 		}
 		catch(final EntityNotFoundException e) {
@@ -400,8 +397,7 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 			final Class<IEntity> entityClass =
 				(Class<IEntity>) context.getEntityTypeResolver().resolveEntityClass(ref.getEntityType());
 			final IEntityService<IEntity> svc = context.getEntityServiceFactory().instanceByEntityType(entityClass);
-			final Long id = Long.valueOf(ref.getId());
-			final GlobalLongPrimaryKey pk = new GlobalLongPrimaryKey(entityClass, id);
+			final Object pk = context.getEntityFactory().stringToPrimaryKey(ref.getId());
 			final IEntity e = svc.load(pk);
 			svc.purge(e);
 			payload.setRef(ref);

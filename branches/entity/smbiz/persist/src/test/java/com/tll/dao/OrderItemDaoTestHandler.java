@@ -27,18 +27,18 @@ public class OrderItemDaoTestHandler extends AbstractEntityDaoTestHandler<OrderI
 	@Override
 	public void persistDependentEntities() {
 		final Currency c = createAndPersist(Currency.class, true);
-		pkC = c.getPrimaryKey();
+		pkC = c.getId();
 
 		Asp asp = create(Asp.class, true);
 		asp.setCurrency(c);
 		asp = persist(asp);
-		pkA = asp.getPrimaryKey();
+		pkA = asp.getId();
 
 		Order o = create(Order.class, false);
 		o.setCurrency(c);
 		o.setAccount(asp);
 		o = persist(o);
-		pkO = o.getPrimaryKey();
+		pkO = o.getId();
 	}
 
 	@Override

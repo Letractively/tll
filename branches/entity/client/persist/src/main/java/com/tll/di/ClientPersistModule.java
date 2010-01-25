@@ -14,6 +14,7 @@ import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.mail.MailManager;
 import com.tll.model.IEntityAssembler;
+import com.tll.model.IEntityFactory;
 import com.tll.model.schema.ISchemaInfo;
 import com.tll.refdata.RefData;
 import com.tll.server.marshal.Marshaler;
@@ -73,6 +74,8 @@ public abstract class ClientPersistModule extends AbstractModule {
 			@Inject
 			IEntityTypeResolver entityTypeResolver;
 			@Inject
+			IEntityFactory<?> entityFactory;
+			@Inject
 			IEntityAssembler entityAssembler;
 			@Inject
 			IEntityServiceFactory entityServiceFactory;
@@ -84,7 +87,7 @@ public abstract class ClientPersistModule extends AbstractModule {
 			@Override
 			public PersistContext get() {
 				return new PersistContext(refData, mailManager, schemaInfo, marshaler, marshalOptionsResolver,
-						entityTypeResolver, entityAssembler, entityServiceFactory, exceptionHandler, persistCache);
+						entityTypeResolver, entityFactory, entityAssembler, entityServiceFactory, exceptionHandler, persistCache);
 			}
 		}).in(Scopes.SINGLETON);
 

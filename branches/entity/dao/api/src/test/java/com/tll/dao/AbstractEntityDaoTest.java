@@ -22,8 +22,8 @@ import com.google.inject.TypeLiteral;
 import com.tll.criteria.Criteria;
 import com.tll.dao.test.EntityDaoTestDecorator;
 import com.tll.model.EntityBeanFactory;
-import com.tll.model.EntityFactory;
 import com.tll.model.IEntity;
+import com.tll.model.IEntityFactory;
 import com.tll.model.INamedEntity;
 import com.tll.model.ITimeStampEntity;
 import com.tll.model.NameKey;
@@ -82,7 +82,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		for(final E e : entities) {
 			boolean found = false;
 			for(final Object id : ids) {
-				if(id.equals(e.getPrimaryKey())) {
+				if(id.equals(e.getId())) {
 					found = true;
 					break;
 				}
@@ -295,10 +295,10 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	}
 
 	/**
-	 * @return The injected {@link EntityFactory}
+	 * @return The injected {@link IEntityFactory}
 	 */
-	protected final EntityFactory getEntityFactory() {
-		return injector.getInstance(EntityFactory.class);
+	protected final IEntityFactory<?> getEntityFactory() {
+		return injector.getInstance(IEntityFactory.class);
 	}
 
 	/**
@@ -325,7 +325,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		if(BusinessKeyFactory.hasBusinessKeys(entityHandler.entityClass())) {
 			entityHandler.makeUnique(e);
 		}
-		testEntityRefStack.add(new PkAndType(e.entityClass(), e.getPrimaryKey()));
+		testEntityRefStack.add(new PkAndType(e.entityClass(), e.getId()));
 		logger.debug("Test entity created: " + e);
 		return e;
 	}
@@ -412,7 +412,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 		startNewTransaction();
 		try {
-			e = dao.load(e.entityClass(), e.getPrimaryKey());
+			e = dao.load(e.entityClass(), e.getId());
 			Assert.fail("Loaded entity that should not have been committed into the db due to trans rollback");
 		}
 		catch(final EntityNotFoundException ex) {
@@ -434,7 +434,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		e = dao.persist(e);
 		setComplete();
 		endTransaction();
-		pk = e.getPrimaryKey();
+		pk = e.getId();
 		Assert.assertNotNull(pk, "The created entities' primary key is null");
 		Assert.assertTrue(!e.isNew(), "The created entity is new and shouldn't be");
 
@@ -448,7 +448,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 		// retrieve
 		startNewTransaction();
-		e = dao.load(e.entityClass(), e.getPrimaryKey());
+		e = dao.load(e.entityClass(), e.getId());
 		Assert.assertNotNull(e, "The loaded entity is null");
 		entityHandler.verifyLoadedEntityState(e);
 		setComplete(); // we need to do this for JDO in order to ensure a detached copy is made
@@ -463,7 +463,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 		// find (update verify)
 		startNewTransaction();
-		e = getEntityFromDb(e.entityClass(), e.getPrimaryKey());
+		e = getEntityFromDb(e.entityClass(), e.getId());
 		Assert.assertNotNull(e, "The retrieved entity for update check is null");
 		setComplete();
 		endTransaction();
@@ -487,7 +487,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		startNewTransaction();
 		setComplete();
 		try {
-			e = getEntityFromDb(e.entityClass(), e.getPrimaryKey());
+			e = getEntityFromDb(e.entityClass(), e.getId());
 			Assert.assertNull(e, "The entity was not purged");
 		}
 		catch(final EntityNotFoundException ex) {
@@ -562,7 +562,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		startNewTransaction();
 		Assert.assertNotNull(e, "Null generated test entity");
 		final ArrayList<Object> ids = new ArrayList<Object>(1);
-		ids.add(e.getPrimaryKey());
+		ids.add(e.getId());
 		final List<IEntity> list = dao.findByPrimaryKeys(entityHandler.entityClass(), ids, null);
 		endTransaction();
 		Assert.assertTrue(list != null, "find by ids returned null list");
@@ -583,7 +583,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		final ArrayList<Object> idList = new ArrayList<Object>(5);
 		for(IEntity e : entityList) {
 			e = dao.persist(e);
-			idList.add(e.getPrimaryKey());
+			idList.add(e.getId());
 		}
 		setComplete();
 		endTransaction();
@@ -618,7 +618,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		final ArrayList<Object> idList = new ArrayList<Object>(5);
 		for(IEntity e : entityList) {
 			e = dao.persist(e);
-			idList.add(e.getPrimaryKey());
+			idList.add(e.getId());
 		}
 		setComplete();
 		endTransaction();
@@ -678,7 +678,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 	final void daoPurgeNonExistantEntity() throws Exception {
 		IEntity e = getTestEntity();
-		final Object pk = e.getPrimaryKey();
+		final Object pk = e.getId();
 
 		// save it first
 		e = dao.persist(e);
@@ -711,7 +711,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		endTransaction();
 
 		final Criteria<IEntity> c = new Criteria<IEntity>(entityHandler.entityClass());
-		c.getPrimaryGroup().addCriterion(e.entityClass(), e.getPrimaryKey());
+		c.getPrimaryGroup().addCriterion(e.entityClass(), e.getId());
 		startNewTransaction();
 		final IEntity re = dao.findEntity(c);
 		Assert.assertTrue(re != null);

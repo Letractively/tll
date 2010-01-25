@@ -149,18 +149,18 @@ public final class EntityBeanFactory {
 
 	private final ListableBeanFactory beanFactory;
 
-	private final IPrimaryKeyGenerator<?> pkGenerator;
+	private final IEntityFactory<?> entityFactory;
 
 	/**
 	 * Constructor
-	 * @param beanFactory
-	 * @param pkGenerator Optional
+	 * @param beanFactory Responsible for creating raw entity POJOs.
+	 * @param entityFactory Optional, responsible for generating surrogate primary keys
 	 */
-	public EntityBeanFactory(ListableBeanFactory beanFactory, IPrimaryKeyGenerator<?> pkGenerator) {
+	public EntityBeanFactory(ListableBeanFactory beanFactory, IEntityFactory<?> entityFactory) {
 		super();
 		if(beanFactory == null) throw new IllegalArgumentException("The beanFactory is null");
 		this.beanFactory = beanFactory;
-		this.pkGenerator = pkGenerator;
+		this.entityFactory = entityFactory;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -188,8 +188,8 @@ public final class EntityBeanFactory {
 		final E[] arr = getBeansOfType(entityClass);
 		if(arr != null && arr.length > 0) {
 			for(final E e : arr) {
-				if(pkGenerator != null) {
-					pkGenerator.generateIdentifier(e);
+				if(entityFactory != null) {
+					entityFactory.generatePrimaryKey(e);
 				}
 				set.add(e);
 			}
@@ -208,8 +208,8 @@ public final class EntityBeanFactory {
 	public <E extends IEntity> E getEntityCopy(Class<E> entityClass, boolean makeUnique) {
 		final E e = getBean(entityClass);
 		if(e != null) {
-			if(pkGenerator != null) {
-				pkGenerator.generateIdentifier(e);
+			if(entityFactory != null) {
+				entityFactory.generatePrimaryKey(e);
 			}
 			if(makeUnique) {
 				makeBusinessKeyUnique(e);

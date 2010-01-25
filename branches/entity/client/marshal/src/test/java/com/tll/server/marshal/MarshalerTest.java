@@ -14,9 +14,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.inject.Binder;
 import com.google.inject.Module;
-import com.google.inject.Scopes;
 import com.tll.AbstractConfigAwareTest;
 import com.tll.common.model.IModelProperty;
 import com.tll.common.model.Model;
@@ -25,9 +23,7 @@ import com.tll.di.test.TestPersistenceUnitModule;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.EntityGraph;
 import com.tll.model.IEntity;
-import com.tll.model.ObjectGenerator;
 import com.tll.model.IScalar;
-import com.tll.model.TestPrimaryKeyGenerator;
 import com.tll.model.test.Account;
 import com.tll.model.test.AccountAddress;
 import com.tll.model.test.AccountStatus;
@@ -61,13 +57,6 @@ public class MarshalerTest extends AbstractConfigAwareTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new Module() {
-			
-			@Override
-			public void configure(Binder binder) {
-				binder.bind(ObjectGenerator.class).to(TestPrimaryKeyGenerator.class).in(Scopes.SINGLETON);
-			}
-		});
 		modules.add(new TestPersistenceUnitModule());
 		modules.add(new TestMarshalModule());
 	}

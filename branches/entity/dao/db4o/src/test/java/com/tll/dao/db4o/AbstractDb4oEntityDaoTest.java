@@ -96,7 +96,7 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 		dao.setObjectContainer(oc);
 		((Db4oTrans)getDbTrans()).setObjectContainer(oc);
 		startNewTransaction();
-		final IEntity eloaded = dao.load(e.entityClass(), e.getPrimaryKey());
+		final IEntity eloaded = dao.load(e.entityClass(), e.getId());
 		entityHandler.verifyLoadedEntityState(eloaded);
 		dao.purge(eloaded);
 		setComplete();

@@ -1,0 +1,45 @@
+/**
+ * The Logic Lab
+ * @author jpk
+ * @since Oct 27, 2009
+ */
+package com.tll.model.key;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
+import com.tll.model.AbstractEntityFactory;
+import com.tll.model.IEntity;
+
+/**
+ * GaePrimaryKeyGenerator - Generates unique id tokens by relying on the dao
+ * impl to persist entity instances.
+ * @author jpk
+ */
+// TODO move to com.tll.model package
+public final class GaeEntityFactory extends AbstractEntityFactory<Key> {
+
+	static final Log log = LogFactory.getLog(GaeEntityFactory.class);
+
+	@Override
+	public <E extends IEntity> E createEntity(Class<E> entityClass, boolean generate) throws IllegalStateException {
+		return newEntity(entityClass);
+	}
+
+	@Override
+	public String primaryKeyToString(Key pk) {
+		return KeyFactory.keyToString(pk);
+	}
+
+	@Override
+	public Key stringToPrimaryKey(String s) {
+		return KeyFactory.stringToKey(s);
+	}
+
+	@Override
+	public Key generatePrimaryKey(IEntity entity) {
+		throw new UnsupportedOperationException("GAE relies on initial datastore persistence to obtain primary keys");
+	}
+}

@@ -6,9 +6,9 @@ import com.tll.common.model.ModelKey;
 import com.tll.common.search.ISearch;
 
 /**
- * IPersistServiceImpl - Server side model data crud support that is not
- * necessarily conforming to entity boundaries but is rather implementation
- * specific.
+ * IPersistServiceImpl - Server side model data crud support not required to be
+ * aligned with server-side entity boundaries. Rather, this is a determination
+ * made by {@link IPersistServiceImplResolver}.
  * @author jpk
  */
 public interface IPersistServiceImpl {

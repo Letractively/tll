@@ -27,17 +27,17 @@ public class ShipBoundCostDaoTestHandler extends AbstractEntityDaoTestHandler<Sh
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
-		pkC = currency.getPrimaryKey();
+		pkC = currency.getId();
 
 		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
-		pkA = account.getPrimaryKey();
+		pkA = account.getId();
 
 		ShipMode shipMode = create(ShipMode.class, true);
 		shipMode.setAccount(account);
 		shipMode = persist(shipMode);
-		pkS = shipMode.getPrimaryKey();
+		pkS = shipMode.getId();
 	}
 
 	@Override

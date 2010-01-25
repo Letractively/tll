@@ -27,15 +27,15 @@ public class UserDaoTestHandler extends AbstractEntityDaoTestHandler<User> {
 	@Override
 	public void persistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
-		pkC = currency.getPrimaryKey();
+		pkC = currency.getId();
 
 		Asp account = create(Asp.class, true);
 		account.setCurrency(currency);
 		account = persist(account);
-		pkA = account.getPrimaryKey();
+		pkA = account.getId();
 
 		final Authority auth = createAndPersist(Authority.class, true);
-		pkT = auth.getPrimaryKey();
+		pkT = auth.getId();
 	}
 
 	@Override

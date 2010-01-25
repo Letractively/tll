@@ -240,7 +240,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 			final String encNewPassword = encodePassword(newRawPassword, newUsername);
 
 			// set the credentials
-			setCredentials(user.getPrimaryKey(), newUsername, encNewPassword);
+			setCredentials(user.getId(), newUsername, encNewPassword);
 
 			updateSecurityContextIfNecessary(user.getUsername(), newUsername, newRawPassword, false);
 		}

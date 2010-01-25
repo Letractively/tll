@@ -10,7 +10,9 @@ import com.tll.ITypeDescriptorProvider;
 public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvider, ITypeDescriptorProvider {
 
 	/**
-	 * The name of the id primary key field.
+	 * The name of the primary key field. This is solely the Java Bean property
+	 * name and doesn't imply the name for the corresponding primary key field in
+	 * a datastore.
 	 */
 	static final String PK_FIELDNAME = "id";
 
@@ -20,38 +22,39 @@ public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvi
 	 *         entity objects.
 	 */
 	Class<? extends IEntity> entityClass();
-	
+
 	/**
 	 * @return The root entity class of this entity.
 	 */
 	Class<? extends IEntity> rootEntityClass();
 
 	/**
-	 * @return The primary key
+	 * @return The surrogate primary key. Entity implementations are not required
+	 *         to employ surrogate primary keys.
 	 */
-	Object getPrimaryKey();
-	
+	Long getId();
+
 	/**
-	 * Sets the primary key.
-	 * @param pk The primary key to set
+	 * Sets the surrogate primary key.
+	 * @param id The surrogate primary key to set
 	 */
-	void setPrimaryKey(Object pk);
-	
+	void setId(Long id);
+
 	/**
-	 * True if the identifier for this object was assigned at creation.<br>
-	 * Note that generated entities are expected to provide a constructor that
-	 * takes the initial id as an argument.<br>
-	 * Note that the generated status of an entity does *not* imply a specific
-	 * persistence status. All generated entities start as transient instances,
-	 * but are expected to be persisted shortly thereafter.
+	 * True if the primary key for was assigned at object creation.<br>
+	 * The generated status of an entity does *not* imply a specific persistence
+	 * status rather it only means the primary key is fully set requring not other
+	 * alteration. All generated entities start as transient instances, but are
+	 * expected to be persisted shortly thereafter.
 	 * @return true/false
 	 */
-	//boolean isGenerated();
-	
+	boolean isGenerated();
+
 	/**
 	 * This method <b>must only</b> be called when a new entity is created and the
-	 * id is generated. It will set the id and set the generated flag to true.
-	 * @param pk the primary key to set
+	 * primary key is generated. It will set the primary key property and set the
+	 * generated flag to true.
+	 * @param pk the fully set primary key to set
 	 */
-	//void setGenerated(Object pk);
+	void setGenerated(Object pk);
 }

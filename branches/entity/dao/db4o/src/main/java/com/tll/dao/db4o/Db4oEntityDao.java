@@ -225,7 +225,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 
 			@Override
 			public boolean match(E candidate) {
-				return ids.contains((candidate.getPrimaryKey()));
+				return ids.contains((candidate.getId()));
 			}
 		});
 	}
@@ -413,7 +413,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 		}
 		final ArrayList<Long> idlist = new ArrayList<Long>();
 		for(final E e : list) {
-			idlist.add((Long)e.getPrimaryKey());
+			idlist.add(e.getId());
 		}
 		return idlist;
 	}
@@ -482,7 +482,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 
 			@Override
 			public boolean match(E candidate) {
-				return candidate.getPrimaryKey().equals(key);
+				return candidate.getId().equals(key);
 			}
 		}, key);
 	}
@@ -568,7 +568,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	@Override
 	public <E extends IEntity> void purge(E entity) throws EntityNotFoundException, DataAccessException {
 		logger.debug("Purging entity: " + entity);
-		purge(entity.entityClass(), entity.getPrimaryKey());
+		purge(entity.entityClass(), entity.getId());
 	}
 
 	@Override

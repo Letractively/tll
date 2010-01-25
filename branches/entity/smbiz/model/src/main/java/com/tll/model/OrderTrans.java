@@ -222,7 +222,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 
 	public Object accountKey() {
 		try {
-			return getOrder().getAccount().getPrimaryKey();
+			return getOrder().getAccount().getId();
 		}
 		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
@@ -232,7 +232,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 
 	public Object orderId() {
 		try {
-			return getOrder().getPrimaryKey();
+			return getOrder().getId();
 		}
 		catch(final NullPointerException npe) {
 			return null;
