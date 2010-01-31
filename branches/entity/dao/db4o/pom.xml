@@ -47,19 +47,19 @@
 		</plugins>
 	</build>
 
-  <profiles>
-  	<profile>
-  		<id>jdo</id>
-  		<dependencies>
-  			<!-- required for resolution of JDO stuff in *enhanced* .class files tll-model testassets jar  -->
-  			<dependency>
-  				<groupId>javax.jdo</groupId>
-  				<artifactId>jdo2-api</artifactId>
-  				<scope>test</scope>
-  			</dependency>
-  		</dependencies>
-  	</profile>
-  </profiles>
+	<profiles>
+		<profile>
+			<id>jdo</id>
+			<dependencies>
+				<!-- required for resolution of JDO stuff in *enhanced* .class files tll-model testassets jar  -->
+				<dependency>
+					<groupId>javax.jdo</groupId>
+					<artifactId>jdo2-api</artifactId>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 
 	<dependencies>
 		<dependency>
@@ -82,24 +82,24 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
 		</dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-aspects</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-beans</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.aspectj</groupId>
-          <artifactId>aspectjrt</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.aspectj</groupId>
-          <artifactId>aspectjweaver</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aspects</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.aspectj</groupId>
+					<artifactId>aspectjrt</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.aspectj</groupId>
+					<artifactId>aspectjweaver</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
@@ -109,6 +109,7 @@
 			<artifactId>org.springextensions.db4o</artifactId>
 			<version>${springextensions.db4o.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>com.google.code.guice</groupId>
 			<artifactId>guice</artifactId>

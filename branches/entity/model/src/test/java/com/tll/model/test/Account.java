@@ -33,8 +33,6 @@ public class Account extends NamedTimeStampEntity implements IChildEntity<Accoun
 	public static final int MAXLEN_BILLING_MODEL = 32;
 	public static final int MAXLEN_BILLING_CYCLE = 32;
 
-	protected Long id;
-	
 	protected Account parent;
 
 	protected AccountStatus status;

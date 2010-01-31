@@ -10,6 +10,7 @@ import com.google.inject.Module;
 import com.tll.di.EGraphModule;
 import com.tll.di.ModelBuildModule;
 import com.tll.di.ModelModule;
+import com.tll.model.IEntityFactory;
 import com.tll.model.test.TestEntityFactory;
 import com.tll.model.test.TestPersistenceUnitEntityAssembler;
 import com.tll.model.test.TestPersistenceUnitEntityGraphBuilder;
@@ -20,43 +21,29 @@ import com.tll.model.test.TestPersistenceUnitEntityGraphBuilder;
  */
 public final class TestPersistenceUnitModule implements Module {
 
-	protected final String beanDefFilePath;
+	private final String beanDefFilePath;
 
-	/**
-	 * Constructor - Defaults to employing:
-	 * <ul>
-	 * <li>Default xml bean def location
-	 * </ul>
-	 * @see TestPersistenceUnitModule#TestPersistenceUnitModule(String)
-	 */
-	public TestPersistenceUnitModule() {
-		this(null);
-	}
+	private final Class<? extends IEntityFactory<?>> entityFactoryImplType;
 
 	/**
 	 * Constructor
 	 * @param beanDefFilePath Xml bean definition file path. If <code>null</code>,
 	 *        the default location is used.
+	 * @param entityFactoryImplType The {@link IEntityFactory} impl type. If
+	 *        <code>null</code>, {@link TestEntityFactory} will be used.
 	 * @see EGraphModule for the default xml bean def file locatoin
 	 */
-	public TestPersistenceUnitModule(String beanDefFilePath) {
+	public TestPersistenceUnitModule(String beanDefFilePath, Class<? extends IEntityFactory<?>> entityFactoryImplType) {
 		super();
 		this.beanDefFilePath = beanDefFilePath;
+		this.entityFactoryImplType = entityFactoryImplType == null ? TestEntityFactory.class : entityFactoryImplType;
 	}
-
-	private final Module[] mods = new Module[] {
-
-		new ModelModule(),
-
-		new ModelBuildModule(TestEntityFactory.class, TestPersistenceUnitEntityAssembler.class),
-
-		new EGraphModule(TestPersistenceUnitEntityGraphBuilder.class, this.beanDefFilePath), };
 
 	@Override
 	public final void configure(Binder binder) {
-		for(final Module m : mods) {
-			m.configure(binder);
-		}
+		new ModelModule().configure(binder);
+		new ModelBuildModule(entityFactoryImplType, TestPersistenceUnitEntityAssembler.class).configure(binder);
+		new EGraphModule(TestPersistenceUnitEntityGraphBuilder.class, this.beanDefFilePath).configure(binder);
 	}
 
 }

@@ -15,6 +15,7 @@ import com.tll.dao.test.TestEntityDaoTestHandler;
 import com.tll.di.GaeDaoModule;
 import com.tll.di.test.GaeTransModule;
 import com.tll.di.test.TestPersistenceUnitModule;
+import com.tll.model.key.GaeEntityFactory;
 
 
 /**
@@ -35,7 +36,7 @@ public class GaeEntityDaoTest extends AbstractGaeEntityDaoTest {
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
 		modules.add(new GaeDaoModule(getConfig()));
-		modules.add(new TestPersistenceUnitModule());
+		modules.add(new TestPersistenceUnitModule(null, GaeEntityFactory.class));
 		modules.add(new GaeTransModule());
 	}
 }

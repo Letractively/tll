@@ -20,8 +20,6 @@ public class IdState extends EntityBase {
 
 	private static final long serialVersionUID = 5319169153141045247L;
 	
-	private Long id = Long.valueOf(1L);
-
 	/**
 	 * Holds the next primary key for root entity types.
 	 */
@@ -30,16 +28,6 @@ public class IdState extends EntityBase {
 	@Override
 	public Class<? extends IEntity> entityClass() {
 		return IdState.class;
-	}
-
-	@Override
-	public Long getId() {
-		return id;
-	}
-
-	@Override
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public Long getCurrentId(Class<?> entityType) {

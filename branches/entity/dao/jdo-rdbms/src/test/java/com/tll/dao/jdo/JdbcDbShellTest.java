@@ -27,7 +27,7 @@ public class JdbcDbShellTest extends AbstractDbAwareTest {
 
 	@Override
 	protected void addModules(List<Module> modules) {
-		modules.add(new TestPersistenceUnitModule());
+		modules.add(new TestPersistenceUnitModule(null, null));
 		modules.add(new JdbcDbShellModule(getConfig()));
 	}
 

@@ -10,6 +10,7 @@ import com.db4o.ObjectContainer;
 import com.db4o.config.Configuration;
 import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.Provider;
 import com.tll.dao.AbstractEntityDaoTest;
 import com.tll.dao.IDbTrans;
 import com.tll.dao.db4o.test.Db4oTestDaoDecorator;
@@ -23,8 +24,7 @@ import com.tll.model.IEntity;
  * @author jpk
  */
 @Test(groups = {
-	"dao", "db4o"
-})
+	"dao", "db4o" })
 public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db4oEntityDao, Db4oTestDaoDecorator> {
 
 	private Db4oTrans dbtrans;
@@ -95,6 +95,13 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 		final ObjectContainer oc = Db4o.openFile(c, db4oUri.getPath());
 		dao.setObjectContainer(oc);
 		((Db4oTrans)getDbTrans()).setObjectContainer(oc);
+		((Db4oEntityFactory)getEntityFactory()).setObjectContainer(new Provider<ObjectContainer>() {
+			
+			@Override
+			public ObjectContainer get() {
+				return oc;
+			}
+		});
 		startNewTransaction();
 		final IEntity eloaded = dao.load(e.entityClass(), e.getId());
 		entityHandler.verifyLoadedEntityState(eloaded);

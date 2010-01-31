@@ -10,6 +10,7 @@ import java.util.List;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.testng.annotations.Test;
 
+import com.db4o.ObjectContainer;
 import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -67,4 +68,12 @@ public class Db4oPagingSearchListHandlerTest extends AbstractPagingSearchListHan
 		super.beforeClass();
 		injector.getInstance(PlatformTransactionManager.class);	// bind @Transactional
 	}
+
+	@Override
+	protected void afterClass() {
+		super.afterClass();
+		// kill db4o's object container
+		injector.getInstance(ObjectContainer.class).close();
+	}
+
 }

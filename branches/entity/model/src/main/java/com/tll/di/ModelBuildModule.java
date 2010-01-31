@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
+import com.google.inject.TypeLiteral;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.IEntityFactory;
 
@@ -49,22 +50,8 @@ public class ModelBuildModule extends AbstractModule {
 	protected void configure() {
 		log.info("Employing Model build module...");
 
-		/*
-		// IEntityFactory (optionally depends on IPrimaryKeyGenerator)
-		bind(IEntityFactory.class).toProvider(new Provider<IEntityFactory>() {
-
-			@Inject(optional = true)
-			IPrimaryKeyGenerator<?> pkg;
-
-			@Override
-			public IEntityFactory get() {
-				return new EntityFactory(pkg);
-			}
-		}).in(Scopes.SINGLETON);
-		*/
-
 		// IEntityFactory
-		bind(IEntityFactory.class).to(entityFactoryImplType).in(Scopes.SINGLETON);
+		bind(new TypeLiteral<IEntityFactory<?>>() {}).to(entityFactoryImplType).in(Scopes.SINGLETON);
 
 		// IEntityAssembler
 		bind(IEntityAssembler.class).to(entityAssemlerImplType).in(Scopes.SINGLETON);

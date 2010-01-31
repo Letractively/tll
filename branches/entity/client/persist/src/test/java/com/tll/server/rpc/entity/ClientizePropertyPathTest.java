@@ -20,6 +20,7 @@ import com.tll.di.test.TestPersistenceUnitModule;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.test.Account;
 import com.tll.model.test.AccountAddress;
+import com.tll.model.test.TestEntityFactory;
 
 /**
  * ClientizePropertyPathTest
@@ -32,7 +33,7 @@ public class ClientizePropertyPathTest extends AbstractConfigAwareTest {
 
 	@Override
 	protected void addModules(List<Module> modules) {
-		modules.add(new TestPersistenceUnitModule());
+		modules.add(new TestPersistenceUnitModule(null, TestEntityFactory.class));
 	}
 
 	private Account getTestEntity() {

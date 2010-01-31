@@ -158,12 +158,12 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 			URI db4oUri;
 
 			@Inject
-			Configuration c;
+			Provider<Configuration> c;
 
 			@Override
 			public ObjectContainer get() {
 				log.info("Creating db4o session for: " + db4oUri);
-				return Db4o.openFile(c, db4oUri.getPath());
+				return Db4o.openFile(c.get(), db4oUri.getPath());
 			}
 		}).in(Scopes.SINGLETON);
 

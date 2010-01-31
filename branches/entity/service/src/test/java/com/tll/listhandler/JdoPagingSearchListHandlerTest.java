@@ -24,7 +24,7 @@ import com.tll.di.test.JdoTransModule;
  * @author jpk
  */
 @Test(groups = {
-	"dao", "jdo"
+	"listhandler", "jdo"
 })
 public class JdoPagingSearchListHandlerTest extends AbstractPagingSearchListHandlerTest {
 

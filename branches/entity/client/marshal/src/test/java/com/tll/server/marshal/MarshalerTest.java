@@ -28,6 +28,7 @@ import com.tll.model.test.Account;
 import com.tll.model.test.AccountAddress;
 import com.tll.model.test.AccountStatus;
 import com.tll.model.test.NestedEntity;
+import com.tll.model.test.TestEntityFactory;
 import com.tll.model.test.TestPersistenceUnitEntityGraphBuilder;
 
 /**
@@ -57,7 +58,7 @@ public class MarshalerTest extends AbstractConfigAwareTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new TestPersistenceUnitModule());
+		modules.add(new TestPersistenceUnitModule(null, TestEntityFactory.class));
 		modules.add(new TestMarshalModule());
 	}
 

@@ -33,13 +33,13 @@ public abstract class EntityBase implements IEntity {
 	 * given id is null, null is returned.
 	 * @param <E>
 	 * @param clc the collection to look in
-	 * @param pk the primary key of the entity to find
+	 * @param id the primary key of the entity to find
 	 * @return the found entity or null if not found
 	 */
-	protected final static <E extends IEntity> E findEntityInCollection(Collection<E> clc, Object pk) {
-		if(clc == null || pk == null) return null;
+	protected final static <E extends IEntity> E findEntityInCollection(Collection<E> clc, Object id) {
+		if(clc == null || id == null) return null;
 		for(final E e : clc) {
-			if(pk.equals(e.getId())) {
+			if(id.equals(e.getId())) {
 				return e;
 			}
 		}
@@ -226,7 +226,7 @@ public abstract class EntityBase implements IEntity {
 
 	@Override
 	public final String toString() {
-		return typeDesc() + ", pk: " + getId() + ", version: " + getVersion();
+		return typeDesc() + ", id: " + getId() + ", version: " + getVersion();
 	}
 
 	@Override
@@ -239,6 +239,6 @@ public abstract class EntityBase implements IEntity {
 	 */
 	@Override
 	public String descriptor() {
-		return typeDesc() + " (Pk: " + getId() + ")";
+		return typeDesc() + " (Id: " + getId() + ")";
 	}
 }

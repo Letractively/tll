@@ -11,6 +11,11 @@
 	<url>http://tll.googlecode.com</url>
 	<inceptionYear>2005</inceptionYear>
 
+	<organization>
+		<name>The Logic Lab</name>
+		<url>http://tll.googlecode.com</url>
+	</organization>
+	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -708,10 +713,6 @@
 				<artifactId>gwt-log</artifactId>
 				<version>${gwtLogVersion}</version>
 			</dependency>
-			<!--
-				<dependency> <groupId>com.google.code.gwt-incubator</groupId> <artifactId>gwt-incubator</artifactId>
-				<version>${gwtIncubatorVersion}</version> </dependency>
-			-->
 
 			<dependency>
 				<groupId>org.testng</groupId>

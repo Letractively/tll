@@ -11,7 +11,6 @@ import com.tll.common.model.SmbizEntityType;
 import com.tll.common.model.StringPropertyValue;
 import com.tll.model.Account;
 import com.tll.model.IEntity;
-import com.tll.model.GlobalLongPrimaryKey;
 import com.tll.service.entity.account.IAccountService;
 
 /**
@@ -39,7 +38,7 @@ public class AccountService extends AbstractPersistServiceImpl {
 		assert m != null;
 		final Account a = (Account) e;
 		if(a.getParent() != null) {
-			final Object new GlobalLongPrimaryKey(Account.class, a.getParent().getId());
+			final Object pk = a.getParent().getId();
 			final IAccountService svc = context.getEntityServiceFactory().instance(IAccountService.class);
 			final Account parent = svc.load(pk);
 			final Model mparent = new Model(SmbizEntityType.ACCOUNT);

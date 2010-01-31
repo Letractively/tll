@@ -298,7 +298,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	 * @return The injected {@link IEntityFactory}
 	 */
 	protected final IEntityFactory<?> getEntityFactory() {
-		return injector.getInstance(IEntityFactory.class);
+		return injector.getInstance(Key.get(new TypeLiteral<IEntityFactory<?>>() {}));
 	}
 
 	/**
@@ -308,7 +308,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	 * @return The injected {@link EntityBeanFactory}
 	 */
 	protected final EntityBeanFactory getEntityBeanFactory() {
-		return injector.getInstance(Key.get(new TypeLiteral<EntityBeanFactory>() {}));
+		return injector.getInstance(EntityBeanFactory.class);
 	}
 
 	/**

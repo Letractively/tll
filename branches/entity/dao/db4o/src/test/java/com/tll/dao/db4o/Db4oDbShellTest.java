@@ -33,7 +33,7 @@ public class Db4oDbShellTest extends AbstractDbAwareTest {
 		super();
 		// kill the existing db4o file if present
 		final Config cfg = Config.load();
-		final Injector i = buildInjector(new TestPersistenceUnitModule(), new TestDb4oDaoModule(cfg));
+		final Injector i = buildInjector(new TestPersistenceUnitModule(null, Db4oEntityFactory.class), new TestDb4oDaoModule(cfg));
 		final File f = new File(i.getInstance(Key.get(URI.class, Db4oFile.class)));
 		f.delete();
 	}
@@ -46,7 +46,7 @@ public class Db4oDbShellTest extends AbstractDbAwareTest {
 
 	@Override
 	protected void addModules(List<Module> modules) {
-		modules.add(new TestPersistenceUnitModule());
+		modules.add(new TestPersistenceUnitModule(null, null));
 		modules.add(new TestDb4oDaoModule(getConfig()));
 		modules.add(new Db4oDbShellModule());
 	}

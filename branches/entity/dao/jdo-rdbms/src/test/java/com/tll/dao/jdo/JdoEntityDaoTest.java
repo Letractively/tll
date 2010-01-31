@@ -10,6 +10,7 @@ import com.tll.dao.test.TestEntityDaoTestHandler;
 import com.tll.di.JdoDaoModule;
 import com.tll.di.test.JdoTransModule;
 import com.tll.di.test.TestPersistenceUnitModule;
+import com.tll.model.key.JdoRdbmsEntityFactory;
 
 /**
  * JdoEntityDaoTest
@@ -30,7 +31,7 @@ public class JdoEntityDaoTest extends AbstractJdoEntityDaoTest {
 		super.addModules(modules);
 		modules.add(new JdoDaoModule(getConfig()));
 		modules.add(new JdoTransModule());
-		modules.add(new TestPersistenceUnitModule());
+		modules.add(new TestPersistenceUnitModule(null, JdoRdbmsEntityFactory.class));
 	}
 
 }

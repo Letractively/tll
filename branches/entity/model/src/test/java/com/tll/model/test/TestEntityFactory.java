@@ -13,7 +13,9 @@ import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
 
 /**
- * TestEntityFactory - Simple {@link IEntityFactory} generating {@link Long} primary keys.
+ * TestEntityFactory - Simple {@link IEntityFactory} generating {@link Long}
+ * primary keys <em>w/o retaining state of the last provided id between jvm
+ * sessions</em>.
  * @author jpk
  */
 public class TestEntityFactory extends AbstractEntityFactory<Long> {
@@ -31,13 +33,13 @@ public class TestEntityFactory extends AbstractEntityFactory<Long> {
 		if(nextId == null) {
 			nextId = Long.valueOf(0);
 		}
-		nextId = Long.valueOf(nextId.longValue()+1);
+		nextId = Long.valueOf(nextId.longValue() + 1);
 		idMap.put(entity.rootEntityClass(), nextId);
 		// this is a complete primary key
 		entity.setGenerated(nextId);
 		return nextId;
 	}
-	
+
 	@Override
 	public String primaryKeyToString(Long pk) {
 		return pk == null ? null : pk.toString();

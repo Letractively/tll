@@ -16,6 +16,7 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
+import com.google.inject.Inject;
 import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.bk.BusinessKeyNotDefinedException;
 import com.tll.model.bk.IBusinessKeyDefinition;
@@ -156,6 +157,7 @@ public final class EntityBeanFactory {
 	 * @param beanFactory Responsible for creating raw entity POJOs.
 	 * @param entityFactory Optional, responsible for generating surrogate primary keys
 	 */
+	@Inject
 	public EntityBeanFactory(ListableBeanFactory beanFactory, IEntityFactory<?> entityFactory) {
 		super();
 		if(beanFactory == null) throw new IllegalArgumentException("The beanFactory is null");

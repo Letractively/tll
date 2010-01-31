@@ -29,7 +29,7 @@ public class Db4oEntityDaoTest extends AbstractDb4oEntityDaoTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new TestPersistenceUnitModule());
+		modules.add(new TestPersistenceUnitModule(null, Db4oEntityFactory.class));
 		modules.add(new TestDb4oDaoModule(getConfig()));
 	}
 

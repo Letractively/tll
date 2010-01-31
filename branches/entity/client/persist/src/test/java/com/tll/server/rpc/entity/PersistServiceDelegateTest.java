@@ -46,6 +46,7 @@ import com.tll.di.test.TestPersistenceUnitModule;
 import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
 import com.tll.model.test.Address;
+import com.tll.model.test.TestEntityFactory;
 import com.tll.refdata.RefDataType;
 
 /**
@@ -63,7 +64,7 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 		// as it implicitly binds at the MailModule constrctor
 		modules.add(new MailModule(Config.load(new ConfigRef("config-mail.properties"))));
 
-		modules.add(new TestPersistenceUnitModule());
+		modules.add(new TestPersistenceUnitModule(null, TestEntityFactory.class));
 		modules.add(new TestDb4oDaoModule(getConfig()));
 		modules.add(new Db4oDbShellModule());
 		modules.add(new TestEntityServiceFactoryModule());
