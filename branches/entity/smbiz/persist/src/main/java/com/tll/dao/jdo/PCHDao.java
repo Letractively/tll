@@ -19,7 +19,7 @@ import com.tll.dao.IPCHDao;
  * TODO implement
  * @author jpk
  */
-public class PCHDao extends JdoEntityDao implements IPCHDao {
+public class PCHDao extends JdoRdbmsEntityDao implements IPCHDao {
 
 	/**
 	 * Constructor

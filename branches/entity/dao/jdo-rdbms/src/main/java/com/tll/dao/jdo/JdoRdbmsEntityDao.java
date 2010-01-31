@@ -45,10 +45,10 @@ import com.tll.model.bk.IBusinessKey;
 import com.tll.util.DateRange;
 
 /**
- * JdoEntityDao
+ * JdoRdbmsEntityDao
  * @author jpk
  */
-public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
+public class JdoRdbmsEntityDao extends JdoDaoSupport implements IEntityDao {
 
 	private static final String Q_AND = " && ";
 
@@ -97,7 +97,7 @@ public class JdoEntityDao extends JdoDaoSupport implements IEntityDao {
 	 * @param pmf
 	 */
 	@Inject
-	public JdoEntityDao(PersistenceManagerFactory pmf) {
+	public JdoRdbmsEntityDao(PersistenceManagerFactory pmf) {
 		super();
 		setPersistenceManagerFactory(pmf);
 	}

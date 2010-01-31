@@ -17,7 +17,7 @@ import com.tll.model.IEntity;
 @Test(groups = {
 	"dao", "jdo"
 })
-public abstract class AbstractJdoEntityDaoTest extends AbstractEntityDaoTest<JdoEntityDao, JdoTestDaoDecorator> {
+public abstract class AbstractJdoEntityDaoTest extends AbstractEntityDaoTest<JdoRdbmsEntityDao, JdoTestDaoDecorator> {
 
 	/**
 	 * A distinct db shell.

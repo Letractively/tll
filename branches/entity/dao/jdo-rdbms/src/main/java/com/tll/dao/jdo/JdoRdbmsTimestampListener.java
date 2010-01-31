@@ -13,11 +13,11 @@ import javax.jdo.listener.StoreLifecycleListener;
 import com.tll.model.ITimeStampEntity;
 
 /**
- * JdoTimestampListener - Applies timestamping to {@link ITimeStampEntity}
+ * JdoRdbmsTimestampListener - Applies timestamping to {@link ITimeStampEntity}
  * instances before they are persisted.
  * @author jpk
  */
-public class JdoTimestampListener implements StoreLifecycleListener {
+public class JdoRdbmsTimestampListener implements StoreLifecycleListener {
 
 	@Override
 	public void preStore(InstanceLifecycleEvent event) {

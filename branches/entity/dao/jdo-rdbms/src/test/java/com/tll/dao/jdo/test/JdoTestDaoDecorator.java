@@ -7,14 +7,14 @@ package com.tll.dao.jdo.test;
 
 import javax.jdo.PersistenceManagerFactory;
 
-import com.tll.dao.jdo.JdoEntityDao;
+import com.tll.dao.jdo.JdoRdbmsEntityDao;
 import com.tll.dao.test.EntityDaoTestDecorator;
 
 /**
  * JdoTestDaoDecorator
  * @author jpk
  */
-public final class JdoTestDaoDecorator extends EntityDaoTestDecorator<JdoEntityDao> {
+public final class JdoTestDaoDecorator extends EntityDaoTestDecorator<JdoRdbmsEntityDao> {
 
 	public PersistenceManagerFactory getPersistenceManagerFactory() {
 		return rawDao.getPersistenceManagerFactory();

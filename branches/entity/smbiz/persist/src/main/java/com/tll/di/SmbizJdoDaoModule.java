@@ -15,7 +15,7 @@ import com.tll.config.Config;
  * SmbizJdoDaoModule
  * @author jpk
  */
-public class SmbizJdoDaoModule extends JdoDaoModule {
+public class SmbizJdoDaoModule extends JdoRdbmsDaoModule {
 
 	/**
 	 * Constructor

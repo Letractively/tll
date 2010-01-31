@@ -26,17 +26,17 @@ import com.tll.config.Config;
 import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
 import com.tll.dao.IEntityDao;
-import com.tll.dao.jdo.JdoEntityDao;
-import com.tll.dao.jdo.JdoTimestampListener;
+import com.tll.dao.jdo.JdoRdbmsEntityDao;
+import com.tll.dao.jdo.JdoRdbmsTimestampListener;
 import com.tll.model.IEntityFactory;
 import com.tll.model.ITimeStampEntity;
 import com.tll.model.key.JdoRdbmsEntityFactory;
 
 /**
- * JdoDaoModule
+ * JdoRdbmsDaoModule
  * @author jpk
  */
-public class JdoDaoModule extends AbstractModule implements IConfigAware {
+public class JdoRdbmsDaoModule extends AbstractModule implements IConfigAware {
 
 	/**
 	 * ConfigKeys.
@@ -63,14 +63,14 @@ public class JdoDaoModule extends AbstractModule implements IConfigAware {
 
 	private static final boolean DEFAULT_EMPLOY_SPRING_TRANSACTIONS = false;
 
-	protected static final Log log = LogFactory.getLog(JdoDaoModule.class);
+	protected static final Log log = LogFactory.getLog(JdoRdbmsDaoModule.class);
 
 	protected Config config;
 
 	/**
 	 * Constructor
 	 */
-	public JdoDaoModule() {
+	public JdoRdbmsDaoModule() {
 		super();
 	}
 
@@ -78,7 +78,7 @@ public class JdoDaoModule extends AbstractModule implements IConfigAware {
 	 * Constructor
 	 * @param config
 	 */
-	public JdoDaoModule(Config config) {
+	public JdoRdbmsDaoModule(Config config) {
 		super();
 		setConfig(config);
 	}
@@ -117,7 +117,7 @@ public class JdoDaoModule extends AbstractModule implements IConfigAware {
 					final PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory(jdoProps);
 
 					// add timestamp listener only for timestamp type entities :)
-					pmf.addInstanceLifecycleListener(new JdoTimestampListener(), new Class<?>[] { ITimeStampEntity.class });
+					pmf.addInstanceLifecycleListener(new JdoRdbmsTimestampListener(), new Class<?>[] { ITimeStampEntity.class });
 
 					return pmf;
 				}
@@ -150,7 +150,7 @@ public class JdoDaoModule extends AbstractModule implements IConfigAware {
 		bind(IEntityFactory.class).to(JdoRdbmsEntityFactory.class).in(Scopes.SINGLETON);
 
 		// IEntityDao
-		bind(IEntityDao.class).to(JdoEntityDao.class).in(Scopes.SINGLETON);
+		bind(IEntityDao.class).to(JdoRdbmsEntityDao.class).in(Scopes.SINGLETON);
 
 		final boolean dst =
 				config == null ? DEFAULT_EMPLOY_SPRING_TRANSACTIONS : config.getBoolean(ConfigKeys.DB_TRANS_BINDTOSPRING

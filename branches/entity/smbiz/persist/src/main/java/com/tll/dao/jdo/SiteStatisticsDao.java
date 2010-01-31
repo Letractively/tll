@@ -16,7 +16,7 @@ import com.tll.dao.ISiteStatisticsDao;
  * TODO implement
  * @author jpk
  */
-public class SiteStatisticsDao extends JdoEntityDao implements ISiteStatisticsDao {
+public class SiteStatisticsDao extends JdoRdbmsEntityDao implements ISiteStatisticsDao {
 
 	/**
 	 * Constructor

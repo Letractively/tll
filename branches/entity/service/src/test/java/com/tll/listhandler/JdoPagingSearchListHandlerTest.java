@@ -14,7 +14,7 @@ import com.google.inject.Module;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.dao.IDbShell;
-import com.tll.di.JdoDaoModule;
+import com.tll.di.JdoRdbmsDaoModule;
 import com.tll.di.test.JdbcDbShellModule;
 import com.tll.di.test.JdoTransModule;
 
@@ -36,7 +36,7 @@ public class JdoPagingSearchListHandlerTest extends AbstractPagingSearchListHand
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new JdoDaoModule(getConfig()));
+		modules.add(new JdoRdbmsDaoModule(getConfig()));
 		modules.add(new JdoTransModule());
 		modules.add(new JdbcDbShellModule(getConfig()));
 	}
