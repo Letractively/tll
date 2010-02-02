@@ -499,13 +499,13 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	}
 
 	@Override
-	public <E extends IEntity> E load(final NameKey<E> nameKey) throws EntityNotFoundException,
+	public <N extends INamedEntity> N load(final NameKey<N> nameKey) throws EntityNotFoundException,
 	NonUniqueResultException, DataAccessException {
-		return loadByPredicate(new Predicate<E>(nameKey.getType()) {
+		return loadByPredicate(new Predicate<N>(nameKey.getType()) {
 
 			@Override
-			public boolean match(IEntity candidate) {
-				return nameKey.getNameProperty().equals(((INamedEntity)candidate).getName());
+			public boolean match(INamedEntity candidate) {
+				return nameKey.getNameProperty().equals(candidate.getName());
 			}
 		}, nameKey);
 	}

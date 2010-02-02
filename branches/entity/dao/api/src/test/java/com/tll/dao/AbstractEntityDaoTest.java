@@ -503,7 +503,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	 * @throws Exception
 	 */
 	final void daoLoadAll() throws Exception {
-		final List<IEntity> list = dao.loadAll(entityHandler.entityClass());
+		final List<? extends IEntity> list = dao.loadAll(entityHandler.entityClass());
 		endTransaction();
 		Assert.assertNotNull(list, "loadAll returned null");
 	}

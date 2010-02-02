@@ -9,6 +9,7 @@ import com.tll.criteria.Criteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.model.IEntity;
+import com.tll.model.INamedEntity;
 import com.tll.model.NameKey;
 import com.tll.model.bk.IBusinessKey;
 
@@ -44,7 +45,7 @@ public interface IEntityDao extends IDao {
 
 	/**
 	 * Loads the named entity by a given name.
-	 * @param <E> entity type
+	 * @param <N> named entity type
 	 * @param nameKey the name key
 	 * @return the never <code>null</code> named entity (unless an exception is
 	 *         thrown).
@@ -53,7 +54,7 @@ public interface IEntityDao extends IDao {
 	 *         given name key.
 	 * @throws DataAccessException
 	 */
-	<E extends IEntity> E load(NameKey<E> nameKey) throws EntityNotFoundException, NonUniqueResultException,
+	<N extends INamedEntity> N load(NameKey<N> nameKey) throws EntityNotFoundException, NonUniqueResultException,
 	DataAccessException;
 
 	/**

@@ -28,7 +28,7 @@ public final class PrimaryKeyListHandler<E extends IEntity> extends SearchListHa
 	 * @param criteria The criteria used to generate the underlying list
 	 * @param sorting
 	 */
-	PrimaryKeyListHandler(IListingDataProvider dataProvider, Criteria<E> criteria, Sorting sorting) {
+	PrimaryKeyListHandler(IListingDataProvider<E> dataProvider, Criteria<E> criteria, Sorting sorting) {
 		super(dataProvider, criteria, sorting);
 	}
 

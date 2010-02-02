@@ -15,6 +15,7 @@ import com.tll.dao.NonUniqueResultException;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
 import com.tll.model.IEntity;
+import com.tll.model.INamedEntity;
 import com.tll.model.NameKey;
 import com.tll.model.bk.IBusinessKey;
 
@@ -87,7 +88,7 @@ public class EntityDaoTestDecorator<T extends IEntityDao> implements IEntityDao 
 	}
 
 	@Override
-	public <E extends IEntity> E load(NameKey<E> nameKey) throws EntityNotFoundException,
+	public <N extends INamedEntity> N load(NameKey<N> nameKey) throws EntityNotFoundException,
 	NonUniqueResultException, DataAccessException {
 		return rawDao.load(nameKey);
 	}

@@ -40,6 +40,7 @@ import com.tll.dao.NonUniqueResultException;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
 import com.tll.model.IEntity;
+import com.tll.model.INamedEntity;
 import com.tll.model.NameKey;
 import com.tll.model.bk.IBusinessKey;
 import com.tll.util.DateRange;
@@ -130,12 +131,12 @@ public class JdoRdbmsEntityDao extends JdoDaoSupport implements IEntityDao {
 	}
 
 	@Override
-	public <E extends IEntity> E load(NameKey<E> nameKey) {
+	public <N extends INamedEntity> N load(NameKey<N> nameKey) {
 		if(logger.isDebugEnabled()) logger.debug("Loading by NameKey: " + nameKey);
 		try {
-			final Criteria<E> nc = new Criteria<E>(nameKey.getType());
+			final Criteria<N> nc = new Criteria<N>(nameKey.getType());
 			nc.getPrimaryGroup().addCriterion(nameKey, false);
-			final E e = findEntity(nc);
+			final N e = findEntity(nc);
 			if(logger.isDebugEnabled()) logger.debug(e + " loaded by NameKey");
 			return e;
 		}

@@ -23,7 +23,7 @@ import com.tll.service.IService;
  * @author jpk
  * @param <E> the entity type
  */
-public interface IEntityService<E extends IEntity> extends IListingDataProvider, IService {
+public interface IEntityService<E extends IEntity> extends IListingDataProvider<E>, IService {
 
 	/**
 	 * Returns the class of the entity managed by this service.
@@ -51,7 +51,7 @@ public interface IEntityService<E extends IEntity> extends IListingDataProvider,
 	 * Returns all of the entities in the system managed by this service.
 	 * @return all of the entities
 	 */
-	List<E> loadAll();
+	List<? extends E> loadAll();
 
 	/**
 	 * Updates an instance of this entity. The input entity should have a valid

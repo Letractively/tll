@@ -19,6 +19,7 @@ import com.tll.dao.Sorting;
 import com.tll.dao.db4o.Db4oEntityDao;
 import com.tll.dao.test.EntityDaoTestDecorator;
 import com.tll.model.IEntity;
+import com.tll.model.INamedEntity;
 import com.tll.model.NameKey;
 import com.tll.model.bk.IBusinessKey;
 
@@ -105,9 +106,9 @@ public class Db4oTestDaoDecorator extends EntityDaoTestDecorator<Db4oEntityDao> 
 	}
 
 	@Override
-	public <E extends IEntity> E load(NameKey<E> nameKey) throws EntityNotFoundException,
+	public <N extends INamedEntity> N load(NameKey<N> nameKey) throws EntityNotFoundException,
 	NonUniqueResultException, DataAccessException {
-		final E r = super.load(nameKey);
+		final N r = super.load(nameKey);
 		hook();
 		return r;
 	}

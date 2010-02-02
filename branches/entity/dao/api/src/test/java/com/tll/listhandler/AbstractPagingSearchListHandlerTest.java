@@ -4,10 +4,9 @@
  */
 package com.tll.listhandler;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-
-import javax.validation.ValidatorFactory;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.AfterClass;
@@ -15,24 +14,22 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.inject.Binder;
-import com.google.inject.Inject;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 import com.tll.criteria.Criteria;
+import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.IEntityDao;
+import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.di.test.TestPersistenceUnitModule;
 import com.tll.model.EntityBeanFactory;
-import com.tll.model.IEntityAssembler;
 import com.tll.model.test.Address;
 import com.tll.model.test.TestEntityFactory;
-import com.tll.service.entity.EntityService;
-import com.tll.service.entity.IEntityService;
 
 /**
  * AbstractPagingSearchListHandlerTest
@@ -45,24 +42,29 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 	 * @author jpk
 	 */
 	@Transactional
-	static final class TestEntityService extends EntityService<Address> {
-
-		/**
-		 * Constructor
-		 * @param dao
-		 * @param entityAssembler
-		 * @param vfactory
-		 */
-		@Inject
-		public TestEntityService(IEntityDao dao, IEntityAssembler entityAssembler, ValidatorFactory vfactory) {
-			super(dao, entityAssembler, vfactory);
+	final class TestDataProvider implements IListingDataProvider<Address> {
+		
+		@Override
+		public List<SearchResult> find(Criteria<Address> criteria, Sorting sorting) throws InvalidCriteriaException {
+			return getEntityDao().find(criteria, sorting);
 		}
 
 		@Override
-		public Class<Address> getEntityClass() {
-			return Address.class;
+		public List<Address> getEntitiesFromIds(Class<Address> entityClass, Collection<?> pks, Sorting sorting) {
+			return getEntityDao().findByPrimaryKeys(Address.class, pks, sorting);
 		}
-	}
+
+		@Override
+		public IPageResult<SearchResult> getPage(Criteria<Address> criteria, Sorting sorting, int offset,
+				int pageSize) throws InvalidCriteriaException {
+			return getEntityDao().getPage(criteria, sorting, offset, pageSize);
+		}
+
+		@Override
+		public List<?> getPrimaryKeys(Criteria<Address> criteria, Sorting sorting) throws InvalidCriteriaException {
+			return getEntityDao().getPrimaryKeys(criteria, sorting);
+		}
+	} // TestDataProvider
 
 	/**
 	 * The number of listing elements for which to test.
@@ -77,7 +79,7 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 
 			@Override
 			public void configure(Binder binder) {
-				binder.bind(new TypeLiteral<IEntityService<Address>>() {}).to(TestEntityService.class).in(Scopes.SINGLETON);
+				binder.bind(new TypeLiteral<IListingDataProvider<Address>>() {}).to(TestDataProvider.class).in(Scopes.SINGLETON);
 			}
 		});
 	}
@@ -96,8 +98,8 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 		return injector.getInstance(IEntityDao.class);
 	}
 
-	protected final IEntityService<Address> getTestEntityService() {
-		return injector.getInstance(Key.get(new TypeLiteral<IEntityService<Address>>() {}));
+	protected final IListingDataProvider<Address> getTestEntityService() {
+		return injector.getInstance(Key.get(new TypeLiteral<IListingDataProvider<Address>>(){}));
 	}
 
 	protected final EntityBeanFactory getEntityBeanFactory() {
@@ -117,12 +119,12 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 	public void test() throws Exception {
 		stubListElements();
 
-		final IEntityService<Address> dataProvider = getTestEntityService();
-
-		final List<Address> elements = dataProvider.loadAll();
+		final List<? extends Address> elements = getEntityDao().loadAll(Address.class);
 		assert elements != null && elements.size() > 0 : "No elements exist - test can't run";
 		assert elements.size() >= 10 : "At least 10 list elements must be present for this test";
 		final int pageSize = 3;
+
+		final IListingDataProvider<Address> dataProvider = getTestEntityService();
 
 		final Criteria<Address> criteria = new Criteria<Address>(Address.class);
 		final Sorting sorting = new Sorting(new SortColumn("emailAddress"));

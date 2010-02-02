@@ -28,7 +28,7 @@ public final class PagingSearchListHandler<E extends IEntity> extends SearchList
 	 * @param criteria The criteria used to generate the underlying list
 	 * @param sorting The required sorting directive.
 	 */
-	PagingSearchListHandler(IListingDataProvider dataProvider, Criteria<E> criteria, Sorting sorting) {
+	PagingSearchListHandler(IListingDataProvider<E> dataProvider, Criteria<E> criteria, Sorting sorting) {
 		super(dataProvider, criteria, sorting);
 	}
 

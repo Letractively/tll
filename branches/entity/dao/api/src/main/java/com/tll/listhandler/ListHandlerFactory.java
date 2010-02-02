@@ -63,7 +63,7 @@ public abstract class ListHandlerFactory {
 	 * @throws IllegalStateException when the list handler type is un-supported.
 	 */
 	public static <E extends IEntity> IListHandler<SearchResult> create(Criteria<E> criteria, Sorting sorting,
-			ListHandlerType type, IListingDataProvider dataProvider) throws InvalidCriteriaException, EmptyListException,
+			ListHandlerType type, IListingDataProvider<E> dataProvider) throws InvalidCriteriaException, EmptyListException,
 			ListHandlerException, IllegalStateException {
 
 		SearchListHandler<E> slh = null;
