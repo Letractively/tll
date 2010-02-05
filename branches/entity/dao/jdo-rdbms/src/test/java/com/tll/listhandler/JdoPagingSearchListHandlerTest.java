@@ -29,11 +29,6 @@ import com.tll.di.test.JdoTransModule;
 public class JdoPagingSearchListHandlerTest extends AbstractPagingSearchListHandlerTest {
 
 	@Override
-	protected Config doGetConfig() {
-		return Config.load(new ConfigRef("jdo-config.properties"));
-	}
-
-	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
 		modules.add(new JdoRdbmsDaoModule(getConfig()));

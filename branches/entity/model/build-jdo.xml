@@ -3,6 +3,7 @@ The following properties must be present:
  
  - enhancer.classpath
  - jdo.files [relative to classpath root] (E.g.: 'META-INF/package.jdo')
+ - jdo.target-dir-name the dir underwhich the enhanced *.class files are put
 
  enhancer.classpath must include:
 				datanucleus-enhancer.jar
@@ -21,7 +22,7 @@ The following properties must be present:
 	</path>
 
 	<target name="enhance">
-		<echo message="JDO Enhancing files [jdo.files: ${jdo.files}]" />
+		<echo message="JDO Enhancing files [jdo.files: ${jdo.files}] to dir: ${jdo.target-dir-name}" />
 		<echo message="classpath: ${enhancer.classpath}" />
 		<java classname="org.datanucleus.enhancer.DataNucleusEnhancer" fork="true">
 			<classpath refid="path.enhancer.classpath" />
@@ -31,6 +32,8 @@ The following properties must be present:
 			<arg value="ASM" />
 			<arg value="-v" />
 			<arg value="${jdo.files}" />
+			<arg value="-d" />
+			<arg value="${jdo.target-dir-name}" />
 		</java>
 	</target>
 

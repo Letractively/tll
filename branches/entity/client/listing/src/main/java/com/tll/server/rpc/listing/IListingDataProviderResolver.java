@@ -21,6 +21,6 @@ public interface IListingDataProviderResolver {
 	 * @return the resolved data provider
 	 * @throws IllegalArgumentException when the data provider can't be resolved
 	 */
-	IListingDataProvider resolve(ListingRequest request)
+	IListingDataProvider<?> resolve(ListingRequest request)
 	throws IllegalArgumentException;
 }

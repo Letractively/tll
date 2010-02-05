@@ -124,6 +124,7 @@
 										<property name="enhancer.classpath" value="target/classes;${ecp}" />
 										<echo message="enhancer.classpath: ${enhancer.classpath}" />
 										<property name="jdo.files" value="META-INF/package.jdo" />
+										<property name="jdo.target-dir-name" value="target/jdoenhanced" />
 										<ant antfile="build-jdo.xml">
 											<target name="enhance" />
 										</ant>
@@ -148,6 +149,22 @@
 								</configuration>
 							</execution>
 						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+        		<artifactId>maven-jar-plugin</artifactId>
+        		<executions>
+        			<execution>
+        				<id>jdo-enhance-jar</id>
+        				<goals>
+        					<goal>jar</goal>
+        				</goals>
+        				<phase>package</phase>
+        				<configuration>
+        					<classifier>jdo</classifier>
+        				</configuration>
+        			</execution>
+        		</executions>
 					</plugin>
 				</plugins>
 			</build>

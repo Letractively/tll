@@ -49,6 +49,7 @@ final class ListingProcessor {
 	 * @param request the listing request
 	 * @return the resultant listing payload
 	 */
+	@SuppressWarnings("unchecked")
 	ListingPayload<Model> process(final String sessionId, final ListingContext context,
 			final ListingRequest request) {
 
@@ -120,10 +121,10 @@ final class ListingProcessor {
 							}
 
 							// translate client side criteria to server side criteria
-							final Criteria<? extends IEntity> criteria;
+							final Criteria<IEntity> criteria;
 							try {
 								// delegate
-								criteria = context.getSearchTranslator().translateListingSearchCriteria(context, search);
+								criteria = (Criteria<IEntity>) context.getSearchTranslator().translateListingSearchCriteria(context, search);
 							}
 							catch(final IllegalArgumentException iae) {
 								throw new ListingException(listingId, "Unable to translate listing search criteria: "
@@ -131,7 +132,7 @@ final class ListingProcessor {
 							}
 
 							// resolve the listing handler data provider
-							final IListingDataProvider dataProvider = context.getListingDataProviderResolver().resolve(request);
+							final IListingDataProvider<IEntity> dataProvider = (IListingDataProvider<IEntity>) context.getListingDataProviderResolver().resolve(request);
 
 							// resolve the list handler type
 							final ListHandlerType lht = listingDef.getListHandlerType();
