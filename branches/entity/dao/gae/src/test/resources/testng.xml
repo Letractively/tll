@@ -2,11 +2,6 @@
 <suite name="jdo-dao-tests">
 
 	<test name="gae-dao-tests" annotations="JDK">
-		<groups>
-			<run>
-				<include name="dao" />
-			</run>
-		</groups>
 		<packages>
 			<package name="com.tll.dao.gae" />
 		</packages>

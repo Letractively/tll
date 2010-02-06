@@ -2,13 +2,9 @@
 <suite name="jdo-dao-tests">
 
 	<test name="jdo-dao-tests" annotations="JDK">
-		<groups>
-			<run>
-				<include name="jdo" />
-			</run>
-		</groups>
 		<packages>
 			<package name="com.tll.dao.jdo" />
+			<package name="com.tll.listhandler" />
 		</packages>
 	</test>
 

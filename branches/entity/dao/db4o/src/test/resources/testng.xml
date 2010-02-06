@@ -2,11 +2,6 @@
 <suite name="db4o-dao-tests">
 
   <test name="db4o-dao-tests" annotations="JDK">
-    <groups>
-      <run>
-        <include name="db4o" />
-      </run>
-    </groups>
     <packages>
       <package name="com.tll.dao.db4o" />
       <package name="com.tll.listhandler" />
