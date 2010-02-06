@@ -3,7 +3,7 @@
  * @author jpk
  * @since Oct 27, 2009
  */
-package com.tll.model.key;
+package com.tll.dao.gae;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

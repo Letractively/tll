@@ -10,7 +10,6 @@ import com.tll.dao.test.TestEntityDaoTestHandler;
 import com.tll.di.JdoRdbmsDaoModule;
 import com.tll.di.test.JdoTransModule;
 import com.tll.di.test.TestPersistenceUnitModule;
-import com.tll.model.key.JdoRdbmsEntityFactory;
 
 /**
  * JdoEntityDaoTest

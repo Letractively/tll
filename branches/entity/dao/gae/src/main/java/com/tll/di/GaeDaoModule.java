@@ -24,10 +24,10 @@ import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.gae.GaeEntityDao;
+import com.tll.dao.gae.GaeEntityFactory;
 import com.tll.dao.gae.GaeTimestampListener;
 import com.tll.model.IEntityFactory;
 import com.tll.model.ITimeStampEntity;
-import com.tll.model.key.GaeEntityFactory;
 
 /**
  * GaeDaoModule

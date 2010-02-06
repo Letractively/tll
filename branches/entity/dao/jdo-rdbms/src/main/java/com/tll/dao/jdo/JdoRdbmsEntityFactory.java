@@ -3,7 +3,7 @@
  * @author jpk
  * @since Oct 27, 2009
  */
-package com.tll.model.key;
+package com.tll.dao.jdo;
 
 import java.sql.Connection;
 import java.util.Properties;

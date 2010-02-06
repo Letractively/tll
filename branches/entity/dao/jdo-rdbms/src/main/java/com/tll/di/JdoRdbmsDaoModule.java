@@ -27,10 +27,10 @@ import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.jdo.JdoRdbmsEntityDao;
+import com.tll.dao.jdo.JdoRdbmsEntityFactory;
 import com.tll.dao.jdo.JdoRdbmsTimestampListener;
 import com.tll.model.IEntityFactory;
 import com.tll.model.ITimeStampEntity;
-import com.tll.model.key.JdoRdbmsEntityFactory;
 
 /**
  * JdoRdbmsDaoModule

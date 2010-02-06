@@ -15,7 +15,6 @@ import com.tll.dao.test.TestEntityDaoTestHandler;
 import com.tll.di.GaeDaoModule;
 import com.tll.di.test.GaeTransModule;
 import com.tll.di.test.TestPersistenceUnitModule;
-import com.tll.model.key.GaeEntityFactory;
 
 
 /**
