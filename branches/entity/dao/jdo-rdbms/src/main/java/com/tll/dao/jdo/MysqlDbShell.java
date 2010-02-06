@@ -23,22 +23,23 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import com.google.inject.Inject;
+import com.tll.dao.IDbErrorDeterminer;
 import com.tll.dao.IDbShell;
 
 /**
- * JdbcDbShell - Simple JDBC based way to communicate with a data store.
+ * MysqlDbShell - Simple JDBC based way to communicate with a data store.
  * <p>
  * Intended to create, delete, stub and otherwise generally affect a targeted
  * database. Helpful for testing.
  * @author jpk
  */
-public class JdbcDbShell implements IDbShell {
+public class MysqlDbShell implements IDbShell {
 
 	/**
-	 * MySqlErrorCodeExtractor
+	 * MySqlErrorDeterminer
 	 * @author jpk
 	 */
-	static class MySqlErrorCodeExtractor {
+	static class MySqlErrorDeterminer implements IDbErrorDeterminer {
 
 		static final int ER_DB_CREATE_EXISTS = 1007;
 
@@ -145,7 +146,7 @@ public class JdbcDbShell implements IDbShell {
 			});
 		}
 
-	} // MySqlErrorCodeExtractor
+	} // MySqlErrorDeterminer
 
 	/**
 	 * ShellImpl
@@ -165,7 +166,7 @@ public class JdbcDbShell implements IDbShell {
 
 	} // ShellImpl
 
-	private static final Log log = LogFactory.getLog(JdbcDbShell.class);
+	private static final Log log = LogFactory.getLog(MysqlDbShell.class);
 
 	private static final String NL = System.getProperty("line.separator");
 
@@ -267,7 +268,7 @@ public class JdbcDbShell implements IDbShell {
 	/**
 	 * Db dialect specific exception translator used for handling exceptions.
 	 */
-	private final MySqlErrorCodeExtractor errorHandler;
+	private final IDbErrorDeterminer errorDeterminer;
 
 	/**
 	 * Constructor
@@ -281,7 +282,7 @@ public class JdbcDbShell implements IDbShell {
 	 * @param dbDelResource
 	 */
 	@Inject
-	public JdbcDbShell(String rootDbName, String dbName, String urlPrefix, String username, String password,
+	public MysqlDbShell(String rootDbName, String dbName, String urlPrefix, String username, String password,
 			URL dbSchemaResource, URL dbStubResource, URL dbDelResource) {
 		super();
 
@@ -296,7 +297,7 @@ public class JdbcDbShell implements IDbShell {
 		this.dbStubResource = dbStubResource;
 		this.dbDelResource = dbDelResource;
 
-		this.errorHandler = new MySqlErrorCodeExtractor();
+		this.errorDeterminer = new MySqlErrorDeterminer();
 
 		if(log.isInfoEnabled()) {
 			log.info("Jdbc shell instantiated for db: " + dbName);
@@ -311,7 +312,7 @@ public class JdbcDbShell implements IDbShell {
 			if(log.isInfoEnabled()) log.info(dbName + " database created.");
 		}
 		catch(final DataAccessException e) {
-			if(errorHandler.isCreateAlreadyExist(e)) {
+			if(errorDeterminer.isCreateAlreadyExist(e)) {
 				if(log.isDebugEnabled()) log.debug("database already exists: " + dbName);
 				return;
 			}
@@ -327,7 +328,7 @@ public class JdbcDbShell implements IDbShell {
 				executeSql(dataSource, sql);
 			}
 			catch(final DataAccessException e) {
-				if(errorHandler.isTableAlreadyExists(e)) {
+				if(errorDeterminer.isTableAlreadyExists(e)) {
 					if(log.isDebugEnabled()) log.debug("table already exists (skipping): " + sql);
 					continue;
 				}
@@ -345,7 +346,7 @@ public class JdbcDbShell implements IDbShell {
 			if(log.isInfoEnabled()) log.info(dbName + " database dropped.");
 		}
 		catch(final DataAccessException e) {
-			if(errorHandler.isDropNonExistant(e)) {
+			if(errorDeterminer.isDropNonExistant(e)) {
 				if(log.isDebugEnabled()) log.debug("database doesn't exisst: " + dbName);
 				return;
 			}
@@ -363,7 +364,7 @@ public class JdbcDbShell implements IDbShell {
 				executeSql(dataSource, sql);
 			}
 			catch(final DataAccessException e) {
-				if(errorHandler.isTableNonExistant(e)) {
+				if(errorDeterminer.isTableNonExistant(e)) {
 					if(log.isDebugEnabled()) log.debug("table doesn't exist (skipping): " + sql);
 					continue;
 				}

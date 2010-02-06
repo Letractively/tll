@@ -11,7 +11,7 @@ import com.google.inject.Scopes;
 import com.tll.config.Config;
 import com.tll.config.IConfigAware;
 import com.tll.dao.IDbShell;
-import com.tll.dao.jdo.JdbcDbShell;
+import com.tll.dao.jdo.MysqlDbShell;
 import com.tll.di.JdbcConfigKeys;
 import com.tll.util.ClassUtil;
 
@@ -86,7 +86,7 @@ public class JdbcDbShellModule extends AbstractModule implements IConfigAware {
 
 				// mysql?
 				if("mysql".equals(dbType)) {
-					return new JdbcDbShell(rootDbName, dbName, urlPrefix, username, password, schema, stub, delete);
+					return new MysqlDbShell(rootDbName, dbName, urlPrefix, username, password, schema, stub, delete);
 				}
 
 				throw new IllegalStateException("Unhandled db type: " + dbType);

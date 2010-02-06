@@ -22,7 +22,7 @@ public abstract class AbstractJdoEntityDaoTest extends AbstractEntityDaoTest<Jdo
 	/**
 	 * A distinct db shell.
 	 */
-	protected JdbcDbShell dbShell;
+	protected IDbShell dbShell;
 
 	/**
 	 * Constructor
@@ -37,14 +37,14 @@ public abstract class AbstractJdoEntityDaoTest extends AbstractEntityDaoTest<Jdo
 	}
 
 	/*
-	 * We must have create a jdo db shell BEFORE the test injector is created
+	 * We must create a jdo db shell BEFORE the test injector is created
 	 * as the PersistenceManagerFactory will "ping" the test db and if it doesn't exist we fail fast.
 	 */
 	@Override
 	protected IDbShell getDbShell() {
 		if(dbShell == null) {
 			// create a distinct instance NOT using the test injector
-			dbShell = (JdbcDbShell) Guice.createInjector(new JdbcDbShellModule(getConfig())).getInstance(IDbShell.class);
+			dbShell = Guice.createInjector(new JdbcDbShellModule(getConfig())).getInstance(IDbShell.class);
 			assert dbShell != null;
 		}
 		return dbShell;

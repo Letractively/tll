@@ -2,7 +2,6 @@ package com.tll.dao.jdo;
 
 import java.util.List;
 
-import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -34,8 +33,6 @@ public class JdbcDbShellTest extends AbstractDbAwareTest {
 	public void test() throws Exception {
 		final IDbShell db = injector.getInstance(IDbShell.class);
 		try {
-			Assert.assertTrue(db instanceof JdbcDbShell);
-
 			db.create();
 			db.clearData();
 			db.addData();

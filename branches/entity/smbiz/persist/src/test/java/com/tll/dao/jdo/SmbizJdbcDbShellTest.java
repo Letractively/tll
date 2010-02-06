@@ -36,7 +36,7 @@ public class SmbizJdbcDbShellTest extends AbstractDbAwareTest {
 	public void test() throws Exception {
 		final IDbShell db = injector.getInstance(IDbShell.class);
 		try {
-			Assert.assertTrue(db instanceof JdbcDbShell);
+			Assert.assertTrue(db instanceof MysqlDbShell);
 
 			db.create();
 			db.clearData();
