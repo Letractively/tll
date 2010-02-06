@@ -15,7 +15,7 @@ import com.tll.dao.IDbShell;
 import com.tll.di.SmbizDb4oDaoModule;
 import com.tll.di.test.Db4oDbShellModule;
 import com.tll.di.SmbizModelBuildModule;
-import com.tll.model.IEntityGraphPopulator;
+import com.tll.model.egraph.IEntityGraphPopulator;
 import com.tll.di.EGraphModule;
 
 // gmaven does't pick up test classes in the maven classpath 
@@ -25,8 +25,8 @@ import com.tll.di.SmbizEGraphModule;
 import com.tll.model.SmbizEntityGraphBuilder;
 import com.tll.model.*;
 import com.google.inject.Inject;
-import com.tll.model.AbstractEntityGraphPopulator;
-import com.tll.model.EntityBeanFactory;
+import com.tll.model.egraph.AbstractEntityGraphPopulator;
+import com.tll.model.egraph.EntityBeanFactory;
 import com.tll.util.EnumUtil;
 
 /**

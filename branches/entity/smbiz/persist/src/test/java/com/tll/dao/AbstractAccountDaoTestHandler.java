@@ -10,8 +10,8 @@ import com.tll.model.AccountAddress;
 import com.tll.model.Address;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
-import com.tll.model.EntityBeanFactory;
 import com.tll.model.PaymentInfo;
+import com.tll.model.egraph.EntityBeanFactory;
 
 /**
  * AbstractAccountDaoTestHandler

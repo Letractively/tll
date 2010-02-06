@@ -1,4 +1,4 @@
-package com.tll.model;
+package com.tll.model.egraph;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -17,6 +17,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import com.google.inject.Inject;
+import com.tll.model.IEntity;
+import com.tll.model.IEntityFactory;
 import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.bk.BusinessKeyNotDefinedException;
 import com.tll.model.bk.IBusinessKeyDefinition;

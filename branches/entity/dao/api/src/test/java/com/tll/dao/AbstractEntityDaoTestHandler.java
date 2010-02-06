@@ -12,9 +12,9 @@ import org.apache.commons.logging.LogFactory;
 import org.testng.Assert;
 
 import com.tll.criteria.Criteria;
-import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
+import com.tll.model.egraph.EntityBeanFactory;
 
 /**
  * AbstractEntityDaoTestHandler

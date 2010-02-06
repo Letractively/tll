@@ -7,6 +7,8 @@ package com.tll.model;
 import java.util.Set;
 
 import com.google.inject.Inject;
+import com.tll.model.egraph.AbstractEntityGraphPopulator;
+import com.tll.model.egraph.EntityBeanFactory;
 import com.tll.util.EnumUtil;
 
 /**

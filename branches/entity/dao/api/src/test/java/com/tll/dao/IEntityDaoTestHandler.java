@@ -6,9 +6,9 @@
 package com.tll.dao;
 
 import com.tll.criteria.Criteria;
-import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
+import com.tll.model.egraph.EntityBeanFactory;
 
 /**
  * IEntityDaoTestHandler - Encapsulates entity lifecycle behavior for testing

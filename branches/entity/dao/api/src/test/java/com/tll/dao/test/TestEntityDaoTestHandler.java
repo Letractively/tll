@@ -9,7 +9,7 @@ import org.testng.Assert;
 
 import com.tll.criteria.Criteria;
 import com.tll.dao.AbstractEntityDaoTestHandler;
-import com.tll.model.EntityBeanFactory;
+import com.tll.model.egraph.EntityBeanFactory;
 import com.tll.model.test.Account;
 import com.tll.model.test.AccountAddress;
 import com.tll.model.test.Address;

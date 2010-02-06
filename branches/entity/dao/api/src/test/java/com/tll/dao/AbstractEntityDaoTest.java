@@ -21,7 +21,6 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.tll.criteria.Criteria;
 import com.tll.dao.test.EntityDaoTestDecorator;
-import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
 import com.tll.model.INamedEntity;
@@ -33,6 +32,7 @@ import com.tll.model.bk.BusinessKeyPropertyException;
 import com.tll.model.bk.BusinessKeyUtil;
 import com.tll.model.bk.IBusinessKey;
 import com.tll.model.bk.IBusinessKeyDefinition;
+import com.tll.model.egraph.EntityBeanFactory;
 import com.tll.util.Comparator;
 
 /**

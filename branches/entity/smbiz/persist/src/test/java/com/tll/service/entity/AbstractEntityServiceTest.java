@@ -32,8 +32,8 @@ import com.tll.di.SmbizEntityServiceFactoryModule;
 import com.tll.di.SmbizModelBuildModule;
 import com.tll.di.SmbizEntityServiceFactoryModule.UserCacheAware;
 import com.tll.di.test.Db4oDbShellModule;
-import com.tll.model.EntityBeanFactory;
 import com.tll.model.IEntity;
+import com.tll.model.egraph.EntityBeanFactory;
 import com.tll.util.ClassUtil;
 
 /**

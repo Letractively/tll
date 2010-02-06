@@ -12,7 +12,6 @@ import org.testng.annotations.Test;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.tll.config.Config;
-import com.tll.config.ConfigRef;
 import com.tll.dao.IDbShell;
 import com.tll.di.JdoRdbmsDaoModule;
 import com.tll.di.test.JdbcDbShellModule;
