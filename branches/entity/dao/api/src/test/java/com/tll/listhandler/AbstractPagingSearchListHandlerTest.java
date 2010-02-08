@@ -148,20 +148,20 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 
 	protected final void stubListElements() {
 		// stub the list elements
-		startNewTransaction();
+		getDbTrans().startTrans();
 		final Set<Address> elements = getEntityBeanFactory().getNEntityCopies(Address.class, NUM_LIST_ELEMENTS, true);
 		getEntityDao().persistAll(elements);
-		setComplete();
-		endTransaction();
+		getDbTrans().setComplete();
+		getDbTrans().endTrans();
 	}
 
 	@Test
 	public void test() throws Exception {
 		stubListElements();
 
-		startNewTransaction();
+		getDbTrans().startTrans();
 		final List<? extends Address> elements = getEntityDao().loadAll(Address.class);
-		endTransaction();
+		getDbTrans().endTrans();
 		assert elements != null && elements.size() > 0 : "No elements exist - test can't run";
 		assert elements.size() >= 10 : "At least 10 list elements must be present for this test";
 		final int pageSize = 3;

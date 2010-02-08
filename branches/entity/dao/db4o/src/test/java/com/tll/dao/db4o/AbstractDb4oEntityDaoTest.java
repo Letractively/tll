@@ -33,7 +33,7 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 	 * Constructor
 	 */
 	public AbstractDb4oEntityDaoTest() {
-		super(Db4oTestDaoDecorator.class, true);
+		super(Db4oTestDaoDecorator.class);
 	}
 
 	@Override
@@ -87,8 +87,8 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 	void daoDb4oTestOpenCloseLoad() throws Exception {
 		final IEntity e = getTestEntity();
 		dao.persist(e);
-		setComplete();
-		endTransaction();
+		getDbTrans().setComplete();
+		getDbTrans().endTrans();
 		dao.getObjectContainer().close();
 		final Configuration c = injector.getInstance(Configuration.class);
 		final URI db4oUri = injector.getInstance(Key.get(URI.class, Db4oFile.class));
@@ -102,11 +102,11 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 				return oc;
 			}
 		});
-		startNewTransaction();
+		getDbTrans().startTrans();
 		final IEntity eloaded = dao.load(e.entityClass(), e.getId());
 		entityHandler.verifyLoadedEntityState(eloaded);
 		dao.purge(eloaded);
-		setComplete();
-		endTransaction();
+		getDbTrans().setComplete();
+		getDbTrans().endTrans();
 	}
 }

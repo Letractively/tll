@@ -25,7 +25,7 @@ public class ShipBoundCostDaoTestHandler extends AbstractEntityDaoTestHandler<Sh
 	}
 
 	@Override
-	public void persistDependentEntities() {
+	public void doPersistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
 		pkC = currency.getId();
 
@@ -41,7 +41,7 @@ public class ShipBoundCostDaoTestHandler extends AbstractEntityDaoTestHandler<Sh
 	}
 
 	@Override
-	public void purgeDependentEntities() {
+	public void doPurgeDependentEntities() {
 		purge(ShipMode.class, pkS);
 		purge(Account.class, pkA);
 		purge(Currency.class, pkC);

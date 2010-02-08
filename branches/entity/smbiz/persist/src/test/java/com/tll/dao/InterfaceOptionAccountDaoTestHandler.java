@@ -37,7 +37,7 @@ public class InterfaceOptionAccountDaoTestHandler extends AbstractEntityDaoTestH
 	}
 
 	@Override
-	public void persistDependentEntities() {
+	public void doPersistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
 		pkC = currency.getId();
 
@@ -56,7 +56,7 @@ public class InterfaceOptionAccountDaoTestHandler extends AbstractEntityDaoTestH
 	}
 
 	@Override
-	public void purgeDependentEntities() {
+	public void doPurgeDependentEntities() {
 		purge(Interface.class, pkI); pkI = null;
 		purge(Asp.class, pkA); pkA = null;
 		purge(Currency.class, pkC); pkC = null;

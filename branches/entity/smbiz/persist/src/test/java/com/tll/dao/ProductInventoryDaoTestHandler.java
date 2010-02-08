@@ -8,9 +8,9 @@ import org.testng.Assert;
 import com.tll.model.Account;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
+import com.tll.model.EntityUtil;
 import com.tll.model.ProductGeneral;
 import com.tll.model.ProductInventory;
-import com.tll.model.egraph.EntityBeanFactory;
 
 /**
  * ProductInventoryDaoTestHandler
@@ -26,7 +26,7 @@ public class ProductInventoryDaoTestHandler extends AbstractEntityDaoTestHandler
 	}
 
 	@Override
-	public void persistDependentEntities() {
+	public void doPersistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
 		pkC = currency.getId();
 
@@ -37,7 +37,7 @@ public class ProductInventoryDaoTestHandler extends AbstractEntityDaoTestHandler
 	}
 
 	@Override
-	public void purgeDependentEntities() {
+	public void doPurgeDependentEntities() {
 		purge(Account.class, pkA);
 		purge(Currency.class, pkC);
 	}
@@ -52,7 +52,7 @@ public class ProductInventoryDaoTestHandler extends AbstractEntityDaoTestHandler
 	@Override
 	public void makeUnique(ProductInventory e) {
 		super.makeUnique(e);
-		EntityBeanFactory.makeBusinessKeyUnique(e.getProductGeneral());
+		EntityUtil.makeBusinessKeyUnique(e.getProductGeneral());
 	}
 
 	@Override

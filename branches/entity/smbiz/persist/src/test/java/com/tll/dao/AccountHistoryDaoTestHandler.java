@@ -24,7 +24,7 @@ public class AccountHistoryDaoTestHandler extends AbstractEntityDaoTestHandler<A
 	}
 
 	@Override
-	public void persistDependentEntities() {
+	public void doPersistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
 		this.pkC = currency.getId();
 
@@ -37,7 +37,7 @@ public class AccountHistoryDaoTestHandler extends AbstractEntityDaoTestHandler<A
 	}
 
 	@Override
-	public void purgeDependentEntities() {
+	public void doPurgeDependentEntities() {
 		purge(Asp.class, pkA); pkA = null;
 		purge(Currency.class, pkC); pkC = null;
 	}

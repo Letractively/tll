@@ -85,20 +85,4 @@ public abstract class AbstractDbAwareTest extends AbstractConfigAwareTest {
 	protected IDbShell getDbShell() {
 		return injector.getInstance(IDbShell.class);
 	}
-
-	protected final void startNewTransaction() {
-		getDbTrans().startTrans();
-	}
-
-	protected final void setComplete() {
-		getDbTrans().setComplete();
-	}
-
-	protected final void endTransaction() {
-		getDbTrans().endTrans();
-	}
-
-	protected final boolean isTransStarted() {
-		return getDbTrans().isTransStarted();
-	}
 }

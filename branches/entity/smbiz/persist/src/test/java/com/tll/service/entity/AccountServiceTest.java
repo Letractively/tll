@@ -47,11 +47,11 @@ public abstract class AccountServiceTest extends AccountRelatedServiceTest {
 			final IAccountService accountService = getEntityServiceFactory().instance(IAccountService.class);
 			account = accountService.persist(account);
 
-			startNewTransaction();
+			getDbTrans().startTrans();
 			final Criteria<AccountHistory> criteria = new Criteria<AccountHistory>(AccountHistory.class);
 			criteria.getPrimaryGroup().addCriterion("account", Account.class, account.getId());
 			final List<SearchResult> list = AbstractDbAwareTest.getEntitiesFromDb(getDao(), criteria);
-			endTransaction();
+			getDbTrans().endTrans();
 			assert list != null && list.size() == 1;
 		}
 		catch(final Throwable t) {

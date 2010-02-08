@@ -35,7 +35,7 @@ public class OrderItemTransDaoTestHandler extends AbstractEntityDaoTestHandler<O
 	}
 
 	@Override
-	public void persistDependentEntities() {
+	public void doPersistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
 		pkC = currency.getId();
 
@@ -59,7 +59,7 @@ public class OrderItemTransDaoTestHandler extends AbstractEntityDaoTestHandler<O
 	}
 
 	@Override
-	public void purgeDependentEntities() {
+	public void doPurgeDependentEntities() {
 		purge(OrderTrans.class, pkOt);
 		purge(Order.class, pkO);
 		purge(Account.class, pkA);

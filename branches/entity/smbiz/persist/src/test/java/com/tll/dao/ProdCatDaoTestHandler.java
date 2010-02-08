@@ -35,7 +35,7 @@ public class ProdCatDaoTestHandler extends AbstractEntityDaoTestHandler<ProdCat>
 	}
 
 	@Override
-	public void persistDependentEntities() {
+	public void doPersistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
 		pkC = currency.getId();
 
@@ -57,7 +57,7 @@ public class ProdCatDaoTestHandler extends AbstractEntityDaoTestHandler<ProdCat>
 	}
 
 	@Override
-	public void purgeDependentEntities() {
+	public void doPurgeDependentEntities() {
 		purge(ProductCategory.class, pkCa);
 		purge(ProductInventory.class, pkP);
 		purge(Account.class, pkA);

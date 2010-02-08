@@ -60,6 +60,11 @@ public class GaeTrans implements IDbTrans {
 	}
 
 	@Override
+	public boolean isGlobalTrans() {
+		return false;
+	}
+
+	@Override
 	public void startTrans() throws IllegalStateException {
 		if(isTransStarted()) {
 			throw new IllegalStateException("Transaction already started.");

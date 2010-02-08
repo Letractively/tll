@@ -8,10 +8,10 @@ import java.util.Set;
 
 import org.testng.Assert;
 
+import com.tll.model.EntityUtil;
 import com.tll.model.Interface;
 import com.tll.model.InterfaceOption;
 import com.tll.model.InterfaceOptionParameterDefinition;
-import com.tll.model.egraph.EntityBeanFactory;
 
 /**
  * AbstractInterfaceDaoTestHandler
@@ -50,9 +50,9 @@ public abstract class AbstractInterfaceDaoTestHandler<I extends Interface> exten
 	public void makeUnique(I e) {
 		super.makeUnique(e);
 		for(final InterfaceOption o : e.getOptions()) {
-			EntityBeanFactory.makeBusinessKeyUnique(o);
+			EntityUtil.makeBusinessKeyUnique(o);
 			for(final InterfaceOptionParameterDefinition param : o.getParameters()) {
-				EntityBeanFactory.makeBusinessKeyUnique(param);
+				EntityUtil.makeBusinessKeyUnique(param);
 			}
 		}
 	}

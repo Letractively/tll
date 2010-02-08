@@ -24,17 +24,17 @@ public class UserServiceTest extends AccountRelatedServiceTest {
 
 	private void stubAuthorities() {
 		final IEntityDao dao = getDao();
-		startNewTransaction();
+		getDbTrans().startTrans();
 		try {
 			for(final AuthorityRoles role : AuthorityRoles.values()) {
 				final Authority a = getEntityBeanFactory().getEntityCopy(Authority.class, false);
 				a.setAuthority(role.toString());
 				dao.persist(a);
 			}
-			setComplete();
+			getDbTrans().setComplete();
 		}
 		finally {
-			endTransaction();
+			getDbTrans().endTrans();
 		}
 	}
 
@@ -67,9 +67,9 @@ public class UserServiceTest extends AccountRelatedServiceTest {
 			final User user = userService.create(account, "name@domain.com", "password");
 			Assert.assertNotNull(user);
 
-			startNewTransaction();
+			getDbTrans().startTrans();
 			final User dbUser = AbstractDbAwareTest.getEntityFromDb(getDao(), User.class, user);
-			endTransaction();
+			getDbTrans().endTrans();
 			Assert.assertEquals(dbUser, user);
 		}
 		catch(final Throwable t) {

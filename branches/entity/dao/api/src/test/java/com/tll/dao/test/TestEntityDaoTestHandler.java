@@ -9,7 +9,7 @@ import org.testng.Assert;
 
 import com.tll.criteria.Criteria;
 import com.tll.dao.AbstractEntityDaoTestHandler;
-import com.tll.model.egraph.EntityBeanFactory;
+import com.tll.model.EntityUtil;
 import com.tll.model.test.Account;
 import com.tll.model.test.AccountAddress;
 import com.tll.model.test.Address;
@@ -37,7 +37,7 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 	}
 
 	@Override
-	public void persistDependentEntities() {
+	public void doPersistDependentEntities() {
 		Currency currency = create(Currency.class, true);
 		currency = persist(currency);
 		pkCurrency = currency.getId();
@@ -56,7 +56,7 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 	}
 
 	@Override
-	public void purgeDependentEntities() {
+	public void doPurgeDependentEntities() {
 		purge(Account.class, pkAccountParent); pkAccountParent = null;
 		purge(NestedEntity.class, pkNestedEntity); pkNestedEntity = null;
 		purge(Currency.class, pkCurrency); pkCurrency = null;
@@ -84,8 +84,8 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 		super.makeUnique(e);
 		if(e.getAddresses() != null) {
 			for(final AccountAddress aa : e.getAddresses()) {
-				EntityBeanFactory.makeBusinessKeyUnique(aa);
-				EntityBeanFactory.makeBusinessKeyUnique(aa.getAddress());
+				EntityUtil.makeBusinessKeyUnique(aa);
+				EntityUtil.makeBusinessKeyUnique(aa.getAddress());
 			}
 		}
 	}

@@ -12,6 +12,7 @@ import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.ITimeStampEntity;
@@ -242,7 +243,7 @@ public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopula
 	 * @param e
 	 */
 	protected final <E extends IEntity> void makeUnique(E e) {
-		EntityBeanFactory.makeBusinessKeyUnique(e);
+		EntityUtil.makeBusinessKeyUnique(e);
 	}
 
 	/**

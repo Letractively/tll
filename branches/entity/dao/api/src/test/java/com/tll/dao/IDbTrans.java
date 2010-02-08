@@ -5,6 +5,11 @@ package com.tll.dao;
  * @author jpk
  */
 public interface IDbTrans {
+	
+	/**
+	 * @return <code>true</code> if global transactions are supported.
+	 */
+	boolean isGlobalTrans();
 
 	/**
 	 * Starts a new transaction.

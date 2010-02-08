@@ -74,30 +74,30 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 	}
 
 	private Interface stubInterface(boolean persist) {
-		if(persist) startNewTransaction();
+		if(persist) getDbTrans().startTrans();
 		final Interface intf = stub(InterfaceSwitch.class, false);
 		final InterfaceOption io = stub(InterfaceOption.class, false);
 		final InterfaceOptionParameterDefinition iopd = stub(InterfaceOptionParameterDefinition.class, false);
 		io.addParameter(iopd);
 		intf.addOption(io);
 		if(persist) {
-			setComplete();
+			getDbTrans().setComplete();
 			getDao().persist(intf);
-			endTransaction();
+			getDbTrans().endTrans();
 		}
 		return intf;
 	}
 
 	private InterfaceOptionAccount stubIoa(Interface intf, boolean persist) {
-		if(persist) startNewTransaction();
+		if(persist) getDbTrans().startTrans();
 		final Account a = stub(Asp.class, false);
 		final InterfaceOptionAccount ioa = stub(InterfaceOptionAccount.class, false);
 		ioa.setAccount(a);
 		ioa.setOption(intf.getOptions().iterator().next());
 		if(persist) {
-			setComplete();
+			getDbTrans().setComplete();
 			getDao().persist(intf);
-			endTransaction();
+			getDbTrans().endTrans();
 		}
 		return ioa;
 	}
@@ -135,10 +135,10 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 			ai.addOption(aio);
 		}
 		if(persist) {
-			startNewTransaction();
+			getDbTrans().startTrans();
 			getDao().persist(ai);
-			setComplete();
-			endTransaction();
+			getDbTrans().setComplete();
+			getDbTrans().endTrans();
 		}
 		return ai;
 	}

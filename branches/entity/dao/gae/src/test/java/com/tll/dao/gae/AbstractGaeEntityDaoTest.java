@@ -28,7 +28,7 @@ public abstract class AbstractGaeEntityDaoTest extends AbstractEntityDaoTest<Gae
 	 * Constructor
 	 */
 	public AbstractGaeEntityDaoTest() {
-		super(GaeTestDaoDecorator.class, false);
+		super(GaeTestDaoDecorator.class);
 		// create the gae test env
 		setTestEnv(new GaeDatastoreTestEnvironment());
 	}

@@ -59,6 +59,11 @@ public class Db4oTrans implements IDbTrans {
 		this.oc = oc;
 	}
 
+	@Override
+	public boolean isGlobalTrans() {
+		return true;
+	}
+
 	/**
 	 * Hook to [re-]set the {@link ObjectContainer} ref.
 	 * @param oc the object container to set

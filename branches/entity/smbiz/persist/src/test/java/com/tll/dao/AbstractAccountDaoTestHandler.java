@@ -10,8 +10,8 @@ import com.tll.model.AccountAddress;
 import com.tll.model.Address;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
+import com.tll.model.EntityUtil;
 import com.tll.model.PaymentInfo;
-import com.tll.model.egraph.EntityBeanFactory;
 
 /**
  * AbstractAccountDaoTestHandler
@@ -23,7 +23,7 @@ public abstract class AbstractAccountDaoTestHandler<A extends Account> extends A
 	Object pkPaymentInfo, pkCurrency, pkAccountParent;
 
 	@Override
-	public void persistDependentEntities() {
+	public void doPersistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
 		final PaymentInfo paymentInfo = createAndPersist(PaymentInfo.class, true);
 		pkCurrency = currency.getId();
@@ -38,7 +38,7 @@ public abstract class AbstractAccountDaoTestHandler<A extends Account> extends A
 	}
 
 	@Override
-	public void purgeDependentEntities() {
+	public void doPurgeDependentEntities() {
 		purge(Account.class, pkAccountParent); pkAccountParent = null;
 		purge(PaymentInfo.class, pkPaymentInfo); pkPaymentInfo = null;
 		purge(Currency.class, pkCurrency); pkCurrency = null;
@@ -66,8 +66,8 @@ public abstract class AbstractAccountDaoTestHandler<A extends Account> extends A
 		super.makeUnique(e);
 		if(e.getAddresses() != null) {
 			for(final AccountAddress aa : e.getAddresses()) {
-				EntityBeanFactory.makeBusinessKeyUnique(aa);
-				EntityBeanFactory.makeBusinessKeyUnique(aa.getAddress());
+				EntityUtil.makeBusinessKeyUnique(aa);
+				EntityUtil.makeBusinessKeyUnique(aa.getAddress());
 			}
 		}
 	}

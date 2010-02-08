@@ -8,7 +8,6 @@ package com.tll.dao;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
 
@@ -21,6 +20,7 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.tll.criteria.Criteria;
 import com.tll.dao.test.EntityDaoTestDecorator;
+import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
 import com.tll.model.INamedEntity;
@@ -28,8 +28,6 @@ import com.tll.model.ITimeStampEntity;
 import com.tll.model.NameKey;
 import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.bk.BusinessKeyNotDefinedException;
-import com.tll.model.bk.BusinessKeyPropertyException;
-import com.tll.model.bk.BusinessKeyUtil;
 import com.tll.model.bk.IBusinessKey;
 import com.tll.model.bk.IBusinessKeyDefinition;
 import com.tll.model.egraph.EntityBeanFactory;
@@ -64,58 +62,6 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		}
 	} // PkAndType
 
-	/**
-	 * Compare a clc of entity ids and entites ensuring the id list is referenced
-	 * w/in the entity list
-	 * @param <E>
-	 * @param ids
-	 * @param entities
-	 * @return true/false
-	 */
-	protected static final <E extends IEntity> boolean entitiesAndIdsEquals(Collection<?> ids, Collection<E> entities) {
-		if(ids == null || entities == null) {
-			return false;
-		}
-		if(ids.size() != entities.size()) {
-			return false;
-		}
-		for(final E e : entities) {
-			boolean found = false;
-			for(final Object id : ids) {
-				if(id.equals(e.getId())) {
-					found = true;
-					break;
-				}
-			}
-			if(!found) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Ensures two entities are non-unique by business key.
-	 * @param <E>
-	 * @param e1
-	 * @param e2
-	 */
-	protected static final <E extends IEntity> void ensureNonUnique(E e1, E e2) {
-		if(e2 instanceof ITimeStampEntity) {
-			((ITimeStampEntity) e2).setDateCreated(((ITimeStampEntity) e2).getDateCreated());
-			((ITimeStampEntity) e2).setDateModified(((ITimeStampEntity) e2).getDateModified());
-		}
-		try {
-			BusinessKeyUtil.apply(e2, BusinessKeyFactory.create(e1));
-		}
-		catch(final BusinessKeyNotDefinedException e) {
-			// assume ok
-		}
-		catch(final BusinessKeyPropertyException e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
 	protected static final Sorting simpleIdSorting = new Sorting(new SortColumn(IEntity.PK_FIELDNAME));
 
 	/**
@@ -140,17 +86,10 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	private final Stack<PkAndType> testEntityRefStack;
 	
 	/**
-	 * Flag to indicate whether or not global transactions are supported.
-	 * <br>GAE does not support global transactions.
-	 */
-	private final boolean globalTransactions;
-
-	/**
 	 * Constructor
 	 * @param daoType
-	 * @param globalTransactions Global transactions supported?
 	 */
-	public AbstractEntityDaoTest(Class<D> daoType, boolean globalTransactions) {
+	public AbstractEntityDaoTest(Class<D> daoType) {
 		super();
 		try {
 			dao = daoType.newInstance();
@@ -159,7 +98,6 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 			throw new IllegalArgumentException(e);
 		}
 		testEntityRefStack = new Stack<PkAndType>();
-		this.globalTransactions = globalTransactions;
 	}
 
 	/**
@@ -182,8 +120,11 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	 * Extended classes may override to tweak the behavior.
 	 */
 	protected void resetDb() {
-		getDbShell().create();
-		getDbShell().clearData();
+		IDbShell dbShell = getDbShell();
+		if(dbShell != null) {
+			getDbShell().create();
+			getDbShell().clearData();
+		}
 	}
 
 	/**
@@ -224,14 +165,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	 */
 	private void beforeEntityType() {
 		// stub dependent entities for test entities of the current entity type
-		if(globalTransactions) startNewTransaction();
-		try {
-			entityHandler.persistDependentEntities();
-			if(globalTransactions) setComplete();
-		}
-		finally {
-			if(globalTransactions) endTransaction();
-		}
+		entityHandler.persistDependentEntities();
 	}
 
 	/**
@@ -240,14 +174,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	 */
 	private void afterEntityType() {
 		// un-stub dependent entities for test entities of the current entity type
-		if(globalTransactions) startNewTransaction();
-		try {
-			entityHandler.purgeDependentEntities();
-			if(globalTransactions) setComplete();
-		}
-		finally {
-			if(globalTransactions) endTransaction();
-		}
+		entityHandler.purgeDependentEntities();
 	}
 
 	@Override
@@ -260,7 +187,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		}
 
 		// start a new transaction for convenience and brevity
-		startNewTransaction();
+		getDbTrans().startTrans();
 	}
 
 	@Override
@@ -268,26 +195,27 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		super.afterMethod();
 
 		// kill an open transaction
-		if(isTransStarted()) {
-			endTransaction();
+		if(getDbTrans().isTransStarted()) {
+			getDbTrans().endTrans();
 		}
 
 		// teardown test entities..
+		final boolean globalTransactions = getDbTrans().isGlobalTrans();
 		if(testEntityRefStack.size() > 0) {
 			for(final PkAndType n : testEntityRefStack) {
 				assert n.entityType == entityHandler.entityClass();
-				if(globalTransactions) startNewTransaction();
+				if(globalTransactions) getDbTrans().startTrans();
 				try {
 					final IEntity e = dao.load(n.entityType, n.pk);
 					logger.debug("Tearing down test entity: " + e + "..");
 					entityHandler.teardownTestEntity(e);
-					if(globalTransactions) setComplete();
+					if(globalTransactions) getDbTrans().setComplete();
 				}
 				catch(final EntityNotFoundException e) {
 					// ok
 				}
 				finally {
-					if(globalTransactions) endTransaction();
+					if(globalTransactions) getDbTrans().endTrans();
 				}
 			}
 			testEntityRefStack.clear();
@@ -365,7 +293,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	public final void test() throws Exception {
 
 		for(final IEntityDaoTestHandler<?> handler : entityHandlers) {
-			handler.init(dao, getEntityBeanFactory(), globalTransactions ? null : getDbTrans());
+			handler.init(dao, getEntityBeanFactory(), getDbTrans());
 			entityHandler = (IEntityDaoTestHandler<IEntity>) handler;
 
 			logger.debug("\n\n ====== Testing entity dao for entity type: " + handler.entityClass() + "...");
@@ -408,9 +336,9 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		IEntity e = getTestEntity();
 
 		e = dao.persist(e);
-		endTransaction(); // rollback
+		getDbTrans().endTrans(); // rollback
 
-		startNewTransaction();
+		getDbTrans().startTrans();
 		try {
 			e = dao.load(e.entityClass(), e.getId());
 			Assert.fail("Loaded entity that should not have been committed into the db due to trans rollback");
@@ -432,8 +360,8 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 		// create
 		e = dao.persist(e);
-		setComplete();
-		endTransaction();
+		getDbTrans().setComplete();
+		getDbTrans().endTrans();
 		pk = e.getId();
 		Assert.assertNotNull(pk, "The created entities' primary key is null");
 		Assert.assertTrue(!e.isNew(), "The created entity is new and shouldn't be");
@@ -447,26 +375,26 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		}
 
 		// retrieve
-		startNewTransaction();
+		getDbTrans().startTrans();
 		e = dao.load(e.entityClass(), e.getId());
 		Assert.assertNotNull(e, "The loaded entity is null");
 		entityHandler.verifyLoadedEntityState(e);
-		setComplete(); // we need to do this for JDO in order to ensure a detached copy is made
-		endTransaction();
+		getDbTrans().setComplete(); // we need to do this for JDO in order to ensure a detached copy is made
+		getDbTrans().endTrans();
 
 		// update
-		startNewTransaction();
+		getDbTrans().startTrans();
 		entityHandler.alterTestEntity(e);
 		e = dao.persist(e);
-		setComplete();
-		endTransaction();
+		getDbTrans().setComplete();
+		getDbTrans().endTrans();
 
 		// find (update verify)
-		startNewTransaction();
+		getDbTrans().startTrans();
 		e = getEntityFromDb(e.entityClass(), e.getId());
 		Assert.assertNotNull(e, "The retrieved entity for update check is null");
-		setComplete();
-		endTransaction();
+		getDbTrans().setComplete();
+		getDbTrans().endTrans();
 		entityHandler.verifyEntityAlteration(e);
 
 		if(e instanceof ITimeStampEntity) {
@@ -478,14 +406,14 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		}
 
 		// purge (delete)
-		startNewTransaction();
+		getDbTrans().startTrans();
 		dao.purge(e);
-		setComplete();
-		endTransaction();
+		getDbTrans().setComplete();
+		getDbTrans().endTrans();
 
 		// verify purge
-		startNewTransaction();
-		setComplete();
+		getDbTrans().startTrans();
+		getDbTrans().setComplete();
 		try {
 			e = getEntityFromDb(e.entityClass(), e.getId());
 			Assert.assertNull(e, "The entity was not purged");
@@ -494,7 +422,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 			// expected
 		}
 		finally {
-			endTransaction();
+			getDbTrans().endTrans();
 		}
 	}
 
@@ -504,7 +432,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	 */
 	final void daoLoadAll() throws Exception {
 		final List<? extends IEntity> list = dao.loadAll(entityHandler.entityClass());
-		endTransaction();
+		getDbTrans().endTrans();
 		Assert.assertNotNull(list, "loadAll returned null");
 	}
 
@@ -514,8 +442,8 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 		// create
 		e = dao.persist(e);
-		setComplete();
-		endTransaction();
+		getDbTrans().setComplete();
+		getDbTrans().endTrans();
 
 		// retrieve by name key if applicable..
 		if(INamedEntity.class.isAssignableFrom(entityHandler.entityClass())) {
@@ -523,7 +451,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 			final Class<INamedEntity> nec = (Class) entityHandler.entityClass();
 			final String name = ((INamedEntity) e).getName();
 			final NameKey<INamedEntity> nk = new NameKey<INamedEntity>(nec, name);
-			startNewTransaction();
+			getDbTrans().startTrans();
 			try {
 				e = dao.load(nk);
 				// NOTE: as there may be other like enties having the same name, we only
@@ -541,7 +469,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 				// INamedEntity but map INamedEntity.getName() to another ORM property
 				// and declare annotatively INamedEntity.getName() as @Transient
 			}
-			endTransaction();
+			getDbTrans().endTrans();
 		}
 		else {
 			logger.debug("Not performing daoFindByName() as the test entity type is not a named entity");
@@ -556,15 +484,15 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	final void daoFindByIds() throws Exception {
 		IEntity e = getTestEntity();
 		e = dao.persist(e);
-		setComplete();
-		endTransaction();
+		getDbTrans().setComplete();
+		getDbTrans().endTrans();
 
-		startNewTransaction();
+		getDbTrans().startTrans();
 		Assert.assertNotNull(e, "Null generated test entity");
 		final ArrayList<Object> ids = new ArrayList<Object>(1);
 		ids.add(e.getId());
 		final List<IEntity> list = dao.findByPrimaryKeys(entityHandler.entityClass(), ids, null);
-		endTransaction();
+		getDbTrans().endTrans();
 		Assert.assertTrue(list != null, "find by ids returned null list");
 		Assert.assertTrue(list.size() == 1, "find by ids returned list of size: " + list.size());
 	}
@@ -585,23 +513,23 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 			e = dao.persist(e);
 			idList.add(e.getId());
 		}
-		setComplete();
-		endTransaction();
+		getDbTrans().setComplete();
+		getDbTrans().endTrans();
 		final Criteria<IEntity> criteria = new Criteria<IEntity>(entityHandler.entityClass());
 		criteria.getPrimaryGroup().addCriterion(IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
 
 		// get ids
-		startNewTransaction();
+		getDbTrans().startTrans();
 		final List<?> dbIdList = dao.getPrimaryKeys(criteria, simpleIdSorting);
-		Assert.assertTrue(entitiesAndIdsEquals(dbIdList, entityList), "getIds list is empty or has incorrect ids");
-		endTransaction();
+		Assert.assertTrue(EntityUtil.entitiesAndIdsEquals(dbIdList, entityList), "getIds list is empty or has incorrect ids");
+		getDbTrans().endTrans();
 
 		// get entities
-		startNewTransaction();
+		getDbTrans().startTrans();
 		final List<IEntity> dbEntityList = dao.findByPrimaryKeys(entityHandler.entityClass(), idList, null);
 		Assert.assertNotNull(idList, "getEntities list is null");
-		Assert.assertTrue(entitiesAndIdsEquals(idList, dbEntityList), "getEntities list is empty or has incorrect ids");
-		endTransaction();
+		Assert.assertTrue(EntityUtil.entitiesAndIdsEquals(idList, dbEntityList), "getEntities list is empty or has incorrect ids");
+		getDbTrans().endTrans();
 	}
 
 	/**
@@ -620,29 +548,29 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 			e = dao.persist(e);
 			idList.add(e.getId());
 		}
-		setComplete();
-		endTransaction();
+		getDbTrans().setComplete();
+		getDbTrans().endTrans();
 
 		final Criteria<IEntity> crit = new Criteria<IEntity>(entityHandler.entityClass());
 		crit.getPrimaryGroup().addCriterion(IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
 
-		startNewTransaction();
+		getDbTrans().startTrans();
 		IPageResult<SearchResult> page = dao.getPage(crit, simpleIdSorting, 0, 2);
 		Assert.assertTrue(page != null && page.getPageList() != null && page.getPageList().size() == 2,
 				"Empty or invalid number of initial page elements");
-		endTransaction();
+		getDbTrans().endTrans();
 
-		startNewTransaction();
+		getDbTrans().startTrans();
 		page = dao.getPage(crit, simpleIdSorting, 2, 2);
 		Assert.assertTrue(page != null && page.getPageList() != null && page.getPageList().size() == 2,
 				"Empty or invalid number of subsequent page elements");
-		endTransaction();
+		getDbTrans().endTrans();
 
-		startNewTransaction();
+		getDbTrans().startTrans();
 		page = dao.getPage(crit, simpleIdSorting, 4, 2);
 		Assert.assertTrue(page != null && page.getPageList() != null && page.getPageList().size() == 1,
 				"Empty or invalid number of last page elements");
-		endTransaction();
+		getDbTrans().endTrans();
 	}
 
 	/**
@@ -658,16 +586,16 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 		IEntity e = getTestEntity();
 		e = dao.persist(e);
-		setComplete();
-		endTransaction();
+		getDbTrans().setComplete();
+		getDbTrans().endTrans();
 
-		startNewTransaction();
+		getDbTrans().startTrans();
 		final IEntity e2 = getTestEntity();
-		ensureNonUnique(e, e2);
+		EntityUtil.ensureNonUnique(e, e2);
 		try {
 			dao.persist(e2);
-			setComplete();
-			endTransaction();
+			getDbTrans().setComplete();
+			getDbTrans().endTrans();
 			Assert.fail("A duplicate exception should have occurred for entity type: " + entityHandler.entityClass());
 		}
 		catch(final EntityExistsException de) {
@@ -683,16 +611,16 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		// save it first
 		e = dao.persist(e);
 
-		setComplete();
-		endTransaction();
-		startNewTransaction();
+		getDbTrans().setComplete();
+		getDbTrans().endTrans();
+		getDbTrans().startTrans();
 
 		// delete it (with key)
 		dao.purge(e.entityClass(), pk);
 
-		setComplete();
-		endTransaction();
-		startNewTransaction();
+		getDbTrans().setComplete();
+		getDbTrans().endTrans();
+		getDbTrans().startTrans();
 
 		try {
 			dao.purge(e);
@@ -707,12 +635,12 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		// persist the target test entity
 		IEntity e = getTestEntity();
 		e = dao.persist(e);
-		setComplete();
-		endTransaction();
+		getDbTrans().setComplete();
+		getDbTrans().endTrans();
 
 		final Criteria<IEntity> c = new Criteria<IEntity>(entityHandler.entityClass());
 		c.getPrimaryGroup().addCriterion(e.entityClass(), e.getId());
-		startNewTransaction();
+		getDbTrans().startTrans();
 		final IEntity re = dao.findEntity(c);
 		Assert.assertTrue(re != null);
 		Assert.assertEquals(re, e);
@@ -725,10 +653,10 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 			// persist the target test entity
 			IEntity e = getTestEntity();
 			e = dao.persist(e);
-			setComplete();
-			endTransaction();
+			getDbTrans().setComplete();
+			getDbTrans().endTrans();
 
-			startNewTransaction();
+			getDbTrans().startTrans();
 			final Criteria<IEntity> c = new Criteria<IEntity>(entityHandler.entityClass());
 			for(final IBusinessKeyDefinition<IEntity> bkdef : bkdefs) {
 				final IBusinessKey<IEntity> bk = BusinessKeyFactory.create(e, bkdef);
@@ -749,10 +677,10 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 			// persist the target test entity
 			INamedEntity e = getTestEntity();
 			e = dao.persist(e);
-			setComplete();
-			endTransaction();
+			getDbTrans().setComplete();
+			getDbTrans().endTrans();
 
-			startNewTransaction();
+			getDbTrans().startTrans();
 			final Criteria<IEntity> c = new Criteria<IEntity>(entityHandler.entityClass());
 			c.getPrimaryGroup().addCriterion(
 					new NameKey(e.entityClass(), e.getName(), entityHandler.getActualNameProperty()), true);
@@ -770,13 +698,13 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		// persist the target test entity
 		IEntity e = getTestEntity();
 		e = dao.persist(e);
-		setComplete();
-		endTransaction();
+		getDbTrans().setComplete();
+		getDbTrans().endTrans();
 
-		startNewTransaction();
+		getDbTrans().startTrans();
 		// NOTE: we only verify that the method executes w/o exceptions
 		dao.findEntities(c, entityHandler.getTestSorting());
-		endTransaction();
+		getDbTrans().endTrans();
 	}
 
 	// TODO do we want to support named queries now in light of the fact that we

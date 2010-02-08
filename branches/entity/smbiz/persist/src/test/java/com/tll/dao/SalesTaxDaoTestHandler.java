@@ -24,7 +24,7 @@ public class SalesTaxDaoTestHandler extends AbstractEntityDaoTestHandler<SalesTa
 	}
 
 	@Override
-	public void persistDependentEntities() {
+	public void doPersistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
 		pkC = currency.getId();
 
@@ -35,7 +35,7 @@ public class SalesTaxDaoTestHandler extends AbstractEntityDaoTestHandler<SalesTa
 	}
 
 	@Override
-	public void purgeDependentEntities() {
+	public void doPurgeDependentEntities() {
 		purge(Account.class, pkA);
 		purge(Currency.class, pkC);
 	}

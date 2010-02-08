@@ -30,7 +30,7 @@ public class AccountAddressDaoTestHandler extends AbstractEntityDaoTestHandler<A
 	}
 
 	@Override
-	public void persistDependentEntities() {
+	public void doPersistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
 		this.pkCurrency = currency.getId();
 
@@ -46,7 +46,7 @@ public class AccountAddressDaoTestHandler extends AbstractEntityDaoTestHandler<A
 	}
 
 	@Override
-	public void purgeDependentEntities() {
+	public void doPurgeDependentEntities() {
 		purge(Address.class, pkAddress);
 		purge(Asp.class, pkAsp);
 		purge(Currency.class, pkCurrency);

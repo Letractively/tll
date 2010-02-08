@@ -28,7 +28,7 @@ public abstract class AbstractJdoEntityDaoTest extends AbstractEntityDaoTest<Jdo
 	 * Constructor
 	 */
 	public AbstractJdoEntityDaoTest() {
-		super(JdoTestDaoDecorator.class, true);
+		super(JdoTestDaoDecorator.class);
 	}
 
 	@Override

@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.testng.Assert;
 
 import com.tll.criteria.Criteria;
+import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.egraph.EntityBeanFactory;
@@ -66,15 +67,16 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	}
 	
 	private void maybeStartTrans() {
-		if(dbTrans == null) return;
-		log.debug("Starting trans");
-		dbTrans.startTrans();
-		dbTrans.setComplete();
+		if(!dbTrans.isGlobalTrans() && !dbTrans.isTransStarted()) {
+			log.debug("Starting NON-global trans");
+			dbTrans.startTrans();
+			dbTrans.setComplete();
+		}
 	}
 	
 	private void endAnyTrans() {
-		if(dbTrans != null) {
-			log.debug("Ending trans");
+		if(!dbTrans.isGlobalTrans() && dbTrans.isTransStarted()) {
+			log.debug("Ending NON-global trans");
 			dbTrans.endTrans();
 		}
 	}
@@ -166,20 +168,42 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	public boolean supportsPaging() {
 		return true; // true by default
 	}
-
+	
 	@Override
-	public void persistDependentEntities() {
+	public final void persistDependentEntities() {
+		if(dbTrans.isGlobalTrans()) dbTrans.startTrans();
+		try {
+			doPersistDependentEntities();
+			if(dbTrans.isGlobalTrans()) dbTrans.setComplete();
+		}
+		finally {
+			if(dbTrans.isGlobalTrans()) dbTrans.endTrans();
+		}
+	}
+
+	protected void doPersistDependentEntities() {
 		// base impl no-op
 	}
 
 	@Override
-	public void purgeDependentEntities() {
+	public final void purgeDependentEntities() {
+		if(dbTrans.isGlobalTrans()) dbTrans.startTrans();
+		try {
+			doPurgeDependentEntities();
+			if(dbTrans.isGlobalTrans()) dbTrans.setComplete();
+		}
+		finally {
+			if(dbTrans.isGlobalTrans()) dbTrans.endTrans();
+		}
+	}
+	
+	protected void doPurgeDependentEntities() {
 		// base impl no-op
 	}
-
+	
 	@Override
 	public void makeUnique(E e) {
-		EntityBeanFactory.makeBusinessKeyUnique(e);
+		EntityUtil.makeBusinessKeyUnique(e);
 	}
 
 	@Override

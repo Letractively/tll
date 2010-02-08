@@ -34,7 +34,7 @@ public class CustomerAccountDaoTestHandler extends AbstractEntityDaoTestHandler<
 	}
 
 	@Override
-	public void persistDependentEntities() {
+	public void doPersistDependentEntities() {
 		final Currency currency = createAndPersist(Currency.class, true);
 
 		Account account = create(Asp.class, true);
@@ -57,7 +57,7 @@ public class CustomerAccountDaoTestHandler extends AbstractEntityDaoTestHandler<
 	}
 
 	@Override
-	public void purgeDependentEntities() {
+	public void doPurgeDependentEntities() {
 		purge(Visitor.class, pkVisitor);
 		purge(Customer.class, pkCustomer);
 		purge(Account.class, pkAccount);

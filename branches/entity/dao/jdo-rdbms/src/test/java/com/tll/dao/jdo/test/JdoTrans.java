@@ -60,6 +60,11 @@ public class JdoTrans implements IDbTrans {
 	}
 
 	@Override
+	public boolean isGlobalTrans() {
+		return true;
+	}
+
+	@Override
 	public void startTrans() throws IllegalStateException {
 		if(isTransStarted()) {
 			throw new IllegalStateException("Transaction already started.");
