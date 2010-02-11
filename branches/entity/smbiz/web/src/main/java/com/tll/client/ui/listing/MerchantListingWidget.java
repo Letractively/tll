@@ -5,6 +5,7 @@
  */
 package com.tll.client.ui.listing;
 
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.tll.client.App;
 import com.tll.client.SmbizAdmin;
 import com.tll.client.listing.AbstractAccountListingConfig;
@@ -103,7 +104,7 @@ public class MerchantListingWidget extends RemoteListingWidget {
 
 	static final IListingConfig<Model> config = new MerchantListingConfig();
 
-	static final Option cListing = new Option("Customer Listing", App.imgs().arrow_sm_down().createImage());
+	static final Option cListing = new Option("Customer Listing", AbstractImagePrototype.create(App.imgs().arrow_sm_down()).createImage());
 
 	final NamedQuerySearch criteria;
 

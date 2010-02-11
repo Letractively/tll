@@ -12,6 +12,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Image;
@@ -131,10 +132,10 @@ IListingHandler<R> {
 		pageSize = config.getPageSize();
 
 		if(pageSize > 0) {
-			imgPageFirst = imageBundle.page_first().createImage();
-			imgPagePrev = imageBundle.page_prev().createImage();
-			imgPageNext = imageBundle.page_next().createImage();
-			imgPageLast = imageBundle.page_last().createImage();
+			imgPageFirst = AbstractImagePrototype.create(imageBundle.page_first()).createImage();
+			imgPagePrev = AbstractImagePrototype.create(imageBundle.page_prev()).createImage();
+			imgPageNext = AbstractImagePrototype.create(imageBundle.page_next()).createImage();
+			imgPageLast = AbstractImagePrototype.create(imageBundle.page_last()).createImage();
 
 			btnPageFirst = new PushButton(imgPageFirst, this);
 			btnPagePrev = new PushButton(imgPagePrev, this);
@@ -151,7 +152,7 @@ IListingHandler<R> {
 			addButton(btnPagePrev, "Previous Page");
 
 			// separator
-			split = imageBundle.split().createImage();
+			split = AbstractImagePrototype.create(imageBundle.split()).createImage();
 			split.setStylePrimaryName(Toolbar.Styles.SPLIT);
 			add(split);
 
@@ -164,7 +165,7 @@ IListingHandler<R> {
 			add(pageXofY);
 
 			// separator
-			split = imageBundle.split().createImage();
+			split = AbstractImagePrototype.create(imageBundle.split()).createImage();
 			split.setStylePrimaryName(Toolbar.Styles.SPLIT);
 			add(split);
 
@@ -175,12 +176,12 @@ IListingHandler<R> {
 
 		// show refresh button?
 		if(config.isShowRefreshBtn()) {
-			imgRefresh = imageBundle.refresh().createImage();
+			imgRefresh = AbstractImagePrototype.create(imageBundle.refresh()).createImage();
 			btnRefresh = new PushButton(imgRefresh, this);
 
 			if(pageSize > 0) {
 				// separator
-				split = imageBundle.split().createImage();
+				split = AbstractImagePrototype.create(imageBundle.split()).createImage();
 				split.setStylePrimaryName(Toolbar.Styles.SPLIT);
 				add(split);
 			}
@@ -194,7 +195,7 @@ IListingHandler<R> {
 			btnAdd = new PushButton(title, this);
 			if(pageSize > 0 || config.isShowRefreshBtn()) {
 				// separator
-				split = imageBundle.split().createImage();
+				split = AbstractImagePrototype.create(imageBundle.split()).createImage();
 				split.setStylePrimaryName(Toolbar.Styles.SPLIT);
 				add(split);
 			}
@@ -204,7 +205,7 @@ IListingHandler<R> {
 
 		// separator
 		if(pageSize > 0 || config.isShowRefreshBtn() || addRowHandler != null) {
-			split = imageBundle.split().createImage();
+			split = AbstractImagePrototype.create(imageBundle.split()).createImage();
 			split.setStylePrimaryName(Toolbar.Styles.SPLIT);
 			add(split);
 		}
@@ -313,37 +314,37 @@ IListingHandler<R> {
 			// first page btn
 			btnPageFirst.setEnabled(!isFirstPage && hasRows);
 			if(isFirstPage || !hasRows) {
-				imageBundle.page_first_disabled().applyTo(imgPageFirst);
+				AbstractImagePrototype.create(imageBundle.page_first_disabled()).applyTo(imgPageFirst);
 			}
 			else {
-				imageBundle.page_first().applyTo(imgPageFirst);
+				AbstractImagePrototype.create(imageBundle.page_first()).applyTo(imgPageFirst);
 			}
 
 			// last page btn
 			btnPageLast.setEnabled(!isLastPage && hasRows);
 			if(isLastPage || !hasRows) {
-				imageBundle.page_last_disabled().applyTo(imgPageLast);
+				AbstractImagePrototype.create(imageBundle.page_last_disabled()).applyTo(imgPageLast);
 			}
 			else {
-				imageBundle.page_last().applyTo(imgPageLast);
+				AbstractImagePrototype.create(imageBundle.page_last()).applyTo(imgPageLast);
 			}
 
 			// prev page btn
 			btnPagePrev.setEnabled(!isFirstPage && hasRows);
 			if(isFirstPage || !hasRows) {
-				imageBundle.page_prev_disabled().applyTo(imgPagePrev);
+				AbstractImagePrototype.create(imageBundle.page_prev_disabled()).applyTo(imgPagePrev);
 			}
 			else {
-				imageBundle.page_prev().applyTo(imgPagePrev);
+				AbstractImagePrototype.create(imageBundle.page_prev()).applyTo(imgPagePrev);
 			}
 
 			// next page btn
 			btnPageNext.setEnabled(!isLastPage && hasRows);
 			if(isLastPage || !hasRows) {
-				imageBundle.page_next_disabled().applyTo(imgPageNext);
+				AbstractImagePrototype.create(imageBundle.page_next_disabled()).applyTo(imgPageNext);
 			}
 			else {
-				imageBundle.page_next().applyTo(imgPageNext);
+				AbstractImagePrototype.create(imageBundle.page_next()).applyTo(imgPageNext);
 			}
 
 			tbPage.setEnabled(hasRows);

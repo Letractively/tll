@@ -7,6 +7,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -933,9 +934,9 @@ public final class UITests extends AbstractUITest {
 
 			b1 = new PushButton("Push Button 1");
 			b1.getElement().getStyle().setProperty("margin", "1em");
-			b2 = new PushButton(MsgLevelImageBundle.INSTANCE.error().createImage());
+			b2 = new PushButton(AbstractImagePrototype.create(MsgLevelImageBundle.INSTANCE.error()).createImage());
 			b2.getElement().getStyle().setProperty("margin", "1em");
-			b3 = new PushButton(MsgLevelImageBundle.INSTANCE.warn().createImage());
+			b3 = new PushButton(AbstractImagePrototype.create(MsgLevelImageBundle.INSTANCE.warn()).createImage());
 			b3.getElement().getStyle().setProperty("margin", "1em");
 			contextArea.add(b1);
 			contextArea.add(b2);
@@ -981,21 +982,21 @@ public final class UITests extends AbstractUITest {
 			contextArea.add(tb);
 
 			// add contents to the the toolbar
-			final PushButton pb = new PushButton(MsgLevelImageBundle.INSTANCE.info().createImage());
+			final PushButton pb = new PushButton(AbstractImagePrototype.create(MsgLevelImageBundle.INSTANCE.info()).createImage());
 			pb.setEnabled(false);
 			tb.addButton(pb, "Info");
-			tb.add(ToolbarImageBundle.INSTANCE.split().createImage());
-			tb.addButton(new PushButton(MsgLevelImageBundle.INSTANCE.error().createImage()), "Error");
-			tb.add(ToolbarImageBundle.INSTANCE.split().createImage());
-			tb.addButton(new PushButton(MsgLevelImageBundle.INSTANCE.warn().createImage()), "Warn");
-			tb.addButton(new PushButton(MsgLevelImageBundle.INSTANCE.warn().createImage()), "Warn");
-			tb.addButton(new PushButton(MsgLevelImageBundle.INSTANCE.warn().createImage()), "Warn");
-			tb.add(ToolbarImageBundle.INSTANCE.split().createImage());
+			tb.add(AbstractImagePrototype.create(ToolbarImageBundle.INSTANCE.split()).createImage());
+			tb.addButton(new PushButton(AbstractImagePrototype.create(MsgLevelImageBundle.INSTANCE.error()).createImage()), "Error");
+			tb.add(AbstractImagePrototype.create(ToolbarImageBundle.INSTANCE.split()).createImage());
+			tb.addButton(new PushButton(AbstractImagePrototype.create(MsgLevelImageBundle.INSTANCE.warn()).createImage()), "Warn");
+			tb.addButton(new PushButton(AbstractImagePrototype.create(MsgLevelImageBundle.INSTANCE.warn()).createImage()), "Warn");
+			tb.addButton(new PushButton(AbstractImagePrototype.create(MsgLevelImageBundle.INSTANCE.warn()).createImage()), "Warn");
+			tb.add(AbstractImagePrototype.create(ToolbarImageBundle.INSTANCE.split()).createImage());
 			final Label lbl = new Label("This is a label");
 			lbl.setWidth("100%");
 			tb.add(lbl);
 
-			tb.add(new PushButton(MsgLevelImageBundle.INSTANCE.fatal().createImage()));
+			tb.add(new PushButton(AbstractImagePrototype.create(MsgLevelImageBundle.INSTANCE.fatal()).createImage()));
 		}
 
 		@Override

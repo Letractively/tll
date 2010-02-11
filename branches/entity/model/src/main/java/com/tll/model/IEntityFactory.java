@@ -13,6 +13,13 @@ package com.tll.model;
 public interface IEntityFactory<PK> {
 
 	/**
+	 * Are primary keys generatable? I.e.: are they able to be created in their
+	 * entirety <em>before</em> the associated entity is first persisted?
+	 * @return true/false
+	 */
+	boolean isPrimaryKeyGeneratable();
+
+	/**
 	 * Creates a new entity instance of the given type.
 	 * @param <E>
 	 * @param entityClass entity type to create
@@ -28,13 +35,16 @@ public interface IEntityFactory<PK> {
 	 * <p>
 	 * The primary key created by this method is <em>not</em> required to be
 	 * "complete" meaning the datastore may need to alter it to establish its
-	 * completeness. This behavior is implementation dependent and is ascertained
-	 * by the method {@link IEntity#isGenerated()} property.
+	 * completeness.
+	 * <p>
+	 * Determination of whether a given enties' primary key was "generated" is
+	 * achieved by calling {@link IEntity#isGenerated()}.
 	 * @param entity The required entity instance
-	 * @return the generated primary key set in the given entity.
+	 * @return the newly created primary key that was set in the given entity
+	 *         returned as a convenience
 	 */
 	PK generatePrimaryKey(IEntity entity);
-	
+
 	/**
 	 * Converts an entity primary key to a String with the added provision that
 	 * the resultant string is able to be converted back to the original primary

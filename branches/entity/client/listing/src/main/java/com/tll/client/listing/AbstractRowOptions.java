@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.tll.client.ui.listing.EditRowImageBundle;
 import com.tll.client.ui.option.Option;
 
@@ -35,7 +36,7 @@ public abstract class AbstractRowOptions implements IRowOptionsDelegate {
 	 * @return New Option instance
 	 */
 	private static Option editOption(String subjectName) {
-		return new Option(EDIT_OPTION_PREFIX + subjectName, imageBundle.edit().createImage());
+		return new Option(EDIT_OPTION_PREFIX + subjectName, AbstractImagePrototype.create(imageBundle.edit()).createImage());
 	}
 
 	/**
@@ -46,7 +47,7 @@ public abstract class AbstractRowOptions implements IRowOptionsDelegate {
 	 * @return New Option instance
 	 */
 	private static Option deleteOption(String subjectName) {
-		return new Option(DELETE_OPTION_PREFIX + subjectName, imageBundle.delete().createImage());
+		return new Option(DELETE_OPTION_PREFIX + subjectName, AbstractImagePrototype.create(imageBundle.delete()).createImage());
 	}
 
 	/**

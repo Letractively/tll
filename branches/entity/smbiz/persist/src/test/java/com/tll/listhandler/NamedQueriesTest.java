@@ -140,7 +140,7 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 	 * @param entityClass
 	 * @return The {@link IListingDataProvider} subject to testing.
 	 */
-	protected <E extends IEntity> IListingDataProvider getListHandlerDataProvider(Class<E> entityClass) {
+	protected <E extends IEntity> IListingDataProvider<E> getListHandlerDataProvider(Class<E> entityClass) {
 		return injector.getInstance(IEntityServiceFactory.class).instanceByEntityType(entityClass);
 	}
 

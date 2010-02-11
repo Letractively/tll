@@ -1,53 +1,53 @@
 package com.tll.client.ui.view;
 
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.ImageBundle;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.ImageResource;
 
 /**
  * ViewToolbarImageBundle
  * @author jpk
  */
-public interface ViewToolbarImageBundle extends ImageBundle {
+public interface ViewToolbarImageBundle extends ClientBundle {
 
 	/**
 	 * arrow_sm_right
 	 * @return the image prototype
 	 */
-	@Resource(value = "com/tll/public/images/arrow_sm_right.gif")
-	AbstractImagePrototype arrow_sm_right();
+	@Source(value = "com/tll/public/images/arrow_sm_right.gif")
+	ImageResource arrow_sm_right();
 
 	/**
 	 * arrow_sm_down
 	 * @return the image prototype
 	 */
-	@Resource(value = "com/tll/public/images/arrow_sm_down.gif")
-	AbstractImagePrototype arrow_sm_down();
+	@Source(value = "com/tll/public/images/arrow_sm_down.gif")
+	ImageResource arrow_sm_down();
 
 	/**
 	 * close
 	 * @return the image prototype
 	 */
-	@Resource(value = "com/tll/public/images/close.gif")
-	AbstractImagePrototype close();
+	@Source(value = "com/tll/public/images/close.gif")
+	ImageResource close();
 
 	/**
 	 * external (11x11)
 	 * @return the image prototype
 	 */
-	@Resource(value = "com/tll/public/images/external.gif")
-	AbstractImagePrototype external();
+	@Source(value = "com/tll/public/images/external.gif")
+	ImageResource external();
 
 	/**
 	 * permalink (11x11)
 	 * @return the image prototype
 	 */
-	@Resource(value = "com/tll/public/images/permalink.gif")
-	AbstractImagePrototype permalink();
+	@Source(value = "com/tll/public/images/permalink.gif")
+	ImageResource permalink();
 
 	/**
 	 * refresh
 	 * @return the image prototype
 	 */
-	@Resource(value = "com/tll/public/images/refresh.gif")
-	AbstractImagePrototype refresh();
+	@Source(value = "com/tll/public/images/refresh.gif")
+	ImageResource refresh();
 }

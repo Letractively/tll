@@ -5,19 +5,19 @@
  */
 package com.tll.client.ui;
 
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.ImageBundle;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.ImageResource;
 
 /**
  * ImageBundle
  * @author jpk
  */
-public interface SmbizImageBundle extends ImageBundle {
+public interface SmbizImageBundle extends ClientBundle {
 
 	/**
 	 * arrow_sm_down
 	 * @return the image prototype
 	 */
-	@Resource(value = "com/tll/public/images/arrow_sm_down.gif")
-	AbstractImagePrototype arrow_sm_down();
+	@Source(value = "com/tll/public/images/arrow_sm_down.gif")
+	ImageResource arrow_sm_down();
 }

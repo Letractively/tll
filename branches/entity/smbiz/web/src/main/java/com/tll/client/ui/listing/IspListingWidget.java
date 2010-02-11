@@ -6,6 +6,7 @@
 package com.tll.client.ui.listing;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.tll.client.App;
 import com.tll.client.SmbizAdmin;
 import com.tll.client.data.rpc.CrudCommand;
@@ -35,7 +36,7 @@ import com.tll.listhandler.ListHandlerType;
  */
 public class IspListingWidget extends RemoteListingWidget {
 
-	static final Option mListing = new Option("Merchant Listing", App.imgs().arrow_sm_down().createImage());
+	static final Option mListing = new Option("Merchant Listing", AbstractImagePrototype.create(App.imgs().arrow_sm_down()).createImage());
 
 	/**
 	 * IspListingConfig

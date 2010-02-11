@@ -5,6 +5,7 @@
  */
 package com.tll.client.ui.msg;
 
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Image;
 import com.tll.common.msg.Msg.MsgLevel;
 
@@ -23,14 +24,14 @@ abstract class Util {
 	public static Image getMsgLevelImage(MsgLevel level) {
 		switch(level) {
 			case WARN:
-				return MsgLevelImageBundle.INSTANCE.warn().createImage();
+				return AbstractImagePrototype.create(MsgLevelImageBundle.INSTANCE.warn()).createImage();
 			case ERROR:
-				return MsgLevelImageBundle.INSTANCE.error().createImage();
+				return AbstractImagePrototype.create(MsgLevelImageBundle.INSTANCE.error()).createImage();
 			case FATAL:
-				return MsgLevelImageBundle.INSTANCE.fatal().createImage();
+				return AbstractImagePrototype.create(MsgLevelImageBundle.INSTANCE.fatal()).createImage();
 			default:
 			case INFO:
-				return MsgLevelImageBundle.INSTANCE.info().createImage();
+				return AbstractImagePrototype.create(MsgLevelImageBundle.INSTANCE.info()).createImage();
 		}
 	}
 }

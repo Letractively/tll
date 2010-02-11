@@ -18,10 +18,14 @@ import com.tll.model.IEntity;
  * impl to persist entity instances.
  * @author jpk
  */
-// TODO move to com.tll.model package
 public final class GaeEntityFactory extends AbstractEntityFactory<Key> {
 
 	static final Log log = LogFactory.getLog(GaeEntityFactory.class);
+
+	@Override
+	public boolean isPrimaryKeyGeneratable() {
+		return false;
+	}
 
 	@Override
 	public <E extends IEntity> E createEntity(Class<E> entityClass, boolean generate) throws IllegalStateException {

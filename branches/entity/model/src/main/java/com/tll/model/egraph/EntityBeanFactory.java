@@ -111,7 +111,7 @@ public final class EntityBeanFactory {
 		final E[] arr = getBeansOfType(entityClass);
 		if(arr != null && arr.length > 0) {
 			for(final E e : arr) {
-				if(entityFactory != null) {
+				if(entityFactory != null && entityFactory.isPrimaryKeyGeneratable()) {
 					entityFactory.generatePrimaryKey(e);
 				}
 				set.add(e);
@@ -131,7 +131,7 @@ public final class EntityBeanFactory {
 	public <E extends IEntity> E getEntityCopy(Class<E> entityClass, boolean makeUnique) {
 		final E e = getBean(entityClass);
 		if(e != null) {
-			if(entityFactory != null) {
+			if(entityFactory != null && entityFactory.isPrimaryKeyGeneratable()) {
 				entityFactory.generatePrimaryKey(e);
 			}
 			if(makeUnique) {

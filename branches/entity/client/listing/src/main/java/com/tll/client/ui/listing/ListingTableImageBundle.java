@@ -5,26 +5,26 @@
  */
 package com.tll.client.ui.listing;
 
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.ImageBundle;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.ImageResource;
 
 /**
  * ListingTableImageBundle
  * @author jpk
  */
-public interface ListingTableImageBundle extends ImageBundle {
+public interface ListingTableImageBundle extends ClientBundle {
 
 	/**
 	 * sort_asc
 	 * @return the image prototype
 	 */
-	@Resource(value = "com/tll/public/images/sort_asc.gif")
-	AbstractImagePrototype sort_asc();
+	@Source(value = "com/tll/public/images/sort_asc.gif")
+	ImageResource sort_asc();
 
 	/**
 	 * sort_desc
 	 * @return the image prototype
 	 */
-	@Resource(value = "com/tll/public/images/sort_desc.gif")
-	AbstractImagePrototype sort_desc();
+	@Source(value = "com/tll/public/images/sort_desc.gif")
+	ImageResource sort_desc();
 }

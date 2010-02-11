@@ -12,7 +12,7 @@ import com.tll.key.IKey;
  * @author jpk
  */
 @SuppressWarnings("serial")
-public class ModelKey implements IKey, IEntityTypeProvider {
+public class ModelKey implements IKey<Model>, IEntityTypeProvider {
 
 	/**
 	 * The entity type.

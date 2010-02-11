@@ -13,6 +13,7 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
@@ -249,10 +250,10 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 
 			// insert the sort dir arrow image
 			if(direction == SortDir.ASC) {
-				imageBundle.sort_asc().applyTo(imgSortDir);
+				AbstractImagePrototype.create(imageBundle.sort_asc()).applyTo(imgSortDir);
 			}
 			else {
-				imageBundle.sort_desc().applyTo(imgSortDir);
+				AbstractImagePrototype.create(imageBundle.sort_desc()).applyTo(imgSortDir);
 			}
 			imgSortDir.setStyleName(Styles.SORT);
 			imgSortDir.setTitle(reverseTitle);

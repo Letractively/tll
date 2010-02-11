@@ -15,9 +15,65 @@
 	<description>Google App Engine dao impl</description>
 
 	<build>
+		<plugins>
+			<!-- make the datanucleus-enhancer jar locally available for runtime jdo class enhancement -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy jdo enhancer</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>asm</groupId>
+									<artifactId>asm</artifactId>
+									<outputDirectory>${project.build.directory}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.datanucleus</groupId>
+									<artifactId>datanucleus-enhancer</artifactId>
+									<outputDirectory>${project.build.directory}</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					
+					<!-- jdo runtime enhancement of test entities -->
+					<forkMode>once</forkMode>
+					<argLine>-javaagent:${basedir}/target/datanucleus-enhancer-${datanucleusEnhancerVersion}.jar=com.tll.model</argLine>
+					<additionalClasspathElements>
+            <additionalClasspathElement>${basedir}/target</additionalClasspathElement>
+          </additionalClasspathElements>
+
+					<suiteXmlFiles>
+						<suiteXmlFile>${pom.basedir}/src/test/resources/testng.xml</suiteXmlFile>
+					</suiteXmlFiles>
+				</configuration>
+			</plugin>
+
+		</plugins>
 	</build>
 
 	<dependencies>
+		<!-- solely for jdo runtime enhancement for tests -->
+		<dependency>
+	    <groupId>asm</groupId>
+	    <artifactId>asm</artifactId>
+	    <scope>provided</scope>
+    </dependency>
+
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>

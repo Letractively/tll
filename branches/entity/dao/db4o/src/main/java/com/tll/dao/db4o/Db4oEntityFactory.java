@@ -11,7 +11,6 @@ import com.google.inject.Provider;
 import com.tll.model.AbstractEntityFactory;
 import com.tll.model.IEntity;
 
-
 /**
  * Db4oEntityFactory
  * @author jpk
@@ -20,7 +19,7 @@ public class Db4oEntityFactory extends AbstractEntityFactory<Long> {
 
 	private Provider<ObjectContainer> oc;
 	private IdState state;
-	
+
 	/**
 	 * Constructor
 	 * @param oc Required {@link ObjectContainer} provider
@@ -30,7 +29,12 @@ public class Db4oEntityFactory extends AbstractEntityFactory<Long> {
 		super();
 		setObjectContainer(oc);
 	}
-	
+
+	@Override
+	public boolean isPrimaryKeyGeneratable() {
+		return true;
+	}
+
 	/**
 	 * Sets the object container provider.
 	 * @param oc required
@@ -68,7 +72,7 @@ public class Db4oEntityFactory extends AbstractEntityFactory<Long> {
 				oc.get().store(state);
 			}
 		}
-		
+
 		assert state != null;
 		Long current = state.getCurrentId(entity.entityClass());
 

@@ -109,6 +109,11 @@ public class JdoRdbmsEntityFactory extends AbstractEntityFactory<Long> {
 	}
 
 	@Override
+	public boolean isPrimaryKeyGeneratable() {
+		return true;
+	}
+
+	@Override
 	public <E extends IEntity> E createEntity(Class<E> entityClass, boolean generate) throws IllegalStateException {
 		return newEntity(entityClass);
 	}

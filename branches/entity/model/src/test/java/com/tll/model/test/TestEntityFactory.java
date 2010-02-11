@@ -23,6 +23,11 @@ public class TestEntityFactory extends AbstractEntityFactory<Long> {
 	private static final Map<Class<?>, Long> idMap = new HashMap<Class<?>, Long>();
 
 	@Override
+	public boolean isPrimaryKeyGeneratable() {
+		return true;
+	}
+
+	@Override
 	public <E extends IEntity> E createEntity(Class<E> entityClass, boolean generate) throws IllegalStateException {
 		return newEntity(entityClass);
 	}

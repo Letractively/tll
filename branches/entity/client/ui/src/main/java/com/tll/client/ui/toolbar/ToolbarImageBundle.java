@@ -1,14 +1,14 @@
 package com.tll.client.ui.toolbar;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.ImageBundle;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.ImageResource;
 
 /**
  * ToolbarImageBundle - Images for {@link Toolbar} related UI artifacts.
  * @author jpk
  */
-public interface ToolbarImageBundle extends ImageBundle {
+public interface ToolbarImageBundle extends ClientBundle {
 
 	/**
 	 * The message level image bundle instance.
@@ -19,6 +19,6 @@ public interface ToolbarImageBundle extends ImageBundle {
 	 * split
 	 * @return the split prototype
 	 */
-	@Resource(value = "com/tll/public/images/split.gif")
-	AbstractImagePrototype split();
+	@Source(value = "com/tll/public/images/split.gif")
+	ImageResource split();
 }

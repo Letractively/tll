@@ -17,6 +17,8 @@ import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
 import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -45,28 +47,28 @@ implements SelectionHandler<Integer>, BeforeSelectionHandler<Integer> {
 	 * ImageBundle
 	 * @author jpk
 	 */
-	public interface ImageBundle extends com.google.gwt.user.client.ui.ImageBundle {
+	public interface ImageBundle extends ClientBundle {
 
 		/**
 		 * add (16x16)
 		 * @return the image prototype
 		 */
-		@Resource(value = "com/tll/public/images/add.gif")
-		AbstractImagePrototype add();
+		@Source(value = "com/tll/public/images/add.gif")
+		ImageResource add();
 
 		/**
 		 * undo (18x18)
 		 * @return the image prototype
 		 */
-		@Resource(value = "com/tll/public/images/undo.gif")
-		AbstractImagePrototype undo();
+		@Source(value = "com/tll/public/images/undo.gif")
+		ImageResource undo();
 
 		/**
 		 * delete (18x18)
 		 * @return the image prototype
 		 */
-		@Resource(value = "com/tll/public/images/delete.gif")
-		AbstractImagePrototype delete();
+		@Source(value = "com/tll/public/images/delete.gif")
+		ImageResource delete();
 	}
 
 	/**
@@ -178,7 +180,7 @@ implements SelectionHandler<Integer>, BeforeSelectionHandler<Integer> {
 		tabPanel.setVisible(false);
 		if(enableAdd) {
 			// add trailing *add* tab
-			final Image imgAdd = imageBundle.add().createImage();
+			final Image imgAdd = AbstractImagePrototype.create(imageBundle.add()).createImage();
 			imgAdd.setTitle("Add " + getIndexTypeName());
 			tabPanel.add(new SimplePanel(), imgAdd);
 		}
@@ -222,7 +224,7 @@ implements SelectionHandler<Integer>, BeforeSelectionHandler<Integer> {
 
 		if(enableDelete || isUiAdd) {
 			final ToggleButton btnDeleteTgl =
-				new ToggleButton(imageBundle.delete().createImage(), imageBundle.undo().createImage());
+				new ToggleButton(AbstractImagePrototype.create(imageBundle.delete()).createImage(), AbstractImagePrototype.create(imageBundle.undo()).createImage());
 			btnDeleteTgl.addStyleName(Styles.DELETE_BUTTON);
 			btnDeleteTgl.setTitle("Delete " + labelText);
 			btnDeleteTgl.getElement().setPropertyBoolean(UI_ADD, isUiAdd);

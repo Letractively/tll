@@ -5,26 +5,26 @@
  */
 package com.tll.client.ui.listing;
 
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.ImageBundle;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.ImageResource;
 
 /**
  * EditRowImageBundle
  * @author jpk
  */
-public interface EditRowImageBundle extends ImageBundle {
+public interface EditRowImageBundle extends ClientBundle {
 
 	/**
 	 * pencil
 	 * @return the image prototype
 	 */
-	@Resource(value = "com/tll/public/images/pencil.gif")
-	AbstractImagePrototype edit();
+	@Source(value = "com/tll/public/images/pencil.gif")
+	ImageResource edit();
 
 	/**
 	 * trash
 	 * @return the image prototype
 	 */
-	@Resource(value = "com/tll/public/images/trash.gif")
-	AbstractImagePrototype delete();
+	@Source(value = "com/tll/public/images/trash.gif")
+	ImageResource delete();
 }
