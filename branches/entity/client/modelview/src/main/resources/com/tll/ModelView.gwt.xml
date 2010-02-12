@@ -1,0 +1,4 @@
+<module>
+  <inherits name="com.tll.ClientModel" />
+  <inherits name="com.tll.View" />
+</module>
