@@ -18,6 +18,15 @@ import com.tll.client.mvc.view.IView;
  * @author jpk
  */
 public class ModelChangeViewHandler implements IModelChangeHandler {
+	
+	private static final ModelChangeViewHandler instance = new ModelChangeViewHandler();
+	
+	public static ModelChangeViewHandler get() {
+		return instance;
+	}
+
+	private ModelChangeViewHandler() {
+	}
 
 	@Override
 	public void onModelChangeEvent(ModelChangeEvent event) {

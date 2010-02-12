@@ -20,7 +20,6 @@
 			<resource>
 				<directory>src/main/java</directory>
 				<includes>
-					<include>**/model/key/IKey.java</include>
 					<include>**/model/schema/AbstractSchemaProperty.java</include>
 					<include>**/model/schema/IPropertyMetadataProvider.java</include>
 					<include>**/model/schema/IPropertyNameProvider.java</include>

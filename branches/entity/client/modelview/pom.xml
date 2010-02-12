@@ -20,6 +20,11 @@
 	<dependencies>
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>tll-client-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>tll-client-model</artifactId>
       <version>${project.version}</version>
     </dependency>

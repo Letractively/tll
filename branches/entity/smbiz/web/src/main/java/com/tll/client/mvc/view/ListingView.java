@@ -6,7 +6,7 @@
 package com.tll.client.mvc.view;
 
 import com.tll.client.model.ModelChangeEvent;
-import com.tll.client.mvc.ViewManager;
+import com.tll.client.mvc.ModelChangeViewHandler;
 import com.tll.client.ui.listing.ModelListingWidget;
 
 /**
@@ -39,7 +39,7 @@ public abstract class ListingView<I extends IViewInitializer, L extends ModelLis
 	 * @param listingWidget The listing widget to set for this listing view.
 	 */
 	protected final void setListingWidget(L listingWidget) {
-		listingWidget.addModelChangeHandler(ViewManager.get());
+		listingWidget.addModelChangeHandler(ModelChangeViewHandler.get());
 		addWidget(listingWidget);
 		this.listingWidget = listingWidget;
 	}

@@ -19,4 +19,7 @@
 		<include name="RefSet.java" />
 		<include name="StringUtil.java" />
 	</source>
+	<source path="key">
+    <include name="IKey.java" />
+	</source>
 </module>

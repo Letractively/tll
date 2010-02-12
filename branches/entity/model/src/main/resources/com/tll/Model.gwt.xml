@@ -1,9 +1,5 @@
 <module>
 
-  <source path="model/key">
-    <include name="IKey.java" />
-  </source>
-
   <source path="model/schema">
     <include name="AbstractSchemaProperty.java" />
     <include name="IPropertyMetadataProvider.java" />

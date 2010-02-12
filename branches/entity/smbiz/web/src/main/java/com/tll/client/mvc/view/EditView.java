@@ -12,6 +12,7 @@ import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.model.IHasModelChangeHandlers;
 import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.ModelChangeEvent;
+import com.tll.client.mvc.ModelChangeViewHandler;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
@@ -71,7 +72,7 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 		addWidget(editPanel);
 
 		// edit views shall notify other open views of model changes
-		addModelChangeHandler(ViewManager.get());
+		addModelChangeHandler(ModelChangeViewHandler.get());
 	}
 
 	/**
