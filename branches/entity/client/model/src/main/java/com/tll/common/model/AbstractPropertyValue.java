@@ -5,6 +5,7 @@
  */
 package com.tll.common.model;
 
+import com.tll.criteria.IQueryParam;
 import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
 import com.tll.util.ObjectUtil;
@@ -13,7 +14,7 @@ import com.tll.util.ObjectUtil;
  * AbstractPropertyValue
  * @author jpk
  */
-public abstract class AbstractPropertyValue extends AbstractModelProperty implements IPropertyValue {
+public abstract class AbstractPropertyValue extends AbstractModelProperty implements IPropertyValue, IQueryParam {
 
 	/**
 	 * Ad-hoc factory method for stubbing {@link IPropertyValue}s.
