@@ -6,12 +6,12 @@ import java.util.List;
 import org.springframework.dao.DataAccessException;
 
 import com.tll.criteria.Criteria;
-import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.NameKey;
 import com.tll.model.bk.IBusinessKey;
+import com.tll.model.schema.IQueryParam;
 
 /**
  * IEntityDao - DAO definition for {@link IEntity}s.

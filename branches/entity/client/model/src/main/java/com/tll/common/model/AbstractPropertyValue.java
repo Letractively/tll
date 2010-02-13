@@ -5,7 +5,7 @@
  */
 package com.tll.common.model;
 
-import com.tll.criteria.IQueryParam;
+import com.tll.model.schema.IQueryParam;
 import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
 import com.tll.util.ObjectUtil;

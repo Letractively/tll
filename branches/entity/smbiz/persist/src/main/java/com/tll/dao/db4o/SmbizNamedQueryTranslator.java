@@ -8,7 +8,6 @@ package com.tll.dao.db4o;
 import java.util.List;
 
 import com.db4o.query.Query;
-import com.tll.criteria.IQueryParam;
 import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.criteria.SelectNamedQueries;
@@ -17,6 +16,7 @@ import com.tll.model.INamedEntity;
 import com.tll.model.Interface;
 import com.tll.model.Isp;
 import com.tll.model.Merchant;
+import com.tll.model.schema.IQueryParam;
 
 
 /**

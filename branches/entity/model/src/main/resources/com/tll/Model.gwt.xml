@@ -7,6 +7,7 @@
     <include name="ISchemaProperty.java" />
     <include name="PropertyMetadata.java" />
     <include name="PropertyType.java" />
+    <include name="IQueryParam.java" />
   </source>
 
 </module>

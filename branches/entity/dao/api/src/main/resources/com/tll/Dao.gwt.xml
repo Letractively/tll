@@ -2,7 +2,6 @@
   
   <source path="criteria">
     <include name="CriteriaType.java" />
-    <include name="IQueryParam.java" />
   </source>
   
   <source path="dao">

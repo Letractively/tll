@@ -8,10 +8,10 @@ package com.tll.dao.db4o.test;
 import java.util.List;
 
 import com.db4o.query.Query;
-import com.tll.criteria.IQueryParam;
 import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.db4o.IDb4oNamedQueryTranslator;
+import com.tll.model.schema.IQueryParam;
 
 
 /**

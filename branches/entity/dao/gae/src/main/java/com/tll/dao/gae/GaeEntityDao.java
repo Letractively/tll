@@ -29,7 +29,6 @@ import com.tll.criteria.Criteria;
 import com.tll.criteria.Criterion;
 import com.tll.criteria.CriterionGroup;
 import com.tll.criteria.ICriterion;
-import com.tll.criteria.IQueryParam;
 import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.EntityExistsException;
@@ -43,6 +42,7 @@ import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.NameKey;
 import com.tll.model.bk.IBusinessKey;
+import com.tll.model.schema.IQueryParam;
 import com.tll.util.DateRange;
 
 /**

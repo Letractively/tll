@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.tll.model.IEntity;
+import com.tll.model.schema.IQueryParam;
 
 /**
  * Criteria - Holds fairly versatile criterion for querying entity data through

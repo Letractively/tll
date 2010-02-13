@@ -9,7 +9,6 @@ import org.springframework.dao.DataAccessException;
 
 import com.db4o.ObjectContainer;
 import com.tll.criteria.Criteria;
-import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.EntityNotFoundException;
 import com.tll.dao.IPageResult;
@@ -22,6 +21,7 @@ import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.NameKey;
 import com.tll.model.bk.IBusinessKey;
+import com.tll.model.schema.IQueryParam;
 
 /**
  * Db4oTestDaoDecorator - We use this decorator to force purging for all dao
