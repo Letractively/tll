@@ -7,7 +7,6 @@ package com.tll.client.ui.field;
 import java.util.Date;
 import java.util.Map;
 
-import com.tll.client.cache.AuxDataCache;
 import com.tll.client.convert.EnumToDataMapConverter;
 import com.tll.client.ui.GridRenderer;
 import com.tll.client.util.GlobalFormat;
@@ -266,12 +265,12 @@ public abstract class FieldFactory {
 	 * @param propName
 	 * @param labelText
 	 * @param helpText
-	 * @param refDataType
+	 * @param refmap
 	 * @return select field containing the app currencies
 	 */
 	public static final SuggestField frefdata(String name, String propName, String labelText, String helpText,
-			RefDataType refDataType) {
-		return fsuggest(name, propName, labelText, helpText, AuxDataCache.get().getRefDataMap(refDataType));
+			Map<String, String> refmap) {
+		return fsuggest(name, propName, labelText, helpText, refmap);
 	}
 
 	/**

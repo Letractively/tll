@@ -1,5 +1,4 @@
 <module>
-  <inherits name="com.tll.Refdata" />
   <inherits name="com.tll.Schema" />
   <inherits name="com.tll.ClientCore" />
 </module>

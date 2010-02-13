@@ -9,18 +9,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.tll.client.cache.AuxDataCache;
 import com.tll.client.ui.GridRenderer;
 import com.tll.client.ui.field.AbstractFieldGroupProvider;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.RadioGroupField.GridStyles;
 import com.tll.common.model.Model;
-import com.tll.common.model.test.TestEntityType;
 import com.tll.common.model.test.TestModelStubber;
 import com.tll.model.test.AccountStatus;
 import com.tll.model.test.AddressType;
 import com.tll.model.test.CreditCardType;
-import com.tll.refdata.RefDataType;
 
 /**
  * TestFieldGroupProviders
@@ -35,6 +32,17 @@ public class TestFieldGroupProviders {
 	static abstract class AbstractTestFieldGroupProvider extends AbstractFieldGroupProvider {
 
 		private static boolean auxDataInitialized;
+		
+		static final Map<String, String> states = new HashMap<String, String>();
+		static final Map<String, String> countries = new HashMap<String, String>();
+		
+		static {
+			states.put("CA", "California");
+			states.put("MI", "Michigan");
+			
+			countries.put("USA", "United States");
+			countries.put("SNG", "Singapore");
+		}
 
 		/**
 		 * Constructor
@@ -45,17 +53,17 @@ public class TestFieldGroupProviders {
 				// set needed aux data cache
 				final List<Model> list = new ArrayList<Model>();
 				list.add(TestModelStubber.stubCurrency());
-				AuxDataCache.get().cacheEntityList(TestEntityType.CURRENCY, list);
+				//AuxDataCache.get().cacheEntityList(TestEntityType.CURRENCY, list);
 
 				final Map<String, String> cc = new HashMap<String, String>();
 				cc.put("us", "United States");
 				cc.put("br", "Brazil");
-				AuxDataCache.get().cacheRefDataMap(RefDataType.ISO_COUNTRY_CODES, cc);
+				//AuxDataCache.get().cacheRefDataMap(RefDataType.ISO_COUNTRY_CODES, cc);
 
 				final Map<String, String> st = new HashMap<String, String>();
 				st.put("MI", "Michigan");
 				st.put("CA", "California");
-				AuxDataCache.get().cacheRefDataMap(RefDataType.US_STATES, st);
+				//AuxDataCache.get().cacheRefDataMap(RefDataType.US_STATES, st);
 
 				auxDataInitialized = true;
 			}
@@ -84,9 +92,9 @@ public class TestFieldGroupProviders {
 			//fg.addField(fstext("adrsAddress1", "address1", "Address 1", "Address 1", 40));
 			//fg.addField(fstext("adrsAddress2", "address2", "Address 2", "Address 2", 40));
 			fg.addField(ftext("adrsCity", "city", "City", "City", 30));
-			fg.addField(frefdata("adrsProvince", "province", "State/Province", "State/Province", RefDataType.US_STATES));
+			fg.addField(frefdata("adrsProvince", "province", "State/Province", "State/Province", states));
 			//fg.addField(fstext("adrsPostalCode", "postalCode", "Zip", "Zip", 20));
-			fg.addField(frefdata("adrsCountry", "country", "Country", "Country", RefDataType.ISO_COUNTRY_CODES));
+			fg.addField(frefdata("adrsCountry", "country", "Country", "Country", countries));
 
 			// ad hoc props to verify types
 			fg.addField(fcheckbox("adrsBoolean", "boolean", "Boolean", "Boolean"));
@@ -119,9 +127,9 @@ public class TestFieldGroupProviders {
 			fg.addField(ftext("ccAddress1", "paymentData_ccAddress1", "Address 1", "Address 1", 40));
 			fg.addField(ftext("ccAddress2", "paymentData_ccAddress2", "Address 2", "Address 2", 40));
 			fg.addField(ftext("ccCity", "paymentData_ccCity", "City", "City", 30));
-			fg.addField(frefdata("ccState", "paymentData_ccState", "State/Province", "State", RefDataType.US_STATES));
+			fg.addField(frefdata("ccState", "paymentData_ccState", "State/Province", "State", states));
 			fg.addField(ftext("ccZip", "paymentData_ccZip", "Postal Code", "Postal Code", 15));
-			fg.addField(frefdata("ccCountry", "paymentData_ccCountry", "Country", "Country", RefDataType.ISO_COUNTRY_CODES));
+			fg.addField(frefdata("ccCountry", "paymentData_ccCountry", "Country", "Country", countries));
 		}
 
 	}

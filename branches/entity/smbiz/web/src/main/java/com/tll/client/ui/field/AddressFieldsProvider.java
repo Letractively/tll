@@ -5,6 +5,7 @@
  */
 package com.tll.client.ui.field;
 
+import com.tll.client.cache.AuxDataCache;
 import com.tll.refdata.RefDataType;
 
 /**
@@ -29,9 +30,9 @@ public class AddressFieldsProvider extends AbstractFieldGroupProvider {
 		fg.addField(ftext("adrsAddress1", "address1", "Address 1", "Address 1", 40));
 		fg.addField(ftext("adrsAddress2", "address2", "Address 2", "Address 2", 40));
 		fg.addField(ftext("adrsCity", "city", "City", "City", 30));
-		fg.addField(frefdata("adrsProvince", "province", "State/Province", "State/Province", RefDataType.US_STATES));
+		fg.addField(frefdata("adrsProvince", "province", "State/Province", "State/Province", AuxDataCache.get().getRefDataMap(RefDataType.US_STATES)));
 		fg.addField(ftext("adrsPostalCode", "postalCode", "Zip", "Zip", 20));
-		fg.addField(frefdata("adrsCountry", "country", "Country", "Country", RefDataType.ISO_COUNTRY_CODES));
+		fg.addField(frefdata("adrsCountry", "country", "Country", "Country", AuxDataCache.get().getRefDataMap(RefDataType.ISO_COUNTRY_CODES)));
 	}
 
 }
