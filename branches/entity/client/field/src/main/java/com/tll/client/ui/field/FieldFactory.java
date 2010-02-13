@@ -15,7 +15,6 @@ import com.tll.client.validate.DateValidator;
 import com.tll.client.validate.EmailAddressValidator;
 import com.tll.client.validate.EnumValidator;
 import com.tll.common.model.Model;
-import com.tll.refdata.RefDataType;
 
 /**
  * FieldFactory
@@ -259,7 +258,7 @@ public abstract class FieldFactory {
 
 	/**
 	 * Creates a new {@link SuggestField} whose suggestions are defined by the
-	 * given {@link RefDataType}. <br>
+	 * given ref map. <br>
 	 * NOTE: the value type is {@link String}.
 	 * @param name
 	 * @param propName

@@ -20,7 +20,6 @@
   			<directory>src/main/java</directory>
   			<includes>
   				<include>**/criteria/CriteriaType.java</include>
-  				<include>**/criteria/IQueryParam.java</include>
   				<include>**/dao/SortColumn.java</include>
   				<include>**/dao/SortDir.java</include>
   				<include>**/dao/Sorting.java</include>
@@ -104,6 +103,11 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-schema</artifactId>
       <version>${project.version}</version>
     </dependency>
   	<dependency>

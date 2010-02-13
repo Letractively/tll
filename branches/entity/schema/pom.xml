@@ -25,6 +25,7 @@
 					<include>**/schema/ISchemaProperty.java</include>
 					<include>**/schema/PropertyMetadata.java</include>
 					<include>**/schema/PropertyType.java</include>
+					<include>**/schema/IQueryParam.java</include>
 				</includes>
 			</resource>
 			<resource>
