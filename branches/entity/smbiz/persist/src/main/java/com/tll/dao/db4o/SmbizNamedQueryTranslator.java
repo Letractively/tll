@@ -16,7 +16,7 @@ import com.tll.model.INamedEntity;
 import com.tll.model.Interface;
 import com.tll.model.Isp;
 import com.tll.model.Merchant;
-import com.tll.model.schema.IQueryParam;
+import com.tll.schema.IQueryParam;
 
 
 /**

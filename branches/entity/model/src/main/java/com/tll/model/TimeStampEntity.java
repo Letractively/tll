@@ -2,7 +2,7 @@ package com.tll.model;
 
 import java.util.Date;
 
-import com.tll.model.schema.Managed;
+import com.tll.schema.Managed;
 
 /**
  * An entity that contains audit information. The information currently stored

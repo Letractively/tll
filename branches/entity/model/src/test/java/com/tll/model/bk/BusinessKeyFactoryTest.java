@@ -13,8 +13,8 @@ import org.testng.annotations.Test;
 
 import com.tll.model.EntityBase;
 import com.tll.model.IEntity;
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
+import com.tll.schema.BusinessKeyDef;
+import com.tll.schema.BusinessObject;
 
 /**
  * BusinessKeyFactoryTest

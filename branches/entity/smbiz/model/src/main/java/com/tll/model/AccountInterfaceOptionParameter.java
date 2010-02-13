@@ -7,9 +7,9 @@ package com.tll.model;
 
 import javax.validation.constraints.NotNull;
 
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
-import com.tll.model.schema.Transient;
+import com.tll.schema.BusinessKeyDef;
+import com.tll.schema.BusinessObject;
+import com.tll.schema.Transient;
 
 /**
  * AccountInterfaceOptionParameter - Pseudo-entity to facilitate ui interaction.

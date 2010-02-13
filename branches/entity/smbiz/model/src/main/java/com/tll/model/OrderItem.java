@@ -9,8 +9,8 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
+import com.tll.schema.BusinessKeyDef;
+import com.tll.schema.BusinessObject;
 
 /**
  * Order item entity

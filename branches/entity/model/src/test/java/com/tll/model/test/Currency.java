@@ -7,8 +7,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.NamedEntity;
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
+import com.tll.schema.BusinessKeyDef;
+import com.tll.schema.BusinessObject;
 
 /**
  * The currency entity

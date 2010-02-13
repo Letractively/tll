@@ -3,7 +3,7 @@ package com.tll.model;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.tll.model.schema.Extended;
+import com.tll.schema.Extended;
 
 /**
  * The merchant entity

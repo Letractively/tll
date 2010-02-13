@@ -3,8 +3,8 @@ package com.tll.model;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
+import com.tll.schema.BusinessKeyDef;
+import com.tll.schema.BusinessObject;
 
 /**
  * The customer account entity

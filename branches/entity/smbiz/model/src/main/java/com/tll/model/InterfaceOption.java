@@ -9,9 +9,9 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
-import com.tll.model.schema.Extended;
+import com.tll.schema.BusinessKeyDef;
+import com.tll.schema.BusinessObject;
+import com.tll.schema.Extended;
 
 /**
  * The interface option entity

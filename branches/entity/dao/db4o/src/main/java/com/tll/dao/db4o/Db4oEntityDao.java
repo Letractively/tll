@@ -58,7 +58,7 @@ import com.tll.model.bk.BusinessKeyPropertyException;
 import com.tll.model.bk.BusinessKeyUtil;
 import com.tll.model.bk.IBusinessKey;
 import com.tll.model.bk.NonUniqueBusinessKeyException;
-import com.tll.model.schema.IQueryParam;
+import com.tll.schema.IQueryParam;
 import com.tll.util.DBType;
 import com.tll.util.DateRange;
 import com.tll.util.PropertyPath;

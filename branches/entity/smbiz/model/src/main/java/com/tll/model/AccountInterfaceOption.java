@@ -14,7 +14,7 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import com.tll.model.schema.Transient;
+import com.tll.schema.Transient;
 
 /**
  * AccountOptionPanel - Pseudo-entity to facilitate ui interaction.

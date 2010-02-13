@@ -5,8 +5,8 @@
  */
 package com.tll.criteria;
 
-import com.tll.model.schema.IQueryParam;
-import com.tll.model.schema.PropertyType;
+import com.tll.schema.IQueryParam;
+import com.tll.schema.PropertyType;
 
 
 /**

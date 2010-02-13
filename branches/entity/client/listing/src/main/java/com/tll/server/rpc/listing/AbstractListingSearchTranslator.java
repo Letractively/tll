@@ -13,7 +13,7 @@ import com.tll.common.search.INamedQuerySearch;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.model.IEntity;
-import com.tll.model.schema.IQueryParam;
+import com.tll.schema.IQueryParam;
 
 /**
  * AbstractListingSearchTranslator

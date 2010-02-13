@@ -3,7 +3,7 @@
  * @author jpk
  * Apr 23, 2008
  */
-package com.tll.model.schema;
+package com.tll.schema;
 
 
 /**

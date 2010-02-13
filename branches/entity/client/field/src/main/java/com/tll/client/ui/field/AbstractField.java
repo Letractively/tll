@@ -39,8 +39,8 @@ import com.tll.client.validate.NotEmptyValidator;
 import com.tll.client.validate.ValidationException;
 import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.model.PropertyPathException;
-import com.tll.model.schema.IPropertyMetadataProvider;
-import com.tll.model.schema.PropertyMetadata;
+import com.tll.schema.IPropertyMetadataProvider;
+import com.tll.schema.PropertyMetadata;
 import com.tll.util.ObjectUtil;
 import com.tll.util.StringUtil;
 

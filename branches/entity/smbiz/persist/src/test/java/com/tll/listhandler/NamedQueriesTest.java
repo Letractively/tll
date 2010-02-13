@@ -43,8 +43,8 @@ import com.tll.di.test.Db4oDbShellModule;
 import com.tll.model.Asp;
 import com.tll.model.IEntity;
 import com.tll.model.Isp;
-import com.tll.model.schema.IQueryParam;
-import com.tll.model.schema.PropertyType;
+import com.tll.schema.IQueryParam;
+import com.tll.schema.PropertyType;
 import com.tll.service.entity.IEntityServiceFactory;
 import com.tll.util.ClassUtil;
 

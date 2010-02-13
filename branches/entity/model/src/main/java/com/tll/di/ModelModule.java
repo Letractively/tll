@@ -14,8 +14,8 @@ import org.apache.commons.logging.LogFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
-import com.tll.model.schema.ISchemaInfo;
 import com.tll.model.schema.SchemaInfo;
+import com.tll.schema.ISchemaInfo;
 
 /**
  * ModelModule - Core bootstrapping of the model module.

@@ -11,12 +11,12 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
-import com.tll.model.schema.Reference;
-import com.tll.model.schema.Root;
 import com.tll.model.validate.AtLeastOne;
 import com.tll.model.validate.BusinessKeyUniqueness;
+import com.tll.schema.BusinessKeyDef;
+import com.tll.schema.BusinessObject;
+import com.tll.schema.Reference;
+import com.tll.schema.Root;
 
 /**
  * Account - Base class for account type entities.

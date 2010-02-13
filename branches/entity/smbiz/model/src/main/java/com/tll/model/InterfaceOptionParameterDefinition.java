@@ -1,8 +1,8 @@
 package com.tll.model;
 
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
-import com.tll.model.schema.Extended;
+import com.tll.schema.BusinessKeyDef;
+import com.tll.schema.BusinessObject;
+import com.tll.schema.Extended;
 
 /**
  * Interface option parameter definition entity

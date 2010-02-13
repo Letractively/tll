@@ -9,8 +9,8 @@ import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.NamedTimeStampEntity;
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
+import com.tll.schema.BusinessKeyDef;
+import com.tll.schema.BusinessObject;
 
 /**
  * The account address entity holding a refs to a single account and single

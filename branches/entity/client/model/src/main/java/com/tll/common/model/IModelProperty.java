@@ -7,8 +7,8 @@ package com.tll.common.model;
 
 import com.tll.IMarshalable;
 import com.tll.common.bind.IBindable;
-import com.tll.model.schema.IPropertyNameProvider;
-import com.tll.model.schema.PropertyType;
+import com.tll.schema.IPropertyNameProvider;
+import com.tll.schema.PropertyType;
 
 /**
  * IModelProperty - Represents a single model property.

@@ -12,7 +12,7 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.NotReadablePropertyException;
 
-import com.tll.model.schema.IPropertyNameProvider;
+import com.tll.schema.IPropertyNameProvider;
 import com.tll.util.ValidationUtil;
 
 /**

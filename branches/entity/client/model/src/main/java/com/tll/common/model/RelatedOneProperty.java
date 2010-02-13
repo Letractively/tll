@@ -5,7 +5,7 @@
  */
 package com.tll.common.model;
 
-import com.tll.model.schema.PropertyType;
+import com.tll.schema.PropertyType;
 
 /**
  * RelatedOneProperty - Represents a related one relationship w/in a

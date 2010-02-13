@@ -15,6 +15,58 @@
 	<description>Provides model schema metadata.</description>
 	
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/schema/AbstractSchemaProperty.java</include>
+					<include>**/schema/IPropertyMetadataProvider.java</include>
+					<include>**/schema/IPropertyNameProvider.java</include>
+					<include>**/schema/ISchemaProperty.java</include>
+					<include>**/schema/PropertyMetadata.java</include>
+					<include>**/schema/PropertyType.java</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
 	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>${testNGVersion}</version>
+			<classifier>jdk15</classifier>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
 
 </project>

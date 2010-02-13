@@ -1,4 +1,4 @@
-package com.tll.model.schema;
+package com.tll.schema;
 
 
 /**

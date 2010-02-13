@@ -1,6 +1,6 @@
 package com.tll.model;
 
-import com.tll.model.schema.Extended;
+import com.tll.schema.Extended;
 
 /**
  * The Customer entity

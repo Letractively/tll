@@ -15,8 +15,8 @@ import org.springframework.beans.NullValueInNestedPathException;
 
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
-import com.tll.model.schema.BusinessKeyDef;
-import com.tll.model.schema.BusinessObject;
+import com.tll.schema.BusinessKeyDef;
+import com.tll.schema.BusinessObject;
 
 /**
  * BusinessKeyFactory - Defines all entity business keys in the application and

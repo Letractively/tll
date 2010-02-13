@@ -18,8 +18,8 @@ import com.tll.model.bk.BusinessKeyNotDefinedException;
 import com.tll.model.bk.BusinessKeyPropertyException;
 import com.tll.model.bk.BusinessKeyUtil;
 import com.tll.model.bk.IBusinessKeyDefinition;
-import com.tll.model.schema.Extended;
-import com.tll.model.schema.Root;
+import com.tll.schema.Extended;
+import com.tll.schema.Root;
 
 /**
  * EntityUtil

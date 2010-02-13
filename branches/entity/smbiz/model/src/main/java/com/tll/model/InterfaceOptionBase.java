@@ -3,7 +3,7 @@ package com.tll.model;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.tll.model.schema.Root;
+import com.tll.schema.Root;
 
 /**
  * Base class for interface options and interface option parameter definition

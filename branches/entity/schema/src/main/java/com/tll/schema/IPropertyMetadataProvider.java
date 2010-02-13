@@ -3,7 +3,7 @@
  * @author jpk
  * Jan 6, 2009
  */
-package com.tll.model.schema;
+package com.tll.schema;
 
 /**
  * IPropertyMetadataProvider - Indicates the ability to provide

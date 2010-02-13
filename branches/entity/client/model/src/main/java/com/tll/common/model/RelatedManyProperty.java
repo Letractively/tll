@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.tll.common.bind.PropertyChangeEvent;
-import com.tll.model.schema.PropertyType;
+import com.tll.schema.PropertyType;
 import com.tll.util.PropertyPath;
 
 /**

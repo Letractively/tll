@@ -5,7 +5,7 @@ import java.util.Collection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.tll.model.schema.Managed;
+import com.tll.schema.Managed;
 import com.tll.util.StringUtil;
 
 /**

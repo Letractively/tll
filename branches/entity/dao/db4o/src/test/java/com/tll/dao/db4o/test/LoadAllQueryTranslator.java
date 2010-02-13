@@ -11,7 +11,7 @@ import com.db4o.query.Query;
 import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.db4o.IDb4oNamedQueryTranslator;
-import com.tll.model.schema.IQueryParam;
+import com.tll.schema.IQueryParam;
 
 
 /**

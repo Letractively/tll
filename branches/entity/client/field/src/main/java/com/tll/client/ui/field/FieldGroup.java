@@ -21,7 +21,7 @@ import com.tll.client.validate.ErrorDisplay;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
-import com.tll.model.schema.IPropertyMetadataProvider;
+import com.tll.schema.IPropertyMetadataProvider;
 import com.tll.util.PropertyPath;
 import com.tll.util.StringUtil;
 

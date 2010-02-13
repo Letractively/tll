@@ -19,11 +19,11 @@ import com.tll.common.model.Model;
 import com.tll.common.model.RelatedManyProperty;
 import com.tll.common.model.RelatedOneProperty;
 import com.tll.common.model.StringPropertyValue;
-import com.tll.model.schema.PropertyMetadata;
-import com.tll.model.schema.PropertyType;
 import com.tll.model.test.AccountStatus;
 import com.tll.model.test.AddressType;
 import com.tll.model.test.CreditCardType;
+import com.tll.schema.PropertyMetadata;
+import com.tll.schema.PropertyType;
 
 /**
  * TestModelFactory - Ad-hoc factory for generating testable {@link Model}

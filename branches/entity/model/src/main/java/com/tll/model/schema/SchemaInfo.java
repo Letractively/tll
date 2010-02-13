@@ -17,6 +17,16 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.tll.model.IEntity;
+import com.tll.schema.ISchemaInfo;
+import com.tll.schema.ISchemaProperty;
+import com.tll.schema.Managed;
+import com.tll.schema.Nested;
+import com.tll.schema.NestedInfo;
+import com.tll.schema.PropertyMetadata;
+import com.tll.schema.PropertyType;
+import com.tll.schema.Reference;
+import com.tll.schema.RelationInfo;
+import com.tll.schema.SchemaInfoException;
 import com.tll.util.PropertyPath;
 
 public final class SchemaInfo implements ISchemaInfo {

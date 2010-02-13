@@ -37,7 +37,7 @@ import com.tll.model.IEntityAssembler;
 import com.tll.model.IUserRef;
 import com.tll.model.NameKey;
 import com.tll.model.User;
-import com.tll.model.schema.PropertyType;
+import com.tll.schema.PropertyType;
 import com.tll.service.ChangeUserCredentialsFailedException;
 import com.tll.service.entity.NamedEntityService;
 

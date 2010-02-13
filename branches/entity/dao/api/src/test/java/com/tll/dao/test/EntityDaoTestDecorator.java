@@ -17,7 +17,7 @@ import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.NameKey;
 import com.tll.model.bk.IBusinessKey;
-import com.tll.model.schema.IQueryParam;
+import com.tll.schema.IQueryParam;
 
 /**
  * EntityDaoTestDecorator - Decorates {@link IEntityDao} to:

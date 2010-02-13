@@ -3,7 +3,7 @@
  * @author jpk
  * Jan 19, 2009
  */
-package com.tll.model.schema;
+package com.tll.schema;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

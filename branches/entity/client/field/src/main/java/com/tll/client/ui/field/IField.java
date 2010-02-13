@@ -9,7 +9,7 @@ import com.tll.client.ui.IWidgetRef;
 import com.tll.client.validate.IHasErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
-import com.tll.model.schema.IPropertyMetadataProvider;
+import com.tll.schema.IPropertyMetadataProvider;
 
 /**
  * IField - Abstraction for managing the display and editing of data.

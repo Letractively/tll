@@ -11,8 +11,8 @@ import java.util.Set;
 
 import javax.validation.Valid;
 
-import com.tll.model.schema.Transient;
 import com.tll.model.validate.BusinessKeyUniqueness;
+import com.tll.schema.Transient;
 
 /**
  * AccountInterface - Used for UI purposes to marshal an appropriate data

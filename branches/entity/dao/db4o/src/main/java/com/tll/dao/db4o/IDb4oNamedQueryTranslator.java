@@ -10,7 +10,7 @@ import java.util.List;
 import com.db4o.query.Query;
 import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.InvalidCriteriaException;
-import com.tll.model.schema.IQueryParam;
+import com.tll.schema.IQueryParam;
 
 /**
  * IDb4oNamedQueryTranslator - Since db4o doesn't support named queries, we

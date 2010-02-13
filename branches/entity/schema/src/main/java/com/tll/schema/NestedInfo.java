@@ -3,7 +3,7 @@
  * @author jpk
  * @since Apr 29, 2009
  */
-package com.tll.model.schema;
+package com.tll.schema;
 
 import java.io.Serializable;
 

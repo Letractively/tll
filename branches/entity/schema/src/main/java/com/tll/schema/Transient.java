@@ -1,7 +1,4 @@
-/**
- * 
- */
-package com.tll.model.schema;
+package com.tll.schema;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -9,15 +6,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 /**
- * Root - Signifies a "root" entity type for use in conjunction with the Extended annotation.
+ * Transient - Indicates the entity type or entity property is not elidgible for
+ * persistence.
  * @author jpk
- *
  */
-@Target(ElementType.TYPE)
+@Target(value = { ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Root {
+public @interface Transient {
 
 }

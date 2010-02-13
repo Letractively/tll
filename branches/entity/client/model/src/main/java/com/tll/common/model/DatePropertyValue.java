@@ -5,8 +5,8 @@ package com.tll.common.model;
 
 import java.util.Date;
 
-import com.tll.model.schema.PropertyMetadata;
-import com.tll.model.schema.PropertyType;
+import com.tll.schema.PropertyMetadata;
+import com.tll.schema.PropertyType;
 
 /**
  * StringPropertyValue
