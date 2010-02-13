@@ -1,5 +1,4 @@
 <module>
-  <inherits name="com.tll.ClientModel" />
   <inherits name="com.tll.UI" />
 
   <stylesheet src="css/view.css" />

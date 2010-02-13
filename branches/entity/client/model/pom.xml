@@ -70,11 +70,6 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
       <artifactId>tll-client-core</artifactId>
       <version>${project.version}</version>
     </dependency>
