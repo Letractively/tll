@@ -44,7 +44,7 @@ public class AccountEditView extends EditView {
 	}
 
 	@Override
-	protected ViewClass getViewClass() {
+	public ViewClass getViewClass() {
 		return klas;
 	}
 

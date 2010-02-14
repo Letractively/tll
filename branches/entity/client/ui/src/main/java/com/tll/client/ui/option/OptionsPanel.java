@@ -55,8 +55,8 @@ MouseOutHandler, IHasOptionHandlers {
 	} // MRegs
 
 	protected final HashMap<Option, MRegs> options = new HashMap<Option, MRegs>();
-	private final VerticalPanel vp = new VerticalPanel();
-	private int crntIndx = -1;
+	protected final VerticalPanel vp = new VerticalPanel();
+	protected int crntIndx = -1;
 
 	/**
 	 * Constructor
@@ -77,14 +77,14 @@ MouseOutHandler, IHasOptionHandlers {
 	 * Adds a single Option
 	 * @param option The Option to add
 	 */
-	private void addOption(Option option) {
+	protected void addOption(Option option) {
 		final MRegs mreg =
 			new MRegs(option.addMouseDownHandler(this), option.addMouseOutHandler(this), option.addMouseOverHandler(this));
 		options.put(option, mreg);
 		vp.add(option);
 	}
 
-	private void clearOptions() {
+	protected void clearOptions() {
 		crntIndx = -1;
 		MRegs m;
 		for(final Option option : options.keySet()) {
@@ -111,14 +111,14 @@ MouseOutHandler, IHasOptionHandlers {
 		}
 	}
 
-	private void clearCurrentOption() {
+	protected void clearCurrentOption() {
 		if(crntIndx != -1) {
 			vp.getWidget(crntIndx).getElement().getParentElement().setClassName("");
 			crntIndx = -1;
 		}
 	}
 
-	private void setCurrentOption(int index, boolean fireCurrentOptionChanged) {
+	protected void setCurrentOption(int index, boolean fireCurrentOptionChanged) {
 		if(crntIndx != -1 && crntIndx == index) {
 			return;
 		}

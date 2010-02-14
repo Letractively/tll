@@ -1,6 +1,6 @@
 <module>
   <inherits name="com.tll.ClientModel" />
-  <inherits name="com.tll.Service" />
+  <inherits name="com.tll.Dao" />
   
   <stylesheet src="css/tableview.css" />
 

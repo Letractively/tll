@@ -49,7 +49,7 @@ public class UserEditView extends EditView {
 	}
 
 	@Override
-	protected Class getViewClass() {
+	public ViewClass getViewClass() {
 		return klas;
 	}
 

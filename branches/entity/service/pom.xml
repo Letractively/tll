@@ -15,21 +15,7 @@
   <description>Service layer definition.</description>
 
   <build>
-  	<resources>
-  		<resource>
-  			<directory>src/main/java</directory>
-  			<includes>
-  				<include>**/listhandler/EmptyListException.java</include>
-  				<include>**/listhandler/IListHandler.java</include>
-  				<include>**/listhandler/ListHandlerException.java</include>
-  				<include>**/listhandler/ListHandlerType.java</include>
-  			</includes>
-  		</resource>
-  		<resource>
-  			<directory>src/main/resources</directory>
-  		</resource>
-  	</resources>
-  	
+
     <plugins>
       <!-- We weave Spring's @Transactional aspect into the code at compile time. -->
       <plugin>

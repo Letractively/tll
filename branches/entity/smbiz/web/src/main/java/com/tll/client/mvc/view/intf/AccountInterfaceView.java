@@ -57,7 +57,7 @@ public class AccountInterfaceView extends AbstractRpcAndModelAwareView<AccountIn
 	private InterfaceStack intfStack;
 
 	@Override
-	protected ViewClass getViewClass() {
+	public ViewClass getViewClass() {
 		return klas;
 	}
 

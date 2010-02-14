@@ -45,11 +45,6 @@ public abstract class AbstractView<I extends IViewInitializer> extends Composite
 		return this;
 	}
 
-	/**
-	 * @return The {@link ViewClass} of this AbstractView.
-	 */
-	protected abstract ViewClass getViewClass();
-
 	public final ViewKey getViewKey() {
 		return viewKey;
 	}

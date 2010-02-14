@@ -5,6 +5,7 @@ package com.tll.client.mvc.view.account;
 
 import com.tll.client.mvc.view.ListingView;
 import com.tll.client.mvc.view.StaticViewInitializer;
+import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.listing.IspListingWidget;
 
 /**
@@ -36,7 +37,7 @@ public final class IspListingView extends ListingView<StaticViewInitializer, Isp
 	}
 
 	@Override
-	protected Class getViewClass() {
+	public ViewClass getViewClass() {
 		return klas;
 	}
 

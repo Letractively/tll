@@ -38,7 +38,7 @@ public class ViewD extends AbstractView<StaticViewInitializer> {
 	}
 
 	@Override
-	protected ViewClass getViewClass() {
+	public ViewClass getViewClass() {
 		return klas;
 	}
 

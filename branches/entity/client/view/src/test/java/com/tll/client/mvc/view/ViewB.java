@@ -38,7 +38,7 @@ public class ViewB extends AbstractView<ViewBInit> {
 	}
 
 	@Override
-	protected ViewClass getViewClass() {
+	public ViewClass getViewClass() {
 		return klas;
 	}
 

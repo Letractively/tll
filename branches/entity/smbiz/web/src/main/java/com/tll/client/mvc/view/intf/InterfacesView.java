@@ -168,7 +168,7 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 	}
 
 	@Override
-	protected Class getViewClass() {
+	public ViewClass getViewClass() {
 		return klas;
 	}
 

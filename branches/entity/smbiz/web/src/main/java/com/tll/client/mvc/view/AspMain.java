@@ -48,7 +48,7 @@ public class AspMain extends MainView {
 	}
 
 	@Override
-	protected Class getViewClass() {
+	public ViewClass getViewClass() {
 		return klas;
 	}
 }

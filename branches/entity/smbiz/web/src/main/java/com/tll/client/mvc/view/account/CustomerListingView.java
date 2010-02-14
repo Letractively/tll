@@ -4,6 +4,7 @@
 package com.tll.client.mvc.view.account;
 
 import com.tll.client.mvc.view.ListingView;
+import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.listing.CustomerListingWidget;
 import com.tll.client.ui.view.ViewLink;
 import com.tll.common.model.ModelKey;
@@ -66,7 +67,7 @@ public final class CustomerListingView extends ListingView<CustomerListingViewIn
 	}
 
 	@Override
-	protected Class getViewClass() {
+	public ViewClass getViewClass() {
 		return klas;
 	}
 }

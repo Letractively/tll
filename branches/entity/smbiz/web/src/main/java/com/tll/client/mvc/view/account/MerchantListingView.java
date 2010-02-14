@@ -5,6 +5,7 @@ package com.tll.client.mvc.view.account;
 
 import com.tll.client.mvc.view.ListingView;
 import com.tll.client.mvc.view.StaticViewInitializer;
+import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.listing.MerchantListingWidget;
 import com.tll.client.ui.view.ViewLink;
 import com.tll.common.model.ModelKey;
@@ -60,7 +61,7 @@ public final class MerchantListingView extends ListingView<MerchantListingViewIn
 	}
 
 	@Override
-	protected Class getViewClass() {
+	public ViewClass getViewClass() {
 		return klas;
 	}
 

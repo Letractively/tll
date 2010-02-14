@@ -27,7 +27,7 @@ public abstract class ViewClass {
 	public static void addClass(ViewClass vclass) {
 		assert vclass != null && vclass.getName() != null;
 		if(findClassByViewName(vclass.getName()) != null) {
-			throw new IllegalArgumentException("AbstractView name: " + vclass.getName()
+			throw new IllegalArgumentException("Name: " + vclass.getName()
 					+ " already exists in one of the existing view classes");
 		}
 		classes.add(vclass);

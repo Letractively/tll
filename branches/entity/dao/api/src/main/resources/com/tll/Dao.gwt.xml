@@ -10,4 +10,11 @@
     <include name="SortColumn.java" />
   </source>
 
+	<source path="listhandler">
+		<include name="EmptyListException.java" />
+		<include name="IListHandler.java" />
+		<include name="ListHandlerException.java" />
+		<include name="ListHandlerType.java" />
+	</source>
+
 </module>

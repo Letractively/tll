@@ -36,7 +36,11 @@ public class ViewToolbar extends Toolbar implements HasMouseDownHandlers, HasMou
 		public static final String VIEW_TITLE = "viewTitle";
 	} // Styles
 
-	private static final ViewToolbarImageBundle imageBundle = GWT.create(ViewToolbarImageBundle.class);
+	private static final ViewToolbarClientBundle resources = GWT.create(ViewToolbarClientBundle.class);
+	
+	public static final ViewToolbarClientBundle resources() {
+		return resources;
+	}
 
 	static final String TITLE_MINIMIZE = "Minimize";
 	static final String TITLE_MAXIMIZE = "Maximize";
@@ -62,14 +66,14 @@ public class ViewToolbar extends Toolbar implements HasMouseDownHandlers, HasMou
 		assert viewDisplayName != null && viewOptions != null && clickHandler != null;
 		viewTitle = new Label(viewDisplayName);
 		btnMinimize =
-			viewOptions.isMinimizable() ? new ToggleButton(AbstractImagePrototype.create(imageBundle.arrow_sm_down()).createImage(), AbstractImagePrototype.create(imageBundle
+			viewOptions.isMinimizable() ? new ToggleButton(AbstractImagePrototype.create(resources.arrow_sm_down()).createImage(), AbstractImagePrototype.create(resources
 					.arrow_sm_right()).createImage(), clickHandler) : null;
 			btnPop =
-				viewOptions.isPopable() ? new ToggleButton(AbstractImagePrototype.create(imageBundle.external()).createImage(), AbstractImagePrototype.create(imageBundle.permalink())
+				viewOptions.isPopable() ? new ToggleButton(AbstractImagePrototype.create(resources.external()).createImage(), AbstractImagePrototype.create(resources.permalink())
 						.createImage(), clickHandler) : null;
 
-				btnClose = viewOptions.isClosable() ? new PushButton(AbstractImagePrototype.create(imageBundle.close()).createImage(), clickHandler) : null;
-				btnRefresh = viewOptions.isRefreshable() ? new PushButton(AbstractImagePrototype.create(imageBundle.refresh()).createImage(), clickHandler) : null;
+				btnClose = viewOptions.isClosable() ? new PushButton(AbstractImagePrototype.create(resources.close()).createImage(), clickHandler) : null;
+				btnRefresh = viewOptions.isRefreshable() ? new PushButton(AbstractImagePrototype.create(resources.refresh()).createImage(), clickHandler) : null;
 
 				addStyleName(Styles.VIEW_TOOLBAR);
 				viewTitle.setStyleName(Styles.VIEW_TITLE);

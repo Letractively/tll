@@ -6,7 +6,6 @@ package com.tll.client.ui.listing;
 
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
@@ -20,9 +19,6 @@ import com.tll.client.listing.IListingHandler;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ListingEvent;
-import com.tll.client.model.IHasModelChangeHandlers;
-import com.tll.client.model.IModelChangeHandler;
-import com.tll.client.model.ModelChangeEvent;
 
 /**
  * ListingWidget - Base class for all listing {@link Widget}s in the app.
@@ -31,7 +27,7 @@ import com.tll.client.model.ModelChangeEvent;
  * @param <T> the table widget type
  */
 public abstract class ListingWidget<R, T extends ListingTable<R>> extends Composite implements
-Focusable, KeyDownHandler, IListingHandler<R>, IHasModelChangeHandlers {
+Focusable, KeyDownHandler, IListingHandler<R> {
 
 	/**
 	 * Styles - (tableview.css)
@@ -137,10 +133,12 @@ Focusable, KeyDownHandler, IListingHandler<R>, IHasModelChangeHandlers {
 		return null; // default
 	}
 
+	/*
 	@Override
 	public final HandlerRegistration addModelChangeHandler(IModelChangeHandler handler) {
 		return addHandler(handler, ModelChangeEvent.TYPE);
 	}
+	*/
 
 	/**
 	 * Sets the operator which is delegated to on behalf of this Widget for

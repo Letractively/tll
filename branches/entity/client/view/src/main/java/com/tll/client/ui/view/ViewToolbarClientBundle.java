@@ -4,10 +4,10 @@ import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 
 /**
- * ViewToolbarImageBundle
+ * ViewToolbarClientBundle
  * @author jpk
  */
-public interface ViewToolbarImageBundle extends ClientBundle {
+public interface ViewToolbarClientBundle extends ClientBundle {
 
 	/**
 	 * arrow_sm_right

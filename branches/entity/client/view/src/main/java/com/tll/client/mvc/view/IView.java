@@ -25,6 +25,11 @@ public interface IView<I extends IViewInitializer> {
 		 */
 		static final String VIEW = "view";
 	}
+	
+	/**
+	 * @return The view class of this view.
+	 */
+	ViewClass getViewClass();
 
 	/**
 	 * @return The short view name.
@@ -50,7 +55,7 @@ public interface IView<I extends IViewInitializer> {
 
 	/**
 	 * Hook to enable tailoring of the view at runtime with the employed view
-	 * toolbar and the widget that contains the view entirely. This method is
+	 * toolbar and the widgetthat contains the view entirely. This method is
 	 * invoked after {@link #initialize(IViewInitializer)}.
 	 * @param viewConitainerRef the widget containing the view in its entirety
 	 * @param toolbar The view toolbar is additionally provided enabling

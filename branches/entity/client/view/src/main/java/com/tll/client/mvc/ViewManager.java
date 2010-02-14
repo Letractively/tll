@@ -201,6 +201,24 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	}
 
 	/**
+	 * @return The current view's runtime identifier.
+	 */
+	public ViewKey getCurrentViewKey() {
+		return current == null ? null : current.vc.getViewKey();
+	}
+
+	/**
+	 * Searches the currently cached views for the view matching the given view
+	 * key.
+	 * @param key the view key
+	 * @return The matching cached view or <code>null</code> if not found.
+	 */
+	public IView<?> resolveView(ViewKey key) {
+		CView cv = cache.peekQueue(key);
+		return cv == null ? null : cv.vc.getView();
+	}
+
+	/**
 	 * Sets the current view. The current view is defined as the visible pinned
 	 * view.
 	 * @param init The view initializer employed only when the view is not present
@@ -627,10 +645,12 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 				dispatch(pendingViewRequest);
 			}
 			else {
-				// user pressed the back button or a non-show type view request was invoked or equivalant
+				// user pressed the back button or a non-show type view request was
+				// invoked or equivalant
 				CView e = findView(viewKeyHash);
 				if(e == null) {
-					// probably the user is clicking the back button a number of times beyond the cache capacity
+					// probably the user is clicking the back button a number of times
+					// beyond the cache capacity
 					// resort to the visited view ref cache
 					final ViewRef r = findViewRef(viewKeyHash);
 					if(r == null) {
@@ -640,7 +660,8 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 						setCurrentView(r.getViewInitializer());
 						return;
 					}
-					// this should only happen when the user mucks with the view key hash in the query string
+					// this should only happen when the user mucks with the view key hash
+					// in the query string
 					// resort to the initial view
 					e = initial;
 				}

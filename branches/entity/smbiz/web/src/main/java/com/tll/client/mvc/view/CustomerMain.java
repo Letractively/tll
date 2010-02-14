@@ -49,7 +49,7 @@ public class CustomerMain extends MainView {
 	}
 
 	@Override
-	protected Class getViewClass() {
+	public ViewClass getViewClass() {
 		return klas;
 	}
 }
