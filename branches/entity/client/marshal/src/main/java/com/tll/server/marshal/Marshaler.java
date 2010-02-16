@@ -64,7 +64,7 @@ public final class Marshaler {
 	private static final Log log = LogFactory.getLog(Marshaler.class);
 
 	private final IEntityTypeResolver etResolver;
-	private final IEntityFactory<Object> entityFactory;
+	private final IEntityFactory<?> entityFactory;
 	private final ISchemaInfo schemaInfo;
 
 	/**
@@ -74,7 +74,7 @@ public final class Marshaler {
 	 * @param schemaInfo
 	 */
 	@Inject
-	public Marshaler(final IEntityTypeResolver etResolver, final IEntityFactory<Object> entityFactory,
+	public Marshaler(final IEntityTypeResolver etResolver, final IEntityFactory<?> entityFactory,
 			final ISchemaInfo schemaInfo) {
 		this.etResolver = etResolver;
 		this.entityFactory = entityFactory;
@@ -410,7 +410,7 @@ public final class Marshaler {
 							if(imid != null) { // may be null (gae)
 								for(final IEntity ie : newRmEntitySet) {
 									assert ie.getId() != null;
-									if(entityFactory.primaryKeyToString(ie.getId()).equals(imid)) {
+									if(((IEntityFactory)entityFactory).primaryKeyToString(ie.getId()).equals(imid)) {
 										indexedEntity = ie;
 										break;
 									}
@@ -537,7 +537,7 @@ public final class Marshaler {
 
 		// convert server side ids to strings client-side
 		else if(IEntity.PK_FIELDNAME.equals(pname)) {
-			String mid = entityFactory.primaryKeyToString(obj);
+			String mid = ((IEntityFactory)entityFactory).primaryKeyToString(obj);
 			prop = new StringPropertyValue(pname, pdata, obj == null ? null : mid);
 		}
 

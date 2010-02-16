@@ -2,8 +2,11 @@
  * The Logic Lab
  * @author jpk Aug 29, 2007
  */
-package com.tll.common.data;
+package com.tll.common.data.rpc;
 
+import com.tll.common.data.IModelRelatedRequest;
+import com.tll.common.data.ListingOp;
+import com.tll.common.data.RemoteListingDefinition;
 import com.tll.common.search.IListingSearch;
 import com.tll.dao.Sorting;
 

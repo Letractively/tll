@@ -15,6 +15,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.tll.client.mvc.view.IHasViewChangeHandlers;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.IViewChangeHandler;
@@ -282,9 +283,12 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			if(rmvCrnt) {
 				// remove current pinned view
 				current.vc.removeFromParent();
+				RootPanel.get().removeStyleName(current.vc.getView().getViewClass().getName());
 			}
 			if(pinPndg) {
-				// pin the view
+				// add the current view's view class name to the root panel
+				RootPanel.get().addStyleName(e.vc.getView().getViewClass().getName());
+				// ** pin the view (the current view in the dom) **
 				vc.pin(parentViewPanel);
 			}
 			// set as current

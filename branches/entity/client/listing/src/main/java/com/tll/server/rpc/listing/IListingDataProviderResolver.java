@@ -5,7 +5,7 @@
  */
 package com.tll.server.rpc.listing;
 
-import com.tll.common.data.ListingRequest;
+import com.tll.common.data.rpc.ListingRequest;
 import com.tll.listhandler.IListingDataProvider;
 
 

@@ -20,13 +20,26 @@ import com.tll.client.ui.option.Option;
  */
 public abstract class AbstractRowOptions implements IRowOptionsDelegate {
 
-	private static final String EDIT_OPTION_PREFIX = "Edit ";
-	private static final String DELETE_OPTION_PREFIX = "Delete ";
-
 	/**
 	 * The edit row image bundle.
 	 */
 	private static final EditRowImageBundle imageBundle = (EditRowImageBundle) GWT.create(EditRowImageBundle.class);
+
+	private Option[] staticOptions;
+
+	/**
+	 * @return The prefix text used for the edit option.
+	 */
+	protected String editOptionPrefix() {
+		return "Edit ";
+	}
+
+	/**
+	 * @return The prefix text used for the delete option.
+	 */
+	protected String deleteOptionPrefix() {
+		return "Delete ";
+	}
 
 	/**
 	 * Generates an edit option with the given name.
@@ -35,8 +48,8 @@ public abstract class AbstractRowOptions implements IRowOptionsDelegate {
 	 * @param subjectName
 	 * @return New Option instance
 	 */
-	private static Option editOption(String subjectName) {
-		return new Option(EDIT_OPTION_PREFIX + subjectName, AbstractImagePrototype.create(imageBundle.edit()).createImage());
+	private Option editOption(String subjectName) {
+		return new Option(editOptionPrefix() + subjectName, AbstractImagePrototype.create(imageBundle.edit()).createImage());
 	}
 
 	/**
@@ -46,17 +59,17 @@ public abstract class AbstractRowOptions implements IRowOptionsDelegate {
 	 * @param subjectName
 	 * @return New Option instance
 	 */
-	private static Option deleteOption(String subjectName) {
-		return new Option(DELETE_OPTION_PREFIX + subjectName, AbstractImagePrototype.create(imageBundle.delete()).createImage());
+	private Option deleteOption(String subjectName) {
+		return new Option(deleteOptionPrefix() + subjectName, AbstractImagePrototype.create(imageBundle.delete()).createImage());
 	}
-
+	
 	/**
 	 * Does the option text indicate edit?
 	 * @param optionText
 	 * @return true/false
 	 */
-	private static boolean isEditOption(String optionText) {
-		return optionText == null ? false : optionText.startsWith(EDIT_OPTION_PREFIX);
+	private boolean isEditOption(String optionText) {
+		return optionText == null ? false : optionText.startsWith(editOptionPrefix());
 	}
 
 	/**
@@ -64,11 +77,9 @@ public abstract class AbstractRowOptions implements IRowOptionsDelegate {
 	 * @param optionText
 	 * @return true/false
 	 */
-	private static boolean isDeleteOption(String optionText) {
-		return optionText == null ? false : optionText.startsWith(DELETE_OPTION_PREFIX);
+	private boolean isDeleteOption(String optionText) {
+		return optionText == null ? false : optionText.startsWith(deleteOptionPrefix());
 	}
-
-	private Option[] staticOptions;
 
 	/**
 	 * @return The listing element name.

@@ -8,8 +8,6 @@ package com.tll.common.data.rpc;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.tll.IMarshalable;
-import com.tll.common.data.ListingPayload;
-import com.tll.common.data.ListingRequest;
 
 /**
  * IListingService - Handles {@link ListingRequest}s.

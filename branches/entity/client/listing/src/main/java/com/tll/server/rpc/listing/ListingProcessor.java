@@ -11,11 +11,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.tll.common.data.ListingOp;
-import com.tll.common.data.ListingPayload;
-import com.tll.common.data.ListingRequest;
 import com.tll.common.data.RemoteListingDefinition;
 import com.tll.common.data.Status;
-import com.tll.common.data.ListingPayload.ListingStatus;
+import com.tll.common.data.rpc.ListingPayload;
+import com.tll.common.data.rpc.ListingRequest;
+import com.tll.common.data.rpc.ListingPayload.ListingStatus;
 import com.tll.common.model.Model;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;

@@ -6,7 +6,6 @@ package com.tll.client.listing;
 
 import com.google.gwt.event.shared.GwtEvent;
 import com.tll.common.data.ListingOp;
-import com.tll.common.data.ListingPayload.ListingStatus;
 import com.tll.dao.Sorting;
 
 /**
@@ -21,7 +20,6 @@ public final class ListingEvent<R> extends GwtEvent<IListingHandler<R>> {
 
 	private final String listingId;
 	private final ListingOp listingOp;
-	private final ListingStatus listingStatus;
 	private final int listSize;
 	private final R[] pageElements;
 	private final int offset;
@@ -50,7 +48,6 @@ public final class ListingEvent<R> extends GwtEvent<IListingHandler<R>> {
 			R[] pageElements, int offset, Sorting sorting, int pageSize) {
 		this.listingId = listingId;
 		this.listingOp = listingOp;
-		this.listingStatus = null;
 		this.listSize = listSize;
 		this.pageElements = pageElements;
 		this.offset = offset;
@@ -83,10 +80,6 @@ public final class ListingEvent<R> extends GwtEvent<IListingHandler<R>> {
 
 	public ListingOp getListingOp() {
 		return listingOp;
-	}
-
-	public ListingStatus getListingStatus() {
-		return listingStatus;
 	}
 
 	public R[] getPageElements() {

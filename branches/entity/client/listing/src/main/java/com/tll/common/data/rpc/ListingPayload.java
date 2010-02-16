@@ -3,9 +3,11 @@
  * @author jpk
  * Aug 31, 2007
  */
-package com.tll.common.data;
+package com.tll.common.data.rpc;
 
 import com.tll.IMarshalable;
+import com.tll.common.data.Payload;
+import com.tll.common.data.Status;
 import com.tll.dao.Sorting;
 
 /**

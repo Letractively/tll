@@ -3,19 +3,21 @@
  * @author jpk
  * @since Mar 13, 2009
  */
-package com.tll.client.listing;
+package com.tll.client.listing.rpc;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.tll.IMarshalable;
 import com.tll.client.data.rpc.RpcCommand;
+import com.tll.client.listing.AbstractListingOperator;
+import com.tll.client.listing.ListingEvent;
 import com.tll.common.data.ListingOp;
-import com.tll.common.data.ListingPayload;
-import com.tll.common.data.ListingRequest;
 import com.tll.common.data.RemoteListingDefinition;
-import com.tll.common.data.ListingPayload.ListingStatus;
 import com.tll.common.data.rpc.IListingService;
 import com.tll.common.data.rpc.IListingServiceAsync;
+import com.tll.common.data.rpc.ListingPayload;
+import com.tll.common.data.rpc.ListingRequest;
+import com.tll.common.data.rpc.ListingPayload.ListingStatus;
 import com.tll.common.model.Model;
 import com.tll.common.search.IListingSearch;
 import com.tll.dao.Sorting;

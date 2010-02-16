@@ -3,7 +3,7 @@
  * @author jpk
  * @since May 8, 2009
  */
-package com.tll.client.ui.listing;
+package com.tll.client.ui.listing.rpc;
 
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.tll.client.data.rpc.IHasRpcHandlers;
@@ -11,6 +11,7 @@ import com.tll.client.data.rpc.IRpcHandler;
 import com.tll.client.data.rpc.RpcEvent;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.ui.RpcUiHandler;
+import com.tll.client.ui.listing.ModelListingWidget;
 import com.tll.common.model.Model;
 
 

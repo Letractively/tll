@@ -52,4 +52,10 @@ public final class Option extends Label {
 	public String getText() {
 		return text;
 	}
+
+	@Override
+	public String toString() {
+		return getText();
+	}
+
 }

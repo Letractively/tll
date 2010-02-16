@@ -6,9 +6,9 @@ package com.tll.server.rpc.listing;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.tll.common.data.ListingPayload;
-import com.tll.common.data.ListingRequest;
 import com.tll.common.data.rpc.IListingService;
+import com.tll.common.data.rpc.ListingPayload;
+import com.tll.common.data.rpc.ListingRequest;
 import com.tll.common.model.Model;
 import com.tll.server.rpc.RpcServlet;
 import com.tll.util.StringUtil;

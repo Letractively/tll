@@ -7,10 +7,10 @@ package com.tll.server.rpc.entity;
 
 import com.google.inject.Inject;
 import com.tll.common.data.IModelRelatedRequest;
-import com.tll.common.data.ListingRequest;
 import com.tll.common.data.LoadRequest;
 import com.tll.common.data.PersistRequest;
 import com.tll.common.data.PurgeRequest;
+import com.tll.common.data.rpc.ListingRequest;
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.IEntityTypeProvider;
 import com.tll.common.search.AccountInterfaceDataSearch;

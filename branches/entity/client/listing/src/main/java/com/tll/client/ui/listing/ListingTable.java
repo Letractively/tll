@@ -42,7 +42,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 	 * The listing table specific image bundle.
 	 */
 	private static final ListingTableImageBundle imageBundle =
-		(ListingTableImageBundle) GWT.create(ListingTableImageBundle.class);
+			(ListingTableImageBundle) GWT.create(ListingTableImageBundle.class);
 
 	/**
 	 * Styles - (tableview.css)
@@ -69,11 +69,6 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		public static final String ACTIVE = "actv";
 
 	} // Styles
-
-	/**
-	 * The sort column arrow.
-	 */
-	private Image imgSortDir;
 
 	protected Column[] columns;
 
@@ -209,7 +204,19 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 	 * SortLink
 	 * @author jpk
 	 */
-	private final class SortLink extends Composite implements ClickHandler {
+	// NOTE: unfortunately, we have to declare this as static otherwise gwt
+	// compile can't find it
+	// TODO fix this so it isn't static but gwt compilable
+	public static final class SortLink extends Composite implements ClickHandler {
+
+		private boolean ignoreCaseWhenSorting;
+
+		/**
+		 * The sort column arrow.
+		 */
+		private Image imgSortDir;
+
+		private IListingOperator<?> listingOperator;
 
 		private final FlowPanel pnl = new FlowPanel();
 
@@ -222,13 +229,17 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		/**
 		 * Constructor
 		 * @param column
+		 * @param ignoreCaseWhenSorting 
+		 * @param lo 
 		 */
-		public SortLink(Column column) {
+		public SortLink(Column column, boolean ignoreCaseWhenSorting, IListingOperator<?> lo) {
 			assert column.getPropertyName() != null;
 			lnk = new SimpleHyperLink(column.getName(), this);
 			pnl.add(lnk);
 			initWidget(pnl);
 			this.column = column;
+			this.ignoreCaseWhenSorting = ignoreCaseWhenSorting;
+			this.listingOperator = lo;
 		}
 
 		@SuppressWarnings("synthetic-access")
@@ -270,9 +281,8 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		public void onClick(ClickEvent event) {
 			if(event.getSource() == lnk) {
 				final SortColumn sc =
-					new SortColumn(column.getPropertyName(), column.getParentAlias(), direction == SortDir.ASC ? SortDir.DESC
-							: SortDir.ASC,
-							ignoreCaseWhenSorting? Boolean.TRUE : Boolean.FALSE);
+						new SortColumn(column.getPropertyName(), column.getParentAlias(), direction == SortDir.ASC ? SortDir.DESC
+								: SortDir.ASC, ignoreCaseWhenSorting ? Boolean.TRUE : Boolean.FALSE);
 				listingOperator.sort(new Sorting(sc));
 			}
 		}
@@ -289,7 +299,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 			final boolean isRowCntCol = Column.ROW_COUNT_COLUMN == col;
 			if(isRowCntCol) {
 				getCellFormatter().addStyleName(0, c, Styles.COUNT_COL);
-				//getColumnFormatter().addStyleName(c, Styles.COUNT_COL);
+				// getColumnFormatter().addStyleName(c, Styles.COUNT_COL);
 			}
 			if(config.isSortable()) {
 				if(isRowCntCol) {
@@ -297,7 +307,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 				}
 				else if(col.getPropertyName() != null) {
 					assert sortlinks != null;
-					final SortLink sl = new SortLink(col);
+					final SortLink sl = new SortLink(col, ignoreCaseWhenSorting, listingOperator);
 					sortlinks[c] = sl;
 					setWidget(0, c, sl);
 				}
@@ -376,21 +386,21 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 
 		switch(event.getTypeInt()) {
 
-		case Event.ONMOUSEOVER:
-			final Element td = getEventTargetCell(event);
-			if(td == null) return;
-			final Element tr = td.getParentElement();
-			final Element tbody = tr.getParentElement();
-			setActiveRow(DOM.getChildIndex((com.google.gwt.user.client.Element) tbody.cast(),
-					(com.google.gwt.user.client.Element) tr.cast()));
-			break;
+			case Event.ONMOUSEOVER:
+				final Element td = getEventTargetCell(event);
+				if(td == null) return;
+				final Element tr = td.getParentElement();
+				final Element tbody = tr.getParentElement();
+				setActiveRow(DOM.getChildIndex((com.google.gwt.user.client.Element) tbody.cast(),
+						(com.google.gwt.user.client.Element) tr.cast()));
+				break;
 
-		case Event.ONMOUSEOUT:
-			if(actvRowIndex >= 0) {
-				getRowFormatter().removeStyleName(actvRowIndex, Styles.ACTIVE);
-				actvRowIndex = -1;
-			}
-			break;
+			case Event.ONMOUSEOUT:
+				if(actvRowIndex >= 0) {
+					getRowFormatter().removeStyleName(actvRowIndex, Styles.ACTIVE);
+					actvRowIndex = -1;
+				}
+				break;
 		}
 	}
 

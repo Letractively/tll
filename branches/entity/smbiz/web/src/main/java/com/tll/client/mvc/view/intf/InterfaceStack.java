@@ -16,7 +16,7 @@ import com.tll.client.data.rpc.RpcEvent;
 import com.tll.client.listing.IListingHandler;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ListingEvent;
-import com.tll.client.listing.RemoteListingOperator;
+import com.tll.client.listing.rpc.RemoteListingOperator;
 import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.ui.RpcUiHandler;
