@@ -6,6 +6,7 @@
 package com.tll.client.listing;
 
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.common.data.ListingOp;
 import com.tll.dao.Sorting;
 
 /**
@@ -54,6 +55,13 @@ public abstract class AbstractListingOperator<R> implements IListingOperator<R> 
 		doFetch(ofst, srtg);
 		listingGenerated = true;
 	}
+	
+	protected void fireListingEvent(ListingOp listingOp, R[] pageElements) {
+		// fire the listing event
+		sourcingWidget.fireEvent(
+				new ListingEvent<R>(
+						getListingId(), listingOp, listSize, pageElements, offset, sorting, getPageSize()));
+	}
 
 	/**
 	 * Responsible for fetching the data.
@@ -62,6 +70,8 @@ public abstract class AbstractListingOperator<R> implements IListingOperator<R> 
 	 */
 	protected abstract void doFetch(int ofst, Sorting srtg);
 
+	protected abstract String getListingId();
+	
 	protected abstract int getPageSize();
 
 	protected boolean listingGenerated;

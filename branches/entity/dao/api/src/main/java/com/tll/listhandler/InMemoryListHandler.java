@@ -3,36 +3,54 @@ package com.tll.listhandler;
 import java.util.Collections;
 import java.util.List;
 
-import com.tll.dao.SortColumnBeanComparator;
+import com.tll.IPropertyValueProvider;
+import com.tll.dao.SortColumnComparator;
 import com.tll.dao.Sorting;
 
 /**
- * InMemoryListHandler - {@link IListHandler} implementation for a {@link java.util.List}.
+ * InMemoryListHandler - {@link IListHandler} implementation for a
+ * {@link java.util.List}.
  * @author jpk
  * @param <T> the row element type
  */
-public class InMemoryListHandler<T> extends AbstractListHandler<T> {
+public class InMemoryListHandler<T extends IPropertyValueProvider> extends AbstractListHandler<T> {
 
 	/**
-	 * The managed non-<code>null</code> list.
+	 * The managed list.
 	 */
-	private final List<T> rows;
+	private List<T> rows;
+
+	/**
+	 * Constructor
+	 */
+	public InMemoryListHandler() {
+		super();
+	}
 
 	/**
 	 * Constructor
 	 * @param rows must not be <code>null</code> but may be empty.
-	 * @throws IllegalArgumentException When <code>rows</code> is <code>null</code>
+	 * @throws IllegalArgumentException When <code>rows</code> is
+	 *         <code>null</code>
 	 */
-	InMemoryListHandler(List<T> rows) {
+	public InMemoryListHandler(List<T> rows) {
 		super();
-		if(rows == null) {
-			throw new IllegalArgumentException("Null row list");
-		}
-		this.rows = rows;
+		setList(rows);
 	}
 
 	public final ListHandlerType getListHandlerType() {
 		return ListHandlerType.IN_MEMORY;
+	}
+	
+	/**
+	 * Sets or resets the managed row list.
+	 * @param rows non-<code>null</code>
+	 */
+	public void setList(List<T> rows) {
+		if(rows == null) {
+			throw new IllegalArgumentException("Null row list");
+		}
+		this.rows = rows;
 	}
 
 	public final int size() {
@@ -40,12 +58,13 @@ public class InMemoryListHandler<T> extends AbstractListHandler<T> {
 	}
 
 	void sort(Sorting sort) throws ListHandlerException {
+		if(rows == null) throw new ListHandlerException("Rows not set.");
 		if(sort == null || sort.size() < 1) {
 			throw new ListHandlerException("No sorting specified.");
 		}
 		if(size() > 1) {
 			try {
-				Collections.sort(this.rows, new SortColumnBeanComparator<T>(sort.getPrimarySortColumn()));
+				Collections.sort(this.rows, new SortColumnComparator<T>(sort.getPrimarySortColumn()));
 			}
 			catch(final RuntimeException e) {
 				throw new ListHandlerException("Unable to sort list: " + e.getMessage(), e);
@@ -55,11 +74,22 @@ public class InMemoryListHandler<T> extends AbstractListHandler<T> {
 	}
 
 	public List<T> getElements(int offset, int pageSize, Sorting sort) throws IndexOutOfBoundsException,
-	EmptyListException, ListHandlerException {
-		if(size() < 1) throw new EmptyListException("No collection list elements exist");
-		if(sort != null && !sort.equals(this.sorting)) {
+			EmptyListException, ListHandlerException {
+		final int siz = size();
+		if(rows == null) throw new ListHandlerException("No rows set");
+		if(siz < 1) throw new EmptyListException("No collection list elements exist");
+		
+		if(sort != null && !sort.equals(this.sorting) || sorting == null) {
 			sort(sort);
 		}
-		return rows.subList(offset, offset + pageSize);
+		
+		// adjust boundaries if necessary
+		// TODO determine if we should be rigid instead and throw an IndexOutOfBoundsException..
+		int start = offset, end = offset + pageSize;
+		if(start >= siz) start = siz - 1;
+		if(end > siz) end = siz;
+		assert end >= start;
+		
+		return rows.subList(start, end);
 	}
 }

@@ -23,8 +23,11 @@
   				<include>**/dao/SortColumn.java</include>
   				<include>**/dao/SortDir.java</include>
   				<include>**/dao/Sorting.java</include>
+  				<include>**/dao/SortColumnComparator.java</include>
   				<include>**/listhandler/EmptyListException.java</include>
   				<include>**/listhandler/IListHandler.java</include>
+  				<include>**/listhandler/AbstractListHandler.java</include>
+  				<include>**/listhandler/InMemoryListHandler.java</include>
   				<include>**/listhandler/ListHandlerException.java</include>
   				<include>**/listhandler/ListHandlerType.java</include>
   			</includes>

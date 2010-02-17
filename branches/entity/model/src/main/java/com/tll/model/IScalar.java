@@ -13,13 +13,6 @@ import java.util.Map;
 public interface IScalar {
 
 	/**
-	 * Provides an OGNL compliant property path such that it is marshalable.
-	 * @param propertyName
-	 * @return The working property path
-	 */
-	String getPropertyPath(String propertyName);
-
-	/**
 	 * @return The type from which this scalar is derived. May be
 	 *         <code>null</code>.
 	 *         <p>

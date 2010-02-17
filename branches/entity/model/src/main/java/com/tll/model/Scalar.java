@@ -60,15 +60,4 @@ public final class Scalar implements IScalar {
 	public Map<String, Object> getTupleMap() {
 		return map;
 	}
-
-	public String getPropertyPath(String propertyName) {
-		// a scalar is expected to only have 1-level deep properties in an OGNL
-		// (property path) sense
-		// so the property name should be stripped of any prefixing property
-		// path
-		assert propertyName != null;
-		final String[] props = propertyName.split("\\.");
-		return "tupleMap[" + props[props.length - 1] + ']';
-	}
-
 }

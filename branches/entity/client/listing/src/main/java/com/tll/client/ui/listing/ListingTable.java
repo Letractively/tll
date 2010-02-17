@@ -166,6 +166,12 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 	 */
 	final void setListingOperator(IListingOperator<R> listingOperator) {
 		this.listingOperator = listingOperator;
+		// SUPER F*** HAcK
+		if(sortlinks != null) {
+			for(SortLink sl : sortlinks) {
+				if(sl != null) sl.setListingOperator(listingOperator);
+			}
+		}
 	}
 
 	/**
@@ -229,17 +235,19 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		/**
 		 * Constructor
 		 * @param column
-		 * @param ignoreCaseWhenSorting 
-		 * @param lo 
+		 * @param ignoreCaseWhenSorting
 		 */
-		public SortLink(Column column, boolean ignoreCaseWhenSorting, IListingOperator<?> lo) {
+		public SortLink(Column column, boolean ignoreCaseWhenSorting) {
 			assert column.getPropertyName() != null;
 			lnk = new SimpleHyperLink(column.getName(), this);
 			pnl.add(lnk);
 			initWidget(pnl);
 			this.column = column;
 			this.ignoreCaseWhenSorting = ignoreCaseWhenSorting;
-			this.listingOperator = lo;
+		}
+
+		public void setListingOperator(IListingOperator<?> listingOperator) {
+			this.listingOperator = listingOperator;
 		}
 
 		@SuppressWarnings("synthetic-access")
@@ -279,12 +287,10 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		}
 
 		public void onClick(ClickEvent event) {
-			if(event.getSource() == lnk) {
-				final SortColumn sc =
-						new SortColumn(column.getPropertyName(), column.getParentAlias(), direction == SortDir.ASC ? SortDir.DESC
-								: SortDir.ASC, ignoreCaseWhenSorting ? Boolean.TRUE : Boolean.FALSE);
-				listingOperator.sort(new Sorting(sc));
-			}
+			final SortColumn sc =
+					new SortColumn(column.getPropertyName(), column.getParentAlias(), direction == SortDir.ASC ? SortDir.DESC
+							: SortDir.ASC, ignoreCaseWhenSorting ? Boolean.TRUE : Boolean.FALSE);
+			listingOperator.sort(new Sorting(sc));
 		}
 	}
 
@@ -307,7 +313,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 				}
 				else if(col.getPropertyName() != null) {
 					assert sortlinks != null;
-					final SortLink sl = new SortLink(col, ignoreCaseWhenSorting, listingOperator);
+					final SortLink sl = new SortLink(col, ignoreCaseWhenSorting);
 					sortlinks[c] = sl;
 					setWidget(0, c, sl);
 				}

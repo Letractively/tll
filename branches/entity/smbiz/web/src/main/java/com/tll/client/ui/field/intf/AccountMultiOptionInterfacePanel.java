@@ -80,7 +80,7 @@ public class AccountMultiOptionInterfacePanel extends AbstractAccountInterfacePa
 					cmpsr.newRow();
 
 					try {
-						lblDflt.setText(Fmt.format(m.getPropertyValue("default").getValue(), GlobalFormat.BOOL_YESNO));
+						lblDflt.setText(Fmt.format(m.getProperty("default"), GlobalFormat.BOOL_YESNO));
 					}
 					catch(final Exception e) {
 						throw new IllegalArgumentException(e);

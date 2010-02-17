@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import com.tll.IPropertyValueProvider;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.SearchResult;
@@ -31,7 +32,7 @@ public abstract class ListHandlerFactory {
 	 * @throws IllegalArgumentException When the given collection is
 	 *         <code>null</code>
 	 */
-	public static <T> IListHandler<T> create(Collection<T> c, Sorting sorting) throws ListHandlerException,
+	public static <T extends IPropertyValueProvider> IListHandler<T> create(Collection<T> c, Sorting sorting) throws ListHandlerException,
 	IllegalArgumentException {
 		try {
 			final InMemoryListHandler<T> listHandler = new InMemoryListHandler<T>(CollectionUtil.listFromCollection(c));

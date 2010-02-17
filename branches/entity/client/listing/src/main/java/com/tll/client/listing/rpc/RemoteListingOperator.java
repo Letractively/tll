@@ -10,7 +10,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.tll.IMarshalable;
 import com.tll.client.data.rpc.RpcCommand;
 import com.tll.client.listing.AbstractListingOperator;
-import com.tll.client.listing.ListingEvent;
 import com.tll.common.data.ListingOp;
 import com.tll.common.data.RemoteListingDefinition;
 import com.tll.common.data.rpc.IListingService;
@@ -99,10 +98,7 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 				listSize = payload.getListSize();
 				// reset
 				listingRequest = null;
-				// fire the listing event
-				sourcingWidget.fireEvent(new ListingEvent<Model>(payload.getListingId(), op, payload
-						.getListSize(), payload.getPageElements(), payload.getOffset(), payload.getSorting(), listingDef
-						.getPageSize()));
+				fireListingEvent(op, payload.getPageElements());
 			}
 		}
 	}
@@ -129,6 +125,11 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 		if(listingId == null || listingDef == null) throw new IllegalArgumentException();
 		this.listingId = listingId;
 		this.listingDef = listingDef;
+	}
+
+	@Override
+	protected String getListingId() {
+		return listingId;
 	}
 
 	private void execute() {

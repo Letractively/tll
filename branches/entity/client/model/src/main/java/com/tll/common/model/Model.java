@@ -15,6 +15,7 @@ import java.util.Set;
 import com.allen_sauer.gwt.log.client.Log;
 import com.tll.IDescriptorProvider;
 import com.tll.IMarshalable;
+import com.tll.IPropertyValueProvider;
 import com.tll.common.bind.IBindable;
 import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.model.CopyCriteria.CopyMode;
@@ -32,7 +33,7 @@ import com.tll.util.StringUtil;
  * to represent an entity instance object graph on the client.
  * @author jpk
  */
-public final class Model implements IMarshalable, IBindable, IPropertyMetadataProvider, IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
+public final class Model implements IMarshalable, IBindable, IPropertyMetadataProvider, IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty>, IPropertyValueProvider {
 
 	/**
 	 * ModelPropSet
@@ -666,6 +667,27 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		props.set(mprop);
 	}
 
+	public Object getProperty(String propPath) throws PropertyPathException {
+		return getModelProperty(propPath).getValue();
+	}
+
+	public void setProperty(String propPath, Object value) throws PropertyPathException, IllegalArgumentException {
+		setProperty(propPath, value, null);
+	}
+
+	/*
+	 * IPropertyValueProvider implementation
+	 */
+	@Override
+	public Object getPropertyValue(String propertyPath) {
+		try {
+			return getProperty(propertyPath);
+		}
+		catch(PropertyPathException e) {
+			throw new IllegalArgumentException("Unable to get property value: " + e.getMessage(), e);
+		}
+	}
+
 	/**
 	 * Provides the property value in String form
 	 * <em>for self-formatting types only</em>.
@@ -688,14 +710,6 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 			throw new IllegalArgumentException("Non self-formatting property: " + propPath);
 		}
 		return ((ISelfFormattingPropertyValue) prop).asString();
-	}
-
-	public Object getProperty(String propPath) throws PropertyPathException {
-		return getModelProperty(propPath).getValue();
-	}
-
-	public void setProperty(String propPath, Object value) throws PropertyPathException, IllegalArgumentException {
-		setProperty(propPath, value, null);
 	}
 
 	/**
@@ -763,7 +777,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * @throws PropertyPathException When the property path is mal-formed or
 	 *         doesn't point to an existing model property.
 	 */
-	public IPropertyValue getPropertyValue(String propPath) throws PropPathNodeMismatchException, PropertyPathException {
+	public IPropertyValue getValueProperty(String propPath) throws PropPathNodeMismatchException, PropertyPathException {
 		final IModelProperty prop = getModelProperty(propPath);
 		if(prop == null) return null;
 		if(!prop.getType().isValue()) {
@@ -893,7 +907,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 
 	public PropertyMetadata getPropertyMetadata(String propPath) {
 		try {
-			return getPropertyValue(propPath).getMetadata();
+			return getValueProperty(propPath).getMetadata();
 		}
 		catch(final PropertyPathException e) {
 			return null;
@@ -956,7 +970,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * @throws PropertyPathException
 	 */
 	public void clearPropertyValue(String propPath) throws PropertyPathException {
-		getPropertyValue(propPath).clear();
+		getValueProperty(propPath).clear();
 	}
 
 	/**

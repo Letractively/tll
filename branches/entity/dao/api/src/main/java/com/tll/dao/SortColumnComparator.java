@@ -6,33 +6,32 @@ package com.tll.dao;
 import java.io.Serializable;
 import java.util.Comparator;
 
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
-
+import com.tll.IPropertyValueProvider;
 
 /**
- * {@link Comparator} that compares properties of beans via reflection employing
- * a {@link SortColumn} that dictates the order and Spring's {@link BeanWrapper}
- * for performing reflection operations.
+ * A {@link Comparator} based on a {@link SortColumn}.
+ * <p>
+ * Threadsafe.
  * @param <T> The {@link Comparator} type.
  * @author jpk
  */
 @SuppressWarnings("unchecked")
-public class SortColumnBeanComparator<T> implements Comparator<T>, Serializable {
+public final class SortColumnComparator<T extends IPropertyValueProvider> implements Comparator<T>, Serializable {
 
 	static final long serialVersionUID = 5681155061446144523L;
 
 	/**
 	 * The {@link SortColumn} dictating the ordinality when comparing.
 	 */
-	protected SortColumn sortColumn;
+	private final SortColumn sortColumn;
 
 	/**
 	 * Constructor
 	 * @param sortColumn
 	 */
-	public SortColumnBeanComparator(final SortColumn sortColumn) {
+	public SortColumnComparator(final SortColumn sortColumn) {
 		super();
+		if(sortColumn == null) throw new NullPointerException();
 		this.sortColumn = sortColumn;
 	}
 
@@ -40,22 +39,9 @@ public class SortColumnBeanComparator<T> implements Comparator<T>, Serializable 
 
 		int rval = 0;
 
-		// TODO eliminate this HACK
-		String propPath;
-		if(o1 instanceof SearchResult) {
-			assert o2 instanceof SearchResult;
-			propPath = ((SearchResult) o1).getPropertyPath(sortColumn.getPropertyName());
-		}
-		else {
-			propPath = sortColumn.getPropertyName();
-		}
-		// END HACK
-
-		final BeanWrapper bw1 = new BeanWrapperImpl(o1);
-		final BeanWrapper bw2 = new BeanWrapperImpl(o2);
-
-		final Object v1 = bw1.getPropertyValue(propPath);
-		final Object v2 = bw2.getPropertyValue(propPath);
+		String propPath = sortColumn.getPropertyName();
+		final Object v1 = o1.getPropertyValue(propPath);
+		final Object v2 = o2.getPropertyValue(propPath);
 
 		if(v1 == null && v2 == null) {
 			return 0;

@@ -3,6 +3,7 @@
   <inherits name="com.tll.Dao" />
   
   <source path="client">
+  	<include name="**" />
   	<exclude name="**/rpc/**" />
   </source>
   

@@ -38,7 +38,7 @@ public abstract class ModelPropertyFormatter {
 		if(model == null) return null;
 		try {
 			// resolve the property
-			final IPropertyValue pv = model.getPropertyValue(propName);
+			final IPropertyValue pv = model.getValueProperty(propName);
 
 			// self formatting type?
 			if(pv.getType().isSelfFormatting()) {
