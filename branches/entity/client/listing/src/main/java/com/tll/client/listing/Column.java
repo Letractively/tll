@@ -18,9 +18,14 @@ public class Column implements IPropertyNameProvider {
 	private final String name;
 
 	/**
-	 * The format directive
+	 * The data format directive.
 	 */
 	private final GlobalFormat format;
+
+	/**
+	 * Optional CSS style class.
+	 */
+	private String style;
 
 	/**
 	 * Optional property name (dot notation).
@@ -48,7 +53,7 @@ public class Column implements IPropertyNameProvider {
 	 * @param propertyName
 	 */
 	public Column(String name, String propertyName) {
-		this(name, null, propertyName, null);
+		this(name, null, propertyName, null, null);
 	}
 
 	/**
@@ -58,7 +63,7 @@ public class Column implements IPropertyNameProvider {
 	 * @param parentAlias
 	 */
 	public Column(String name, String propertyName, String parentAlias) {
-		this(name, null, propertyName, parentAlias);
+		this(name, null, propertyName, parentAlias, null);
 	}
 
 	/**
@@ -67,7 +72,7 @@ public class Column implements IPropertyNameProvider {
 	 * @param format the format to employ for the cells in this column.
 	 */
 	public Column(String name, GlobalFormat format) {
-		this(name, format, null, null);
+		this(name, format, null, null, null);
 	}
 
 	/**
@@ -77,7 +82,7 @@ public class Column implements IPropertyNameProvider {
 	 * @param propertyName
 	 */
 	public Column(String name, GlobalFormat format, String propertyName) {
-		this(name, format, propertyName, null);
+		this(name, format, propertyName, null, null);
 	}
 
 	/**
@@ -88,11 +93,24 @@ public class Column implements IPropertyNameProvider {
 	 * @param parentAlias
 	 */
 	public Column(String name, GlobalFormat format, String propertyName, String parentAlias) {
+		this(name, format, propertyName, parentAlias, null);
+	}
+
+	/**
+	 * Constructor - Property binding
+	 * @param name
+	 * @param format
+	 * @param propertyName
+	 * @param parentAlias
+	 * @param style
+	 */
+	public Column(String name, GlobalFormat format, String propertyName, String parentAlias, String style) {
 		super();
 		this.name = name;
 		this.format = format;
 		this.propertyName = propertyName;
 		this.parentAlias = parentAlias;
+		this.style = style;
 	}
 
 	/**
@@ -117,10 +135,19 @@ public class Column implements IPropertyNameProvider {
 	}
 
 	/**
-	 * @return the parent alias used in conjunction with the proerty name on the server
+	 * @return the parent alias used in conjunction with the proerty name on the
+	 *         server
 	 */
 	public String getParentAlias() {
 		return parentAlias;
+	}
+
+	public String getStyle() {
+		return style;
+	}
+
+	public void setStyle(String style) {
+		this.style = style;
 	}
 
 	@Override

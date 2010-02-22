@@ -118,7 +118,7 @@ class InterfaceStack extends Composite implements IRpcHandler, IListingHandler<M
 		 * @param showDeleteBtn
 		 */
 		public InterfacePanel(ModelKey intfRef, boolean showCancelBtn, boolean showDeleteBtn) {
-			super(fldPnlResolver.resolveFieldPanel(intfRef), showCancelBtn, showDeleteBtn);
+			super(fldPnlResolver.resolveFieldPanel(intfRef), showCancelBtn, showDeleteBtn, true);
 			this.intfRef = intfRef;
 			setErrorHandler(errorHandler, false);
 			addEditHandler(this);

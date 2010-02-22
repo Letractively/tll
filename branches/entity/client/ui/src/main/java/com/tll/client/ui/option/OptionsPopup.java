@@ -40,7 +40,7 @@ public class OptionsPopup extends PopupPanel implements MouseDownHandler, MouseO
 	 */
 	public static final int DFLT_OFST_Y = -5;
 
-	protected final OptionsPanel optionsPanel = new OptionsPanel();
+	protected final OptionsPanel<Option> optionsPanel = new OptionsPanel<Option>();
 
 	private final PopupHideTimer timer;
 

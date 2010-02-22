@@ -41,6 +41,7 @@ public abstract class AbstractView<I extends IViewInitializer> extends Composite
 		initWidget(pnl);
 	}
 
+	@Override
 	public final Widget getViewWidget() {
 		return this;
 	}
@@ -49,6 +50,7 @@ public abstract class AbstractView<I extends IViewInitializer> extends Composite
 		return viewKey;
 	}
 
+	@Override
 	public String getShortViewName() {
 		return getLongViewName();
 	}
@@ -79,11 +81,22 @@ public abstract class AbstractView<I extends IViewInitializer> extends Composite
 	public final Widget getViewContainerRef() {
 		return viewContainerRef;
 	}
+	
+	@Override
+	public String getElementId() {
+		if(viewKey == null) throw new IllegalStateException();
+		return getElement().getId();
+	}
 
+	@Override
 	public final void initialize(I initializer) {
 		if(initializer == null || initializer.getViewKey() == null)
 			throw new IllegalArgumentException("Null or invalid view initializer.");
 		viewKey = initializer.getViewKey();
+
+		// set unique dom element id
+		getElement().setId("view_" + viewKey.toString());
+
 		// add view specific style to the view's widget
 		if(getViewStyle() != null) {
 			addStyleName(getViewStyle());
@@ -99,6 +112,7 @@ public abstract class AbstractView<I extends IViewInitializer> extends Composite
 	 */
 	protected abstract void doInitialization(I initializer);
 
+	@Override
 	public final void apply(Widget viewCntnrRef, ViewToolbar toolbar) {
 		this.viewContainerRef = viewCntnrRef;
 		loaded();
@@ -122,6 +136,7 @@ public abstract class AbstractView<I extends IViewInitializer> extends Composite
 		// base impl no-op
 	}
 
+	@Override
 	public final void refresh() {
 		doRefresh();
 	}
@@ -138,6 +153,7 @@ public abstract class AbstractView<I extends IViewInitializer> extends Composite
 	 * this view looses reference-ability. This could mean, for example, to issue
 	 * an RPC cache clean up type command.
 	 */
+	@Override
 	public final void onDestroy() {
 		Log.debug("Destroying view " + toString());
 		doDestroy();

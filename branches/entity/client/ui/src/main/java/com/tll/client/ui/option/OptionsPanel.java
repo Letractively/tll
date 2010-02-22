@@ -5,6 +5,7 @@
 package com.tll.client.ui.option;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -22,9 +23,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 /**
  * OptionsPanel - Panel containing a vertical list of options that are
  * selectable via mouse and keyboard.
+ * @param <O> option type
  * @author jpk
  */
-public class OptionsPanel extends FocusPanel implements KeyDownHandler, MouseDownHandler, MouseOverHandler,
+public class OptionsPanel<O extends Option> extends FocusPanel implements KeyDownHandler, MouseDownHandler, MouseOverHandler,
 MouseOutHandler, IHasOptionHandlers {
 
 	/**
@@ -54,7 +56,7 @@ MouseOutHandler, IHasOptionHandlers {
 		}
 	} // MRegs
 
-	protected final HashMap<Option, MRegs> options = new HashMap<Option, MRegs>();
+	protected final HashMap<O, MRegs> options = new HashMap<O, MRegs>();
 	protected final VerticalPanel vp = new VerticalPanel();
 	protected int crntIndx = -1;
 
@@ -77,24 +79,32 @@ MouseOutHandler, IHasOptionHandlers {
 	 * Adds a single Option
 	 * @param option The Option to add
 	 */
-	protected void addOption(Option option) {
+	protected void addOption(O option) {
 		final MRegs mreg =
 			new MRegs(option.addMouseDownHandler(this), option.addMouseOutHandler(this), option.addMouseOverHandler(this));
 		options.put(option, mreg);
 		vp.add(option);
 	}
+	
+	/**
+	 * Removes a single option
+	 * @param option the option to remove
+	 */
+	protected void removeOption(O option) {
+		vp.remove(option);
+		MRegs m = options.get(option);
+		m.down.removeHandler();
+		m.out.removeHandler();
+		m.over.removeHandler();
+		options.remove(option);
+	}
 
-	protected void clearOptions() {
+	protected final void clearOptions() {
 		crntIndx = -1;
-		MRegs m;
-		for(final Option option : options.keySet()) {
-			vp.remove(option);
-			m = options.get(option);
-			m.down.removeHandler();
-			m.out.removeHandler();
-			m.over.removeHandler();
+		HashSet<O> tormv = new HashSet<O>(options.keySet());
+		for(final O option : tormv) {
+			removeOption(option);
 		}
-		options.clear();
 	}
 
 	/**
@@ -102,10 +112,10 @@ MouseOutHandler, IHasOptionHandlers {
 	 * existing options before the new ones are added.
 	 * @param options Array of {@link Option}s to be set
 	 */
-	public void setOptions(Option[] options) {
+	public final void setOptions(O[] options) {
 		clearOptions();
 		if(options != null) {
-			for(final Option element2 : options) {
+			for(final O element2 : options) {
 				addOption(element2);
 			}
 		}

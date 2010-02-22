@@ -466,7 +466,7 @@ public final class UITests extends AbstractUITest {
 			mvchanged = new ModelViewer();
 			fp = new TestFieldPanel();
 			eh = ErrorHandlerBuilder.build(true, true, new GlobalMsgPanel());
-			ep = new EditPanel(fp, false, false);
+			ep = new EditPanel(fp, false, false, true);
 			ep.setErrorHandler(eh, true);
 
 			final CopyCriteria mcrit = CopyCriteria.all();

@@ -45,6 +45,7 @@ import com.tll.client.mvc.view.user.UserEditView;
 import com.tll.client.rpc.IAdminContextListener;
 import com.tll.client.ui.msg.Msgs;
 import com.tll.client.ui.option.IOptionHandler;
+import com.tll.client.ui.option.Option;
 import com.tll.client.ui.option.OptionEvent;
 import com.tll.client.ui.option.OptionsPanel;
 import com.tll.client.ui.view.ViewLink;
@@ -206,7 +207,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		Label lblCrntAcntDateCreated;
 
 		DisclosurePanel dpOps;
-		OptionsPanel opsPanel;
+		OptionsPanel<Option> opsPanel;
 
 		DisclosurePanel dpOpsDisplay;
 		StatusDisplay cmdDisplay;
@@ -285,7 +286,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			dpOps = new DisclosurePanel("Operations");
 			dpOps.setOpen(true);
 			dpOps.setStylePrimaryName(Styles.DISCLOSURE_PANEL);
-			opsPanel = new OptionsPanel();
+			opsPanel = new OptionsPanel<Option>();
 			opsPanel.getElement().setId("operations");
 			opsPanel.addOptionHandler(this);
 			dpOps.add(opsPanel);

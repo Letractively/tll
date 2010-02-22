@@ -45,6 +45,10 @@ public class DataListingOperator<R, H extends IListHandler<R>> extends AbstractL
 		this.dataProvider = dataProvider;
 		this.sorting = sorting;
 	}
+	
+	protected final H getDataProvider() {
+		return dataProvider;
+	}
 
 	@Override
 	protected void doFetch(int ofst, Sorting srtg) {

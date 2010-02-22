@@ -766,7 +766,7 @@ public final class UITests extends AbstractUITest {
 		} // OptionEventIndicator
 
 		SimplePanel optionPnlWrapper;
-		OptionsPanel op;
+		OptionsPanel<Option> op;
 		HorizontalPanel hp;
 		OptionEventIndicator indicator;
 
@@ -789,7 +789,7 @@ public final class UITests extends AbstractUITest {
 		public void load() {
 			optionPnlWrapper = new SimplePanel();
 
-			op = new OptionsPanel();
+			op = new OptionsPanel<Option>();
 			op.setOptions(new Option[] {
 				new Option("Option 1"), new Option("Option 2"), new Option("Option 3"), new Option("Option 4"),
 				new Option("Option 5"), new Option("Option 6"), new Option("Option 7"), new Option("Option 8"),

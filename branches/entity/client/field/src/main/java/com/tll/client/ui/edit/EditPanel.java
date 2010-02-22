@@ -62,6 +62,22 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 		 */
 		public static final String BTN_ROW = "btnRow";
 		/**
+		 * Save style.
+		 */
+		public static final String SAVE = "save";
+		/**
+		 * Cancel style.
+		 */
+		public static final String CANCEL = "cancel";
+		/**
+		 * Delete style.
+		 */
+		public static final String DELETE = "delete";
+		/**
+		 * Reset style.
+		 */
+		public static final String RESET = "reset";
+		/**
 		 * The edit portal style.
 		 */
 		public static final String PORTAL = "portal";
@@ -93,9 +109,9 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	 */
 	private final FlowPanel pnlButtonRow = new FlowPanel();
 
-	private final Button btnSave, btnReset;
+	private final Button btnSave;
 
-	private Button btnDelete, btnCancel;
+	private Button btnReset, btnDelete, btnCancel;
 
 	/**
 	 * Constructor
@@ -104,8 +120,9 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	 *        when clicked.
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
+	 * @param showResetBtn Show the reset button?
 	 */
-	public EditPanel(IFieldBoundWidget fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
+	public EditPanel(IFieldBoundWidget fieldPanel, boolean showCancelBtn, boolean showDeleteBtn, boolean showResetBtn) {
 		super();
 		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
 		fieldPanel.setModelChangeTracker(new ModelChangeTracker());
@@ -118,10 +135,8 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 		pnlButtonRow.setStyleName(Styles.BTN_ROW);
 
 		btnSave = new Button("", this);
+		btnSave.addStyleName(Styles.SAVE);
 		pnlButtonRow.add(btnSave);
-
-		btnReset = new Button("Reset", this);
-		pnlButtonRow.add(btnReset);
 
 		showDeleteButton(showDeleteBtn);
 
@@ -150,10 +165,20 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 			panel.insert(msgDisplay.getDisplayWidget(), 0);
 		}
 	}
+	
+	public final void showResetButton(boolean show) {
+		if(btnReset == null) {
+			btnReset = new Button("Reset", this);
+			btnReset.addStyleName(Styles.RESET);
+			pnlButtonRow.add(btnReset);
+		}
+		btnReset.setVisible(show);
+	}
 
 	public final void showDeleteButton(boolean show) {
 		if(btnDelete == null) {
 			btnDelete = new Button("Delete", this);
+			btnDelete.addStyleName(Styles.DELETE);
 			pnlButtonRow.add(btnDelete);
 		}
 		btnDelete.setVisible(show);
@@ -162,6 +187,7 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	public final void showCancelButton(boolean show) {
 		if(btnCancel == null) {
 			btnCancel = new Button("Cancel", this);
+			btnCancel.addStyleName(Styles.CANCEL);
 			pnlButtonRow.add(btnCancel);
 		}
 		btnCancel.setVisible(show);

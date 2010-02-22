@@ -103,7 +103,7 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-model</artifactId>
+      <artifactId>tll-schema</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>

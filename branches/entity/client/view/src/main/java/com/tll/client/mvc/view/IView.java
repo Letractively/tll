@@ -45,6 +45,12 @@ public interface IView<I extends IViewInitializer> {
 	 * @return The Widget used in the UI that represents this view.
 	 */
 	Widget getViewWidget();
+	
+	/**
+	 * @return The underlying DOM element id of this view (not the view container).
+	 * @throws IllegalStateException When the view isn't initialized. 
+	 */
+	String getElementId() throws IllegalStateException;
 
 	/**
 	 * Initializes the view enabling it to be uniquely identifiable at runtime.

@@ -10,7 +10,7 @@ import com.tll.client.ui.ImageContainer;
  * Option - A single option in an {@link OptionsPanel}.
  * @author jpk
  */
-public final class Option extends Label {
+public class Option extends Label {
 
 	/**
 	 * Styles - (option.css)

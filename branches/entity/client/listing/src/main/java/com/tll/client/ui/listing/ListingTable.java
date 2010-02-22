@@ -307,6 +307,10 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 				getCellFormatter().addStyleName(0, c, Styles.COUNT_COL);
 				// getColumnFormatter().addStyleName(c, Styles.COUNT_COL);
 			}
+			if(col.getStyle() != null) {
+				getColumnFormatter().addStyleName(c, col.getStyle());
+				getCellFormatter().addStyleName(0, c, col.getStyle());
+			}
 			if(config.isSortable()) {
 				if(isRowCntCol) {
 					setWidget(0, c, new Label("#"));
@@ -339,6 +343,11 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		}
 
 		for(int c = 0; c < columns.length; c++) {
+			Column col = columns[c];
+			if(col.getStyle() != null) {
+				getColumnFormatter().addStyleName(c, col.getStyle());
+				getCellFormatter().addStyleName(rowIndex, c, col.getStyle());
+			}
 			if(Column.ROW_COUNT_COLUMN == columns[c]) {
 				getCellFormatter().addStyleName(rowIndex, c, Styles.COUNT_COL);
 				if(rowNum > -1) {

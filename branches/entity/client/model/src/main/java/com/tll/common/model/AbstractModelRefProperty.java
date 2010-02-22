@@ -50,6 +50,11 @@ abstract class AbstractModelRefProperty extends AbstractRelationalProperty imple
 	public final Model getModel() {
 		return model;
 	}
+	
+	@Override
+	public final void setModel(Model model) {
+		setModel(model, false);
+	}
 
 	/**
 	 * Responsible for setting the model and firing a property change events if

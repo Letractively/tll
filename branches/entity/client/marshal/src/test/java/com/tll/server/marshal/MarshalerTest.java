@@ -125,10 +125,6 @@ public class MarshalerTest extends AbstractConfigAwareTest {
 				return tupleMap;
 			}
 
-			public String getPropertyPath(String propertyName) {
-				return null;
-			}
-
 			public Class<? extends IEntity> getRefType() {
 				return Account.class;
 			}

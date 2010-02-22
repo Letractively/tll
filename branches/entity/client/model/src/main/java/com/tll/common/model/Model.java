@@ -40,7 +40,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * @author jpk
 	 */
 	static class ModelPropSet implements Iterable<IModelProperty> {
-		
+
 		private final LinkedHashSet<IModelProperty> set = new LinkedHashSet<IModelProperty>();
 
 		/**
@@ -102,7 +102,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		public int size() {
 			return set.size();
 		}
-		
+
 	} // ModelPropSet
 
 	/**
@@ -152,12 +152,13 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 			this.srcProp = srcProp;
 			this.rootRelPath = rootRelPath;
 			this.nearestParentRefPath = nearestParentRefPath;
-			//Log.debug("ChangesPredicate elm: " + this);
+			// Log.debug("ChangesPredicate elm: " + this);
 		}
 
 		@Override
 		public String toString() {
-			return "srcProp: " + srcProp + ", rootRelPath: " + rootRelPath + ", nearestParentRefPath: " + nearestParentRefPath;
+			return "srcProp: " + srcProp + ", rootRelPath: " + rootRelPath + ", nearestParentRefPath: "
+					+ nearestParentRefPath;
 		}
 	} // WhitelistElement
 
@@ -285,7 +286,8 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		@Override
 		public boolean evaluateSourceAndCopy(Model source, Model copy) {
 			super.evaluateSourceAndCopy(source, copy);
-			// when in change mode, only copy id and version when a model is marked as deleted
+			// when in change mode, only copy id and version when a model is marked as
+			// deleted
 			if(source.markedDeleted) {
 				return false;
 			}
@@ -302,7 +304,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 			if(srcProp instanceof IModelRefProperty) {
 				final Model m = ((IModelRefProperty) srcProp).getModel();
 				if(m != null && m.isMarkedDeleted()) {
-					//Log.debug("Allowing model ref [" + rootRelPath + "]");
+					// Log.debug("Allowing model ref [" + rootRelPath + "]");
 					return true;
 				}
 			}
@@ -362,7 +364,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		}
 
 		final String cpp = PropertyPath.getPropertyPath(parentPath, current.getPropertyName());
-		//Log.debug("resolveModelProperty() current prop path: " + cpp);
+		// Log.debug("resolveModelProperty() current prop path: " + cpp);
 
 		if(descendant == current) return cpp;
 
@@ -413,7 +415,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		// check visited
 		Binding<Model, Model> b = visited.findBindingBySource(source);
 		if(b != null) {
-			//Log.debug("Already visited target: " + b.tgt);
+			// Log.debug("Already visited target: " + b.tgt);
 			return b.tgt;
 		}
 		copy = new Model(source.entityType);
@@ -428,7 +430,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 			assert srcprop != null;
 
 			final String crntPropPath = PropertyPath.getPropertyPath(parentPropPath, srcprop.getPropertyName());
-			//Log.debug("copy() Checking prop: " + crntPropPath);
+			// Log.debug("copy() Checking prop: " + crntPropPath);
 
 			if(!cp.evaluateProperty(srcprop, crntPropPath)) {
 				continue;
@@ -586,7 +588,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * @param id
 	 */
 	public void setId(String id) {
-		setPropertyNoPropertyPathException(ID_PROPERTY, id, PropertyType.STRING);
+		setProperty(ID_PROPERTY, id, PropertyType.STRING);
 	}
 
 	/**
@@ -602,7 +604,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * @param name
 	 */
 	public void setName(String name) {
-		setPropertyNoPropertyPathException(NAME_PROPERTY, name, PropertyType.STRING);
+		setProperty(NAME_PROPERTY, name, PropertyType.STRING);
 	}
 
 	/**
@@ -633,7 +635,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	}
 
 	public void setVersion(String version) {
-		setPropertyNoPropertyPathException(VERSION_PROPERTY, version, PropertyType.STRING);
+		setProperty(VERSION_PROPERTY, version, PropertyType.STRING);
 	}
 
 	/**
@@ -672,7 +674,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	}
 
 	public void setProperty(String propPath, Object value) throws PropertyPathException, IllegalArgumentException {
-		setProperty(propPath, value, null);
+		setPropertyInternal(propPath, value, null);
 	}
 
 	/*
@@ -713,24 +715,32 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	}
 
 	/**
-	 * Same as {@link #setProperty(String, Object, PropertyType)} but when a
-	 * @param propPath
-	 * @param value
-	 * @param ptype if specified, the property will be automatically created if it
-	 *        doesn't exist {@link PropertyPathException} occurs, it is converted
-	 *        into an {@link IllegalStateException}.
-	 * @throws IllegalArgumentException
-	 * @throws IllegalStateException
+	 * Same as {@link #setProperty(String, Object)} but no
+	 * {@link PropertyPathException} is raised on error rather an un-checked
+	 * exception.
+	 * @param propPath property identifying path
+	 * @param value property value to set
+	 * @param ptype the expected property type
+	 * @throws IllegalArgumentException When setting the property fails
 	 */
-	public void setPropertyNoPropertyPathException(String propPath, Object value, PropertyType ptype)
-	throws IllegalArgumentException, IllegalStateException {
+	public void setProperty(String propPath, Object value, PropertyType ptype) throws IllegalArgumentException {
 		try {
-			setProperty(propPath, value, ptype);
+			setPropertyInternal(propPath, value, ptype);
 		}
 		catch(final PropertyPathException e) {
-			// shouldn't happen
-			throw new IllegalStateException(e);
+			throw new IllegalArgumentException(e);
 		}
+	}
+
+	/**
+	 * Same as {@link #setPropertyInternal(String, Object, PropertyType)} but when
+	 * a
+	 * @param propPath
+	 * @param value
+	 * @throws IllegalArgumentException When setting the string property fails
+	 */
+	public void setString(String propPath, String value) throws IllegalArgumentException {
+		setProperty(propPath, value, PropertyType.STRING);
 	}
 
 	/**
@@ -803,7 +813,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 			assert prop != null;
 			if(!prop.getType().isModelRef()) {
 				throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
-				"model reference");
+						"model reference");
 			}
 			return ((IModelRefProperty) prop).getModel();
 		}
@@ -822,7 +832,8 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * Retrieves a related one property value from the model given a property
 	 * path.
 	 * @param propPath The property path (E.g.: "root.relatedModelPropName")
-	 * @return The resolved related one property or <code>null</code> if it doesn't exist
+	 * @return The resolved related one property or <code>null</code> if it
+	 *         doesn't exist
 	 * @throws IllegalArgumentException When the given property path can't be
 	 *         resolved or does not map to related one property.
 	 */
@@ -832,7 +843,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 			assert prop != null;
 			if(prop.getType() != PropertyType.RELATED_ONE) {
 				throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
-				"related one");
+						"related one");
 			}
 			return (RelatedOneProperty) prop;
 		}
@@ -851,7 +862,8 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * Retrieves a related many property value from the model given a property
 	 * path.
 	 * @param propPath The property path (E.g.: "root.listProperty")
-	 * @return The resolved related many property or <code>null</code> if it doesn't exist
+	 * @return The resolved related many property or <code>null</code> if it
+	 *         doesn't exist
 	 * @throws IllegalArgumentException When the given property path can't be
 	 *         resolved or does not map to a related many property.
 	 */
@@ -861,7 +873,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 			assert prop != null;
 			if(prop.getType() != PropertyType.RELATED_MANY) {
 				throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
-				"related many");
+						"related many");
 			}
 			return (RelatedManyProperty) prop;
 		}
@@ -881,7 +893,8 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * This is a property value that wraps a nested Model that is a child of a
 	 * related many property.
 	 * @param propPath The property path. (E.g.: "root.listProperty[1]")
-	 * @return The resolved indexed property or <code>null</code> if it doesn't exist.
+	 * @return The resolved indexed property or <code>null</code> if it doesn't
+	 *         exist.
 	 * @throws IllegalArgumentException When the given property path can't be
 	 *         resolved or does not map to an indexed property.
 	 */
@@ -924,13 +937,12 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 *         descendant of this model instance.
 	 */
 	public String getRelPath(IModelProperty descendant) throws IllegalArgumentException {
-		if(descendant  == null) throw new IllegalArgumentException("Null descendant arg");
+		if(descendant == null) throw new IllegalArgumentException("Null descendant arg");
 		if(descendant == selfRef) return "";
 		if(descendant instanceof IModelRefProperty) {
 			if(((IModelRefProperty) descendant).getModel() == this) return "";
 		}
-		final String s =
-			resolveModelProperty(descendant, getSelfRef(), "", new RefSet<Model>());
+		final String s = resolveModelProperty(descendant, getSelfRef(), "", new RefSet<Model>());
 		if(s == null)
 			throw new IllegalArgumentException("[" + descendant + "] is not a descendant of model: [" + this + "]");
 		return s;
@@ -947,19 +959,19 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	public Model copy(final CopyCriteria criteria) {
 		ICopyPredicate cp;
 		switch(criteria.getMode()) {
-		case SUBSET:
-			cp = new SubsetPredicate(criteria.getWhitelistProps());
-			break;
-		case CHANGES:
-			cp = new ChangesPredicate(criteria.getWhitelistProps());
-			break;
-		case NO_REFERENCES:
-			cp = new NoReferencesPredicate();
-			break;
-		default:
-		case ALL:
-			cp = new AllPropsPredicate();
-			break;
+			case SUBSET:
+				cp = new SubsetPredicate(criteria.getWhitelistProps());
+				break;
+			case CHANGES:
+				cp = new ChangesPredicate(criteria.getWhitelistProps());
+				break;
+			case NO_REFERENCES:
+				cp = new NoReferencesPredicate();
+				break;
+			default:
+			case ALL:
+				cp = new AllPropsPredicate();
+				break;
 		}
 		return copy(null, this, cp, new BindingRefSet<Model, Model>());
 	}
@@ -1050,8 +1062,10 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		return props.size();
 	}
 
-	// Don't rely on logical equals since we want to support scalar data in a Model instance!
-	// so we need to be careful and do manual checking for model collections when searching for a particular instance
+	// Don't rely on logical equals since we want to support scalar data in a
+	// Model instance!
+	// so we need to be careful and do manual checking for model collections when
+	// searching for a particular instance
 	/*
 	@Override
 	public boolean equals(Object obj) {
@@ -1088,8 +1102,8 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * @throws PropertyPathException
 	 * @throws IllegalArgumentException
 	 */
-	private void setProperty(String propPath, Object value, PropertyType ptype) throws PropertyPathException,
-	IllegalArgumentException {
+	private void setPropertyInternal(String propPath, Object value, PropertyType ptype) throws PropertyPathException,
+			IllegalArgumentException {
 		try {
 			IModelProperty mprop = null;
 			if(PropertyPath.isIndexed(propPath)) {
