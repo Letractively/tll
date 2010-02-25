@@ -5,6 +5,7 @@
 package com.tll.common.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -110,10 +111,11 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * @author jpk
 	 */
 	static interface ICopyPredicate {
-		
+
 		/**
 		 * Should the copy clone references or maintain the original model ref?
-		 * <p>Used when model ref type properties are encountered
+		 * <p>
+		 * Used when model ref type properties are encountered
 		 * @return true/false
 		 */
 		boolean maintainReference();
@@ -376,6 +378,23 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	public static final String DATE_MODIFIED_PROPERTY = "dateModified";
 
 	/**
+	 * Utility method to find a {@link Model} instance in a collection given its
+	 * key. This is handy since we only do <em>physical</em> equality on
+	 * {@link Model} instances.
+	 * @param mclc the model collection to search
+	 * @param key identifies the model being sought in the collection
+	 * @return the found instance or <code>null</code> if not found in the
+	 *         collection.
+	 */
+	public static Model findInCollection(Collection<Model> mclc, ModelKey key) {
+		if(mclc == null) return null;
+		for(Model m : mclc) {
+			if(m.getKey().equals(key)) return m;
+		}
+		return null;
+	}
+
+	/**
 	 * Resolves the root relative property path of a given model property
 	 * descendant.
 	 * @param descendant
@@ -470,7 +489,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 			if(srcprop instanceof RelatedOneProperty) {
 				final IModelRefProperty mrp = (IModelRefProperty) srcprop;
 				final Model srcModel = mrp.getModel();
-				boolean keepRef = mrp.isReference()? cp.maintainReference() : false;
+				boolean keepRef = mrp.isReference() ? cp.maintainReference() : false;
 				final Model cpyModel = srcModel == null ? null : keepRef ? srcModel : copy(crntPropPath, srcModel, cp, visited);
 				copy.set(new RelatedOneProperty(mrp.getRelatedType(), cpyModel, mrp.getPropertyName(), mrp.isReference()));
 			}
@@ -483,7 +502,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 					final String ipath = PropertyPath.index(crntPropPath, ip.getIndex());
 					if(cp.evaluateProperty(ip, ipath)) {
 						final Model im = ip.getModel();
-						boolean keepRef = ip.isReference()? cp.maintainReference() : false;
+						boolean keepRef = ip.isReference() ? cp.maintainReference() : false;
 						final Model cim = keepRef ? im : copy(ipath, im, cp, visited);
 						if(cim != null) clist.add(cim);
 					}

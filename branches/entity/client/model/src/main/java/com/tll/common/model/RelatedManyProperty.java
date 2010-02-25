@@ -96,13 +96,65 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	}
 
 	/**
+	 * Inserts a {@link Model} instance at the given index.
+	 * <p>
+	 * <b>NOTE: </b>This method does <em>not</em> raise property change events.
+	 * @param model the model to insert
+	 * @param index the index at which to insert
+	 * @throws IllegalArgumentException When the model is <code>null</code> or its
+	 *         entity type does not match this properties reference type.
+	 * @throws IndexOutOfBoundsException when the index is out of bounds
+	 */
+	public void insert(Model model, int index) throws IllegalArgumentException, IndexOutOfBoundsException {
+		if(model == null) throw new IllegalArgumentException("Null index models not allowed.");
+		if(!this.relatedType.equals(model.getEntityType())) throw new IllegalArgumentException("Entity type mismatch.");
+		list.add(new IndexedProperty(relatedType, model, propertyName, isReference(), index));
+		mlist.add(model);
+	}
+
+	/**
+	 * Removes a {@link Model} instance at the given index.
+	 * <p>
+	 * <b>NOTE: </b>This method does <em>not</em> raise property change events.
+	 * @param index the index at which to remove the model
+	 * @return the removed model
+	 * @throws IndexOutOfBoundsException when the index is out of bounds
+	 */
+	public Model remove(int index) {
+		Model m = mlist.remove(index);
+		list.remove(index);
+		return m;
+	}
+
+	/**
+	 * Removes a {@link Model} instance given a key.
+	 * <p>
+	 * <b>NOTE: </b>This method does <em>not</em> raise property change events.
+	 * @param key
+	 * @return <code>true</code> if the model was found and removed.
+	 */
+	public boolean remove(ModelKey key) {
+		Model m = Model.findInCollection(mlist, key);
+		if(m == null) return false;
+		for(IndexedProperty ip : list) {
+			if(ip.model == m) {
+				list.remove(ip);
+				mlist.remove(m);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Provides the encased List of {@link Model}s.
 	 * <p>
 	 * <em><b>IMPT:</b>Mutations made to this list do <b>NOT</b> invoke {@link PropertyChangeEvent}s.</em>
 	 * @return the list of indexed models
 	 */
 	public List<Model> getModelList() {
-		return mlist;
+		// don't give a ref to "our" list, rather copy the elements into a new list
+		return new ArrayList<Model>(mlist);
 	}
 
 	/**
