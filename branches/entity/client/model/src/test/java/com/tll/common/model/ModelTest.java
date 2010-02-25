@@ -202,6 +202,16 @@ public class ModelTest {
 	}
 
 	@Test(enabled = true)
+	public void testCopyKeepRefs() throws Exception {
+		final Model model = TestModelStubber.stubAccount(true);
+		final Model copy = model.copy(CopyCriteria.keepReferences());
+		Assert.assertTrue(model.getProperty("currency") == copy.getProperty("currency"));
+		Assert.assertTrue(model.getProperty("parent") == copy.getProperty("parent"));
+		Assert.assertTrue(model.getProperty("addresses[0].account") == copy.getProperty("addresses[0].account"));
+		Assert.assertFalse(model.getProperty("addresses[0].address") == copy.getProperty("addresses[0].address"));
+	}
+
+	@Test(enabled = true)
 	public void testCopySubset() throws Exception {
 		final Model m = TestModelStubber.stubAccount(true);
 		IModelProperty mp;

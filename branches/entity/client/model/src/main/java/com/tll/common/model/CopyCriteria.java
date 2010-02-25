@@ -16,6 +16,7 @@ public class CopyCriteria {
 	static enum CopyMode {
 		ALL,
 		NO_REFERENCES,
+		KEEP_REFERENCES,
 		SUBSET,
 		CHANGES
 	}
@@ -23,6 +24,8 @@ public class CopyCriteria {
 	private static final CopyCriteria COPY_ALL = new CopyCriteria(CopyMode.ALL, null);
 
 	private static final CopyCriteria COPY_NO_REFS = new CopyCriteria(CopyMode.NO_REFERENCES, null);
+
+	private static final CopyCriteria COPY_KEEP_REFS = new CopyCriteria(CopyMode.KEEP_REFERENCES, null);
 
 	private final CopyMode mode;
 
@@ -43,7 +46,16 @@ public class CopyCriteria {
 	}
 
 	/**
-	 * Creates copy criteria where a whitelist is employed to create a sub-set of model properties.
+	 * @return copy criteria that copies all properties except model ref types in
+	 *         which case the model ref is maintained.
+	 */
+	public static CopyCriteria keepReferences() {
+		return COPY_KEEP_REFS;
+	}
+
+	/**
+	 * Creates copy criteria where a whitelist is employed to create a sub-set of
+	 * model properties.
 	 * @param whiteList the subset of model properties to copy over
 	 * @return the subset model
 	 */

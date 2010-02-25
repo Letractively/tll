@@ -110,6 +110,13 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * @author jpk
 	 */
 	static interface ICopyPredicate {
+		
+		/**
+		 * Should the copy clone references or maintain the original model ref?
+		 * <p>Used when model ref type properties are encountered
+		 * @return true/false
+		 */
+		boolean maintainReference();
 
 		/**
 		 * Evaluates at the {@link Model} level the source and corresponding copy.
@@ -175,6 +182,11 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		}
 
 		@Override
+		public boolean maintainReference() {
+			return false; // default is to clone even references
+		}
+
+		@Override
 		public boolean evaluateProperty(IModelProperty srcProp, String rootRelPath) {
 			return true; // default
 		}
@@ -193,6 +205,19 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 				return !((IModelRefProperty) srcProp).isReference();
 			}
 			return true; // default
+		}
+
+	} // NoReferencesPredicate
+
+	/**
+	 * KeepReferencesPredicate
+	 * @author jpk
+	 */
+	static class KeepReferencesPredicate extends AllPropsPredicate {
+
+		@Override
+		public boolean maintainReference() {
+			return true;
 		}
 
 	} // NoReferencesPredicate
@@ -231,6 +256,11 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 					add(new WhitelistElement(mp, rootRelPath, nearestParentRefPath));
 				}
 			}
+		}
+
+		@Override
+		public boolean maintainReference() {
+			return false;
 		}
 
 		@Override
@@ -440,7 +470,8 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 			if(srcprop instanceof RelatedOneProperty) {
 				final IModelRefProperty mrp = (IModelRefProperty) srcprop;
 				final Model srcModel = mrp.getModel();
-				final Model cpyModel = srcModel == null ? null : copy(crntPropPath, srcModel, cp, visited);
+				boolean keepRef = mrp.isReference()? cp.maintainReference() : false;
+				final Model cpyModel = srcModel == null ? null : keepRef ? srcModel : copy(crntPropPath, srcModel, cp, visited);
 				copy.set(new RelatedOneProperty(mrp.getRelatedType(), cpyModel, mrp.getPropertyName(), mrp.isReference()));
 			}
 
@@ -452,7 +483,8 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 					final String ipath = PropertyPath.index(crntPropPath, ip.getIndex());
 					if(cp.evaluateProperty(ip, ipath)) {
 						final Model im = ip.getModel();
-						final Model cim = copy(ipath, im, cp, visited);
+						boolean keepRef = ip.isReference()? cp.maintainReference() : false;
+						final Model cim = keepRef ? im : copy(ipath, im, cp, visited);
 						if(cim != null) clist.add(cim);
 					}
 				}
@@ -967,6 +999,9 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 				break;
 			case NO_REFERENCES:
 				cp = new NoReferencesPredicate();
+				break;
+			case KEEP_REFERENCES:
+				cp = new KeepReferencesPredicate();
 				break;
 			default:
 			case ALL:
