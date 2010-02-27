@@ -9,24 +9,27 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.tll.client.data.rpc.IHasRpcHandlers;
 import com.tll.client.data.rpc.IRpcHandler;
 import com.tll.client.data.rpc.RpcEvent;
-import com.tll.client.listing.IListingConfig;
 import com.tll.client.ui.RpcUiHandler;
+import com.tll.client.ui.listing.ListingNavBar;
+import com.tll.client.ui.listing.ModelListingTable;
 import com.tll.client.ui.listing.ModelListingWidget;
 import com.tll.common.model.Model;
 
 
 /**
  * RemoteListingWidget
+ * @param <T> table type
  * @author jpk
  */
-public class RemoteListingWidget extends ModelListingWidget implements IHasRpcHandlers {
+public class RemoteListingWidget<T extends ModelListingTable> extends ModelListingWidget<T> implements IHasRpcHandlers {
 
 	/**
 	 * Constructor
-	 * @param config
+	 * @param table
+	 * @param navBar
 	 */
-	public RemoteListingWidget(IListingConfig<Model> config) {
-		super(config);
+	public RemoteListingWidget(T table, ListingNavBar<Model> navBar) {
+		super(table, navBar);
 		addRpcHandler(new RpcUiHandler(this));
 	}
 

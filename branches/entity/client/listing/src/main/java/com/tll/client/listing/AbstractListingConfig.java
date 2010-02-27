@@ -15,7 +15,7 @@ import com.tll.dao.Sorting;
  */
 public abstract class AbstractListingConfig<R> implements IListingConfig<R> {
 
-	private final String caption, listingElementName;
+	private final String listingElementName;
 	private final String[] modelProps;
 	private final Column[] cols;
 	private final Sorting defaultSorting;
@@ -23,30 +23,27 @@ public abstract class AbstractListingConfig<R> implements IListingConfig<R> {
 
 	/**
 	 * Constructor
-	 * @param caption
 	 * @param listingElementName
 	 * @param modelProps
 	 * @param cols
 	 * @param defaultSorting
 	 */
-	public AbstractListingConfig(String caption, String listingElementName, String[] modelProps, Column[] cols,
+	public AbstractListingConfig(String listingElementName, String[] modelProps, Column[] cols,
 			Sorting defaultSorting) {
-		this(caption, listingElementName, modelProps, cols, defaultSorting, DEFAULT_PAGE_SIZE);
+		this(listingElementName, modelProps, cols, defaultSorting, DEFAULT_PAGE_SIZE);
 	}
 
 	/**
 	 * Constructor
-	 * @param caption
 	 * @param listingElementName
 	 * @param modelProps
 	 * @param cols
 	 * @param defaultSorting
 	 * @param pageSize
 	 */
-	public AbstractListingConfig(String caption, String listingElementName, String[] modelProps, Column[] cols,
+	public AbstractListingConfig(String listingElementName, String[] modelProps, Column[] cols,
 			Sorting defaultSorting, int pageSize) {
 		super();
-		this.caption = caption;
 		this.listingElementName = listingElementName;
 		this.modelProps = modelProps;
 		this.cols = cols;
@@ -62,11 +59,6 @@ public abstract class AbstractListingConfig<R> implements IListingConfig<R> {
 	@Override
 	public final String getListingElementName() {
 		return listingElementName;
-	}
-
-	@Override
-	public final String getCaption() {
-		return caption;
 	}
 
 	@Override
@@ -112,6 +104,6 @@ public abstract class AbstractListingConfig<R> implements IListingConfig<R> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public ITableCellRenderer<R> getCellRenderer() {
-		return (ITableCellRenderer<R>) DefaultCellRenderer.get();
+		return (ITableCellRenderer<R>) new ModelCellRenderer();
 	}
 }

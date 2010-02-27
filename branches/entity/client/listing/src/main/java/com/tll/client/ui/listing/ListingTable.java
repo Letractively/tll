@@ -355,13 +355,15 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 				}
 			}
 			else {
-				String cv = cellRenderer.getCellValue(rowData, columns[c]);
+				cellRenderer.renderCell(rowIndex, c, rowData, columns[c], this);
+				/*
 				if(overwriteOnNull || cv != null) {
 					if(cv == null) {
 						cv = "-";
 					}
 					setText(rowIndex, c, cv);
 				}
+				*/
 			}
 		}
 	}
@@ -419,11 +421,21 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		}
 	}
 
-	public void onClick(ClickEvent event) {
+	public final void onClick(ClickEvent event) {
 		if(event.getSource() == this) {
 			final Cell cell = getCellForEvent(event);
 			setCurrentRow(cell.getRowIndex());
+			onCellClick(cell.getCellIndex(), cell.getRowIndex());
 		}
+	}
+	
+	/**
+	 * Called when a table cell is clicked
+	 * @param colIndex
+	 * @param rowIndex
+	 */
+	protected void onCellClick(int colIndex, int rowIndex) {
+		// base impl no-op
 	}
 
 	public void onKeyDown(KeyDownEvent event) {

@@ -10,7 +10,7 @@ package com.tll.client.mvc.view;
  * only require a {@link ViewClass} for initialization.
  * @author jpk
  */
-public final class StaticViewInitializer extends AbstractViewKeyProvider implements IViewInitializer {
+public class StaticViewInitializer extends AbstractViewKeyProvider implements IViewInitializer {
 
 	private final ViewKey key;
 

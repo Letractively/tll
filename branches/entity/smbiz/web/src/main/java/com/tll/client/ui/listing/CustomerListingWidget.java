@@ -34,7 +34,7 @@ import com.tll.listhandler.ListHandlerType;
  * CustomerListingWidget
  * @author jpk
  */
-public class CustomerListingWidget extends RemoteListingWidget {
+public class CustomerListingWidget extends RemoteListingWidget<ModelListingTable> {
 
 	/**
 	 * CustomerListingConfig
@@ -73,7 +73,7 @@ public class CustomerListingWidget extends RemoteListingWidget {
 		 * Constructor
 		 */
 		public CustomerListingConfig() {
-			super(null, listingElementName, mprops, cols, defaultSorting);
+			super(listingElementName, mprops, cols, defaultSorting);
 		}
 	}
 
@@ -127,7 +127,7 @@ public class CustomerListingWidget extends RemoteListingWidget {
 	 *        customers
 	 */
 	public CustomerListingWidget(ModelKey parentAccountRef) {
-		super(config);
+		super(new ModelListingTable(config), new ListingNavBar<Model>(config, null));
 		this.parentAccountRef = parentAccountRef;
 		criteria = new NamedQuerySearch(SmbizEntityType.CUSTOMER, "account.customerList", true);
 		criteria.addParam(new StringPropertyValue("parentId", parentAccountRef.getId()));
@@ -141,12 +141,10 @@ public class CustomerListingWidget extends RemoteListingWidget {
 		return parentAccountRef;
 	}
 
-	@Override
 	protected IRowOptionsDelegate getRowOptionsHandler() {
 		return new RowHandler();
 	}
 
-	@Override
 	protected IAddRowDelegate getAddRowHandler() {
 		// TODO impl
 		return null;

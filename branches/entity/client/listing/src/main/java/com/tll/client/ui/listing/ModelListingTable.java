@@ -16,7 +16,7 @@ import com.tll.common.model.ModelKey;
  * ModelListingTable - A table whose rows are identifiable by a key.
  * @author jpk
  */
-public final class ModelListingTable extends ListingTable<Model> {
+public class ModelListingTable extends ListingTable<Model> {
 
 	/**
 	 * The row data comprised of . {@link Model} instances for each listing
@@ -37,7 +37,7 @@ public final class ModelListingTable extends ListingTable<Model> {
 	 * @param row 0-based table row num (considers the header row).
 	 * @return ModelKey
 	 */
-	ModelKey getRowKey(int row) {
+	protected ModelKey getRowKey(int row) {
 		return getRowData(row).getKey();
 	}
 
@@ -46,7 +46,7 @@ public final class ModelListingTable extends ListingTable<Model> {
 	 * @param row 0-based table row num (considers the header row).
 	 * @return the model row data
 	 */
-	Model getRowData(int row) {
+	protected Model getRowData(int row) {
 		return rowDataList.get(row - 1);
 	}
 
@@ -56,7 +56,7 @@ public final class ModelListingTable extends ListingTable<Model> {
 	 * @return The resolved row index or <code>-1</code> if no row matching the
 	 *         given row key is present in the table.
 	 */
-	int getRowIndex(ModelKey rowKey) {
+	protected int getRowIndex(ModelKey rowKey) {
 		for(int i = 0; i < rowDataList.size(); i++) {
 			final ModelKey rdlKey = rowDataList.get(i).getKey();
 			if(rdlKey.equals(rowKey)) return i + 1; // account for header row
@@ -80,19 +80,19 @@ public final class ModelListingTable extends ListingTable<Model> {
 	}
 
 	@Override
-	int addRow(Model rowData) {
+	protected int addRow(Model rowData) {
 		rowDataList.add(rowData);
 		return super.addRow(rowData);
 	}
 
 	@Override
-	void updateRow(int rowIndex, Model rowData) {
+	protected void updateRow(int rowIndex, Model rowData) {
 		rowDataList.set(rowIndex - 1, rowData);
 		super.updateRow(rowIndex, rowData);
 	}
 
 	@Override
-	void deleteRow(int rowIndex) {
+	protected void deleteRow(int rowIndex) {
 		rowDataList.remove(rowIndex - 1);
 		super.deleteRow(rowIndex);
 	}
@@ -101,7 +101,7 @@ public final class ModelListingTable extends ListingTable<Model> {
 	 * Applies model data to a given row in the UI only and does not alter the
 	 * underlying row data.
 	 */
-	void applyModeltoUi(int rowIndex, Model mdata) {
+	protected void applyModeltoUi(int rowIndex, Model mdata) {
 		super.setRowData(rowIndex, -1, mdata, true);
 		getRowFormatter().addStyleName(rowIndex, Styles.UPDATED);
 	}

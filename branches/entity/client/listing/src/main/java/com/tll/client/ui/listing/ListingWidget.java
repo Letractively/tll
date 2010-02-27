@@ -10,14 +10,10 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Focusable;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.listing.IAddRowDelegate;
-import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingHandler;
 import com.tll.client.listing.IListingOperator;
-import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ListingEvent;
 
 /**
@@ -26,8 +22,7 @@ import com.tll.client.listing.ListingEvent;
  * @param <R> The row data type.
  * @param <T> the table widget type
  */
-public abstract class ListingWidget<R, T extends ListingTable<R>> extends Composite implements
-Focusable, KeyDownHandler, IListingHandler<R> {
+public abstract class ListingWidget<R, T extends ListingTable<R>> extends Composite implements Focusable, KeyDownHandler, IListingHandler<R> {
 
 	/**
 	 * Styles - (tableview.css)
@@ -79,24 +74,17 @@ Focusable, KeyDownHandler, IListingHandler<R> {
 	/**
 	 * The optional row popup.
 	 */
-	protected RowContextPopup rowPopup;
+	//protected RowContextPopup rowPopup;
 
 	/**
 	 * Constructor
-	 * @param config The listing configuration
-	 * @param table {@link ListingTable} implementation
+	 * @param table listing table widget
+	 * @param navBar optional nav bar
 	 */
-	public ListingWidget(IListingConfig<R> config, T table) {
+	public ListingWidget(T table, ListingNavBar<R> navBar) {
 		super();
 		final FlowPanel tableViewPanel = new FlowPanel();
 		tableViewPanel.setStylePrimaryName(Styles.TABLE_VIEW);
-
-		// add a caption if specified
-		if(config.getCaption() != null) {
-			final Label caption = new Label(config.getCaption());
-			caption.setStyleName(Styles.CAPTION);
-			tableViewPanel.add(caption);
-		}
 
 		// portal
 		portal.setStyleName(Styles.PORTAL);
@@ -108,6 +96,8 @@ Focusable, KeyDownHandler, IListingHandler<R> {
 		this.table = table;
 
 		// generate nav bar
+		this.navBar = navBar;
+		/*
 		if(config.isShowNavBar()) {
 			navBar = new ListingNavBar<R>(config, getAddRowHandler());
 			tableViewPanel.add(navBar.getWidget());
@@ -119,18 +109,11 @@ Focusable, KeyDownHandler, IListingHandler<R> {
 		// row delegate?
 		final IRowOptionsDelegate rod = getRowOptionsHandler();
 		if(rod != null) rowPopup = new RowContextPopup(2000, table, rod);
+		*/
 
 		focusPanel.add(tableViewPanel);
 
 		initWidget(focusPanel);
-	}
-
-	protected IRowOptionsDelegate getRowOptionsHandler() {
-		return null; // default
-	}
-
-	protected IAddRowDelegate getAddRowHandler() {
-		return null; // default
 	}
 
 	/*
@@ -159,6 +142,7 @@ Focusable, KeyDownHandler, IListingHandler<R> {
 		return operator;
 	}
 
+	// TODO eliminate these methods: these are not widget specific rather data specific
 	public final void clear() {
 		operator.clear();
 	}

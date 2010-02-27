@@ -6,6 +6,7 @@
 package com.tll.client.mvc.view;
 
 import com.tll.client.model.ModelChangeEvent;
+import com.tll.client.ui.listing.ModelListingTable;
 import com.tll.client.ui.listing.ModelListingWidget;
 
 /**
@@ -14,7 +15,7 @@ import com.tll.client.ui.listing.ModelListingWidget;
  * @param <I> the view initializer type
  * @param <L> the listing widget type
  */
-public abstract class ListingView<I extends IViewInitializer, L extends ModelListingWidget> extends AbstractModelAwareView<I> {
+public abstract class ListingView<I extends IViewInitializer, L extends ModelListingWidget<ModelListingTable>> extends AbstractModelAwareView<I> {
 
 	protected static abstract class AbstractListingViewClass extends ViewClass {
 

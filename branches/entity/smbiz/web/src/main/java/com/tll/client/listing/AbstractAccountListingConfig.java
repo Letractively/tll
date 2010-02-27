@@ -18,29 +18,27 @@ public abstract class AbstractAccountListingConfig extends AbstractListingConfig
 
 	/**
 	 * Constructor
-	 * @param caption
 	 * @param listingElementName
 	 * @param modelProps
 	 * @param cols
 	 * @param defaultSorting
 	 * @param pageSize
 	 */
-	public AbstractAccountListingConfig(String caption, String listingElementName, String[] modelProps, Column[] cols,
+	public AbstractAccountListingConfig(String listingElementName, String[] modelProps, Column[] cols,
 			Sorting defaultSorting, int pageSize) {
-		super(caption, listingElementName, modelProps, cols, defaultSorting, pageSize);
+		super(listingElementName, modelProps, cols, defaultSorting, pageSize);
 	}
 
 	/**
 	 * Constructor
-	 * @param caption
 	 * @param listingElementName
 	 * @param modelProps
 	 * @param cols
 	 * @param defaultSorting
 	 */
-	public AbstractAccountListingConfig(String caption, String listingElementName, String[] modelProps, Column[] cols,
+	public AbstractAccountListingConfig(String listingElementName, String[] modelProps, Column[] cols,
 			Sorting defaultSorting) {
-		super(caption, listingElementName, modelProps, cols, defaultSorting);
+		super(listingElementName, modelProps, cols, defaultSorting);
 	}
 
 	@Override

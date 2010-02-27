@@ -11,9 +11,7 @@ import com.tll.client.SmbizAdmin;
 import com.tll.client.listing.AbstractAccountListingConfig;
 import com.tll.client.listing.AbstractRowOptions;
 import com.tll.client.listing.Column;
-import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.rpc.RemoteListingOperator;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.ShowViewRequest;
@@ -33,7 +31,7 @@ import com.tll.listhandler.ListHandlerType;
  * MerchantListingWidget
  * @author jpk
  */
-public class MerchantListingWidget extends RemoteListingWidget {
+public class MerchantListingWidget extends RemoteListingWidget<ModelListingTable> {
 
 	/**
 	 * MerchantListingConfig
@@ -70,7 +68,7 @@ public class MerchantListingWidget extends RemoteListingWidget {
 		 * Constructor
 		 */
 		public MerchantListingConfig() {
-			super(null, listingElementName, mprops, cols, defaultSorting);
+			super(listingElementName, mprops, cols, defaultSorting);
 		}
 	}
 
@@ -117,7 +115,7 @@ public class MerchantListingWidget extends RemoteListingWidget {
 	 *        customers
 	 */
 	public MerchantListingWidget(ModelKey parentAccountRef) {
-		super(config);
+		super(new ModelListingTable(config), null);
 		this.parentAccountRef = parentAccountRef;
 		criteria = new NamedQuerySearch(SmbizEntityType.MERCHANT, "account.merchantList", true);
 		criteria.addParam(new StringPropertyValue("parentId", parentAccountRef.getId()));
@@ -127,6 +125,7 @@ public class MerchantListingWidget extends RemoteListingWidget {
 				config.getPageSize(), config.getDefaultSorting()));
 	}
 
+	/*
 	@Override
 	protected IRowOptionsDelegate getRowOptionsHandler() {
 		return new RowHandler();
@@ -137,4 +136,5 @@ public class MerchantListingWidget extends RemoteListingWidget {
 		// TODO impl
 		return null;
 	}
+	*/
 }

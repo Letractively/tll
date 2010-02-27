@@ -1,15 +1,17 @@
 package com.tll.client;
 
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.listing.AbstractRowOptions;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.listing.ModelPropertyFormatter;
 import com.tll.client.listing.rpc.RemoteListingOperator;
+import com.tll.client.ui.listing.ListingNavBar;
+import com.tll.client.ui.listing.ModelListingTable;
 import com.tll.client.ui.listing.ModelListingWidget;
 import com.tll.client.ui.listing.rpc.RemoteListingWidget;
 import com.tll.common.model.Model;
@@ -99,13 +101,14 @@ public final class UITests extends AbstractUITest {
 		private final ITableCellRenderer<Model> cellRenderer = new ITableCellRenderer<Model>() {
 
 			@Override
-			public String getCellValue(Model rowData, Column column) {
+			public void renderCell(int rowIndex, int cellIndex, Model rowData, Column column, HTMLTable table) {
+				String cval;
 				if(column == cName) {
 					final StringBuilder sb = new StringBuilder();
 					sb.append(ModelPropertyFormatter.pformat(rowData, "firstName", null));
 					sb.append(" ");
 					sb.append(ModelPropertyFormatter.pformat(rowData, "lastName", null));
-					return sb.toString();
+					cval = sb.toString();
 				}
 				else if(column == cAddress) {
 					final StringBuilder sb = new StringBuilder();
@@ -115,12 +118,15 @@ public final class UITests extends AbstractUITest {
 						sb.append(" ");
 						sb.append(a2);
 					}
-					return sb.toString();
+					cval = sb.toString();
 				}
 				else if(column == cCity) {
-					return ModelPropertyFormatter.pformat(rowData, "city", null);
+					cval = ModelPropertyFormatter.pformat(rowData, "city", null);
 				}
-				throw new IllegalStateException("Un-resolvable column: " + column);
+				else {
+					throw new IllegalStateException("Un-resolvable column: " + column);
+				}
+				table.setText(rowIndex, cellIndex, cval);
 			}
 		};
 
@@ -178,39 +184,28 @@ public final class UITests extends AbstractUITest {
 		public ITableCellRenderer<Model> getCellRenderer() {
 			return cellRenderer;
 		}
-
-		@Override
-		public String getCaption() {
-			return "Addresses";
-		}
 	} // TestConfig
 
-	static class TestListingWidget extends RemoteListingWidget {
+	static class TestListingWidget extends RemoteListingWidget<ModelListingTable> {
 
 		static final TestConfig config = new TestConfig();
 		static final TestAddressSearch criteria = new TestAddressSearch();
 
 		static final TestRowOptions rowOptions = new TestRowOptions();
 		static final TestAddRowDelegate addRowDelegate = new TestAddRowDelegate();
+		
+		static {
+			
+		}
 
 		public TestListingWidget() {
-			super(config);
+			super(new ModelListingTable(config), new ListingNavBar<Model>(config, addRowDelegate));
 
 			setOperator(RemoteListingOperator.create(config.getListingId(), ListHandlerType.PAGE, criteria, config
 					.getModelProperties(), config.getPageSize(), config.getDefaultSorting()));
 
 			rowOptions.setListing(this);
 			addRowDelegate.setListing(this);
-		}
-
-		@Override
-		protected IAddRowDelegate getAddRowHandler() {
-			return addRowDelegate;
-		}
-
-		@Override
-		protected IRowOptionsDelegate getRowOptionsHandler() {
-			return rowOptions;
 		}
 
 	} // TestListingWidget
@@ -222,7 +217,7 @@ public final class UITests extends AbstractUITest {
 	static final class RemoteListingWidgetTest extends DefaultUITestCase {
 
 		TestConfig config;
-		ModelListingWidget lw;
+		ModelListingWidget<ModelListingTable> lw;
 
 		/**
 		 * Constructor

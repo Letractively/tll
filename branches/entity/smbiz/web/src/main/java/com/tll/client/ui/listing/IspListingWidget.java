@@ -13,9 +13,7 @@ import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.listing.AbstractAccountListingConfig;
 import com.tll.client.listing.AbstractRowOptions;
 import com.tll.client.listing.Column;
-import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.rpc.RemoteListingOperator;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.EditViewInitializer;
@@ -35,7 +33,7 @@ import com.tll.listhandler.ListHandlerType;
  * IspListingWidget
  * @author jpk
  */
-public class IspListingWidget extends RemoteListingWidget {
+public class IspListingWidget extends RemoteListingWidget<ModelListingTable> {
 
 	static final Option mListing = new Option("Merchant Listing", AbstractImagePrototype.create(App.imgs().arrow_sm_down()).createImage());
 
@@ -72,7 +70,7 @@ public class IspListingWidget extends RemoteListingWidget {
 		 * Constructor
 		 */
 		public IspListingConfig() {
-			super(null, listingElementName, mprops, cols, defaultSorting);
+			super(listingElementName, mprops, cols, defaultSorting);
 		}
 	}
 
@@ -120,7 +118,7 @@ public class IspListingWidget extends RemoteListingWidget {
 	 * Constructor
 	 */
 	public IspListingWidget() {
-		super(config);
+		super(new ModelListingTable(config), new ListingNavBar<Model>(config, null));
 		criteria = new NamedQuerySearch(SmbizEntityType.ISP, "account.ispList", true);
 
 		setOperator(RemoteListingOperator.create(config.getListingId(),
@@ -128,6 +126,7 @@ public class IspListingWidget extends RemoteListingWidget {
 				config.getPageSize(), config.getDefaultSorting()));
 	}
 
+	/*
 	@Override
 	protected IRowOptionsDelegate getRowOptionsHandler() {
 		return new RowHandler();
@@ -138,4 +137,5 @@ public class IspListingWidget extends RemoteListingWidget {
 		// TODO impl
 		return null;
 	}
+	*/
 }

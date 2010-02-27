@@ -28,12 +28,6 @@ public interface IListingConfig<R> {
 	String getListingElementName();
 
 	/**
-	 * Optional table caption name.
-	 * @return The table caption name
-	 */
-	String getCaption();
-
-	/**
 	 * @return The columns
 	 */
 	Column[] getColumns();

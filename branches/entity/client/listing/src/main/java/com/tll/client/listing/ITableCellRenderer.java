@@ -4,6 +4,8 @@
  */
 package com.tll.client.listing;
 
+import com.google.gwt.user.client.ui.HTMLTable;
+
 /**
  * ITableCellRenderer - Responsible for transforming row data to presentation
  * ready columned text.
@@ -14,9 +16,11 @@ public interface ITableCellRenderer<R> {
 
 	/**
 	 * Provides the table cell value given the row data and particular column.
-	 * @param rowData The row data.
+	 * @param rowIndex the 0-based row index
+	 * @param cellIndex
+	 * @param rowData The row data
 	 * @param column The table column
-	 * @return The table cell value
+	 * @param table the table in which to render the cell contents
 	 */
-	String getCellValue(R rowData, Column column);
+	void renderCell(int rowIndex, int cellIndex, R rowData, Column column, HTMLTable table);
 }

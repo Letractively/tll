@@ -5,7 +5,6 @@
  */
 package com.tll.client.ui.listing;
 
-import com.tll.client.listing.IListingConfig;
 import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.common.model.Model;
@@ -13,17 +12,19 @@ import com.tll.common.model.ModelKey;
 
 /**
  * ModelListingWidget - Listing Widget dedicated to handling Model type data.
+ * @param <T> the model table type
  * @author jpk
  */
-public class ModelListingWidget extends ListingWidget<Model, ModelListingTable>
+public class ModelListingWidget<T extends ModelListingTable> extends ListingWidget<Model, T>
 implements IModelChangeHandler {
 
 	/**
 	 * Constructor
-	 * @param config
+	 * @param table
+	 * @param navBar
 	 */
-	public ModelListingWidget(IListingConfig<Model> config) {
-		super(config, new ModelListingTable(config));
+	public ModelListingWidget(T table, ListingNavBar<Model> navBar) {
+		super(table, navBar);
 	}
 
 	/**
