@@ -21,7 +21,6 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.Event.NativePreviewHandler;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -341,48 +340,41 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 			hrEventPreview = Event.addNativePreviewHandler(this);
 		}
 	}
-
+	
 	/**
-	 * Pins the view container to the given parent panel
-	 * @param parent The parent panel
+	 * Sets the state of this container to be ready for pinning to a Panel.
 	 */
-	public void pin(Panel parent) {
-		if(!isAttached() || isPopped()) {
-			assert parent != null;
+	public void makePinReady() {
+		if(hrEventPreview != null) {
+			hrEventPreview.removeHandler();
+			hrEventPreview = null;
+		}
 
-			if(hrEventPreview != null) {
-				hrEventPreview.removeHandler();
-				hrEventPreview = null;
-			}
+		if(hrMouseDown != null) {
+			hrMouseDown.removeHandler();
+			hrMouseMove.removeHandler();
+			hrMouseUp.removeHandler();
+			hrMouseDown = hrMouseMove = hrMouseUp = null;
+		}
 
-			if(hrMouseDown != null) {
-				hrMouseDown.removeHandler();
-				hrMouseMove.removeHandler();
-				hrMouseUp.removeHandler();
-				hrMouseDown = hrMouseMove = hrMouseUp = null;
-			}
+		final Element elm = getElement();
+		elm.getStyle().setProperty("position", "");
+		elm.getStyle().setProperty("left", "");
+		elm.getStyle().setProperty("top", "");
+		elm.getStyle().setProperty("width", "");
+		elm.getStyle().setProperty("height", "");
 
-			final Element elm = getElement();
-			elm.getStyle().setProperty("position", "");
-			elm.getStyle().setProperty("left", "");
-			elm.getStyle().setProperty("top", "");
-			elm.getStyle().setProperty("width", "");
-			elm.getStyle().setProperty("height", "");
+		mainLayout.removeStyleDependentName(Styles.POPPED);
+		mainLayout.addStyleDependentName(Styles.PINNED);
 
-			mainLayout.removeStyleDependentName(Styles.POPPED);
-			mainLayout.addStyleDependentName(Styles.PINNED);
+		maximize();
+		if(toolbar.btnMinimize != null) {
+			toolbar.show(toolbar.btnMinimize, false);
+		}
 
-			maximize();
-			if(toolbar.btnMinimize != null) {
-				toolbar.show(toolbar.btnMinimize, false);
-			}
-
-			if(toolbar.btnPop != null) {
-				toolbar.btnPop.setDown(false);
-				toolbar.btnPop.setTitle(ViewToolbar.TITLE_POP);
-			}
-
-			parent.add(this);
+		if(toolbar.btnPop != null) {
+			toolbar.btnPop.setDown(false);
+			toolbar.btnPop.setTitle(ViewToolbar.TITLE_POP);
 		}
 	}
 

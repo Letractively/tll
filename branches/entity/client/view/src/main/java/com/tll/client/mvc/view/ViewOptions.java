@@ -14,20 +14,14 @@ public class ViewOptions {
 	/**
 	 * The default view options.
 	 */
-	public static final ViewOptions DEFAULT_VIEW_OPTIONS = new ViewOptions(true, true, true, true, false);
+	public static final ViewOptions DEFAULT_VIEW_OPTIONS = new ViewOptions(true, true, true, true, false, false);
 
-	private boolean closable;
-	private boolean minimizable;
-	private boolean refreshable;
-	private boolean popable;
-	private boolean initiallyPopped;
-
-	/**
-	 * Constructor
-	 */
-	public ViewOptions() {
-		super();
-	}
+	private final boolean closable;
+	private final boolean minimizable;
+	private final boolean refreshable;
+	private final boolean popable;
+	private final boolean initiallyPopped;
+	private final boolean keepInDom;
 
 	/**
 	 * Constructor
@@ -36,15 +30,19 @@ public class ViewOptions {
 	 * @param refreshable
 	 * @param popable
 	 * @param initiallyPopped
+	 * @param keepInDom Flag indicating that view's should not be removed from the
+	 *        DOM when uloading the view rather to set the view's visibility to
+	 *        false.
 	 */
 	public ViewOptions(boolean closable, boolean minimizable, boolean refreshable, boolean popable,
-			boolean initiallyPopped) {
+			boolean initiallyPopped, boolean keepInDom) {
 		super();
 		this.closable = closable;
 		this.minimizable = minimizable;
 		this.refreshable = refreshable;
 		this.popable = popable;
 		this.initiallyPopped = initiallyPopped;
+		this.keepInDom = keepInDom;
 	}
 
 	/**
@@ -55,24 +53,10 @@ public class ViewOptions {
 	}
 
 	/**
-	 * @param minimizable the minimizable to set
-	 */
-	public void setMinimizable(boolean minimizable) {
-		this.minimizable = minimizable;
-	}
-
-	/**
 	 * @return the popable
 	 */
 	public boolean isPopable() {
 		return popable;
-	}
-
-	/**
-	 * @param popable the popable to set
-	 */
-	public void setPopable(boolean popable) {
-		this.popable = popable;
 	}
 
 	/**
@@ -83,24 +67,10 @@ public class ViewOptions {
 	}
 
 	/**
-	 * @param initiallyPopped the initiallyPopped to set
-	 */
-	public void setInitiallyPopped(boolean initiallyPopped) {
-		this.initiallyPopped = initiallyPopped;
-	}
-
-	/**
 	 * @return the closable
 	 */
 	public boolean isClosable() {
 		return closable;
-	}
-
-	/**
-	 * @param closable the closable to set
-	 */
-	public void setClosable(boolean closable) {
-		this.closable = closable;
 	}
 
 	/**
@@ -111,10 +81,10 @@ public class ViewOptions {
 	}
 
 	/**
-	 * @param refreshable the refreshable to set
+	 * @return <code>true</code> if view's of this class should always be kept in
+	 *         the DOM.
 	 */
-	public void setRefreshable(boolean refreshable) {
-		this.refreshable = refreshable;
+	public boolean isKeepInDom() {
+		return keepInDom;
 	}
-
 }

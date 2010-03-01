@@ -124,7 +124,7 @@
 }
 
 .tableView tr.crnt {
-	background-color: #DFDFDF;
+	/*background-color: #DFDFDF;*/
 	cursor: pointer;
 }
 

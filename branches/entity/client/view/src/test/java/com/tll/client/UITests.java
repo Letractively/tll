@@ -62,7 +62,7 @@ public final class UITests extends AbstractUITest {
 
 		@Override
 		protected void init() {
-			final ViewOptions vo = new ViewOptions(true, true, true, true, false);
+			final ViewOptions vo = new ViewOptions(true, true, true, true, false, false);
 			vt = new ViewToolbar("Testing", vo, new ClickHandler() {
 
 				@Override

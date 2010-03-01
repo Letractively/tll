@@ -19,7 +19,7 @@ public abstract class MainView extends AbstractView<StaticViewInitializer> {
 	 */
 	public static abstract class MainViewClass extends ViewClass {
 
-		private static final ViewOptions VIEW_OPTIONS = new ViewOptions(false, false, false, false, false);
+		private static final ViewOptions VIEW_OPTIONS = new ViewOptions(false, false, false, false, false, false);
 
 		private final String name;
 

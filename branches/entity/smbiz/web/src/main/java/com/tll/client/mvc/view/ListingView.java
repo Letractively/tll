@@ -19,7 +19,7 @@ public abstract class ListingView<I extends IViewInitializer, L extends ModelLis
 
 	protected static abstract class AbstractListingViewClass extends ViewClass {
 
-		private static final ViewOptions VIEW_OPTIONS = new ViewOptions(true, false, true, false, false);
+		private static final ViewOptions VIEW_OPTIONS = new ViewOptions(true, false, true, false, false, false);
 
 		@Override
 		public ViewOptions getViewOptions() {

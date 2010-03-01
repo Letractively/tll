@@ -23,7 +23,7 @@ public class UserEditView extends EditView {
 
 	public static final class Class extends ViewClass {
 
-		private static final ViewOptions VIEW_OPTIONS = new ViewOptions(true, true, true, true, true);
+		private static final ViewOptions VIEW_OPTIONS = new ViewOptions(true, true, true, true, true, false);
 
 		@Override
 		public String getName() {

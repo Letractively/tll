@@ -14,6 +14,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.tll.client.mvc.view.IHasViewChangeHandlers;
@@ -101,7 +102,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 *        container. Must not be <code>null</code>.
 	 * @param cacheCapacity The limit of the number of views to hold in memory.
 	 */
-	public static void initialize(Panel parentViewPanel, int cacheCapacity) {
+	public static void initialize(ComplexPanel parentViewPanel, int cacheCapacity) {
 		instance = new ViewManager(parentViewPanel, cacheCapacity);
 	}
 
@@ -125,9 +126,9 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 
 	/**
 	 * The parent view panel. This property must be set so that views can attach
-	 * to the DOM.
+	 * to the DOM.  The panel must support multiple children.
 	 */
-	private final Panel parentViewPanel;
+	private final ComplexPanel parentViewPanel;
 
 	/**
 	 * The view cache.
@@ -171,9 +172,9 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * Constructor
 	 * @param parentPanel The panel that will contained pinned views.
 	 * @param cacheCapacity
-	 * @see ViewManager#initialize(Panel, int)
+	 * @see ViewManager#initialize(ComplexPanel, int)
 	 */
-	private ViewManager(Panel parentPanel, int cacheCapacity) {
+	private ViewManager(ComplexPanel parentPanel, int cacheCapacity) {
 		parentViewPanel = parentPanel;
 		cache = new ViewCache(cacheCapacity);
 		History.addValueChangeHandler(this);
@@ -266,6 +267,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 */
 	private void setCurrentView(CView e, boolean showPopped) {
 		final ViewContainer vc = e.vc;
+		final ViewOptions options = e.init.getViewKey().getViewClass().getViewOptions();
 
 		// set the view
 		if(showPopped) {
@@ -278,18 +280,29 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			final boolean crntIsPopped = current != null && current.vc.isPopped();
 
 			final boolean rmvCrnt = current != null && ((!sameView && !crntIsPopped) || (sameView && pndgIsPopped));
-			final boolean pinPndg = (rmvCrnt || (sameView && crntIsPopped) || !sameView || !e.vc.isAttached());
+			final boolean pinPndg = (rmvCrnt || (sameView && crntIsPopped) || !sameView || (!e.vc.isAttached() || !e.vc.isVisible()));
 
 			if(rmvCrnt) {
-				// remove current pinned view
-				current.vc.removeFromParent();
+				// remove or hide the current pinned view
+				if(current.init.getViewKey().getViewClass().getViewOptions().isKeepInDom()) {
+					current.vc.setVisible(false);
+				}
+				else {
+					current.vc.removeFromParent();
+				}
 				RootPanel.get().removeStyleName(current.vc.getView().getViewClass().getName());
 			}
 			if(pinPndg) {
 				// add the current view's view class name to the root panel
 				RootPanel.get().addStyleName(e.vc.getView().getViewClass().getName());
 				// ** pin the view (the current view in the dom) **
-				vc.pin(parentViewPanel);
+				vc.makePinReady();
+				if(options.isKeepInDom() && parentViewPanel.getWidgetIndex(vc) >= 0) {
+					vc.setVisible(true);
+				}
+				else {
+					parentViewPanel.add(vc);
+				}
 			}
 			// set as current
 			current = e;
