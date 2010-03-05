@@ -5,12 +5,11 @@
 package com.tll.client.model;
 
 import com.google.gwt.event.shared.GwtEvent;
-import com.tll.common.data.Status;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 
 /**
- * ModelChangeEvent - Used to dissemminate model changes.
+ * Used to dissemminate <em>successful</em> model changes.
  * @author jpk
  */
 public final class ModelChangeEvent extends GwtEvent<IModelChangeHandler> {
@@ -36,20 +35,16 @@ public final class ModelChangeEvent extends GwtEvent<IModelChangeHandler> {
 	private final Model model;
 	private final ModelKey modelKey;
 
-	private final Status status;
-
 	/**
 	 * Constructor
 	 * @param change
 	 * @param model
 	 * @param modelKey
-	 * @param status
 	 */
-	public ModelChangeEvent(ModelChangeOp change, Model model, ModelKey modelKey, Status status) {
+	public ModelChangeEvent(ModelChangeOp change, Model model, ModelKey modelKey) {
 		this.change = change;
 		this.model = model;
 		this.modelKey = modelKey;
-		this.status = status;
 	}
 
 	public ModelChangeOp getChangeOp() {
@@ -62,10 +57,6 @@ public final class ModelChangeEvent extends GwtEvent<IModelChangeHandler> {
 
 	public ModelKey getModelKey() {
 		return model == null ? modelKey : model.getKey();
-	}
-
-	public Status getStatus() {
-		return status;
 	}
 
 	@Override

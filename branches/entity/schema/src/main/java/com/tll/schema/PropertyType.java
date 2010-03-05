@@ -22,36 +22,41 @@ public enum PropertyType {
 	FLOAT(1 << 6),
 	DOUBLE(1 << 7),
 	DATE(1 << 8), // date and time (java.util.Date)
+	
+	/**
+	 * A non-marshalable unknown object reference.
+	 */
+	OBJECT(1 << 9),
 
-	STRING_MAP(1 << 9),
+	STRING_MAP(1 << 10),
 
 	/**
 	 * {@link #RELATED_ONE} corres. to a related one relation
 	 */
-	RELATED_ONE(1 << 10),
+	RELATED_ONE(1 << 11),
 
 	/**
 	 * {@link #RELATED_MANY} corres. to a related many type relation
 	 */
-	RELATED_MANY(1 << 11),
+	RELATED_MANY(1 << 12),
 
 	/**
 	 * {@link #INDEXED} corres. to an element referenced by index within a related
 	 * many relation
 	 */
-	INDEXED(1 << 12),
+	INDEXED(1 << 13),
 
 	/**
 	 * {@link #NESTED} corres. to a nested element.
 	 */
-	NESTED(1 << 13);
+	NESTED(1 << 14);
 
 	/**
 	 * {@link #VALUE_TYPES} corres. to non-collection and non-relational types
 	 */
 	private static final int VALUE_TYPES =
 		STRING.flag | CHAR.flag | ENUM.flag | BOOL.flag | INT.flag | LONG.flag | FLOAT.flag | DOUBLE.flag | DATE.flag
-		| STRING_MAP.flag;
+		| STRING_MAP.flag | OBJECT.flag;
 
 	/**
 	 * {@link #RELATIONAL_TYPES} corres. to those types that represent a relation

@@ -219,6 +219,18 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 		CView cv = cache.peekQueue(key);
 		return cv == null ? null : cv.vc.getView();
 	}
+	
+	/**
+	 * @return Array of currently cached views
+	 */
+	public IView<?>[] getCachedViews() {
+		ArrayList<IView<?>> list = new ArrayList<IView<?>>();
+		for(final Iterator<CView> itr = cache.queueIterator(); itr.hasNext();) {
+			final CView e = itr.next();
+			list.add(e.vc.getView());
+		}
+		return list.toArray(new IView[] {});
+	}
 
 	/**
 	 * Sets the current view. The current view is defined as the visible pinned

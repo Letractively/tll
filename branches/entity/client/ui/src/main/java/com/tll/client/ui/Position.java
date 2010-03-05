@@ -15,5 +15,11 @@ public enum Position {
 	 * {@link #BOTTOM}: Position beneath and left aligned of the associated ui
 	 * element.
 	 */
-	BOTTOM;
+	BOTTOM,
+	
+	/**
+	 * {@link #TOP}: Position above and left aligned of the associated ui
+	 * element.
+	 */
+	TOP
 }

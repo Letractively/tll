@@ -9,12 +9,14 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.model.ModelChangeEvent.ModelChangeOp;
+import com.tll.client.ui.msg.Msgs;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.LoadRequest;
 import com.tll.common.data.ModelPayload;
 import com.tll.common.data.AbstractModelRequest;
 import com.tll.common.data.PersistRequest;
 import com.tll.common.data.PurgeRequest;
+import com.tll.common.data.Status;
 import com.tll.common.data.rpc.ICrudService;
 import com.tll.common.data.rpc.ICrudServiceAsync;
 import com.tll.common.model.Model;
@@ -194,7 +196,12 @@ public class CrudCommand extends RpcCommand<ModelPayload> {
 			default:
 				throw new IllegalStateException("Unhandled crud op: " + crudOp);
 			}
-			source.fireEvent(new ModelChangeEvent(mop, result.getModel(), result.getRef(), result.getStatus()));
+			Status status = result.getStatus();
+			if(status.hasErrors()) {
+				Msgs.post(status.getMsgs(), source);
+				return;
+			}
+			source.fireEvent(new ModelChangeEvent(mop, result.getModel(), result.getRef()));
 		}
 	}
 }

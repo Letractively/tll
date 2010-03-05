@@ -27,9 +27,11 @@ public abstract class AbstractModelAwareView<I extends IViewInitializer> extends
 	 * Handles model change errors. Sub-classes should override as necessary.
 	 * @param event The {@link ModelChangeEvent}
 	 */
+	/*
 	protected void handleModelChangeError(ModelChangeEvent event) {
 		// base impl no-op
 	}
+	*/
 
 	/**
 	 * Handles successful model changes. Sub-classes should override as necessary.
@@ -45,14 +47,14 @@ public abstract class AbstractModelAwareView<I extends IViewInitializer> extends
 			Log.debug("View ( " + toString() + " ) is handling model change event: " + event.toString() + "..");
 
 			// global handling
-			if(event.getStatus() != null && event.getStatus().hasErrors()) {
+			//if(event.getStatus() != null && event.getStatus().hasErrors()) {
 				// has errors
-				handleModelChangeError(event);
-			}
-			else {
+				//handleModelChangeError(event);
+			//}
+			//else {
 				// no errors
 				handleModelChangeSuccess(event);
-			}
+			//}
 		}
 	}
 }

@@ -18,7 +18,7 @@ import com.tll.common.msg.Msg;
  * @see Msg
  * @author jpk
  */
-final class MsgPopup extends PopupPanel implements IMsgOperator {
+public class MsgPopup extends PopupPanel implements IMsgOperator {
 
 	private static final Position DEFAULT_POSITION = Position.BOTTOM;
 
@@ -26,6 +26,11 @@ final class MsgPopup extends PopupPanel implements IMsgOperator {
 	 * The non-<code>null</code> reference ui widget.
 	 */
 	private Widget refWidget;
+	
+	/**
+	 * Pixel offset top and left for displaying the popup relative to the ref widget.
+	 */
+	private int offsetTop = 0, offsetLeft = 0;
 
 	private int duration = -1;
 
@@ -77,6 +82,16 @@ final class MsgPopup extends PopupPanel implements IMsgOperator {
 	public void setRefWidget(Widget refWidget) {
 		if(refWidget == null) throw new IllegalArgumentException("Null ref widget");
 		this.refWidget = refWidget;
+	}
+	
+	/**
+	 * Set the display offsets relative to the ref widget.
+	 * @param top pixels
+	 * @param left pixels
+	 */
+	public void setRefWidgetOffset(int top, int left) {
+		this.offsetTop = top;
+		this.offsetLeft = left;
 	}
 
 	@Override
@@ -144,6 +159,12 @@ final class MsgPopup extends PopupPanel implements IMsgOperator {
 						final int ret = refWidget.getAbsoluteTop();
 						switch(position) {
 							default:
+							case TOP:
+								// position the msg panel left-aligned and directly above the ref
+								// widget
+								left = rel;
+								top = ret;
+								break;
 							case BOTTOM:
 								// position the msg panel left-aligned and directly beneath the ref
 								// widget
@@ -156,6 +177,8 @@ final class MsgPopup extends PopupPanel implements IMsgOperator {
 								break;
 							}
 						}
+						left += offsetLeft;
+						top += offsetTop;
 						setPopupPosition(Math.max(0, left), Math.max(0, top));
 					}
 				});

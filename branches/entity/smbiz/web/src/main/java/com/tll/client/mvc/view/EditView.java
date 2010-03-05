@@ -19,13 +19,11 @@ import com.tll.client.ui.edit.EditPanel;
 import com.tll.client.ui.edit.IEditHandler;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.msg.GlobalMsgPanel;
-import com.tll.client.validate.ErrorClassifier;
 import com.tll.client.validate.ErrorHandlerBuilder;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 import com.tll.common.msg.Msg;
-import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.common.search.PrimaryKeySearch;
 
@@ -184,11 +182,14 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 		return addHandler(handler, ModelChangeEvent.TYPE);
 	}
 
+	// TODO create explicit event handling system for conveying server side emmanated field/validation errors
+	/*
 	@Override
 	protected void handleModelChangeError(ModelChangeEvent event) {
 		gmp.clear();
 		editPanel.applyFieldErrors(event.getStatus().getMsgs(MsgAttr.FIELD.flag), ErrorClassifier.SERVER, true);
 	}
+	*/
 
 	@Override
 	protected void handleModelChangeSuccess(ModelChangeEvent event) {

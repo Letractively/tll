@@ -287,6 +287,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		}
 
 		public void onClick(ClickEvent event) {
+			event.stopPropagation();
 			final SortColumn sc =
 					new SortColumn(column.getPropertyName(), column.getParentAlias(), direction == SortDir.ASC ? SortDir.DESC
 							: SortDir.ASC, ignoreCaseWhenSorting ? Boolean.TRUE : Boolean.FALSE);
