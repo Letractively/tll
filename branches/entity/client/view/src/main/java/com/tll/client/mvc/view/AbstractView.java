@@ -95,7 +95,7 @@ public abstract class AbstractView<I extends IViewInitializer> extends Composite
 		viewKey = initializer.getViewKey();
 
 		// set unique dom element id
-		getElement().setId("view_" + viewKey.toString());
+		getElement().setId("view_" + Integer.toString(viewKey.hashCode()));
 
 		// add view specific style to the view's widget
 		if(getViewStyle() != null) {
