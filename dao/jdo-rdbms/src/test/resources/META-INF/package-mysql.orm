@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<orm xmlns="http://java.sun.com/xml/ns/jdo/orm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/jdo/orm
+        http://java.sun.com/xml/ns/jdo/orm_2_0.xsd">
+
+	<package name="com.tll.model">
+
+		<class name="EntityBase">
+			<primary-key>
+				<column name="id" jdbc-type="BIGINT" allows-null="false" />
+			</primary-key>
+			<column name="version" jdbc-type="BIGINT" default-value="0"/>
+		</class>
+		
+		<class name="NamedEntity">
+			<field name="name">
+				<column name="name" jdbc-type="VARCHAR" length="255" allows-null="false" />
+			</field>
+		</class>
+		
+		<class name="TimeStampEntity">
+			<field name="dateCreated">
+				<column name="date_created" jdbc-type="TIMESTAMP" allows-null="false" />
+			</field>
+			<field name="dateModified">
+				<column name="date_modified" jdbc-type="TIMESTAMP" allows-null="false" />
+			</field>
+		</class>
+
+		<class name="NamedTimeStampEntity">
+			<field name="name">
+				<column name="name" jdbc-type="VARCHAR" length="255" allows-null="false" />
+			</field>
+		</class>
+		
+	</package>
+
+	<package name="com.tll.model.test">
+
+		<class name="Address" table="address">
+			<unique name="address1__postal_code">
+				<column name="address_1" />
+				<column name="postal_code" />
+			</unique>
+			<field name="firstName">
+				<column name="first_name" jdbc-type="VARCHAR" length="64" />
+			</field>
+			<field name="lastName">
+				<column name="last_name" jdbc-type="VARCHAR" length="64" />
+			</field>
+			<field name="mi">
+				<column name="mi" jdbc-type="CHAR" length="1" />
+			</field>
+			<field name="company">
+				<column name="company" jdbc-type="VARCHAR" length="64" />
+			</field>
+			<field name="attn">
+				<column name="attn" jdbc-type="VARCHAR" length="64" />
+			</field>
+			<field name="address1">
+				<column name="address_1" jdbc-type="VARCHAR" length="128" allows-null="false" />
+			</field>
+			<field name="address2">
+				<column name="address_2" jdbc-type="VARCHAR" length="128" />
+			</field>
+			<field name="city">
+				<column name="city" jdbc-type="VARCHAR" length="128" allows-null="false" />
+			</field>
+			<field name="province">
+				<column name="province" jdbc-type="VARCHAR" length="128" allows-null="false" />
+			</field>
+			<field name="postalCode">
+				<column name="postal_code" jdbc-type="VARCHAR" length="15" allows-null="false" />
+			</field>
+			<field name="country">
+				<column name="country" jdbc-type="VARCHAR" length="128" allows-null="false" />
+			</field>
+			<field name="phone">
+				<column name="phone" jdbc-type="VARCHAR" length="15" />
+			</field>
+			<field name="fax">
+				<column name="fax" jdbc-type="VARCHAR" length="15" />
+			</field>
+			<field name="emailAddress">
+				<column name="email_address" jdbc-type="VARCHAR" length="128" />
+			</field>
+		</class>
+
+		<class name="Currency" table="currency">
+			<field name="symbol" unique="true">
+				<column name="symbol" jdbc-type="VARCHAR" length="8" allows-null="false" />
+			</field>
+			<field name="iso4217" unique="true">
+				<column name="iso_4217" jdbc-type="VARCHAR" length="16" allows-null="false" />
+			</field>
+			<field name="usdExchangeRate" unique="true">
+				<column name="usd_exchange_rate" jdbc-type="FLOAT" allows-null="false" />
+			</field>
+		</class>
+
+		<class name="NestedEntity" table="nested_entity">
+			<unique>
+				<column name="name" />
+			</unique>
+			<field name="nestedData">
+				<column name="data" jdbc-type="BLOB" />
+			</field>
+		</class>
+
+		<class name="Account" table="account">
+			<unique>
+				<column name="name" />
+			</unique>
+			<field name="parent">
+				<column name="parent_aid" jdbc-type="BIGINT" />
+				<foreign-key name="fk_prnt_acnt" delete-action="null" />
+			</field>
+			<field name="nestedEntity">
+				<column name="ne_id" jdbc-type="BIGINT" />
+				<foreign-key name="fk_a_ne" delete-action="null" />
+			</field>
+			<field name="currency">
+				<column name="cur_id" jdbc-type="BIGINT" />
+				<foreign-key name="fk_a_c" delete-action="null" />
+			</field>
+			<field name="status">
+				<column name="status" jdbc-type="TINYINT" allows-null="false" />
+			</field>
+			<field name="billingModel">
+				<column name="billing_model" jdbc-type="VARCHAR" length="32" />
+			</field>
+			<field name="dateLastCharged">
+				<column name="date_last_charged" jdbc-type="TIMESTAMP" />
+			</field>
+		</class>
+
+		<class name="AccountAddress" table="account_address">
+			<unique>
+				<column name="aid" />
+				<column name="address_id" />
+			</unique>
+			<unique>
+				<column name="aid" />
+				<column name="name" />
+			</unique>
+			<field name="type">
+				<column name="type" jdbc-type="VARCHAR" length="32" allows-null="false" />
+			</field>
+			<field name="account">
+				<column name="aid" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_aadr_a" delete-action="cascade" />
+			</field>
+			<field name="address">
+				<column name="address_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_aadr_adr" delete-action="cascade" />
+			</field>
+		</class>
+
+	</package>
+
+</orm>

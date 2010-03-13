@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jdo xmlns="http://java.sun.com/xml/ns/jdo/jdo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/jdo/jdo
+        http://java.sun.com/xml/ns/jdo/jdo_2_0.xsd">
+
+	<package name="com.tll.model">
+
+		<class name="EntityBase" identity-type="application" detachable="true">
+			<inheritance strategy="subclass-table" />
+			<version strategy="version-number">
+				<extension vendor-name="datanucleus" key="field-name" value="version" />
+			</version>
+
+			<!-- this is for jdo-rdbms -->
+			<field name="id" primary-key="true" value-strategy="increment">
+				<!-- CRITICAL: this ensures eagerly set ids are not ignored by JDO! -->
+				<extension vendor-name="datanucleus" key="strategy-when-notnull" value="false" />
+			</field>
+			
+			<!-- TODO override elsewhere -->
+			<!-- this is for gae -->
+			<!-- <field name="id" primary-key="true" value-strategy="identity" /> -->
+
+			<field name="generated" persistence-modifier="none" />
+		</class>
+
+		<class name="NamedEntity" detachable="true">
+			<inheritance strategy="subclass-table" />
+			<field name="name" />
+		</class>
+
+		<class name="TimeStampEntity" detachable="true">
+			<inheritance strategy="subclass-table" />
+			<field name="dateCreated" />
+			<field name="dateModified" />
+		</class>
+
+		<class name="NamedTimeStampEntity" detachable="true">
+			<inheritance strategy="subclass-table" />
+			<field name="name" />
+		</class>
+
+		<class name="IEntityFactory" persistence-modifier="persistence-aware" />
+
+	</package>
+
+	<package name="com.tll.model.test">
+
+		<class name="Address" detachable="true">
+			<field name="firstName" />
+			<field name="lastName" />
+			<field name="mi" />
+			<field name="company" />
+			<field name="attn" />
+			<field name="address1" />
+			<field name="address2" />
+			<field name="city" />
+			<field name="province" />
+			<field name="postalCode" />
+			<field name="country" />
+			<field name="phone" />
+			<field name="fax" />
+			<field name="emailAddress" />
+		</class>
+
+		<class name="Currency" detachable="true">
+			<field name="symbol" />
+			<field name="iso4217" />
+			<field name="usdExchangeRate" />
+		</class>
+
+		<class name="NestedEntity" detachable="true">
+			<field name="nestedData" serialized="true" persistence-modifier="persistent" />
+		</class>
+
+		<class name="Account" detachable="true">
+			<field name="parent" />
+			<field name="status" />
+			<field name="billingModel" />
+			<field name="dateLastCharged" />
+			<field name="nestedEntity" />
+			<field name="currency" />
+			<field name="addresses" mapped-by="account">
+				<collection element-type="AccountAddress" />
+			</field>
+		</class>
+
+		<class name="AccountAddress" detachable="true">
+			<field name="type" />
+			<field name="account" />
+			<field name="address" />
+		</class>
+
+	</package>
+
+</jdo>

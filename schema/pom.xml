@@ -1,0 +1,55 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<artifactId>tll</artifactId>
+		<groupId>com.tll</groupId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	
+	<groupId>com.tll</groupId>
+	<artifactId>tll-schema</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>tll-schema</name>
+	<description>Provides model schema metadata.</description>
+	
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/schema/AbstractSchemaProperty.java</include>
+					<include>**/schema/IPropertyMetadataProvider.java</include>
+					<include>**/schema/IPropertyNameProvider.java</include>
+					<include>**/schema/ISchemaProperty.java</include>
+					<include>**/schema/PropertyMetadata.java</include>
+					<include>**/schema/PropertyType.java</include>
+					<include>**/schema/IQueryParam.java</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+	</build>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>${testNGVersion}</version>
+			<classifier>jdk15</classifier>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+</project>
