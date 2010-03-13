@@ -9,15 +9,12 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.tll.common.model.IEntityType;
-import com.tll.refdata.RefDataType;
 
 /**
  * AuxDataRequest - Way to request "auxiliary" data when issuing an RPC call.
  * @author jpk
  */
 public final class AuxDataRequest implements IModelRelatedRequest {
-
-	private Set<RefDataType> refData;
 
 	private Set<IEntityType> entityTypes;
 
@@ -26,17 +23,6 @@ public final class AuxDataRequest implements IModelRelatedRequest {
 	@Override
 	public String descriptor() {
 		return "Aux Data Request";
-	}
-
-	/**
-	 * Request app ref data in the form of a string/string map.
-	 * @param refDataType
-	 */
-	public void requestAppRefData(RefDataType refDataType) {
-		if(refData == null) {
-			refData = new HashSet<RefDataType>();
-		}
-		refData.add(refDataType);
 	}
 
 	/**
@@ -57,10 +43,6 @@ public final class AuxDataRequest implements IModelRelatedRequest {
 		entityPrototypes.add(entityType);
 	}
 
-	public Iterator<RefDataType> getRefDataRequests() {
-		return refData == null ? null : refData.iterator();
-	}
-
 	public Iterator<IEntityType> getEntityRequests() {
 		return entityTypes == null ? null : entityTypes.iterator();
 	}
@@ -70,7 +52,6 @@ public final class AuxDataRequest implements IModelRelatedRequest {
 	}
 
 	public int size() {
-		return (refData == null ? 0 : refData.size()) + (entityTypes == null ? 0 : entityTypes.size())
-		+ (entityPrototypes == null ? 0 : entityPrototypes.size());
+		return (entityTypes == null ? 0 : entityTypes.size()) + (entityPrototypes == null ? 0 : entityPrototypes.size());
 	}
 }

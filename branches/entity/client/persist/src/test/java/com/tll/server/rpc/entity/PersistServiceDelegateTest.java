@@ -36,7 +36,6 @@ import com.tll.dao.db4o.test.Db4oTrans;
 import com.tll.di.AbstractDb4oDaoModule;
 import com.tll.di.LogExceptionHandlerModule;
 import com.tll.di.MailModule;
-import com.tll.di.RefDataModule;
 import com.tll.di.TestEntityServiceFactoryModule;
 import com.tll.di.TestMarshalModule;
 import com.tll.di.test.Db4oDbShellModule;
@@ -47,7 +46,6 @@ import com.tll.model.IEntity;
 import com.tll.model.egraph.EntityBeanFactory;
 import com.tll.model.test.Address;
 import com.tll.model.test.TestEntityFactory;
-import com.tll.refdata.RefDataType;
 
 /**
  * PersistServiceDelegateTest
@@ -58,8 +56,6 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 
 	@Override
 	protected void addModules(List<Module> modules) {
-		modules.add(new RefDataModule());
-
 		// hack: create mail module to avoid guice ConfigurationException
 		// as it implicitly binds at the MailModule constrctor
 		modules.add(new MailModule(Config.load(new ConfigRef("config-mail.properties"))));
@@ -240,13 +236,11 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 	public void testLoadAuxData() throws Exception {
 		final PersistServiceDelegate delegate = getDelegate();
 		final AuxDataRequest adr = new AuxDataRequest();
-		adr.requestAppRefData(RefDataType.ISO_COUNTRY_CODES);
 		adr.requestEntityList(TestEntityType.ADDRESS);
 		adr.requestEntityPrototype(TestEntityType.ADDRESS);
 		final AuxDataPayload p = delegate.loadAuxData(adr);
 		assert p != null;
 		assert p.getEntityMap() != null && p.getEntityMap().size() > 0;
 		assert p.getEntityPrototypes() != null && p.getEntityPrototypes().size() == 1;
-		assert p.getRefDataMaps() != null && p.getRefDataMaps().size() == 1;
 	}
 }

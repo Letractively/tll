@@ -5,9 +5,7 @@
  */
 package com.tll.client.ui.field;
 
-import com.tll.client.cache.AuxDataCache;
 import com.tll.model.CreditCardType;
-import com.tll.refdata.RefDataType;
 
 /**
  * CreditCardFieldsProvider
@@ -32,8 +30,8 @@ public class CreditCardFieldsProvider extends AbstractFieldGroupProvider {
 		fg.addField(ftext("ccAddress1", "paymentData_ccAddress1", "Address 1", "Address 1", 40));
 		fg.addField(ftext("ccAddress2", "paymentData_ccAddress2", "Address 2", "Address 2", 40));
 		fg.addField(ftext("ccCity", "paymentData_ccCity", "City", "City", 30));
-		fg.addField(frefdata("ccState", "paymentData_ccState", "State/Province", "State", AuxDataCache.get().getRefDataMap(RefDataType.US_STATES)));
+		fg.addField(frefdata("ccState", "paymentData_ccState", "State/Province", "State", null/*AuxDataCache.get().getRefDataMap(RefDataType.US_STATES)*/));
 		fg.addField(ftext("ccZip", "paymentData_ccZip", "Postal Code", "Postal Code", 15));
-		fg.addField(frefdata("ccCountry", "paymentData_ccCountry", "Country", "Country", AuxDataCache.get().getRefDataMap(RefDataType.US_STATES)));
+		fg.addField(frefdata("ccCountry", "paymentData_ccCountry", "Country", "Country", null/*AuxDataCache.get().getRefDataMap(RefDataType.US_STATES)*/));
 	}
 }

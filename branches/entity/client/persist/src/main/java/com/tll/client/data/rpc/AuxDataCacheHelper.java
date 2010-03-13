@@ -16,7 +16,6 @@ import com.tll.common.data.AuxDataPayload;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
-import com.tll.refdata.RefDataType;
 
 
 /**
@@ -34,17 +33,6 @@ public abstract class AuxDataCacheHelper {
 		if(adr == null) return null;
 		final AuxDataCache adc = AuxDataCache.get();
 		final AuxDataRequest sadr = new AuxDataRequest();
-
-		// ref data
-		final Iterator<RefDataType> rdi = adr.getRefDataRequests();
-		if(rdi != null) {
-			while(rdi.hasNext()) {
-				final RefDataType rdt = rdi.next();
-				if(!adc.isCached(AuxDataType.REFDATA, rdt)) {
-					sadr.requestAppRefData(rdt);
-				}
-			}
-		}
 
 		// entities
 		Iterator<IEntityType> ets = adr.getEntityRequests();
@@ -78,14 +66,6 @@ public abstract class AuxDataCacheHelper {
 	public static void cache(AuxDataPayload payload) {
 
 		final AuxDataCache adc = AuxDataCache.get();
-
-		// ref data maps
-		final Map<RefDataType, Map<String, String>> map = payload.getRefDataMaps();
-		if(map != null) {
-			for(final Map.Entry<RefDataType, Map<String, String>> e : map.entrySet()) {
-				adc.cacheRefDataMap(e.getKey(), e.getValue());
-			}
-		}
 
 		// entity lists
 		final Map<IEntityType, List<Model>> egm = payload.getEntityMap();

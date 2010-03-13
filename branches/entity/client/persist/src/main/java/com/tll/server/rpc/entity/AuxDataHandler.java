@@ -20,7 +20,6 @@ import com.tll.common.model.Model;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.model.IEntity;
-import com.tll.refdata.RefDataType;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.service.entity.IEntityService;
 
@@ -62,11 +61,12 @@ public abstract class AuxDataHandler {
 	public static void getAuxData(PersistContext context, final AuxDataRequest auxDataRequest,
 			final AuxDataPayload payload) {
 
-		Map<RefDataType, Map<String, String>> appRefDataMap = null;
+		//Map<RefDataType, Map<String, String>> appRefDataMap = null;
 		Map<IEntityType, List<Model>> entityMap = null;
 		Set<Model> entityPrototypes = null;
 
 		// app ref data
+		/*
 		final Iterator<RefDataType> adritr = auxDataRequest.getRefDataRequests();
 		while(adritr != null && adritr.hasNext()) {
 			final RefDataType rdt = adritr.next();
@@ -82,6 +82,7 @@ public abstract class AuxDataHandler {
 				appRefDataMap.put(rdt, map);
 			}
 		}
+		*/
 
 		// entity collection
 		Iterator<IEntityType> etitr = auxDataRequest.getEntityRequests();
@@ -127,7 +128,7 @@ public abstract class AuxDataHandler {
 			entityPrototypes.add(model);
 		}
 
-		payload.setRefDataMaps(appRefDataMap);
+		//payload.setRefDataMaps(appRefDataMap);
 		payload.setEntityMap(entityMap);
 		payload.setEntityPrototypes(entityPrototypes);
 	}

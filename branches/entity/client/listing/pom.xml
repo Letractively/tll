@@ -212,12 +212,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
-			<artifactId>tll-refdata</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.tll</groupId>
 			<artifactId>tll-model</artifactId>
 			<version>${project.version}</version>
 			<classifier>testassets</classifier>

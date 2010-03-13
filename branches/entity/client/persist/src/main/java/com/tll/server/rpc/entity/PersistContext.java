@@ -10,7 +10,6 @@ import com.google.inject.Inject;
 import com.tll.mail.MailManager;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.IEntityFactory;
-import com.tll.refdata.RefData;
 import com.tll.schema.ISchemaInfo;
 import com.tll.server.marshal.Marshaler;
 import com.tll.server.rpc.IExceptionHandler;
@@ -31,7 +30,6 @@ public final class PersistContext {
 	 */
 	public static final String KEY = Long.toString(key);
 
-	private final RefData refData;
 	private final MailManager mailManager;
 	private final ISchemaInfo schemaInfo;
 	private final Marshaler marshaler;
@@ -45,7 +43,6 @@ public final class PersistContext {
 
 	/**
 	 * Constructor
-	 * @param refData
 	 * @param mailManager
 	 * @param schemaInfo
 	 * @param marshaler
@@ -58,12 +55,11 @@ public final class PersistContext {
 	 * @param persistCache
 	 */
 	@Inject
-	public PersistContext(RefData refData, MailManager mailManager, ISchemaInfo schemaInfo, Marshaler marshaler,
+	public PersistContext(MailManager mailManager, ISchemaInfo schemaInfo, Marshaler marshaler,
 			IMarshalOptionsResolver marshalOptionsResolver, IEntityTypeResolver entityTypeResolver,
 			IEntityFactory<?> entityFactory, IEntityAssembler entityAssembler, IEntityServiceFactory entityServiceFactory,
 			IExceptionHandler exceptionHandler, PersistCache persistCache) {
 		super();
-		this.refData = refData;
 		this.mailManager = mailManager;
 		this.schemaInfo = schemaInfo;
 		this.marshaler = marshaler;
@@ -78,10 +74,6 @@ public final class PersistContext {
 
 	public IEntityServiceFactory getEntityServiceFactory() {
 		return entityServiceFactory;
-	}
-
-	public RefData getRefData() {
-		return refData;
 	}
 
 	public IEntityFactory<?> getEntityFactory() {

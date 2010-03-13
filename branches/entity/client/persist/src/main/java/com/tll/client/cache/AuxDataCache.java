@@ -14,7 +14,6 @@ import com.tll.common.cache.AuxDataType;
 import com.tll.common.model.CopyCriteria;
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
-import com.tll.refdata.RefDataType;
 
 /**
  * AuxDataCache - Caches Aux data on the client.
@@ -32,14 +31,6 @@ public final class AuxDataCache {
 	}
 
 	/**
-	 * Map of app ref data name/value pairs keyed by the app ref data type.<br>
-	 * Each ref data map ascribes to the format where the map keys are the
-	 * datastore bound values and the map values are the presentation worthy
-	 * tokens.
-	 */
-	private Map<RefDataType, Map<String, String>> refDataMaps;
-
-	/**
 	 * Map of entity lists keyed by the entity class name.
 	 */
 	private Map<IEntityType, List<Model>> entityMap;
@@ -53,18 +44,6 @@ public final class AuxDataCache {
 	 * Constructor
 	 */
 	private AuxDataCache() {
-	}
-
-	/**
-	 * Caches ref data.
-	 * @param refDataType
-	 * @param map
-	 */
-	public void cacheRefDataMap(RefDataType refDataType, Map<String, String> map) {
-		if(refDataMaps == null) {
-			refDataMaps = new HashMap<RefDataType, Map<String, String>>();
-		}
-		refDataMaps.put(refDataType, map);
 	}
 
 	/**
@@ -88,14 +67,6 @@ public final class AuxDataCache {
 			entityPrototypes = new HashSet<Model>();
 		}
 		entityPrototypes.add(prototype);
-	}
-
-	/**
-	 * @param refDataType
-	 * @return the cached refdata map or <code>null</code> if it isn't cached.
-	 */
-	public Map<String, String> getRefDataMap(RefDataType refDataType) {
-		return refDataMaps == null ? null : refDataMaps.get(refDataType);
 	}
 
 	/**
@@ -134,8 +105,6 @@ public final class AuxDataCache {
 	public boolean isCached(AuxDataType type, Object obj) {
 		if(obj == null) return false;
 		switch(type) {
-		case REFDATA:
-			return refDataMaps == null ? false : refDataMaps.containsKey(obj);
 		case ENTITY:
 			return entityMap == null ? false : entityMap.containsKey(obj);
 		case ENTITY_PROTOTYPE: {
@@ -156,7 +125,6 @@ public final class AuxDataCache {
 	 * Clears out all cached elements of all types.
 	 */
 	public void clear() {
-		if(refDataMaps != null) refDataMaps.clear();
 		if(entityMap != null) entityMap.clear();
 		if(entityPrototypes != null) entityPrototypes.clear();
 	}

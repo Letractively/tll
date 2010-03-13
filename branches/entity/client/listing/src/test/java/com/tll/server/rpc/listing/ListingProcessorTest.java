@@ -29,7 +29,6 @@ import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.Sorting;
 import com.tll.di.LogExceptionHandlerModule;
 import com.tll.di.MailModule;
-import com.tll.di.RefDataModule;
 import com.tll.di.TestEntityServiceFactoryModule;
 import com.tll.di.TestListingModule;
 import com.tll.di.TestMarshalModule;
@@ -57,8 +56,6 @@ public class ListingProcessorTest extends AbstractDbAwareTest {
 
 	@Override
 	protected void addModules(List<Module> modules) {
-		modules.add(new RefDataModule());
-
 		// hack: create mail module to avoid guice ConfigurationException
 		// as it implicitly binds at the MailModule constrctor
 		modules.add(new MailModule(Config.load(new ConfigRef("config-mail.properties"))));

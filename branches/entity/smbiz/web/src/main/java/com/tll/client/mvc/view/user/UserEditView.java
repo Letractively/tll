@@ -11,7 +11,6 @@ import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.ui.field.user.UserPanel;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.model.SmbizEntityType;
-import com.tll.refdata.RefDataType;
 
 /**
  * UserEditView
@@ -57,8 +56,8 @@ public class UserEditView extends EditView {
 	protected AuxDataRequest getNeededAuxData() {
 		final AuxDataRequest auxDataRequest = new AuxDataRequest();
 		auxDataRequest.requestEntityList(SmbizEntityType.CURRENCY);
-		auxDataRequest.requestAppRefData(RefDataType.US_STATES);
-		auxDataRequest.requestAppRefData(RefDataType.ISO_COUNTRY_CODES);
+		//auxDataRequest.requestAppRefData(RefDataType.US_STATES);
+		//auxDataRequest.requestAppRefData(RefDataType.ISO_COUNTRY_CODES);
 		auxDataRequest.requestEntityList(SmbizEntityType.AUTHORITY);
 		return auxDataRequest;
 	}

@@ -113,11 +113,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
-			<artifactId>tll-refdata</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.tll</groupId>
 			<artifactId>tll-schema</artifactId>
 			<version>${project.version}</version>
 		</dependency>
