@@ -1,5 +1,4 @@
 <module>
-  <inherits name="com.tll.ClientModel" />
   <inherits name="com.tll.UI" />
   
   <replace-with class="com.tll.client.ui.field.impl.FieldLabelImplIE">
