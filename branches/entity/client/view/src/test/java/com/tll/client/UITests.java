@@ -20,8 +20,6 @@ import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.ui.view.RecentViewsPanel;
 import com.tll.client.ui.view.ViewPathPanel;
 import com.tll.client.ui.view.ViewToolbar;
-import com.tll.common.model.IEntityType;
-import com.tll.common.model.ModelKey;
 
 /**
  * UI Tests - GWT module for the sole purpose of verifying the DOM/Style of
@@ -92,17 +90,7 @@ public final class UITests extends AbstractUITest {
 
 		VerticalPanel context;
 		FlowPanel viewContainer;
-		ModelKey mk;
-
-		enum TestEntityType implements IEntityType {
-			TYPE_A,
-			TYPE_B;
-
-			@Override
-			public String descriptor() {
-				return name();
-			}
-		}
+		String dyn;
 
 		/**
 		 * Constructor
@@ -128,7 +116,7 @@ public final class UITests extends AbstractUITest {
 
 			ViewManager.initialize(viewContainer, 3);
 
-			mk = new ModelKey(TestEntityType.TYPE_A, "77", "Model Name");
+			dyn = "dyn";
 		}
 
 		@Override
@@ -158,7 +146,7 @@ public final class UITests extends AbstractUITest {
 
 					@Override
 					public void onClick(ClickEvent event) {
-						ViewManager.get().dispatch(new ShowViewRequest(new ViewBInit(mk)));
+						ViewManager.get().dispatch(new ShowViewRequest(new ViewBInit(dyn)));
 					}
 				}),
 				new Button("View C", new ClickHandler() {

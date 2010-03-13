@@ -107,12 +107,6 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-client-model</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
       <artifactId>tll-client-ui</artifactId>
       <version>${project.version}</version>
       <classifier>testassets</classifier>
