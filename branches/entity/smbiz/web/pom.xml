@@ -473,11 +473,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
-			<artifactId>tll-refdata</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.tll</groupId>
 			<artifactId>tll-mail</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
