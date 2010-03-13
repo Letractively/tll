@@ -1,6 +1,17 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="client-persist-tests">
   
+  <test name="client-marshal-tests" annotations="JDK">
+    <groups>
+      <run>
+        <include name="client-marshal" />
+      </run>
+    </groups>
+    <packages>
+      <package name="com.tll.server.*" />
+    </packages>
+  </test>
+  
   <test name="client-persist-tests" annotations="JDK">
     <groups>
       <run>

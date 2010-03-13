@@ -27,7 +27,6 @@
     <module>view</module>
     <module>modelview</module>
     <module>field</module>
-    <module>marshal</module>
     <module>persist</module>
     <module>listing</module>
     <module>login</module>
