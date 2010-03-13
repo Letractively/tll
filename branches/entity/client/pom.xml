@@ -25,7 +25,6 @@
     <module>rpc</module>
     <module>model</module>
     <module>view</module>
-    <module>modelview</module>
     <module>field</module>
     <module>persist</module>
     <module>listing</module>

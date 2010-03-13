@@ -538,11 +538,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
-			<artifactId>tll-client-modelview</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.tll</groupId>
 			<artifactId>tll-client-field</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
