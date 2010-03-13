@@ -12,7 +12,7 @@ import com.tll.common.model.ModelKey;
  * ModelPayload - To transport model and any supporting aux data to the client.
  * @author jpk
  */
-public final class ModelPayload extends AuxDataPayload {
+public final class ModelPayload extends ModelDataPayload {
 
 	/**
 	 * The model.

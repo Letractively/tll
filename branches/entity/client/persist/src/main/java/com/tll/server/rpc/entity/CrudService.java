@@ -5,21 +5,21 @@
  */
 package com.tll.server.rpc.entity;
 
-import com.tll.common.data.AuxDataPayload;
-import com.tll.common.data.AuxDataRequest;
+import com.tll.common.data.ModelDataPayload;
+import com.tll.common.data.ModelDataRequest;
 import com.tll.common.data.LoadRequest;
 import com.tll.common.data.ModelPayload;
 import com.tll.common.data.PersistRequest;
 import com.tll.common.data.PurgeRequest;
-import com.tll.common.data.rpc.IAuxDataService;
+import com.tll.common.data.rpc.IModelDataService;
 import com.tll.common.data.rpc.ICrudService;
 import com.tll.server.rpc.RpcServlet;
 
 /**
- * CrudAuxDataService - {@link ICrudService} impl.
+ * {@link ICrudService} impl.
  * @author jpk
  */
-public class CrudAuxDataService extends RpcServlet implements ICrudService, IAuxDataService {
+public class CrudService extends RpcServlet implements ICrudService, IModelDataService {
 	private static final long serialVersionUID = 7648139224336273139L;
 
 	private PersistServiceDelegate getDelegate() {
@@ -27,8 +27,8 @@ public class CrudAuxDataService extends RpcServlet implements ICrudService, IAux
 	}
 
 	@Override
-	public AuxDataPayload handleAuxDataRequest(AuxDataRequest request) {
-		return getDelegate().loadAuxData(request);
+	public ModelDataPayload handleModelDataRequest(ModelDataRequest request) {
+		return getDelegate().loadModelData(request);
 	}
 
 	@Override

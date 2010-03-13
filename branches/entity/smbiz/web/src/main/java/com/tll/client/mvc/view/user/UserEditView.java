@@ -9,7 +9,7 @@ import com.tll.client.mvc.view.EditView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.ui.field.user.UserPanel;
-import com.tll.common.data.AuxDataRequest;
+import com.tll.common.data.ModelDataRequest;
 import com.tll.common.model.SmbizEntityType;
 
 /**
@@ -53,13 +53,13 @@ public class UserEditView extends EditView {
 	}
 
 	@Override
-	protected AuxDataRequest getNeededAuxData() {
-		final AuxDataRequest auxDataRequest = new AuxDataRequest();
-		auxDataRequest.requestEntityList(SmbizEntityType.CURRENCY);
+	protected ModelDataRequest getNeededModelData() {
+		final ModelDataRequest modelDataRequest = new ModelDataRequest();
+		modelDataRequest.requestEntityList(SmbizEntityType.CURRENCY);
 		//auxDataRequest.requestAppRefData(RefDataType.US_STATES);
 		//auxDataRequest.requestAppRefData(RefDataType.ISO_COUNTRY_CODES);
-		auxDataRequest.requestEntityList(SmbizEntityType.AUTHORITY);
-		return auxDataRequest;
+		modelDataRequest.requestEntityList(SmbizEntityType.AUTHORITY);
+		return modelDataRequest;
 	}
 
 }

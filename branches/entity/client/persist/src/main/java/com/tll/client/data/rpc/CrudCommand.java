@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.model.ModelChangeEvent.ModelChangeOp;
 import com.tll.client.ui.msg.Msgs;
-import com.tll.common.data.AuxDataRequest;
+import com.tll.common.data.ModelDataRequest;
 import com.tll.common.data.LoadRequest;
 import com.tll.common.data.ModelPayload;
 import com.tll.common.data.AbstractModelRequest;
@@ -47,10 +47,10 @@ public class CrudCommand extends RpcCommand<ModelPayload> {
 	 * @param adr optional aux data request
 	 * @return new rpc command ready for execution
 	 */
-	public static Command loadModel(Widget source, ISearch search, AuxDataRequest adr) {
+	public static Command loadModel(Widget source, ISearch search, ModelDataRequest adr) {
 		final CrudCommand cmd = new CrudCommand();
 		cmd.setSource(source);
-		cmd.load(search, AuxDataCacheHelper.filterRequest(adr));
+		cmd.load(search, ModelDataCommand.filterRequest(adr));
 		return cmd;
 	}
 
@@ -102,12 +102,12 @@ public class CrudCommand extends RpcCommand<ModelPayload> {
 	 * @param search the criteria by which the model data is loaded
 	 * @param auxDataRequest optional aux data request
 	 */
-	public void load(ISearch search, AuxDataRequest auxDataRequest) {
+	public void load(ISearch search, ModelDataRequest auxDataRequest) {
 		if(search == null || !search.isSet()) {
 			throw new IllegalArgumentException("Null or un-set search criteria");
 		}
 		final LoadRequest<ISearch> elr = new LoadRequest<ISearch>(search);
-		elr.setAuxDataRequest(AuxDataCacheHelper.filterRequest(auxDataRequest));
+		elr.setModelDataRequest(ModelDataCommand.filterRequest(auxDataRequest));
 		this.modelRequest = elr;
 		crudOp = CrudOp.LOAD;
 	}
@@ -175,7 +175,7 @@ public class CrudCommand extends RpcCommand<ModelPayload> {
 	@Override
 	protected void handleSuccess(ModelPayload result) {
 		// cache aux data first
-		AuxDataCacheHelper.cache(result);
+		ModelDataCommand.cache(result);
 		super.handleSuccess(result);
 		if(source != null) {
 			// fire a model change event

@@ -7,7 +7,7 @@ package com.tll.client.mvc.view;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
-import com.tll.client.data.rpc.AuxDataCommand;
+import com.tll.client.data.rpc.ModelDataCommand;
 import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.model.IHasModelChangeHandlers;
 import com.tll.client.model.IModelChangeHandler;
@@ -20,7 +20,7 @@ import com.tll.client.ui.edit.IEditHandler;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.client.validate.ErrorHandlerBuilder;
-import com.tll.common.data.AuxDataRequest;
+import com.tll.common.data.ModelDataRequest;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 import com.tll.common.msg.Msg;
@@ -77,7 +77,7 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 	 * @return All possible aux data that may be accessed throughout the life of
 	 *         the edit panel.
 	 */
-	protected abstract AuxDataRequest getNeededAuxData();
+	protected abstract ModelDataRequest getNeededModelData();
 
 	public String getLongViewName() {
 		String s = modelKey.getEntityType().descriptor();
@@ -126,10 +126,10 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 		if(model == null) {
 			// we need to fetch the model first
 			// NOTE: needed aux data will be fetched with this rpc call
-			cmd = CrudCommand.loadModel(this, new PrimaryKeySearch(modelKey), getNeededAuxData());
+			cmd = CrudCommand.loadModel(this, new PrimaryKeySearch(modelKey), getNeededModelData());
 		}
 		else {
-			cmd = AuxDataCommand.fetchAuxData(this, getNeededAuxData());
+			cmd = ModelDataCommand.fetchModelData(this, getNeededModelData());
 			if(cmd == null) {
 				editPanel.setModel(model);
 				return;

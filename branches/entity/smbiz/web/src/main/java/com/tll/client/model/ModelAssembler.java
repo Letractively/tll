@@ -5,7 +5,7 @@
  */
 package com.tll.client.model;
 
-import com.tll.client.cache.AuxDataCache;
+import com.tll.client.cache.ModelCache;
 import com.tll.common.model.Model;
 import com.tll.common.model.SmbizEntityType;
 
@@ -24,11 +24,11 @@ public abstract class ModelAssembler {
 	 */
 	public static Model assemble(SmbizEntityType type) {
 		// default behavior
-		final Model m = AuxDataCache.get().getEntityPrototype(type);
+		final Model m = ModelCache.get().getEntityPrototype(type);
 
 		// handle special cases
 		if(type == SmbizEntityType.INTERFACE_SWITCH) {
-			final Model op = AuxDataCache.get().getEntityPrototype(SmbizEntityType.INTERFACE_OPTION);
+			final Model op = ModelCache.get().getEntityPrototype(SmbizEntityType.INTERFACE_OPTION);
 			m.relatedMany("options").getModelList().add(op);
 		}
 

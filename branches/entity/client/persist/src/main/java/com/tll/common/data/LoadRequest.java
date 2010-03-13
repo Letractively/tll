@@ -23,7 +23,7 @@ public class LoadRequest<S extends ISearch> extends AbstractModelRequest {
 	/**
 	 * The aux data request. May be <code>null</code>.
 	 */
-	private AuxDataRequest auxDataRequest;
+	private ModelDataRequest modelDataRequest;
 
 	/**
 	 * Constructor
@@ -56,17 +56,17 @@ public class LoadRequest<S extends ISearch> extends AbstractModelRequest {
 	}
 
 	/**
-	 * @return the auxDataRequest
+	 * @return the modelDataRequest
 	 */
-	public AuxDataRequest getAuxDataRequest() {
-		return auxDataRequest;
+	public ModelDataRequest getModelDataRequest() {
+		return modelDataRequest;
 	}
 
 	/**
-	 * @param auxDataRequest the auxDataRequest to set
+	 * @param modelDataRequest the auxDataRequest to set
 	 */
-	public void setAuxDataRequest(AuxDataRequest auxDataRequest) {
-		this.auxDataRequest = auxDataRequest;
+	public void setModelDataRequest(ModelDataRequest modelDataRequest) {
+		this.modelDataRequest = modelDataRequest;
 	}
 
 	@Override

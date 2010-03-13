@@ -6,12 +6,17 @@
 package com.tll.server.rpc.entity;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.inject.Inject;
-import com.tll.common.data.AuxDataPayload;
-import com.tll.common.data.AuxDataRequest;
+import com.tll.common.data.ModelDataPayload;
+import com.tll.common.data.ModelDataRequest;
 import com.tll.common.data.IModelRelatedRequest;
 import com.tll.common.data.LoadRequest;
 import com.tll.common.data.ModelPayload;
@@ -20,10 +25,15 @@ import com.tll.common.data.Payload;
 import com.tll.common.data.PersistRequest;
 import com.tll.common.data.PurgeRequest;
 import com.tll.common.data.Status;
+import com.tll.common.model.IEntityType;
+import com.tll.common.model.Model;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.common.search.ISearch;
+import com.tll.model.IEntity;
+import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.rpc.RpcServlet;
+import com.tll.service.entity.IEntityService;
 
 /**
  * PersistServiceDelegate - Server side handling of model data persist
@@ -43,6 +53,110 @@ public final class PersistServiceDelegate {
 	private static final Map<Class<? extends IPersistServiceImpl>, IPersistServiceImpl> map =
 		new HashMap<Class<? extends IPersistServiceImpl>, IPersistServiceImpl>();
 
+	/**
+	 * Attempts to resolve marshaling options from the persist svc delegate
+	 * falling back on the provided defaults.
+	 * <p>
+	 * NOTE: we provide a <code>null</code> status instance since the error is
+	 * spurious since we have a fallback marshal options instance.
+	 * @param context the persist context
+	 * @param entityType
+	 * @param fallback Used when no persist svc is resolved from the given entity
+	 *        type
+	 * @return Never-<code>null</code> instance.
+	 */
+	private static MarshalOptions getMarshalOptions(PersistContext context, IEntityType entityType,
+			MarshalOptions fallback) {
+		try {
+			return context.getMarshalOptionsResolver().resolve(entityType);
+		}
+		catch(final RuntimeException e) {
+			return fallback;
+		}
+	}
+
+	/**
+	 * Provides model data.
+	 * @param context
+	 * @param auxDataRequest
+	 * @param payload
+	 */
+	@SuppressWarnings("unchecked")
+	public static void getModelData(PersistContext context, final ModelDataRequest auxDataRequest,
+			final ModelDataPayload payload) {
+
+		//Map<RefDataType, Map<String, String>> appRefDataMap = null;
+		Map<IEntityType, List<Model>> entityMap = null;
+		Set<Model> entityPrototypes = null;
+
+		// app ref data
+		/*
+		final Iterator<RefDataType> adritr = auxDataRequest.getRefDataRequests();
+		while(adritr != null && adritr.hasNext()) {
+			final RefDataType rdt = adritr.next();
+			final Map<String, String> map = context.getRefData().getRefData(rdt);
+			if(map == null) {
+				payload.getStatus()
+				.addMsg("Unable to find app ref data: " + rdt.getName(), MsgLevel.ERROR, MsgAttr.STATUS.flag);
+			}
+			else {
+				if(appRefDataMap == null) {
+					appRefDataMap = new HashMap<RefDataType, Map<String, String>>();
+				}
+				appRefDataMap.put(rdt, map);
+			}
+		}
+		*/
+
+		// entity collection
+		Iterator<IEntityType> etitr = auxDataRequest.getEntityRequests();
+		if(etitr != null) {
+			while(etitr.hasNext()) {
+				final IEntityType et = etitr.next();
+				final Class<? extends IEntity> entityClass =
+					(Class<? extends IEntity>) context.getEntityTypeResolver().resolveEntityClass(et);
+				final IEntityService<? extends IEntity> svc =
+					context.getEntityServiceFactory().instanceByEntityType(entityClass);
+				final List<? extends IEntity> list = svc.loadAll();
+				if(list == null || list.size() < 1) {
+					payload.getStatus().addMsg("Unable to obtain " + et.descriptor() + " entities for aux data.",
+							MsgLevel.ERROR, MsgAttr.STATUS.flag);
+				}
+				else {
+					final MarshalOptions mo = getMarshalOptions(context, et, MarshalOptions.NO_REFERENCES);
+					final List<Model> elist = new ArrayList<Model>(list.size());
+					for(final IEntity e : list) {
+						final Model group = context.getMarshaler().marshalEntity(e, mo);
+						elist.add(group);
+					}
+					if(entityMap == null) {
+						entityMap = new HashMap<IEntityType, List<Model>>();
+					}
+					entityMap.put(et, elist);
+				}
+			}
+		}
+
+		// entity prototypes
+		etitr = auxDataRequest.getEntityPrototypeRequests();
+		while(etitr != null && etitr.hasNext()) {
+			final IEntityType et = etitr.next();
+			final IEntity e =
+				context.getEntityAssembler().assembleEntity(
+						(Class<IEntity>) context.getEntityTypeResolver().resolveEntityClass(et), null);
+			final MarshalOptions mo = getMarshalOptions(context, et, MarshalOptions.NO_REFERENCES);
+			final Model model = context.getMarshaler().marshalEntity(e, mo);
+			if(entityPrototypes == null) {
+				entityPrototypes = new HashSet<Model>();
+			}
+			entityPrototypes.add(model);
+		}
+
+		//payload.setRefDataMaps(appRefDataMap);
+		payload.setEntityMap(entityMap);
+		payload.setEntityPrototypes(entityPrototypes);
+	}
+	
 	private final PersistContext context;
 
 	private final IPersistServiceImplResolver resolver;
@@ -70,8 +184,8 @@ public final class PersistServiceDelegate {
 			resolveImpl(request, payload.getStatus()).load(request.getSearch(), payload);
 		}
 		// load any requested auxiliary
-		if(request.getAuxDataRequest() != null) {
-			AuxDataHandler.getAuxData(context, request.getAuxDataRequest(), payload);
+		if(request.getModelDataRequest() != null) {
+			getModelData(context, request.getModelDataRequest(), payload);
 		}
 		return payload;
 	}
@@ -112,11 +226,11 @@ public final class PersistServiceDelegate {
 	 * @param request
 	 * @return the resultant payload
 	 */
-	public AuxDataPayload loadAuxData(final AuxDataRequest request) {
-		final AuxDataPayload payload = new AuxDataPayload();
-		if(validateAuxDataRequest(request, payload)) {
+	public ModelDataPayload loadModelData(final ModelDataRequest request) {
+		final ModelDataPayload payload = new ModelDataPayload();
+		if(validateModelDataRequest(request, payload)) {
 			try {
-				AuxDataHandler.getAuxData(context, request, payload);
+				getModelData(context, request, payload);
 			}
 			catch(final RuntimeException se) {
 				RpcServlet.exceptionToStatus(se, payload.getStatus());
@@ -186,12 +300,12 @@ public final class PersistServiceDelegate {
 	}
 
 	/**
-	 * Validates an inbound aux data request.
+	 * Validates an inbound model data request.
 	 * @param request
 	 * @param payload Can't be <code>null</code>
 	 * @return true/false
 	 */
-	private boolean validateAuxDataRequest(final AuxDataRequest request, final Payload payload) {
+	private boolean validateModelDataRequest(final ModelDataRequest request, final Payload payload) {
 		if(request == null) {
 			payload.getStatus().addMsg("No aux data request specified", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 			return false;

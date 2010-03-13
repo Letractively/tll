@@ -6,11 +6,10 @@
 package com.tll.common.cache;
 
 /**
- * AuxDataType
+ * Enumerates the model data type.
  * @author jpk
  */
-public enum AuxDataType {
-	REFDATA,
+public enum ModelDataType {
 	ENTITY,
 	ENTITY_PROTOTYPE;
 }

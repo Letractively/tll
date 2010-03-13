@@ -14,8 +14,8 @@ import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
-import com.tll.common.data.AuxDataPayload;
-import com.tll.common.data.AuxDataRequest;
+import com.tll.common.data.ModelDataPayload;
+import com.tll.common.data.ModelDataRequest;
 import com.tll.common.data.LoadRequest;
 import com.tll.common.data.ModelPayload;
 import com.tll.common.data.PersistRequest;
@@ -229,16 +229,16 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 
 	/**
 	 * Tests
-	 * {@link PersistServiceDelegate#loadAuxData(com.tll.common.data.AuxDataRequest)}
+	 * {@link PersistServiceDelegate#loadModelData(com.tll.common.data.ModelDataRequest)}
 	 * @throws Exception
 	 */
 	@Test
-	public void testLoadAuxData() throws Exception {
+	public void testLoadModelData() throws Exception {
 		final PersistServiceDelegate delegate = getDelegate();
-		final AuxDataRequest adr = new AuxDataRequest();
+		final ModelDataRequest adr = new ModelDataRequest();
 		adr.requestEntityList(TestEntityType.ADDRESS);
 		adr.requestEntityPrototype(TestEntityType.ADDRESS);
-		final AuxDataPayload p = delegate.loadAuxData(adr);
+		final ModelDataPayload p = delegate.loadModelData(adr);
 		assert p != null;
 		assert p.getEntityMap() != null && p.getEntityMap().size() > 0;
 		assert p.getEntityPrototypes() != null && p.getEntityPrototypes().size() == 1;

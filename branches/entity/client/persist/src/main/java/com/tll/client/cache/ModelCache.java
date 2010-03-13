@@ -10,22 +10,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.tll.common.cache.AuxDataType;
+import com.tll.common.cache.ModelDataType;
 import com.tll.common.model.CopyCriteria;
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
 
 /**
- * AuxDataCache - Caches Aux data on the client.
+ * Caches {@link Model} instances client side.
  * @author jpk
  */
-public final class AuxDataCache {
+public final class ModelCache {
 
-	private static AuxDataCache instance;
+	private static ModelCache instance;
 
-	public static final AuxDataCache get() {
+	public static final ModelCache get() {
 		if(instance == null) {
-			instance = new AuxDataCache();
+			instance = new ModelCache();
 		}
 		return instance;
 	}
@@ -43,7 +43,7 @@ public final class AuxDataCache {
 	/**
 	 * Constructor
 	 */
-	private AuxDataCache() {
+	private ModelCache() {
 	}
 
 	/**
@@ -102,7 +102,7 @@ public final class AuxDataCache {
 	 * @param obj
 	 * @return true/false
 	 */
-	public boolean isCached(AuxDataType type, Object obj) {
+	public boolean isCached(ModelDataType type, Object obj) {
 		if(obj == null) return false;
 		switch(type) {
 		case ENTITY:

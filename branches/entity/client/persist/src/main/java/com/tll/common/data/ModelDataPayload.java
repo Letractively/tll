@@ -12,17 +12,17 @@ import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
 
 /**
- * AuxDataPayload - Construct to hold aux (enum maps, ref data maps and related
- * on entity refs) data based on what is requested in {@link AuxDataRequest}.
- * @see AuxDataRequest
+ * Construct to hold aux (enum maps, ref data maps and related
+ * on entity refs) data based on what is requested in {@link ModelDataRequest}.
+ * @see ModelDataRequest
  * @author jpk
  */
-public class AuxDataPayload extends Payload {
+public class ModelDataPayload extends Payload {
 
 	/**
 	 * Constructor
 	 */
-	public AuxDataPayload() {
+	public ModelDataPayload() {
 		super();
 	}
 
@@ -30,7 +30,7 @@ public class AuxDataPayload extends Payload {
 	 * Constructor
 	 * @param status
 	 */
-	public AuxDataPayload(Status status) {
+	public ModelDataPayload(Status status) {
 		super(status);
 	}
 

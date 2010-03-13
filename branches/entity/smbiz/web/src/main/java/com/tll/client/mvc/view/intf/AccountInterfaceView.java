@@ -14,7 +14,7 @@ import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.intf.AccountMultiOptionInterfacePanel;
 import com.tll.client.ui.field.intf.AccountSwitchInterfacePanel;
-import com.tll.common.data.AuxDataRequest;
+import com.tll.common.data.ModelDataRequest;
 import com.tll.common.model.EnumPropertyValue;
 import com.tll.common.model.ModelKey;
 import com.tll.common.model.SmbizEntityType;
@@ -42,7 +42,7 @@ public class AccountInterfaceView extends AbstractRpcAndModelAwareView<AccountIn
 		}
 	} // Class
 
-	private static final AuxDataRequest auxDataRequest = new AuxDataRequest();
+	private static final ModelDataRequest auxDataRequest = new ModelDataRequest();
 
 	static {
 		auxDataRequest.requestEntityPrototype(SmbizEntityType.INTERFACE_SWITCH);
@@ -96,7 +96,7 @@ public class AccountInterfaceView extends AbstractRpcAndModelAwareView<AccountIn
 			}, new InterfaceStack.IFieldPanelDataLoader() {
 
 				@Override
-				public IRpcCommand load(ModelKey intfKey, AuxDataRequest adr) {
+				public IRpcCommand load(ModelKey intfKey, ModelDataRequest adr) {
 					final CrudCommand c = new CrudCommand();
 					c.load(new AccountInterfaceDataSearch(initializer.getAccountRef().getId(), intfKey.getId()), adr);
 					return c;

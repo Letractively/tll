@@ -15,8 +15,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PushButton;
-import com.tll.client.data.rpc.AuxDataCacheHelper;
-import com.tll.client.data.rpc.AuxDataCommand;
+import com.tll.client.data.rpc.ModelCacheHelper;
+import com.tll.client.data.rpc.ModelDataCommand;
 import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.data.rpc.IRpcCommand;
 import com.tll.client.model.ModelAssembler;
@@ -35,8 +35,8 @@ import com.tll.client.ui.field.RadioGroupField;
 import com.tll.client.ui.field.intf.MultiOptionInterfacePanel;
 import com.tll.client.ui.field.intf.SwitchInterfacePanel;
 import com.tll.client.ui.view.ViewToolbar;
-import com.tll.common.data.AuxDataPayload;
-import com.tll.common.data.AuxDataRequest;
+import com.tll.common.data.ModelDataPayload;
+import com.tll.common.data.ModelDataRequest;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 import com.tll.common.model.SmbizEntityType;
@@ -143,7 +143,7 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 
 	} // IntfSlectDlg
 
-	static final AuxDataRequest auxDataRequest = new AuxDataRequest();
+	static final ModelDataRequest auxDataRequest = new ModelDataRequest();
 
 	static {
 		auxDataRequest.requestEntityPrototype(SmbizEntityType.INTERFACE_SWITCH);
@@ -206,7 +206,7 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 			}, new InterfaceStack.IFieldPanelDataLoader() {
 
 				@Override
-				public IRpcCommand load(ModelKey intfKey, AuxDataRequest adr) {
+				public IRpcCommand load(ModelKey intfKey, ModelDataRequest adr) {
 					final CrudCommand c = new CrudCommand();
 					c.load(new PrimaryKeySearch(intfKey), adr);
 					return c;
@@ -247,12 +247,12 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 	public void onClick(ClickEvent event) {
 		if(event.getSource() == btnAddIntf) {
 			// ensure we have the aux data cached
-			final AuxDataRequest adr = AuxDataCacheHelper.filterRequest(auxDataRequest);
+			final ModelDataRequest adr = ModelCacheHelper.filterRequest(auxDataRequest);
 			if(adr != null) {
-				(new AuxDataCommand(adr) {
+				(new ModelDataCommand(adr) {
 
 					@Override
-					protected void handleSuccess(AuxDataPayload result) {
+					protected void handleSuccess(ModelDataPayload result) {
 						super.handleSuccess(result);
 						showAddIntfDlg();
 					}

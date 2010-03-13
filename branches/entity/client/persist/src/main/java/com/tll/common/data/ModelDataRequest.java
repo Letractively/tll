@@ -11,10 +11,10 @@ import java.util.Set;
 import com.tll.common.model.IEntityType;
 
 /**
- * AuxDataRequest - Way to request "auxiliary" data when issuing an RPC call.
+ * Way to request model data when issuing an RPC call.
  * @author jpk
  */
-public final class AuxDataRequest implements IModelRelatedRequest {
+public final class ModelDataRequest implements IModelRelatedRequest {
 
 	private Set<IEntityType> entityTypes;
 

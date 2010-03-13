@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.tll.client.cache.AuxDataCache;
+import com.tll.client.cache.ModelCache;
 import com.tll.common.model.Model;
 import com.tll.common.model.SmbizEntityType;
 
@@ -44,7 +44,7 @@ public abstract class CurrencyAwareFieldGroupProvider extends AbstractFieldGroup
 	 */
 	protected synchronized static Map<String, String> getCurrencyDataMap() {
 		if(currencyMap == null) {
-			final List<Model> currencies = AuxDataCache.get().getEntityList(SmbizEntityType.CURRENCY);
+			final List<Model> currencies = ModelCache.get().getEntityList(SmbizEntityType.CURRENCY);
 			if(currencies == null) return null;
 			currencyMap = new HashMap<String, String>();
 			final StringBuilder sb = new StringBuilder();
