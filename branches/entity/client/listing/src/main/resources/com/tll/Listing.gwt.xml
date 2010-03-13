@@ -4,4 +4,8 @@
   
   <stylesheet src="css/tableview.css" />
 
+  <source path="client" />
+  
+  <source path="common" />
+  
 </module>

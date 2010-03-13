@@ -3,7 +3,8 @@
 
 	<stylesheet src="css/status.css" />
 
-	<source path="client" />
-	<source path="common" />
-
+  <source path="client" />
+  
+  <source path="common" />
+  
 </module>
