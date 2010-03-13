@@ -23,7 +23,7 @@ IValidator {
 	 * Styles - (field.css)
 	 * @author jpk
 	 */
-	static final class Styles {
+	public static final class Styles {
 
 		/**
 		 * Style indicating a UI artifact is a field.
@@ -70,6 +70,11 @@ IValidator {
 		 * Style for indicating a field has focus.
 		 */
 		public static final String ACTIVE = "active";
+
+		/**
+		 * Style indicating a UI artifact is a field title.
+		 */
+		public static final String FIELD_TITLE = "fldtitle";
 
 	} // Styles
 

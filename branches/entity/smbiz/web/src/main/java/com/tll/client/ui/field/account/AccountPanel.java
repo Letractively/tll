@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.model.ModelAssembler;
 import com.tll.client.ui.field.AddressFieldsRenderer;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.FlowFieldPanel;
+import com.tll.client.ui.field.AbstractBindableFlowFieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.client.ui.field.IFieldRenderer;
@@ -30,13 +30,13 @@ import com.tll.model.AddressType;
  * AccountPanel
  * @author jpk
  */
-public class AccountPanel extends FlowFieldPanel {
+public class AccountPanel extends AbstractBindableFlowFieldPanel {
 
 	/**
 	 * AccountAddressPanel
 	 * @author jpk
 	 */
-	static final class AccountAddressPanel extends FlowFieldPanel {
+	static final class AccountAddressPanel extends AbstractBindableFlowFieldPanel {
 
 		@Override
 		protected FieldGroup generateFieldGroup() {

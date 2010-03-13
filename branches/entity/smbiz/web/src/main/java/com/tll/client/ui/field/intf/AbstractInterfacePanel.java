@@ -12,10 +12,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
 import com.tll.client.model.ModelAssembler;
 import com.tll.client.ui.Br;
+import com.tll.client.ui.field.AbstractBindableFieldPanel;
 import com.tll.client.ui.field.AbstractFieldGroupProvider;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.FieldPanel;
-import com.tll.client.ui.field.FlowFieldPanel;
+import com.tll.client.ui.field.AbstractBindableFlowFieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.GridFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
@@ -24,11 +24,11 @@ import com.tll.common.model.Model;
 import com.tll.common.model.SmbizEntityType;
 
 /**
- * AbstractInterfacePanel - Base class for {@link FieldPanel}s that display app
+ * AbstractInterfacePanel - Base class for {@link AbstractBindableFieldPanel}s that display app
  * interfaces (not Options).
  * @author jpk
  */
-abstract class AbstractInterfacePanel extends FlowFieldPanel {
+abstract class AbstractInterfacePanel extends AbstractBindableFlowFieldPanel {
 
 	/**
 	 * OptionRenderer
@@ -98,7 +98,7 @@ abstract class AbstractInterfacePanel extends FlowFieldPanel {
 		 * ParamPanel
 		 * @author jpk
 		 */
-		static final class ParamPanel extends FlowFieldPanel {
+		static final class ParamPanel extends AbstractBindableFlowFieldPanel {
 
 			@Override
 			protected FieldGroup generateFieldGroup() {
@@ -157,7 +157,7 @@ abstract class AbstractInterfacePanel extends FlowFieldPanel {
 		final VerticalPanel g = new VerticalPanel();
 		Label l;
 		l = new Label("Availability");
-		l.addStyleName(FieldPanel.Styles.FIELD_TITLE);
+		l.addStyleName(com.tll.client.ui.field.IFieldWidget.Styles.FIELD_TITLE);
 		g.add(l);
 		g.add(fg.getFieldWidget("intfIsAvailableAsp").getWidget());
 		g.add(fg.getFieldWidget("intfIsAvailableIsp").getWidget());
@@ -165,7 +165,7 @@ abstract class AbstractInterfacePanel extends FlowFieldPanel {
 		g.add(fg.getFieldWidget("intfIsAvailableCustomer").getWidget());
 		g.add(new Br());
 		l = new Label("Requiredness");
-		l.addStyleName(FieldPanel.Styles.FIELD_TITLE);
+		l.addStyleName(com.tll.client.ui.field.IFieldWidget.Styles.FIELD_TITLE);
 		g.add(l);
 		g.add(fg.getFieldWidget("intfIsRequiredAsp").getWidget());
 		g.add(fg.getFieldWidget("intfIsRequiredIsp").getWidget());

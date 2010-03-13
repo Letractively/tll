@@ -8,11 +8,11 @@ package com.tll.client.ui.field;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 /**
- * FlowFieldPanel - {@link FieldPanel} employing a {@link FlowPanel} as its
+ * {@link AbstractBindableFieldPanel} employing a {@link FlowPanel} as its
  * wrapped widget.
  * @author jpk
  */
-public abstract class FlowFieldPanel extends FieldPanel<FlowPanel> {
+public abstract class AbstractBindableFlowFieldPanel extends AbstractBindableFieldPanel<FlowPanel> {
 
 	/**
 	 * The wrapped widget.
@@ -22,7 +22,7 @@ public abstract class FlowFieldPanel extends FieldPanel<FlowPanel> {
 	/**
 	 * Constructor
 	 */
-	public FlowFieldPanel() {
+	public AbstractBindableFlowFieldPanel() {
 		super();
 		initWidget(panel);
 	}

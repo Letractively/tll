@@ -11,7 +11,7 @@ import com.tll.client.data.rpc.IRpcCommand;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.mvc.view.AbstractRpcAndModelAwareView;
 import com.tll.client.mvc.view.ViewClass;
-import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.field.AbstractBindableFieldPanel;
 import com.tll.client.ui.field.intf.AccountMultiOptionInterfacePanel;
 import com.tll.client.ui.field.intf.AccountSwitchInterfacePanel;
 import com.tll.common.data.ModelDataRequest;
@@ -81,7 +81,7 @@ public class AccountInterfaceView extends AbstractRpcAndModelAwareView<AccountIn
 					auxDataRequest, new InterfaceStack.IFieldPanelResolver() {
 
 				@Override
-				public FieldPanel<?> resolveFieldPanel(ModelKey intfKey) {
+				public AbstractBindableFieldPanel<?> resolveFieldPanel(ModelKey intfKey) {
 					final SmbizEntityType type = (SmbizEntityType) intfKey.getEntityType();
 					switch(type) {
 					case INTERFACE_SWITCH:

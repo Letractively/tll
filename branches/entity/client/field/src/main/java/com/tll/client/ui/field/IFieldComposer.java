@@ -7,7 +7,6 @@ package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.ui.field.FieldPanel.Styles;
 
 /**
  * IFieldComposer - Composes fields onto a given "canvas" ( {@link Panel} )
@@ -39,7 +38,7 @@ public interface IFieldComposer {
 	void add(FieldLabel fldLbl, Widget w);
 
 	/**
-	 * Adds a label widget having {@link Styles#FIELD_TITLE} applied to it.
+	 * Adds a label widget having <code>Styles.FIELD_TITLE</code> applied to it.
 	 * @param text the label text
 	 */
 	void addFieldTitle(String text);

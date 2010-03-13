@@ -16,18 +16,18 @@ import com.tll.client.ui.field.BankFieldsRenderer;
 import com.tll.client.ui.field.CreditCardFieldsProvider;
 import com.tll.client.ui.field.CreditCardFieldsRenderer;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.FieldPanel;
-import com.tll.client.ui.field.FlowFieldPanel;
+import com.tll.client.ui.field.AbstractBindableFieldPanel;
+import com.tll.client.ui.field.AbstractBindableFlowFieldPanel;
 import com.tll.client.ui.field.IFieldRenderer;
 
 /**
  * PaymentInfoPanel
  * @author jpk
  */
-public final class PaymentInfoPanel extends FieldPanel<TabPanel> implements
+public final class PaymentInfoPanel extends AbstractBindableFieldPanel<TabPanel> implements
 		HasSelectionHandlers<Integer>, HasBeforeSelectionHandlers<Integer> {
 
-	static final class CreditCardPanel extends FlowFieldPanel {
+	static final class CreditCardPanel extends AbstractBindableFlowFieldPanel {
 
 		@Override
 		public FieldGroup generateFieldGroup() {
@@ -41,7 +41,7 @@ public final class PaymentInfoPanel extends FieldPanel<TabPanel> implements
 
 	}
 
-	static final class BankPanel extends FlowFieldPanel {
+	static final class BankPanel extends AbstractBindableFlowFieldPanel {
 
 		@Override
 		public FieldGroup generateFieldGroup() {

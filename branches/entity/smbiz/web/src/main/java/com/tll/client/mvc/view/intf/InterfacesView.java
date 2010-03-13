@@ -27,8 +27,8 @@ import com.tll.client.ui.Dialog;
 import com.tll.client.ui.GridRenderer;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.FieldPanel;
-import com.tll.client.ui.field.FlowFieldPanel;
+import com.tll.client.ui.field.AbstractBindableFieldPanel;
+import com.tll.client.ui.field.AbstractBindableFlowFieldPanel;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.RadioGroupField;
 import com.tll.client.ui.field.intf.MultiOptionInterfacePanel;
@@ -75,7 +75,7 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 		 * InterfaceTypeSelectPanel
 		 * @author jpk
 		 */
-		final class InterfaceTypeSelectPanel extends FlowFieldPanel {
+		final class InterfaceTypeSelectPanel extends AbstractBindableFlowFieldPanel {
 
 			SmbizEntityType intfType;
 
@@ -190,7 +190,7 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 					auxDataRequest, new InterfaceStack.IFieldPanelResolver() {
 
 				@Override
-				public FieldPanel<?> resolveFieldPanel(ModelKey mkey) {
+				public AbstractBindableFieldPanel<?> resolveFieldPanel(ModelKey mkey) {
 					final SmbizEntityType type = (SmbizEntityType) mkey.getEntityType();
 					switch(type) {
 					case INTERFACE_SWITCH:

@@ -7,6 +7,7 @@ package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
+import com.tll.client.ui.field.IFieldWidget.Styles;
 
 
 /**
@@ -25,7 +26,7 @@ public abstract class AbstractFieldComposer implements IFieldComposer {
 	@Override
 	public void addFieldTitle(String text) {
 		final Label l = new Label(text);
-		l.setStyleName(FieldPanel.Styles.FIELD_TITLE);
+		l.setStyleName(Styles.FIELD_TITLE);
 		add(null, l);
 	}
 

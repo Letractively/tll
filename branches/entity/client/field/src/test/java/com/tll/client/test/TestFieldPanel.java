@@ -5,7 +5,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.FlowFieldPanel;
+import com.tll.client.ui.field.AbstractBindableFlowFieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.client.ui.field.IFieldRenderer;
@@ -23,13 +23,13 @@ import com.tll.model.test.AddressType;
  * model, and an indexed field panel mocking a related many model collection.
  * @author jpk
  */
-public class TestFieldPanel extends FlowFieldPanel {
+public class TestFieldPanel extends AbstractBindableFlowFieldPanel {
 
 	/**
 	 * TestIndexFieldPanel
 	 * @author jpk
 	 */
-	static class TestIndexFieldPanel extends FlowFieldPanel {
+	static class TestIndexFieldPanel extends AbstractBindableFlowFieldPanel {
 
 		@Override
 		protected FieldGroup generateFieldGroup() {

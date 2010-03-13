@@ -17,7 +17,7 @@ import com.tll.client.mvc.ViewManager;
 import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
 import com.tll.client.ui.edit.IEditHandler;
-import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.field.AbstractBindableFieldPanel;
 import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.client.validate.ErrorHandlerBuilder;
 import com.tll.common.data.ModelDataRequest;
@@ -59,7 +59,7 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 	 * Constructor
 	 * @param fieldPanel The required field panel
 	 */
-	public EditView(FieldPanel<?> fieldPanel) {
+	public EditView(AbstractBindableFieldPanel<?> fieldPanel) {
 		super();
 		gmp = new GlobalMsgPanel();
 		editPanel = new EditPanel(fieldPanel, true, false, true);

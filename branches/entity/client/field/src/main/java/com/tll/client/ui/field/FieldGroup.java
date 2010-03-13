@@ -11,7 +11,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.IWidgetRef;
 import com.tll.client.validate.CompositeValidator;
@@ -297,11 +296,6 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	private final LinkedHashSet<IField> fields = new LinkedHashSet<IField>();
 
 	/**
-	 * On ordered collection of commands to be executed before validation happens.
-	 */
-	private ArrayList<Command> preValidationActions;
-
-	/**
 	 * The field group validator(s).
 	 */
 	private CompositeValidator validator;
@@ -323,23 +317,6 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	public FieldGroup(String name) {
 		super();
 		setName(name);
-	}
-
-	public void addPreValidationAction(Command action) {
-		if(preValidationActions == null) {
-			preValidationActions = new ArrayList<Command>();
-		}
-		preValidationActions.add(action);
-	}
-
-	public void removePreValidationAction(Command action) {
-		if(action != null && preValidationActions != null) {
-			preValidationActions.remove(action);
-		}
-	}
-
-	public void clearPreValidationActions() {
-		if(preValidationActions != null) preValidationActions.clear();
 	}
 
 	@Override
@@ -702,11 +679,6 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	}
 
 	public void validate() throws ValidationException {
-		if(preValidationActions != null) {
-			for(final Command action : preValidationActions) {
-				action.execute();
-			}
-		}
 		final ArrayList<Error> errors = new ArrayList<Error>();
 		validate(errors, this, new ArrayList<FieldGroup>());
 		if(errors.size() > 0) {

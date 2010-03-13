@@ -21,7 +21,7 @@ import com.tll.client.model.ModelChangeTracker;
 import com.tll.client.ui.FocusCommand;
 import com.tll.client.ui.Position;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.field.AbstractBindableFieldPanel;
 import com.tll.client.ui.field.IFieldBoundWidget;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.NoChangesException;
@@ -39,9 +39,9 @@ import com.tll.common.msg.Msg.MsgLevel;
 
 /**
  * EditPanel - Composite panel targeting a {@link FlowPanel} whose children
- * consist of a {@link ScrollPanel} containing a {@link FieldPanel} and another
+ * consist of a {@link ScrollPanel} containing a {@link AbstractBindableFieldPanel} and another
  * {@link FlowPanel} containing edit buttons. The {@link ScrollPanel} enables
- * the the {@link FieldPanel} content to always be navigable and keeps the edit
+ * the the {@link AbstractBindableFieldPanel} content to always be navigable and keeps the edit
  * and cancel buttons in constant position.
  * @author jpk
  */
@@ -89,7 +89,7 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	private final FlowPanel panel = new FlowPanel();
 
 	/**
-	 * This panel contains the {@link FieldPanel}.
+	 * This panel contains the {@link AbstractBindableFieldPanel}.
 	 */
 	private final SimplePanel portal = new SimplePanel();
 
@@ -115,7 +115,7 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 
 	/**
 	 * Constructor
-	 * @param fieldPanel The required {@link FieldPanel}
+	 * @param fieldPanel The required {@link AbstractBindableFieldPanel}
 	 * @param showCancelBtn Show the cancel button? Causes a cancel edit event
 	 *        when clicked.
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
@@ -233,7 +233,7 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 
 	/**
 	 * Applies field error messages to the fields contained in the member
-	 * {@link FieldPanel}.
+	 * {@link AbstractBindableFieldPanel}.
 	 * @param msgs The field error messages to apply
 	 * @param classifier the error classifier
 	 * @param clearExisting Remove existing errors of the given error classifier

@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.FlowFieldPanel;
+import com.tll.client.ui.field.AbstractBindableFlowFieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.IFieldWidget;
@@ -33,7 +33,7 @@ public class AccountMultiOptionInterfacePanel extends AbstractAccountInterfacePa
 	 * given interface option and account.
 	 * @author jpk
 	 */
-	static class AccountOptionPanel extends FlowFieldPanel {
+	static class AccountOptionPanel extends AbstractBindableFlowFieldPanel {
 
 		final Label lblDesc = new Label(null, false);
 		final Label lblDflt = new Label(null, false);

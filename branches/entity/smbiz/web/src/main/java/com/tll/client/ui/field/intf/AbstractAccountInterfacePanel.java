@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.FlowFieldPanel;
+import com.tll.client.ui.field.AbstractBindableFlowFieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.TabbedIndexedFieldPanel;
@@ -21,14 +21,14 @@ import com.tll.common.model.PropertyPathException;
  * AbstractAccountInterfacePanel
  * @author jpk
  */
-abstract class AbstractAccountInterfacePanel extends FlowFieldPanel {
+abstract class AbstractAccountInterfacePanel extends AbstractBindableFlowFieldPanel {
 
 	/**
 	 * AccountParameterPanel - Represents an interface option parameter that
 	 * handles account subscribing and un-subscribing.
 	 * @author jpk
 	 */
-	static class AccountParameterPanel extends FlowFieldPanel {
+	static class AccountParameterPanel extends AbstractBindableFlowFieldPanel {
 
 		final Label lblName, lblCode, lblDesc;
 		TextField value;

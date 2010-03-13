@@ -27,7 +27,7 @@ import com.tll.util.PropertyPath;
  * IndexedFieldPanel - Caters to the display of indexed field collections.
  * <p>
  * The {@link IndexedFieldPanel} is savagely different from its brethren
- * {@link FieldPanel} in that the value type is a raw reference to a model
+ * {@link AbstractBindableFieldPanel} in that the value type is a raw reference to a model
  * collection rather than a {@link FieldGroup}. Because of this, this field
  * panel type manages its own binding life-cycle which is triggered by the
  * {@link #setValue(Collection)} and {@link #getValue()} methods.
@@ -38,7 +38,7 @@ import com.tll.util.PropertyPath;
  * @param <I> the index field panel type
  * @author jpk
  */
-public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?>> extends FieldPanel<W> implements IIndexedFieldBoundWidget {
+public abstract class IndexedFieldPanel<W extends Widget, I extends AbstractBindableFieldPanel<?>> extends AbstractBindableFieldPanel<W> implements IIndexedFieldBoundWidget {
 
 	/**
 	 * Index - Wrapper class for each field panel at an index encapsulating the
@@ -98,7 +98,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	private final String indexedPropertyName;
 
 	/**
-	 * The list of indexed {@link FieldPanel}s.
+	 * The list of indexed {@link AbstractBindableFieldPanel}s.
 	 */
 	private final List<Index> indexPanels = new ArrayList<Index>();
 

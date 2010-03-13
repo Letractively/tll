@@ -40,7 +40,7 @@ import com.tll.common.model.Model;
  * @param <I> the index field panel type
  * @author jpk
  */
-public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends IndexedFieldPanel<FlowPanel, I>
+public abstract class TabbedIndexedFieldPanel<I extends AbstractBindableFieldPanel<?>> extends IndexedFieldPanel<FlowPanel, I>
 implements SelectionHandler<Integer>, BeforeSelectionHandler<Integer> {
 
 	/**

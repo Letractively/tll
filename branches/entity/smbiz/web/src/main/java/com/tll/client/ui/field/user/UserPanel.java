@@ -13,7 +13,7 @@ import com.tll.client.mvc.view.EditViewInitializer;
 import com.tll.client.mvc.view.account.AccountEditView;
 import com.tll.client.ui.field.AddressFieldsRenderer;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.FlowFieldPanel;
+import com.tll.client.ui.field.AbstractBindableFlowFieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.IFieldWidget;
@@ -24,7 +24,7 @@ import com.tll.common.model.Model;
  * UserPanel
  * @author jpk
  */
-public class UserPanel extends FlowFieldPanel {
+public class UserPanel extends AbstractBindableFlowFieldPanel {
 
 	class UserFieldsRenderer implements IFieldRenderer<FlowPanel> {
 

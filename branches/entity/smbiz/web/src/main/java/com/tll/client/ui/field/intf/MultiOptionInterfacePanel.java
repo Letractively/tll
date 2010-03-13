@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.tll.client.model.ModelAssembler;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.FlowFieldPanel;
+import com.tll.client.ui.field.AbstractBindableFlowFieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.IFieldWidget;
@@ -41,7 +41,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel {
 	 * OptionPanel
 	 * @author jpk
 	 */
-	final class OptionPanel extends FlowFieldPanel {
+	final class OptionPanel extends AbstractBindableFlowFieldPanel {
 
 		private final ParamsPanel paramsPanel;
 		private final DisclosurePanel dpParams;
