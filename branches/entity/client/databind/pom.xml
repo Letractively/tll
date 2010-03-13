@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<artifactId>tll-client</artifactId>
+		<groupId>com.tll</groupId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	
+	<groupId>com.tll</groupId>
+	<artifactId>tll-client-databind</artifactId>
+  <version>${project.parent.version}</version>
+	<name>tll-client-databind</name>
+	<description>Field/Model databinding.</description>
+	
+	<build>
+	</build>
+	
+	<dependencies>
+	
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-client-model</artifactId>
+      <version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-client-field</artifactId>
+      <version>${project.version}</version>
+		</dependency>
+
+	</dependencies>
+
+</project>
