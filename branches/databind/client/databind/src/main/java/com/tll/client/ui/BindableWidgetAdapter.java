@@ -39,11 +39,6 @@ public final class BindableWidgetAdapter<V> implements IBindableWidget<V> {
 	private final IBindableWidget<V> target;
 
 	/**
-	 * The converter for handling in-bound un-typed values.
-	 */
-	private IConverter<V, Object> converter;
-
-	/**
 	 * Responsible for disseminating <em>property</em> change events.
 	 */
 	protected final PropertyChangeSupport changeSupport;
@@ -63,16 +58,6 @@ public final class BindableWidgetAdapter<V> implements IBindableWidget<V> {
 	}
 
 	@Override
-	public IConverter<V, Object> getConverter() {
-		return converter;
-	}
-
-	@Override
-	public void setConverter(IConverter<V, Object> converter) {
-		this.converter = converter;
-	}
-
-	@Override
 	public Object getProperty(String propPath) throws PropertyPathException {
 		if(!IBindableWidget.PROPERTY_VALUE.equals(propPath)) {
 			throw new MalformedPropPathException(propPath);
@@ -86,8 +71,8 @@ public final class BindableWidgetAdapter<V> implements IBindableWidget<V> {
 		if(!IBindableWidget.PROPERTY_VALUE.equals(propPath)) {
 			throw new MalformedPropPathException(propPath);
 		}
-		final IConverter<V, Object> cvrtr = getConverter();
-		if(cvrtr == null) {
+		IConverter<V, Object> converter = target.getConverter();
+		if(converter == null) {
 			// attempt to cast
 			try {
 				setValue((V) value);
@@ -98,7 +83,7 @@ public final class BindableWidgetAdapter<V> implements IBindableWidget<V> {
 		}
 		else {
 			// employ the provided converter
-			setValue(cvrtr.convert(value));
+			setValue(converter.convert(value));
 		}
 	}
 
@@ -115,6 +100,16 @@ public final class BindableWidgetAdapter<V> implements IBindableWidget<V> {
 	@Override
 	public void setValue(V value, boolean fireEvents) {
 		target.setValue(value, fireEvents);
+	}
+
+	@Override
+	public IConverter<V, Object> getConverter() {
+		return target.getConverter(); 
+	}
+
+	@Override
+	public void setConverter(IConverter<V, Object> converter) {
+		target.setConverter(converter);
 	}
 
 	@Override
@@ -139,13 +134,11 @@ public final class BindableWidgetAdapter<V> implements IBindableWidget<V> {
 
 	@Override
 	public void fireEvent(GwtEvent<?> event) {
-		// the delegator must implement this
-		throw new UnsupportedOperationException();
+		target.fireEvent(event);
 	}
 
 	@Override
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<V> handler) {
-		// the delegator must implement this
-		throw new UnsupportedOperationException();
+		return target.addValueChangeHandler(handler);
 	}
 }

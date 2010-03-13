@@ -4,20 +4,24 @@
  */
 package com.tll.client.ui.field;
 
+import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.ui.IBindableWidget;
+import com.tll.client.convert.IHasConverter;
 import com.tll.client.ui.IHasHelpText;
 import com.tll.client.validate.IValidator;
 import com.tll.schema.IPropertyNameProvider;
 
 /**
  * IFieldWidget - A physical non-group field capable of display in the ui.
- * @param <V> the value type
+ * @param <V> value type
  * @author jpk
  */
-public interface IFieldWidget<V> extends IField, IBindableWidget<V>, IPropertyNameProvider, HasText, IHasHelpText,
-IValidator {
+public interface IFieldWidget<V> extends IField, IPropertyNameProvider, HasValue<V>, HasText, IHasHelpText, IValidator, ValueChangeHandler<V>, Focusable, BlurHandler, FocusHandler, IHasConverter<Object, V> {
 
 	/**
 	 * Styles - (field.css)

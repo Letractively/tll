@@ -57,11 +57,13 @@ public class DefaultFieldBindingBuilder implements IFieldBindingBuilder {
 	 *         because not all required members have been set
 	 * @throws BindingException When the binding creation fails
 	 */
+	@SuppressWarnings("unchecked")
 	static Binding createBinding(Model model, IConverter<Object, Object> modelConverter, String modelProp,
 			IPropertyChangeListener modelChangeListener, IFieldWidget<?> fw, IConverter<Object, Object> fieldConverter,
 			IPropertyChangeListener fieldChangeListener) throws BindingException {
+		BindableFieldWidget<?> bfw = new BindableFieldWidget<Object>((IFieldWidget<Object>) fw);
 		final Binding b =
-			new Binding(model, modelProp, modelConverter, null, null, fw, IBindableWidget.PROPERTY_VALUE, fieldConverter,
+			new Binding(model, modelProp, modelConverter, null, null, bfw, IBindableWidget.PROPERTY_VALUE, fieldConverter,
 					fw, fw.getErrorHandler());
 		if(modelChangeListener != null) b.addPropertyChangeListener(modelChangeListener, true);
 		if(fieldChangeListener != null) b.addPropertyChangeListener(fieldChangeListener, false);
