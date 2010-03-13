@@ -15,10 +15,9 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PushButton;
-import com.tll.client.data.rpc.ModelCacheHelper;
-import com.tll.client.data.rpc.ModelDataCommand;
 import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.data.rpc.IRpcCommand;
+import com.tll.client.data.rpc.ModelDataCommand;
 import com.tll.client.model.ModelAssembler;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.mvc.view.AbstractRpcAndModelAwareView;
@@ -247,7 +246,7 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 	public void onClick(ClickEvent event) {
 		if(event.getSource() == btnAddIntf) {
 			// ensure we have the aux data cached
-			final ModelDataRequest adr = ModelCacheHelper.filterRequest(auxDataRequest);
+			final ModelDataRequest adr = ModelDataCommand.filterRequest(auxDataRequest);
 			if(adr != null) {
 				(new ModelDataCommand(adr) {
 
