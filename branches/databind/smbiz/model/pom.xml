@@ -1,0 +1,212 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>smbiz</artifactId>
+		<groupId>com.tll</groupId>
+		<version>0.9.0-SNAPSHOT</version>
+	</parent>
+
+	<groupId>com.tll</groupId>
+	<artifactId>smbiz-model</artifactId>
+	<name>smbiz-model</name>
+	<version>0.9.0-SNAPSHOT</version>
+	<description>The smbiz model module.</description>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/client/**</include>
+					<include>**/common/**</include>
+					<include>**/model/AccountSource.java</include>
+					<include>**/model/AccountStatus.java</include>
+					<include>**/model/AddressType.java</include>
+					<include>**/model/AdminRole.java</include>
+					<include>**/model/AuthorityRoles.java</include>
+					<include>**/model/CreditCardType.java</include>
+					<include>**/model/OrderItemStatus.java</include>
+					<include>**/model/OrderItemTransOp.java</include>
+					<include>**/model/OrderStatus.java</include>
+					<include>**/model/OrderTransOp.java</include>
+					<include>**/model/OrderTransOpResult.java</include>
+					<include>**/model/PaymentItemStatus.java</include>
+					<include>**/model/PaymentOp.java</include>
+					<include>**/model/PaymentProcessor.java</include>
+					<include>**/model/PaymentType.java</include>
+					<include>**/model/ProductStatus.java</include>
+					<include>**/model/ShipModeType.java</include>
+				</includes>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/main/assembly/test-assets.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+
+	</build>
+
+	<profiles>
+		<profile>
+			<id>jdo</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<configuration>
+							<!--
+								This tells datanucleus to NOT auto-enhance since the enhancer is on the classpath! This is a manually driven
+								process since the maven plugin is limited in its functionality and we have more control invoking it manually
+							-->
+							<compilerArgument>-proc:none</compilerArgument>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>jdo-enhance-classpath</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>build-classpath</goal>
+								</goals>
+								<configuration>
+									<includeArtifactIds>log4j,asm,commons-logging,gwt-servlet,spring-security-core,tll-core,tll-model,jdo2-api,datanucleus-core,datanucleus-enhancer</includeArtifactIds>
+									<outputFile>target/jdo-enhance-cp.txt</outputFile>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>jdo-enhance</id>
+								<phase>process-classes</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<loadfile property="ecp" srcFile="target/jdo-enhance-cp.txt" />
+										<property name="enhancer.classpath" value="target/classes;src/test/resources;${ecp}" />
+										<echo message="enhancer.classpath: ${enhancer.classpath}" />
+										<property name="jdo.files" value="META-INF/package.jdo" />
+										<ant antfile="../../model/build-jdo.xml">
+											<target name="enhance" />
+										</ant>
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+			<dependencies>
+				<dependency>
+					<groupId>asm</groupId>
+					<artifactId>asm</artifactId>
+					<scope>provided</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.datanucleus</groupId>
+					<artifactId>datanucleus-core</artifactId>
+					<scope>provided</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.datanucleus</groupId>
+					<artifactId>datanucleus-enhancer</artifactId>
+					<scope>provided</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
+
+	<dependencies>
+		<dependency>
+			<artifactId>commons-logging</artifactId>
+			<groupId>commons-logging</groupId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.code.guice</groupId>
+			<artifactId>guice</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>aopalliance</groupId>
+			<artifactId>aopalliance</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- satisifies the possibly jdo enhanced model classes -->
+		<dependency>
+			<groupId>javax.jdo</groupId>
+			<artifactId>jdo2-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-servlet</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-model</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-model</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<classifier>testassets</classifier>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+</project>

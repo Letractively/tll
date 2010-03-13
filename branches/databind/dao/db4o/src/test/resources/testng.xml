@@ -1,0 +1,11 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="db4o-dao-tests">
+
+  <test name="db4o-dao-tests" annotations="JDK">
+    <packages>
+      <package name="com.tll.dao.db4o" />
+      <package name="com.tll.listhandler" />
+    </packages>
+  </test>
+
+</suite>

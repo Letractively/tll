@@ -1,0 +1,12 @@
+<module rename-to="uitests">
+  <inherits name="com.tll.View" />
+
+  <source path="client">
+    <exclude name="**/*GWTTest*" />
+  </source>
+
+  <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
+  <set-property name="log_DivLogger" value="DISABLED" />
+
+  <entry-point class="com.tll.client.UITests" />
+</module>
