@@ -168,7 +168,8 @@ public final class SuggestField extends AbstractDataField<String, String> {
 		buildOracle();
 	}
 
-	public String getText() {
+	@Override
+	public String doGetText() {
 		return sb.getText();
 	}
 

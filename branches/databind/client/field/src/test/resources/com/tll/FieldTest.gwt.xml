@@ -8,11 +8,6 @@
   <set-property name="log_RemoteLogger" value="DISABLED" />
   <set-property name="log_WindowLogger" value="DISABLED" />
   
-  <inherits name="com.tll.ModelTest" />
   <inherits name="com.tll.Field" />
-
-  <source path="common/model">
-    <exclude name="*Test.java" />
-  </source>
 
 </module>

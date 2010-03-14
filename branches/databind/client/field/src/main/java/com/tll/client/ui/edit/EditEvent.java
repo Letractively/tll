@@ -25,8 +25,6 @@ public final class EditEvent<T> extends GwtEvent<IEditHandler<T>> {
 		}
 	}
 
-	public static final Type<IEditHandler<?>> TYPE = new Type<IEditHandler<?>>();
-
 	/**
 	 * Fires add edit event.
 	 * @param <T> edit content type
@@ -66,6 +64,8 @@ public final class EditEvent<T> extends GwtEvent<IEditHandler<T>> {
 		source.fireEvent(new EditEvent<Object>(EditOp.CANCEL, null));
 	}
 
+	public static final Type<IEditHandler<?>> TYPE = new Type<IEditHandler<?>>();
+
 	private final EditOp op;
 
 	private final T content;
@@ -100,5 +100,10 @@ public final class EditEvent<T> extends GwtEvent<IEditHandler<T>> {
 	@Override
 	public GwtEvent.Type<IEditHandler<T>> getAssociatedType() {
 		return (Type) TYPE;
+	}
+
+	@Override
+	public String toDebugString() {
+		return super.toDebugString();
 	}
 }

@@ -468,6 +468,18 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 		}
 		return value;
 	}
+	
+	/**
+	 * @return The raw field text which may be <code>null</code>.
+	 */
+	protected abstract String doGetText();
+
+	@Override
+	public final String getText() {
+		String sval = doGetText();
+		sval = StringUtil.isEmpty(sval) ? dfltReadOnlyEmptyValue : sval;
+		return sval;
+	}
 
 	private void draw() {
 
@@ -499,9 +511,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 			// set help text
 			rof.setTitle(helpText);
 
-			String sval = getText();
-			sval = StringUtil.isEmpty(sval) ? dfltReadOnlyEmptyValue : sval;
-			rof.setText(sval);
+			rof.setText(getText());
 		}
 		if(fldLbl != null) fldLbl.setFor(readOnly ? "" : domId);
 

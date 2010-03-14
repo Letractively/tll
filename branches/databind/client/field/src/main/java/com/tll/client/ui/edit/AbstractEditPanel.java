@@ -111,12 +111,10 @@ public abstract class AbstractEditPanel<T, P extends AbstractFieldPanel<?>> exte
 	public AbstractEditPanel(P fieldPanel, boolean showCancelBtn, boolean showDeleteBtn, boolean showResetBtn) {
 		super();
 		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
-		//fieldPanel.setModelChangeTracker(new ModelChangeTracker());
 		this.fieldPanel = fieldPanel;
 
 		portal.setStyleName(Styles.PORTAL);
-		// we need to defer this until needed model and aux data is loaded
-		// portal.setWidget(fieldPanel);
+		portal.setWidget(fieldPanel);
 
 		pnlButtonRow.setStyleName(Styles.BTN_ROW);
 

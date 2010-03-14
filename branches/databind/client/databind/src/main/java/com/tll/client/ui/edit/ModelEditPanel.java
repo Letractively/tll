@@ -6,7 +6,7 @@
 package com.tll.client.ui.edit;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.model.ModelChangeTracker;
 import com.tll.client.ui.Position;
 import com.tll.client.ui.field.AbstractBindableFieldPanel;
 import com.tll.client.ui.field.NoChangesException;
@@ -33,6 +33,7 @@ public class ModelEditPanel extends AbstractEditPanel<Model, AbstractBindableFie
 	public ModelEditPanel(AbstractBindableFieldPanel<?> fieldPanel, boolean showCancelBtn, boolean showDeleteBtn,
 			boolean showResetBtn) {
 		super(fieldPanel, showCancelBtn, showDeleteBtn, showResetBtn);
+		fieldPanel.setModelChangeTracker(new ModelChangeTracker());
 	}
 
 	public final Model getModel() {
@@ -44,12 +45,13 @@ public class ModelEditPanel extends AbstractEditPanel<Model, AbstractBindableFie
 		fieldPanel.setModel(model);
 		if(model != null) {
 			setEditMode(model.isNew());
+			/*
 			// deferred attachment to guaranting model and aux data is available
-			final Widget w = fieldPanel;
-			if(w.getParent() == null) {
+			if(fieldPanel.getParent() == null) {
 				Log.debug("EditPanel.setModel() attaching fieldPanel..");
-				getPortal().add(w);
+				getPortal().add(fieldPanel);
 			}
+			*/
 		}
 		Log.debug("ModelEditPanel.setModel() - END");
 	}

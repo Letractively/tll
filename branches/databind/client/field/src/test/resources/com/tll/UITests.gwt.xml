@@ -1,5 +1,4 @@
 <module rename-to="uitests">
-  <inherits name="com.tll.ModelTest" />
   <inherits name="com.tll.Field" />
 
   <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
@@ -13,10 +12,6 @@
 
   <source path="client">
     <exclude name="**/*GWTTest*" />
-  </source>
-
-  <source path="common/model">
-    <exclude name="*Test.java" />
   </source>
 
   <!-- target host mode browser only -->

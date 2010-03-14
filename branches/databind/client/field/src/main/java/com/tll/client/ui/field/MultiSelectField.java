@@ -171,7 +171,8 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 		return lb.getSelectedIndex();
 	}
 
-	public String getText() {
+	@Override
+	public String doGetText() {
 		// comma delimit
 		final StringBuilder sb = new StringBuilder();
 		for(int i = 0; i < lb.getItemCount(); i++) {

@@ -198,7 +198,8 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 		return fp;
 	}
 
-	public String getText() {
+	@Override
+	public String doGetText() {
 		return getToken(fp.getValue());
 	}
 
