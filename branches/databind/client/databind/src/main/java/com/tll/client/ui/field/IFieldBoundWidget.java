@@ -62,16 +62,4 @@ public interface IFieldBoundWidget extends IHasFieldGroup, IHasModel, IHasErrorH
 	 *         to editing or <code>null</code> if no properties changed.
 	 */
 	Model getChangedModel();
-
-	/**
-	 * Enables or disables the field bound widget. When disabling, all shown
-	 * member fields shall be rendered non-interactable.
-	 * @param enable Enable or disable?
-	 */
-	void enable(boolean enable);
-
-	/**
-	 * Resets the state of the fields to reflect the current state of model data.
-	 */
-	void reset();
 }

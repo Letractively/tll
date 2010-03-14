@@ -21,7 +21,7 @@ import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.ui.RpcUiHandler;
 import com.tll.client.ui.edit.EditEvent;
-import com.tll.client.ui.edit.EditPanel;
+import com.tll.client.ui.edit.AbstractEditPanel;
 import com.tll.client.ui.edit.IEditHandler;
 import com.tll.client.ui.field.AbstractBindableFieldPanel;
 import com.tll.client.ui.msg.GlobalMsgPanel;
@@ -101,11 +101,11 @@ class InterfaceStack extends Composite implements IRpcHandler, IListingHandler<M
 	} // InterfacesPanel
 
 	/**
-	 * InterfacePanel - {@link EditPanel} for an interface w/in the
+	 * InterfacePanel - {@link AbstractEditPanel} for an interface w/in the
 	 * {@link InterfaceStack}.
 	 * @author jpk
 	 */
-	final class InterfacePanel extends EditPanel implements IEditHandler, IRpcHandler, IModelChangeHandler {
+	final class InterfacePanel extends AbstractEditPanel implements IEditHandler, IRpcHandler, IModelChangeHandler {
 
 		private final ModelKey intfRef;
 

@@ -10,15 +10,16 @@ import com.google.gwt.event.shared.HasHandlers;
 
 
 /**
- * IHasEditHandlers
+ * Fires edit events of a particular content type.
+ * @param <T> edit content type
  * @author jpk
  */
-public interface IHasEditHandlers extends HasHandlers {
+public interface IHasEditHandlers<T> extends HasHandlers {
 
 	/**
 	 * Adds a handler.
 	 * @param handler
 	 * @return {@link HandlerRegistration}
 	 */
-	HandlerRegistration addEditHandler(IEditHandler handler);
+	HandlerRegistration addEditHandler(IEditHandler<T> handler);
 }

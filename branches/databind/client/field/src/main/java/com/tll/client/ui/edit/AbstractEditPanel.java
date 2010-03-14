@@ -14,38 +14,25 @@ import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.model.ModelChangeTracker;
 import com.tll.client.ui.FocusCommand;
-import com.tll.client.ui.Position;
+import com.tll.client.ui.field.AbstractFieldPanel;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.AbstractBindableFieldPanel;
-import com.tll.client.ui.field.IFieldBoundWidget;
 import com.tll.client.ui.field.IFieldWidget;
-import com.tll.client.ui.field.NoChangesException;
 import com.tll.client.ui.msg.IMsgDisplay;
-import com.tll.client.ui.msg.Msgs;
 import com.tll.client.validate.Error;
 import com.tll.client.validate.ErrorClassifier;
 import com.tll.client.validate.ErrorDisplay;
 import com.tll.client.validate.ErrorHandlerDelegate;
 import com.tll.client.validate.IErrorHandler;
-import com.tll.client.validate.ValidationException;
-import com.tll.common.model.Model;
 import com.tll.common.msg.Msg;
-import com.tll.common.msg.Msg.MsgLevel;
 
 /**
- * EditPanel - Composite panel targeting a {@link FlowPanel} whose children
- * consist of a {@link ScrollPanel} containing a {@link AbstractBindableFieldPanel} and another
- * {@link FlowPanel} containing edit buttons. The {@link ScrollPanel} enables
- * the the {@link AbstractBindableFieldPanel} content to always be navigable and keeps the edit
- * and cancel buttons in constant position.
+ * Wraps a panel holding editable content that fires edit events.
+ * @param <T> edit content type
  * @author jpk
  */
-public class EditPanel extends Composite implements ClickHandler, IHasEditHandlers {
+public abstract class AbstractEditPanel<T> extends Composite implements ClickHandler, IHasEditHandlers<T> {
 
 	/**
 	 * Styles - (admin.css)
@@ -54,7 +41,7 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	protected static class Styles {
 
 		/**
-		 * The style name for {@link EditPanel}s.
+		 * The style name for {@link AbstractEditPanel}s.
 		 */
 		public static final String ENTITY_EDIT = "entityEdit";
 		/**
@@ -88,15 +75,12 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	 */
 	private final FlowPanel panel = new FlowPanel();
 
-	/**
-	 * This panel contains the {@link AbstractBindableFieldPanel}.
-	 */
 	private final SimplePanel portal = new SimplePanel();
 
 	/**
 	 * Contains the actual edit fields.
 	 */
-	protected final IFieldBoundWidget fieldPanel;
+	protected final AbstractFieldPanel<?> fieldPanel;
 
 	/**
 	 * Ref to the optional message display which is gotten from the error handler
@@ -115,17 +99,17 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 
 	/**
 	 * Constructor
-	 * @param fieldPanel The required {@link AbstractBindableFieldPanel}
+	 * @param fieldPanel The required {@link AbstractFieldPanel}
 	 * @param showCancelBtn Show the cancel button? Causes a cancel edit event
 	 *        when clicked.
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
 	 * @param showResetBtn Show the reset button?
 	 */
-	public EditPanel(IFieldBoundWidget fieldPanel, boolean showCancelBtn, boolean showDeleteBtn, boolean showResetBtn) {
+	public AbstractEditPanel(AbstractFieldPanel<?> fieldPanel, boolean showCancelBtn, boolean showDeleteBtn, boolean showResetBtn) {
 		super();
 		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
-		fieldPanel.setModelChangeTracker(new ModelChangeTracker());
+		//fieldPanel.setModelChangeTracker(new ModelChangeTracker());
 		this.fieldPanel = fieldPanel;
 
 		portal.setStyleName(Styles.PORTAL);
@@ -165,7 +149,7 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 			panel.insert(msgDisplay.getDisplayWidget(), 0);
 		}
 	}
-	
+
 	public final void showResetButton(boolean show) {
 		if(btnReset == null) {
 			btnReset = new Button("Reset", this);
@@ -194,35 +178,36 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	}
 
 	@Override
-	public final HandlerRegistration addEditHandler(IEditHandler handler) {
+	public final HandlerRegistration addEditHandler(IEditHandler<T> handler) {
 		return addHandler(handler, EditEvent.TYPE);
 	}
 
-	private void setEditMode(boolean isAdd) {
+	/**
+	 * Sets the edit mode to either add or update.
+	 * @param isAdd
+	 */
+	public void setEditMode(boolean isAdd) {
 		btnSave.setText(isAdd ? "Add" : "Update");
 		// now show the button row
 		pnlButtonRow.setVisible(true);
 	}
 
-	private boolean isAdd() {
+	protected final boolean isAdd() {
 		return "Add".equals(btnSave.getText());
 	}
 
+	/*
 	public final Model getModel() {
 		return fieldPanel.getModel();
 	}
 
-	/**
-	 * Sets the model propagating it to the held field panel.
-	 * @param model The model to set
-	 */
 	public void setModel(Model model) {
 		Log.debug("EditPanel.setModel() - START");
 		fieldPanel.setModel(model);
 		if(model != null) {
 			setEditMode(model.isNew());
 			// deferred attachment to guaranting model and aux data is available
-			final Widget w = (Widget) fieldPanel;
+			final Widget w = fieldPanel;
 			if(w.getParent() == null) {
 				Log.debug("EditPanel.setModel() attaching fieldPanel..");
 				portal.add(w);
@@ -230,10 +215,11 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 		}
 		Log.debug("EditPanel.setModel() - END");
 	}
+	*/
 
 	/**
 	 * Applies field error messages to the fields contained in the member
-	 * {@link AbstractBindableFieldPanel}.
+	 * {@link AbstractFieldPanel}.
 	 * @param msgs The field error messages to apply
 	 * @param classifier the error classifier
 	 * @param clearExisting Remove existing errors of the given error classifier
@@ -262,19 +248,31 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 			errorHandler.handleError(new Error(classifier, fw, emsg), ErrorDisplay.ALL_FLAGS);
 		}
 	}
-
+	
+	/**
+	 * @return The edit content.
+	 */
+	protected abstract T getEditContent();
+	
 	public final void onClick(ClickEvent event) {
 		final Object sender = event.getSource();
 		if(sender == btnSave) {
+			if(isAdd()) {
+				EditEvent.fireAdd(this, getEditContent());
+			}
+			else {
+				EditEvent.fireUpdate(this, getEditContent());
+			}
+			/*
 			try {
 				Log.debug("EditPanel - Saving..");
-				fieldPanel.updateModel();
+				//fieldPanel.updateModel();
 				if(isAdd()) {
 					EditEvent.fireAdd(this, fieldPanel.getModel());
 				}
 				else {
-					final Model medited = fieldPanel.getModel();
-					final Model mchanged = fieldPanel.getChangedModel();
+					//final Model medited = fieldPanel.getModel();
+					//final Model mchanged = fieldPanel.getChangedModel();
 					EditEvent.fireUpdate(this, medited, mchanged);
 				}
 			}
@@ -294,12 +292,13 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 				assert emsg != null;
 				Log.error(emsg);
 			}
+			*/
 		}
 		else if(sender == btnReset) {
 			fieldPanel.reset();
 		}
 		else if(sender == btnDelete) {
-			EditEvent.fireDelete(this);
+			EditEvent.fireDelete(this, getEditContent());
 		}
 		else if(sender == btnCancel) {
 			EditEvent.fireCancel(this);

@@ -149,24 +149,22 @@ public abstract class AbstractBindableFieldPanel<W extends Widget> extends Abstr
 
 	@Override
 	public void reset() {
-		if(group == null) return;
 		final IIndexedFieldBoundWidget[] indexed = getIndexedChildren();
 		if(indexed != null) {
 			for(final IIndexedFieldBoundWidget i : indexed) {
-				i.reset();
+				((AbstractFieldPanel<?>)i).reset();
 			}
 		}
-		group.reset();
+		super.reset();
 	}
 
 	@Override
 	public void enable(boolean enable) {
-		if(group == null) return;
-		group.setEnabled(enable);
+		super.enable(enable);
 		final IIndexedFieldBoundWidget[] indexed = getIndexedChildren();
 		if(indexed != null) {
 			for(final IIndexedFieldBoundWidget i : indexed) {
-				i.enable(enable);
+				((AbstractFieldPanel<?>)i).enable(enable);
 			}
 		}
 	}

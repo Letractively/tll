@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.test.TestFieldPanel;
 import com.tll.client.ui.GridRenderer;
 import com.tll.client.ui.edit.EditEvent;
-import com.tll.client.ui.edit.EditPanel;
+import com.tll.client.ui.edit.AbstractEditPanel;
 import com.tll.client.ui.edit.IEditHandler;
 import com.tll.client.ui.field.FieldErrorHandler;
 import com.tll.client.ui.field.FieldFactory;
@@ -439,7 +439,7 @@ public final class UITests extends AbstractUITest {
 		GlobalMsgPanel gmp;
 		TestFieldPanel fp;
 		ErrorHandlerDelegate eh;
-		EditPanel ep;
+		AbstractEditPanel ep;
 		ModelViewer mv, mvchanged;
 		Model m;
 
@@ -466,7 +466,7 @@ public final class UITests extends AbstractUITest {
 			mvchanged = new ModelViewer();
 			fp = new TestFieldPanel();
 			eh = ErrorHandlerBuilder.build(true, true, new GlobalMsgPanel());
-			ep = new EditPanel(fp, false, false, true);
+			ep = new AbstractEditPanel(fp, false, false, true);
 			ep.setErrorHandler(eh, true);
 
 			final CopyCriteria mcrit = CopyCriteria.all();

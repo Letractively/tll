@@ -15,7 +15,7 @@ import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.mvc.ModelChangeViewHandler;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.ui.edit.EditEvent;
-import com.tll.client.ui.edit.EditPanel;
+import com.tll.client.ui.edit.AbstractEditPanel;
 import com.tll.client.ui.edit.IEditHandler;
 import com.tll.client.ui.field.AbstractBindableFieldPanel;
 import com.tll.client.ui.msg.GlobalMsgPanel;
@@ -53,7 +53,7 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 	/**
 	 * The Panel containing the UI edit Widgets.
 	 */
-	private final EditPanel editPanel;
+	private final AbstractEditPanel editPanel;
 
 	/**
 	 * Constructor
@@ -62,7 +62,7 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 	public EditView(AbstractBindableFieldPanel<?> fieldPanel) {
 		super();
 		gmp = new GlobalMsgPanel();
-		editPanel = new EditPanel(fieldPanel, true, false, true);
+		editPanel = new AbstractEditPanel(fieldPanel, true, false, true);
 		editPanel.setErrorHandler(ErrorHandlerBuilder.build(true, true, new GlobalMsgPanel()), true);
 		editPanel.addEditHandler(this);
 

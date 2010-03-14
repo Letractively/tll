@@ -9,14 +9,15 @@ import com.google.gwt.event.shared.EventHandler;
 
 
 /**
- * IEditHandler - Listens to edit events.
+ * Listens to edit events of a particular edit content type.
+ * @param <T> edit content type
  * @author jpk
  */
-public interface IEditHandler extends EventHandler {
+public interface IEditHandler<T> extends EventHandler {
 
 	/**
 	 * Fired when an edit event occurs.
 	 * @param event The event
 	 */
-	void onEdit(EditEvent event);
+	void onEdit(EditEvent<T> event);
 }
