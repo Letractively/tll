@@ -14,6 +14,7 @@ import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.tll.client.ui.FocusCommand;
 import com.tll.client.ui.field.AbstractFieldPanel;
@@ -30,9 +31,10 @@ import com.tll.common.msg.Msg;
 /**
  * Wraps a panel holding editable content that fires edit events.
  * @param <T> edit content type
+ * @param <P> field panel type
  * @author jpk
  */
-public abstract class AbstractEditPanel<T> extends Composite implements ClickHandler, IHasEditHandlers<T> {
+public abstract class AbstractEditPanel<T, P extends AbstractFieldPanel<?>> extends Composite implements ClickHandler, IHasEditHandlers<T> {
 
 	/**
 	 * Styles - (admin.css)
@@ -80,7 +82,7 @@ public abstract class AbstractEditPanel<T> extends Composite implements ClickHan
 	/**
 	 * Contains the actual edit fields.
 	 */
-	protected final AbstractFieldPanel<?> fieldPanel;
+	protected final P fieldPanel;
 
 	/**
 	 * Ref to the optional message display which is gotten from the error handler
@@ -106,7 +108,7 @@ public abstract class AbstractEditPanel<T> extends Composite implements ClickHan
 	 *        when clicked.
 	 * @param showResetBtn Show the reset button?
 	 */
-	public AbstractEditPanel(AbstractFieldPanel<?> fieldPanel, boolean showCancelBtn, boolean showDeleteBtn, boolean showResetBtn) {
+	public AbstractEditPanel(P fieldPanel, boolean showCancelBtn, boolean showDeleteBtn, boolean showResetBtn) {
 		super();
 		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
 		//fieldPanel.setModelChangeTracker(new ModelChangeTracker());
@@ -134,6 +136,10 @@ public abstract class AbstractEditPanel<T> extends Composite implements ClickHan
 		panel.setStyleName(Styles.ENTITY_EDIT);
 
 		initWidget(panel);
+	}
+	
+	protected final Panel getPortal() {
+		return portal;
 	}
 
 	/**
@@ -196,27 +202,6 @@ public abstract class AbstractEditPanel<T> extends Composite implements ClickHan
 		return "Add".equals(btnSave.getText());
 	}
 
-	/*
-	public final Model getModel() {
-		return fieldPanel.getModel();
-	}
-
-	public void setModel(Model model) {
-		Log.debug("EditPanel.setModel() - START");
-		fieldPanel.setModel(model);
-		if(model != null) {
-			setEditMode(model.isNew());
-			// deferred attachment to guaranting model and aux data is available
-			final Widget w = fieldPanel;
-			if(w.getParent() == null) {
-				Log.debug("EditPanel.setModel() attaching fieldPanel..");
-				portal.add(w);
-			}
-		}
-		Log.debug("EditPanel.setModel() - END");
-	}
-	*/
-
 	/**
 	 * Applies field error messages to the fields contained in the member
 	 * {@link AbstractFieldPanel}.
@@ -257,48 +242,24 @@ public abstract class AbstractEditPanel<T> extends Composite implements ClickHan
 	public final void onClick(ClickEvent event) {
 		final Object sender = event.getSource();
 		if(sender == btnSave) {
-			if(isAdd()) {
-				EditEvent.fireAdd(this, getEditContent());
-			}
-			else {
-				EditEvent.fireUpdate(this, getEditContent());
-			}
-			/*
-			try {
-				Log.debug("EditPanel - Saving..");
-				//fieldPanel.updateModel();
+			T editContent = getEditContent();
+			if(editContent != null) {
 				if(isAdd()) {
-					EditEvent.fireAdd(this, fieldPanel.getModel());
+					EditEvent.fireAdd(this, editContent);
 				}
 				else {
-					//final Model medited = fieldPanel.getModel();
-					//final Model mchanged = fieldPanel.getChangedModel();
-					EditEvent.fireUpdate(this, medited, mchanged);
+					EditEvent.fireUpdate(this, editContent);
 				}
 			}
-			catch(final NoChangesException e) {
-				// no field edits were made
-				Msgs.post(new Msg("No changes detected.", MsgLevel.INFO), this, Position.CENTER, 3000, true);
-			}
-			catch(final ValidationException e) {
-				// turn on incremental validation after first pass
-				fieldPanel.getFieldGroup().validateIncrementally(true);
-			}
-			catch(final Exception e) {
-				String emsg = e.getMessage();
-				if(emsg == null) {
-					emsg = e.getClass().toString();
-				}
-				assert emsg != null;
-				Log.error(emsg);
-			}
-			*/
 		}
 		else if(sender == btnReset) {
 			fieldPanel.reset();
 		}
 		else if(sender == btnDelete) {
-			EditEvent.fireDelete(this, getEditContent());
+			T editContent = getEditContent();
+			if(editContent != null) {
+				EditEvent.fireDelete(this, editContent);
+			}
 		}
 		else if(sender == btnCancel) {
 			EditEvent.fireCancel(this);

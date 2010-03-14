@@ -12,7 +12,7 @@ import com.tll.client.ui.field.FieldGroup;
  * Edit panel whose edit content is a {@link FieldGroup}.
  * @author jpk
  */
-public class FieldGroupEditPanel extends AbstractEditPanel<FieldGroup> {
+public class FieldGroupEditPanel extends AbstractEditPanel<FieldGroup, AbstractFieldPanel<?>> {
 
 	/**
 	 * Constructor

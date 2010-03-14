@@ -23,8 +23,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.test.TestFieldPanel;
 import com.tll.client.ui.GridRenderer;
 import com.tll.client.ui.edit.EditEvent;
-import com.tll.client.ui.edit.AbstractEditPanel;
 import com.tll.client.ui.edit.IEditHandler;
+import com.tll.client.ui.edit.ModelEditPanel;
 import com.tll.client.ui.field.FieldErrorHandler;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
@@ -439,7 +439,7 @@ public final class UITests extends AbstractUITest {
 		GlobalMsgPanel gmp;
 		TestFieldPanel fp;
 		ErrorHandlerDelegate eh;
-		AbstractEditPanel ep;
+		ModelEditPanel ep;
 		ModelViewer mv, mvchanged;
 		Model m;
 
@@ -466,15 +466,15 @@ public final class UITests extends AbstractUITest {
 			mvchanged = new ModelViewer();
 			fp = new TestFieldPanel();
 			eh = ErrorHandlerBuilder.build(true, true, new GlobalMsgPanel());
-			ep = new AbstractEditPanel(fp, false, false, true);
+			ep = new ModelEditPanel(fp, false, false, true);
 			ep.setErrorHandler(eh, true);
 
 			final CopyCriteria mcrit = CopyCriteria.all();
 
-			ep.addEditHandler(new IEditHandler() {
+			ep.addEditHandler(new IEditHandler<Model>() {
 
 				@Override
-				public void onEdit(EditEvent event) {
+				public void onEdit(EditEvent<Model> event) {
 					String version;
 
 					// mimic model persist life-cycle
@@ -501,7 +501,7 @@ public final class UITests extends AbstractUITest {
 					}
 					ep.setModel(mcopy);
 					mv.setModel(mcopy);
-					mvchanged.setModel(event.getChangedModel());
+					mvchanged.setModel(event.getContent());
 					m = mcopy;
 				}
 			});

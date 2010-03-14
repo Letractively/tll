@@ -20,9 +20,10 @@ import com.tll.client.listing.rpc.RemoteListingOperator;
 import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.ui.RpcUiHandler;
-import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.AbstractEditPanel;
+import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.IEditHandler;
+import com.tll.client.ui.edit.ModelEditPanel;
 import com.tll.client.ui.field.AbstractBindableFieldPanel;
 import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.client.validate.ErrorHandlerBuilder;
@@ -105,7 +106,7 @@ class InterfaceStack extends Composite implements IRpcHandler, IListingHandler<M
 	 * {@link InterfaceStack}.
 	 * @author jpk
 	 */
-	final class InterfacePanel extends AbstractEditPanel implements IEditHandler, IRpcHandler, IModelChangeHandler {
+	final class InterfacePanel extends ModelEditPanel implements IEditHandler<Model>, IRpcHandler, IModelChangeHandler {
 
 		private final ModelKey intfRef;
 
@@ -144,7 +145,7 @@ class InterfaceStack extends Composite implements IRpcHandler, IListingHandler<M
 		}
 
 		@Override
-		public void onEdit(EditEvent event) {
+		public void onEdit(EditEvent<Model> event) {
 			switch(event.getOp()) {
 			case ADD:
 				crud.add(fieldPanel.getModel());
