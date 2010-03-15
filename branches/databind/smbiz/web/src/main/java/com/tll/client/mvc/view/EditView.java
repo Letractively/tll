@@ -16,6 +16,7 @@ import com.tll.client.mvc.ModelChangeViewHandler;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.IEditHandler;
+import com.tll.client.ui.edit.IModelEditContent;
 import com.tll.client.ui.edit.ModelEditPanel;
 import com.tll.client.ui.field.AbstractBindableFieldPanel;
 import com.tll.client.ui.msg.GlobalMsgPanel;
@@ -32,7 +33,7 @@ import com.tll.common.search.PrimaryKeySearch;
  * to edit a single entity.
  * @author jpk
  */
-public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInitializer> implements IEditHandler<Model>, IHasModelChangeHandlers {
+public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInitializer> implements IEditHandler<IModelEditContent>, IHasModelChangeHandlers {
 
 	/**
 	 * The model reference used to subsequently fetch the actual model subject to
@@ -145,17 +146,17 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 		editPanel.setModel(null); // forces clean-up of bindings and listeners
 	}
 
-	public final void onEdit(EditEvent<Model> event) {
+	public final void onEdit(EditEvent<IModelEditContent> event) {
 		Command cmd = null;
 		switch(event.getOp()) {
 		case CANCEL:
 			ViewManager.get().dispatch(new UnloadViewRequest(getViewKey(), false, false));
 			break;
 		case ADD:
-		case UPDATE: {
-			cmd = CrudCommand.persistModel(this, event.getContent());
+			cmd = CrudCommand.persistModel(this, event.getContent().getModel());
+		case UPDATE:
+			cmd = CrudCommand.persistModel(this, event.getContent().getChangedModel());
 			break;
-		}
 		case DELETE:
 			if(!model.isNew()) {
 				cmd = CrudCommand.deleteModel(this, modelKey);

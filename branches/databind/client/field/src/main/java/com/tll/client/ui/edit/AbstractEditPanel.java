@@ -118,16 +118,14 @@ public abstract class AbstractEditPanel<T, P extends AbstractFieldPanel<?>> exte
 
 		pnlButtonRow.setStyleName(Styles.BTN_ROW);
 
-		btnSave = new Button("", this);
+		// default to add mode
+		btnSave = new Button("Add", this);
 		btnSave.addStyleName(Styles.SAVE);
 		pnlButtonRow.add(btnSave);
 
 		showDeleteButton(showDeleteBtn);
 
 		showCancelButton(showCancelBtn);
-
-		// hide the button row until initialized
-		pnlButtonRow.setVisible(false);
 
 		panel.add(portal);
 		panel.add(pnlButtonRow);
@@ -192,8 +190,6 @@ public abstract class AbstractEditPanel<T, P extends AbstractFieldPanel<?>> exte
 	 */
 	public void setEditMode(boolean isAdd) {
 		btnSave.setText(isAdd ? "Add" : "Update");
-		// now show the button row
-		pnlButtonRow.setVisible(true);
 	}
 
 	protected final boolean isAdd() {

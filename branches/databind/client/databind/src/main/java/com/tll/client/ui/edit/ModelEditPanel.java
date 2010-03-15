@@ -21,7 +21,7 @@ import com.tll.common.msg.Msg.MsgLevel;
  * events.
  * @author jpk
  */
-public class ModelEditPanel extends AbstractEditPanel<Model, AbstractBindableFieldPanel<?>> {
+public class ModelEditPanel extends AbstractEditPanel<IModelEditContent, AbstractBindableFieldPanel<?>> {
 
 	/**
 	 * Constructor
@@ -57,13 +57,22 @@ public class ModelEditPanel extends AbstractEditPanel<Model, AbstractBindableFie
 	}
 
 	@Override
-	protected Model getEditContent() {
+	protected IModelEditContent getEditContent() {
 		try {
 			Log.debug("EditPanel - Saving..");
 			fieldPanel.updateModel();
-			//Model m = fieldPanel.getModel();
-			final Model mchanged = fieldPanel.getChangedModel();
-			return mchanged;
+			return new IModelEditContent() {
+				
+				@Override
+				public Model getModel() {
+					return fieldPanel.getModel();
+				}
+				
+				@Override
+				public Model getChangedModel() {
+					return fieldPanel.getChangedModel();
+				}
+			};
 		}
 		catch(final NoChangesException e) {
 			// no field edits were made
