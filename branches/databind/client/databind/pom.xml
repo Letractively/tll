@@ -24,71 +24,9 @@
           <useSystemClassLoader>false</useSystemClassLoader>
           <argLine>-Xms128m -Xmx512m -ea</argLine>
           <includes>
-            <include>com/tll/FieldGWTTestSuite.java</include>
+            <include>com/tll/DatabindGWTTestSuite.java</include>
           </includes>
         </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>gwt-processing</id>
-            <phase>process-test-classes</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <tasks>
-                <property name="gwt.compile.style" value="PRETTY" />
-                <property name="gwt.compile.classpath" refid="maven.test.classpath" />
-                <property name="gwt.compile.modules" value="com.tll.UITests" />
-                <property name="gwt.shell.entryModule" value="com.tll.UITests" />
-                <property name="gwt.shell.startupUrl" value="UITests.html" />
-                <echo message="test classpath: ${gwt.compile.classpath}" />
-                <ant antfile="${basedir}/../build-gwt.xml">
-                  <target name="build-shell-exec-file" />
-                  <target name="build-shell-debug-exec-file" />
-                  <!-- <target name="compile" /> -->
-                </ant>
-              </tasks>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>generate-gwt-war-dir</id>
-            <goals>
-              <goal>directory-single</goal>
-            </goals>
-            <phase>process-test-classes</phase>
-            <configuration>
-              <finalName>war</finalName>
-              <outputDirectory>target</outputDirectory>
-              <appendAssemblyId>false</appendAssemblyId>
-              <descriptors>
-                <descriptor>gwt-test-war-dir.xml</descriptor>
-              </descriptors>
-            </configuration>
-          </execution>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <descriptors>
-                <descriptor>test-assets.xml</descriptor>
-              </descriptors>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
 
     </plugins>
@@ -137,7 +75,6 @@
       <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
-    <!-- 
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-client-core</artifactId>
@@ -145,7 +82,6 @@
       <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
-    -->
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-client-ui</artifactId>
