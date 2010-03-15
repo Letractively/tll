@@ -22,6 +22,7 @@ import com.tll.common.search.ISearch;
 import com.tll.common.search.PrimaryKeySearch;
 import com.tll.dao.EntityExistsException;
 import com.tll.dao.EntityNotFoundException;
+import com.tll.model.EntityMetadata;
 import com.tll.model.IEntity;
 import com.tll.model.NameKey;
 import com.tll.model.bk.BusinessKeyFactory;
@@ -321,7 +322,8 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 			final String bkName = search.getBusinessKeyName();
 			final IPropertyValue[] pvs = search.getProperties();
 			IBusinessKey<IEntity> bk;
-			bk = BusinessKeyFactory.create(ec, bkName);
+			BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
+			bk = bkf.create(ec, bkName);
 			for(final IPropertyValue pv : pvs) {
 				bk.setPropertyValue(pv.getPropertyName(), pv.getValue());
 			}

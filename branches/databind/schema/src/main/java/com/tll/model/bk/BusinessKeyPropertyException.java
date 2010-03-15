@@ -1,7 +1,6 @@
 package com.tll.model.bk;
 
 import com.tll.ApplicationException;
-import com.tll.model.IEntity;
 
 /**
  * BusinessKeyPropertyException - When a business key is applied to an entity
@@ -17,7 +16,7 @@ public class BusinessKeyPropertyException extends ApplicationException {
 	 * @param businessKeyName
 	 * @param businessKeyPropertyName
 	 */
-	public BusinessKeyPropertyException(Class<? extends IEntity> entityClass, String businessKeyName,
+	public BusinessKeyPropertyException(Class<?> entityClass, String businessKeyName,
 			String businessKeyPropertyName) {
 		super("Unable to access business key property: " + businessKeyPropertyName + " for " + businessKeyName + " of "
 				+ entityClass);

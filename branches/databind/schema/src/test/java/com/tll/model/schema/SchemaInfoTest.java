@@ -17,15 +17,14 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.tll.model.EntityBase;
-import com.tll.model.IEntity;
-import com.tll.model.NamedTimeStampEntity;
+import com.tll.model.IEntityMetadata;
 import com.tll.model.validate.AtLeastOne;
 import com.tll.model.validate.BusinessKeyUniqueness;
 import com.tll.schema.ISchemaInfo;
 import com.tll.schema.ISchemaProperty;
 import com.tll.schema.Nested;
 import com.tll.schema.PropertyType;
+import com.tll.schema.SchemaInfo;
 
 /**
  * SchemaInfoTest
@@ -118,16 +117,53 @@ public class SchemaInfoTest {
 		}
 	}
 
+	static class EntityBase {
+
+		private long id;
+
+		public long getId() {
+			return id;
+		}
+
+		public void setId(long id) {
+			this.id = id;
+		}
+
+	}
+
+	static class NamedTimeStampEntity extends EntityBase {
+
+		private String name;
+		private Date dateCreated, dateModified;
+		
+		public String getName() {
+			return name;
+		}
+		
+		public void setName(String name) {
+			this.name = name;
+		}
+		
+		public Date getDateCreated() {
+			return dateCreated;
+		}
+		
+		public void setDateCreated(Date dateCreated) {
+			this.dateCreated = dateCreated;
+		}
+		
+		public Date getDateModified() {
+			return dateModified;
+		}
+		
+		public void setDateModified(Date dateModified) {
+			this.dateModified = dateModified;
+		}
+	}
+
 	static class TestEntityA extends EntityBase {
 
-		private static final long serialVersionUID = 3324870910518294253L;
-
 		private String aProp;
-
-		@Override
-		public Class<? extends IEntity> entityClass() {
-			return TestEntityA.class;
-		}
 
 		public String getAProp() {
 			return aProp;
@@ -141,14 +177,7 @@ public class SchemaInfoTest {
 
 	static class TestEntityB extends EntityBase {
 
-		private static final long serialVersionUID = -5868841032847881791L;
-
 		private TestEntityA entityA;
-
-		@Override
-		public Class<? extends IEntity> entityClass() {
-			return TestEntityB.class;
-		}
 
 		public TestEntityA getEntityA() {
 			return entityA;
@@ -181,20 +210,11 @@ public class SchemaInfoTest {
 		private transient AllTypesData nested;
 		private Map<String, String> smap;
 
-		public Class<? extends IEntity> entityClass() {
-			return TestEntity.class;
-		}
-
-		@Override
-		public String typeDesc() {
-			return "Test Entity";
-		}
-
 		@Override
 		@NotEmpty
 		@Length(max = MAXLEN_NAME)
 		public String getName() {
-			return name;
+			return super.getName();
 		}
 
 		public TestEnum getEnm() {
@@ -285,7 +305,7 @@ public class SchemaInfoTest {
 		public Set<TestEntity> getRelatedMany() {
 			return relatedMany;
 		}
-
+		
 		public void setRelatedMany(Set<TestEntity> related) {
 			this.relatedMany = related;
 		}
@@ -299,6 +319,37 @@ public class SchemaInfoTest {
 		}
 	}
 
+	static class TestEntityMetadata implements IEntityMetadata {
+
+		@Override
+		public Class<?> getEntityClass(Object entity) {
+			return entity.getClass();
+		}
+
+		@Override
+		public String getEntityInstanceDescriptor(Object entity) {
+			return "";
+		}
+
+		@Override
+		public String getEntityTypeDescriptor(Object entity) {
+			return "Test Entity";
+		}
+
+		@Override
+		public Class<?> getRootEntityClass(Class<? extends Object> entityClass) {
+			return entityClass;
+		}
+
+		@Override
+		public boolean isEntityType(Class<?> claz) {
+			return TestEntity.class.isAssignableFrom(claz);
+		}
+		
+	}
+	
+	static final IEntityMetadata entityMetadata = new TestEntityMetadata();
+	
 	/**
 	 * Constructor
 	 */
@@ -308,7 +359,7 @@ public class SchemaInfoTest {
 
 	@Test
 	public void test() throws Exception {
-		final ISchemaInfo si = new SchemaInfo();
+		final ISchemaInfo si = new SchemaInfo(entityMetadata);
 		Assert.assertNotNull(si);
 		ISchemaProperty sp;
 

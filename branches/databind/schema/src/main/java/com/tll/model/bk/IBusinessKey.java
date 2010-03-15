@@ -18,7 +18,7 @@ public interface IBusinessKey<E> extends IBusinessKeyDefinition<E>, IKey<E> {
 	 * Get the property value given a property name.
 	 * @param propertyName
 	 * @return The property value
-	 */
+	 */ 
 	Object getPropertyValue(String propertyName);
 
 	/**

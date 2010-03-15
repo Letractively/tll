@@ -1,4 +1,4 @@
-package com.tll.model.schema;
+package com.tll.schema;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -16,17 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.tll.model.IEntity;
-import com.tll.schema.ISchemaInfo;
-import com.tll.schema.ISchemaProperty;
-import com.tll.schema.Managed;
-import com.tll.schema.Nested;
-import com.tll.schema.NestedInfo;
-import com.tll.schema.PropertyMetadata;
-import com.tll.schema.PropertyType;
-import com.tll.schema.Reference;
-import com.tll.schema.RelationInfo;
-import com.tll.schema.SchemaInfoException;
+import com.tll.model.IEntityMetadata;
 import com.tll.util.PropertyPath;
 
 public final class SchemaInfo implements ISchemaInfo {
@@ -91,6 +81,8 @@ public final class SchemaInfo implements ISchemaInfo {
 		}
 		return (Character.toLowerCase(s.charAt(0)) + s.substring(1));
 	}
+	
+	private final IEntityMetadata entityMetadata;
 
 	/**
 	 * key: entity class val: serviceMap of FieldData objects keyed by the field
@@ -99,6 +91,16 @@ public final class SchemaInfo implements ISchemaInfo {
 	 */
 	private final Map<Class<?>, Map<String, ISchemaProperty>> schemaMap =
 		new HashMap<Class<?>, Map<String, ISchemaProperty>>();
+
+	/**
+	 * Constructor
+	 * @param entityMetadata required
+	 */
+	public SchemaInfo(IEntityMetadata entityMetadata) {
+		super();
+		if(entityMetadata == null) throw new NullPointerException();
+		this.entityMetadata = entityMetadata;
+	}
 
 	@Override
 	public PropertyMetadata getPropertyMetadata(final Class<?> entityClass, final String propertyName)
@@ -192,9 +194,7 @@ public final class SchemaInfo implements ISchemaInfo {
 	 */
 	private boolean isElidgible(final Method method) {
 		final String mn = method.getName();
-		// handle IChildEntity.getParent() specifically since its overridden and we
-		// don't want the IChildEntity method decl!
-		if("getParent".equals(method.getName()) && IEntity.class == method.getReturnType()) {
+		if(/*"getParent".equals(method.getName()) && */entityMetadata.isEntityType(method.getReturnType())) {
 			return false;
 		}
 		// we still want to provide info on transient properties!
@@ -244,15 +244,6 @@ public final class SchemaInfo implements ISchemaInfo {
 	}
 
 	/**
-	 * Is the given class type an entity (persist capable)?
-	 * @param type
-	 * @return true/false
-	 */
-	private boolean isEntityType(Class<?> type) {
-		return IEntity.class.isAssignableFrom(type);
-	}
-
-	/**
 	 * Is the persist property relational?
 	 * @param pprop the persist prop ref
 	 * @return true/false
@@ -264,13 +255,13 @@ public final class SchemaInfo implements ISchemaInfo {
 			try {
 				final Class<?> rmec =
 					(Class<?>) ((ParameterizedType) pprop.method.getGenericReturnType()).getActualTypeArguments()[0];
-				return isEntityType(rmec);
+				return entityMetadata.isEntityType(rmec);
 			}
 			catch(final Throwable t) {
 				return false;
 			}
 		}
-		return isEntityType(rt);
+		return entityMetadata.isEntityType(rt);
 	}
 
 	/**
@@ -293,7 +284,7 @@ public final class SchemaInfo implements ISchemaInfo {
 		if(isRelational(pprop)) {
 			// relational
 			final boolean reference = m.getAnnotation(Reference.class) != null;
-			if(isEntityType(rt)) {
+			if(entityMetadata.isEntityType(rt)) {
 				// related one
 				return new RelationInfo(rt, PropertyType.RELATED_ONE, reference);
 			}

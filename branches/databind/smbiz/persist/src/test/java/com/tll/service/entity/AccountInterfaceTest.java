@@ -15,6 +15,7 @@ import com.tll.model.AccountInterface;
 import com.tll.model.AccountInterfaceOption;
 import com.tll.model.AccountInterfaceOptionParameter;
 import com.tll.model.Asp;
+import com.tll.model.EntityMetadata;
 import com.tll.model.IEntityFactory;
 import com.tll.model.Interface;
 import com.tll.model.InterfaceOption;
@@ -41,7 +42,8 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 
 		getInterfaceService().setAccountInterface(ai);
 
-		final IBusinessKey<InterfaceOptionAccount> bk = BusinessKeyFactory.create(InterfaceOptionAccount.class, "Option Id and Account Id");
+		BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
+		final IBusinessKey<InterfaceOptionAccount> bk = bkf.create(InterfaceOptionAccount.class, "Option Id and Account Id");
 		bk.setPropertyValue("option.id", io.getId());
 		bk.setPropertyValue("account.id", a.getId());
 		final InterfaceOptionAccount ioa = getDao().load(bk);

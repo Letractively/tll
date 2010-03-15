@@ -13,23 +13,24 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-
 /**
- * AtLeastOne - Signifies "at least one" requirement.
+ * BusinessKeyUniqueness - Applied on a collection of entities. This edit
+ * ensures all entities w/in the collection are unique against oneanother based
+ * on the defined business keys for the entity type of the collection.
  * @author jpk
  */
-@Constraint(validatedBy = AtLeastOneValidator.class)
+@Constraint(validatedBy = BusinessKeyUniquenessValidator.class)
 @Target(value = {
 	ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE })
-	@Retention(RetentionPolicy.RUNTIME)
-	@Documented
-	public @interface AtLeastOne {
-
-	String message() default "{validator.at_least_one}";
-
-	Class<?>[] groups() default {};
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface BusinessKeyUniqueness { 
 
 	String type();
+
+	String message() default "{validator.business_key_uniqueness}";
+
+	Class<?>[] groups() default {};
 
 	Class<? extends Payload>[] payload() default {};
 }

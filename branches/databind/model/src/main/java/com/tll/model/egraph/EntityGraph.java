@@ -11,11 +11,12 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import com.tll.model.EntityMetadata;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityProvider;
+import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.bk.BusinessKeyPropertyException;
-import com.tll.model.bk.BusinessKeyUtil;
 import com.tll.model.bk.NonUniqueBusinessKeyException;
 
 /**
@@ -224,7 +225,8 @@ public final class EntityGraph implements IEntityProvider {
 	private <E extends IEntity> void validateEntitySet(Class<E> entityType) throws NonUniqueBusinessKeyException {
 		final Set<? extends IEntity> set = getRootEntitySet(entityType);
 		try {
-			BusinessKeyUtil.isBusinessKeyUnique(set);
+			BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
+			bkf.isBusinessKeyUnique(set);
 		}
 		catch(final BusinessKeyPropertyException e) {
 			throw new IllegalStateException("Unable to validate entity graph: " + e.getMessage(), e);

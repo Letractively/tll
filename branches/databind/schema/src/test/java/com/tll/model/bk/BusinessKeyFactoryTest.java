@@ -11,8 +11,7 @@ import java.util.List;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.tll.model.EntityBase;
-import com.tll.model.IEntity;
+import com.tll.model.IEntityMetadata;
 import com.tll.schema.BusinessKeyDef;
 import com.tll.schema.BusinessObject;
 
@@ -27,23 +26,27 @@ public class BusinessKeyFactoryTest {
 		@BusinessKeyDef(name = TestEntity.BK_NAME, properties = { "name" }),
 		@BusinessKeyDef(name = TestEntity.BK_CODE, properties = { "code" }),
 		@BusinessKeyDef(name = TestEntity.BK_AR, properties = {
-			"authNum", "refNum" })
-	})
-	static class TestEntity extends EntityBase {
+			"authNum", "refNum" }) })
+	static class TestEntity {
+
 		private static final long serialVersionUID = 1L;
 
 		public static final String BK_NAME = "Name";
 		public static final String BK_CODE = "Code";
 		public static final String BK_AR = "Auth Num & Ref Num";
 
+		private long id;
 		private String name;
 		private int code;
 		private String authNum;
 		private String refNum;
 
-		@Override
-		public Class<? extends IEntity> entityClass() {
-			return TestEntity.class;
+		public long getId() {
+			return id;
+		}
+
+		public void setId(long id) {
+			this.id = id;
 		}
 
 		public String getName() {
@@ -89,15 +92,48 @@ public class BusinessKeyFactoryTest {
 		e.setRefNum("refNum");
 		return e;
 	}
+	
+	static class TestEntityMetadata implements IEntityMetadata {
+
+		@Override
+		public Class<?> getEntityClass(Object entity) {
+			return entity.getClass();
+		}
+
+		@Override
+		public String getEntityInstanceDescriptor(Object entity) {
+			return "";
+		}
+
+		@Override
+		public String getEntityTypeDescriptor(Object entity) {
+			return "Test Entity";
+		}
+
+		@Override
+		public Class<?> getRootEntityClass(Class<?> entityClass) {
+			return TestEntity.class;
+		}
+
+		@Override
+		public boolean isEntityType(Class<?> claz) {
+			return TestEntity.class.isAssignableFrom(claz);
+		}
+		
+	}
+	
+	static final IEntityMetadata entityMetadata = new TestEntityMetadata();
+	
+	static final BusinessKeyFactory bkf = new BusinessKeyFactory(entityMetadata);
 
 	public void testBusinessKeyFactoryCreateFromClass() throws Exception {
-		final IBusinessKey<TestEntity>[] bks = BusinessKeyFactory.create(TestEntity.class);
+		final IBusinessKey<TestEntity>[] bks = bkf.create(TestEntity.class);
 		assert bks != null && bks.length == 3 : "Incorrect number of created business keys.";
 	}
 
 	public void testBusinessKeyFactoryCreateFromInstance() throws Exception {
 		final TestEntity e = stubTestEntity();
-		final IBusinessKey<TestEntity>[] bks = BusinessKeyFactory.create(e);
+		final IBusinessKey<TestEntity>[] bks = bkf.create(e);
 		assert bks != null && bks.length == 3 : "Incorrect number of created business keys.";
 		for(final IBusinessKey<TestEntity> bk : bks) {
 			if(TestEntity.BK_NAME.equals(bk.getBusinessKeyName())) {
@@ -120,11 +156,10 @@ public class BusinessKeyFactoryTest {
 
 	public void testBusinessKeyFactoryIsBusinessKeyUnique() throws Exception {
 		final TestEntity[] arr = new TestEntity[] {
-			stubTestEntity(), stubTestEntity()
-		};
+			stubTestEntity(), stubTestEntity() };
 		final List<TestEntity> list = Arrays.asList(arr);
 		try {
-			BusinessKeyUtil.isBusinessKeyUnique(list);
+			bkf.isBusinessKeyUnique(list);
 			Assert.fail("Business key unique check failed.");
 		}
 		catch(final NonUniqueBusinessKeyException e) {

@@ -1,7 +1,6 @@
 package com.tll.model.bk;
 
 import com.tll.ApplicationException;
-import com.tll.model.IEntity;
 
 /**
  * BusinessKeyNotDefinedException
@@ -16,7 +15,7 @@ public class BusinessKeyNotDefinedException extends ApplicationException {
 	 * given entity type.
 	 * @param entityClass The entity type
 	 */
-	public BusinessKeyNotDefinedException(Class<? extends IEntity> entityClass) {
+	public BusinessKeyNotDefinedException(Class<?> entityClass) {
 		super("No business keys exist for  " + entityClass.getName());
 	}
 
@@ -26,7 +25,7 @@ public class BusinessKeyNotDefinedException extends ApplicationException {
 	 * @param entityClass The entity type
 	 * @param businessKeyName The business key name
 	 */
-	public BusinessKeyNotDefinedException(Class<? extends IEntity> entityClass, String businessKeyName) {
+	public BusinessKeyNotDefinedException(Class<?> entityClass, String businessKeyName) {
 		super("No business key of name '" + businessKeyName + "' is defined for " + entityClass.getName());
 	}
 }

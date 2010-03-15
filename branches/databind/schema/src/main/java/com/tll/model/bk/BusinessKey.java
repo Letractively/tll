@@ -3,14 +3,13 @@ package com.tll.model.bk;
 import java.util.Arrays;
 
 import com.tll.key.AbstractKey;
-import com.tll.model.IEntity;
 
 /**
  * Abstract base class for all business keys in the application.
  * @author jpk
  * @param <E>
  */
-final class BusinessKey<E extends IEntity> extends AbstractKey<E> implements IBusinessKey<E> {
+final class BusinessKey<E> extends AbstractKey<E> implements IBusinessKey<E> {
 
 	private static final long serialVersionUID = 2415120120614040086L;
 

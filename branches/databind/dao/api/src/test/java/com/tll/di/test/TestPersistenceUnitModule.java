@@ -9,7 +9,6 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.tll.di.EGraphModule;
 import com.tll.di.ModelBuildModule;
-import com.tll.di.ModelModule;
 import com.tll.model.IEntityFactory;
 import com.tll.model.test.TestEntityFactory;
 import com.tll.model.test.TestPersistenceUnitEntityAssembler;
@@ -41,7 +40,7 @@ public final class TestPersistenceUnitModule implements Module {
 
 	@Override
 	public final void configure(Binder binder) {
-		new ModelModule().configure(binder);
+		//new ValidationModule().configure(binder);
 		new ModelBuildModule(entityFactoryImplType, TestPersistenceUnitEntityAssembler.class).configure(binder);
 		new EGraphModule(TestPersistenceUnitEntityGraphBuilder.class, this.beanDefFilePath).configure(binder);
 	}
