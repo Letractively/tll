@@ -18,6 +18,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.tll.model.IEntityMetadata;
+import com.tll.model.SimpleEntityMetadata;
 import com.tll.model.validate.AtLeastOne;
 import com.tll.model.validate.BusinessKeyUniqueness;
 import com.tll.schema.ISchemaInfo;
@@ -188,11 +189,7 @@ public class SchemaInfoTest {
 		}
 	}
 
-	/**
-	 * TestEntity
-	 * @author jpk
-	 */
-	static class TestEntity extends NamedTimeStampEntity {
+	static class TestEntityC extends NamedTimeStampEntity {
 
 		private static final long serialVersionUID = -8237732782824087760L;
 		public static final int MAXLEN_NAME = 64;
@@ -206,7 +203,7 @@ public class SchemaInfoTest {
 		private long lng;
 		private Date date;
 		private TestEntityB relatedOne;
-		private Set<TestEntity> relatedMany = new LinkedHashSet<TestEntity>();
+		private Set<TestEntityC> relatedMany = new LinkedHashSet<TestEntityC>();
 		private transient AllTypesData nested;
 		private Map<String, String> smap;
 
@@ -302,11 +299,11 @@ public class SchemaInfoTest {
 		@AtLeastOne(type = "relatedMany")
 		@BusinessKeyUniqueness(type = "relatedMany")
 		@Valid
-		public Set<TestEntity> getRelatedMany() {
+		public Set<TestEntityC> getRelatedMany() {
 			return relatedMany;
 		}
 		
-		public void setRelatedMany(Set<TestEntity> related) {
+		public void setRelatedMany(Set<TestEntityC> related) {
 			this.relatedMany = related;
 		}
 
@@ -319,31 +316,11 @@ public class SchemaInfoTest {
 		}
 	}
 
-	static class TestEntityMetadata implements IEntityMetadata {
-
-		@Override
-		public Class<?> getEntityClass(Object entity) {
-			return entity.getClass();
-		}
-
-		@Override
-		public String getEntityInstanceDescriptor(Object entity) {
-			return "";
-		}
-
-		@Override
-		public String getEntityTypeDescriptor(Object entity) {
-			return "Test Entity";
-		}
-
-		@Override
-		public Class<?> getRootEntityClass(Class<? extends Object> entityClass) {
-			return entityClass;
-		}
+	static class TestEntityMetadata extends SimpleEntityMetadata {
 
 		@Override
 		public boolean isEntityType(Class<?> claz) {
-			return TestEntity.class.isAssignableFrom(claz);
+			return EntityBase.class.isAssignableFrom(claz);
 		}
 		
 	}
@@ -363,43 +340,43 @@ public class SchemaInfoTest {
 		Assert.assertNotNull(si);
 		ISchemaProperty sp;
 
-		sp = si.getSchemaProperty(TestEntity.class, "enm");
+		sp = si.getSchemaProperty(TestEntityC.class, "enm");
 		assert sp.getPropertyType() == PropertyType.ENUM;
 
-		sp = si.getSchemaProperty(TestEntity.class, "string");
+		sp = si.getSchemaProperty(TestEntityC.class, "string");
 		assert sp.getPropertyType() == PropertyType.STRING;
 
-		sp = si.getSchemaProperty(TestEntity.class, "integer");
+		sp = si.getSchemaProperty(TestEntityC.class, "integer");
 		assert sp.getPropertyType() == PropertyType.INT;
 
-		sp = si.getSchemaProperty(TestEntity.class, "dbl");
+		sp = si.getSchemaProperty(TestEntityC.class, "dbl");
 		assert sp.getPropertyType() == PropertyType.DOUBLE;
 
-		sp = si.getSchemaProperty(TestEntity.class, "flot");
+		sp = si.getSchemaProperty(TestEntityC.class, "flot");
 		assert sp.getPropertyType() == PropertyType.FLOAT;
 
-		sp = si.getSchemaProperty(TestEntity.class, "character");
+		sp = si.getSchemaProperty(TestEntityC.class, "character");
 		assert sp.getPropertyType() == PropertyType.CHAR;
 
-		sp = si.getSchemaProperty(TestEntity.class, "lng");
+		sp = si.getSchemaProperty(TestEntityC.class, "lng");
 		assert sp.getPropertyType() == PropertyType.LONG;
 
-		sp = si.getSchemaProperty(TestEntity.class, "date");
+		sp = si.getSchemaProperty(TestEntityC.class, "date");
 		assert sp.getPropertyType() == PropertyType.DATE;
 
-		sp = si.getSchemaProperty(TestEntity.class, "relatedOne");
+		sp = si.getSchemaProperty(TestEntityC.class, "relatedOne");
 		assert sp.getPropertyType() == PropertyType.RELATED_ONE;
 
-		sp = si.getSchemaProperty(TestEntity.class, "relatedMany");
+		sp = si.getSchemaProperty(TestEntityC.class, "relatedMany");
 		assert sp.getPropertyType() == PropertyType.RELATED_MANY;
 
-		sp = si.getSchemaProperty(TestEntity.class, "nested");
+		sp = si.getSchemaProperty(TestEntityC.class, "nested");
 		assert sp.getPropertyType() == PropertyType.NESTED;
 
-		sp = si.getSchemaProperty(TestEntity.class, "relatedOne.entityA.aProp");
+		sp = si.getSchemaProperty(TestEntityC.class, "relatedOne.entityA.aProp");
 		assert sp.getPropertyType() == PropertyType.STRING;
 
-		sp = si.getSchemaProperty(TestEntity.class, "smap");
+		sp = si.getSchemaProperty(TestEntityC.class, "smap");
 		assert sp.getPropertyType() == PropertyType.STRING_MAP;
 	}
 }

@@ -194,7 +194,7 @@ public final class SchemaInfo implements ISchemaInfo {
 	 */
 	private boolean isElidgible(final Method method) {
 		final String mn = method.getName();
-		if(/*"getParent".equals(method.getName()) && */entityMetadata.isEntityType(method.getReturnType())) {
+		if("getParent".equals(method.getName()) && entityMetadata.isEntityType(method.getReturnType())) {
 			return false;
 		}
 		// we still want to provide info on transient properties!

@@ -15,11 +15,11 @@ import com.tll.model.bk.BusinessKeyPropertyException;
 import com.tll.model.bk.NonUniqueBusinessKeyException;
 
 /**
- * Validates business key uniqueness.
+ * Validates business key uniqueness based in simple enity metadata.
  * @see BusinessKeyUniqueness
  * @author jpk
  */
-public abstract class BusinessKeyUniquenessValidator implements ConstraintValidator<BusinessKeyUniqueness, Collection<?>> {
+public class BusinessKeyUniquenessValidator implements ConstraintValidator<BusinessKeyUniqueness, Collection<?>> {
 
 	private final BusinessKeyFactory bkf = new BusinessKeyFactory(new SimpleEntityMetadata());
 	
