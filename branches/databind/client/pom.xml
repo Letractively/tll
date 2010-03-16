@@ -27,6 +27,7 @@
     <module>model</module>
     <module>databind</module>
     <module>view</module>
+    <module>marshal</module>
     <module>persist</module>
     <module>listing</module>
     <module>login</module>

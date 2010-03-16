@@ -8,9 +8,9 @@ package com.tll.server.rpc.listing;
 import javax.servlet.ServletContext;
 
 import com.google.inject.Inject;
+import com.tll.server.marshal.IMarshalOptionsResolver;
 import com.tll.server.marshal.Marshaler;
 import com.tll.server.rpc.IExceptionHandler;
-import com.tll.server.rpc.entity.IMarshalOptionsResolver;
 
 /**
  * ListingContext

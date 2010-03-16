@@ -184,7 +184,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
-			<artifactId>tll-client-persist</artifactId>
+			<artifactId>tll-client-marshal</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
@@ -269,7 +269,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
-			<artifactId>tll-client-persist</artifactId>
+			<artifactId>tll-client-marshal</artifactId>
 			<version>${project.version}</version>
 			<classifier>testassets</classifier>
 			<scope>test</scope>

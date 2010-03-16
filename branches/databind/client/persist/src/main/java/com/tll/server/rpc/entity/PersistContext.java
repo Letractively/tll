@@ -11,6 +11,7 @@ import com.tll.mail.MailManager;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.IEntityFactory;
 import com.tll.schema.ISchemaInfo;
+import com.tll.server.marshal.IMarshalOptionsResolver;
 import com.tll.server.marshal.Marshaler;
 import com.tll.server.rpc.IExceptionHandler;
 import com.tll.service.entity.IEntityServiceFactory;
