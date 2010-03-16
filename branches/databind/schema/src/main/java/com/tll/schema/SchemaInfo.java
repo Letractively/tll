@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.google.inject.Inject;
 import com.tll.model.IEntityMetadata;
 import com.tll.util.PropertyPath;
 
@@ -96,39 +97,11 @@ public final class SchemaInfo implements ISchemaInfo {
 	 * Constructor
 	 * @param entityMetadata required
 	 */
+	@Inject
 	public SchemaInfo(IEntityMetadata entityMetadata) {
 		super();
 		if(entityMetadata == null) throw new NullPointerException();
 		this.entityMetadata = entityMetadata;
-	}
-
-	@Override
-	public PropertyMetadata getPropertyMetadata(final Class<?> entityClass, final String propertyName)
-	throws SchemaInfoException {
-		final ISchemaProperty sp = getSchemaProperty(entityClass, propertyName);
-		if(!sp.getPropertyType().isValue()) {
-			throw new SchemaInfoException(propertyName + " for entity type " + entityClass.getName()
-					+ " is not a value type property.");
-		}
-		return (PropertyMetadata) sp;
-	}
-
-	@Override
-	public RelationInfo getRelationInfo(final Class<?> entityClass, final String propertyName) throws SchemaInfoException {
-		final ISchemaProperty sp = getSchemaProperty(entityClass, propertyName);
-		if(!sp.getPropertyType().isRelational()) {
-			throw new SchemaInfoException(propertyName + " for entity type " + entityClass.getName() + " is not relational.");
-		}
-		return (RelationInfo) sp;
-	}
-
-	@Override
-	public NestedInfo getNestedInfo(final Class<?> entityClass, final String propertyName) throws SchemaInfoException {
-		final ISchemaProperty sp = getSchemaProperty(entityClass, propertyName);
-		if(!sp.getPropertyType().isNested()) {
-			throw new SchemaInfoException(propertyName + " for entity type " + entityClass.getName() + " is not nested.");
-		}
-		return (NestedInfo) sp;
 	}
 
 	@Override
@@ -215,15 +188,13 @@ public final class SchemaInfo implements ISchemaInfo {
 			if(isElidgible(method)) {
 				propName = getPropertyNameFromAccessorMethodName(method.getName());
 				final PersistProperty fi = getFieldInfo(propName, type, method);
-				if(fi != null) {
-					final ISchemaProperty sp = toSchemaProperty(fi);
-					if(sp != null) {
-						fullPropName = parentPropName == null ? propName : parentPropName + '.' + propName;
-						map.put(fullPropName, sp);
-						// handle nested
-						if(sp.getPropertyType().isNested()) {
-							iterateEntity(propName, method.getReturnType(), map);
-						}
+				final ISchemaProperty sp = toSchemaProperty(fi);
+				if(sp != null) {
+					fullPropName = parentPropName == null ? propName : parentPropName + '.' + propName;
+					map.put(fullPropName, sp);
+					// handle nested
+					if(sp.getPropertyType().isNested()) {
+						iterateEntity(propName, method.getReturnType(), map);
 					}
 				}
 			}

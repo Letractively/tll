@@ -9,10 +9,16 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.tll.di.EGraphModule;
 import com.tll.di.ModelBuildModule;
+import com.tll.di.ModelModule;
+import com.tll.di.ValidationModule;
+import com.tll.model.EntityMetadata;
 import com.tll.model.IEntityFactory;
+import com.tll.model.IEntityMetadata;
 import com.tll.model.test.TestEntityFactory;
 import com.tll.model.test.TestPersistenceUnitEntityAssembler;
 import com.tll.model.test.TestPersistenceUnitEntityGraphBuilder;
+import com.tll.schema.ISchemaInfo;
+import com.tll.schema.SchemaInfo;
 
 /**
  * TestPersistenceUnitModule
@@ -40,7 +46,19 @@ public final class TestPersistenceUnitModule implements Module {
 
 	@Override
 	public final void configure(Binder binder) {
-		//new ValidationModule().configure(binder);
+		new ValidationModule().configure(binder);
+		new ModelModule() {
+			
+			@Override
+			protected Class<? extends ISchemaInfo> getSchemaInfoImplType() {
+				return SchemaInfo.class;
+			}
+			
+			@Override
+			protected Class<? extends IEntityMetadata> getEntityMetadataImplType() {
+				return EntityMetadata.class;
+			}
+		}.configure(binder);
 		new ModelBuildModule(entityFactoryImplType, TestPersistenceUnitEntityAssembler.class).configure(binder);
 		new EGraphModule(TestPersistenceUnitEntityGraphBuilder.class, this.beanDefFilePath).configure(binder);
 	}

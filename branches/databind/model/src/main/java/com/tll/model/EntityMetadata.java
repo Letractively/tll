@@ -5,39 +5,53 @@
  */
 package com.tll.model;
 
+import com.tll.schema.Extended;
+import com.tll.schema.Root;
+
 /**
- * EntityMetadata
+ * IEntity's metadata definition.
  * @author jpk
  */
-public class EntityMetadata extends SimpleEntityMetadata {
+public class EntityMetadata implements IEntityMetadata {
+
+	@Override
+	public Class<?> getRootEntityClass(Class<?> entityClass) {
+		if(entityClass.getAnnotation(Extended.class) != null) {
+			Class<?> ec = entityClass;
+			do {
+				ec = ec.getSuperclass();
+			} while(ec != null && ec.getAnnotation(Root.class) == null);
+			if(ec != null) return ec;
+		}
+		return entityClass;
+	}
 
 	@Override
 	public Class<?> getEntityClass(Object entity) {
 		if(entity instanceof IEntity) {
-			((IEntity) entity).entityClass();
+			return ((IEntity) entity).entityClass();
 		}
-		return super.getEntityClass(entity);
+		throw new IllegalArgumentException();
 	}
 
 	@Override
 	public String getEntityInstanceDescriptor(Object entity) {
 		if(entity instanceof IEntity) {
-			return ((IEntity) entity).descriptor(); 
+			return ((IEntity) entity).descriptor();
 		}
-		return super.getEntityInstanceDescriptor(entity);
+		throw new IllegalArgumentException();
 	}
 
 	@Override
 	public String getEntityTypeDescriptor(Object entity) {
 		if(entity instanceof IEntity) {
-			return ((IEntity) entity).typeDesc(); 
+			return ((IEntity) entity).typeDesc();
 		}
-		return super.getEntityTypeDescriptor(entity);
+		throw new IllegalArgumentException();
 	}
 
 	@Override
 	public boolean isEntityType(Class<?> claz) {
 		return IEntity.class.isAssignableFrom(claz);
 	}
-
 }

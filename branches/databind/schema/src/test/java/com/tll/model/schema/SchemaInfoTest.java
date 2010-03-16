@@ -17,14 +17,16 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.tll.IDescriptorProvider;
+import com.tll.ITypeDescriptorProvider;
 import com.tll.model.IEntityMetadata;
-import com.tll.model.SimpleEntityMetadata;
 import com.tll.model.validate.AtLeastOne;
-import com.tll.model.validate.BusinessKeyUniqueness;
+import com.tll.schema.Extended;
 import com.tll.schema.ISchemaInfo;
 import com.tll.schema.ISchemaProperty;
 import com.tll.schema.Nested;
 import com.tll.schema.PropertyType;
+import com.tll.schema.Root;
 import com.tll.schema.SchemaInfo;
 
 /**
@@ -136,27 +138,27 @@ public class SchemaInfoTest {
 
 		private String name;
 		private Date dateCreated, dateModified;
-		
+
 		public String getName() {
 			return name;
 		}
-		
+
 		public void setName(String name) {
 			this.name = name;
 		}
-		
+
 		public Date getDateCreated() {
 			return dateCreated;
 		}
-		
+
 		public void setDateCreated(Date dateCreated) {
 			this.dateCreated = dateCreated;
 		}
-		
+
 		public Date getDateModified() {
 			return dateModified;
 		}
-		
+
 		public void setDateModified(Date dateModified) {
 			this.dateModified = dateModified;
 		}
@@ -297,12 +299,13 @@ public class SchemaInfoTest {
 		}
 
 		@AtLeastOne(type = "relatedMany")
-		@BusinessKeyUniqueness(type = "relatedMany")
+		//@BusinessKeyUniqueness(type = "relatedMany")
+		// TODO create bk validator test elsewhere
 		@Valid
 		public Set<TestEntityC> getRelatedMany() {
 			return relatedMany;
 		}
-		
+
 		public void setRelatedMany(Set<TestEntityC> related) {
 			this.relatedMany = related;
 		}
@@ -316,17 +319,47 @@ public class SchemaInfoTest {
 		}
 	}
 
-	static class TestEntityMetadata extends SimpleEntityMetadata {
+	static class TestEntityMetadata implements IEntityMetadata {
 
 		@Override
 		public boolean isEntityType(Class<?> claz) {
 			return EntityBase.class.isAssignableFrom(claz);
 		}
-		
+
+		@Override
+		public Class<?> getEntityClass(Object entity) {
+			return entity == null ? null : entity.getClass();
+		}
+
+		@Override
+		public String getEntityInstanceDescriptor(Object entity) {
+			if(entity == null) return null;
+			if(entity instanceof IDescriptorProvider) return ((IDescriptorProvider) entity).descriptor();
+			return entity.toString();
+		}
+
+		@Override
+		public String getEntityTypeDescriptor(Object entity) {
+			if(entity == null) return null;
+			if(entity instanceof ITypeDescriptorProvider) return ((ITypeDescriptorProvider) entity).typeDesc();
+			return entity.getClass().getSimpleName();
+		}
+
+		@Override
+		public Class<?> getRootEntityClass(Class<?> entityClass) {
+			if(entityClass.getAnnotation(Extended.class) != null) {
+				Class<?> ec = entityClass;
+				do {
+					ec = ec.getSuperclass();
+				} while(ec != null && ec.getAnnotation(Root.class) == null);
+				if(ec != null) return ec;
+			}
+			return entityClass;
+		}
 	}
-	
+
 	static final IEntityMetadata entityMetadata = new TestEntityMetadata();
-	
+
 	/**
 	 * Constructor
 	 */

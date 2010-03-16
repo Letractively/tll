@@ -9,7 +9,7 @@ import java.util.Collection;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import com.tll.model.SimpleEntityMetadata;
+import com.tll.model.EntityMetadata;
 import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.bk.BusinessKeyPropertyException;
 import com.tll.model.bk.NonUniqueBusinessKeyException;
@@ -21,8 +21,8 @@ import com.tll.model.bk.NonUniqueBusinessKeyException;
  */
 public class BusinessKeyUniquenessValidator implements ConstraintValidator<BusinessKeyUniqueness, Collection<?>> {
 
-	private final BusinessKeyFactory bkf = new BusinessKeyFactory(new SimpleEntityMetadata());
-	
+	private final BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
+
 	public void initialize(BusinessKeyUniqueness parameters) {
 		// no-op
 	}

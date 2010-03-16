@@ -14,6 +14,7 @@ import java.util.Set;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.NullValueInNestedPathException;
 
+import com.google.inject.Inject;
 import com.tll.model.IEntityMetadata;
 import com.tll.schema.BusinessKeyDef;
 import com.tll.schema.BusinessObject;
@@ -72,6 +73,7 @@ public final class BusinessKeyFactory {
 	 * Constructor
 	 * @param entityMetadata required
 	 */
+	@Inject
 	public BusinessKeyFactory(IEntityMetadata entityMetadata) {
 		super();
 		if(entityMetadata == null) throw new NullPointerException();

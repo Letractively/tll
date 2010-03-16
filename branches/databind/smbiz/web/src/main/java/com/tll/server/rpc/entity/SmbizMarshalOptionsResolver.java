@@ -7,6 +7,7 @@ package com.tll.server.rpc.entity;
 
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.SmbizEntityType;
+import com.tll.server.marshal.IMarshalOptionsResolver;
 import com.tll.server.marshal.MarshalOptions;
 
 /**
