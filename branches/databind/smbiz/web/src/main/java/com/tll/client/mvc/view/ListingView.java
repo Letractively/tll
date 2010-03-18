@@ -47,13 +47,13 @@ public abstract class ListingView<I extends IViewInitializer, L extends ModelLis
 
 	@Override
 	protected final void doRefresh() {
-		if(listingWidget != null) listingWidget.refresh();
+		if(listingWidget != null) listingWidget.getOperator().refresh();
 	}
 
 	@Override
 	protected final void doDestroy() {
 		if(listingWidget != null) {
-			listingWidget.clear();
+			listingWidget.getOperator().clear();
 		}
 	}
 

@@ -118,7 +118,7 @@ public class IspListingWidget extends RemoteListingWidget<ModelListingTable> {
 	 * Constructor
 	 */
 	public IspListingWidget() {
-		super(new ModelListingTable(config), new ListingNavBar<Model>(config, null));
+		super(config.getListingId(), config.getListingElementName(), new ModelListingTable(config), new ListingNavBar<Model>(config, null));
 		criteria = new NamedQuerySearch(SmbizEntityType.ISP, "account.ispList", true);
 
 		setOperator(RemoteListingOperator.create(config.getListingId(),

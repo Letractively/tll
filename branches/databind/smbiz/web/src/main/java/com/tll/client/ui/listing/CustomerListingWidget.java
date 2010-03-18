@@ -127,7 +127,7 @@ public class CustomerListingWidget extends RemoteListingWidget<ModelListingTable
 	 *        customers
 	 */
 	public CustomerListingWidget(ModelKey parentAccountRef) {
-		super(new ModelListingTable(config), new ListingNavBar<Model>(config, null));
+		super(config.getListingId(), config.getListingElementName(), new ModelListingTable(config), new ListingNavBar<Model>(config, null));
 		this.parentAccountRef = parentAccountRef;
 		criteria = new NamedQuerySearch(SmbizEntityType.CUSTOMER, "account.customerList", true);
 		criteria.addParam(new StringPropertyValue("parentId", parentAccountRef.getId()));
