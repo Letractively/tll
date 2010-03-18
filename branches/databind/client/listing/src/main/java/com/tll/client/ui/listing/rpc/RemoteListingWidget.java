@@ -25,11 +25,13 @@ public class RemoteListingWidget<T extends ModelListingTable> extends ModelListi
 
 	/**
 	 * Constructor
+	 * @param listingId 
+	 * @param listingElementName 
 	 * @param table
 	 * @param navBar
 	 */
-	public RemoteListingWidget(T table, ListingNavBar<Model> navBar) {
-		super(table, navBar);
+	public RemoteListingWidget(String listingId, String listingElementName, T table, ListingNavBar<Model> navBar) {
+		super(listingId, listingElementName, table, navBar);
 		addRpcHandler(new RpcUiHandler(this));
 	}
 

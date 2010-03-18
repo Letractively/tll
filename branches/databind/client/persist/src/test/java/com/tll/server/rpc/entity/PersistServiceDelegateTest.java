@@ -10,13 +10,11 @@ import java.util.List;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.Scopes;
+import com.tll.common.data.LoadRequest;
 import com.tll.common.data.ModelDataPayload;
 import com.tll.common.data.ModelDataRequest;
-import com.tll.common.data.LoadRequest;
 import com.tll.common.data.ModelPayload;
 import com.tll.common.data.PersistRequest;
 import com.tll.common.data.PurgeRequest;
@@ -30,22 +28,19 @@ import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.IDbShell;
-import com.tll.dao.IDbTrans;
 import com.tll.dao.IEntityDao;
-import com.tll.dao.db4o.test.Db4oTrans;
 import com.tll.di.AbstractDb4oDaoModule;
 import com.tll.di.LogExceptionHandlerModule;
 import com.tll.di.MailModule;
 import com.tll.di.TestEntityServiceFactoryModule;
 import com.tll.di.test.Db4oDbShellModule;
 import com.tll.di.test.TestClientPersistModule;
+import com.tll.di.test.TestDaoModule;
 import com.tll.di.test.TestDb4oDaoModule;
 import com.tll.di.test.TestMarshalModule;
-import com.tll.di.test.TestPersistenceUnitModule;
 import com.tll.model.IEntity;
 import com.tll.model.egraph.EntityBeanFactory;
 import com.tll.model.test.Address;
-import com.tll.model.test.TestEntityFactory;
 
 /**
  * PersistServiceDelegateTest
@@ -60,20 +55,11 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 		// as it implicitly binds at the MailModule constrctor
 		modules.add(new MailModule(Config.load(new ConfigRef("config-mail.properties"))));
 
-		modules.add(new TestPersistenceUnitModule(null, TestEntityFactory.class));
-		modules.add(new TestDb4oDaoModule(getConfig()));
-		modules.add(new Db4oDbShellModule());
+		modules.add(new TestDaoModule(getConfig()));
 		modules.add(new TestEntityServiceFactoryModule());
 		modules.add(new LogExceptionHandlerModule());
 		modules.add(new TestMarshalModule());
 		modules.add(new TestClientPersistModule());
-		modules.add(new Module() {
-
-			@Override
-			public void configure(Binder binder) {
-				binder.bind(IDbTrans.class).to(Db4oTrans.class).in(Scopes.SINGLETON);
-			}
-		});
 	}
 
 	@Override

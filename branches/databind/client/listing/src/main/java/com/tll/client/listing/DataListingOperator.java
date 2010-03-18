@@ -59,7 +59,7 @@ public class DataListingOperator<R, H extends IListHandler<R>> extends AbstractL
 			offset = ofst;
 		}
 		catch(final EmptyListException e) {
-			throw new IllegalStateException(e);
+			current.clear();
 		}
 		catch(final IndexOutOfBoundsException e) {
 			throw new IllegalStateException(e);

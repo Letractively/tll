@@ -20,11 +20,13 @@ implements IModelChangeHandler {
 
 	/**
 	 * Constructor
+	 * @param listingId 
+	 * @param listingElementName 
 	 * @param table
 	 * @param navBar
 	 */
-	public ModelListingWidget(T table, ListingNavBar<Model> navBar) {
-		super(table, navBar);
+	public ModelListingWidget(String listingId, String listingElementName, T table, ListingNavBar<Model> navBar) {
+		super(listingId, listingElementName, table, navBar);
 	}
 
 	/**

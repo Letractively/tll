@@ -199,7 +199,7 @@ public final class UITests extends AbstractUITest {
 		}
 
 		public TestListingWidget() {
-			super(new ModelListingTable(config), new ListingNavBar<Model>(config, addRowDelegate));
+			super(config.getListingId(), config.getListingElementName(), new ModelListingTable(config), new ListingNavBar<Model>(config, addRowDelegate));
 
 			setOperator(RemoteListingOperator.create(config.getListingId(), ListHandlerType.PAGE, criteria, config
 					.getModelProperties(), config.getPageSize(), config.getDefaultSorting()));

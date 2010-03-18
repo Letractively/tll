@@ -12,6 +12,11 @@
 	margin: 2px 0 1px 0;
 }
 
+.tableView .nodata {
+	font-style: italic;
+	font-size: larger;
+}
+
 .tableView .table {
 	width: 100%;
 }
