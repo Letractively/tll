@@ -15,9 +15,10 @@ import com.tll.listhandler.ListHandlerException;
 public final class ListingHandler<R> {
 
 	private final int pageSize;
-	private final String listingId;
-
+	
 	private final IListHandler<R> listHandler;
+
+	private final String listingId;
 
 	/**
 	 * The current list index.

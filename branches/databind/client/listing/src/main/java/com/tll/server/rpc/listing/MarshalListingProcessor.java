@@ -40,8 +40,9 @@ public class MarshalListingProcessor extends AbstractListingProcessor<Model> {
 	}
 
 	@Override
-	protected ListingHandler<Model> getRowDataListHandler(IListHandler<SearchResult> searchResultListHandler,
-			IEntityType entityType, String listingId, RemoteListingDefinition<? extends IListingSearch> listingDef) {
+	protected IListHandler<Model> getRowDataListHandler(IListHandler<SearchResult> searchResultListHandler,
+			RemoteListingDefinition<? extends IListingSearch> listingDef) {
+		IEntityType entityType = listingDef.getSearchCriteria().getEntityType();
 		MarshalOptions mo;
 		try {
 			mo = mor.resolve(entityType);
@@ -52,7 +53,7 @@ public class MarshalListingProcessor extends AbstractListingProcessor<Model> {
 		final MarshalingListHandler marshalingListHandler =
 			new MarshalingListHandler(searchResultListHandler, marshaler, mo, listingDef.getPropKeys());
 
-		return new ListingHandler<Model>(marshalingListHandler, listingId, listingDef.getPageSize());
+		return marshalingListHandler;
 	}
 
 }

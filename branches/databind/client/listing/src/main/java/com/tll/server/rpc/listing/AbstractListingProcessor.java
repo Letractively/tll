@@ -16,7 +16,6 @@ import com.tll.common.data.Status;
 import com.tll.common.data.rpc.ListingPayload;
 import com.tll.common.data.rpc.ListingRequest;
 import com.tll.common.data.rpc.ListingPayload.ListingStatus;
-import com.tll.common.model.IEntityType;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.common.search.IListingSearch;
@@ -45,11 +44,12 @@ abstract class AbstractListingProcessor<R extends IMarshalable> {
 	/**
 	 * Responsible for providing the proper row data type list handler from the
 	 * raw server-side list handler.
-	 * @param searchResultListHandler the raw server-side list handler
+	 * @param listHandler the raw server-side list handler
+	 * @param listingDef the listing def
 	 * @return list handler of the row data type
 	 */
-	protected abstract ListingHandler<R> getRowDataListHandler(IListHandler<SearchResult> searchResultListHandler,
-			IEntityType entityType, String listingId, RemoteListingDefinition<? extends IListingSearch> listingDef);
+	protected abstract IListHandler<R> getRowDataListHandler(IListHandler<SearchResult> listHandler,
+			RemoteListingDefinition<? extends IListingSearch> listingDef);
 
 	/**
 	 * Processes all listing requests.
@@ -121,7 +121,10 @@ abstract class AbstractListingProcessor<R extends IMarshalable> {
 						if(log.isDebugEnabled()) log.debug("Generating listing handler for listing: '" + listingId + "'...");
 
 						final RemoteListingDefinition<? extends IListingSearch> listingDef = request.getListingDef();
-						if(listingDef != null) {
+						if(listingDef == null) {
+							status.addMsg("No listing def specified.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
+						}
+						else {
 							final IListingSearch search = listingDef.getSearchCriteria();
 							if(search == null) {
 								throw new ListingException(listingId, "No search criteria specified.");
@@ -170,7 +173,8 @@ abstract class AbstractListingProcessor<R extends IMarshalable> {
 							}
 
 							// transform to marshaling list handler
-							handler = getRowDataListHandler(listHandler, search.getEntityType(), listingId, listingDef);
+							IListHandler<R> rowListHandler = getRowDataListHandler(listHandler, listingDef);
+							handler = new ListingHandler<R>(rowListHandler, listingId, listingDef.getPageSize());
 						}
 					}
 
