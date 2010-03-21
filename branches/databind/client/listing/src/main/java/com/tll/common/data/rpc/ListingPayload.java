@@ -5,6 +5,8 @@
  */
 package com.tll.common.data.rpc;
 
+import java.util.List;
+
 import com.tll.IMarshalable;
 import com.tll.common.data.Payload;
 import com.tll.common.data.Status;
@@ -40,7 +42,7 @@ public class ListingPayload<R extends IMarshalable> extends Payload {
 
 	private int listSize;
 
-	private R[] pageElements;
+	private List<R> pageElements;
 
 	private int offset = -1;
 
@@ -72,7 +74,7 @@ public class ListingPayload<R extends IMarshalable> extends Payload {
 	 * @param offset
 	 * @param sorting
 	 */
-	public void setPageData(int listSize, R[] pageElements, int offset, Sorting sorting) {
+	public void setPageData(int listSize, List<R> pageElements, int offset, Sorting sorting) {
 		this.listSize = listSize;
 		this.pageElements = pageElements;
 		this.offset = offset;
@@ -91,7 +93,7 @@ public class ListingPayload<R extends IMarshalable> extends Payload {
 		return listSize;
 	}
 
-	public R[] getPageElements() {
+	public List<R> getPageElements() {
 		return pageElements;
 	}
 

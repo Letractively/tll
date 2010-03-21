@@ -321,10 +321,10 @@ class InterfaceStack extends Composite implements IRpcHandler, IListingHandler<M
 		stackPanel.clear();
 		list.clear();
 
-		final Model[] intfs = event.getPageElements();
+		final List<Model> intfs = event.getPageElements();
 		if(intfs != null) {
-			for(int i = 0; i < intfs.length; i++) {
-				addInterface(intfs[i], true);
+			for(Model m : intfs) {
+				addInterface(m, true);
 			}
 			initialized = true;
 			if(stackPanel.getWidgetCount() > 0) stackPanel.showStack(0);

@@ -19,8 +19,8 @@ import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.marshal.Marshaler;
 
 /**
- * MarshalingListHandler - Transforms {@link SearchResult}s to {@link Model}s
- * for use in client side list handling.
+ * Transforms {@link SearchResult}s to {@link Model}s for use in client side
+ * list handling.
  * @author jpk
  */
 public final class MarshalingListHandler extends DecoratedListHandler<SearchResult, Model> {

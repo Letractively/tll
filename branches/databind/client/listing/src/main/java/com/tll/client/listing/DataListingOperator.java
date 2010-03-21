@@ -85,9 +85,8 @@ public class DataListingOperator<R, H extends IListHandler<R>> extends AbstractL
 		fireListingEvent(ListingOp.FETCH);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void fireListingEvent(ListingOp listingOp) {
-		fireListingEvent(listingOp, (R[]) current.toArray(new Object[]{}));
+		fireListingEvent(listingOp, current);
 	}
 
 	@Override

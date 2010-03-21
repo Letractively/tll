@@ -6,6 +6,7 @@ package com.tll.server.rpc.listing;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.inject.Inject;
 import com.tll.common.data.rpc.IListingService;
 import com.tll.common.data.rpc.ListingPayload;
 import com.tll.common.data.rpc.ListingRequest;
@@ -14,14 +15,24 @@ import com.tll.server.rpc.RpcServlet;
 import com.tll.util.StringUtil;
 
 /**
- * ListingService - Handles client listing requests.
+ * Handles client listing requests.
  * @author jpk
  */
-public final class ListingService extends RpcServlet implements IListingService<Model> {
+public final class ModelListingService extends RpcServlet implements IListingService<Model> {
 
 	private static final long serialVersionUID = 7575667259462319956L;
 
-	private final ListingProcessor processor = new ListingProcessor();
+	private final MarshalListingProcessor processor;
+
+	/**
+	 * Constructor
+	 * @param processor
+	 */
+	@Inject
+	public ModelListingService(MarshalListingProcessor processor) {
+		super();
+		this.processor = processor;
+	}
 
 	/**
 	 * Process a listing related request

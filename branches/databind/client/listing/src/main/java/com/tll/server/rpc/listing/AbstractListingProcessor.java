@@ -10,13 +10,14 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.tll.IMarshalable;
 import com.tll.common.data.ListingOp;
 import com.tll.common.data.RemoteListingDefinition;
 import com.tll.common.data.Status;
 import com.tll.common.data.rpc.ListingPayload;
 import com.tll.common.data.rpc.ListingRequest;
 import com.tll.common.data.rpc.ListingPayload.ListingStatus;
-import com.tll.common.model.Model;
+import com.tll.common.model.IEntityType;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.common.search.IListingSearch;
@@ -31,16 +32,25 @@ import com.tll.listhandler.ListHandlerException;
 import com.tll.listhandler.ListHandlerFactory;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.model.IEntity;
-import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.rpc.RpcServlet;
 
 /**
  * ListingProcessor - Handles listing requests
+ * @param <R> listing row data type
  * @author jpk
  */
-final class ListingProcessor {
+abstract class AbstractListingProcessor<R extends IMarshalable> {
 
 	private final Log log = LogFactory.getLog(this.getClass());
+
+	/**
+	 * Responsible for providing the proper row data type list handler from the
+	 * raw server-side list handler.
+	 * @param searchResultListHandler the raw server-side list handler
+	 * @return list handler of the row data type
+	 */
+	protected abstract ListingHandler<R> getRowDataListHandler(IListHandler<SearchResult> searchResultListHandler,
+			IEntityType entityType, String listingId, RemoteListingDefinition<? extends IListingSearch> listingDef);
 
 	/**
 	 * Processes all listing requests.
@@ -50,8 +60,7 @@ final class ListingProcessor {
 	 * @return the resultant listing payload
 	 */
 	@SuppressWarnings("unchecked")
-	ListingPayload<Model> process(final String sessionId, final ListingContext context,
-			final ListingRequest request) {
+	ListingPayload<R> process(final String sessionId, final ListingContext context, final ListingRequest request) {
 
 		if(context == null) throw new IllegalStateException("Null listing context");
 
@@ -71,7 +80,7 @@ final class ListingProcessor {
 			status.addMsg("No listing op specified.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 		}
 
-		ListingHandler<Model> handler = null;
+		ListingHandler<R> handler = null;
 		ListingStatus listingStatus = null;
 
 		if(!status.hasErrors() && request != null) {
@@ -92,8 +101,7 @@ final class ListingProcessor {
 					if(offset == null) {
 						offset = state.getOffset();
 						assert offset != null;
-						if(log.isDebugEnabled())
-							log.debug("Setting offset (" + offset + ") from cache for listing:" + listingId);
+						if(log.isDebugEnabled()) log.debug("Setting offset (" + offset + ") from cache for listing:" + listingId);
 					}
 					if(sorting == null) {
 						sorting = state.getSorting();
@@ -124,7 +132,8 @@ final class ListingProcessor {
 							final Criteria<IEntity> criteria;
 							try {
 								// delegate
-								criteria = (Criteria<IEntity>) context.getSearchTranslator().translateListingSearchCriteria(context, search);
+								criteria =
+										(Criteria<IEntity>) context.getSearchTranslator().translateListingSearchCriteria(context, search);
 							}
 							catch(final IllegalArgumentException iae) {
 								throw new ListingException(listingId, "Unable to translate listing search criteria: "
@@ -132,7 +141,8 @@ final class ListingProcessor {
 							}
 
 							// resolve the listing handler data provider
-							final IListingDataProvider<IEntity> dataProvider = (IListingDataProvider<IEntity>) context.getListingDataProviderResolver().resolve(request);
+							final IListingDataProvider<IEntity> dataProvider =
+									(IListingDataProvider<IEntity>) context.getListingDataProviderResolver().resolve(request);
 
 							// resolve the list handler type
 							final ListHandlerType lht = listingDef.getListHandlerType();
@@ -161,18 +171,7 @@ final class ListingProcessor {
 							}
 
 							// transform to marshaling list handler
-							MarshalOptions mo;
-							try {
-								mo = context.getMarshalOptionsResolver().resolve(search.getEntityType());
-							}
-							catch(final IllegalArgumentException e) {
-								mo = MarshalOptions.NO_REFERENCES;
-							}
-							final MarshalingListHandler marshalingListHandler =
-								new MarshalingListHandler(listHandler, context.getMarshaler(), mo, listingDef.getPropKeys());
-
-							// instantiate the handler
-							handler = new ListingHandler<Model>(marshalingListHandler, listingId, listingDef.getPageSize());
+							handler = getRowDataListHandler(listHandler, search.getEntityType(), listingId, listingDef);
 						}
 					}
 
@@ -231,21 +230,21 @@ final class ListingProcessor {
 					lcache.storeHandler(sessionId, listingId, handler);
 					// cache listing state
 					if(log.isDebugEnabled()) log.debug("[Re-]Caching listing state '" + listingId + "'...");
-					lcache.storeState(sessionId, listingId, new ListingState(Integer.valueOf(handler.getOffset()), handler.getSorting()));
+					lcache.storeState(sessionId, listingId, new ListingState(Integer.valueOf(handler.getOffset()), handler
+							.getSorting()));
 					listingStatus = ListingStatus.CACHED;
 				}
 			}
 		} // !status.hasErrors()
 
-		final ListingPayload<Model> p = new ListingPayload<Model>(status, listingId, listingStatus);
+		final ListingPayload<R> p = new ListingPayload<R>(status, listingId, listingStatus);
 
 		// only provide page data when it is needed at the client and there are no
 		// errors
 		if(handler != null && !status.hasErrors() && (listingOp != null && !listingOp.isClear())) {
 			if(log.isDebugEnabled()) log.debug("Sending page data for '" + listingId + "'...");
-			final List<Model> list = handler.getElements();
-			final Model[] arr = list == null ? new Model[0] : list.toArray(new Model[list.size()]);
-			p.setPageData(handler.size(), arr, handler.getOffset(), handler.getSorting());
+			final List<R> list = handler.getElements();
+			p.setPageData(handler.size(), list, handler.getOffset(), handler.getSorting());
 		}
 
 		return p;

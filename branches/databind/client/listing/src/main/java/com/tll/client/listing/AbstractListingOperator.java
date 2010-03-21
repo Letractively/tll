@@ -5,6 +5,8 @@
  */
 package com.tll.client.listing;
 
+import java.util.List;
+
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.common.data.ListingOp;
 import com.tll.dao.Sorting;
@@ -56,7 +58,7 @@ public abstract class AbstractListingOperator<R> implements IListingOperator<R> 
 		listingGenerated = true;
 	}
 	
-	protected void fireListingEvent(ListingOp listingOp, R[] pageElements) {
+	protected void fireListingEvent(ListingOp listingOp, List<R> pageElements) {
 		// fire the listing event
 		sourcingWidget.fireEvent(
 				new ListingEvent<R>(

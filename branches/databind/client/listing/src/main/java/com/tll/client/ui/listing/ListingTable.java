@@ -4,6 +4,8 @@
  */
 package com.tll.client.ui.listing;
 
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -215,7 +217,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 	// TODO fix this so it isn't static but gwt compilable
 	public static final class SortLink extends Composite implements ClickHandler {
 
-		private boolean ignoreCaseWhenSorting;
+		private final boolean ignoreCaseWhenSorting;
 
 		/**
 		 * The sort column arrow.
@@ -369,14 +371,14 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		}
 	}
 
-	private void addBodyRows(R[] page, int offset) {
-		final int numBodyRows = page.length;
+	private void addBodyRows(List<R> page, int offset) {
+		final int numBodyRows = page.size();
 		resizeRows(numBodyRows + 1);
 		boolean evn = false;
 		int rowIndex = offset;
 		for(int r = 0; r < numBodyRows; r++) {
 			getRowFormatter().addStyleName(r + 1, ((evn = !evn) ? Styles.EVEN : Styles.ODD));
-			setRowData(r + 1, ++rowIndex, page[r], true);
+			setRowData(r + 1, ++rowIndex, page.get(r), true);
 		}
 	}
 
