@@ -9,8 +9,8 @@ import com.tll.listhandler.ListHandlerException;
 
 /**
  * ListingHandler - Cachable listing construct.
- * @author jpk
  * @param <R> The row data type.
+ * @author jpk
  */
 public final class ListingHandler<R> {
 
@@ -27,7 +27,7 @@ public final class ListingHandler<R> {
 	/**
 	 * The current list of elements.
 	 */
-	private List<R> page;
+	private List<R> elements;
 
 	/**
 	 * The sorting directive.
@@ -59,8 +59,16 @@ public final class ListingHandler<R> {
 		this.pageSize = pageSize;
 	}
 
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public String getListingId() {
+		return listingId;
+	}
+
 	public List<R> getElements() {
-		return page;
+		return elements;
 	}
 
 	public int getOffset() {
@@ -76,7 +84,7 @@ public final class ListingHandler<R> {
 	}
 
 	public void query(int ofst, Sorting srtg, boolean force) throws EmptyListException, IndexOutOfBoundsException,
-	ListingException {
+			ListingException {
 
 		if(!force && listHandler.size() < 1) {
 			throw new EmptyListException("No list elements exist");
@@ -87,17 +95,18 @@ public final class ListingHandler<R> {
 		}
 
 		// do we need to actually re-query?
-		if(!force && page != null && this.offset == ofst && this.sorting != null && this.sorting.equals(srtg)) {
+		if(!force && elements != null && this.offset == ofst && this.sorting != null && this.sorting.equals(srtg)) {
 			return;
 		}
 
-		// update sorting (irregardless of whether or not we have resultant elements)
+		// update sorting (irregardless of whether or not we have resultant
+		// elements)
 		this.sorting = srtg;
 
 		// query
 		final int psize = pageSize == -1 ? listHandler.size() : pageSize;
 		try {
-			page = listHandler.getElements(ofst, psize, srtg);
+			elements = listHandler.getElements(ofst, psize, srtg);
 		}
 		catch(final EmptyListException e) {
 			throw e;

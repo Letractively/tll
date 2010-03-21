@@ -5,13 +5,12 @@
  */
 package com.tll.server.rpc.listing;
 
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.tll.IMarshalable;
 import com.tll.common.data.ListingOp;
+import com.tll.common.data.Page;
 import com.tll.common.data.RemoteListingDefinition;
 import com.tll.common.data.Status;
 import com.tll.common.data.rpc.ListingPayload;
@@ -72,7 +71,7 @@ abstract class AbstractListingProcessor<R extends IMarshalable> {
 
 		final String listingId = request == null ? null : request.getListingId();
 		if(listingId == null) {
-			status.addMsg("No listing name specified.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
+			status.addMsg("No listing id specified.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 		}
 
 		final ListingOp listingOp = request == null ? null : request.getListingOp();
@@ -243,8 +242,8 @@ abstract class AbstractListingProcessor<R extends IMarshalable> {
 		// errors
 		if(handler != null && !status.hasErrors() && (listingOp != null && !listingOp.isClear())) {
 			if(log.isDebugEnabled()) log.debug("Sending page data for '" + listingId + "'...");
-			final List<R> list = handler.getElements();
-			p.setPageData(handler.size(), list, handler.getOffset(), handler.getSorting());
+			p.setPageData(new Page(handler.size(), handler.getPageSize(), handler.getOffset(), handler.getSorting(), handler
+					.getElements()));
 		}
 
 		return p;

@@ -11,6 +11,7 @@ import com.tll.IMarshalable;
 import com.tll.client.data.rpc.RpcCommand;
 import com.tll.client.listing.AbstractListingOperator;
 import com.tll.common.data.ListingOp;
+import com.tll.common.data.Page;
 import com.tll.common.data.RemoteListingDefinition;
 import com.tll.common.data.rpc.IListingService;
 import com.tll.common.data.rpc.IListingServiceAsync;
@@ -93,12 +94,13 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 			}
 			else {
 				// update client-side listing state
-				offset = payload.getOffset();
-				sorting = payload.getSorting();
-				listSize = payload.getListSize();
+				Page page = payload.getPage();
+				offset = page == null ? -1 : page.getOffset();
+				sorting = page == null ? null : page.getSorting();
+				listSize = page == null ? -1 : page.getTotalSize();
 				// reset
 				listingRequest = null;
-				fireListingEvent(op, payload.getPageElements());
+				fireListingEvent(op, page == null ? null : page.getElements());
 			}
 		}
 	}
