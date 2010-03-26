@@ -14,7 +14,7 @@ import com.google.gwt.event.shared.GwtEvent;
  */
 public final class EditEvent<T> extends GwtEvent<IEditHandler<T>> {
 
-	public enum EditOp {
+	public static enum EditOp {
 		ADD,
 		UPDATE,
 		DELETE,

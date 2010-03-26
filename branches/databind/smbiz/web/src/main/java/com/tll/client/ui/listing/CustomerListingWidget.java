@@ -19,7 +19,6 @@ import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.EditViewInitializer;
 import com.tll.client.mvc.view.ShowViewRequest;
 import com.tll.client.mvc.view.account.AccountEditView;
-import com.tll.client.ui.listing.rpc.RemoteListingWidget;
 import com.tll.client.ui.option.Option;
 import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.Model;
@@ -34,7 +33,7 @@ import com.tll.listhandler.ListHandlerType;
  * CustomerListingWidget
  * @author jpk
  */
-public class CustomerListingWidget extends RemoteListingWidget<ModelListingTable> {
+public class CustomerListingWidget extends ModelListingWidget<ModelListingTable> {
 
 	/**
 	 * CustomerListingConfig
@@ -126,6 +125,7 @@ public class CustomerListingWidget extends RemoteListingWidget<ModelListingTable
 	 * @param parentAccountRef Ref to the account that is parent to the listed
 	 *        customers
 	 */
+	@SuppressWarnings("unchecked")
 	public CustomerListingWidget(ModelKey parentAccountRef) {
 		super(config.getListingId(), config.getListingElementName(), new ModelListingTable(config), new ListingNavBar<Model>(config, null));
 		this.parentAccountRef = parentAccountRef;

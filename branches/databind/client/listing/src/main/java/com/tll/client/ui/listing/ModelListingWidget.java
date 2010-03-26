@@ -7,6 +7,7 @@ package com.tll.client.ui.listing;
 
 import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.ModelChangeEvent;
+import com.tll.client.ui.listing.rpc.RemoteListingWidget;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 
@@ -15,7 +16,7 @@ import com.tll.common.model.ModelKey;
  * @param <T> the model table type
  * @author jpk
  */
-public class ModelListingWidget<T extends ModelListingTable> extends ListingWidget<Model, T>
+public class ModelListingWidget<T extends ModelListingTable> extends RemoteListingWidget<Model, T>
 implements IModelChangeHandler {
 
 	/**

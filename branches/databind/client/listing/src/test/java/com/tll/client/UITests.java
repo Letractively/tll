@@ -12,7 +12,6 @@ import com.tll.client.listing.ModelPropertyFormatter;
 import com.tll.client.listing.rpc.RemoteListingOperator;
 import com.tll.client.ui.listing.ListingNavBar;
 import com.tll.client.ui.listing.ModelListingTable;
-import com.tll.client.ui.listing.ModelListingWidget;
 import com.tll.client.ui.listing.rpc.RemoteListingWidget;
 import com.tll.common.model.Model;
 import com.tll.common.model.test.TestModelStubber;
@@ -33,7 +32,8 @@ public final class UITests extends AbstractUITest {
 
 	@Override
 	protected UITestCase[] getTestCases() {
-		return new UITestCase[] { new RemoteListingWidgetTest() };
+		return new UITestCase[] { new RemoteListingWidgetTest()
+		};
 	}
 
 	static final class TestRowOptions extends AbstractRowOptions {
@@ -95,8 +95,12 @@ public final class UITests extends AbstractUITest {
 		static final Column cAddress = new Column("Address", "address1");
 		static final Column cCity = new Column("City", "city");
 
-		static final String[] mprops = new String[] { "firstName", "lastName", "address1", "address2" };
-		static final Column[] cols = new Column[] { Column.ROW_COUNT_COLUMN, cName, cAddress, cCity };
+		static final String[] mprops = new String[] {
+			"firstName", "lastName", "address1", "address2"
+		};
+		static final Column[] cols = new Column[] {
+			Column.ROW_COUNT_COLUMN, cName, cAddress, cCity
+		};
 
 		private final ITableCellRenderer<Model> cellRenderer = new ITableCellRenderer<Model>() {
 
@@ -186,23 +190,28 @@ public final class UITests extends AbstractUITest {
 		}
 	} // TestConfig
 
-	static class TestListingWidget extends RemoteListingWidget<ModelListingTable> {
+	static class TestListingWidget extends RemoteListingWidget<Model, ModelListingTable> {
 
 		static final TestConfig config = new TestConfig();
 		static final TestAddressSearch criteria = new TestAddressSearch();
 
 		static final TestRowOptions rowOptions = new TestRowOptions();
 		static final TestAddRowDelegate addRowDelegate = new TestAddRowDelegate();
-		
+
 		static {
-			
+
 		}
 
+		@SuppressWarnings("unchecked")
 		public TestListingWidget() {
-			super(config.getListingId(), config.getListingElementName(), new ModelListingTable(config), new ListingNavBar<Model>(config, addRowDelegate));
+			super(config.getListingId(), config.getListingElementName(), new ModelListingTable(config),
+					new ListingNavBar<Model>(config, addRowDelegate));
 
-			setOperator(RemoteListingOperator.create(config.getListingId(), ListHandlerType.PAGE, criteria, config
-					.getModelProperties(), config.getPageSize(), config.getDefaultSorting()));
+			RemoteListingOperator<Model, TestAddressSearch> operator =
+					RemoteListingOperator.create(config.getListingId(), ListHandlerType.PAGE, criteria, config
+							.getModelProperties(), config.getPageSize(), config.getDefaultSorting());
+
+			setOperator(operator);
 
 			rowOptions.setListing(this);
 			addRowDelegate.setListing(this);
@@ -217,7 +226,7 @@ public final class UITests extends AbstractUITest {
 	static final class RemoteListingWidgetTest extends DefaultUITestCase {
 
 		TestConfig config;
-		ModelListingWidget<ModelListingTable> lw;
+		TestListingWidget lw;
 
 		/**
 		 * Constructor

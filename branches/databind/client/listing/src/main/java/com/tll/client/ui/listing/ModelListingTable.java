@@ -13,13 +13,14 @@ import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 
 /**
- * ModelListingTable - A table whose rows are identifiable by a key.
+ * A table whose rows are {@link Model}s and, consequently, identifiable by a
+ * unique key: {@link ModelKey}.
  * @author jpk
  */
 public class ModelListingTable extends ListingTable<Model> {
 
 	/**
-	 * The row data comprised of . {@link Model} instances for each listing
+	 * The row data comprised of {@link Model} instances for each listing
 	 * element row.
 	 */
 	protected final List<Model> rowDataList = new ArrayList<Model>();
@@ -67,7 +68,7 @@ public class ModelListingTable extends ListingTable<Model> {
 
 	@Override
 	protected void setRowData(int rowIndex, int rowNum, Model rowData, boolean overwriteOnNull) {
-		assert rowIndex >= 1;	// min index is one after the header row!
+		assert rowIndex >= 1; // min index is one after the header row!
 		super.setRowData(rowIndex, rowNum, rowData, overwriteOnNull);
 		final int dindex = rowIndex - 1;
 		if(dindex == rowDataList.size()) {

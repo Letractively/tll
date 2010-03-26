@@ -167,6 +167,8 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 		operator.setSourcingWidget(this);
 		this.table.setListingOperator(operator);
 		if(navBar != null) navBar.setListingOperator(operator);
+		
+		// why is this needed?
 		addHandler(this, ListingEvent.TYPE);
 	}
 

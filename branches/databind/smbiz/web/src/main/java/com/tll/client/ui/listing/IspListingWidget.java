@@ -20,7 +20,6 @@ import com.tll.client.mvc.view.EditViewInitializer;
 import com.tll.client.mvc.view.ShowViewRequest;
 import com.tll.client.mvc.view.account.AccountEditView;
 import com.tll.client.mvc.view.account.MerchantListingViewInitializer;
-import com.tll.client.ui.listing.rpc.RemoteListingWidget;
 import com.tll.client.ui.option.Option;
 import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.Model;
@@ -33,7 +32,7 @@ import com.tll.listhandler.ListHandlerType;
  * IspListingWidget
  * @author jpk
  */
-public class IspListingWidget extends RemoteListingWidget<ModelListingTable> {
+public class IspListingWidget extends ModelListingWidget<ModelListingTable> {
 
 	static final Option mListing = new Option("Merchant Listing", AbstractImagePrototype.create(App.imgs().arrow_sm_down()).createImage());
 
@@ -117,6 +116,7 @@ public class IspListingWidget extends RemoteListingWidget<ModelListingTable> {
 	/**
 	 * Constructor
 	 */
+	@SuppressWarnings("unchecked")
 	public IspListingWidget() {
 		super(config.getListingId(), config.getListingElementName(), new ModelListingTable(config), new ListingNavBar<Model>(config, null));
 		criteria = new NamedQuerySearch(SmbizEntityType.ISP, "account.ispList", true);
