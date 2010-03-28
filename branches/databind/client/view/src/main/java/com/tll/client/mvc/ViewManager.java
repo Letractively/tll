@@ -208,6 +208,30 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	public ViewKey getCurrentViewKey() {
 		return current == null ? null : current.vc.getViewKey();
 	}
+	
+	/**
+	 * Loads the view into cache but does't add it to the dom.
+	 * @param init
+	 */
+	@SuppressWarnings("unchecked")
+	public void loadView(IViewInitializer init) {
+		Log.debug("Loading view: " + init + " ..");
+		
+		// non-cached view
+		final IView<IViewInitializer> view = (IView<IViewInitializer>) init.getViewKey().getViewClass().newView();
+
+		// initialize the view
+		view.initialize(init);
+
+		CView e = new CView(new ViewContainer(view, init.getViewKey().getViewClass().getViewOptions(), init.getViewKey()), init);
+		
+		cacheView(e);
+
+		view.apply(e.vc, e.vc.getToolbar());
+
+		// load the view
+		view.refresh();
+	}
 
 	/**
 	 * Searches the currently cached views for the view matching the given view
@@ -331,23 +355,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 		}
 
 		// add the view to the cache
-		final CView old = cache.cache(e);
-		if(old != null) {
-			assert old != e && !old.getViewKey().equals(e.getViewKey());
-			Log.debug("Destroying view - " + old.vc.getView().toString() + "..");
-			// view life-cycle destroy
-			old.vc.getView().onDestroy();
-			
-			// fire view un-load event
-			DeferredCommand.addCommand(new Command() {
-
-				@SuppressWarnings("synthetic-access")
-				@Override
-				public void execute() {
-					viewChangeHandlers.fireEvent(ViewChangeEvent.viewUnloadedEvent(old.getViewKey()));
-				}
-			});
-		}
+		cacheView(e);
 
 		// unload pending cview
 		if(pendingUnload != null) {
@@ -368,6 +376,28 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 
 		// set the initial view if not set
 		if(initial == null) initial = e;
+	}
+	
+	private void cacheView(CView e) {
+		// add the view to the cache
+		final CView old = cache.cache(e);
+		if(old != null) {
+			assert old != e && !old.getViewKey().equals(e.getViewKey());
+			Log.debug("Destroying view - " + old.vc.getView().toString() + "..");
+			// view life-cycle destroy
+			old.vc.getView().onDestroy();
+			
+			// fire view un-load event
+			DeferredCommand.addCommand(new Command() {
+
+				@SuppressWarnings("synthetic-access")
+				@Override
+				public void execute() {
+					viewChangeHandlers.fireEvent(ViewChangeEvent.viewUnloadedEvent(old.getViewKey()));
+				}
+			});
+		}
+
 	}
 
 	/**

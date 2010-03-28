@@ -62,7 +62,7 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 	/**
 	 * Displayed in place of the table when no data rows exist.
 	 */
-	private final Widget noDataRowsWidget;
+	private Widget noDataRowsWidget;
 
 	/**
 	 * The listing navigation bar.
@@ -113,12 +113,6 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 		portal.add(table);
 		focusPanel.addKeyDownHandler(this);
 		this.table = table;
-
-		// no data rows widget
-		noDataRowsWidget = new Label("Currently, no " + listingElementName + "s exist.");
-		noDataRowsWidget.setStyleName(Styles.NODATA);
-		noDataRowsWidget.setVisible(false);
-		tableViewPanel.add(noDataRowsWidget);
 
 		// generate nav bar
 		this.navBar = navBar;
@@ -193,6 +187,7 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 	public final void addRow(R rowData) {
 		table.addRow(rowData);
 		if(navBar != null) navBar.increment();
+		handleTableVisibility();
 	}
 
 	/**
@@ -211,6 +206,7 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 	public final void deleteRow(int rowIndex) {
 		table.deleteRow(rowIndex);
 		if(navBar != null) navBar.decrement();
+		handleTableVisibility();
 	}
 
 	/**
@@ -249,14 +245,28 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 	public final void setPortalHeight(String height) {
 		portal.setHeight(height);
 	}
+	
+	protected Widget createNoDataRowsWidget() {
+		return new Label("Currently, no " + listingElementName + "s exist.");
+	}
+	
+	private void handleTableVisibility() {
+		// handle no data rows case
+		boolean noDataRows = table.getRowCount() <= 1;
+		portal.setVisible(!noDataRows);
+		if(noDataRowsWidget == null) {
+			// no data rows widget
+			noDataRowsWidget = createNoDataRowsWidget();
+			noDataRowsWidget.setStyleName(Styles.NODATA);
+			noDataRowsWidget.setVisible(false);
+			((FlowPanel)portal.getParent()).add(noDataRowsWidget);
+		}
+		if(noDataRowsWidget != null) noDataRowsWidget.setVisible(noDataRows);
+	}
 
 	public final void onListingEvent(ListingEvent<R> event) {
 		table.onListingEvent(event);
 		if(navBar != null) navBar.onListingEvent(event);
-
-		// handle no data rows case
-		boolean noDataRows = table.getRowCount() <= 1;
-		portal.setVisible(!noDataRows);
-		noDataRowsWidget.setVisible(noDataRows);
+		handleTableVisibility();
 	}
 }

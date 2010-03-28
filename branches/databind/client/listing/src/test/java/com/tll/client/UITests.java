@@ -102,7 +102,7 @@ public final class UITests extends AbstractUITest {
 			Column.ROW_COUNT_COLUMN, cName, cAddress, cCity
 		};
 
-		private final ITableCellRenderer<Model> cellRenderer = new ITableCellRenderer<Model>() {
+		static final ITableCellRenderer<Model> cellRenderer = new ITableCellRenderer<Model>() {
 
 			@Override
 			public void renderCell(int rowIndex, int cellIndex, Model rowData, Column column, HTMLTable table) {
@@ -183,11 +183,6 @@ public final class UITests extends AbstractUITest {
 		public String[] getModelProperties() {
 			return mprops;
 		}
-
-		@Override
-		public ITableCellRenderer<Model> getCellRenderer() {
-			return cellRenderer;
-		}
 	} // TestConfig
 
 	static class TestListingWidget extends RemoteListingWidget<Model, ModelListingTable> {
@@ -204,7 +199,7 @@ public final class UITests extends AbstractUITest {
 
 		@SuppressWarnings("unchecked")
 		public TestListingWidget() {
-			super(config.getListingId(), config.getListingElementName(), new ModelListingTable(config),
+			super(config.getListingId(), config.getListingElementName(), new ModelListingTable(config, TestConfig.cellRenderer),
 					new ListingNavBar<Model>(config, addRowDelegate));
 
 			RemoteListingOperator<Model, TestAddressSearch> operator =

@@ -82,17 +82,11 @@ public class DataListingOperator<R, H extends IListHandler<R>> extends AbstractL
 	@Override
 	public void refresh() {
 		doFetch(0, sorting);
-		fireListingEvent(ListingOp.FETCH);
+		fireListingEvent(ListingOp.REFRESH);
 	}
 	
 	private void fireListingEvent(ListingOp listingOp) {
 		fireListingEvent(listingOp, current);
-	}
-
-	@Override
-	public void display() {
-		super.display();
-		fireListingEvent(ListingOp.FETCH);
 	}
 
 	@Override

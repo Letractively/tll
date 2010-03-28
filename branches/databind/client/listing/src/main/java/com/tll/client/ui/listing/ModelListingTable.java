@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.tll.client.listing.IListingConfig;
+import com.tll.client.listing.ITableCellRenderer;
+import com.tll.client.listing.ModelCellRenderer;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 
@@ -26,11 +28,20 @@ public class ModelListingTable extends ListingTable<Model> {
 	protected final List<Model> rowDataList = new ArrayList<Model>();
 
 	/**
-	 * Constructor
+	 * Constructor - Uses {@link ModelCellRenderer} as the cell renderer.
 	 * @param config
 	 */
 	public ModelListingTable(IListingConfig<Model> config) {
-		super(config);
+		super(config, new ModelCellRenderer());
+	}
+
+	/**
+	 * Constructor
+	 * @param config
+	 * @param cellRenderer
+	 */
+	public ModelListingTable(IListingConfig<Model> config, ITableCellRenderer<Model> cellRenderer) {
+		super(config, cellRenderer);
 	}
 
 	/**

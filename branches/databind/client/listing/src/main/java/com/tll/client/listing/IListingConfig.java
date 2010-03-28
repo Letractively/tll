@@ -73,10 +73,4 @@ public interface IListingConfig<R> {
 	 * @return true/false
 	 */
 	boolean isShowRefreshBtn();
-
-	/**
-	 * @return The table cell transformer responsible for rendering cell values
-	 *         from the backing listing data.
-	 */
-	ITableCellRenderer<R> getCellRenderer();
 }
