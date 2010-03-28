@@ -318,44 +318,56 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			}
 			// set as current
 			current = e;
+			
+			// fire view load event
+			DeferredCommand.addCommand(new Command() {
+
+				@SuppressWarnings("synthetic-access")
+				@Override
+				public void execute() {
+					viewChangeHandlers.fireEvent(ViewChangeEvent.viewLoadedEvent(current.getViewKey()));
+				}
+			});
 		}
 
 		// add the view to the cache
-		CView old = cache.cache(e);
+		final CView old = cache.cache(e);
 		if(old != null) {
 			assert old != e && !old.getViewKey().equals(e.getViewKey());
 			Log.debug("Destroying view - " + old.vc.getView().toString() + "..");
 			// view life-cycle destroy
 			old.vc.getView().onDestroy();
-			old = null;
+			
+			// fire view un-load event
+			DeferredCommand.addCommand(new Command() {
+
+				@SuppressWarnings("synthetic-access")
+				@Override
+				public void execute() {
+					viewChangeHandlers.fireEvent(ViewChangeEvent.viewUnloadedEvent(old.getViewKey()));
+				}
+			});
 		}
 
 		// unload pending cview
 		if(pendingUnload != null) {
 			Log.debug("Destroying pending unload view- " + pendingUnload.vc.getView().toString() + "..");
 			pendingUnload.vc.getView().onDestroy();
+			
+			// fire view un-load event
+			DeferredCommand.addCommand(new Command() {
+
+				@SuppressWarnings("synthetic-access")
+				@Override
+				public void execute() {
+					viewChangeHandlers.fireEvent(ViewChangeEvent.viewLoadedEvent(pendingUnload.getViewKey()));
+				}
+			});
 			pendingUnload = null;
 		}
 
 		// set the initial view if not set
 		if(initial == null) initial = e;
-
-		// fire view changed event
-		fireViewChangeEvent();
-	}
-
-	/**
-	 * Fires a view change event to all subscribed handlers.
-	 */
-	private void fireViewChangeEvent() {
-		DeferredCommand.addCommand(new Command() {
-
-			@SuppressWarnings("synthetic-access")
-			@Override
-			public void execute() {
-				viewChangeHandlers.fireEvent(new ViewChangeEvent());
-			}
-		});
 	}
 
 	/**
@@ -394,9 +406,17 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			// our view listeners so they remain in sync
 			if(pendingUnload != null) {
 				pendingUnload.vc.getView().onDestroy();
-				pendingUnload = null;
+				// fire view load event
+				DeferredCommand.addCommand(new Command() {
+
+					@SuppressWarnings("synthetic-access")
+					@Override
+					public void execute() {
+						viewChangeHandlers.fireEvent(ViewChangeEvent.viewLoadedEvent(pendingUnload.getViewKey()));
+						pendingUnload = null;
+					}
+				});
 			}
-			fireViewChangeEvent();
 		}
 	}
 

@@ -21,7 +21,7 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	/**
 	 * The list of indexed props.
 	 */
-	private ArrayList<IndexedProperty> list = new ArrayList<IndexedProperty>();
+	private final ArrayList<IndexedProperty> list = new ArrayList<IndexedProperty>();
 
 	/**
 	 * The value collection whereby each indexed model corresponds to the wrapped
@@ -154,7 +154,7 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	 */
 	public List<Model> getModelList() {
 		// don't give a ref to "our" list, rather copy the elements into a new list
-		return new ArrayList<Model>(mlist);
+		return mlist == null ? new ArrayList<Model>(0) : new ArrayList<Model>(mlist);
 	}
 
 	/**
