@@ -59,4 +59,8 @@ public final class ViewChangeEvent extends GwtEvent<IViewChangeHandler> {
 		handler.onViewChange(this);
 	}
 
+	@Override
+	public String toString() {
+		return "ViewChangeEvent [key=" + key + ", op=" + op + "]";
+	}
 }

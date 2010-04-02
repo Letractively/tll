@@ -48,7 +48,13 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	static final class ViewChangeHandlers extends ArrayList<IViewChangeHandler> {
 
 		public void fireEvent(ViewChangeEvent event) {
-			for(final IViewChangeHandler handler : this) {
+			Log.debug("Firing " + event);
+			// creting a new list avoids concurrent modification exception
+			// TODO use a queuing system instead! to ensure view change events are
+			// recieved in proper order by the listeners!!
+			// TODO if we do queue view change events, do we then need to defer them??
+			ArrayList<IViewChangeHandler> ihandlers = new ArrayList<IViewChangeHandler>(this);
+			for(final IViewChangeHandler handler : ihandlers) {
 				handler.onViewChange(event);
 			}
 		}
@@ -368,7 +374,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 				@SuppressWarnings("synthetic-access")
 				@Override
 				public void execute() {
-					viewChangeHandlers.fireEvent(ViewChangeEvent.viewLoadedEvent(pendingUnload.getViewKey()));
+					viewChangeHandlers.fireEvent(ViewChangeEvent.viewUnloadedEvent(pendingUnload.getViewKey()));
 				}
 			});
 			pendingUnload = null;
@@ -414,6 +420,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 		// unload the given view
 		e.vc.close();
 
+		if(pendingUnload != null) throw new IllegalStateException();
 		if(destroy) {
 			pendingUnload = e;
 			// remove the view from cache
@@ -436,13 +443,13 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			// our view listeners so they remain in sync
 			if(pendingUnload != null) {
 				pendingUnload.vc.getView().onDestroy();
-				// fire view load event
+				// fire view un-load event
 				DeferredCommand.addCommand(new Command() {
 
 					@SuppressWarnings("synthetic-access")
 					@Override
 					public void execute() {
-						viewChangeHandlers.fireEvent(ViewChangeEvent.viewLoadedEvent(pendingUnload.getViewKey()));
+						viewChangeHandlers.fireEvent(ViewChangeEvent.viewUnloadedEvent(pendingUnload.getViewKey()));
 						pendingUnload = null;
 					}
 				});
