@@ -22,16 +22,13 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
 import com.tll.client.data.rpc.ForgotPasswordCommand;
 import com.tll.client.data.rpc.IHasRpcHandlers;
 import com.tll.client.data.rpc.IRpcHandler;
-import com.tll.client.data.rpc.ISourcesUserSessionEvents;
-import com.tll.client.data.rpc.IUserSessionListener;
 import com.tll.client.data.rpc.RpcEvent;
 
 /**
  * LoginDialog
  * @author jpk
  */
-public class LoginDialog extends Dialog implements SubmitHandler, SubmitCompleteHandler, ClickHandler,
- ISourcesUserSessionEvents, IHasRpcHandlers {
+public class LoginDialog extends Dialog implements SubmitHandler, SubmitCompleteHandler, ClickHandler, IHasUserSessionHandlers, IHasRpcHandlers {
 
 	private final Label lblStatusMsg;
 	private final FormPanel form;
@@ -41,12 +38,22 @@ public class LoginDialog extends Dialog implements SubmitHandler, SubmitComplete
 	private final Button btnSubmit;
 	private final SimpleHyperLink lnkTgl;
 
-	private final UserSessionListenerCollection userSessionListeners = new UserSessionListenerCollection();
+	/**
+	 * Constructor
+	 * <p>
+	 * Default, Spring-Security based, form field names and form action.
+	 */
+	public LoginDialog() {
+		this("j_username", "j_password", GWT.getModuleBaseURL() + "j_acegi_security_check");
+	}
 
 	/**
 	 * Constructor
+	 * @param fldUsername name of the username field
+	 * @param fldPassword name of the password field
+	 * @param formAction path to which the form is submitted
 	 */
-	public LoginDialog() {
+	public LoginDialog(String fldUsername, String fldPassword, String formAction) {
 		super();
 
 		setText("Login");
@@ -54,15 +61,15 @@ public class LoginDialog extends Dialog implements SubmitHandler, SubmitComplete
 		lblStatusMsg = new Label("");
 
 		tbEmail = new TextBox();
-		tbEmail.setName("j_username");
+		tbEmail.setName(fldUsername);
 		tbEmail.setMaxLength(20);
 
 		lblPswd = new Label("Password");
 		tbPswd = new PasswordTextBox();
-		tbPswd.setName("j_password");
+		tbPswd.setName(fldPassword);
 
 		form = new FormPanel();
-		form.setAction(GWT.getModuleBaseURL() + "j_acegi_security_check");
+		form.setAction(formAction);
 		form.setMethod(FormPanel.METHOD_POST);
 
 		final VerticalPanel vert = new VerticalPanel();
@@ -96,12 +103,9 @@ public class LoginDialog extends Dialog implements SubmitHandler, SubmitComplete
 		addRpcHandler(new RpcUiHandler(this));
 	}
 
-	public void addUserSessionListener(IUserSessionListener listener) {
-		userSessionListeners.add(listener);
-	}
-
-	public void removeUserSessionListener(IUserSessionListener listener) {
-		userSessionListeners.remove(listener);
+	@Override
+	public HandlerRegistration addUserSessionHandler(IUserSessionHandler handler) {
+		return addHandler(handler, UserSessionEvent.TYPE);
 	}
 
 	@Override
@@ -183,7 +187,10 @@ public class LoginDialog extends Dialog implements SubmitHandler, SubmitComplete
 		final String results = event.getResults();
 		if(results == null || results.length() == 0) {
 			// successful login
-			userSessionListeners.fireLogin();
+
+			// userSessionListeners.fireLogin();
+			fireEvent(new UserSessionEvent(true));
+
 			tbEmail.setText(null);
 			tbPswd.setText(null);
 			return;

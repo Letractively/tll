@@ -11,9 +11,10 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.tll.client.AdminContext;
-import com.tll.client.data.rpc.IUserSessionListener;
 import com.tll.client.data.rpc.RpcCommand;
 import com.tll.client.rpc.IAdminContextListener.ChangeType;
+import com.tll.client.ui.IUserSessionHandler;
+import com.tll.client.ui.UserSessionEvent;
 import com.tll.common.data.rpc.AdminContextPayload;
 import com.tll.common.data.rpc.IAdminContextService;
 import com.tll.common.data.rpc.IAdminContextServiceAsync;
@@ -25,7 +26,7 @@ import com.tll.common.model.ModelKey;
  * @author jpk
  */
 @SuppressWarnings("synthetic-access")
-public final class AdminContextCommand extends RpcCommand<AdminContextPayload> implements IUserSessionListener {
+public final class AdminContextCommand extends RpcCommand<AdminContextPayload> implements IUserSessionHandler {
 
 	private static final IAdminContextServiceAsync svc;
 	static {
@@ -151,12 +152,14 @@ public final class AdminContextCommand extends RpcCommand<AdminContextPayload> i
 		});
 	}
 
-	public void onLogin() {
-		// no-op
+	public void onUserSessionEvent(UserSessionEvent event) {
+		if(event.isStart()) {
+			// login
+			// no-op
+		}
+		else {
+			// logout
+			listeners.fire(null, ChangeType.INVALIDATE);
+		}
 	}
-
-	public void onLogout() {
-		listeners.fire(null, ChangeType.INVALIDATE);
-	}
-
 }

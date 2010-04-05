@@ -9,6 +9,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -29,9 +30,7 @@ import com.tll.client.AdminContext;
 import com.tll.client.App;
 import com.tll.client.OpsManager;
 import com.tll.client.SmbizAdmin;
-import com.tll.client.data.rpc.ISourcesUserSessionEvents;
 import com.tll.client.data.rpc.IStatusHandler;
-import com.tll.client.data.rpc.IUserSessionListener;
 import com.tll.client.data.rpc.RpcEvent;
 import com.tll.client.data.rpc.StatusEvent;
 import com.tll.client.data.rpc.StatusEventDispatcher;
@@ -63,7 +62,7 @@ import com.tll.common.msg.Msg.MsgAttr;
  * @author jpk
  */
 @SuppressWarnings("synthetic-access")
-public final class MainPanel extends Composite implements IAdminContextListener, ISourcesUserSessionEvents {
+public final class MainPanel extends Composite implements IAdminContextListener, IHasUserSessionHandlers {
 
 	/**
 	 * Styles - (admin.css)
@@ -109,8 +108,6 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 	private final Footer footer = new Footer();
 	private final Center center = new Center();
 
-	private final UserSessionListenerCollection userSessionListeners = new UserSessionListenerCollection();
-
 	/**
 	 * Constructor
 	 */
@@ -142,12 +139,9 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		addHandler(new RpcUiHandler(this), RpcEvent.TYPE);
 	}
 
-	public void addUserSessionListener(IUserSessionListener listener) {
-		userSessionListeners.add(listener);
-	}
-
-	public void removeUserSessionListener(IUserSessionListener listener) {
-		userSessionListeners.remove(listener);
+	@Override
+	public HandlerRegistration addUserSessionHandler(IUserSessionHandler handler) {
+		return addHandler(handler, UserSessionEvent.TYPE);
 	}
 
 	public void onAdminContextChange(AdminContext ac, ChangeType changeType) {
@@ -319,7 +313,8 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			final String results = event.getResults();
 			if(results == null || results.length() == 0) {
 				// successful logoff
-				userSessionListeners.fireLogout();
+				MainPanel.this.fireEvent(new UserSessionEvent(false));
+				//userSessionListeners.fireLogout();
 				return;
 			}
 			// logout error

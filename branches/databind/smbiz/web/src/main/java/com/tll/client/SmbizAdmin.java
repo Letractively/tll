@@ -139,7 +139,7 @@ public final class SmbizAdmin implements EntryPoint, IAdminContextListener {
 	private void buildLoginDialog() {
 		if(loginDialog == null) {
 			loginDialog = new LoginDialog();
-			loginDialog.addUserSessionListener(acc);
+			loginDialog.addUserSessionHandler(acc);
 		}
 	}
 
@@ -148,7 +148,7 @@ public final class SmbizAdmin implements EntryPoint, IAdminContextListener {
 			mainPanel = new MainPanel();
 			acc.addAdminContextListener(this);
 			acc.addAdminContextListener(mainPanel);
-			mainPanel.addUserSessionListener(acc);
+			mainPanel.addUserSessionHandler(acc);
 			RootPanel.get().add(mainPanel);
 		}
 	}
