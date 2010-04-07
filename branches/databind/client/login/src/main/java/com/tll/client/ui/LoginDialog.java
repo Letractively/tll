@@ -49,6 +49,16 @@ public class LoginDialog extends Dialog implements SubmitHandler, SubmitComplete
 
 	/**
 	 * Constructor
+	 * <p>
+	 * Uses default username/password field names.
+	 * @param formAction where to send login form submission.
+	 */
+	public LoginDialog(String formAction) {
+		this("j_username", "j_password", formAction);
+	}
+
+	/**
+	 * Constructor
 	 * @param fldUsername name of the username field
 	 * @param fldPassword name of the password field
 	 * @param formAction path to which the form is submitted
