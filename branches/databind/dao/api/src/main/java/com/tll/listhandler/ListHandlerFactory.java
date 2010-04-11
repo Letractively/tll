@@ -64,10 +64,10 @@ public abstract class ListHandlerFactory {
 	 * @throws IllegalStateException when the list handler type is un-supported.
 	 */
 	public static <E extends IEntity> IListHandler<SearchResult> create(Criteria<E> criteria, Sorting sorting,
-			ListHandlerType type, IListingDataProvider<E> dataProvider) throws InvalidCriteriaException, EmptyListException,
+			ListHandlerType type, IListingDataProvider dataProvider) throws InvalidCriteriaException, EmptyListException,
 			ListHandlerException, IllegalStateException {
 
-		SearchListHandler<E> slh = null;
+		SearchListHandler slh = null;
 
 		switch(type) {
 
@@ -78,11 +78,11 @@ public abstract class ListHandlerFactory {
 			if(criteria.getCriteriaType().isQuery()) {
 				throw new InvalidCriteriaException("Id list handling does not support query based criteria");
 			}
-			slh = new PrimaryKeyListHandler<E>(dataProvider, criteria, sorting);
+			slh = new PrimaryKeyListHandler(dataProvider, criteria, sorting);
 			break;
 
 		case PAGE:
-			slh = new PagingSearchListHandler<E>(dataProvider, criteria, sorting);
+			slh = new PagingSearchListHandler(dataProvider, criteria, sorting);
 			break;
 
 		default:

@@ -225,7 +225,7 @@ public abstract class EntityBase implements IEntity {
 	}
 
 	@Override
-	public final String toString() {
+	public String toString() {
 		return typeDesc() + ", id: " + getId() + ", version: " + getVersion();
 	}
 

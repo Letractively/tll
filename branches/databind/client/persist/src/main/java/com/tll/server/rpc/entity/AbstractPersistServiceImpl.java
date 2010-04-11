@@ -122,23 +122,6 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	}
 
 	/**
-	 * Translates a target entity instance to a {@link Model} instance.
-	 * @param entityType the entity type
-	 * @param e the entity to translate
-	 * @return the translated model instance
-	 * @throws Exception upon error
-	 */
-	protected Model entityToModel(IEntityType entityType, IEntity e) throws Exception, Exception {
-		// default simply marshals the entity
-		try {
-			return marshal(entityType, e);
-		}
-		catch(final Throwable t) {
-			throw new Exception(t);
-		}
-	}
-
-	/**
 	 * The default add routine which may be overridden.
 	 * @param model
 	 * @param payload
@@ -198,8 +181,22 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 
 		payload.getStatus().addMsg(e.descriptor() + (isNew ? " added." : " updated."), MsgLevel.INFO, MsgAttr.STATUS.flag);
 	}
-
+	
 	@SuppressWarnings("unchecked")
+	protected static void handleValidationException(PersistContext context, ConstraintViolationException cve, ModelPayload payload) {
+		//final Class<? extends IEntity> entityClass =
+			//(Class<? extends IEntity>) context.getEntityTypeResolver().resolveEntityClass(model.getEntityType());
+		for(final ConstraintViolation<?> iv : cve.getConstraintViolations()) {
+			// resolve index if we have a violation on under an indexed entity property
+			// since the validation api doesn't provide the index rather only empty brackets ([])
+			// in the ConstraintViolation's propertyPath property
+			Class<? extends IEntity> entityClass = (Class<? extends IEntity>) iv.getRootBeanClass();
+			payload.getStatus().addMsg(iv.getMessage(), MsgLevel.ERROR, MsgAttr.FIELD.flag,
+					clientizePropertyPath(context.getSchemaInfo(), entityClass, iv.getPropertyPath().toString()));
+		}
+	}
+
+	//@SuppressWarnings("unchecked")
 	@Override
 	public final void persist(Model model, ModelPayload payload) {
 		try {
@@ -215,15 +212,7 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 			RpcServlet.exceptionToStatus(e, payload.getStatus());
 		}
 		catch(final ConstraintViolationException ise) {
-			final Class<? extends IEntity> entityClass =
-				(Class<? extends IEntity>) context.getEntityTypeResolver().resolveEntityClass(model.getEntityType());
-			for(final ConstraintViolation iv : ise.getConstraintViolations()) {
-				// resolve index if we have a violation on under an indexed entity property
-				// since the validation api doesn't provide the index rather only empty brackets ([])
-				// in the ConstraintViolation's propertyPath property
-				payload.getStatus().addMsg(iv.getMessage(), MsgLevel.ERROR, MsgAttr.FIELD.flag,
-						clientizePropertyPath(context.getSchemaInfo(), entityClass, iv.getPropertyPath().toString()));
-			}
+			handleValidationException(context, ise, payload);
 		}
 		catch(final RuntimeException e) {
 			RpcServlet.exceptionToStatus(e, payload.getStatus());
@@ -258,6 +247,23 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	}
 
 	/**
+	 * Translates a target entity instance to a {@link Model} instance.
+	 * @param entityType the entity type
+	 * @param e the entity to translate
+	 * @return the translated model instance
+	 * @throws Exception upon error
+	 */
+	protected Model entityToModel(IEntityType entityType, IEntity e) throws Exception {
+		// default simply marshals the entity
+		try {
+			return marshal(entityType, e);
+		}
+		catch(final Throwable t) {
+			throw new Exception(t);
+		}
+	}
+
+	/**
 	 * Convenience method for entity to model marshaling.
 	 * @param entityType
 	 * @param entity
@@ -277,12 +283,6 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 		assert m != null;
 		return m;
 	}
-
-	/**
-	 * @return A descriptive ui-ready name for the type of model data this
-	 *         implmentation supports.
-	 */
-	protected abstract String getModelTypeName();
 
 	/**
 	 * Loads an entity by primary key marshaling it into a {@link Model} instance.

@@ -143,8 +143,8 @@ abstract class AbstractListingProcessor<R extends IMarshalable> {
 							}
 
 							// resolve the listing handler data provider
-							final IListingDataProvider<IEntity> dataProvider =
-									(IListingDataProvider<IEntity>) context.getListingDataProviderResolver().resolve(request);
+							final IListingDataProvider dataProvider = 
+								context.getListingDataProviderResolver().resolve(request);
 
 							// resolve the list handler type
 							final ListHandlerType lht = listingDef.getListHandlerType();

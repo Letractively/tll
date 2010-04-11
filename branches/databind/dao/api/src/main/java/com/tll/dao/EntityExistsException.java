@@ -7,7 +7,6 @@ package com.tll.dao;
 
 
 /**
- * EntityNotFoundException
  * @author jpk
  */
 public class EntityExistsException extends RuntimeException {

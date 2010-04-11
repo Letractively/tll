@@ -3,6 +3,7 @@ package com.tll.service.entity;
 import java.util.Map;
 
 import com.tll.model.IEntity;
+import com.tll.service.IService;
 
 /**
  * Factory that provides refs to all loaded entity services in the app.
@@ -10,19 +11,19 @@ import com.tll.model.IEntity;
  * @author jpk
  */
 public final class EntityServiceFactory implements IEntityServiceFactory {
-	final Map<Class<? extends IEntityService<? extends IEntity>>, IEntityService<? extends IEntity>> map;
+	final Map<Class<? extends IService>, IService> map;
 
 	/**
 	 * Constructor
 	 * @param map
 	 */
-	public EntityServiceFactory(Map<Class<? extends IEntityService<? extends IEntity>>, IEntityService<? extends IEntity>> map) {
+	public EntityServiceFactory(Map<Class<? extends IService>, IService> map) {
 		super();
 		this.map = map;
 	}
 
 	@SuppressWarnings("unchecked")
-	public <S extends IEntityService<? extends IEntity>> S instance(Class<S> type) {
+	public <S extends IService> S instance(Class<S> type) {
 		final S s = (S) map.get(type);
 		if(s == null) {
 			throw new IllegalArgumentException("Entity Service of type: " + type + " not found.");
@@ -32,9 +33,11 @@ public final class EntityServiceFactory implements IEntityServiceFactory {
 
 	@SuppressWarnings("unchecked")
 	public <E extends IEntity> IEntityService<E> instanceByEntityType(Class<E> entityType) {
-		for(final IEntityService<? extends IEntity> es : map.values()) {
-			if(es.getEntityClass().isAssignableFrom(entityType)) {
-				return (IEntityService<E>) es;
+		for(final IService es : map.values()) {
+			if(es instanceof IEntityService) {
+				if(((IEntityService<? extends IEntity>) es).getEntityClass().isAssignableFrom(entityType)) {
+					return (IEntityService<E>) es;
+				}
 			}
 		}
 		throw new IllegalArgumentException("Entity Service for entity of type: " + entityType + " not found.");

@@ -67,7 +67,7 @@
 		<mysqlConnectorVersion>5.1.6</mysqlConnectorVersion>
 
 		<gwtVersion>2.0.3</gwtVersion>
-		<gwtLogVersion>3.0.0</gwtLogVersion>
+		<gwtLogVersion>3.0.1</gwtLogVersion>
 		
 		<junitVersion>4.5</junitVersion>
 		<testNGVersion>5.10</testNGVersion>

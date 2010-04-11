@@ -139,7 +139,7 @@ public final class SmbizAdmin implements EntryPoint, IAdminContextListener {
 	private void buildLoginDialog() {
 		if(loginDialog == null) {
 			loginDialog = new LoginDialog();
-			loginDialog.addUserSessionHandler(acc);
+			loginDialog.getLoginPanel().addUserSessionHandler(acc);
 		}
 	}
 

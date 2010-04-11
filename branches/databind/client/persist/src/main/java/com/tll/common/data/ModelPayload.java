@@ -9,7 +9,7 @@ import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 
 /**
- * ModelPayload - To transport model and any supporting aux data to the client.
+ * Generic model data transport.
  * @author jpk
  */
 public final class ModelPayload extends ModelDataPayload {

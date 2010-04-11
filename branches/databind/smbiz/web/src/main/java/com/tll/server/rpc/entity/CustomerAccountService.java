@@ -23,11 +23,6 @@ public class CustomerAccountService extends AbstractPersistServiceImpl {
 	}
 
 	@Override
-	protected String getModelTypeName() {
-		return "Customer Account";
-	}
-
-	@Override
 	protected Model entityToModel(IEntityType entityType, IEntity e) throws Exception {
 		final Model m = super.entityToModel(entityType, e);
 		return m;
