@@ -251,18 +251,6 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	}
 	
 	/**
-	 * @return Array of currently cached views
-	 */
-	public IView<?>[] getCachedViews() {
-		ArrayList<IView<?>> list = new ArrayList<IView<?>>();
-		for(final Iterator<CView> itr = cache.queueIterator(); itr.hasNext();) {
-			final CView e = itr.next();
-			list.add(e.vc.getView());
-		}
-		return list.toArray(new IView[] {});
-	}
-
-	/**
 	 * Sets the current view. The current view is defined as the visible pinned
 	 * view.
 	 * @param init The view initializer employed only when the view is not present
@@ -562,18 +550,14 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 *         most recently visited (head) to oldest (tail) which may be empty
 	 *         indicating there are currently no cached views.
 	 */
-	/*
 	public IView<?>[] getCachedViews() {
-		if(cache.size() == 0) {
-			return new IView[] {};
-		}
+		if(cache.size() == 0) return new IView[0];
 		final ArrayList<IView<?>> list = new ArrayList<IView<?>>(cache.size());
 		for(final Iterator<CView> itr = cache.queueIterator(); itr.hasNext();) {
 			list.add(itr.next().vc.getView());
 		}
-		return list.toArray(new IView[list.size()]);
+		return list.toArray(new IView[0]);
 	}
-	 */
 
 	/**
 	 * Provides an array of the cached views as stand-alone references in "cache"

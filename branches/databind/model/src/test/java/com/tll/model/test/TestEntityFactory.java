@@ -28,11 +28,6 @@ public class TestEntityFactory extends AbstractEntityFactory<Long> {
 	}
 
 	@Override
-	public <E extends IEntity> E createEntity(Class<E> entityClass, boolean generate) throws IllegalStateException {
-		return newEntity(entityClass);
-	}
-
-	@Override
 	public synchronized Long generatePrimaryKey(IEntity entity) {
 		Long nextId = idMap.get(entity.rootEntityClass());
 		if(nextId == null) {

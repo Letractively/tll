@@ -93,6 +93,14 @@ public abstract class AuthenticationProcessingFilter extends AbstractSecurityFil
 
 		// avoids Acegi's SavedRequest mechanism
 		wrapped.setAlwaysUseDefaultTargetUrl(true);
+		
+		// required!
+		try {
+			wrapped.afterPropertiesSet();
+		}
+		catch(Exception e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	@Override

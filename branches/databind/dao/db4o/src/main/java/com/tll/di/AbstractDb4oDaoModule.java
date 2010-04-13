@@ -27,9 +27,7 @@ import com.tll.config.Config;
 import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
 import com.tll.dao.IEntityDao;
-import com.tll.dao.db4o.Db4oEntityFactory;
 import com.tll.dao.db4o.IDb4oNamedQueryTranslator;
-import com.tll.model.IEntityFactory;
 
 /**
  * AbstractDb4oDaoModule - Db4o dao impl module.
@@ -213,8 +211,9 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 			// @Transactional!
 		}
 
+		// this is in ModelBuildModule
 		// IEntityFactory
-		bind(IEntityFactory.class).to(Db4oEntityFactory.class).in(Scopes.SINGLETON);
+		//bind(new TypeLiteral<IEntityFactory<?>>() {}).to(Db4oEntityFactory.class).in(Scopes.SINGLETON);
 
 		// IDb4oNamedQueryTranslator
 		bind(IDb4oNamedQueryTranslator.class).to(getNamedQueryTranslatorImpl()).in(Scopes.SINGLETON);

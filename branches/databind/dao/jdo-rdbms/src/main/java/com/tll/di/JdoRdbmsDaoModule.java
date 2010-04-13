@@ -27,9 +27,7 @@ import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.jdo.JdoRdbmsEntityDao;
-import com.tll.dao.jdo.JdoRdbmsEntityFactory;
 import com.tll.dao.jdo.JdoRdbmsTimestampListener;
-import com.tll.model.IEntityFactory;
 import com.tll.model.ITimeStampEntity;
 
 /**
@@ -147,7 +145,7 @@ public class JdoRdbmsDaoModule extends AbstractModule implements IConfigAware {
 		// as it manages the life-cycle of PersistenceManagers
 
 		// IEntityFactory
-		bind(IEntityFactory.class).to(JdoRdbmsEntityFactory.class).in(Scopes.SINGLETON);
+		//bind(new TypeLiteral<IEntityFactory<?>>() {}).to(JdoRdbmsEntityFactory.class).in(Scopes.SINGLETON);
 
 		// IEntityDao
 		bind(IEntityDao.class).to(JdoRdbmsEntityDao.class).in(Scopes.SINGLETON);

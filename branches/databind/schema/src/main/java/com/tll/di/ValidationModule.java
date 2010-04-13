@@ -19,12 +19,12 @@ import com.google.inject.Scopes;
  * javax.validation (jsr-303) bootstrapping.
  * @author jpk
  */
-public final class ValidationModule extends AbstractModule {
+public class ValidationModule extends AbstractModule {
 	
 	private static final Log log = LogFactory.getLog(ValidationModule.class);
 
 	@Override
-	protected final void configure() {
+	protected void configure() {
 		log.info("Employing Validation module...");
 		
 		// ValidationFactory

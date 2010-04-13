@@ -31,9 +31,8 @@ import com.tll.client.data.rpc.RpcEvent;
  * LoginPanel
  * @author jpk
  */
-public class LoginPanel extends Composite 
-implements IHasUserSessionHandlers, IHasRpcHandlers, HasValueChangeHandlers<LoginPanel.Mode> {
-	
+public class LoginPanel extends Composite implements IHasUserSessionHandlers, IHasRpcHandlers, HasValueChangeHandlers<LoginPanel.Mode> {
+
 	public static enum Mode {
 		LOGIN,
 		FORGOT_PASSWORD,
@@ -42,7 +41,7 @@ implements IHasUserSessionHandlers, IHasRpcHandlers, HasValueChangeHandlers<Logi
 	final Label lblStatusMsg;
 	final FormPanel form;
 	final TextBox tbEmail;
-	final Label lblPswd;
+	final Label lblEmail, lblPswd;
 	final PasswordTextBox tbPswd;
 	final Button btnSubmit;
 	final SimpleHyperLink lnkTgl;
@@ -53,42 +52,51 @@ implements IHasUserSessionHandlers, IHasRpcHandlers, HasValueChangeHandlers<Logi
 	 * Default, Spring-Security based, form field names and form action.
 	 */
 	public LoginPanel() {
-		this("j_username", "j_password", GWT.getModuleBaseURL() + "j_acegi_security_check");
+		this("j_username", "j_password", GWT.getModuleBaseURL());
 	}
 
 	/**
 	 * Constructor
 	 * <p>
 	 * Uses default username/password field names.
-	 * @param formAction where to send login form submission.
+	 * @param formRoot where to send login form submission.
 	 */
-	public LoginPanel(String formAction) {
-		this("j_username", "j_password", formAction);
+	public LoginPanel(String formRoot) {
+		this("j_username", "j_password", formRoot);
 	}
 
 	/**
 	 * Constructor
 	 * @param fldUsername name of the username field
 	 * @param fldPassword name of the password field
-	 * @param formAction path to which the form is submitted
+	 * @param formAction path to which the form is submitted (e.g.: "/login") <br>
+	 *        <b>NOTE:</b> "j_spring_security_check" will then be appended
 	 */
 	public LoginPanel(String fldUsername, String fldPassword, String formAction) {
 		super();
 
-		//setText("Login");
+		// setText("Login");
 
 		lblStatusMsg = new Label("");
+		lblStatusMsg.setStyleName("loginStatus");
 
+		lblEmail = new Label("Email Address");
+		lblEmail.setStyleName("loginLbl");
 		tbEmail = new TextBox();
+		tbEmail.addStyleName("loginUsername");
 		tbEmail.setName(fldUsername);
-		tbEmail.setMaxLength(20);
+		tbEmail.setMaxLength(50);
 
 		lblPswd = new Label("Password");
+		lblPswd.setStyleName("loginLbl");
 		tbPswd = new PasswordTextBox();
+		tbPswd.addStyleName("loginPswd");
 		tbPswd.setName(fldPassword);
+		tbPswd.setMaxLength(50);
 
 		form = new FormPanel();
-		form.setAction(formAction);
+		form.setStyleName("loginForm");
+		form.setAction(formAction + "j_spring_security_check");
 		form.setMethod(FormPanel.METHOD_POST);
 
 		final VerticalPanel vert = new VerticalPanel();
@@ -97,7 +105,7 @@ implements IHasUserSessionHandlers, IHasRpcHandlers, HasValueChangeHandlers<Logi
 		vert.add(lblStatusMsg);
 
 		btnSubmit = new Button("Login", new ClickHandler() {
-			
+
 			@SuppressWarnings("synthetic-access")
 			@Override
 			public void onClick(ClickEvent event) {
@@ -121,7 +129,7 @@ implements IHasUserSessionHandlers, IHasRpcHandlers, HasValueChangeHandlers<Logi
 		});
 
 		lnkTgl = new SimpleHyperLink("Forgot Password", new ClickHandler() {
-			
+
 			@SuppressWarnings("synthetic-access")
 			@Override
 			public void onClick(ClickEvent event) {
@@ -133,7 +141,7 @@ implements IHasUserSessionHandlers, IHasRpcHandlers, HasValueChangeHandlers<Logi
 					lnkTgl.setTitle("Forgot Password");
 					lnkTgl.setText("Forgot Password");
 					btnSubmit.setText("Login");
-					//setText("Login");
+					// setText("Login");
 					ValueChangeEvent.fire(LoginPanel.this, Mode.LOGIN);
 				}
 				else {
@@ -144,18 +152,19 @@ implements IHasUserSessionHandlers, IHasRpcHandlers, HasValueChangeHandlers<Logi
 					lnkTgl.setTitle("Back to Login");
 					lnkTgl.setText("Back to Login");
 					btnSubmit.setText("Email Password");
-					//setText("Forgot Password");
+					// setText("Forgot Password");
 					ValueChangeEvent.fire(LoginPanel.this, Mode.FORGOT_PASSWORD);
 				}
-				//center();
+				// center();
 			}
 		});
 		lnkTgl.setTitle("Forgot Password");
 
 		final Grid grid = new Grid(3, 2);
+		grid.setStyleName("loginGrid");
 		grid.setWidth("100%");
 		grid.setCellSpacing(2);
-		grid.setWidget(0, 0, new Label("Email Address:"));
+		grid.setWidget(0, 0, lblEmail);
 		grid.setWidget(0, 1, tbEmail);
 		grid.setWidget(1, 0, lblPswd);
 		grid.setWidget(1, 1, tbPswd);
@@ -164,7 +173,7 @@ implements IHasUserSessionHandlers, IHasRpcHandlers, HasValueChangeHandlers<Logi
 		vert.add(grid);
 
 		form.addSubmitHandler(new SubmitHandler() {
-			
+
 			@Override
 			public void onSubmit(SubmitEvent event) {
 				final StringBuilder msg = new StringBuilder(128);
@@ -183,7 +192,7 @@ implements IHasUserSessionHandlers, IHasRpcHandlers, HasValueChangeHandlers<Logi
 			}
 		});
 		form.addSubmitCompleteHandler(new SubmitCompleteHandler() {
-			
+
 			@Override
 			public void onSubmitComplete(SubmitCompleteEvent event) {
 				final String results = event.getResults();
@@ -227,7 +236,7 @@ implements IHasUserSessionHandlers, IHasRpcHandlers, HasValueChangeHandlers<Logi
 		DeferredCommand.addCommand(new FocusCommand(tbEmail, true));
 	}
 	*/
-	
+
 	private boolean isLoginMode() {
 		return "Forgot Password".equals(lnkTgl.getTitle());
 	}

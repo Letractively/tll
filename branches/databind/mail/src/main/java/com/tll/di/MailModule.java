@@ -81,8 +81,8 @@ public final class MailModule extends AbstractModule implements IConfigAware {
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target( {
-		ElementType.FIELD,
-		ElementType.PARAMETER })
+		ElementType.FIELD, ElementType.PARAMETER
+	})
 	@BindingAnnotation
 	public @interface MailTemplatePath {
 	}
@@ -92,8 +92,8 @@ public final class MailModule extends AbstractModule implements IConfigAware {
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target( {
-		ElementType.FIELD,
-		ElementType.PARAMETER })
+		ElementType.FIELD, ElementType.PARAMETER
+	})
 	@BindingAnnotation
 	public @interface MailTemplateSuffixText {
 	}
@@ -103,8 +103,8 @@ public final class MailModule extends AbstractModule implements IConfigAware {
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target( {
-		ElementType.FIELD,
-		ElementType.PARAMETER })
+		ElementType.FIELD, ElementType.PARAMETER
+	})
 	@BindingAnnotation
 	public @interface MailTemplateSuffixHtml {
 	}
@@ -114,8 +114,8 @@ public final class MailModule extends AbstractModule implements IConfigAware {
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target( {
-		ElementType.FIELD,
-		ElementType.PARAMETER })
+		ElementType.FIELD, ElementType.PARAMETER
+	})
 	@BindingAnnotation
 	public @interface DefaultMailRouting {
 	}
@@ -125,8 +125,8 @@ public final class MailModule extends AbstractModule implements IConfigAware {
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target( {
-		ElementType.FIELD,
-		ElementType.PARAMETER })
+		ElementType.FIELD, ElementType.PARAMETER
+	})
 	@BindingAnnotation
 	public @interface PrimaryMailSender {
 	}
@@ -136,8 +136,8 @@ public final class MailModule extends AbstractModule implements IConfigAware {
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target( {
-		ElementType.FIELD,
-		ElementType.PARAMETER })
+		ElementType.FIELD, ElementType.PARAMETER
+	})
 	@BindingAnnotation
 	public @interface SecondaryMailSender {
 	}
@@ -235,8 +235,8 @@ public final class MailModule extends AbstractModule implements IConfigAware {
 				final List<JavaMailSender> javaMailSenders = Arrays.asList(primary, secondary);
 
 				final List<IComposer<? extends IMailContext>> composers = new ArrayList<IComposer<? extends IMailContext>>(2);
-				composers.add(templateComposer);
 				composers.add(simpleComposer);
+				if(templateComposer != null) composers.add(templateComposer);
 
 				return new MailSender(javaMailSenders, numberOfSendRetries, sendRetryDelayMilis, composers);
 			}
@@ -248,9 +248,9 @@ public final class MailModule extends AbstractModule implements IConfigAware {
 			@SecondaryMailSender
 			JavaMailSender secondary;
 			@Inject
-			TemplateComposer templateComposer;
-			@Inject
 			SimpleComposer simpleComposer;
+			@Inject(optional = true)
+			TemplateComposer templateComposer;
 
 		}).in(Scopes.SINGLETON);
 

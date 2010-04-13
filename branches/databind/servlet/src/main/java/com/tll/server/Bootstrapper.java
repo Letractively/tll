@@ -151,8 +151,8 @@ public class Bootstrapper implements ServletContextListener {
 
 		// start 'em up
 		if(handlers != null) {
+			log.debug("Starting up dependency handlers..");
 			for(final IBootstrapHandler handler : handlers) {
-				log.debug("Starting up dependency handlers..");
 				handler.startup(injector, servletContext);
 			}
 		}

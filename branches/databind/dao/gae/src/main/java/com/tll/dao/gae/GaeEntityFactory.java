@@ -28,11 +28,6 @@ public final class GaeEntityFactory extends AbstractEntityFactory<Key> {
 	}
 
 	@Override
-	public <E extends IEntity> E createEntity(Class<E> entityClass, boolean generate) throws IllegalStateException {
-		return newEntity(entityClass);
-	}
-
-	@Override
 	public String primaryKeyToString(Key pk) {
 		return KeyFactory.keyToString(pk);
 	}
