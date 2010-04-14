@@ -378,7 +378,7 @@ public final class Marshaler {
 								toOne = null;
 							}
 							log.debug("About to marshal related one [model: " + rltdOne + "] [entity: " + toOne + "]");
-							marshalModel(rltdOne, toOne, visited, depth + 1);
+							if(toOne != null) marshalModel(rltdOne, toOne, visited, depth + 1);
 						}
 						val = toOne;
 					}

@@ -38,7 +38,6 @@ import com.tll.di.test.TestPersistenceUnitModule;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.model.test.TestEntityFactory;
 import com.tll.server.rpc.listing.ListingCache.ListingCacheAware;
-
 /**
  * ListingProcessorTest - Tests the {@link AbstractListingProcessor}.
  * @author jpk

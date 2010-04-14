@@ -17,9 +17,9 @@ import com.tll.server.marshal.MarshalOptions;
 public class SmbizMarshalOptionsResolver implements IMarshalOptionsResolver {
 
 	public static final MarshalOptions ACCOUNT_MARSHAL_OPTIONS = new MarshalOptions(false, 2, new String[] { "parent" });
-	public static final MarshalOptions ACCOUNT_ADDRESS_OPTIONS = new MarshalOptions(false, 1, null);
-	public static final MarshalOptions ADDRESS_OPTIONS = new MarshalOptions(false, 0, null);
-	public static final MarshalOptions AUTHORITY_OPTIONS = new MarshalOptions(false, 0, null);
+	public static final MarshalOptions ACCOUNT_ADDRESS_OPTIONS = new MarshalOptions(false, 1);
+	public static final MarshalOptions ADDRESS_OPTIONS = new MarshalOptions(false, 0);
+	public static final MarshalOptions AUTHORITY_OPTIONS = new MarshalOptions(false, 0);
 	public static final MarshalOptions INTERFACE_OPTIONS = MarshalOptions.UNCONSTRAINED_MARSHALING;
 	public static final MarshalOptions USER_OPTIONS = new MarshalOptions(true, 2, new String[] { "parent" });
 	public static final MarshalOptions USER_OPTIONS_ADMIN_CONTEXT = new MarshalOptions(true, 1, new String[] { "parent" });

@@ -130,5 +130,6 @@ public class DataListingOperator<R, H extends IListHandler<R>> extends AbstractL
 		offset = 0;
 		sorting = null;
 		fireListingEvent(ListingOp.CLEAR);
+		current.clear();
 	}
 }

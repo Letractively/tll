@@ -404,6 +404,9 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 				actvRowIndex = crntRowIndex = -1; // reset
 			}
 		}
+		else if(event.getListingOp().isClear()) {
+			removeBodyRows();
+		}
 	}
 
 	@Override

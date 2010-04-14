@@ -221,6 +221,10 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 */
 	@SuppressWarnings("unchecked")
 	public void loadView(IViewInitializer init) {
+		// first check if not already cached
+		CView e = cache.peekQueue(init.getViewKey());
+		if(e != null) return;
+		
 		Log.debug("Loading view: " + init + " ..");
 		
 		// non-cached view
@@ -229,7 +233,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 		// initialize the view
 		view.initialize(init);
 
-		CView e = new CView(new ViewContainer(view, init.getViewKey().getViewClass().getViewOptions(), init.getViewKey()), init);
+		e = new CView(new ViewContainer(view, init.getViewKey().getViewClass().getViewOptions(), init.getViewKey()), init);
 		
 		cacheView(e);
 

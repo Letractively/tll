@@ -20,9 +20,9 @@ import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
  */
 public class TestMarshalModule extends MarshalModule {
 
-	static final MarshalOptions ACCOUNT_MARSHAL_OPTIONS = new MarshalOptions(false, 2, null);
-	static final MarshalOptions ACCOUNT_ADDRESS_OPTIONS = new MarshalOptions(false, 1, null);
-	static final MarshalOptions ADDRESS_OPTIONS = new MarshalOptions(false, 0, null);
+	static final MarshalOptions ACCOUNT_MARSHAL_OPTIONS = new MarshalOptions(false, 2);
+	static final MarshalOptions ACCOUNT_ADDRESS_OPTIONS = new MarshalOptions(false, 1);
+	static final MarshalOptions ADDRESS_OPTIONS = new MarshalOptions(false, 0);
 
 	static class TestMarshalOptionsResolver implements IMarshalOptionsResolver {
 		@Override
