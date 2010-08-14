@@ -7,16 +7,17 @@ package com.tll.client.mvc.view;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
-import com.tll.client.data.rpc.ModelDataCommand;
 import com.tll.client.data.rpc.CrudCommand;
+import com.tll.client.data.rpc.ModelDataCommand;
 import com.tll.client.model.IHasModelChangeHandlers;
 import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.mvc.ModelChangeViewHandler;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.ui.edit.EditEvent;
-import com.tll.client.ui.edit.EditPanel;
 import com.tll.client.ui.edit.IEditHandler;
+import com.tll.client.ui.edit.IModelEditContent;
+import com.tll.client.ui.edit.ModelEditPanel;
 import com.tll.client.ui.field.AbstractBindableFieldPanel;
 import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.client.validate.ErrorHandlerBuilder;
@@ -32,7 +33,7 @@ import com.tll.common.search.PrimaryKeySearch;
  * to edit a single entity.
  * @author jpk
  */
-public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInitializer> implements IEditHandler, IHasModelChangeHandlers {
+public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInitializer> implements IEditHandler<IModelEditContent>, IHasModelChangeHandlers {
 
 	/**
 	 * The model reference used to subsequently fetch the actual model subject to
@@ -53,7 +54,7 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 	/**
 	 * The Panel containing the UI edit Widgets.
 	 */
-	private final EditPanel editPanel;
+	private final ModelEditPanel editPanel;
 
 	/**
 	 * Constructor
@@ -62,7 +63,7 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 	public EditView(AbstractBindableFieldPanel<?> fieldPanel) {
 		super();
 		gmp = new GlobalMsgPanel();
-		editPanel = new EditPanel(fieldPanel, true, false, true);
+		editPanel = new ModelEditPanel(fieldPanel, true, false, true);
 		editPanel.setErrorHandler(ErrorHandlerBuilder.build(true, true, new GlobalMsgPanel()), true);
 		editPanel.addEditHandler(this);
 
@@ -145,17 +146,17 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 		editPanel.setModel(null); // forces clean-up of bindings and listeners
 	}
 
-	public final void onEdit(EditEvent event) {
+	public final void onEdit(EditEvent<IModelEditContent> event) {
 		Command cmd = null;
 		switch(event.getOp()) {
 		case CANCEL:
 			ViewManager.get().dispatch(new UnloadViewRequest(getViewKey(), false, false));
 			break;
 		case ADD:
-		case UPDATE: {
-			cmd = CrudCommand.persistModel(this, event.getChangedModel());
+			cmd = CrudCommand.persistModel(this, event.getContent().getModel());
+		case UPDATE:
+			cmd = CrudCommand.persistModel(this, event.getContent().getChangedModel());
 			break;
-		}
 		case DELETE:
 			if(!model.isNew()) {
 				cmd = CrudCommand.deleteModel(this, modelKey);

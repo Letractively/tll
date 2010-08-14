@@ -19,10 +19,4 @@ public class AuthorityService extends AbstractPersistServiceImpl {
 	public AuthorityService(PersistContext context) {
 		super(context);
 	}
-
-	@Override
-	protected String getModelTypeName() {
-		return "Authority";
-	}
-
 }

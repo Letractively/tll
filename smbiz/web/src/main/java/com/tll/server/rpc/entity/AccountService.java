@@ -28,11 +28,6 @@ public class AccountService extends AbstractPersistServiceImpl {
 	}
 
 	@Override
-	protected String getModelTypeName() {
-		return "Account";
-	}
-
-	@Override
 	protected Model entityToModel(IEntityType entityType, IEntity e) throws Exception {
 		final Model m = super.entityToModel(entityType, e);
 		assert m != null;

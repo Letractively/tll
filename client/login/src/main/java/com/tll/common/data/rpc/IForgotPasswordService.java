@@ -11,7 +11,7 @@ import com.tll.common.data.Payload;
  * IForgotPasswordService
  * @author jpk
  */
-@RemoteServiceRelativePath(value = "rpc/adminForgotPassword")
+@RemoteServiceRelativePath(value = "forgotPassword")
 public interface IForgotPasswordService extends RemoteService {
 
 	/**

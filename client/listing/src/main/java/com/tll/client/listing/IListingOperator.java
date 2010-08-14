@@ -29,13 +29,6 @@ public interface IListingOperator<R> {
 	void refresh();
 
 	/**
-	 * Dispatches a listing event containing cached listing data and state. If no
-	 * listing data exists, the listing data is acquired as {@link #refresh()}
-	 * would.
-	 */
-	void display();
-
-	/**
 	 * Sorts the listing. A listing event is then dispatched to the listing
 	 * Widget.
 	 * @param sorting The sorting directive

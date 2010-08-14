@@ -7,13 +7,15 @@ package com.tll.common.model;
 
 import java.util.Set;
 
+import com.tll.IMarshalable;
+
 /**
  * CopyCriteria
  * @author jpk
  */
 public class CopyCriteria {
 
-	static enum CopyMode {
+	static enum CopyMode implements IMarshalable {
 		ALL,
 		NO_REFERENCES,
 		KEEP_REFERENCES,

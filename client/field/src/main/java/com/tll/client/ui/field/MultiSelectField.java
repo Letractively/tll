@@ -68,7 +68,7 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 			if(value != null) {
 				for(int i = 0; i < super.getItemCount(); i++) {
 					for(final V val : value) {
-						final String rv = getRenderer().convert(val);
+						final String rv = renderer.convert(val);
 						if(rv != null && rv.equals(getValue(i))) {
 							setItemSelected(i, true);
 						}
@@ -171,7 +171,8 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 		return lb.getSelectedIndex();
 	}
 
-	public String getText() {
+	@Override
+	public String doGetText() {
 		// comma delimit
 		final StringBuilder sb = new StringBuilder();
 		for(int i = 0; i < lb.getItemCount(); i++) {

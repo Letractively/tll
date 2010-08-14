@@ -31,9 +31,8 @@ INamedEntityService<N> {
 		super(dao, entityAssembler, validatorFactory);
 	}
 
-	@SuppressWarnings("unchecked")
-	public N load(NameKey key) throws EntityNotFoundException {
-		return (N) dao.load(key);
+	public N load(NameKey<N> key) throws EntityNotFoundException {
+		return dao.load(key);
 	}
 
 }

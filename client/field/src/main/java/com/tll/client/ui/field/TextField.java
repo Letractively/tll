@@ -108,7 +108,8 @@ public final class TextField extends AbstractField<String> implements IHasMaxLen
 		super.setEnabled(enabled);
 	}
 
-	public String getText() {
+	@Override
+	public String doGetText() {
 		return tb.getText();
 	}
 

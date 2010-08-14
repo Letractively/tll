@@ -177,7 +177,8 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 		return lb.getSelectedIndex();
 	}
 
-	public String getText() {
+	@Override
+	public String doGetText() {
 		return lb.getSelectedIndex() == -1 ? null : lb.getItemText(lb.getSelectedIndex());
 	}
 

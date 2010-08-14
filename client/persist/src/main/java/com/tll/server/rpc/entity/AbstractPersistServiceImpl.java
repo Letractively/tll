@@ -5,7 +5,6 @@
  */
 package com.tll.server.rpc.entity;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import com.tll.common.data.ModelPayload;
@@ -22,47 +21,22 @@ import com.tll.common.search.ISearch;
 import com.tll.common.search.PrimaryKeySearch;
 import com.tll.dao.EntityExistsException;
 import com.tll.dao.EntityNotFoundException;
+import com.tll.model.EntityMetadata;
 import com.tll.model.IEntity;
 import com.tll.model.NameKey;
 import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.bk.BusinessKeyNotDefinedException;
 import com.tll.model.bk.IBusinessKey;
-import com.tll.schema.ISchemaInfo;
-import com.tll.schema.ISchemaProperty;
-import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.rpc.RpcServlet;
 import com.tll.service.entity.IEntityService;
 import com.tll.service.entity.INamedEntityService;
 import com.tll.util.ObjectUtil;
-import com.tll.util.PropertyPath;
 
 /**
  * AbstractPersistServiceImpl
  * @author jpk
  */
 public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl {
-
-	/**
-	 * Client-izes the given property path (need to account for possible nested).
-	 * <p>
-	 * It is assumed nested entities are only 1-level deep
-	 * @param <T> the entity type
-	 * @param schemaInfo
-	 * @param entityClass
-	 * @param path
-	 * @return the clientized path
-	 */
-	protected static final <T> String clientizePropertyPath(ISchemaInfo schemaInfo, Class<T> entityClass, String path) {
-		final PropertyPath p = new PropertyPath(path);
-		if(p.depth() > 2) {
-			final String ppp = p.trim(1);
-			final ISchemaProperty sp = schemaInfo.getSchemaProperty(entityClass, ppp);
-			if(sp.getPropertyType().isNested()) {
-				path = ppp + '_' + p.last();
-			}
-		}
-		return path;
-	}
 
 	protected final PersistContext context;
 
@@ -127,16 +101,16 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	 * @return the translated model instance
 	 * @throws Exception upon error
 	 */
-	protected Model entityToModel(IEntityType entityType, IEntity e) throws Exception, Exception {
+	protected Model entityToModel(IEntityType entityType, IEntity e) throws Exception {
 		// default simply marshals the entity
 		try {
-			return marshal(entityType, e);
+			return PersistHelper.marshal(context, entityType, e);
 		}
 		catch(final Throwable t) {
 			throw new Exception(t);
 		}
 	}
-
+	
 	/**
 	 * The default add routine which may be overridden.
 	 * @param model
@@ -154,7 +128,7 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 		e = svc.persist(e);
 
 		// marshall
-		model = marshal(model.getEntityType(), e);
+		model = PersistHelper.marshal(context, model.getEntityType(), e);
 		payload.setModel(model);
 
 		payload.getStatus().addMsg(e.descriptor() + " added.", MsgLevel.INFO, MsgAttr.STATUS.flag);
@@ -192,13 +166,13 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 		e = svc.persist(e);
 
 		// marshal
-		final Model refreshedModel = marshal(modelChanges.getEntityType(), e);
+		final Model refreshedModel = PersistHelper.marshal(context, modelChanges.getEntityType(), e);
 		payload.setModel(refreshedModel);
 
 		payload.getStatus().addMsg(e.descriptor() + (isNew ? " added." : " updated."), MsgLevel.INFO, MsgAttr.STATUS.flag);
 	}
-
-	@SuppressWarnings("unchecked")
+	
+	//@SuppressWarnings("unchecked")
 	@Override
 	public final void persist(Model model, ModelPayload payload) {
 		try {
@@ -214,15 +188,7 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 			RpcServlet.exceptionToStatus(e, payload.getStatus());
 		}
 		catch(final ConstraintViolationException ise) {
-			final Class<? extends IEntity> entityClass =
-				(Class<? extends IEntity>) context.getEntityTypeResolver().resolveEntityClass(model.getEntityType());
-			for(final ConstraintViolation iv : ise.getConstraintViolations()) {
-				// resolve index if we have a violation on under an indexed entity property
-				// since the validation api doesn't provide the index rather only empty brackets ([])
-				// in the ConstraintViolation's propertyPath property
-				payload.getStatus().addMsg(iv.getMessage(), MsgLevel.ERROR, MsgAttr.FIELD.flag,
-						clientizePropertyPath(context.getSchemaInfo(), entityClass, iv.getPropertyPath().toString()));
-			}
+			PersistHelper.handleValidationException(context, ise, payload);
 		}
 		catch(final RuntimeException e) {
 			RpcServlet.exceptionToStatus(e, payload.getStatus());
@@ -255,33 +221,6 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	protected final IEntityService<IEntity> getEntityService(IEntityType entityType) throws IllegalArgumentException {
 		return context.getEntityServiceFactory().instanceByEntityType(resolveEntityClass(entityType));
 	}
-
-	/**
-	 * Convenience method for entity to model marshaling.
-	 * @param entityType
-	 * @param entity
-	 * @return new {@link Model} instance
-	 * @throws RuntimeException upon marshaling related error
-	 */
-	protected Model marshal(IEntityType entityType, IEntity entity) throws RuntimeException {
-		MarshalOptions mo;
-		try {
-			mo = context.getMarshalOptionsResolver().resolve(entityType);
-		}
-		catch(final IllegalArgumentException e) {
-			// default fallback
-			mo = MarshalOptions.NO_REFERENCES;
-		}
-		final Model m = context.getMarshaler().marshalEntity(entity, mo);
-		assert m != null;
-		return m;
-	}
-
-	/**
-	 * @return A descriptive ui-ready name for the type of model data this
-	 *         implmentation supports.
-	 */
-	protected abstract String getModelTypeName();
 
 	/**
 	 * Loads an entity by primary key marshaling it into a {@link Model} instance.
@@ -321,7 +260,8 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 			final String bkName = search.getBusinessKeyName();
 			final IPropertyValue[] pvs = search.getProperties();
 			IBusinessKey<IEntity> bk;
-			bk = BusinessKeyFactory.create(ec, bkName);
+			BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
+			bk = bkf.create(ec, bkName);
 			for(final IPropertyValue pv : pvs) {
 				bk.setPropertyValue(pv.getPropertyName(), pv.getValue());
 			}

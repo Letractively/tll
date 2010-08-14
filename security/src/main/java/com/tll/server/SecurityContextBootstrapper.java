@@ -39,6 +39,7 @@ public class SecurityContextBootstrapper implements IBootstrapHandler {
 
 	@Override
 	public void shutdown(ServletContext servletContext) {
-		// no-op
+		log.debug("Un-setting security context..");
+		servletContext.removeAttribute(SecurityContext.KEY);
 	}
 }

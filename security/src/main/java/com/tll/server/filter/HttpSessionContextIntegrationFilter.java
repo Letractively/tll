@@ -28,11 +28,26 @@ public final class HttpSessionContextIntegrationFilter extends AbstractSecurityF
 	 * {@link org.springframework.security.context.HttpSessionContextIntegrationFilter}
 	 * .
 	 */
-	private org.springframework.security.context.HttpSessionContextIntegrationFilter wrapped;
+	private final org.springframework.security.context.HttpSessionContextIntegrationFilter wrapped;
+
+	/**
+	 * Constructor
+	 * @throws ServletException
+	 */
+	public HttpSessionContextIntegrationFilter() throws ServletException {
+		super();
+		wrapped = new org.springframework.security.context.HttpSessionContextIntegrationFilter();
+	}
 
 	@Override
 	public void init(FilterConfig config) /*throws ServletException*/{
-		// no-op
+		// required
+		try {
+			wrapped.afterPropertiesSet();
+		}
+		catch(Exception e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	@Override

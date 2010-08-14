@@ -97,7 +97,7 @@ public abstract class AcegiModule extends AbstractModule implements IConfigAware
 	protected abstract Class<? extends UserDetailsService> getUserDetailsImplType();
 
 	@Override
-	protected final void configure() {
+	protected void configure() {
 		if(config == null) throw new IllegalStateException("No config instance specified.");
 		log.info("Employing Acegi Security");
 

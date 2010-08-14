@@ -24,34 +24,4 @@ public interface ISchemaInfo {
 	 */
 	ISchemaProperty getSchemaProperty(Class<?> entityClass, String propertyName)
 	throws SchemaInfoException;
-
-	/**
-	 * Retrieves the {@link PropertyMetadata} for the given entity property name.
-	 * @param entityClass The entity type
-	 * @param propertyName The entity property name
-	 * @return {@link PropertyMetadata} assoc. with the given property
-	 * @throws SchemaInfoException When the property is not found for the given
-	 *         entity type or is not a value type property.
-	 */
-	PropertyMetadata getPropertyMetadata(Class<?> entityClass, String propertyName) throws SchemaInfoException;
-
-	/**
-	 * Retrieves the {@link RelationInfo} for the given entity property name.
-	 * @param entityClass The entity type
-	 * @param propertyName The entity property name
-	 * @return the field descriptor assoc. with the given field
-	 * @throws SchemaInfoException When the property is not found for the given
-	 *         entity type or is not relational.
-	 */
-	RelationInfo getRelationInfo(Class<?> entityClass, String propertyName) throws SchemaInfoException;
-
-	/**
-	 * Retrieves the {@link NestedInfo} for the given entity property name.
-	 * @param entityClass The entity type
-	 * @param propertyName The entity property name
-	 * @return the field descriptor assoc. with the given field
-	 * @throws SchemaInfoException When the property is not found for the given
-	 *         entity type or is not of nested type.
-	 */
-	NestedInfo getNestedInfo(Class<?> entityClass, String propertyName) throws SchemaInfoException;
 }

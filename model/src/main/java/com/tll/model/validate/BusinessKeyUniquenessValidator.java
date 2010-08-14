@@ -9,24 +9,27 @@ import java.util.Collection;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import com.tll.model.IEntity;
+import com.tll.model.EntityMetadata;
+import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.bk.BusinessKeyPropertyException;
-import com.tll.model.bk.BusinessKeyUtil;
 import com.tll.model.bk.NonUniqueBusinessKeyException;
 
 /**
- * BusinessKeyUniquenessValidator - Validates business key uniqueness.
+ * Validates business key uniqueness based in simple enity metadata.
  * @see BusinessKeyUniqueness
  * @author jpk
  */
-public class BusinessKeyUniquenessValidator implements ConstraintValidator<BusinessKeyUniqueness, Collection<? extends IEntity>> {
+public class BusinessKeyUniquenessValidator implements ConstraintValidator<BusinessKeyUniqueness, Collection<?>> {
+
+	private final BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
 
 	public void initialize(BusinessKeyUniqueness parameters) {
+		// no-op
 	}
 
-	public boolean isValid(Collection<? extends IEntity> clc, ConstraintValidatorContext constraintContext) {
+	public boolean isValid(Collection<?> clc, ConstraintValidatorContext constraintContext) {
 		try {
-			BusinessKeyUtil.isBusinessKeyUnique(clc);
+			bkf.isBusinessKeyUnique(clc);
 			return true;
 		}
 		catch(final BusinessKeyPropertyException e) {

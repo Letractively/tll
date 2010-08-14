@@ -70,7 +70,7 @@ public abstract class AccountServiceTest extends AccountRelatedServiceTest {
 		Account account = stubValidAccount(false);
 		account = accountService.persist(account);
 
-		final IListingDataProvider<AccountHistory> dataProvider = accountService.getAccountHistoryDataProvider();
+		final IListingDataProvider dataProvider = accountService.getAccountHistoryDataProvider();
 
 		final Criteria<AccountHistory> criteria = new Criteria<AccountHistory>(AccountHistory.class);
 		criteria.getPrimaryGroup().addCriterion("account", Account.class, account.getId());

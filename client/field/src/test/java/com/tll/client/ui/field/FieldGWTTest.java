@@ -60,11 +60,9 @@ public class FieldGWTTest extends GWTTestCase {
 		validateFieldCommon(f);
 
 		assert StringUtil.isEmpty(f.getValue());
-		//assert null == f.getProperty(PROP_NAME);
 
-		f.setProperty(PROP_NAME, STRING_VALUE);
+		f.setValue(STRING_VALUE);
 		assert STRING_VALUE.equals(f.getValue());
-		assert STRING_VALUE.equals(f.getProperty(PROP_NAME));
 
 		assert STRING_VALUE.equals(f.getText());
 
@@ -133,7 +131,6 @@ public class FieldGWTTest extends GWTTestCase {
 		validateFieldCommon(f);
 		f.setValue(Boolean.TRUE);
 		assert f.getValue() == Boolean.TRUE;
-		assert f.getProperty(PROP_NAME).equals(Boolean.TRUE);
 		assert Boolean.TRUE.toString().equals(f.getText());
 		assert f.isChecked() == true;
 	}

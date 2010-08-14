@@ -70,13 +70,13 @@ IListingHandler<R> {
 		public static final String PAGE = "tbPage";
 	}
 
-	private String listingElementName;
+	private final String listingElementName;
 
 	private IListingOperator<R> listingOperator;
 
 	private IAddRowDelegate addRowDelegate;
 
-	private int pageSize;
+	private final int pageSize;
 
 	// page nav related
 	private Image imgPageFirst;
@@ -99,7 +99,7 @@ IListingHandler<R> {
 	private PushButton btnAdd;
 
 	// summary text ("Displaying elements x of y")
-	private Label lblSmry;
+	private final Label lblSmry;
 
 	private boolean hasRows;
 	private int firstIndex = -1;
@@ -372,10 +372,10 @@ IListingHandler<R> {
 
 	public void onListingEvent(ListingEvent<R> event) {
 		if(event.getListingOp().isQuery()) {
-			hasRows = event.getPageElements() != null && event.getPageElements().length > 0;
+			hasRows = event.getPageElements() != null && event.getPageElements().size() > 0;
 			if(hasRows) {
 				firstIndex = event.getOffset();
-				lastIndex = firstIndex + event.getPageElements().length - 1;
+				lastIndex = firstIndex + event.getPageElements().size() - 1;
 				totalSize = event.getListSize();
 				numPages = event.getNumPages();
 				crntPage = event.getPageNum() + 1;

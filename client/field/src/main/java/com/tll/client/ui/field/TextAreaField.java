@@ -83,7 +83,8 @@ public class TextAreaField extends AbstractField<String> implements IHasMaxLengt
 		}
 	}
 
-	public String getText() {
+	@Override
+	public String doGetText() {
 		return ta.getText();
 	}
 

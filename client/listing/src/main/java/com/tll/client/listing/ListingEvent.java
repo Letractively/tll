@@ -4,6 +4,8 @@
  */
 package com.tll.client.listing;
 
+import java.util.List;
+
 import com.google.gwt.event.shared.GwtEvent;
 import com.tll.common.data.ListingOp;
 import com.tll.dao.Sorting;
@@ -21,7 +23,7 @@ public final class ListingEvent<R> extends GwtEvent<IListingHandler<R>> {
 	private final String listingId;
 	private final ListingOp listingOp;
 	private final int listSize;
-	private final R[] pageElements;
+	private final List<R> pageElements;
 	private final int offset;
 	private final Sorting sorting;
 
@@ -45,7 +47,7 @@ public final class ListingEvent<R> extends GwtEvent<IListingHandler<R>> {
 	 * @param pageSize
 	 */
 	public ListingEvent(String listingId, ListingOp listingOp, int listSize,
-			R[] pageElements, int offset, Sorting sorting, int pageSize) {
+			List<R> pageElements, int offset, Sorting sorting, int pageSize) {
 		this.listingId = listingId;
 		this.listingOp = listingOp;
 		this.listSize = listSize;
@@ -82,7 +84,7 @@ public final class ListingEvent<R> extends GwtEvent<IListingHandler<R>> {
 		return listingOp;
 	}
 
-	public R[] getPageElements() {
+	public List<R> getPageElements() {
 		return pageElements;
 	}
 

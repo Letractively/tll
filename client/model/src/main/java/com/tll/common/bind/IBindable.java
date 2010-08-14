@@ -8,12 +8,8 @@ package com.tll.common.bind;
 import com.tll.common.model.PropertyPathException;
 
 /**
- * IBindable
- * <p>
  * Indicates the ability to be "bound". The meaning of bound is context
  * dependent.
- * <p>
- * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
  * @author jpk
  */
 public interface IBindable extends ISourcesPropertyChangeEvents {

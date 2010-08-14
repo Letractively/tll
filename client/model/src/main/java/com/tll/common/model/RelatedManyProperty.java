@@ -21,13 +21,13 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	/**
 	 * The list of indexed props.
 	 */
-	private ArrayList<IndexedProperty> list = new ArrayList<IndexedProperty>();
+	private /*final*/ArrayList<IndexedProperty> list = new ArrayList<IndexedProperty>();
 
 	/**
 	 * The value collection whereby each indexed model corresponds to the wrapped
 	 * model in the {@link #list}.
 	 */
-	private ArrayList<Model> mlist;
+	private ArrayList<Model> mlist = new ArrayList<Model>();
 
 	/**
 	 * Constructor
@@ -62,23 +62,16 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 		if(this.mlist == value) return;
 
 		if(value == null) {
-			if(mlist != null) {
-				final Object old = mlist;
-				list.clear();
-				mlist = null;
-				getChangeSupport().firePropertyChange(propertyName, old, mlist);
-			}
+			final Object old = mlist;
+			list.clear();
+			mlist.clear();
+			getChangeSupport().firePropertyChange(propertyName, old, mlist);
 		}
 		else if(value instanceof Collection) {
 			final Collection<Model> clc = (Collection) value;
 			final Object old = mlist;
 			list.clear();
-			if(mlist == null) {
-				mlist = new ArrayList<Model>(clc.size());
-			}
-			else {
-				mlist.clear();
-			}
+			mlist.clear();
 			int i = 0;
 			for(final Model im : clc) {
 				final IndexedProperty ip = new IndexedProperty(relatedType, im, propertyName, isReference(), i++);
@@ -195,9 +188,6 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 				// we're appending a new index
 				if(m != null) {
 					// add
-					if(mlist == null) {
-						mlist = new ArrayList<Model>();
-					}
 					mlist.add(m);
 					list.add(new IndexedProperty(relatedType, m, propertyName, isReference(), index));
 				}
@@ -225,7 +215,7 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 			setValue(value);
 		}
 
-		assert ((mlist == null && list.size() == 0) || (mlist.size() == list.size()));
+		assert (mlist.size() == list.size());
 	}
 
 	/**

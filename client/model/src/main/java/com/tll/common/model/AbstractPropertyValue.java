@@ -43,6 +43,10 @@ public abstract class AbstractPropertyValue extends AbstractModelProperty implem
 				return new DoublePropertyValue(name, metadata, null);
 			case DATE:
 				return new DatePropertyValue(name, metadata, null);
+			case OBJECT:
+				return new ObjectPropertyValue(name, metadata, null);
+			case STRING_MAP:
+				return new StringMapPropertyValue(name, metadata, null);
 			}
 		}
 		throw new IllegalArgumentException();

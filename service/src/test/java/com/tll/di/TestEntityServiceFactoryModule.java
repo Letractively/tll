@@ -13,9 +13,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
-import com.tll.model.IEntity;
+import com.tll.service.IService;
 import com.tll.service.entity.EntityServiceFactory;
-import com.tll.service.entity.IEntityService;
 import com.tll.service.entity.IEntityServiceFactory;
 import com.tll.service.entity.test.AccountService;
 import com.tll.service.entity.test.AddressService;
@@ -45,8 +44,8 @@ public class TestEntityServiceFactoryModule extends AbstractModule {
 			IAddressService adrs;
 
 			public IEntityServiceFactory get() {
-				final Map<Class<? extends IEntityService<? extends IEntity>>, IEntityService<? extends IEntity>> map =
-					new HashMap<Class<? extends IEntityService<? extends IEntity>>, IEntityService<? extends IEntity>>();
+				final Map<Class<? extends IService>, IService> map =
+					new HashMap<Class<? extends IService>, IService>();
 
 				map.put(IAccountService.class, accs);
 				map.put(IAddressService.class, adrs);

@@ -22,13 +22,14 @@ import com.tll.server.SecurityContext;
  * FilterSecurityInterceptor
  * @author jpk
  */
-// TODO fix deprecation warning
+// TODO fix deprecation
 @SuppressWarnings("deprecation")
 public class FilterSecurityInterceptor extends AbstractSecurityFilter {
 
 	protected static final Log log = LogFactory.getLog(FilterSecurityInterceptor.class);
 	
-	private org.springframework.security.intercept.web.FilterSecurityInterceptor wrapped;
+	private final org.springframework.security.intercept.web.FilterSecurityInterceptor wrapped 
+	 = new org.springframework.security.intercept.web.FilterSecurityInterceptor();
 
 	@Override
 	public void init(FilterConfig config) throws ServletException {
@@ -45,6 +46,14 @@ public class FilterSecurityInterceptor extends AbstractSecurityFilter {
 		editor.setAsText(ods);
 		final FilterInvocationDefinitionSource fids = (FilterInvocationDefinitionSource) editor.getValue();
 		wrapped.setObjectDefinitionSource(fids);
+		
+		// required
+		try {
+			wrapped.afterPropertiesSet();
+		}
+		catch(Exception e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	@Override
