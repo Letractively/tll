@@ -48,7 +48,13 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	static final class ViewChangeHandlers extends ArrayList<IViewChangeHandler> {
 
 		public void fireEvent(ViewChangeEvent event) {
-			for(final IViewChangeHandler handler : this) {
+			Log.debug("Firing " + event);
+			// creting a new list avoids concurrent modification exception
+			// TODO use a queuing system instead! to ensure view change events are
+			// recieved in proper order by the listeners!!
+			// TODO if we do queue view change events, do we then need to defer them??
+			ArrayList<IViewChangeHandler> ihandlers = new ArrayList<IViewChangeHandler>(this);
+			for(final IViewChangeHandler handler : ihandlers) {
 				handler.onViewChange(event);
 			}
 		}
@@ -208,6 +214,34 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	public ViewKey getCurrentViewKey() {
 		return current == null ? null : current.vc.getViewKey();
 	}
+	
+	/**
+	 * Loads the view into cache but does't add it to the dom.
+	 * @param init
+	 */
+	@SuppressWarnings("unchecked")
+	public void loadView(IViewInitializer init) {
+		// first check if not already cached
+		CView e = cache.peekQueue(init.getViewKey());
+		if(e != null) return;
+		
+		Log.debug("Loading view: " + init + " ..");
+		
+		// non-cached view
+		final IView<IViewInitializer> view = (IView<IViewInitializer>) init.getViewKey().getViewClass().newView();
+
+		// initialize the view
+		view.initialize(init);
+
+		e = new CView(new ViewContainer(view, init.getViewKey().getViewClass().getViewOptions(), init.getViewKey()), init);
+		
+		cacheView(e);
+
+		view.apply(e.vc, e.vc.getToolbar());
+
+		// load the view
+		view.refresh();
+	}
 
 	/**
 	 * Searches the currently cached views for the view matching the given view
@@ -220,18 +254,6 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 		return cv == null ? null : cv.vc.getView();
 	}
 	
-	/**
-	 * @return Array of currently cached views
-	 */
-	public IView<?>[] getCachedViews() {
-		ArrayList<IView<?>> list = new ArrayList<IView<?>>();
-		for(final Iterator<CView> itr = cache.queueIterator(); itr.hasNext();) {
-			final CView e = itr.next();
-			list.add(e.vc.getView());
-		}
-		return list.toArray(new IView[] {});
-	}
-
 	/**
 	 * Sets the current view. The current view is defined as the visible pinned
 	 * view.
@@ -318,44 +340,62 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			}
 			// set as current
 			current = e;
+			
+			// fire view load event
+			DeferredCommand.addCommand(new Command() {
+
+				@SuppressWarnings("synthetic-access")
+				@Override
+				public void execute() {
+					viewChangeHandlers.fireEvent(ViewChangeEvent.viewLoadedEvent(current.getViewKey()));
+				}
+			});
 		}
 
 		// add the view to the cache
-		CView old = cache.cache(e);
-		if(old != null) {
-			assert old != e && !old.getViewKey().equals(e.getViewKey());
-			Log.debug("Destroying view - " + old.vc.getView().toString() + "..");
-			// view life-cycle destroy
-			old.vc.getView().onDestroy();
-			old = null;
-		}
+		cacheView(e);
 
 		// unload pending cview
 		if(pendingUnload != null) {
 			Log.debug("Destroying pending unload view- " + pendingUnload.vc.getView().toString() + "..");
 			pendingUnload.vc.getView().onDestroy();
+			
+			// fire view un-load event
+			DeferredCommand.addCommand(new Command() {
+
+				@SuppressWarnings("synthetic-access")
+				@Override
+				public void execute() {
+					viewChangeHandlers.fireEvent(ViewChangeEvent.viewUnloadedEvent(pendingUnload.getViewKey()));
+				}
+			});
 			pendingUnload = null;
 		}
 
 		// set the initial view if not set
 		if(initial == null) initial = e;
-
-		// fire view changed event
-		fireViewChangeEvent();
 	}
+	
+	private void cacheView(CView e) {
+		// add the view to the cache
+		final CView old = cache.cache(e);
+		if(old != null) {
+			assert old != e && !old.getViewKey().equals(e.getViewKey());
+			Log.debug("Destroying view - " + old.vc.getView().toString() + "..");
+			// view life-cycle destroy
+			old.vc.getView().onDestroy();
+			
+			// fire view un-load event
+			DeferredCommand.addCommand(new Command() {
 
-	/**
-	 * Fires a view change event to all subscribed handlers.
-	 */
-	private void fireViewChangeEvent() {
-		DeferredCommand.addCommand(new Command() {
+				@SuppressWarnings("synthetic-access")
+				@Override
+				public void execute() {
+					viewChangeHandlers.fireEvent(ViewChangeEvent.viewUnloadedEvent(old.getViewKey()));
+				}
+			});
+		}
 
-			@SuppressWarnings("synthetic-access")
-			@Override
-			public void execute() {
-				viewChangeHandlers.fireEvent(new ViewChangeEvent());
-			}
-		});
 	}
 
 	/**
@@ -372,6 +412,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 		// unload the given view
 		e.vc.close();
 
+		if(pendingUnload != null) throw new IllegalStateException();
 		if(destroy) {
 			pendingUnload = e;
 			// remove the view from cache
@@ -394,9 +435,17 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			// our view listeners so they remain in sync
 			if(pendingUnload != null) {
 				pendingUnload.vc.getView().onDestroy();
-				pendingUnload = null;
+				// fire view un-load event
+				DeferredCommand.addCommand(new Command() {
+
+					@SuppressWarnings("synthetic-access")
+					@Override
+					public void execute() {
+						viewChangeHandlers.fireEvent(ViewChangeEvent.viewUnloadedEvent(pendingUnload.getViewKey()));
+						pendingUnload = null;
+					}
+				});
 			}
-			fireViewChangeEvent();
 		}
 	}
 
@@ -505,18 +554,14 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 *         most recently visited (head) to oldest (tail) which may be empty
 	 *         indicating there are currently no cached views.
 	 */
-	/*
 	public IView<?>[] getCachedViews() {
-		if(cache.size() == 0) {
-			return new IView[] {};
-		}
+		if(cache.size() == 0) return new IView[0];
 		final ArrayList<IView<?>> list = new ArrayList<IView<?>>(cache.size());
 		for(final Iterator<CView> itr = cache.queueIterator(); itr.hasNext();) {
 			list.add(itr.next().vc.getView());
 		}
-		return list.toArray(new IView[list.size()]);
+		return list.toArray(new IView[0]);
 	}
-	 */
 
 	/**
 	 * Provides an array of the cached views as stand-alone references in "cache"

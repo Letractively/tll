@@ -19,10 +19,4 @@ public class AddressService extends AbstractPersistServiceImpl {
 	public AddressService(PersistContext context) {
 		super(context);
 	}
-
-	@Override
-	protected String getModelTypeName() {
-		return "Address";
-	}
-
 }

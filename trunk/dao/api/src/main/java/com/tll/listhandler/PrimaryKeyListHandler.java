@@ -7,14 +7,12 @@ import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
-import com.tll.model.IEntity;
 
 /**
  * Search supporting list handler implementation based on an id list.
  * @author jpk
- * @param <E>
  */
-public final class PrimaryKeyListHandler<E extends IEntity> extends SearchListHandler<E> {
+public final class PrimaryKeyListHandler extends SearchListHandler {
 
 	/**
 	 * The id list - list of entity pks matching the search criteria.
@@ -28,7 +26,7 @@ public final class PrimaryKeyListHandler<E extends IEntity> extends SearchListHa
 	 * @param criteria The criteria used to generate the underlying list
 	 * @param sorting
 	 */
-	PrimaryKeyListHandler(IListingDataProvider<E> dataProvider, Criteria<E> criteria, Sorting sorting) {
+	PrimaryKeyListHandler(IListingDataProvider dataProvider, Criteria<?> criteria, Sorting sorting) {
 		super(dataProvider, criteria, sorting);
 	}
 
@@ -68,12 +66,12 @@ public final class PrimaryKeyListHandler<E extends IEntity> extends SearchListHa
 
 		final List<?> subids = pks.subList(offset, ei);
 
-		final List<E> list = dataProvider.getEntitiesFromIds(criteria.getEntityClass(), subids, sort);
+		final List<?> list = dataProvider.getEntitiesFromIds(criteria.getEntityClass(), subids, sort);
 		if(list == null || list.size() != subids.size()) {
 			throw new ListHandlerException("id and entity count mismatch");
 		}
 		final List<SearchResult> slist = new ArrayList<SearchResult>(list.size());
-		for(final E e : list) {
+		for(final Object e : list) {
 			slist.add(new SearchResult(e));
 		}
 		return slist;

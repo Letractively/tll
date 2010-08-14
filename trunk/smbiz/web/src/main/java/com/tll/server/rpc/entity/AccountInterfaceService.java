@@ -31,11 +31,6 @@ public class AccountInterfaceService extends AbstractPersistServiceImpl {
 	}
 
 	@Override
-	protected String getModelTypeName() {
-		return "Account Interface Option";
-	}
-
-	@Override
 	public void loadImpl(ISearch search, ModelPayload payload) {
 		if(search instanceof AccountInterfaceDataSearch) {
 			final AccountInterfaceDataSearch ais = (AccountInterfaceDataSearch) search;

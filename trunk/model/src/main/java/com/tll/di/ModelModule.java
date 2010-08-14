@@ -1,64 +1,36 @@
 /**
  * The Logic Lab
  * @author jpk
- * Jan 19, 2009
+ * @since Mar 16, 2010
  */
 package com.tll.di;
 
-import javax.validation.Validation;
-import javax.validation.ValidatorFactory;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.google.inject.AbstractModule;
-import com.google.inject.Provider;
 import com.google.inject.Scopes;
-import com.tll.model.schema.SchemaInfo;
+import com.tll.model.IEntityMetadata;
 import com.tll.schema.ISchemaInfo;
 
+
 /**
- * ModelModule - Core bootstrapping of the model module.
+ * Binds {@link IEntityMetadata} and {@link ISchemaInfo} impl types.
  * @author jpk
  */
-public final class ModelModule extends AbstractModule {
+public abstract class ModelModule extends AbstractModule {
 	
-	private static final Log log = LogFactory.getLog(ModelModule.class);
-
-	private final boolean validation;
-
 	/**
-	 * Constructor - Validation is loaded by default
+	 * @return {@link IEntityMetadata} impl type.
 	 */
-	public ModelModule() {
-		this(true);
-	}
-
+	protected abstract Class<? extends IEntityMetadata> getEntityMetadataImplType();
+	
 	/**
-	 * Constructor
-	 * @param validation load entity validation? 
+	 * @return {@link ISchemaInfo} impl type.
 	 */
-	public ModelModule(boolean validation) {
-		super();
-		this.validation = validation;
-	}
+	protected abstract Class<? extends ISchemaInfo> getSchemaInfoImplType();
 
 	@Override
-	protected final void configure() {
-		log.info("Employing Model module...");
-		
-		// ISchemaInfo
-		bind(ISchemaInfo.class).to(SchemaInfo.class).in(Scopes.SINGLETON);
-
-		if(validation) {
-			// ValidationFactory
-			bind(ValidatorFactory.class).toProvider(new Provider<ValidatorFactory>() {
-	
-				@Override
-				public ValidatorFactory get() {
-					return Validation.buildDefaultValidatorFactory();
-				}
-			}).in(Scopes.SINGLETON);
-		}
+	protected void configure() {
+		bind(IEntityMetadata.class).to(getEntityMetadataImplType()).in(Scopes.SINGLETON);
+		bind(ISchemaInfo.class).to(getSchemaInfoImplType()).in(Scopes.SINGLETON);
 	}
+
 }

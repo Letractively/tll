@@ -140,6 +140,22 @@ public abstract class AbstractFieldPanel<W extends Widget> extends Composite imp
 		}
 	}
 
+	/**
+	 * Resets the state of the fields to reflect the current state of model data.
+	 */
+	public void reset() {
+		if(group == null) group.reset();
+	}
+
+	/**
+	 * Enables or disables the field bound widget. When disabling, all shown
+	 * member fields shall be rendered non-interactable.
+	 * @param enable Enable or disable?
+	 */
+	public void enable(boolean enable) {
+		if(group == null) group.setEnabled(enable);
+	}
+
 	@Override
 	protected void onAttach() {
 		Log.debug("Attaching " + this + "..");

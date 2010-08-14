@@ -1,35 +1,28 @@
 package com.tll.client.test;
 
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.tll.client.ui.field.AbstractFieldPanel;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.AbstractBindableFlowFieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.client.ui.field.IFieldRenderer;
-import com.tll.client.ui.field.IFieldWidget;
-import com.tll.client.ui.field.IIndexedFieldBoundWidget;
-import com.tll.client.ui.field.TabbedIndexedFieldPanel;
-import com.tll.common.model.Model;
-import com.tll.common.model.PropertyPathException;
-import com.tll.common.model.test.TestModelStubber;
-import com.tll.model.test.AccountStatus;
-import com.tll.model.test.AddressType;
 
 /**
  * TestFieldPanel - Contains a simple field panel mocking a related one
  * model, and an indexed field panel mocking a related many model collection.
  * @author jpk
  */
-public class TestFieldPanel extends AbstractBindableFlowFieldPanel {
+public class TestFieldPanel extends AbstractFieldPanel<FlowPanel> {
 
-	/**
-	 * TestIndexFieldPanel
-	 * @author jpk
-	 */
-	static class TestIndexFieldPanel extends AbstractBindableFlowFieldPanel {
+	static class TestIndexFieldPanel extends AbstractFieldPanel<FlowPanel> {
+
+		final FlowPanel fp = new FlowPanel();
+		
+		public TestIndexFieldPanel() {
+			super();
+			initWidget(fp);
+		}
 
 		@Override
 		protected FieldGroup generateFieldGroup() {
@@ -46,11 +39,11 @@ public class TestFieldPanel extends AbstractBindableFlowFieldPanel {
 
 					// account address type/name row
 					cmpsr.addField(fg.getFieldWidget("type"));
-					cmpsr.addField(fg.getFieldWidget("aa" + Model.NAME_PROPERTY));
+					cmpsr.addField(fg.getFieldWidget("aaname"));
 
 					// address row
 					cmpsr.newRow();
-					final FlowPanel fp = new FlowPanel();
+					final FlowPanel afp = new FlowPanel();
 					(new IFieldRenderer<FlowPanel>() {
 
 						@Override
@@ -87,23 +80,17 @@ public class TestFieldPanel extends AbstractBindableFlowFieldPanel {
 							c.addField(fgroup.getFieldWidget("adrsFloat"));
 							c.addField(fgroup.getFieldWidget("adrsDouble"));
 						}
-					}).render(fp, (FieldGroup) fg.getFieldByName("address"));
-					cmpsr.addWidget(fp);
+					}).render(afp, (FieldGroup) fg.getFieldByName("address"));
+					cmpsr.addWidget(afp);
 				}
 			};
 		}
 
 	} // TestIndexFieldPanel
 
-	/**
-	 * TestIndexedFieldPanel
-	 * @author jpk
-	 */
+	/*
 	static class TestIndexedFieldPanel extends TabbedIndexedFieldPanel<TestIndexFieldPanel> {
 
-		/**
-		 * Constructor
-		 */
 		public TestIndexedFieldPanel() {
 			super("Addresses", "addresses", true, true);
 		}
@@ -141,15 +128,16 @@ public class TestFieldPanel extends AbstractBindableFlowFieldPanel {
 		}
 
 	} // TestIndexedFieldPanel
+	*/
 
-	final TestIndexedFieldPanel indexedPanel;
+	final FlowPanel pnl = new FlowPanel();
+	
+	//final TestIndexedFieldPanel indexedPanel;
 
-	/**
-	 * Constructor
-	 */
 	public TestFieldPanel() {
 		super();
-		indexedPanel = new TestIndexedFieldPanel();
+		initWidget(pnl);
+		//indexedPanel = new TestIndexedFieldPanel();
 	}
 
 	@Override
@@ -161,15 +149,15 @@ public class TestFieldPanel extends AbstractBindableFlowFieldPanel {
 				cmpsr.setCanvas(widget);
 
 				// first row
-				cmpsr.addField(fg.getFieldWidget("acnt" + Model.NAME_PROPERTY));
+				cmpsr.addField(fg.getFieldWidget("acntname"));
 				cmpsr.addField(fg.getFieldWidget("acntStatus"));
 				cmpsr.addField(fg.getFieldWidget("acntDateCancelled"));
 				cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 				cmpsr.addField(fg.getFieldWidget("acntParentName"));
 				cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-				cmpsr.addField(fg.getFieldWidget("acnt" + Model.DATE_CREATED_PROPERTY));
+				cmpsr.addField(fg.getFieldWidget("acntdateCreated"));
 				cmpsr.stopFlow();
-				cmpsr.addField(fg.getFieldWidget("acnt" + Model.DATE_MODIFIED_PROPERTY));
+				cmpsr.addField(fg.getFieldWidget("acntdateModified"));
 
 				// second row (billing)
 				cmpsr.newRow();
@@ -192,12 +180,11 @@ public class TestFieldPanel extends AbstractBindableFlowFieldPanel {
 
 				// related many (indexed) panel
 				cmpsr.newRow();
-				cmpsr.addWidget(indexedPanel);
+				//cmpsr.addWidget(indexedPanel);
 			}
 		};
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected FieldGroup generateFieldGroup() {
 		final FieldGroup fg = (new IFieldGroupProvider() {
@@ -205,7 +192,7 @@ public class TestFieldPanel extends AbstractBindableFlowFieldPanel {
 			public FieldGroup getFieldGroup() {
 				final FieldGroup fgroup = (new TestFieldGroupProviders.AccountFieldsProvider()).getFieldGroup();
 				fgroup.addField("paymentInfo", (new TestFieldGroupProviders.PaymentInfoFieldsProvider()).getFieldGroup());
-				fgroup.addField("addresses", indexedPanel.getFieldGroup());
+				//fgroup.addField("addresses", indexedPanel.getFieldGroup());
 				return fgroup;
 			}
 		}).getFieldGroup();
@@ -215,6 +202,7 @@ public class TestFieldPanel extends AbstractBindableFlowFieldPanel {
 
 		fg.getFieldWidgetByProperty("parent.name").setReadOnly(true);
 
+		/*
 		((IFieldWidget<AccountStatus>) fg.getFieldWidgetByProperty("status"))
 		.addValueChangeHandler(new ValueChangeHandler<AccountStatus>() {
 
@@ -234,12 +222,15 @@ public class TestFieldPanel extends AbstractBindableFlowFieldPanel {
 				indexedPanel.getFieldGroup().setEnabled(event.getValue().booleanValue());
 			}
 		});
+		*/
 
 		return fg;
 	}
 
+	/*
 	@Override
 	public IIndexedFieldBoundWidget[] getIndexedChildren() {
 		return new IIndexedFieldBoundWidget[] { indexedPanel };
 	}
+	*/
 }

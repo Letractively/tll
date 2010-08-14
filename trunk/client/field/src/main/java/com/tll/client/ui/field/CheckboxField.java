@@ -90,7 +90,8 @@ public final class CheckboxField extends AbstractField<Boolean> {
 		super.setReadOnly(readOnly);
 	}
 
-	public String getText() {
+	@Override
+	public String doGetText() {
 		return ToStringConverter.INSTANCE.convert(getValue());
 	}
 

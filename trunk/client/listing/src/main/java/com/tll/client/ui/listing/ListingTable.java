@@ -4,6 +4,8 @@
  */
 package com.tll.client.ui.listing;
 
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -118,25 +120,25 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 	/**
 	 * Constructor
 	 * @param config
+	 * @param cellRenderer 
 	 */
-	public ListingTable(IListingConfig<R> config) {
+	public ListingTable(IListingConfig<R> config, ITableCellRenderer<R> cellRenderer) {
 		super();
 		sinkEvents(Event.ONMOUSEOVER | Event.ONMOUSEOUT);
 		addClickHandler(this);
 		addHandler(this, KeyDownEvent.getType());
-		initialize(config);
+		initialize(config, cellRenderer);
 	}
 
 	/**
 	 * Initializes the table.
-	 * @param config
 	 */
 	@SuppressWarnings("unchecked")
-	protected void initialize(IListingConfig config) {
+	protected void initialize(IListingConfig config, ITableCellRenderer<R> cellRndrer) {
 		assert config != null;
 
 		this.columns = config.getColumns();
-		this.cellRenderer = config.getCellRenderer();
+		this.cellRenderer = cellRndrer;
 		assert columns != null && cellRenderer != null;
 
 		this.ignoreCaseWhenSorting = config.isIgnoreCaseWhenSorting();
@@ -215,7 +217,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 	// TODO fix this so it isn't static but gwt compilable
 	public static final class SortLink extends Composite implements ClickHandler {
 
-		private boolean ignoreCaseWhenSorting;
+		private final boolean ignoreCaseWhenSorting;
 
 		/**
 		 * The sort column arrow.
@@ -328,6 +330,10 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 			}
 		}
 	}
+	
+	public final void setCellRenderer(ITableCellRenderer<R> cellRenderer) {
+		this.cellRenderer = cellRenderer;
+	}
 
 	/**
 	 * Sets row data.
@@ -339,6 +345,8 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 	 *        row data element is <code>null</code>?
 	 */
 	protected void setRowData(int rowIndex, int rowNum, R rowData, boolean overwriteOnNull) {
+		if(cellRenderer == null) throw new IllegalStateException("No table cell renderer specified");
+		
 		if(rowIndex == 0) {
 			return; // header row
 		}
@@ -369,14 +377,14 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		}
 	}
 
-	private void addBodyRows(R[] page, int offset) {
-		final int numBodyRows = page.length;
+	private void addBodyRows(List<R> page, int offset) {
+		final int numBodyRows = page.size();
 		resizeRows(numBodyRows + 1);
 		boolean evn = false;
 		int rowIndex = offset;
 		for(int r = 0; r < numBodyRows; r++) {
 			getRowFormatter().addStyleName(r + 1, ((evn = !evn) ? Styles.EVEN : Styles.ODD));
-			setRowData(r + 1, ++rowIndex, page[r], true);
+			setRowData(r + 1, ++rowIndex, page.get(r), true);
 		}
 	}
 
@@ -395,6 +403,9 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 				numPages = event.getNumPages();
 				actvRowIndex = crntRowIndex = -1; // reset
 			}
+		}
+		else if(event.getListingOp().isClear()) {
+			removeBodyRows();
 		}
 	}
 

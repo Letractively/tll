@@ -13,7 +13,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.tll.IDescriptorProvider;
 import com.tll.IMarshalable;
 import com.tll.IPropertyValueProvider;
@@ -40,9 +39,13 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * ModelPropSet
 	 * @author jpk
 	 */
-	static class ModelPropSet implements Iterable<IModelProperty> {
+	static class ModelPropSet implements Iterable<IModelProperty>, IMarshalable {
 
-		private final LinkedHashSet<IModelProperty> set = new LinkedHashSet<IModelProperty>();
+		private /*final*/ LinkedHashSet<IModelProperty> set = new LinkedHashSet<IModelProperty>();
+
+		public ModelPropSet() {
+			super();
+		}
 
 		/**
 		 * Ensures the given model prop is non-null and unique by name against the
@@ -286,14 +289,14 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 				for(final WhitelistElement wle : this) {
 					if(relational || indexed) {
 						if(wle.nearestParentRefPath.indexOf(rootRelPath) == 0) {
-							Log.debug("Allowing relational/indexed [" + rootRelPath + "]");
+							//Log.debug("Allowing relational/indexed [" + rootRelPath + "]");
 							return true;
 						}
 					}
 					else {
 						if(wle.rootRelPath.equals(rootRelPath) || rootRelPath.endsWith(ID_PROPERTY)
 								|| rootRelPath.endsWith(VERSION_PROPERTY)) {
-							Log.debug("Allowing value/nested [" + rootRelPath + "]");
+							//Log.debug("Allowing value/nested [" + rootRelPath + "]");
 							return true;
 						}
 					}
@@ -575,7 +578,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * The set of model properties. <br>
 	 * NOTE: can't mark as final for GWT RPC compatibility
 	 */
-	private/*final*/ModelPropSet props = new ModelPropSet();
+	private /*final*/ModelPropSet props = new ModelPropSet();
 
 	/**
 	 * The bound entity type.

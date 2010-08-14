@@ -45,11 +45,6 @@ public class Db4oEntityFactory extends AbstractEntityFactory<Long> {
 	}
 
 	@Override
-	public <E extends IEntity> E createEntity(Class<E> entityClass, boolean generate) throws IllegalStateException {
-		return newEntity(entityClass);
-	}
-
-	@Override
 	public String primaryKeyToString(Long pk) {
 		return pk == null ? null : pk.toString();
 	}

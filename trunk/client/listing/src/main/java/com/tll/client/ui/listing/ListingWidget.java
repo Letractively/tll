@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.listing.IListingHandler;
@@ -22,7 +23,7 @@ import com.tll.client.listing.ListingEvent;
  * @param <R> The row data type.
  * @param <T> the table widget type
  */
-public abstract class ListingWidget<R, T extends ListingTable<R>> extends Composite implements Focusable, KeyDownHandler, IListingHandler<R> {
+public class ListingWidget<R, T extends ListingTable<R>> extends Composite implements Focusable, KeyDownHandler, IListingHandler<R> {
 
 	/**
 	 * Styles - (tableview.css)
@@ -41,15 +42,27 @@ public abstract class ListingWidget<R, T extends ListingTable<R>> extends Compos
 		public static final String CAPTION = "caption";
 
 		/**
+		 * The css class for the label that is displayed when no data rows exist.
+		 */
+		public static final String NODATA = "nodata";
+
+		/**
 		 * The listing portal style.
 		 */
 		public static final String PORTAL = "portal";
 	} // Styles
 
+	protected final String listingId, listingElementName;
+
 	/**
 	 * The listing table.
 	 */
 	protected final T table;
+
+	/**
+	 * Displayed in place of the table when no data rows exist.
+	 */
+	private Widget noDataRowsWidget;
 
 	/**
 	 * The listing navigation bar.
@@ -74,15 +87,21 @@ public abstract class ListingWidget<R, T extends ListingTable<R>> extends Compos
 	/**
 	 * The optional row popup.
 	 */
-	//protected RowContextPopup rowPopup;
+	// protected RowContextPopup rowPopup;
 
 	/**
 	 * Constructor
+	 * @param listingId
+	 * @param listingElementName
 	 * @param table listing table widget
 	 * @param navBar optional nav bar
 	 */
-	public ListingWidget(T table, ListingNavBar<R> navBar) {
+	public ListingWidget(String listingId, String listingElementName, T table, ListingNavBar<R> navBar) {
 		super();
+
+		this.listingId = listingId;
+		this.listingElementName = listingElementName;
+
 		final FlowPanel tableViewPanel = new FlowPanel();
 		tableViewPanel.setStylePrimaryName(Styles.TABLE_VIEW);
 
@@ -116,12 +135,19 @@ public abstract class ListingWidget<R, T extends ListingTable<R>> extends Compos
 		initWidget(focusPanel);
 	}
 
-	/*
-	@Override
-	public final HandlerRegistration addModelChangeHandler(IModelChangeHandler handler) {
-		return addHandler(handler, ModelChangeEvent.TYPE);
+	/**
+	 * @return the unique listing id
+	 */
+	public final String getListingId() {
+		return listingId;
 	}
-	*/
+
+	/**
+	 * @return the presentation worthy listing elment data type name.
+	 */
+	public final String getListingElementName() {
+		return listingElementName;
+	}
 
 	/**
 	 * Sets the operator which is delegated to on behalf of this Widget for
@@ -135,20 +161,16 @@ public abstract class ListingWidget<R, T extends ListingTable<R>> extends Compos
 		operator.setSourcingWidget(this);
 		this.table.setListingOperator(operator);
 		if(navBar != null) navBar.setListingOperator(operator);
+		
+		// why is this needed?
 		addHandler(this, ListingEvent.TYPE);
 	}
 
-	protected final IListingOperator<R> getOperator() {
+	/**
+	 * @return The listing operator.
+	 */
+	public final IListingOperator<R> getOperator() {
 		return operator;
-	}
-
-	// TODO eliminate these methods: these are not widget specific rather data specific
-	public final void clear() {
-		operator.clear();
-	}
-
-	public final void refresh() {
-		operator.refresh();
 	}
 
 	/**
@@ -165,6 +187,7 @@ public abstract class ListingWidget<R, T extends ListingTable<R>> extends Compos
 	public final void addRow(R rowData) {
 		table.addRow(rowData);
 		if(navBar != null) navBar.increment();
+		handleTableVisibility();
 	}
 
 	/**
@@ -183,6 +206,7 @@ public abstract class ListingWidget<R, T extends ListingTable<R>> extends Compos
 	public final void deleteRow(int rowIndex) {
 		table.deleteRow(rowIndex);
 		if(navBar != null) navBar.decrement();
+		handleTableVisibility();
 	}
 
 	/**
@@ -221,9 +245,28 @@ public abstract class ListingWidget<R, T extends ListingTable<R>> extends Compos
 	public final void setPortalHeight(String height) {
 		portal.setHeight(height);
 	}
+	
+	protected Widget createNoDataRowsWidget() {
+		return new Label("Currently, no " + listingElementName + "s exist.");
+	}
+	
+	private void handleTableVisibility() {
+		// handle no data rows case
+		boolean noDataRows = table.getRowCount() <= 1;
+		portal.setVisible(!noDataRows);
+		if(noDataRowsWidget == null) {
+			// no data rows widget
+			noDataRowsWidget = createNoDataRowsWidget();
+			noDataRowsWidget.setStyleName(Styles.NODATA);
+			noDataRowsWidget.setVisible(false);
+			((FlowPanel)portal.getParent()).add(noDataRowsWidget);
+		}
+		if(noDataRowsWidget != null) noDataRowsWidget.setVisible(noDataRows);
+	}
 
 	public final void onListingEvent(ListingEvent<R> event) {
 		table.onListingEvent(event);
 		if(navBar != null) navBar.onListingEvent(event);
+		handleTableVisibility();
 	}
 }

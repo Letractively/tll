@@ -19,10 +19,4 @@ public class InterfaceService extends AbstractPersistServiceImpl {
 	public InterfaceService(PersistContext context) {
 		super(context);
 	}
-
-	@Override
-	protected String getModelTypeName() {
-		return "Interface";
-	}
-
 }

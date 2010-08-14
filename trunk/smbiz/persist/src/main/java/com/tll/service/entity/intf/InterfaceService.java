@@ -15,6 +15,7 @@ import com.tll.model.Account;
 import com.tll.model.AccountInterface;
 import com.tll.model.AccountInterfaceOption;
 import com.tll.model.AccountInterfaceOptionParameter;
+import com.tll.model.EntityMetadata;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.Interface;
 import com.tll.model.InterfaceOption;
@@ -94,7 +95,8 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 	public AccountInterface loadAccountInterface(Object accountKey, Object interfaceKey) {
 		IBusinessKey<InterfaceOptionAccount> bk;
 		try {
-			bk = BusinessKeyFactory.create(InterfaceOptionAccount.class, "Option Id and Account Id");
+			BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
+			bk = bkf.create(InterfaceOptionAccount.class, "Option Id and Account Id");
 		}
 		catch(final BusinessKeyNotDefinedException e) {
 			throw new IllegalStateException(e);
@@ -147,7 +149,8 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 		// remove existing account subscribed options
 		IBusinessKey<InterfaceOptionAccount> bk;
 		try {
-			bk = BusinessKeyFactory.create(InterfaceOptionAccount.class, "Option Id and Account Id");
+			BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
+			bk = bkf.create(InterfaceOptionAccount.class, "Option Id and Account Id");
 		}
 		catch(final BusinessKeyNotDefinedException e) {
 			throw new IllegalStateException(e);
@@ -211,7 +214,8 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 
 		IBusinessKey<InterfaceOptionAccount> bk;
 		try {
-			bk = BusinessKeyFactory.create(InterfaceOptionAccount.class, "Option Id and Account Id");
+			BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
+			bk = bkf.create(InterfaceOptionAccount.class, "Option Id and Account Id");
 		}
 		catch(final BusinessKeyNotDefinedException e) {
 			throw new IllegalStateException(e);

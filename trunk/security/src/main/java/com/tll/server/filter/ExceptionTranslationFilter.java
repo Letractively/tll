@@ -28,7 +28,8 @@ public class ExceptionTranslationFilter extends AbstractSecurityFilter {
 	 * The wrapped
 	 * {@link org.springframework.security.ui.ExceptionTranslationFilter}.
 	 */
-	private org.springframework.security.ui.ExceptionTranslationFilter wrapped;
+	private final org.springframework.security.ui.ExceptionTranslationFilter wrapped =
+			new org.springframework.security.ui.ExceptionTranslationFilter();
 
 	@Override
 	public void init(FilterConfig config) throws ServletException {
@@ -50,6 +51,14 @@ public class ExceptionTranslationFilter extends AbstractSecurityFilter {
 		final AuthenticationProcessingFilterEntryPoint apfep = new AuthenticationProcessingFilterEntryPoint();
 		apfep.setLoginFormUrl(lfu);
 		wrapped.setAuthenticationEntryPoint(apfep);
+		
+		// required
+		try {
+			wrapped.afterPropertiesSet();
+		}
+		catch(Exception e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	@Override

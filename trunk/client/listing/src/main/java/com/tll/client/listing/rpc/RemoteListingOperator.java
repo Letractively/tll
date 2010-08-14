@@ -11,28 +11,27 @@ import com.tll.IMarshalable;
 import com.tll.client.data.rpc.RpcCommand;
 import com.tll.client.listing.AbstractListingOperator;
 import com.tll.common.data.ListingOp;
+import com.tll.common.data.Page;
 import com.tll.common.data.RemoteListingDefinition;
 import com.tll.common.data.rpc.IListingService;
 import com.tll.common.data.rpc.IListingServiceAsync;
 import com.tll.common.data.rpc.ListingPayload;
 import com.tll.common.data.rpc.ListingRequest;
 import com.tll.common.data.rpc.ListingPayload.ListingStatus;
-import com.tll.common.model.Model;
 import com.tll.common.search.IListingSearch;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
 
 /**
  * RemoteListingOperator
+ * @param <R> row data type
+ * @param <S> search type
  * @author jpk
- * @param <S> the search type
  */
-@SuppressWarnings("unchecked")
-public final class RemoteListingOperator<S extends IListingSearch> extends AbstractListingOperator<Model> {
+public final class RemoteListingOperator<R extends IMarshalable, S extends IListingSearch> extends AbstractListingOperator<R> {
 
 	/**
 	 * Factory method that creates a listing command to control acccess to a remote listing.
-	 * @param <S> The search type
 	 * @param listingId the unique listing id
 	 * @param listHandlerType The remote list handler type
 	 * @param searchCriteria The search criteria that generates the remote
@@ -44,17 +43,18 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 	 * @param initialSorting The initial sorting directive
 	 * @return A new {@link RemoteListingOperator}
 	 */
-	public static <S extends IListingSearch> RemoteListingOperator<S> create(
-			String listingId, ListHandlerType listHandlerType, S searchCriteria, String[] propKeys, int pageSize, Sorting initialSorting) {
+	@SuppressWarnings("unchecked")
+	public static RemoteListingOperator create(
+			String listingId, ListHandlerType listHandlerType, IListingSearch searchCriteria, String[] propKeys, int pageSize, Sorting initialSorting) {
 
-		final RemoteListingDefinition<S> rld =
-			new RemoteListingDefinition<S>(listHandlerType, searchCriteria, propKeys, pageSize, initialSorting);
-		return new RemoteListingOperator<S>(listingId, rld);
+		final RemoteListingDefinition rld =
+			new RemoteListingDefinition(listHandlerType, searchCriteria, propKeys, pageSize, initialSorting);
+		return new RemoteListingOperator(listingId, rld);
 	}
 
 	private static final IListingServiceAsync<IListingSearch, IMarshalable> svc;
 	static {
-		svc = (IListingServiceAsync) GWT.create(IListingService.class);
+		svc = GWT.create(IListingService.class);
 	}
 
 	/**
@@ -62,8 +62,9 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 	 * @author jpk
 	 */
 	@SuppressWarnings("synthetic-access")
-	class ListingCommand extends RpcCommand<ListingPayload<Model>> {
+	class ListingCommand extends RpcCommand<ListingPayload<R>> {
 
+		@SuppressWarnings("unchecked")
 		@Override
 		protected void doExecute() {
 			if(listingRequest == null) {
@@ -75,8 +76,9 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 			svc.process(listingRequest, (AsyncCallback) getAsyncCallback());
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
-		protected void handleSuccess(ListingPayload<Model> payload) {
+		protected void handleSuccess(ListingPayload<R> payload) {
 			super.handleSuccess(payload);
 			assert payload.getListingId() != null && listingId != null && payload.getListingId().equals(listingId);
 
@@ -93,12 +95,13 @@ public final class RemoteListingOperator<S extends IListingSearch> extends Abstr
 			}
 			else {
 				// update client-side listing state
-				offset = payload.getOffset();
-				sorting = payload.getSorting();
-				listSize = payload.getListSize();
+				Page page = payload.getPage();
+				offset = page == null ? -1 : page.getOffset();
+				sorting = page == null ? null : page.getSorting();
+				listSize = page == null ? -1 : page.getTotalSize();
 				// reset
 				listingRequest = null;
-				fireListingEvent(op, payload.getPageElements());
+				fireListingEvent(op, page == null ? null : page.getElements());
 			}
 		}
 	}

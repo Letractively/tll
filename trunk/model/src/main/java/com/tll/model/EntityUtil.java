@@ -16,7 +16,6 @@ import org.springframework.beans.BeanWrapperImpl;
 import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.bk.BusinessKeyNotDefinedException;
 import com.tll.model.bk.BusinessKeyPropertyException;
-import com.tll.model.bk.BusinessKeyUtil;
 import com.tll.model.bk.IBusinessKeyDefinition;
 import com.tll.schema.Extended;
 import com.tll.schema.Root;
@@ -102,7 +101,8 @@ public class EntityUtil {
 			((ITimeStampEntity) e2).setDateModified(((ITimeStampEntity) e2).getDateModified());
 		}
 		try {
-			BusinessKeyUtil.apply(e2, BusinessKeyFactory.create(e1));
+			BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
+			bkf.apply(e2, bkf.create(e1));
 		}
 		catch(final BusinessKeyNotDefinedException e) {
 			// assume ok
@@ -125,7 +125,8 @@ public class EntityUtil {
 	public static <E extends IEntity> void makeBusinessKeyUnique(E e) {
 		IBusinessKeyDefinition<E>[] bkdefs;
 		try {
-			bkdefs = BusinessKeyFactory.definitions((Class<E>) e.entityClass());
+			BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
+			bkdefs = bkf.definitions((Class<E>) e.entityClass());
 		}
 		catch(final BusinessKeyNotDefinedException ex) {
 			// ok

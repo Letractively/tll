@@ -100,10 +100,4 @@ public abstract class AbstractListingConfig<R> implements IListingConfig<R> {
 	public boolean isShowRefreshBtn() {
 		return true; // default
 	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public ITableCellRenderer<R> getCellRenderer() {
-		return (ITableCellRenderer<R>) new ModelCellRenderer();
-	}
 }

@@ -31,16 +31,15 @@ import com.tll.di.LogExceptionHandlerModule;
 import com.tll.di.MailModule;
 import com.tll.di.TestEntityServiceFactoryModule;
 import com.tll.di.TestListingModule;
-import com.tll.di.TestMarshalModule;
 import com.tll.di.test.Db4oDbShellModule;
 import com.tll.di.test.TestDb4oDaoModule;
+import com.tll.di.test.TestMarshalModule;
 import com.tll.di.test.TestPersistenceUnitModule;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.model.test.TestEntityFactory;
 import com.tll.server.rpc.listing.ListingCache.ListingCacheAware;
-
 /**
- * ListingProcessorTest - Tests the {@link ListingProcessor}.
+ * ListingProcessorTest - Tests the {@link AbstractListingProcessor}.
  * @author jpk
  */
 @Test(groups = { "server", "listing" })
@@ -51,8 +50,6 @@ public class ListingProcessorTest extends AbstractDbAwareTest {
 
 	static final String listingId1 = "listing1";
 	static final String listingId2 = "listing2";
-
-	private final ListingProcessor processor = new ListingProcessor();
 
 	@Override
 	protected void addModules(List<Module> modules) {
@@ -117,6 +114,8 @@ public class ListingProcessorTest extends AbstractDbAwareTest {
 		final ListingContext context = getListingContext();
 
 		final ListingRequest request = new ListingRequest(listingId1, getListingDef(), ListingOp.REFRESH, Integer.valueOf(0), null);
+
+		MarshalListingProcessor processor = injector.getInstance(MarshalListingProcessor.class);
 
 		final ListingPayload<Model> p = processor.process(ssnId1, context, request);
 

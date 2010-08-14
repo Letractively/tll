@@ -4,6 +4,7 @@
 		<include name="IPropertyValueProvider.java" />
 		<include name="INameValueProvider.java" />
 		<include name="IDescriptorProvider.java" />
+		<include name="ITypeDescriptorProvider.java" />
 		<include name="IMarshalable.java" />
 		<include name="ApplicationException.java" />
 	</source>

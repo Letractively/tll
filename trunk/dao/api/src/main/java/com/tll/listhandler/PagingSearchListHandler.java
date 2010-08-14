@@ -7,14 +7,12 @@ import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
-import com.tll.model.IEntity;
 
 /**
  * Search supporting list handler implementation for pageable result sets.
  * @author jpk
- * @param <E>
  */
-public final class PagingSearchListHandler<E extends IEntity> extends SearchListHandler<E> {
+public final class PagingSearchListHandler extends SearchListHandler {
 
 	/**
 	 * The current page of results
@@ -28,7 +26,7 @@ public final class PagingSearchListHandler<E extends IEntity> extends SearchList
 	 * @param criteria The criteria used to generate the underlying list
 	 * @param sorting The required sorting directive.
 	 */
-	PagingSearchListHandler(IListingDataProvider<E> dataProvider, Criteria<E> criteria, Sorting sorting) {
+	PagingSearchListHandler(IListingDataProvider dataProvider, Criteria<?> criteria, Sorting sorting) {
 		super(dataProvider, criteria, sorting);
 	}
 

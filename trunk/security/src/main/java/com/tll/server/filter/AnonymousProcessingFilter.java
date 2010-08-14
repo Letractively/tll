@@ -48,6 +48,14 @@ public class AnonymousProcessingFilter extends AbstractSecurityFilter {
 		uae.setAsText(ua);
 		final UserAttribute userAttribute = (UserAttribute) uae.getValue();
 		wrapped.setUserAttribute(userAttribute);
+		
+		// required
+		try {
+			wrapped.afterPropertiesSet();
+		}
+		catch(Exception e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	@Override

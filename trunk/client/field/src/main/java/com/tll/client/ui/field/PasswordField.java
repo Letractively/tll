@@ -86,7 +86,8 @@ public final class PasswordField extends AbstractField<String> implements IHasMa
 		}
 	}
 
-	public String getText() {
+	@Override
+	public String doGetText() {
 		return tb.getText();
 	}
 

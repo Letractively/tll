@@ -6,27 +6,25 @@ import org.apache.commons.logging.LogFactory;
 import com.tll.criteria.Criteria;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
-import com.tll.model.IEntity;
 
 /**
  * Abstract search supporting list handler class. All search supporting list
  * handler implementations should derive from this class.
  * @author jpk
- * @param <E>
  */
-public abstract class SearchListHandler<E extends IEntity> extends AbstractListHandler<SearchResult> {
+public abstract class SearchListHandler extends AbstractListHandler<SearchResult> {
 
 	protected final Log LOG = LogFactory.getLog(this.getClass());
 
 	/**
 	 * The list handler data provider.
 	 */
-	protected final IListingDataProvider<E> dataProvider;
+	protected final IListingDataProvider dataProvider;
 
 	/**
 	 * The search criteria.
 	 */
-	protected Criteria<E> criteria;
+	protected Criteria<?> criteria;
 
 	/**
 	 * Constructor
@@ -37,7 +35,7 @@ public abstract class SearchListHandler<E extends IEntity> extends AbstractListH
 	 * @throws IllegalArgumentException When one or more required args are not
 	 *         specifeid
 	 */
-	public SearchListHandler(IListingDataProvider<E> dataProvider, Criteria<E> criteria, Sorting sorting)
+	public SearchListHandler(IListingDataProvider dataProvider, Criteria<?> criteria, Sorting sorting)
 	throws IllegalArgumentException {
 		super();
 		if(dataProvider == null) {

@@ -12,7 +12,7 @@
   <artifactId>tll-client-field</artifactId>
   <name>tll-client-field</name>
   <version>${project.parent.version}</version>
-  <description>Houses the client-side IField classes providing bi-directional field-model binding based on the http://code.google.com/p/gwittir/ project.</description>
+  <description>The client field api.</description>
   
   <build>
     <plugins>
@@ -117,26 +117,7 @@
       <artifactId>tll-client-ui</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-client-model</artifactId>
-      <version>${project.version}</version>
-    </dependency>
     
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-model</artifactId>
-      <version>${project.version}</version>
-      <classifier>testassets</classifier>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-client-core</artifactId>
-      <version>${project.version}</version>
-      <classifier>testassets</classifier>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-client-ui</artifactId>
@@ -144,14 +125,6 @@
       <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-client-model</artifactId>
-      <version>${project.version}</version>
-      <classifier>testassets</classifier>
-      <scope>test</scope>
-    </dependency>
-    
   </dependencies>
 
 </project>

@@ -15,7 +15,7 @@
       com.tll.di.test.TestDb4oDaoModule
       com.tll.di.test.Db4oDbShellModule
       com.tll.di.TestEntityServiceFactoryModule
-      com.tll.di.TestMarshalModule
+      com.tll.di.test.TestMarshalModule
       com.tll.di.LogExceptionHandlerModule
       com.tll.di.TestCacheModule
       com.tll.di.TestListingModule

@@ -4,20 +4,13 @@
  */
 package com.tll.client.test;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.tll.client.ui.GridRenderer;
 import com.tll.client.ui.field.AbstractFieldGroupProvider;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.RadioGroupField.GridStyles;
-import com.tll.common.model.Model;
-import com.tll.common.model.test.TestModelStubber;
-import com.tll.model.test.AccountStatus;
-import com.tll.model.test.AddressType;
-import com.tll.model.test.CreditCardType;
 
 /**
  * TestFieldGroupProviders
@@ -32,14 +25,14 @@ public class TestFieldGroupProviders {
 	static abstract class AbstractTestFieldGroupProvider extends AbstractFieldGroupProvider {
 
 		private static boolean auxDataInitialized;
-		
+
 		static final Map<String, String> states = new HashMap<String, String>();
 		static final Map<String, String> countries = new HashMap<String, String>();
-		
+
 		static {
 			states.put("CA", "California");
 			states.put("MI", "Michigan");
-			
+
 			countries.put("USA", "United States");
 			countries.put("SNG", "Singapore");
 		}
@@ -50,20 +43,13 @@ public class TestFieldGroupProviders {
 		protected AbstractTestFieldGroupProvider() {
 			super();
 			if(!auxDataInitialized) {
-				// set needed aux data cache
-				final List<Model> list = new ArrayList<Model>();
-				list.add(TestModelStubber.stubCurrency());
-				//AuxDataCache.get().cacheEntityList(TestEntityType.CURRENCY, list);
-
 				final Map<String, String> cc = new HashMap<String, String>();
 				cc.put("us", "United States");
 				cc.put("br", "Brazil");
-				//AuxDataCache.get().cacheRefDataMap(RefDataType.ISO_COUNTRY_CODES, cc);
 
 				final Map<String, String> st = new HashMap<String, String>();
 				st.put("MI", "Michigan");
 				st.put("CA", "California");
-				//AuxDataCache.get().cacheRefDataMap(RefDataType.US_STATES, st);
 
 				auxDataInitialized = true;
 			}
@@ -87,13 +73,13 @@ public class TestFieldGroupProviders {
 			fg.addField(ftext("adrsFirstName", "firstName", "First Name", "First Name", 20));
 			fg.addField(ftext("adrsLastName", "lastName", "Last Name", "Last Name", 20));
 			fg.addField(ftext("adrsMi", "mi", "MI", "Middle Initial", 1));
-			//fg.addField(fstext("adrsCompany", "company", "Company", "Company", 20));
-			//fg.addField(fstext("adrsAttn", "attn", "Attn", "Attention", 10));
-			//fg.addField(fstext("adrsAddress1", "address1", "Address 1", "Address 1", 40));
-			//fg.addField(fstext("adrsAddress2", "address2", "Address 2", "Address 2", 40));
+			fg.addField(ftext("adrsCompany", "company", "Company", "Company", 20));
+			fg.addField(ftext("adrsAttn", "attn", "Attn", "Attention", 10));
+			fg.addField(ftext("adrsAddress1", "address1", "Address 1", "Address 1", 40));
+			fg.addField(ftext("adrsAddress2", "address2", "Address 2", "Address 2", 40));
 			fg.addField(ftext("adrsCity", "city", "City", "City", 30));
 			fg.addField(frefdata("adrsProvince", "province", "State/Province", "State/Province", states));
-			//fg.addField(fstext("adrsPostalCode", "postalCode", "Zip", "Zip", 20));
+			fg.addField(ftext("adrsPostalCode", "postalCode", "Zip", "Zip", 20));
 			fg.addField(frefdata("adrsCountry", "country", "Country", "Country", countries));
 
 			// ad hoc props to verify types
@@ -102,6 +88,12 @@ public class TestFieldGroupProviders {
 			fg.addField(ftext("adrsDouble", "double", "Double", "Double", 5));
 		}
 
+	}
+
+	static enum TestEnum {
+		entryA,
+		entryB,
+		entryC;
 	}
 
 	/**
@@ -117,7 +109,7 @@ public class TestFieldGroupProviders {
 
 		@Override
 		public void populateFieldGroup(FieldGroup fg) {
-			fg.addField(fenumradio("ccType", "paymentData_ccType", "Type", "Type", CreditCardType.class, new GridRenderer(-1,
+			fg.addField(fenumradio("ccType", "paymentData_ccType", "Type", "Type", TestEnum.class, new GridRenderer(-1,
 					GridStyles.GRID)));
 			fg.addField(fcreditcard("ccNum", "paymentData_ccNum", "Num", null, 15));
 			fg.addField(ftext("ccCvv2", "paymentData_ccCvv2", "CVV2", "CVV2", 4));
@@ -148,7 +140,7 @@ public class TestFieldGroupProviders {
 		@Override
 		protected void populateFieldGroup(FieldGroup fg) {
 			addModelCommon(fg, true, true, "aa");
-			fg.addField(fenumselect("type", "type", "Type", "Account Address Type", AddressType.class));
+			fg.addField(fenumselect("type", "type", "Type", "Account Address Type", TestEnum.class));
 			final FieldGroup fgAddress = (new AddressFieldsProvider()).getFieldGroup();
 			fgAddress.setName("address");
 			fg.addField("address", fgAddress);
@@ -170,16 +162,16 @@ public class TestFieldGroupProviders {
 		public void populateFieldGroup(FieldGroup fg) {
 			addModelCommon(fg, true, true, "acnt");
 			fg.addField(ftext("acntParentName", "parent.name", "Parent", "Parent Account", 15));
-			fg.addField(fenumselect("acntStatus", "status", "Status", "Status", AccountStatus.class));
+			fg.addField(fenumselect("acntStatus", "status", "Status", "Status", TestEnum.class));
 			fg.addField(fdate("acntDateCancelled", "dateCancelled", "Date Cancelled", "Date Cancelled"));
-			//fg.addField(fcurrencies("acntCurrencyId", "currency.id", "Currency", "Currency"));
+			fg.addField(fenumselect("acntCurrencyId", "currency.id", "Currency", "Currency", TestEnum.class));
 			fg.addField(ftext("acntBillingModel", "billingModel", "Billing Model", "Billing Model", 18));
 			fg.addField(ftext("acntBillingCycle", "billingCycle", "Billing Cycle", "Billing Cycle", 18));
 			fg.addField(fdate("acntDateLastCharged", "dateLastCharged", "Last Charged", "Last Charged"));
 			fg.addField(fdate("acntNextChargeDate", "nextChargeDate", "Next Charge", "Next Charge"));
 			fg
-			.addField(fcheckbox("acntPersistPymntInfo", "persistPymntInfo", "PersistPayment Info?",
-			"PersistPayment Info?"));
+					.addField(fcheckbox("acntPersistPymntInfo", "persistPymntInfo", "PersistPayment Info?",
+							"PersistPayment Info?"));
 		}
 	}
 }

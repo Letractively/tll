@@ -6,9 +6,9 @@
 package com.tll.common.data.rpc;
 
 import com.tll.IMarshalable;
+import com.tll.common.data.Page;
 import com.tll.common.data.Payload;
 import com.tll.common.data.Status;
-import com.tll.dao.Sorting;
 
 /**
  * ListingPayload - Response to a {@link ListingRequest}.
@@ -38,13 +38,7 @@ public class ListingPayload<R extends IMarshalable> extends Payload {
 	 */
 	private ListingStatus listingStatus;
 
-	private int listSize;
-
-	private R[] pageElements;
-
-	private int offset = -1;
-
-	private Sorting sorting;
+	private Page<R> page;
 
 	/**
 	 * Constructor
@@ -67,16 +61,10 @@ public class ListingPayload<R extends IMarshalable> extends Payload {
 
 	/**
 	 * Sets page data.
-	 * @param listSize
-	 * @param pageElements
-	 * @param offset
-	 * @param sorting
+	 * @param page
 	 */
-	public void setPageData(int listSize, R[] pageElements, int offset, Sorting sorting) {
-		this.listSize = listSize;
-		this.pageElements = pageElements;
-		this.offset = offset;
-		this.sorting = sorting;
+	public void setPageData(Page<R> page) {
+		this.page = page;
 	}
 
 	public String getListingId() {
@@ -87,20 +75,7 @@ public class ListingPayload<R extends IMarshalable> extends Payload {
 		return listingStatus;
 	}
 
-	public int getListSize() {
-		return listSize;
+	public Page<R> getPage() {
+		return page;
 	}
-
-	public R[] getPageElements() {
-		return pageElements;
-	}
-
-	public int getOffset() {
-		return offset;
-	}
-
-	public Sorting getSorting() {
-		return sorting;
-	}
-
 }

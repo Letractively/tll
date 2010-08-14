@@ -28,6 +28,7 @@
 					<include>**/IPropertyValueProvider.java</include>
 					<include>**/INameValueProvider.java</include>
 					<include>**/IDescriptorProvider.java</include>
+					<include>**/ITypeDescriptorProvider.java</include>
 					<include>**/IMarshalable.java</include>
 					<include>**/ApplicationException.java</include>
 			    <include>**/util/Binding.java</include>

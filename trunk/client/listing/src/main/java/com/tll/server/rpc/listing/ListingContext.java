@@ -8,9 +8,7 @@ package com.tll.server.rpc.listing;
 import javax.servlet.ServletContext;
 
 import com.google.inject.Inject;
-import com.tll.server.marshal.Marshaler;
 import com.tll.server.rpc.IExceptionHandler;
-import com.tll.server.rpc.entity.IMarshalOptionsResolver;
 
 /**
  * ListingContext
@@ -26,8 +24,6 @@ public class ListingContext {
 
 	private final IListingSearchTranslator searchTranslator;
 	private final IListingDataProviderResolver listingDataProviderResolver;
-	private final Marshaler marshaler;
-	private final IMarshalOptionsResolver marshalOptionsResolver;
 	private final INamedQueryResolver namedQueryResolver;
 	private final IExceptionHandler exceptionHandler;
 	private final ListingCache listingCache;
@@ -36,22 +32,17 @@ public class ListingContext {
 	 * Constructor
 	 * @param searchTranslator
 	 * @param listingDataProviderResolver
-	 * @param marshaler
-	 * @param marshalOptionsResolver
 	 * @param namedQueryResolver
 	 * @param exceptionHandler
 	 * @param listingCache
 	 */
 	@Inject
 	public ListingContext(IListingSearchTranslator searchTranslator,
-			IListingDataProviderResolver listingDataProviderResolver, Marshaler marshaler,
-			IMarshalOptionsResolver marshalOptionsResolver, INamedQueryResolver namedQueryResolver,
+			IListingDataProviderResolver listingDataProviderResolver, INamedQueryResolver namedQueryResolver,
 			IExceptionHandler exceptionHandler, ListingCache listingCache) {
 		super();
 		this.searchTranslator = searchTranslator;
 		this.listingDataProviderResolver = listingDataProviderResolver;
-		this.marshaler = marshaler;
-		this.marshalOptionsResolver = marshalOptionsResolver;
 		this.namedQueryResolver = namedQueryResolver;
 		this.exceptionHandler = exceptionHandler;
 		this.listingCache = listingCache;
@@ -63,14 +54,6 @@ public class ListingContext {
 
 	public IListingDataProviderResolver getListingDataProviderResolver() {
 		return listingDataProviderResolver;
-	}
-
-	public Marshaler getMarshaler() {
-		return marshaler;
-	}
-
-	public IMarshalOptionsResolver getMarshalOptionsResolver() {
-		return marshalOptionsResolver;
 	}
 
 	public IExceptionHandler getExceptionHandler() {

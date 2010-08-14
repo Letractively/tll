@@ -3,7 +3,6 @@ package com.tll.listhandler;
 import java.util.Collections;
 import java.util.List;
 
-import com.tll.IPropertyValueProvider;
 import com.tll.dao.SortColumnComparator;
 import com.tll.dao.Sorting;
 
@@ -13,7 +12,7 @@ import com.tll.dao.Sorting;
  * @author jpk
  * @param <T> the row element type
  */
-public class InMemoryListHandler<T extends IPropertyValueProvider> extends AbstractListHandler<T> {
+public class InMemoryListHandler<T> extends AbstractListHandler<T> {
 
 	/**
 	 * The managed list.

@@ -8,19 +8,15 @@ import java.util.List;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.convert.IConverter;
-import com.tll.client.ui.BindableWidgetAdapter;
 import com.tll.client.ui.IHasFormat;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
@@ -37,8 +33,6 @@ import com.tll.client.validate.IValidator;
 import com.tll.client.validate.IntegerValidator;
 import com.tll.client.validate.NotEmptyValidator;
 import com.tll.client.validate.ValidationException;
-import com.tll.common.bind.IPropertyChangeListener;
-import com.tll.common.model.PropertyPathException;
 import com.tll.schema.IPropertyMetadataProvider;
 import com.tll.schema.PropertyMetadata;
 import com.tll.util.ObjectUtil;
@@ -49,7 +43,7 @@ import com.tll.util.StringUtil;
  * @param <V> the value type
  * @author jpk
  */
-public abstract class AbstractField<V> extends Composite implements IFieldWidget<V>, ValueChangeHandler<V>, Focusable, BlurHandler, FocusHandler {
+public abstract class AbstractField<V> extends Composite implements IFieldWidget<V> {
 
 	/**
 	 * Reflects the number of instantiated {@link AbstractField}s. This is
@@ -62,8 +56,6 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	private static int fieldCounter = 0;
 
 	private static final String dfltReadOnlyEmptyValue = "-";
-
-	private final BindableWidgetAdapter<V> adapter;
 
 	/**
 	 * The unique DOM element id of this field.
@@ -131,6 +123,11 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	 */
 	private boolean initialValueSet;
 
+	/**
+	 * The converter for handling in-bound un-typed values.
+	 */
+	private IConverter<V, Object> converter;
+
 	private IErrorHandler errorHandler;
 
 	/**
@@ -162,48 +159,6 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 		pnl.setStyleName(Styles.FIELD);
 
 		initWidget(pnl);
-
-		adapter = new BindableWidgetAdapter<V>(this);
-	}
-
-	@Override
-	public final Object getProperty(String propPath) throws PropertyPathException {
-		return adapter.getProperty(propPath);
-	}
-
-	@Override
-	public final void setProperty(String propPath, Object value) throws PropertyPathException, IllegalArgumentException {
-		adapter.setProperty(propPath, value);
-	}
-
-	@Override
-	public final IConverter<V, Object> getConverter() {
-		return adapter.getConverter();
-	}
-
-	@Override
-	public final void setConverter(IConverter<V, Object> converter) {
-		adapter.setConverter(converter);
-	}
-
-	@Override
-	public final void addPropertyChangeListener(IPropertyChangeListener listener) {
-		adapter.addPropertyChangeListener(listener);
-	}
-
-	@Override
-	public final void addPropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
-		adapter.addPropertyChangeListener(propertyName, listener);
-	}
-
-	@Override
-	public final void removePropertyChangeListener(IPropertyChangeListener listener) {
-		adapter.removePropertyChangeListener(listener);
-	}
-
-	@Override
-	public final void removePropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
-		adapter.removePropertyChangeListener(propertyName, listener);
 	}
 
 	@Override
@@ -513,6 +468,18 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 		}
 		return value;
 	}
+	
+	/**
+	 * @return The raw field text which may be <code>null</code>.
+	 */
+	protected abstract String doGetText();
+
+	@Override
+	public final String getText() {
+		String sval = doGetText();
+		sval = StringUtil.isEmpty(sval) ? dfltReadOnlyEmptyValue : sval;
+		return sval;
+	}
 
 	private void draw() {
 
@@ -544,9 +511,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 			// set help text
 			rof.setTitle(helpText);
 
-			String sval = getText();
-			sval = StringUtil.isEmpty(sval) ? dfltReadOnlyEmptyValue : sval;
-			rof.setText(sval);
+			rof.setText(getText());
 		}
 		if(fldLbl != null) fldLbl.setFor(readOnly ? "" : domId);
 
@@ -639,6 +604,16 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 			// we don't want auto-transfer!!!
 			//adapter.getChangeSupport().firePropertyChange(PROPERTY_VALUE, old, oldValue);
 		}
+	}
+
+	@Override
+	public final IConverter<V, Object> getConverter() {
+		return converter;
+	}
+
+	@Override
+	public final void setConverter(IConverter<V, Object> converter) {
+		this.converter = converter;
 	}
 
 	@Override

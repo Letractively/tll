@@ -128,7 +128,8 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 		return dbox;
 	}
 
-	public String getText() {
+	@Override
+	public String doGetText() {
 		return dbox.getTextBox().getText();
 	}
 

@@ -44,4 +44,11 @@ public abstract class AbstractEntityFactory<PK> implements IEntityFactory<PK> {
 		return entity;
 	}
 
+	@Override
+	public <E extends IEntity> E createEntity(Class<E> entityClass, boolean generate) throws IllegalStateException {
+		E e = newEntity(entityClass);
+		if(generate) generatePrimaryKey(e);
+		return e;
+	}
+
 }

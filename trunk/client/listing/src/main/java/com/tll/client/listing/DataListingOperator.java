@@ -59,7 +59,7 @@ public class DataListingOperator<R, H extends IListHandler<R>> extends AbstractL
 			offset = ofst;
 		}
 		catch(final EmptyListException e) {
-			throw new IllegalStateException(e);
+			if(current != null) current.clear();
 		}
 		catch(final IndexOutOfBoundsException e) {
 			throw new IllegalStateException(e);
@@ -82,18 +82,11 @@ public class DataListingOperator<R, H extends IListHandler<R>> extends AbstractL
 	@Override
 	public void refresh() {
 		doFetch(0, sorting);
-		fireListingEvent(ListingOp.FETCH);
+		fireListingEvent(ListingOp.REFRESH);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void fireListingEvent(ListingOp listingOp) {
-		fireListingEvent(listingOp, (R[]) current.toArray(new Object[]{}));
-	}
-
-	@Override
-	public void display() {
-		super.display();
-		fireListingEvent(ListingOp.FETCH);
+		fireListingEvent(listingOp, current);
 	}
 
 	@Override
@@ -137,5 +130,6 @@ public class DataListingOperator<R, H extends IListHandler<R>> extends AbstractL
 		offset = 0;
 		sorting = null;
 		fireListingEvent(ListingOp.CLEAR);
+		current.clear();
 	}
 }

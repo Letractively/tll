@@ -20,6 +20,7 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.tll.criteria.Criteria;
 import com.tll.dao.test.EntityDaoTestDecorator;
+import com.tll.model.EntityMetadata;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
@@ -250,7 +251,8 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		logger.debug("Creating test entity..");
 		final E e = (E) getEntityBeanFactory().getEntityCopy(entityHandler.entityClass(), false);
 		entityHandler.assembleTestEntity(e);
-		if(BusinessKeyFactory.hasBusinessKeys(entityHandler.entityClass())) {
+		BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
+		if(bkf.hasBusinessKeys(entityHandler.entityClass())) {
 			entityHandler.makeUnique(e);
 		}
 		testEntityRefStack.add(new PkAndType(e.entityClass(), e.getId()));
@@ -580,7 +582,8 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	final void daoDuplicationException() throws Exception {
 		// IMPT: don't test run this dao test if there are no business keys defined
 		// for the current entity type!!
-		if(!BusinessKeyFactory.hasBusinessKeys(entityHandler.entityClass())) {
+		BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
+		if(!bkf.hasBusinessKeys(entityHandler.entityClass())) {
 			return;
 		}
 
@@ -648,7 +651,8 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 	final void daoFindEntityByBusinessKeyCriteria() throws Exception {
 		try {
-			final IBusinessKeyDefinition<IEntity>[] bkdefs = BusinessKeyFactory.definitions(entityHandler.entityClass());
+			BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
+			final IBusinessKeyDefinition<IEntity>[] bkdefs = bkf.definitions(entityHandler.entityClass());
 
 			// persist the target test entity
 			IEntity e = getTestEntity();

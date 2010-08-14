@@ -14,7 +14,6 @@ import com.tll.client.validate.CreditCardValidator;
 import com.tll.client.validate.DateValidator;
 import com.tll.client.validate.EmailAddressValidator;
 import com.tll.client.validate.EnumValidator;
-import com.tll.common.model.Model;
 
 /**
  * FieldFactory
@@ -280,7 +279,7 @@ public abstract class FieldFactory {
 	 * @return The created entity name field
 	 */
 	public static final TextField entityNameField(String fnamePrefix) {
-		return ftext((fnamePrefix == null ? "" : fnamePrefix) + Model.NAME_PROPERTY, Model.NAME_PROPERTY, "Name", "Name",
+		return ftext((fnamePrefix == null ? "" : fnamePrefix) + "name", "name", "Name", "Name",
 				30);
 	}
 
@@ -294,11 +293,9 @@ public abstract class FieldFactory {
 	 */
 	public static final DateField[] entityTimestampFields(String fnamePrefix) {
 		final DateField dateCreated =
-			fdate((fnamePrefix == null ? "" : fnamePrefix) + Model.DATE_CREATED_PROPERTY, Model.DATE_CREATED_PROPERTY,
-						"Created", "Date Created");
+			fdate((fnamePrefix == null ? "" : fnamePrefix) + "dateCreated", "dateCreated", "Created", "Date Created");
 		final DateField dateModified =
-			fdate((fnamePrefix == null ? "" : fnamePrefix) + Model.DATE_MODIFIED_PROPERTY, Model.DATE_MODIFIED_PROPERTY,
-						"Modified", "Date Modified");
+			fdate((fnamePrefix == null ? "" : fnamePrefix) + "dateModified", "dateModified", "Modified", "Date Modified");
 		dateCreated.setReadOnly(true);
 		dateModified.setReadOnly(true);
 		return new DateField[] {

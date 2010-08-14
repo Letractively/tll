@@ -21,10 +21,4 @@ public class RpcAddressService extends AbstractPersistServiceImpl {
 	public RpcAddressService(PersistContext context) {
 		super(context);
 	}
-
-	@Override
-	protected String getModelTypeName() {
-		return "Address";
-	}
-
 }

@@ -19,10 +19,4 @@ public class UserService extends AbstractPersistServiceImpl {
 	public UserService(PersistContext context) {
 		super(context);
 	}
-
-	@Override
-	protected String getModelTypeName() {
-		return "User";
-	}
-
 }

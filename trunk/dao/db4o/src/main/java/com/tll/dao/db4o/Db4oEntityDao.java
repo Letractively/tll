@@ -47,6 +47,7 @@ import com.tll.dao.NonUniqueResultException;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
+import com.tll.model.EntityMetadata;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.IScalar;
@@ -54,8 +55,8 @@ import com.tll.model.ITimeStampEntity;
 import com.tll.model.IVersionSupport;
 import com.tll.model.NameKey;
 import com.tll.model.Scalar;
+import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.bk.BusinessKeyPropertyException;
-import com.tll.model.bk.BusinessKeyUtil;
 import com.tll.model.bk.IBusinessKey;
 import com.tll.model.bk.NonUniqueBusinessKeyException;
 import com.tll.schema.IQueryParam;
@@ -493,7 +494,8 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 
 			@Override
 			public boolean match(E candidate) {
-				return BusinessKeyUtil.equals(candidate, key);
+				BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
+				return bkf.equals(candidate, key);
 			}
 		}, key);
 	}
@@ -543,7 +545,8 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 					}
 				}
 			}
-			BusinessKeyUtil.isBusinessKeyUnique(mlist);
+			BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
+			bkf.isBusinessKeyUnique(mlist);
 		}
 		catch(final NonUniqueBusinessKeyException e) {
 			throw new EntityExistsException(e.getMessage());

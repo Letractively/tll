@@ -137,6 +137,11 @@
       </exclusions>
   	</dependency>
 
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-servlet</artifactId>
+		</dependency>
+		
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-config</artifactId>

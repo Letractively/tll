@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.test.TestFieldPanel;
 import com.tll.client.ui.GridRenderer;
 import com.tll.client.ui.edit.EditEvent;
-import com.tll.client.ui.edit.EditPanel;
+import com.tll.client.ui.edit.FieldGroupEditPanel;
 import com.tll.client.ui.edit.IEditHandler;
 import com.tll.client.ui.field.FieldErrorHandler;
 import com.tll.client.ui.field.FieldFactory;
@@ -35,14 +35,10 @@ import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.RadioGroupField.GridStyles;
 import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.client.ui.msg.MsgPopupRegistry;
-import com.tll.client.ui.test.ModelViewer;
+import com.tll.client.ui.test.FieldGroupViewer;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.ErrorHandlerBuilder;
 import com.tll.client.validate.ErrorHandlerDelegate;
-import com.tll.common.model.CopyCriteria;
-import com.tll.common.model.Model;
-import com.tll.common.model.RelatedManyProperty;
-import com.tll.common.model.test.TestModelStubber;
 
 /**
  * UI Tests - GWT module for the sole purpose of verifying the DOM/Style of
@@ -58,7 +54,7 @@ public final class UITests extends AbstractUITest {
 	@Override
 	protected UITestCase[] getTestCases() {
 		return new UITestCase[] {
-			new GridFieldComposerTest(), new FlowPanelFieldComposerTest(), new FieldBindingLifecycleTest()
+			new GridFieldComposerTest(), new FlowPanelFieldComposerTest(), new FieldPanelLifecycleTest()
 		};
 	}
 
@@ -428,29 +424,28 @@ public final class UITests extends AbstractUITest {
 	} // FlowPanelFieldComposerTest
 
 	/**
-	 * FieldBindingLifecycleTest - Tests field/model binding functionality through
+	 * Tests field/model binding functionality through
 	 * a mocked model field panel and edit panel.
 	 * @author jpk
 	 */
-	static final class FieldBindingLifecycleTest extends UITestCase {
+	static final class FieldPanelLifecycleTest extends UITestCase {
 
 		HorizontalPanel layout;
 		VerticalPanel context;
 		GlobalMsgPanel gmp;
 		TestFieldPanel fp;
 		ErrorHandlerDelegate eh;
-		EditPanel ep;
-		ModelViewer mv, mvchanged;
-		Model m;
+		FieldGroupEditPanel ep;
+		FieldGroupViewer fgViewer;
 
 		@Override
 		public String getName() {
-			return "Model/Field binding";
+			return "Field panel life-cycle";
 		}
 
 		@Override
 		public String getDescription() {
-			return "Tests model/field binding with handling a nested model collection.";
+			return "Displays field group details in a rendered field panel.";
 		}
 
 		@Override
@@ -462,47 +457,17 @@ public final class UITests extends AbstractUITest {
 
 			gmp = new GlobalMsgPanel();
 
-			mv = new ModelViewer();
-			mvchanged = new ModelViewer();
 			fp = new TestFieldPanel();
 			eh = ErrorHandlerBuilder.build(true, true, new GlobalMsgPanel());
-			ep = new EditPanel(fp, false, false, true);
+			ep = new FieldGroupEditPanel(fp, false, false, true);
 			ep.setErrorHandler(eh, true);
 
-			final CopyCriteria mcrit = CopyCriteria.all();
-
-			ep.addEditHandler(new IEditHandler() {
+			ep.addEditHandler(new IEditHandler<FieldGroup>() {
 
 				@Override
-				public void onEdit(EditEvent event) {
-					String version;
-
-					// mimic model persist life-cycle
-					assert m != null;
-					final Model mcopy = m.copy(mcrit);
-					version = mcopy.getVersion();
-					Integer iversion = Integer.valueOf(version);
-					mcopy.setVersion(version == null ? null : Integer.toString(iversion.intValue()+1));
-					ArrayList<Model> alist = null;
-					List<Model> existing;
-					final RelatedManyProperty ap = mcopy.relatedMany("addresses");
-					existing = ap.getModelList();
-					if(existing != null) {
-						alist = new ArrayList<Model>();
-						for(final Model am : existing) {
-							if(!am.isMarkedDeleted()) {
-								version = am.getVersion();
-								iversion = Integer.valueOf(version);
-								am.setVersion(version == null ? null : Integer.toString(iversion.intValue()+1));
-								alist.add(am);
-							}
-						}
-						ap.setValue(alist);
-					}
-					ep.setModel(mcopy);
-					mv.setModel(mcopy);
-					mvchanged.setModel(event.getChangedModel());
-					m = mcopy;
+				public void onEdit(EditEvent<FieldGroup> event) {
+					// no-op
+					Window.alert("EditEvent: " + event.toDebugString());
 				}
 			});
 
@@ -513,19 +478,14 @@ public final class UITests extends AbstractUITest {
 
 			layout.add(context);
 			VerticalPanel vp = new VerticalPanel();
-			vp.add(new Label("Model props"));
-			vp.add(mv);
-			layout.add(vp);
-			vp = new VerticalPanel();
-			vp.add(new Label("Changed model props"));
-			vp.add(mvchanged);
+			vp.add(new Label("Field Group props"));
+			fgViewer = new FieldGroupViewer();
+			vp.add(fgViewer);
 			layout.add(vp);
 
 			RootPanel.get().add(layout);
 
-			m = TestModelStubber.stubAccount(false);
-			ep.setModel(m);
-			mv.setModel(m);
+			fgViewer.setFieldGroup(fp.getFieldGroup());
 		}
 
 		@Override
@@ -536,12 +496,9 @@ public final class UITests extends AbstractUITest {
 			}
 			context = null;
 			gmp = null;
-			fp.unbind();
 			ep = null;
-			mv = null;
-			m = null;
-			mvchanged = null;
+			fgViewer = null;
 		}
 
-	} // FieldBindingLifecycleTest
+	} // FieldPanelLifecycleTest
 }

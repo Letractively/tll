@@ -8,7 +8,6 @@ package com.tll.client.ui.field;
 import java.util.Collection;
 
 import com.tll.client.convert.IConverter;
-import com.tll.client.ui.IBindableCollectionWidget;
 
 /**
  * AbstractCollectionDataField - Enables a collection of data values to be the
@@ -16,10 +15,9 @@ import com.tll.client.ui.IBindableCollectionWidget;
  * @param <V> the data <em>element</em> value type
  * @author jpk
  */
-public abstract class AbstractCollectionDataField<V> extends AbstractDataField<V, Collection<V>> implements
-		IBindableCollectionWidget<V, String> {
+public abstract class AbstractCollectionDataField<V> extends AbstractDataField<V, Collection<V>> {
 	
-	private final IConverter<String, V> renderer = new IConverter<String, V>() {
+	protected final IConverter<String, V> renderer = new IConverter<String, V>() {
 
 		@Override
 		public String convert(V in) throws IllegalArgumentException {
@@ -36,15 +34,5 @@ public abstract class AbstractCollectionDataField<V> extends AbstractDataField<V
 	 */
 	public AbstractCollectionDataField(String name, String propName, String labelText, String helpText) {
 		super(name, propName, labelText, helpText);
-	}
-
-	@Override
-	public IConverter<String, V> getRenderer() {
-		return renderer;
-	}
-
-	@Override
-	public void setRenderer(IConverter<String, V> renderer) {
-		throw new UnsupportedOperationException();
 	}
 }

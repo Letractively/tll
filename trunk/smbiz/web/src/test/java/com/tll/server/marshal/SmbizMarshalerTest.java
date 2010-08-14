@@ -28,7 +28,6 @@ import com.tll.model.Merchant;
 import com.tll.model.egraph.EntityBeanFactory;
 import com.tll.model.egraph.EntityGraph;
 import com.tll.model.egraph.IEntityGraphPopulator;
-import com.tll.server.rpc.entity.IMarshalOptionsResolver;
 import com.tll.util.CommonUtil;
 
 /**
