@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.convert.IHasConverter;
 import com.tll.client.ui.IHasHelpText;
 import com.tll.client.validate.IValidator;
-import com.tll.schema.IPropertyNameProvider;
+import com.tll.util.IPropertyNameProvider;
 
 /**
  * IFieldWidget - A physical non-group field capable of display in the ui.

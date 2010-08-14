@@ -11,9 +11,9 @@ import java.util.List;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.tll.model.BusinessKeyDef;
+import com.tll.model.BusinessObject;
 import com.tll.model.IEntityMetadata;
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
 
 /**
  * BusinessKeyFactoryTest

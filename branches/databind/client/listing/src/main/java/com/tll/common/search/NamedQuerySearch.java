@@ -10,7 +10,7 @@ import java.util.List;
 
 import com.tll.common.model.IEntityType;
 import com.tll.criteria.CriteriaType;
-import com.tll.schema.IQueryParam;
+import com.tll.criteria.IQueryParam;
 import com.tll.util.StringUtil;
 
 /**

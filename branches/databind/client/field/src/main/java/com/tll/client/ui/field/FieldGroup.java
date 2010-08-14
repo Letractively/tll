@@ -20,7 +20,6 @@ import com.tll.client.validate.ErrorDisplay;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
-import com.tll.schema.IPropertyMetadataProvider;
 import com.tll.util.PropertyPath;
 import com.tll.util.StringUtil;
 
@@ -559,12 +558,12 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		}
 	}
 
-	@Override
-	public void applyPropertyMetadata(IPropertyMetadataProvider provider, boolean isNewModelData) {
-		for(final IField f : fields) {
-			f.applyPropertyMetadata(provider, isNewModelData);
-		}
-	}
+//	@Override
+//	public void applyPropertyMetadata(IPropertyMetadataProvider provider, boolean isNewModelData) {
+//		for(final IField f : fields) {
+//			f.applyPropertyMetadata(provider, isNewModelData);
+//		}
+//	}
 
 	@Override
 	public boolean isRequired() {

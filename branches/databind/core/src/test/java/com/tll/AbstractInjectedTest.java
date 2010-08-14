@@ -10,7 +10,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Stage;
-import com.tll.test.ITestEnvironment;
 
 /**
  * AbstractInjectedTest - Abstract base class for tests wishing to leverge
@@ -31,11 +30,6 @@ public abstract class AbstractInjectedTest {
 	protected final Log logger = LogFactory.getLog(this.getClass());
 
 	/**
-	 * The optional test environment.
-	 */
-	protected ITestEnvironment testEnv;
-
-	/**
 	 * The dependency injector.
 	 */
 	protected Injector injector;
@@ -45,15 +39,6 @@ public abstract class AbstractInjectedTest {
 	 */
 	public AbstractInjectedTest() {
 		super();
-	}
-
-	/**
-	 * Sets the test environment.
-	 * <p>
-	 * This must be called before {@link #beforeClass()} is invoked.
-	 */
-	protected final void setTestEnv(ITestEnvironment testEnv) {
-		this.testEnv = testEnv;
 	}
 
 	/**
@@ -84,30 +69,11 @@ public abstract class AbstractInjectedTest {
 	 */
 	protected void addModules(List<Module> modules) {
 	}
-	
-	/**
-	 * Sets up te test environment is one is specified.
-	 */
-	protected final void setupTestEnv() {
-		if(testEnv != null) {
-			testEnv.setupTestEnvironment();
-		}
-	}
-	
-	/**
-	 * Tears down the test environment if one is specified. 
-	 */
-	protected final void teardownTestEnv() {
-		if(testEnv != null) {
-			testEnv.teardownTestEnvironment();
-		}
-	}
 
 	/**
 	 * Before class hook.
 	 */
 	protected void beforeClass() {
-		setupTestEnv();
 		buildTestInjector();
 	}
 
@@ -115,7 +81,7 @@ public abstract class AbstractInjectedTest {
 	 * After class hook.
 	 */
 	protected void afterClass() {
-		teardownTestEnv();
+		// base impl no-op
 	}
 
 	/**

@@ -19,7 +19,6 @@ import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
 import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.model.PropertyPathException;
-import com.tll.schema.IPropertyMetadataProvider;
 
 /**
  * Adapts an {@link IFieldWidget} to a databinding aware field widget by
@@ -84,10 +83,10 @@ public final class BindableFieldWidget<V> implements IBindableFieldWidget<V> {
 		fieldWidget.addValidator(validator);
 	}
 
-	@Override
-	public void applyPropertyMetadata(IPropertyMetadataProvider provider, boolean isNewModelData) {
-		fieldWidget.applyPropertyMetadata(provider, isNewModelData);
-	}
+//	@Override
+//	public void applyPropertyMetadata(IPropertyMetadataProvider provider, boolean isNewModelData) {
+//		fieldWidget.applyPropertyMetadata(provider, isNewModelData);
+//	}
 
 	@Override
 	public void clearValue() {

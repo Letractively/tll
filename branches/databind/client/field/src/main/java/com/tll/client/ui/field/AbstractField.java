@@ -6,7 +6,6 @@ package com.tll.client.ui.field;
 
 import java.util.List;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -17,24 +16,14 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.convert.IConverter;
-import com.tll.client.ui.IHasFormat;
-import com.tll.client.util.Fmt;
-import com.tll.client.util.GlobalFormat;
-import com.tll.client.validate.BooleanValidator;
-import com.tll.client.validate.CharacterValidator;
 import com.tll.client.validate.CompositeValidator;
-import com.tll.client.validate.DateValidator;
-import com.tll.client.validate.DecimalValidator;
 import com.tll.client.validate.Error;
 import com.tll.client.validate.ErrorClassifier;
 import com.tll.client.validate.ErrorDisplay;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.IValidator;
-import com.tll.client.validate.IntegerValidator;
 import com.tll.client.validate.NotEmptyValidator;
 import com.tll.client.validate.ValidationException;
-import com.tll.schema.IPropertyMetadataProvider;
-import com.tll.schema.PropertyMetadata;
 import com.tll.util.ObjectUtil;
 import com.tll.util.StringUtil;
 
@@ -368,6 +357,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 		}
 	}
 
+	/*
 	public final void applyPropertyMetadata(IPropertyMetadataProvider provider, boolean isNewModelData) {
 		// Log.debug("AbstractField.applyPropertyMetadata() for " + toString());
 		final PropertyMetadata metadata = provider.getPropertyMetadata(getPropertyName());
@@ -425,6 +415,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 		// apply model new flag
 		validateIncrementally(!isNewModelData);
 	}
+	*/
 
 	public final void removeValidator(Class<? extends IValidator> type) {
 		if(validator != null) validator.remove(type);
@@ -468,7 +459,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 		}
 		return value;
 	}
-	
+
 	/**
 	 * @return The raw field text which may be <code>null</code>.
 	 */
@@ -583,7 +574,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	public void onBlur(BlurEvent event) {
 		removeStyleName(Styles.ACTIVE);
 		if(incrValFlag) {
-			resolveError(ErrorDisplay.LOCAL.flag());	// clear out old first
+			resolveError(ErrorDisplay.LOCAL.flag()); // clear out old first
 			try {
 				validate();
 				dirtyCheck();
@@ -602,7 +593,8 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 		if(!ObjectUtil.equals(old, oldValue)) {
 			ValueChangeEvent.fire(this, oldValue);
 			// we don't want auto-transfer!!!
-			//adapter.getChangeSupport().firePropertyChange(PROPERTY_VALUE, old, oldValue);
+			// adapter.getChangeSupport().firePropertyChange(PROPERTY_VALUE, old,
+			// oldValue);
 		}
 	}
 

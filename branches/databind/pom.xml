@@ -20,7 +20,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<asmVersion>3.2</asmVersion>
-		<db4oVersion>7.4.121.14026</db4oVersion>
+		<db4oVersion>8.0-SNAPSHOT</db4oVersion>
 		<springextensions.db4o.version>1.0.0e</springextensions.db4o.version>
 
 		<aspectjVersion>1.6.5</aspectjVersion>
@@ -129,7 +129,7 @@
 			<url>http://download.java.net/maven/1/</url>
 			<!-- <layout>legacy</layout> (DEPRECATED as of maven v3) -->
 		</repository>
-		<!-- db40 -->
+		<!-- db4o -->
 		<repository>
 			<id>db4o</id>
 			<name>db4o</name>
@@ -559,8 +559,8 @@
 
 			<!-- db4o -->
 			<dependency>
-				<groupId>db4o</groupId>
-				<artifactId>db4o</artifactId>
+				<groupId>com.db4o</groupId>
+				<artifactId>db4o-full-java5</artifactId>
 				<version>${db4oVersion}</version>
 			</dependency>
 
@@ -685,6 +685,7 @@
 			</dependency>
 
 			<!-- google app engine -->
+			<!-- 
 			<dependency>
 				<groupId>com.google</groupId>
 				<artifactId>appengine-tools</artifactId>
@@ -720,7 +721,8 @@
 				<artifactId>appengine-local-runtime</artifactId>
 				<version>${gaeVersion}</version>
 			</dependency>
-
+			-->
+			
 			<!-- GWT -->
 			<dependency>
 				<groupId>com.google.gwt</groupId>

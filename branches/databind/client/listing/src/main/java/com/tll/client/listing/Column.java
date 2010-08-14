@@ -1,7 +1,7 @@
 package com.tll.client.listing;
 
 import com.tll.client.util.GlobalFormat;
-import com.tll.schema.IPropertyNameProvider;
+import com.tll.util.IPropertyNameProvider;
 
 /**
  * Column - Listing column definition. A {@link Column} collection dictates the

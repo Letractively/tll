@@ -15,9 +15,9 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.NullValueInNestedPathException;
 
 import com.google.inject.Inject;
+import com.tll.model.BusinessKeyDef;
+import com.tll.model.BusinessObject;
 import com.tll.model.IEntityMetadata;
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
 
 /**
  * BusinessKeyFactory - Defines all entity business keys in the application and
