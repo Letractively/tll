@@ -152,11 +152,6 @@
       <version>${project.version}</version>
     </dependency>
 
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-servlet</artifactId>
-		</dependency>
-		
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>

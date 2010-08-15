@@ -19,7 +19,6 @@ import com.tll.IPropertyValueProvider;
 import com.tll.common.bind.IBindable;
 import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.model.CopyCriteria.CopyMode;
-import com.tll.schema.IPropertyMetadataProvider;
 import com.tll.schema.PropertyMetadata;
 import com.tll.schema.PropertyType;
 import com.tll.util.Binding;
@@ -33,7 +32,7 @@ import com.tll.util.StringUtil;
  * to represent an entity instance object graph on the client.
  * @author jpk
  */
-public final class Model implements IMarshalable, IBindable, IPropertyMetadataProvider, IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty>, IPropertyValueProvider {
+public final class Model implements IMarshalable, IBindable, IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty>, IPropertyValueProvider {
 
 	/**
 	 * ModelPropSet

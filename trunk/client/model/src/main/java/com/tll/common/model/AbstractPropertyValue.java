@@ -5,7 +5,6 @@
  */
 package com.tll.common.model;
 
-import com.tll.schema.IQueryParam;
 import com.tll.schema.PropertyMetadata;
 import com.tll.schema.PropertyType;
 import com.tll.util.ObjectUtil;
@@ -14,7 +13,7 @@ import com.tll.util.ObjectUtil;
  * AbstractPropertyValue
  * @author jpk
  */
-public abstract class AbstractPropertyValue extends AbstractModelProperty implements IPropertyValue, IQueryParam {
+public abstract class AbstractPropertyValue extends AbstractModelProperty implements IPropertyValue {
 
 	/**
 	 * Ad-hoc factory method for stubbing {@link IPropertyValue}s.
@@ -43,8 +42,6 @@ public abstract class AbstractPropertyValue extends AbstractModelProperty implem
 				return new DoublePropertyValue(name, metadata, null);
 			case DATE:
 				return new DatePropertyValue(name, metadata, null);
-			case OBJECT:
-				return new ObjectPropertyValue(name, metadata, null);
 			case STRING_MAP:
 				return new StringMapPropertyValue(name, metadata, null);
 			}

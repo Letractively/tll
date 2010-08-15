@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Dec 24, 2007
  */
-package com.tll.schema;
+package com.tll;
 
 /**
  * IPropertyNameProvider - Indicates the ability to provide a property name.

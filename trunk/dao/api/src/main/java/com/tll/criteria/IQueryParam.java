@@ -1,6 +1,8 @@
-package com.tll.schema;
+package com.tll.criteria;
 
 import com.tll.IMarshalable;
+import com.tll.IPropertyNameProvider;
+import com.tll.schema.PropertyType;
 
 /**
  * QueryParam - Needed to resolve query param types.

@@ -9,7 +9,6 @@ import com.tll.client.ui.IWidgetRef;
 import com.tll.client.validate.IHasErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
-import com.tll.schema.IPropertyMetadataProvider;
 
 /**
  * IField - Abstraction for managing the display and editing of data.
@@ -79,7 +78,8 @@ public interface IField extends HasName, IWidgetRef, IHasErrorHandler {
 	 * @param provider The property metadata provider.
 	 * @param isNewModelData Is the model data new or existing?
 	 */
-	void applyPropertyMetadata(IPropertyMetadataProvider provider, boolean isNewModelData);
+	// NO - this is too close to the model
+	//void applyPropertyMetadata(IPropertyMetadataProvider provider, boolean isNewModelData);
 
 	/**
 	 * Adds a validator.

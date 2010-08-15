@@ -11,9 +11,9 @@ import java.util.List;
 import com.tll.common.search.IListingSearch;
 import com.tll.common.search.INamedQuerySearch;
 import com.tll.criteria.Criteria;
+import com.tll.criteria.IQueryParam;
 import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.model.IEntity;
-import com.tll.schema.IQueryParam;
 
 /**
  * AbstractListingSearchTranslator

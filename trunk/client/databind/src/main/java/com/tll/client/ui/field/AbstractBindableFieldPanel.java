@@ -136,8 +136,9 @@ public abstract class AbstractBindableFieldPanel<W extends Widget> extends Abstr
 			updateFields();
 
 			// apply property metadata and model new flag (sets incremental validation flag)
-			Log.debug("Applying prop metadata to fields..");
-			getFieldGroup().applyPropertyMetadata(model, model.isNew());
+			// TODO iterate the field group and set manually!
+			//Log.debug("Applying prop metadata to fields..");
+			//getFieldGroup().applyPropertyMetadata(model, model.isNew());
 		}
 	}
 

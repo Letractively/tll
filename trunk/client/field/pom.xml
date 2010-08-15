@@ -103,12 +103,6 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-schema</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
       <artifactId>tll-client-core</artifactId>
       <version>${project.version}</version>
     </dependency>

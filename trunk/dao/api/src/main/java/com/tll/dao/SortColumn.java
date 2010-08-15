@@ -3,7 +3,7 @@ package com.tll.dao;
 import java.io.Serializable;
 
 import com.tll.IMarshalable;
-import com.tll.schema.IPropertyNameProvider;
+import com.tll.IPropertyNameProvider;
 
 /**
  * Represents a sort directive for a single "column".
