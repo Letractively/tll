@@ -5,7 +5,6 @@
 package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.CheckBox;
-import com.tll.client.convert.ToBooleanConverter;
 import com.tll.client.convert.ToStringConverter;
 
 /**
@@ -57,7 +56,7 @@ public final class CheckboxField extends AbstractField<Boolean> {
 	 */
 	CheckboxField(String name, String propName, String labelText, String helpText) {
 		super(name, propName, null, helpText);
-		setConverter(ToBooleanConverter.DEFAULT);
+		//setConverter(ToBooleanConverter.DEFAULT);
 		this.cblabelText = labelText;
 		cb = new Impl(cblabelText);
 		cb.addFocusHandler(this);

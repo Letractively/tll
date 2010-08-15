@@ -21,7 +21,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
-import com.tll.client.convert.ToStringConverter;
 
 /**
  * SuggestField
@@ -129,7 +128,7 @@ public final class SuggestField extends AbstractDataField<String, String> {
 		});
 		sb.addFocusHandler(this);
 		sb.addBlurHandler(this);
-		setConverter(ToStringConverter.INSTANCE);
+		//setConverter(ToStringConverter.INSTANCE);
 		setData(data);
 	}
 

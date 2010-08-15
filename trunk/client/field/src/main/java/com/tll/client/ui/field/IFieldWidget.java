@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.IPropertyNameProvider;
-import com.tll.client.convert.IHasConverter;
 import com.tll.client.ui.IHasHelpText;
 import com.tll.client.validate.IValidator;
 
@@ -21,7 +20,7 @@ import com.tll.client.validate.IValidator;
  * @param <V> value type
  * @author jpk
  */
-public interface IFieldWidget<V> extends IField, IPropertyNameProvider, HasValue<V>, HasText, IHasHelpText, IValidator, ValueChangeHandler<V>, Focusable, BlurHandler, FocusHandler, IHasConverter<Object, V> {
+public interface IFieldWidget<V> extends IField, IPropertyNameProvider, HasValue<V>, HasText, IHasHelpText, IValidator, ValueChangeHandler<V>, Focusable, BlurHandler, FocusHandler {
 
 	/**
 	 * Styles - (field.css)

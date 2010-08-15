@@ -8,7 +8,6 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.ui.TextBox;
-import com.tll.client.convert.ToStringConverter;
 import com.tll.client.ui.IHasFormat;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.StringLengthValidator;
@@ -57,7 +56,7 @@ public final class TextField extends AbstractField<String> implements IHasMaxLen
 		tb.addValueChangeHandler(this);
 		tb.addFocusHandler(this);
 		tb.addBlurHandler(this);
-		setConverter(ToStringConverter.INSTANCE);
+		//setConverter(ToStringConverter.INSTANCE);
 		addHandler(new KeyPressHandler() {
 
 			public void onKeyPress(KeyPressEvent event) {

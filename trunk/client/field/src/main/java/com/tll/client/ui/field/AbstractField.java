@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.convert.IConverter;
 import com.tll.client.validate.CompositeValidator;
 import com.tll.client.validate.Error;
 import com.tll.client.validate.ErrorClassifier;
@@ -111,11 +110,6 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	 * Flag to indicate whether or not the initial value is set.
 	 */
 	private boolean initialValueSet;
-
-	/**
-	 * The converter for handling in-bound un-typed values.
-	 */
-	private IConverter<V, Object> converter;
 
 	private IErrorHandler errorHandler;
 
@@ -595,16 +589,6 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 			// we don't want auto-transfer!!!
 			//adapter.getChangeSupport().firePropertyChange(PROPERTY_VALUE, old, oldValue);
 		}
-	}
-
-	@Override
-	public final IConverter<V, Object> getConverter() {
-		return converter;
-	}
-
-	@Override
-	public final void setConverter(IConverter<V, Object> converter) {
-		this.converter = converter;
 	}
 
 	@Override

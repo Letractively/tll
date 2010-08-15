@@ -120,7 +120,7 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 		if(format != null && !format.isDateFormat()) throw new IllegalArgumentException();
 		this.dateFormat = format == null ? GlobalFormat.DATE : format;
 		dbox.setFormat(new DefaultFormat(Fmt.getDateTimeFormat(dateFormat)));
-		setConverter(new ToDateConverter());
+		//setConverter(new ToDateConverter());
 	}
 
 	@Override

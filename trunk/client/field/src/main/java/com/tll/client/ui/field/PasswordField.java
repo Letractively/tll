@@ -9,7 +9,6 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.tll.client.convert.ToStringConverter;
 import com.tll.client.validate.StringLengthValidator;
 
 /**
@@ -51,7 +50,7 @@ public final class PasswordField extends AbstractField<String> implements IHasMa
 		tb.addValueChangeHandler(this);
 		tb.addFocusHandler(this);
 		tb.addBlurHandler(this);
-		setConverter(ToStringConverter.INSTANCE);
+		//setConverter(ToStringConverter.INSTANCE);
 		addHandler(new KeyPressHandler() {
 
 			@Override
