@@ -180,19 +180,6 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao-jdo-rdbms</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-dao-jdo-rdbms</artifactId>
-      <version>${project.version}</version>
-      <classifier>testassets</classifier>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
       <artifactId>tll-dao-db4o</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>

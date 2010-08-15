@@ -20,7 +20,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<asmVersion>3.2</asmVersion>
-		<db4oVersion>7.4.121.14026</db4oVersion>
+		<db4oVersion>8.0-SNAPSHOT</db4oVersion>
 		<springextensions.db4o.version>1.0.0e</springextensions.db4o.version>
 
 		<aspectjVersion>1.6.5</aspectjVersion>
@@ -559,8 +559,8 @@
 
 			<!-- db4o -->
 			<dependency>
-				<groupId>db4o</groupId>
-				<artifactId>db4o</artifactId>
+				<groupId>com.db4o</groupId>
+				<artifactId>db4o-full-java5</artifactId>
 				<version>${db4oVersion}</version>
 			</dependency>
 
@@ -682,43 +682,6 @@
 				<groupId>com.google.code.guice</groupId>
 				<artifactId>guice</artifactId>
 				<version>2.0</version>
-			</dependency>
-
-			<!-- google app engine -->
-			<dependency>
-				<groupId>com.google</groupId>
-				<artifactId>appengine-tools</artifactId>
-				<version>${gaeVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.google</groupId>
-				<artifactId>appengine-local-runtime-shared</artifactId>
-				<version>${gaeVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.google</groupId>
-				<artifactId>appengine-sdk-api</artifactId>
-				<version>${gaeVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.google</groupId>
-				<artifactId>appengine-api</artifactId>
-				<version>${gaeVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.google</groupId>
-				<artifactId>appengine-api-labs</artifactId>
-				<version>${gaeVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.google</groupId>
-				<artifactId>appengine-api-stubs</artifactId>
-				<version>${gaeVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.google</groupId>
-				<artifactId>appengine-local-runtime</artifactId>
-				<version>${gaeVersion}</version>
 			</dependency>
 
 			<!-- GWT -->

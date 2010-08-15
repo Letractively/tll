@@ -144,10 +144,6 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	@SuppressWarnings("unchecked")
 	@Override
 	protected final void beforeClass() {
-		if(testEnv != null) {
-			testEnv.setupTestEnvironment();
-		}
-
 		// get the dao test handlers
 		entityHandlers = getDaoTestHandlers();
 		if(entityHandlers == null || entityHandlers.length < 1) {
