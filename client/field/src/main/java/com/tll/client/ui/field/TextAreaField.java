@@ -5,7 +5,6 @@
 package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.TextArea;
-import com.tll.client.convert.ToStringConverter;
 import com.tll.client.validate.StringLengthValidator;
 
 /**
@@ -48,7 +47,7 @@ public class TextAreaField extends AbstractField<String> implements IHasMaxLengt
 		ta.addValueChangeHandler(this);
 		ta.addFocusHandler(this);
 		ta.addBlurHandler(this);
-		setConverter(ToStringConverter.INSTANCE);
+		//setConverter(ToStringConverter.INSTANCE);
 		setNumRows(numRows);
 		setNumCols(numCols);
 	}
