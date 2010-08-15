@@ -20,6 +20,7 @@
   			<directory>src/main/java</directory>
   			<includes>
   				<include>**/criteria/CriteriaType.java</include>
+  				<include>**/criteria/IQueryParam.java</include>
   				<include>**/dao/SortColumn.java</include>
   				<include>**/dao/SortDir.java</include>
   				<include>**/dao/Sorting.java</include>
@@ -137,11 +138,13 @@
       </exclusions>
   	</dependency>
 
+		<!-- 
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-servlet</artifactId>
 		</dependency>
-		
+		-->
+
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-config</artifactId>

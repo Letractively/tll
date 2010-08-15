@@ -1,6 +1,7 @@
 <module>
 	<source path=""><!-- (i.e. the current dir) -->
 		<include name="IProvider.java" />
+		<include name="IPropertyNameProvider.java" />
 		<include name="IPropertyValueProvider.java" />
 		<include name="INameValueProvider.java" />
 		<include name="IDescriptorProvider.java" />

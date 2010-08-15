@@ -11,10 +11,10 @@ import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.IPropertyNameProvider;
 import com.tll.client.convert.IHasConverter;
 import com.tll.client.ui.IHasHelpText;
 import com.tll.client.validate.IValidator;
-import com.tll.schema.IPropertyNameProvider;
 
 /**
  * IFieldWidget - A physical non-group field capable of display in the ui.

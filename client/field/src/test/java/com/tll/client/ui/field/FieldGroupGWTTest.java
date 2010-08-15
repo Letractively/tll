@@ -10,8 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.google.gwt.junit.client.GWTTestCase;
+import com.tll.IPropertyNameProvider;
 import com.tll.client.test.TestFieldGroupProviders;
-import com.tll.schema.IPropertyNameProvider;
 
 /**
  * FieldGroupGWTTest

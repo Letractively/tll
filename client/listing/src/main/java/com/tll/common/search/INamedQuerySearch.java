@@ -8,7 +8,7 @@ package com.tll.common.search;
 import java.util.List;
 
 import com.tll.common.model.IEntityTypeProvider;
-import com.tll.schema.IQueryParam;
+import com.tll.criteria.IQueryParam;
 
 
 /**
