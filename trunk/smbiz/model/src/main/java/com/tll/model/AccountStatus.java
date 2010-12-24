@@ -20,10 +20,12 @@ public enum AccountStatus implements INameValueProvider<String>, IMarshalable {
 		this.name = name;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String getValue() {
 		return toString();
 	}

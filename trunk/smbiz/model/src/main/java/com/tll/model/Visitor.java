@@ -5,16 +5,12 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-
 /**
  * The visitor entity (those people who visit a storefront site).
  * @author jpk
  */
-@BusinessObject(businessKeys =
-	@BusinessKeyDef(name = "Account Id, Date Created, Remote Host",properties = { "account.id", "dateCreated", "remoteHost" })
-)
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Account Id, Date Created, Remote Host", properties = {
+	"account.id", "dateCreated", "remoteHost" }))
 public class Visitor extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 3466539674112418212L;
@@ -34,6 +30,7 @@ public class Visitor extends TimeStampEntity implements IChildEntity<Account>, I
 
 	private Account account;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return Visitor.class;
 	}
@@ -49,7 +46,7 @@ public class Visitor extends TimeStampEntity implements IChildEntity<Account>, I
 	/**
 	 * @param account The account to set.
 	 */
-	public void setAccount(Account account) {
+	public void setAccount(final Account account) {
 		this.account = account;
 	}
 
@@ -64,7 +61,7 @@ public class Visitor extends TimeStampEntity implements IChildEntity<Account>, I
 	/**
 	 * @param mc The mc to set.
 	 */
-	public void setMc(String mc) {
+	public void setMc(final String mc) {
 		this.mc = mc;
 	}
 
@@ -79,7 +76,7 @@ public class Visitor extends TimeStampEntity implements IChildEntity<Account>, I
 	/**
 	 * @param remoteAddr The remoteAddr to set.
 	 */
-	public void setRemoteAddr(String remoteAddr) {
+	public void setRemoteAddr(final String remoteAddr) {
 		this.remoteAddr = remoteAddr;
 	}
 
@@ -95,7 +92,7 @@ public class Visitor extends TimeStampEntity implements IChildEntity<Account>, I
 	/**
 	 * @param remoteHost The remoteHost to set.
 	 */
-	public void setRemoteHost(String remoteHost) {
+	public void setRemoteHost(final String remoteHost) {
 		this.remoteHost = remoteHost;
 	}
 
@@ -111,18 +108,21 @@ public class Visitor extends TimeStampEntity implements IChildEntity<Account>, I
 	/**
 	 * @param remoteUser The remoteUser to set.
 	 */
-	public void setRemoteUser(String remoteUser) {
+	public void setRemoteUser(final String remoteUser) {
 		this.remoteUser = remoteUser;
 	}
 
+	@Override
 	public Account getParent() {
 		return getAccount();
 	}
 
-	public void setParent(Account e) {
+	@Override
+	public void setParent(final Account e) {
 		setAccount(e);
 	}
 
+	@Override
 	public Object accountKey() {
 		try {
 			return getAccount().getId();

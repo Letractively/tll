@@ -5,9 +5,6 @@ import java.util.Date;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-
 /**
  * Defines site codes (online "coupons")
  * @author jpk
@@ -26,6 +23,7 @@ public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Accou
 
 	private Account account;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return SiteCode.class;
 	}
@@ -47,7 +45,7 @@ public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Accou
 	/**
 	 * @param account The account to set.
 	 */
-	public void setAccount(Account account) {
+	public void setAccount(final Account account) {
 		this.account = account;
 	}
 
@@ -61,7 +59,7 @@ public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Accou
 	/**
 	 * @param code The code to set.
 	 */
-	public void setCode(String code) {
+	public void setCode(final String code) {
 		this.code = code;
 	}
 
@@ -75,18 +73,21 @@ public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Accou
 	/**
 	 * @param expirationDate The expirationDate to set.
 	 */
-	public void setExpirationDate(Date expirationDate) {
+	public void setExpirationDate(final Date expirationDate) {
 		this.expirationDate = expirationDate;
 	}
 
+	@Override
 	public Account getParent() {
 		return getAccount();
 	}
 
-	public void setParent(Account e) {
+	@Override
+	public void setParent(final Account e) {
 		setAccount(e);
 	}
 
+	@Override
 	public Object accountKey() {
 		try {
 			return getAccount().getId();

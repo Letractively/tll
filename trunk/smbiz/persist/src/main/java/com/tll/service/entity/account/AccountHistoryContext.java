@@ -9,7 +9,7 @@ import com.tll.model.CustomerAccount;
  * @author jpk
  */
 public class AccountHistoryContext {
-	
+
 	/**
 	 * AccountHistoryOp
 	 * @author jpk
@@ -25,43 +25,45 @@ public class AccountHistoryContext {
 
 		private final String name;
 
-		private AccountHistoryOp(String name) {
+		private AccountHistoryOp(final String name) {
 			this.name = name;
 		}
 
+		@Override
 		public String getName() {
 			return name;
 		}
 
+		@Override
 		public String getValue() {
 			return name();
 		}
 
 	}
-	
+
 	AccountHistoryOp op;
-  Account account;
-  CustomerAccount customerAccount;
-  
-  public AccountHistoryContext(AccountHistoryOp op, Account account) {
-    this.op = op;
-    this.account = account;
-  }
-  
-  public AccountHistoryContext(AccountHistoryOp op, CustomerAccount customerAccount) {
-    this.op = op;
-    this.customerAccount = customerAccount;
-  }
+	Account account;
+	CustomerAccount customerAccount;
 
-  public Account getAccount() {
-    return account;
-  }
+	public AccountHistoryContext(final AccountHistoryOp op, final Account account) {
+		this.op = op;
+		this.account = account;
+	}
 
-  public CustomerAccount getCustomerAccount() {
-    return customerAccount;
-  }
+	public AccountHistoryContext(final AccountHistoryOp op, final CustomerAccount customerAccount) {
+		this.op = op;
+		this.customerAccount = customerAccount;
+	}
 
-  public AccountHistoryOp getOp() {
-    return op;
-  }
+	public Account getAccount() {
+		return account;
+	}
+
+	public CustomerAccount getCustomerAccount() {
+		return customerAccount;
+	}
+
+	public AccountHistoryOp getOp() {
+		return op;
+	}
 }

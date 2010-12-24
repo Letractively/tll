@@ -1,6 +1,5 @@
 package com.tll.model;
 
-import com.tll.schema.Extended;
 
 /**
  * The ASP entity
@@ -16,6 +15,7 @@ public class Asp extends Account {
 	 */
 	public static final String ASP_NAME = "asp";
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return Asp.class;
 	}

@@ -2,17 +2,13 @@ package com.tll.model;
 
 import javax.validation.constraints.NotNull;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-
 /**
  * Used to hold shipping rates in terms of upper/lower bounds of a product's
  * "weight"
  * @author jpk
  */
-@BusinessObject(businessKeys =
-	@BusinessKeyDef(name = "Ship Mode Id, Lower Bound and Upper Bound", properties = { "shipMode.id", "lbound", "ubound" })
-)
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Ship Mode Id, Lower Bound and Upper Bound", properties = {
+	"shipMode.id", "lbound", "ubound" }))
 public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipMode>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -5074831489410804639L;
@@ -25,6 +21,7 @@ public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipM
 
 	private ShipMode shipMode;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return ShipBoundCost.class;
 	}
@@ -40,7 +37,7 @@ public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipM
 	/**
 	 * @param shipMode The shipMode to set.
 	 */
-	public void setShipMode(ShipMode shipMode) {
+	public void setShipMode(final ShipMode shipMode) {
 		this.shipMode = shipMode;
 	}
 
@@ -55,7 +52,7 @@ public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipM
 	/**
 	 * @param cost The cost to set.
 	 */
-	public void setCost(float cost) {
+	public void setCost(final float cost) {
 		this.cost = cost;
 	}
 
@@ -70,7 +67,7 @@ public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipM
 	/**
 	 * @param bound The lBound to set.
 	 */
-	public void setLbound(float bound) {
+	public void setLbound(final float bound) {
 		lbound = bound;
 	}
 
@@ -85,18 +82,21 @@ public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipM
 	/**
 	 * @param bound The uBound to set.
 	 */
-	public void setUbound(float bound) {
+	public void setUbound(final float bound) {
 		ubound = bound;
 	}
 
+	@Override
 	public ShipMode getParent() {
 		return getShipMode();
 	}
 
-	public void setParent(ShipMode e) {
+	@Override
+	public void setParent(final ShipMode e) {
 		setShipMode(e);
 	}
 
+	@Override
 	public Object accountKey() {
 		try {
 			return getShipMode().getAccount().getId();

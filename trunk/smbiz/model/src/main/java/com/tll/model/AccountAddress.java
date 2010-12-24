@@ -6,18 +6,15 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-
 /**
  * The account address entity holding a refs to a single account and single
  * address.
  * @author jpk
  */
 @BusinessObject(businessKeys = {
-	@BusinessKeyDef(name = "Account Id and Address Id", properties = { "account.id", "address.id" }),
-	@BusinessKeyDef(name = "Account Id and Name", properties = { "account.id", INamedEntity.NAME })
-})
+	@BusinessKeyDef(name = "Account Id and Address Id", properties = {
+		"account.id", "address.id" }), @BusinessKeyDef(name = "Account Id and Name", properties = {
+		"account.id", INamedEntity.NAME }) })
 public class AccountAddress extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 7356724207827323290L;
@@ -30,6 +27,7 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 
 	private AddressType type;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return AccountAddress.class;
 	}
@@ -52,7 +50,7 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 	/**
 	 * @param account The account to set.
 	 */
-	public void setAccount(Account account) {
+	public void setAccount(final Account account) {
 		this.account = account;
 	}
 
@@ -68,7 +66,7 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 	/**
 	 * @param address The address to set.
 	 */
-	public void setAddress(Address address) {
+	public void setAddress(final Address address) {
 		this.address = address;
 	}
 
@@ -80,18 +78,21 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 		return type;
 	}
 
-	public void setType(AddressType type) {
+	public void setType(final AddressType type) {
 		this.type = type;
 	}
 
+	@Override
 	public Account getParent() {
 		return getAccount();
 	}
 
-	public void setParent(Account e) {
+	@Override
+	public void setParent(final Account e) {
 		setAccount(e);
 	}
 
+	@Override
 	public Object accountKey() {
 		try {
 			return getAccount().getId();

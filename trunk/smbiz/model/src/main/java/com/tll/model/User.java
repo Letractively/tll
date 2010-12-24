@@ -17,16 +17,12 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.userdetails.UserDetails;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-
 /**
  * The account user entity
  * @author jpk
  */
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Email Address", properties = { "emailAddress" }))
-public class User extends NamedTimeStampEntity implements UserDetails, IChildEntity<Account>, IAccountRelatedEntity,
-IUserRef {
+public class User extends NamedTimeStampEntity implements UserDetails, IChildEntity<Account>, IAccountRelatedEntity, IUserRef {
 
 	private static final long serialVersionUID = -6126885590318834318L;
 
@@ -52,6 +48,7 @@ IUserRef {
 
 	private Address address;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return User.class;
 	}
@@ -62,6 +59,7 @@ IUserRef {
 		return name;
 	}
 
+	@Override
 	@NotEmpty
 	@Email
 	@Length(max = MAXLEN_EMAIL_ADDRESS)
@@ -69,13 +67,14 @@ IUserRef {
 		return emailAddress;
 	}
 
-	public void setEmailAddress(String emailAddress) {
+	public void setEmailAddress(final String emailAddress) {
 		this.emailAddress = emailAddress;
 	}
 
 	/**
 	 * @return Returns the password.
 	 */
+	@Override
 	@NotEmpty
 	@Length(max = MAXLEN_PASSWORD)
 	public String getPassword() {
@@ -85,7 +84,7 @@ IUserRef {
 	/**
 	 * @param password The password to set.
 	 */
-	public void setPassword(String password) {
+	public void setPassword(final String password) {
 		this.password = password;
 	}
 
@@ -100,7 +99,7 @@ IUserRef {
 	/**
 	 * @param expires the expires to set
 	 */
-	public void setExpires(Date expires) {
+	public void setExpires(final Date expires) {
 		this.expires = expires;
 	}
 
@@ -115,7 +114,7 @@ IUserRef {
 	/**
 	 * @param locked the locked to set
 	 */
-	public void setLocked(boolean locked) {
+	public void setLocked(final boolean locked) {
 		this.locked = locked;
 	}
 
@@ -132,7 +131,7 @@ IUserRef {
 	 * @param role the role as a string
 	 * @return true if this user is "in" the given role, false otherwise.
 	 */
-	public boolean inRole(String role) {
+	public boolean inRole(final String role) {
 		final Set<Authority> as = getAuthoritys();
 		if(as == null) return false;
 		for(final Authority a : as) {
@@ -144,31 +143,31 @@ IUserRef {
 	/**
 	 * @param authorities the authorities to set
 	 */
-	public void setAuthoritys(Set<Authority> authorities) {
+	public void setAuthoritys(final Set<Authority> authorities) {
 		this.authorities = authorities;
 	}
 
-	public Authority getAuthority(Object pk) {
+	public Authority getAuthority(final Object pk) {
 		return findEntityInCollection(authorities, pk);
 	}
 
-	public Authority getAuthority(String nme) {
+	public Authority getAuthority(final String nme) {
 		return findNamedEntityInCollection(authorities, nme);
 	}
 
-	public void addAuthority(Authority authority) {
+	public void addAuthority(final Authority authority) {
 		addEntityToCollection(authorities, authority);
 	}
 
-	public void addAuthorities(Collection<Authority> clc) {
+	public void addAuthorities(final Collection<Authority> clc) {
 		addEntitiesToCollection(clc, authorities);
 	}
 
-	public void removeAuthority(Authority authority) {
+	public void removeAuthority(final Authority authority) {
 		removeEntityFromCollection(authorities, authority);
 	}
 
-	public void removeAuthorities(Collection<Authority> clc) {
+	public void removeAuthorities(final Collection<Authority> clc) {
 		clearEntityCollection(authorities);
 	}
 
@@ -187,7 +186,7 @@ IUserRef {
 	/**
 	 * @param account The account to set.
 	 */
-	public void setAccount(Account account) {
+	public void setAccount(final Account account) {
 		this.account = account;
 	}
 
@@ -201,18 +200,21 @@ IUserRef {
 	/**
 	 * @param address The address to set.
 	 */
-	public void setAddress(Address address) {
+	public void setAddress(final Address address) {
 		this.address = address;
 	}
 
+	@Override
 	public Account getParent() {
 		return getAccount();
 	}
 
-	public void setParent(Account e) {
+	@Override
+	public void setParent(final Account e) {
 		setAccount(e);
 	}
 
+	@Override
 	public Object accountKey() {
 		try {
 			return getAccount().getId();
@@ -227,35 +229,41 @@ IUserRef {
 	 * Acegi implementation must not return null
 	 * @return array of granted authorities
 	 */
+	@Override
 	public GrantedAuthority[] getAuthorities() {
 		return authorities == null ? new Authority[0] : authorities.toArray(new Authority[authorities.size()]);
 	}
 
+	@Override
 	public String getUsername() {
 		return getEmailAddress();
 	}
 
-	public void setUsername(String username) {
+	public void setUsername(final String username) {
 		setEmailAddress(username);
 	}
 
+	@Override
 	public boolean isAccountNonExpired() {
 		return (new Date()).getTime() < (expires == null ? 0L : expires.getTime());
 	}
 
+	@Override
 	public boolean isAccountNonLocked() {
 		return !getLocked();
 	}
 
+	@Override
 	public boolean isCredentialsNonExpired() {
 		return true;
 	}
 
+	@Override
 	public boolean isEnabled() {
 		return enabled;
 	}
 
-	public void setEnabled(boolean enabled) {
+	public void setEnabled(final boolean enabled) {
 		this.enabled = enabled;
 	}
 }

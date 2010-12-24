@@ -9,16 +9,12 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-
 /**
  * Order item entity
  * @author jpk
  */
-@BusinessObject(businessKeys =
-	@BusinessKeyDef(name = "Order Id and SKU", properties = { "order.id", "sku" })
-)
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Order Id and SKU", properties = {
+	"order.id", "sku" }))
 public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Order>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 5728694308136658158L;
@@ -48,6 +44,7 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 
 	private Set<OrderItemTrans> transactions = new LinkedHashSet<OrderItemTrans>();
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return OrderItem.class;
 	}
@@ -71,7 +68,7 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 	/**
 	 * @param description The description to set.
 	 */
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
@@ -86,7 +83,7 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 	/**
 	 * @param image The image to set.
 	 */
-	public void setImage(String image) {
+	public void setImage(final String image) {
 		this.image = image;
 	}
 
@@ -101,7 +98,7 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 	/**
 	 * @param itemStatus The itemStatus to set.
 	 */
-	public void setItemStatus(OrderItemStatus itemStatus) {
+	public void setItemStatus(final OrderItemStatus itemStatus) {
 		this.itemStatus = itemStatus;
 	}
 
@@ -116,7 +113,7 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 	/**
 	 * @param order The order to set.
 	 */
-	public void setOrder(Order order) {
+	public void setOrder(final Order order) {
 		this.order = order;
 	}
 
@@ -131,7 +128,7 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 	/**
 	 * @param payStatus The payStatus to set.
 	 */
-	public void setPayStatus(PaymentItemStatus payStatus) {
+	public void setPayStatus(final PaymentItemStatus payStatus) {
 		this.payStatus = payStatus;
 	}
 
@@ -146,7 +143,7 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 	/**
 	 * @param price The price to set.
 	 */
-	public void setPrice(float price) {
+	public void setPrice(final float price) {
 		this.price = price;
 	}
 
@@ -161,7 +158,7 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 	/**
 	 * @param qty The qty to set.
 	 */
-	public void setQty(int qty) {
+	public void setQty(final int qty) {
 		this.qty = qty;
 	}
 
@@ -177,7 +174,7 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 	/**
 	 * @param sku The sku to set.
 	 */
-	public void setSku(String sku) {
+	public void setSku(final String sku) {
 		this.sku = sku;
 	}
 
@@ -192,7 +189,7 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 	/**
 	 * @param weight The weight to set.
 	 */
-	public void setWeight(float weight) {
+	public void setWeight(final float weight) {
 		this.weight = weight;
 	}
 
@@ -206,23 +203,23 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 	/**
 	 * @param transactions The transactions to set.
 	 */
-	public void setTransactions(Set<OrderItemTrans> transactions) {
+	public void setTransactions(final Set<OrderItemTrans> transactions) {
 		this.transactions = transactions;
 	}
 
-	public OrderItemTrans getItemTransaction(Object pk) {
+	public OrderItemTrans getItemTransaction(final Object pk) {
 		return findEntityInCollection(transactions, pk);
 	}
 
-	public void addItemTransaction(OrderItemTrans e) {
+	public void addItemTransaction(final OrderItemTrans e) {
 		addEntityToCollection(transactions, e);
 	}
 
-	public void addItemTransactions(Collection<OrderItemTrans> clc) {
+	public void addItemTransactions(final Collection<OrderItemTrans> clc) {
 		addEntitiesToCollection(clc, transactions);
 	}
 
-	public void removeTransaction(OrderItemTrans e) {
+	public void removeTransaction(final OrderItemTrans e) {
 		removeEntityFromCollection(transactions, e);
 	}
 
@@ -234,14 +231,17 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 		return getCollectionSize(transactions);
 	}
 
+	@Override
 	public Order getParent() {
 		return getOrder();
 	}
 
-	public void setParent(Order e) {
+	@Override
+	public void setParent(final Order e) {
 		setOrder(e);
 	}
 
+	@Override
 	public Object accountKey() {
 		try {
 			return getOrder().getAccount().getId();

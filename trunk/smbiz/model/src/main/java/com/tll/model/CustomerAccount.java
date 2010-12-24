@@ -3,16 +3,12 @@ package com.tll.model;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-
 /**
  * The customer account entity
  * @author jpk
  */
-@BusinessObject(businessKeys =
-	@BusinessKeyDef(name = "Customer Id and Account Id", properties = { "customer.id", "account.id" })
-)
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Customer Id and Account Id", properties = {
+	"customer.id", "account.id" }))
 public class CustomerAccount extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 7262902363821073379L;
@@ -27,6 +23,7 @@ public class CustomerAccount extends TimeStampEntity implements IChildEntity<Acc
 
 	private Visitor initialVisitorRecord;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return CustomerAccount.class;
 	}
@@ -43,7 +40,7 @@ public class CustomerAccount extends TimeStampEntity implements IChildEntity<Acc
 	/**
 	 * @param customer The customer to set.
 	 */
-	public void setCustomer(Customer customer) {
+	public void setCustomer(final Customer customer) {
 		this.customer = customer;
 	}
 
@@ -58,7 +55,7 @@ public class CustomerAccount extends TimeStampEntity implements IChildEntity<Acc
 	/**
 	 * @param account The account to set.
 	 */
-	public void setAccount(Account account) {
+	public void setAccount(final Account account) {
 		this.account = account;
 	}
 
@@ -73,7 +70,7 @@ public class CustomerAccount extends TimeStampEntity implements IChildEntity<Acc
 	/**
 	 * @param source The source to set.
 	 */
-	public void setSource(AccountSource source) {
+	public void setSource(final AccountSource source) {
 		this.source = source;
 	}
 
@@ -88,7 +85,7 @@ public class CustomerAccount extends TimeStampEntity implements IChildEntity<Acc
 	/**
 	 * @param status The status to set.
 	 */
-	public void setStatus(AccountStatus status) {
+	public void setStatus(final AccountStatus status) {
 		this.status = status;
 	}
 
@@ -102,18 +99,21 @@ public class CustomerAccount extends TimeStampEntity implements IChildEntity<Acc
 	/**
 	 * @param initialVisitorRecord The initialVisitorRecord to set.
 	 */
-	public void setInitialVisitorRecord(Visitor initialVisitorRecord) {
+	public void setInitialVisitorRecord(final Visitor initialVisitorRecord) {
 		this.initialVisitorRecord = initialVisitorRecord;
 	}
 
+	@Override
 	public Account getParent() {
 		return getAccount();
 	}
 
-	public void setParent(Account e) {
+	@Override
+	public void setParent(final Account e) {
 		setAccount(e);
 	}
 
+	@Override
 	public Object accountKey() {
 		try {
 			return getAccount().getId();

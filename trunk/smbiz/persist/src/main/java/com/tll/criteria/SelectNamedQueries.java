@@ -33,18 +33,22 @@ public enum SelectNamedQueries implements ISelectNamedQueryDef {
 		this.supportsPaging = supportsPaging;
 	}
 
+	@Override
 	public String getQueryName() {
 		return queryName;
 	}
 
+	@Override
 	public Class<?> getEntityType() {
 		return entityType;
 	}
 
+	@Override
 	public boolean isScalar() {
 		return scalar;
 	}
 
+	@Override
 	public boolean isSupportsPaging() {
 		return supportsPaging;
 	}

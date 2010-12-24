@@ -3,8 +3,6 @@ package com.tll.model;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.tll.schema.Extended;
-
 /**
  * The merchant entity
  * @author jpk
@@ -18,6 +16,7 @@ public class Merchant extends Account {
 
 	protected String storeName;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return Merchant.class;
 	}
@@ -34,7 +33,7 @@ public class Merchant extends Account {
 	/**
 	 * @param storeName The storeName to set.
 	 */
-	public void setStoreName(String storeName) {
+	public void setStoreName(final String storeName) {
 		this.storeName = storeName;
 	}
 }

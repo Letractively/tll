@@ -13,10 +13,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.tll.model.validate.AtLeastOne;
 import com.tll.model.validate.BusinessKeyUniqueness;
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-import com.tll.schema.Reference;
-import com.tll.schema.Root;
 
 /**
  * Account - Base class for account type entities.
@@ -78,12 +74,14 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 		return name;
 	}
 
+	@Override
 	@Reference
 	public Account getParent() {
 		return parent;
 	}
 
-	public void setParent(Account parent) {
+	@Override
+	public void setParent(final Account parent) {
 		this.parent = parent;
 	}
 
@@ -97,7 +95,7 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	/**
 	 * @param persistPymntInfo The persistPymntInfo to set.
 	 */
-	public void setPersistPymntInfo(boolean persistPymntInfo) {
+	public void setPersistPymntInfo(final boolean persistPymntInfo) {
 		this.persistPymntInfo = persistPymntInfo;
 	}
 
@@ -113,7 +111,7 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	/**
 	 * @param billingCycle The billingCycle to set.
 	 */
-	public void setBillingCycle(String billingCycle) {
+	public void setBillingCycle(final String billingCycle) {
 		this.billingCycle = billingCycle;
 	}
 
@@ -129,7 +127,7 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	/**
 	 * @param billingModel The billingModel to set.
 	 */
-	public void setBillingModel(String billingModel) {
+	public void setBillingModel(final String billingModel) {
 		this.billingModel = billingModel;
 	}
 
@@ -144,7 +142,7 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	/**
 	 * @param currency The currency to set.
 	 */
-	public void setCurrency(Currency currency) {
+	public void setCurrency(final Currency currency) {
 		this.currency = currency;
 	}
 
@@ -158,7 +156,7 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	/**
 	 * @param dateCancelled The dateCancelled to set.
 	 */
-	public void setDateCancelled(Date dateCancelled) {
+	public void setDateCancelled(final Date dateCancelled) {
 		this.dateCancelled = dateCancelled;
 	}
 
@@ -172,7 +170,7 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	/**
 	 * @param dateLastCharged The dateLastCharged to set.
 	 */
-	public void setDateLastCharged(Date dateLastCharged) {
+	public void setDateLastCharged(final Date dateLastCharged) {
 		this.dateLastCharged = dateLastCharged;
 	}
 
@@ -186,7 +184,7 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	/**
 	 * @param nextChargeDate The nextChargeDate to set.
 	 */
-	public void setNextChargeDate(Date nextChargeDate) {
+	public void setNextChargeDate(final Date nextChargeDate) {
 		this.nextChargeDate = nextChargeDate;
 	}
 
@@ -201,7 +199,7 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	/**
 	 * @param paymentInfo The paymentInfo to set.
 	 */
-	public void setPaymentInfo(PaymentInfo paymentInfo) {
+	public void setPaymentInfo(final PaymentInfo paymentInfo) {
 		this.paymentInfo = paymentInfo;
 	}
 
@@ -216,7 +214,7 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	/**
 	 * @param status The status to set.
 	 */
-	public void setStatus(AccountStatus status) {
+	public void setStatus(final AccountStatus status) {
 		this.status = status;
 	}
 
@@ -233,23 +231,23 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	/**
 	 * @param addresses The addresses to set.
 	 */
-	public void setAddresses(Set<AccountAddress> addresses) {
+	public void setAddresses(final Set<AccountAddress> addresses) {
 		this.addresses = addresses;
 	}
 
-	public AccountAddress getAccountAddress(Object pk) {
+	public AccountAddress getAccountAddress(final Object pk) {
 		return findEntityInCollection(this.addresses, pk);
 	}
 
-	public AccountAddress getAccountAddress(String nme) {
+	public AccountAddress getAccountAddress(final String nme) {
 		return findNamedEntityInCollection(this.addresses, nme);
 	}
 
-	public void addAccountAddress(AccountAddress e) {
+	public void addAccountAddress(final AccountAddress e) {
 		addEntityToCollection(addresses, e);
 	}
 
-	public void addAccountAddresses(Collection<AccountAddress> clctn) {
+	public void addAccountAddresses(final Collection<AccountAddress> clctn) {
 		addEntitiesToCollection(clctn, addresses);
 	}
 
@@ -257,7 +255,7 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 		clearEntityCollection(addresses);
 	}
 
-	public void removeAccountAddress(AccountAddress e) {
+	public void removeAccountAddress(final AccountAddress e) {
 		removeEntityFromCollection(addresses, e);
 	}
 
@@ -265,6 +263,7 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 		return getCollectionSize(addresses);
 	}
 
+	@Override
 	public Object accountKey() {
 		return super.getId();
 	}

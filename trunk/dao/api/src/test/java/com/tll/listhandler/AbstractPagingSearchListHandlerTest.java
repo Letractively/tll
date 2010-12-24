@@ -17,6 +17,7 @@ import com.google.inject.Inject;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
+import com.google.inject.TypeLiteral;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.AbstractDbAwareTest;
@@ -26,10 +27,12 @@ import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
+import com.tll.model.EGraphModule;
+import com.tll.model.IEntityFactory;
 import com.tll.model.egraph.EntityBeanFactory;
 import com.tll.model.test.Address;
 import com.tll.model.test.TestEntityFactory;
-import com.tll.model.test.TestPersistenceUnitModule;
+import com.tll.model.test.TestPersistenceUnitEntityGraphBuilder;
 
 /**
  * AbstractPagingSearchListHandlerTest
@@ -113,15 +116,18 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new TestPersistenceUnitModule(null, TestEntityFactory.class));
 		modules.add(new Module() {
 
 			@Override
 			public void configure(Binder binder) {
+				// IEntityFactory
+				binder.bind(new TypeLiteral<IEntityFactory<?>>() {}).to(TestEntityFactory.class).in(Scopes.SINGLETON);
+				
 				binder.bind(IListingDataProvider.class).to(TestDataProvider.class)
 						.in(Scopes.SINGLETON);
 			}
 		});
+		modules.add(new EGraphModule(TestPersistenceUnitEntityGraphBuilder.class, null));
 	}
 
 	@BeforeClass(alwaysRun = true)

@@ -29,6 +29,7 @@ public class AddAccountService {
 	private final IPaymentInfoService piService;
 	private final IInterfaceService iService;
 	private final IUserService userService;
+
 	// private final ICustomerAccountService caService;
 
 	/**
@@ -39,8 +40,8 @@ public class AddAccountService {
 	 * @param userService
 	 */
 	@Inject
-	public AddAccountService(IAccountService accountService, IPaymentInfoService piService,
-			IInterfaceService iService, IUserService userService/*, ICustomerAccountService caService*/) {
+	public AddAccountService(final IAccountService accountService, final IPaymentInfoService piService,
+			final IInterfaceService iService, final IUserService userService/*, ICustomerAccountService caService*/) {
 		super();
 		this.accountService = accountService;
 		this.piService = piService;
@@ -58,8 +59,8 @@ public class AddAccountService {
 	 * @throws EntityExistsException when the account already exists (by business
 	 *         key)
 	 */
-	private Account addAccount(Account account, Collection<AccountInterface> accountInterfaces,
-			Collection<User> users) throws EntityExistsException {
+	private Account addAccount(final Account account, final Collection<AccountInterface> accountInterfaces,
+			final Collection<User> users) throws EntityExistsException {
 
 		// create payment info
 		if(account.getPaymentInfo() != null && account.getPaymentInfo().isNew() && account.getPersistPymntInfo()) {
@@ -88,8 +89,8 @@ public class AddAccountService {
 	 * @throws EntityExistsException
 	 */
 	@Transactional
-	public Isp addIsp(Isp isp, Collection<AccountInterface> accountInterfaces, Collection<User> users)
-	throws ConstraintViolationException, EntityExistsException {
+	public Isp addIsp(final Isp isp, final Collection<AccountInterface> accountInterfaces, final Collection<User> users)
+			throws ConstraintViolationException, EntityExistsException {
 		return (Isp) addAccount(isp, accountInterfaces, users);
 	}
 
@@ -103,8 +104,8 @@ public class AddAccountService {
 	 * @throws EntityExistsException
 	 */
 	@Transactional
-	public Merchant addMerchant(Merchant merchant, Collection<AccountInterface> accountInterfaces,
-			Collection<User> users) throws ConstraintViolationException, EntityExistsException {
+	public Merchant addMerchant(final Merchant merchant, final Collection<AccountInterface> accountInterfaces,
+			final Collection<User> users) throws ConstraintViolationException, EntityExistsException {
 		return (Merchant) addAccount(merchant, accountInterfaces, users);
 	}
 
@@ -118,8 +119,8 @@ public class AddAccountService {
 	 * @throws EntityExistsException
 	 */
 	@Transactional
-	public Customer addCustomer(Customer customer, Collection<AccountInterface> accountInterfaces,
-			Collection<User> users) throws ConstraintViolationException, EntityExistsException {
+	public Customer addCustomer(final Customer customer, final Collection<AccountInterface> accountInterfaces,
+			final Collection<User> users) throws ConstraintViolationException, EntityExistsException {
 		return (Customer) addAccount(customer, accountInterfaces, users);
 	}
 

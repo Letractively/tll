@@ -5,16 +5,12 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-
 /**
  * Product category entity
  * @author jpk
  */
-@BusinessObject(businessKeys =
-	@BusinessKeyDef(name = "Account Id and Name", properties = { "account.id", INamedEntity.NAME })
-)
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Account Id and Name", properties = {
+	"account.id", INamedEntity.NAME }))
 public class ProductCategory extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 5218888162655443332L;
@@ -29,6 +25,7 @@ public class ProductCategory extends NamedTimeStampEntity implements IChildEntit
 
 	private String image;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return ProductCategory.class;
 	}
@@ -51,7 +48,7 @@ public class ProductCategory extends NamedTimeStampEntity implements IChildEntit
 	/**
 	 * @param description The description to set.
 	 */
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
@@ -66,7 +63,7 @@ public class ProductCategory extends NamedTimeStampEntity implements IChildEntit
 	/**
 	 * @param image The image to set.
 	 */
-	public void setImage(String image) {
+	public void setImage(final String image) {
 		this.image = image;
 	}
 
@@ -81,18 +78,21 @@ public class ProductCategory extends NamedTimeStampEntity implements IChildEntit
 	/**
 	 * @param account The account to set.
 	 */
-	public void setAccount(Account account) {
+	public void setAccount(final Account account) {
 		this.account = account;
 	}
 
+	@Override
 	public Account getParent() {
 		return getAccount();
 	}
 
-	public void setParent(Account e) {
+	@Override
+	public void setParent(final Account e) {
 		setAccount(e);
 	}
 
+	@Override
 	public Object accountKey() {
 		try {
 			return getAccount().getId();

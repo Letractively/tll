@@ -36,9 +36,9 @@
 							<goal>single</goal>
 						</goals>
 						<configuration>
-							<descriptors>
-								<descriptor>test-assets.xml</descriptor>
-							</descriptors>
+              <descriptorRefs>
+                <descriptorRef>test-assets</descriptorRef>
+              </descriptorRefs>
 						</configuration>
 					</execution>
 				</executions>
@@ -46,20 +46,6 @@
 
 		</plugins>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>jdo</id>
-			<dependencies>
-				<!-- required for resolution of JDO stuff in *enhanced* .class files tll-model testassets jar  -->
-				<dependency>
-					<groupId>javax.jdo</groupId>
-					<artifactId>jdo2-api</artifactId>
-					<scope>test</scope>
-				</dependency>
-			</dependencies>
-		</profile>
-	</profiles>
 
 	<dependencies>
 		<dependency>

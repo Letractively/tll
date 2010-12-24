@@ -23,10 +23,12 @@ import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
+import com.google.inject.TypeLiteral;
 import com.tll.config.Config;
 import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
 import com.tll.dao.IEntityDao;
+import com.tll.model.IEntityFactory;
 
 /**
  * AbstractDb4oDaoModule - Db4o dao impl module.
@@ -212,9 +214,8 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 			// @Transactional!
 		}
 
-		// this is in ModelBuildModule
 		// IEntityFactory
-		//bind(new TypeLiteral<IEntityFactory<?>>() {}).to(Db4oEntityFactory.class).in(Scopes.SINGLETON);
+		bind(new TypeLiteral<IEntityFactory<?>>() {}).to(Db4oEntityFactory.class).in(Scopes.SINGLETON);
 
 		// IDb4oNamedQueryTranslator
 		bind(IDb4oNamedQueryTranslator.class).to(getNamedQueryTranslatorImpl()).in(Scopes.SINGLETON);

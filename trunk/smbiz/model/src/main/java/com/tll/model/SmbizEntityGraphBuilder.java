@@ -26,7 +26,7 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphPopulator 
 	 * @param ebf the required entity bean factory
 	 */
 	@Inject
-	public SmbizEntityGraphBuilder(EntityBeanFactory ebf) {
+	public SmbizEntityGraphBuilder(final EntityBeanFactory ebf) {
 		super(ebf);
 	}
 
@@ -59,7 +59,7 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphPopulator 
 		addAll(Authority.class);
 	}
 
-	private <A extends Account> A stubAccount(Class<A> type, int num) throws Exception {
+	private <A extends Account> A stubAccount(final Class<A> type, final int num) throws Exception {
 		final A a = add(type, false);
 
 		if(num > 0) {
@@ -179,7 +179,8 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphPopulator 
 				customers[i] = c;
 			}
 			else {
-				final int merchantIndex = i / (2 * numMerchants); // TODO verify the math
+				final int merchantIndex = i / (2 * numMerchants); // TODO verify the
+																													// math
 				final Merchant merchant = merchants[merchantIndex];
 				parent = merchant;
 				ca.setAccount(merchant);
@@ -192,7 +193,7 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphPopulator 
 		}
 	}
 
-	private static InterfaceOption findInterfaceOption(String ioCode, Set<InterfaceOption> options) {
+	private static InterfaceOption findInterfaceOption(final String ioCode, final Set<InterfaceOption> options) {
 		for(final InterfaceOption io : options) {
 			if(ioCode.equals(io.getCode())) {
 				return io;
@@ -201,8 +202,8 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphPopulator 
 		return null;
 	}
 
-	private static InterfaceOptionParameterDefinition findParameterDefinition(String pdCode,
-			Set<InterfaceOptionParameterDefinition> params) {
+	private static InterfaceOptionParameterDefinition findParameterDefinition(final String pdCode,
+			final Set<InterfaceOptionParameterDefinition> params) {
 		for(final InterfaceOptionParameterDefinition pd : params) {
 			if(pdCode.equals(pd.getCode())) {
 				return pd;

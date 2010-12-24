@@ -8,16 +8,12 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-
 /**
  * Order trans entity
  * @author jpk
  */
-@BusinessObject(businessKeys =
-	@BusinessKeyDef(name = "Order Id, Date Created and Username", properties = { "order.id", "dateCreated", "username" })
-)
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Order Id, Date Created and Username", properties = {
+	"order.id", "dateCreated", "username" }))
 public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 8026809773722347843L;
@@ -56,6 +52,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 
 	private Set<OrderItemTrans> itemTransactions = new LinkedHashSet<OrderItemTrans>();
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return OrderTrans.class;
 	}
@@ -64,7 +61,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		return billToAddress;
 	}
 
-	public void setBillToAddress(Address billToAddress) {
+	public void setBillToAddress(final Address billToAddress) {
 		this.billToAddress = billToAddress;
 	}
 
@@ -73,7 +70,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		return itemTotal;
 	}
 
-	public void setItemTotal(float itemTotal) {
+	public void setItemTotal(final float itemTotal) {
 		this.itemTotal = itemTotal;
 	}
 
@@ -81,7 +78,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		return itemTransactions;
 	}
 
-	public void setItemTransactions(Set<OrderItemTrans> itemTransactions) {
+	public void setItemTransactions(final Set<OrderItemTrans> itemTransactions) {
 		this.itemTransactions = itemTransactions;
 	}
 
@@ -90,7 +87,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		return order;
 	}
 
-	public void setOrder(Order order) {
+	public void setOrder(final Order order) {
 		this.order = order;
 	}
 
@@ -99,7 +96,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		return orderTransOp;
 	}
 
-	public void setOrderTransOp(OrderTransOp orderTransOp) {
+	public void setOrderTransOp(final OrderTransOp orderTransOp) {
 		this.orderTransOp = orderTransOp;
 	}
 
@@ -108,7 +105,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		return orderTransResult;
 	}
 
-	public void setOrderTransResult(OrderTransOpResult orderTransResult) {
+	public void setOrderTransResult(final OrderTransOpResult orderTransResult) {
 		this.orderTransResult = orderTransResult;
 	}
 
@@ -116,7 +113,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		return pymntInfo;
 	}
 
-	public void setPymntInfo(PaymentInfo pymntInfo) {
+	public void setPymntInfo(final PaymentInfo pymntInfo) {
 		this.pymntInfo = pymntInfo;
 	}
 
@@ -124,7 +121,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		return pymntTrans;
 	}
 
-	public void setPymntTrans(PaymentTrans pymntTrans) {
+	public void setPymntTrans(final PaymentTrans pymntTrans) {
 		this.pymntTrans = pymntTrans;
 	}
 
@@ -133,7 +130,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		return salesTax;
 	}
 
-	public void setSalesTax(float salesTax) {
+	public void setSalesTax(final float salesTax) {
 		this.salesTax = salesTax;
 	}
 
@@ -143,7 +140,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		return shipCost;
 	}
 
-	public void setShipCost(float shipCost) {
+	public void setShipCost(final float shipCost) {
 		this.shipCost = shipCost;
 	}
 
@@ -152,7 +149,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		return shipModeName;
 	}
 
-	public void setShipModeName(String shipModeName) {
+	public void setShipModeName(final String shipModeName) {
 		this.shipModeName = shipModeName;
 	}
 
@@ -161,7 +158,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		return shipRoutingNum;
 	}
 
-	public void setShipRoutingNum(String shipRoutingNum) {
+	public void setShipRoutingNum(final String shipRoutingNum) {
 		this.shipRoutingNum = shipRoutingNum;
 	}
 
@@ -169,7 +166,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		return shipToAddress;
 	}
 
-	public void setShipToAddress(Address shipToAddress) {
+	public void setShipToAddress(final Address shipToAddress) {
 		this.shipToAddress = shipToAddress;
 	}
 
@@ -178,7 +175,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		return total;
 	}
 
-	public void setTotal(float total) {
+	public void setTotal(final float total) {
 		this.total = total;
 	}
 
@@ -188,19 +185,19 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		return username;
 	}
 
-	public void setUsername(String username) {
+	public void setUsername(final String username) {
 		this.username = username;
 	}
 
-	public OrderItemTrans getOrderItemTrans(Object pk) {
+	public OrderItemTrans getOrderItemTrans(final Object pk) {
 		return findEntityInCollection(itemTransactions, pk);
 	}
 
-	public void addOrderItemTrans(OrderItemTrans e) {
+	public void addOrderItemTrans(final OrderItemTrans e) {
 		addEntityToCollection(itemTransactions, e);
 	}
 
-	public void removeOrderItemTrans(OrderItemTrans e) {
+	public void removeOrderItemTrans(final OrderItemTrans e) {
 		removeEntityFromCollection(itemTransactions, e);
 	}
 
@@ -212,14 +209,17 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		return getCollectionSize(itemTransactions);
 	}
 
+	@Override
 	public Order getParent() {
 		return getOrder();
 	}
 
-	public void setParent(Order e) {
+	@Override
+	public void setParent(final Order e) {
 		setOrder(e);
 	}
 
+	@Override
 	public Object accountKey() {
 		try {
 			return getOrder().getAccount().getId();

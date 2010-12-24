@@ -7,10 +7,6 @@ package com.tll.model;
 
 import javax.validation.constraints.NotNull;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-import com.tll.schema.Transient;
-
 /**
  * AccountInterfaceOptionParameter - Pseudo-entity to facilitate ui interaction.
  * @author jpk
@@ -33,7 +29,7 @@ public class AccountInterfaceOptionParameter extends InterfaceOptionBase {
 		return value;
 	}
 
-	public void setValue(String value) {
+	public void setValue(final String value) {
 		this.value = value;
 	}
 

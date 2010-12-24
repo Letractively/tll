@@ -4,16 +4,12 @@ import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-
 /**
  * The account history entity
  * @author jpk
  */
-@BusinessObject(businessKeys =
-	@BusinessKeyDef(name = "Account Id, Transaction Date and Status", properties = { "account.id", "transDate", "status" })
-)
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Account Id, Transaction Date and Status", properties = {
+	"account.id", "transDate", "status" }))
 public class AccountHistory extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 5543822993709686604L;
@@ -28,6 +24,7 @@ public class AccountHistory extends TimeStampEntity implements IChildEntity<Acco
 
 	private PaymentTrans pymntTrans;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return AccountHistory.class;
 	}
@@ -43,7 +40,7 @@ public class AccountHistory extends TimeStampEntity implements IChildEntity<Acco
 	/**
 	 * @param account The account to set.
 	 */
-	public void setAccount(Account account) {
+	public void setAccount(final Account account) {
 		this.account = account;
 	}
 
@@ -57,7 +54,7 @@ public class AccountHistory extends TimeStampEntity implements IChildEntity<Acco
 	/**
 	 * @param notes The notes to set.
 	 */
-	public void setNotes(String notes) {
+	public void setNotes(final String notes) {
 		this.notes = notes;
 	}
 
@@ -71,7 +68,7 @@ public class AccountHistory extends TimeStampEntity implements IChildEntity<Acco
 	/**
 	 * @param pymntTrans The pymntTrans to set.
 	 */
-	public void setPymntTrans(PaymentTrans pymntTrans) {
+	public void setPymntTrans(final PaymentTrans pymntTrans) {
 		this.pymntTrans = pymntTrans;
 	}
 
@@ -86,7 +83,7 @@ public class AccountHistory extends TimeStampEntity implements IChildEntity<Acco
 	/**
 	 * @param status The status to set.
 	 */
-	public void setStatus(AccountStatus status) {
+	public void setStatus(final AccountStatus status) {
 		this.status = status;
 	}
 
@@ -101,18 +98,21 @@ public class AccountHistory extends TimeStampEntity implements IChildEntity<Acco
 	/**
 	 * @param transDate The transDate to set.
 	 */
-	public void setTransDate(Date transDate) {
+	public void setTransDate(final Date transDate) {
 		this.transDate = transDate;
 	}
 
+	@Override
 	public Account getParent() {
 		return getAccount();
 	}
 
-	public void setParent(Account e) {
+	@Override
+	public void setParent(final Account e) {
 		setAccount(e);
 	}
 
+	@Override
 	public Object accountKey() {
 		try {
 			return getAccount().getId();

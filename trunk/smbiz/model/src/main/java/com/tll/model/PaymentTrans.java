@@ -7,17 +7,13 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-
 /**
  * payment transaction entity
  * @author jpk
  */
 @BusinessObject(businessKeys = {
-	@BusinessKeyDef(name = "Pay Trans Date, Payment Op and Pay Type", properties = { "payTransDate", "payOp", "payType" }),
-	@BusinessKeyDef(name = "Refnum", properties = { "refNum" })
-})
+	@BusinessKeyDef(name = "Pay Trans Date, Payment Op and Pay Type", properties = {
+		"payTransDate", "payOp", "payType" }), @BusinessKeyDef(name = "Refnum", properties = { "refNum" }) })
 public class PaymentTrans extends TimeStampEntity {
 
 	private static final long serialVersionUID = -7701606626029329438L;
@@ -46,6 +42,7 @@ public class PaymentTrans extends TimeStampEntity {
 
 	private String notes;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return PaymentTrans.class;
 	}
@@ -61,7 +58,7 @@ public class PaymentTrans extends TimeStampEntity {
 	/**
 	 * @param amount The amount to set.
 	 */
-	public void setAmount(float amount) {
+	public void setAmount(final float amount) {
 		this.amount = amount;
 	}
 
@@ -76,7 +73,7 @@ public class PaymentTrans extends TimeStampEntity {
 	/**
 	 * @param authNum The authNum to set.
 	 */
-	public void setAuthNum(String authNum) {
+	public void setAuthNum(final String authNum) {
 		this.authNum = authNum;
 	}
 
@@ -90,7 +87,7 @@ public class PaymentTrans extends TimeStampEntity {
 	/**
 	 * @param notes The notes to set.
 	 */
-	public void setNotes(String notes) {
+	public void setNotes(final String notes) {
 		this.notes = notes;
 	}
 
@@ -104,7 +101,7 @@ public class PaymentTrans extends TimeStampEntity {
 	/**
 	 * @param paymentProcessor The paymentProcessor to set.
 	 */
-	public void setPaymentProcessor(PaymentProcessor paymentProcessor) {
+	public void setPaymentProcessor(final PaymentProcessor paymentProcessor) {
 		this.paymentProcessor = paymentProcessor;
 	}
 
@@ -119,7 +116,7 @@ public class PaymentTrans extends TimeStampEntity {
 	/**
 	 * @param payOp The payOp to set.
 	 */
-	public void setPayOp(PaymentOp payOp) {
+	public void setPayOp(final PaymentOp payOp) {
 		this.payOp = payOp;
 	}
 
@@ -134,7 +131,7 @@ public class PaymentTrans extends TimeStampEntity {
 	/**
 	 * @param payTransDate The payTransDate to set.
 	 */
-	public void setPayTransDate(Date payTransDate) {
+	public void setPayTransDate(final Date payTransDate) {
 		this.payTransDate = payTransDate;
 	}
 
@@ -149,7 +146,7 @@ public class PaymentTrans extends TimeStampEntity {
 	/**
 	 * @param payType The payType to set.
 	 */
-	public void setPayType(PaymentType payType) {
+	public void setPayType(final PaymentType payType) {
 		this.payType = payType;
 	}
 
@@ -165,7 +162,7 @@ public class PaymentTrans extends TimeStampEntity {
 	/**
 	 * @param refNum The refNum to set.
 	 */
-	public void setRefNum(String refNum) {
+	public void setRefNum(final String refNum) {
 		this.refNum = refNum;
 	}
 
@@ -181,7 +178,7 @@ public class PaymentTrans extends TimeStampEntity {
 	/**
 	 * @param response The response to set.
 	 */
-	public void setResponse(String response) {
+	public void setResponse(final String response) {
 		this.response = response;
 	}
 
@@ -197,7 +194,7 @@ public class PaymentTrans extends TimeStampEntity {
 	/**
 	 * @param responseMsg The responseMsg to set.
 	 */
-	public void setResponseMsg(String responseMsg) {
+	public void setResponseMsg(final String responseMsg) {
 		this.responseMsg = responseMsg;
 	}
 }

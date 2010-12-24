@@ -22,10 +22,12 @@ public enum OrderItemTransOp implements INameValueProvider<String>, IMarshalable
 		this.name = name;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String getValue() {
 		return name();
 	}

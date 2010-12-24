@@ -24,16 +24,14 @@ import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.IDbShell;
 import com.tll.dao.IDbTrans;
 import com.tll.dao.IEntityDao;
+import com.tll.dao.db4o.AbstractDb4oDaoModule;
+import com.tll.dao.db4o.SmbizDb4oDaoModule;
+import com.tll.dao.db4o.test.Db4oDbShellModule;
 import com.tll.dao.db4o.test.Db4oTrans;
-import com.tll.di.AbstractDb4oDaoModule;
-import com.tll.di.SmbizDb4oDaoModule;
-import com.tll.di.SmbizEGraphModule;
-import com.tll.di.SmbizEntityServiceFactoryModule;
-import com.tll.di.SmbizModelBuildModule;
-import com.tll.di.SmbizEntityServiceFactoryModule.UserCacheAware;
-import com.tll.di.test.Db4oDbShellModule;
 import com.tll.model.IEntity;
+import com.tll.model.SmbizEGraphModule;
 import com.tll.model.egraph.EntityBeanFactory;
+import com.tll.service.entity.SmbizEntityServiceFactoryModule.UserCacheAware;
 import com.tll.util.ClassUtil;
 
 /**
@@ -62,7 +60,6 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 			}
 		});
 
-		modules.add(new SmbizModelBuildModule());
 		modules.add(new SmbizEGraphModule());
 		modules.add(new SmbizDb4oDaoModule(getConfig()));
 		modules.add(new Db4oDbShellModule());

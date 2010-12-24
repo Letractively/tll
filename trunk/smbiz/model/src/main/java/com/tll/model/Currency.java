@@ -5,9 +5,6 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-
 /**
  * The currency entity
  * @author jpk
@@ -15,8 +12,7 @@ import com.tll.schema.BusinessObject;
 @BusinessObject(businessKeys = {
 	@BusinessKeyDef(name = "Name", properties = { INamedEntity.NAME }),
 	@BusinessKeyDef(name = "Symbol", properties = { "symbol" }),
-	@BusinessKeyDef(name = "ISO4217", properties = { "iso4217" }) }
-)
+	@BusinessKeyDef(name = "ISO4217", properties = { "iso4217" }) })
 public class Currency extends NamedEntity {
 
 	private static final long serialVersionUID = -1627972414433764825L;
@@ -36,10 +32,12 @@ public class Currency extends NamedEntity {
 
 	private float usdExchangeRate = 0f;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return Currency.class;
 	}
 
+	@Override
 	@NotEmpty
 	@Length(max = MAXLEN_NAME)
 	public String getName() {
@@ -58,7 +56,7 @@ public class Currency extends NamedEntity {
 	/**
 	 * @param iso4217 The iso4217 to set.
 	 */
-	public void setIso4217(String iso4217) {
+	public void setIso4217(final String iso4217) {
 		this.iso4217 = iso4217;
 	}
 
@@ -74,7 +72,7 @@ public class Currency extends NamedEntity {
 	/**
 	 * @param symbol The symbol to set.
 	 */
-	public void setSymbol(String symbol) {
+	public void setSymbol(final String symbol) {
 		this.symbol = symbol;
 	}
 
@@ -90,7 +88,7 @@ public class Currency extends NamedEntity {
 	/**
 	 * @param usdExchangeRate The usdExchangeRate to set.
 	 */
-	public void setUsdExchangeRate(float usdExchangeRate) {
+	public void setUsdExchangeRate(final float usdExchangeRate) {
 		this.usdExchangeRate = usdExchangeRate;
 	}
 }

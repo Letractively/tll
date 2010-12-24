@@ -14,8 +14,6 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import com.tll.schema.Transient;
-
 /**
  * AccountOptionPanel - Pseudo-entity to facilitate ui interaction.
  * @author jpk
@@ -57,6 +55,7 @@ public class AccountInterfaceOption extends InterfaceOptionBase {
 
 	private Set<AccountInterfaceOptionParameter> parameters = new LinkedHashSet<AccountInterfaceOptionParameter>();
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return AccountInterfaceOption.class;
 	}
@@ -72,7 +71,7 @@ public class AccountInterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @param isDefault The isDefault to set.
 	 */
-	public void setDefault(boolean isDefault) {
+	public void setDefault(final boolean isDefault) {
 		this.isDefault = isDefault;
 	}
 
@@ -89,7 +88,7 @@ public class AccountInterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @param setUpCost The setUpCost to set.
 	 */
-	public void setSetUpCost(float setUpCost) {
+	public void setSetUpCost(final float setUpCost) {
 		this.setUpCost = setUpCost;
 	}
 
@@ -106,7 +105,7 @@ public class AccountInterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @param monthlyCost The monthlyCost to set.
 	 */
-	public void setMonthlyCost(float monthlyCost) {
+	public void setMonthlyCost(final float monthlyCost) {
 		this.monthlyCost = monthlyCost;
 	}
 
@@ -123,7 +122,7 @@ public class AccountInterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @param annualCost The annualCost to set.
 	 */
-	public void setAnnualCost(float annualCost) {
+	public void setAnnualCost(final float annualCost) {
 		this.annualCost = annualCost;
 	}
 
@@ -140,7 +139,7 @@ public class AccountInterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @param baseAnnualPrice The baseAnnualPrice to set.
 	 */
-	public void setBaseAnnualPrice(float baseAnnualPrice) {
+	public void setBaseAnnualPrice(final float baseAnnualPrice) {
 		this.baseAnnualPrice = baseAnnualPrice;
 	}
 
@@ -157,7 +156,7 @@ public class AccountInterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @param baseMonthlyPrice The baseMonthlyPrice to set.
 	 */
-	public void setBaseMonthlyPrice(float baseMonthlyPrice) {
+	public void setBaseMonthlyPrice(final float baseMonthlyPrice) {
 		this.baseMonthlyPrice = baseMonthlyPrice;
 	}
 
@@ -174,7 +173,7 @@ public class AccountInterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @param baseSetupPrice The baseSetupPrice to set.
 	 */
-	public void setBaseSetupPrice(float baseSetupPrice) {
+	public void setBaseSetupPrice(final float baseSetupPrice) {
 		this.baseSetupPrice = baseSetupPrice;
 	}
 
@@ -189,27 +188,27 @@ public class AccountInterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @param parameters The parameters to set.
 	 */
-	public void setParameters(Set<AccountInterfaceOptionParameter> parameters) {
+	public void setParameters(final Set<AccountInterfaceOptionParameter> parameters) {
 		this.parameters = parameters;
 	}
 
-	public AccountInterfaceOptionParameter getParameter(Object pk) {
+	public AccountInterfaceOptionParameter getParameter(final Object pk) {
 		return findEntityInCollection(parameters, pk);
 	}
 
-	public AccountInterfaceOptionParameter getParameter(String nme) {
+	public AccountInterfaceOptionParameter getParameter(final String nme) {
 		return findNamedEntityInCollection(parameters, nme);
 	}
 
-	public void addParameter(AccountInterfaceOptionParameter e) {
+	public void addParameter(final AccountInterfaceOptionParameter e) {
 		addEntityToCollection(parameters, e);
 	}
 
-	public void addParameters(Collection<AccountInterfaceOptionParameter> clc) {
+	public void addParameters(final Collection<AccountInterfaceOptionParameter> clc) {
 		addEntitiesToCollection(clc, parameters);
 	}
 
-	public void removeParameter(AccountInterfaceOptionParameter e) {
+	public void removeParameter(final AccountInterfaceOptionParameter e) {
 		removeEntityFromCollection(parameters, e);
 	}
 
@@ -225,7 +224,7 @@ public class AccountInterfaceOption extends InterfaceOptionBase {
 		return subscribed;
 	}
 
-	public void setSubscribed(boolean subscribed) {
+	public void setSubscribed(final boolean subscribed) {
 		this.subscribed = subscribed;
 	}
 
@@ -235,7 +234,7 @@ public class AccountInterfaceOption extends InterfaceOptionBase {
 		return setUpPrice;
 	}
 
-	public void setSetUpPrice(float setUpPrice) {
+	public void setSetUpPrice(final float setUpPrice) {
 		this.setUpPrice = setUpPrice;
 	}
 
@@ -245,7 +244,7 @@ public class AccountInterfaceOption extends InterfaceOptionBase {
 		return monthlyPrice;
 	}
 
-	public void setMonthlyPrice(float monthlyPrice) {
+	public void setMonthlyPrice(final float monthlyPrice) {
 		this.monthlyPrice = monthlyPrice;
 	}
 
@@ -255,7 +254,7 @@ public class AccountInterfaceOption extends InterfaceOptionBase {
 		return annualPrice;
 	}
 
-	public void setAnnualPrice(float annualPrice) {
+	public void setAnnualPrice(final float annualPrice) {
 		this.annualPrice = annualPrice;
 	}
 }
