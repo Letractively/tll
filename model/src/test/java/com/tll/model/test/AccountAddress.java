@@ -5,12 +5,12 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.tll.model.BusinessKeyDef;
+import com.tll.model.BusinessObject;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.NamedTimeStampEntity;
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
 
 /**
  * The account address entity holding a refs to a single account and single
@@ -41,6 +41,7 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 	 */
 	private AddressType type = AddressType.HOME;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return AccountAddress.class;
 	}
@@ -92,10 +93,12 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 		this.account = account;
 	}
 
+	@Override
 	public Account getParent() {
 		return getAccount();
 	}
 
+	@Override
 	public void setParent(Account e) {
 		setAccount(e);
 	}

@@ -11,6 +11,7 @@ public abstract class NamedEntity extends EntityBase implements INamedEntity {
 
 	protected String name;
 
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}

@@ -106,7 +106,8 @@ public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopula
 	 * @param e
 	 * @return The added entity for convenience.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({
+		"unchecked", "rawtypes" })
 	private <E extends IEntity> E addEntity(E e) {
 		final Set set = getNonNullEntitySet(e.entityClass());
 		if(!set.add(e)) {

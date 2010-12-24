@@ -105,6 +105,7 @@ public final class SortColumn implements Serializable, IMarshalable, IPropertyNa
 		setIgnoreCase(ignoreCase);
 	}
 
+	@Override
 	public String getPropertyName() {
 		return propertyName;
 	}

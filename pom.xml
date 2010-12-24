@@ -23,7 +23,7 @@
 		<db4oVersion>8.0-SNAPSHOT</db4oVersion>
 		<springextensions.db4o.version>1.0.0e</springextensions.db4o.version>
 
-		<aspectjVersion>1.6.5</aspectjVersion>
+		<aspectjVersion>1.6.9</aspectjVersion>
 		<springVersion>2.5.6.SEC01</springVersion>
 		<slfVersion>1.5.6</slfVersion>
 
@@ -31,42 +31,9 @@
 		<javaxTransactionVersion>1.1</javaxTransactionVersion>
 		<javaxServletVersion>2.5</javaxServletVersion>
 		
-		<!-- google app engine -->
-		<gaeVersion>1.3.0</gaeVersion>
-
-		<!-- datanucleus for gae v1.3.0 -->
-		<jdo2apiVersion>2.3-eb</jdo2apiVersion>
-		<datanucleusVersion>1.1.5</datanucleusVersion>
-		<datanucleusEnhancerVersion>1.1.4</datanucleusEnhancerVersion>
-		<datanucleusAppengineVersion>1.0.4.1.final</datanucleusAppengineVersion>
-		<!-- the following are *not* part of the google app engine api -->
-		<datanucleusCacheVersion>1.1.1</datanucleusCacheVersion>
-		<datanucleusPoolVersion>1.0.2</datanucleusPoolVersion>
-		<datanucleusRdbmsVersion>1.1.5</datanucleusRdbmsVersion>
-
-		<!-- datanucleus v1.1.6 -->
-		<!-- 
-		<jdo2apiVersion>2.3-eb</jdo2apiVersion>
-		<datanucleusVersion>1.1.6</datanucleusVersion>
-		<datanucleusCacheVersion>1.1.1</datanucleusCacheVersion>
-		<datanucleusPoolVersion>1.0.2</datanucleusPoolVersion>
-		<datanucleusEnhancerVersion>1.1.4</datanucleusEnhancerVersion>
-		<datanucleusRdbmsVersion>1.1.6</datanucleusRdbmsVersion>
-		-->
-
-		<!-- datanucleus v2.0.0-m3 -->
-		<!-- 
-		<jdo2apiVersion>2.3-eb</jdo2apiVersion>
-		<datanucleusVersion>2.0.0-m3</datanucleusVersion>
-		<datanucleusCacheVersion>2.0.0-m2</datanucleusCacheVersion>
-		<datanucleusPoolVersion>2.0.0-m1</datanucleusPoolVersion>
-		<datanucleusEnhancerVersion>2.0.0-m3</datanucleusEnhancerVersion>
-		<datanucleusRdbmsVersion>2.0.0-m3</datanucleusRdbmsVersion>
-		-->
-
 		<mysqlConnectorVersion>5.1.6</mysqlConnectorVersion>
 
-		<gwtVersion>2.0.3</gwtVersion>
+		<gwtVersion>2.1.0</gwtVersion>
 		<gwtLogVersion>3.0.1</gwtLogVersion>
 		
 		<junitVersion>4.5</junitVersion>
@@ -117,12 +84,6 @@
 				<enabled>true</enabled>
 			</releases>
 		</repository>
-		<!-- DataNucleus -->
-		<repository>
-			<id>DataNucleus_Repos2</id>
-			<name>DataNucleus Repository</name>
-			<url>http://www.datanucleus.org/downloads/maven2</url>
-		</repository>
 		<repository> <!-- Required for transaction-api transitive dep -->
 			<id>Java_Net_LEGACY</id>
 			<name>Java.Net legacy</name>
@@ -138,21 +99,8 @@
 	</repositories>
 
 	<pluginRepositories>
-		<pluginRepository>
-			<id>DataNucleus_2</id>
-			<url>http://www.datanucleus.org/downloads/maven2/</url>
-		</pluginRepository>
 	</pluginRepositories>
 	
-	<distributionManagement>
-		<repository>
-			<id>tll</id>
-			<uniqueVersion>false</uniqueVersion>
-			<url>svn:https://tll.googlecode.com/svn/mavenrepo</url>
-			<name>The Logic Lab</name>
-		</repository>
-	</distributionManagement>
-
 	<modules>
 		<module>build-tools</module><!-- creates tll-assemblies.jar containing global assemblies -->
 		<module>core</module>
@@ -181,22 +129,22 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
-					<version>2.4</version>
+					<version>2.4.3</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>2.1</version>
+					<version>2.3.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
-					<version>2.1.1</version>
+					<version>2.1.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>2.3</version>
+					<version>2.3.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -211,7 +159,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-assembly-plugin</artifactId>
-					<version>2.2-beta-5</version>
+					<version>2.2</version>
 					<dependencies>
 						<dependency>
 							<groupId>com.tll</groupId>
@@ -223,12 +171,12 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-war-plugin</artifactId>
-					<version>2.1-beta-1</version>
+					<version>2.1.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-checkstyle-plugin</artifactId>
-					<version>2.4</version>
+					<version>2.6</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
@@ -238,20 +186,13 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-pmd-plugin</artifactId>
-					<version>2.4</version>
+					<version>2.5</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>aspectj-maven-plugin</artifactId>
 					<version>1.3</version>
 				</plugin>
-				<!-- 
-				<plugin>
-					<groupId>org.datanucleus</groupId>
-					<artifactId>maven-datanucleus-plugin</artifactId>
-					<version>${datanucleusPluginVersion}</version>
-				</plugin>
-				-->
 			</plugins>
 		</pluginManagement>
 
@@ -351,7 +292,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>2.3</version>
+				<version>2.6</version>
 				<configuration>
 					<configLocation>tll/checkstyle.xml</configLocation>
 					<!-- <headerLocation>whizbang/LICENSE.txt</headerLocation> -->
@@ -365,7 +306,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
-				<version>2.4</version>
+				<version>2.5</version>
 				<configuration>
 					<linkXref>true</linkXref>
 					<sourceEncoding>utf-8</sourceEncoding>
@@ -425,7 +366,7 @@
 			<dependency>
 				<groupId>commons-lang</groupId>
 				<artifactId>commons-lang</artifactId>
-				<version>2.4</version>
+				<version>2.5</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-logging</groupId>
@@ -450,12 +391,12 @@
 			<dependency>
 				<groupId>commons-dbcp</groupId>
 				<artifactId>commons-dbcp</artifactId>
-				<version>1.2.1</version>
+				<version>1.4</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-pool</groupId>
 				<artifactId>commons-pool</artifactId>
-				<version>1.2</version>
+				<version>1.5.5</version>
 			</dependency>
 
 			<dependency>
@@ -466,7 +407,7 @@
 			<dependency>
 				<groupId>org.apache.velocity</groupId>
 				<artifactId>velocity</artifactId>
-				<version>1.6.2</version>
+				<version>1.6.4</version>
 			</dependency>
 
 			<dependency>
@@ -477,17 +418,17 @@
 			<dependency>
 				<groupId>javassist</groupId>
 				<artifactId>javassist</artifactId>
-				<version>3.4.GA</version>
+				<version>3.12.1.GA</version>
 			</dependency>
 			<dependency>
 				<groupId>antlr</groupId>
 				<artifactId>antlr</artifactId>
-				<version>2.7.6</version>
+				<version>2.7.7</version>
 			</dependency>
 			<dependency>
 				<groupId>c3p0</groupId>
 				<artifactId>c3p0</artifactId>
-				<version>0.9.1</version>
+				<version>0.9.2</version>
 			</dependency>
 
 			<dependency>
@@ -568,38 +509,6 @@
 				<groupId>mysql</groupId>
 				<artifactId>mysql-connector-java</artifactId>
 				<version>${mysqlConnectorVersion}</version>
-			</dependency>
-
-			<!-- data nucleus -->
-			<dependency>
-				<groupId>org.datanucleus</groupId>
-				<artifactId>datanucleus-cache</artifactId>
-				<version>${datanucleusCacheVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.datanucleus</groupId>
-				<artifactId>datanucleus-connectionpool</artifactId>
-				<version>${datanucleusPoolVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.datanucleus</groupId>
-				<artifactId>datanucleus-core</artifactId>
-				<version>${datanucleusVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.datanucleus</groupId>
-				<artifactId>datanucleus-enhancer</artifactId>
-				<version>${datanucleusEnhancerVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.datanucleus</groupId>
-				<artifactId>datanucleus-rdbms</artifactId>
-				<version>${datanucleusRdbmsVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.datanucleus</groupId>
-				<artifactId>datanucleus-appengine</artifactId>
-				<version>${datanucleusAppengineVersion}</version>
 			</dependency>
 
 			<dependency>

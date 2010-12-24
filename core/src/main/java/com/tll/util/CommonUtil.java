@@ -271,7 +271,8 @@ public abstract class CommonUtil {
 	 * @throws ClassNotFoundException When the package name is not resolvable or
 	 *         is not bound to at least one filesystem directory.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({
+		"unchecked", "rawtypes" })
 	public static <T> Class<T>[] getClasses(final String pckgname, final Class<T> baseClass, final boolean concreteOnly,
 			final String nameExclusor, FilenameFilter filter) throws ClassNotFoundException {
 

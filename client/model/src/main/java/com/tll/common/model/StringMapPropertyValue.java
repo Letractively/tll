@@ -6,8 +6,8 @@ package com.tll.common.model;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.tll.schema.PropertyMetadata;
-import com.tll.schema.PropertyType;
+import com.tll.model.PropertyMetadata;
+import com.tll.model.PropertyType;
 
 /**
  * StringMapPropertyValue - Wraps a String/String {@link Map}.

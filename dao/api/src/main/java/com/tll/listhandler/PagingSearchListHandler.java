@@ -30,10 +30,12 @@ public final class PagingSearchListHandler extends SearchListHandler {
 		super(dataProvider, criteria, sorting);
 	}
 
+	@Override
 	public ListHandlerType getListHandlerType() {
 		return ListHandlerType.PAGE;
 	}
 
+	@Override
 	public List<SearchResult> getElements(int offset, int pageSize, Sorting sort) throws IndexOutOfBoundsException,
 	EmptyListException, ListHandlerException {
 
@@ -49,6 +51,7 @@ public final class PagingSearchListHandler extends SearchListHandler {
 		return page.getPageList();
 	}
 
+	@Override
 	public int size() {
 		return page == null ? 0 : page.getResultCount();
 	}

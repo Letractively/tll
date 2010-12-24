@@ -10,7 +10,7 @@ import java.util.List;
 
 import com.tll.client.TestUtils;
 import com.tll.common.model.CopyCriteria.CopyMode;
-import com.tll.schema.PropertyType;
+import com.tll.model.PropertyType;
 
 /**
  * ModelTestUtils

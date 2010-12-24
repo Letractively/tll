@@ -34,6 +34,7 @@ public class Criterion implements ICriterion {
 		setCaseSensitive(caseSensitive);
 	}
 
+	@Override
 	public boolean isGroup() {
 		return false;
 	}
@@ -111,6 +112,7 @@ public class Criterion implements ICriterion {
 		setComparator(comp);
 	}
 
+	@Override
 	public boolean isSet() {
 		if(Comparator.LIKE.equals(getComparator()) && "%".equals(getValue())) {
 			// if we are doing a like query and the value is just %, then ignore this
@@ -120,6 +122,7 @@ public class Criterion implements ICriterion {
 		return (getValue() != null);
 	}
 
+	@Override
 	public void clear() {
 		setFieldValue(null, null);
 	}

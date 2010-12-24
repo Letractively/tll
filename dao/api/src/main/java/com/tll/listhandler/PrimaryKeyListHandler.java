@@ -30,10 +30,12 @@ public final class PrimaryKeyListHandler extends SearchListHandler {
 		super(dataProvider, criteria, sorting);
 	}
 
+	@Override
 	public ListHandlerType getListHandlerType() {
 		return ListHandlerType.IDLIST;
 	}
 
+	@Override
 	public int size() {
 		return (pks == null) ? 0 : pks.size();
 	}

@@ -65,6 +65,7 @@ class TemplatedMailContext extends AbstractMailContext {
 		return parameters;
 	}
 
+	@Override
 	public String getName() {
 		final Object o = parameters.get(TemplateComposer.SUBJECT_KEY);
 		return o == null ? getTemplate() : o.toString();

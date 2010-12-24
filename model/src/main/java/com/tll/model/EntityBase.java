@@ -5,7 +5,6 @@ import java.util.Collection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.tll.schema.Managed;
 import com.tll.util.StringUtil;
 
 /**
@@ -72,7 +71,8 @@ public abstract class EntityBase implements IEntity {
 	 * @param clc the collection to which the entity is being added
 	 * @param e the entity to be added
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({
+		"unchecked", "rawtypes" })
 	protected final <E extends IEntity> void addEntityToCollection(Collection<E> clc, E e) {
 		if(e == null) {
 			return;
@@ -109,7 +109,8 @@ public abstract class EntityBase implements IEntity {
 	 * @param clc
 	 * @param e
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({
+		"unchecked", "rawtypes" })
 	protected final static <E extends IEntity> void removeEntityFromCollection(Collection<E> clc, E e) {
 		if(clc != null && clc.remove(e)) {
 			if(e instanceof IChildEntity) {
@@ -122,7 +123,8 @@ public abstract class EntityBase implements IEntity {
 	 * @param <E>
 	 * @param clc of entities (which may be child entities)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({
+		"unchecked", "rawtypes" })
 	protected final static <E extends IEntity> void clearEntityCollection(Collection<E> clc) {
 		if(clc == null || clc.size() < 1) {
 			return;

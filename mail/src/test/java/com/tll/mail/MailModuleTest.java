@@ -11,7 +11,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
 import com.tll.config.Config;
-import com.tll.di.MailModule;
 
 /**
  * MailModuleTest - Verifies the dependency injection of the {@link MailModule}.

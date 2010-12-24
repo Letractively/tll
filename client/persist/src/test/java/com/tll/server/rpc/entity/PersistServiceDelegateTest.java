@@ -32,20 +32,20 @@ import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.IDbShell;
 import com.tll.dao.IDbTrans;
 import com.tll.dao.IEntityDao;
+import com.tll.dao.db4o.AbstractDb4oDaoModule;
+import com.tll.dao.db4o.test.Db4oDbShellModule;
 import com.tll.dao.db4o.test.Db4oTrans;
-import com.tll.di.AbstractDb4oDaoModule;
+import com.tll.dao.db4o.test.TestDb4oDaoModule;
 import com.tll.di.LogExceptionHandlerModule;
-import com.tll.di.MailModule;
 import com.tll.di.TestEntityServiceFactoryModule;
-import com.tll.di.test.Db4oDbShellModule;
 import com.tll.di.test.TestClientPersistModule;
-import com.tll.di.test.TestDb4oDaoModule;
 import com.tll.di.test.TestMarshalModule;
-import com.tll.di.test.TestPersistenceUnitModule;
+import com.tll.mail.MailModule;
 import com.tll.model.IEntity;
 import com.tll.model.egraph.EntityBeanFactory;
 import com.tll.model.test.Address;
 import com.tll.model.test.TestEntityFactory;
+import com.tll.model.test.TestPersistenceUnitModule;
 
 /**
  * PersistServiceDelegateTest

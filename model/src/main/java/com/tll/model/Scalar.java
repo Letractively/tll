@@ -53,10 +53,12 @@ public final class Scalar implements IScalar {
 		}
 	}
 
+	@Override
 	public Class<?> getRefType() {
 		return refType;
 	}
 
+	@Override
 	public Map<String, Object> getTupleMap() {
 		return map;
 	}

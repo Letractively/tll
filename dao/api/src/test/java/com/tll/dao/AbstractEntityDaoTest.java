@@ -434,7 +434,8 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		Assert.assertNotNull(list, "loadAll returned null");
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({
+		"unchecked", "rawtypes" })
 	final void daoFindByName() throws Exception {
 		IEntity e = getTestEntity();
 
@@ -671,7 +672,8 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({
+		"unchecked", "rawtypes" })
 	final void daoFindEntityByName() throws Exception {
 		if(INamedEntity.class.isAssignableFrom(entityHandler.entityClass())) {
 			// persist the target test entity
@@ -690,7 +692,8 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({
+		"unchecked", "rawtypes" })
 	final void daoFindEntityByCriteria() throws Exception {
 		final Criteria c = entityHandler.getTestCriteria();
 		if(c == null) return; // ok

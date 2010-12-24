@@ -41,18 +41,22 @@ public abstract class DecoratedListHandler<T, V> implements IDecoratedListHandle
 		setWrappedHandler(listHandler);
 	}
 
+	@Override
 	public ListHandlerType getListHandlerType() {
 		return (listHandler == null) ? null : listHandler.getListHandlerType();
 	}
 
+	@Override
 	public IListHandler<T> getWrappedHandler() {
 		return listHandler;
 	}
 
+	@Override
 	public void setWrappedHandler(IListHandler<T> listHandler) {
 		this.listHandler = listHandler;
 	}
 
+	@Override
 	public int size() {
 		return (listHandler == null) ? 0 : listHandler.size();
 	}

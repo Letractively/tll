@@ -65,6 +65,7 @@ public class Db4oDbShell implements IDbShell {
 	/**
 	 * @return A newly created db4o session.
 	 */
+	@SuppressWarnings("deprecation")
 	private ObjectContainer createDbSession() {
 		if(c == null) {
 			log.info("Instantiating db4o session for: " + dbFile + " with NO configuration");

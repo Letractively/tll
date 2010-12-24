@@ -35,6 +35,8 @@ public final class SortColumnComparator<T> implements Comparator<T>, Serializabl
 		this.sortColumn = sortColumn;
 	}
 
+	@SuppressWarnings("rawtypes")
+	@Override
 	public int compare(final T o1, final T o2) {
 
 		int rval = 0;

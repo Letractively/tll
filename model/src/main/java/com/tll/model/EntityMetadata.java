@@ -5,8 +5,6 @@
  */
 package com.tll.model;
 
-import com.tll.schema.Extended;
-import com.tll.schema.Root;
 
 /**
  * IEntity's metadata definition.

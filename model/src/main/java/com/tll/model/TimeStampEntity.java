@@ -2,7 +2,6 @@ package com.tll.model;
 
 import java.util.Date;
 
-import com.tll.schema.Managed;
 
 /**
  * An entity that contains audit information. The information currently stored
@@ -23,11 +22,13 @@ public abstract class TimeStampEntity extends EntityBase implements ITimeStampEn
 	 * property.
 	 * @return The automatically set date of creation.
 	 */
+	@Override
 	@Managed
 	public Date getDateCreated() {
 		return dateCreated;
 	}
 
+	@Override
 	public void setDateCreated(Date date) {
 		this.dateCreated = date;
 	}
@@ -38,11 +39,13 @@ public abstract class TimeStampEntity extends EntityBase implements ITimeStampEn
 	 * property.
 	 * @return The automatically set date of modification.
 	 */
+	@Override
 	@Managed
 	public Date getDateModified() {
 		return dateModified;
 	}
 
+	@Override
 	public void setDateModified(Date date) {
 		dateModified = date;
 	}

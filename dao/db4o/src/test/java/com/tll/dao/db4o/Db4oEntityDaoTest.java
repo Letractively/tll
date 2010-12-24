@@ -6,9 +6,9 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 import com.tll.dao.IEntityDaoTestHandler;
+import com.tll.dao.db4o.test.TestDb4oDaoModule;
 import com.tll.dao.test.TestEntityDaoTestHandler;
-import com.tll.di.test.TestDb4oDaoModule;
-import com.tll.di.test.TestPersistenceUnitModule;
+import com.tll.model.test.TestPersistenceUnitModule;
 
 /**
  * Db4oEntityDaoTest

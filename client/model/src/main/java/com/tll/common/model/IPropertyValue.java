@@ -1,6 +1,6 @@
 package com.tll.common.model;
 
-import com.tll.schema.PropertyMetadata;
+import com.tll.model.PropertyMetadata;
 
 /**
  * IPropertyValue - A single non-relational model property.
