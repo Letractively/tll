@@ -2,14 +2,13 @@ package com.tll.client.ui;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.HasHTML;
-import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Br - HTML p tag in widget form.
  * @author jpk
  */
-public class P extends Widget implements HasHTML, HasText {
+public class P extends Widget implements HasHTML {
 
 	public P() {
 		setElement(DOM.createElement("p"));

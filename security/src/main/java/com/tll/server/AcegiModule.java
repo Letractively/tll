@@ -1,7 +1,7 @@
 /*
  * The Logic Lab
  */
-package com.tll.di;
+package com.tll.server;
 
 import java.util.Arrays;
 
@@ -107,6 +107,7 @@ public abstract class AcegiModule extends AbstractModule implements IConfigAware
 		// SaltSource
 		bind(SaltSource.class).toProvider(new Provider<SaltSource>() {
 
+			@Override
 			public SaltSource get() {
 				final ReflectionSaltSource rss = new ReflectionSaltSource();
 				rss.setUserPropertyToUse("getUsername");
@@ -130,6 +131,7 @@ public abstract class AcegiModule extends AbstractModule implements IConfigAware
 			@Inject
 			UserCache userCache;
 
+			@Override
 			public DaoAuthenticationProvider get() {
 				final DaoAuthenticationProvider dap = new DaoAuthenticationProvider();
 				dap.setUserDetailsService(uds);
@@ -145,6 +147,7 @@ public abstract class AcegiModule extends AbstractModule implements IConfigAware
 		// AnonymousAuthenticationProvider
 		bind(AnonymousAuthenticationProvider.class).toProvider(new Provider<AnonymousAuthenticationProvider>() {
 
+			@Override
 			public AnonymousAuthenticationProvider get() {
 				final AnonymousAuthenticationProvider aap = new AnonymousAuthenticationProvider();
 				aap.setKey(config.getString(ConfigKeys.APP_NAME.getKey()));
@@ -161,6 +164,7 @@ public abstract class AcegiModule extends AbstractModule implements IConfigAware
 			@Inject
 			AnonymousAuthenticationProvider aap;
 
+			@Override
 			public AuthenticationManager get() {
 				final ProviderManager pm = new ProviderManager();
 				pm.setProviders(Arrays.asList(new Object[] {
@@ -186,6 +190,7 @@ public abstract class AcegiModule extends AbstractModule implements IConfigAware
 					@Inject
 					RoleVoter roleVoter;
 
+					@Override
 					public AccessDecisionManager get() {
 						final AffirmativeBased p = new AffirmativeBased();
 						p.setAllowIfAllAbstainDecisions(false);

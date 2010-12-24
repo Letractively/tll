@@ -30,7 +30,6 @@ import com.tll.dao.Sorting;
 import com.tll.dao.db4o.test.Db4oDbShellModule;
 import com.tll.dao.db4o.test.TestDb4oDaoModule;
 import com.tll.di.LogExceptionHandlerModule;
-import com.tll.di.TestEntityServiceFactoryModule;
 import com.tll.di.TestListingModule;
 import com.tll.di.test.TestMarshalModule;
 import com.tll.listhandler.ListHandlerType;
@@ -38,6 +37,7 @@ import com.tll.mail.MailModule;
 import com.tll.model.test.TestEntityFactory;
 import com.tll.model.test.TestPersistenceUnitModule;
 import com.tll.server.rpc.listing.ListingCache.ListingCacheAware;
+import com.tll.service.entity.test.TestEntityServiceFactoryModule;
 /**
  * ListingProcessorTest - Tests the {@link AbstractListingProcessor}.
  * @author jpk

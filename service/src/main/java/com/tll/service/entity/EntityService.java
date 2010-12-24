@@ -62,6 +62,7 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 		this.validationFactory = validationFactory;
 	}
 
+	@Override
 	public abstract Class<E> getEntityClass();
 
 	/**
@@ -105,43 +106,51 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 		}
 	}
 
+	@Override
 	@Transactional
 	public E persist(E entity) throws EntityExistsException, ConstraintViolationException {
 		validate(entity);
 		return dao.persist(entity);
 	}
 
+	@Override
 	@Transactional
 	public Collection<E> persistAll(Collection<E> entities) throws ConstraintViolationException {
 		validateAll(entities);
 		return dao.persistAll(entities);
 	}
 
+	@Override
 	@Transactional
 	public void purge(E entity) {
 		dao.purge(entity);
 	}
 
+	@Override
 	@Transactional
 	public void purgeAll(Collection<E> entities) {
 		dao.purgeAll(entities);
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public E load(Object pk) throws EntityNotFoundException {
 		return dao.load(getEntityClass(), pk);
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public E load(IBusinessKey<E> key) throws EntityNotFoundException {
 		return dao.load(key);
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public List<? extends E> loadAll() {
 		return dao.loadAll(getEntityClass());
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public List<E> findEntities(Criteria<E> criteria, Sorting sorting) throws InvalidCriteriaException {
 		return dao.findEntities(criteria, sorting);
@@ -149,12 +158,14 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 
 	// IListHandlerDataProvider impl:
 
+	@Override
 	@Transactional(readOnly = true)
 	public List<SearchResult> find(Criteria<?> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
 		return dao.find(criteria, sorting);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public <EX> List<EX> getEntitiesFromIds(Class<EX> entityClass, Collection<?> pks, Sorting sorting) {
@@ -164,11 +175,13 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 		return (List<EX>) dao.findByPrimaryKeys((Class<IEntity>)entityClass, pks, sorting);
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public List<?> getPrimaryKeys(Criteria<?> criteria, Sorting sorting) throws InvalidCriteriaException {
 		return dao.getPrimaryKeys(criteria, sorting);
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public IPageResult<SearchResult> getPage(Criteria<?> criteria, Sorting sorting, int offset,
 			int pageSize)

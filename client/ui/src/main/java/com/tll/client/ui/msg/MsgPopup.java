@@ -195,6 +195,7 @@ public class MsgPopup extends PopupPanel implements IMsgOperator {
 		}
 	}
 
+	@Override
 	public void clearMsgs() {
 		hide();
 		msgPanel.clear();

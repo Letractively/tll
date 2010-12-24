@@ -10,6 +10,7 @@ import java.util.Map;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 
 /**
  * Fmt - String formatting constants and methods.
@@ -31,11 +32,11 @@ public abstract class Fmt {
 			new HashMap<GlobalFormat, NumberFormat>();
 
 	static {
-		dateFormatBindings.put(GlobalFormat.DATE, DateTimeFormat.getShortDateFormat());
-		dateFormatBindings.put(GlobalFormat.TIME, DateTimeFormat.getShortTimeFormat());
-		dateFormatBindings.put(GlobalFormat.TIMESTAMP, DateTimeFormat.getShortDateTimeFormat());
+		dateFormatBindings.put(GlobalFormat.DATE, DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT));
+		dateFormatBindings.put(GlobalFormat.TIME, DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT));
+		dateFormatBindings.put(GlobalFormat.TIMESTAMP, DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT));
 		// default is timestamp
-		dateFormatBindings.put(null, DateTimeFormat.getShortDateTimeFormat());
+		dateFormatBindings.put(null, DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT));
 
 		decimalFormatBindings.put(GlobalFormat.CURRENCY, NumberFormat.getCurrencyFormat());
 		decimalFormatBindings.put(GlobalFormat.PERCENT, NumberFormat.getPercentFormat());

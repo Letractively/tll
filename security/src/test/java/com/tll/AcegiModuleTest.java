@@ -3,7 +3,7 @@
  * @author jpk
  * @since Apr 3, 2009
  */
-package com.tll.di;
+package com.tll;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.AccessDecisionManager;
@@ -25,6 +25,7 @@ import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.google.inject.name.Names;
 import com.tll.config.Config;
+import com.tll.server.AcegiModule;
 
 /**
  * AcegiModuleTest
@@ -68,6 +69,7 @@ public class AcegiModuleTest {
 				// ad hoc UserCache impl
 				binder.bind(UserCache.class).toProvider(new Provider<UserCache>() {
 
+					@Override
 					public UserCache get() {
 						return new UserCache() {
 

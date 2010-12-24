@@ -300,11 +300,13 @@ public final class BindableFieldWidget<V> implements IBindableFieldWidget<V> {
 
 	@Override
 	public final IConverter<V, Object> getConverter() {
-		return fieldWidget.getConverter();
+		//return fieldWidget.getConverter();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public final void setConverter(IConverter<V, Object> converter) {
-		fieldWidget.setConverter(converter);
+		//fieldWidget.setConverter(converter);
+		throw new UnsupportedOperationException();
 	}
 }

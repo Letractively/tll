@@ -120,6 +120,7 @@ public class Bootstrapper implements ServletContextListener {
 		// default no-op
 	}
 
+	@Override
 	public void contextInitialized(ServletContextEvent event) {
 		final ServletContext servletContext = event.getServletContext();
 
@@ -158,6 +159,7 @@ public class Bootstrapper implements ServletContextListener {
 		}
 	}
 
+	@Override
 	public void contextDestroyed(ServletContextEvent servletContextEvent) {
 		// shut 'em down
 		if(handlers != null) {

@@ -154,6 +154,7 @@ MouseOutHandler, IHasOptionHandlers {
 		}
 	}
 
+	@Override
 	public void onKeyDown(KeyDownEvent event) {
 		switch(event.getNativeKeyCode()) {
 			case KeyCodes.KEY_UP:
@@ -170,6 +171,7 @@ MouseOutHandler, IHasOptionHandlers {
 		}
 	}
 
+	@Override
 	public void onMouseDown(MouseDownEvent event) {
 		final int index = vp.getWidgetIndex((Option) event.getSource());
 		if(index >= 0) {
@@ -178,6 +180,7 @@ MouseOutHandler, IHasOptionHandlers {
 		}
 	}
 
+	@Override
 	public void onMouseOver(MouseOverEvent event) {
 		final int index = vp.getWidgetIndex((Option) event.getSource());
 		if(index >= 0) {

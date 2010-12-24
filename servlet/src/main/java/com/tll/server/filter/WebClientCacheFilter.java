@@ -82,6 +82,7 @@ public class WebClientCacheFilter implements Filter {
 	 */
 	private String[] oneDayCacheFileExts;
 
+	@Override
 	public void init(FilterConfig filterConfig) /* throws ServletException */{
 		String dontCachePatternString = filterConfig.getInitParameter(INITPARAM_GWT_NOCACHE);
 		String cachePatternString = filterConfig.getInitParameter(INITPARAM_GWT_CACHE);
@@ -141,6 +142,7 @@ public class WebClientCacheFilter implements Filter {
 		return CacheStatus.INDIFFERENT;
 	}
 
+	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
 	ServletException {
 		if(request instanceof HttpServletRequest) {
@@ -170,6 +172,7 @@ public class WebClientCacheFilter implements Filter {
 	 * (non-Javadoc)
 	 * @see javax.servlet.Filter#destroy()
 	 */
+	@Override
 	public void destroy() {
 	}
 }

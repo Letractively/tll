@@ -31,6 +31,7 @@ INamedEntityService<N> {
 		super(dao, entityAssembler, validatorFactory);
 	}
 
+	@Override
 	public N load(NameKey<N> key) throws EntityNotFoundException {
 		return dao.load(key);
 	}

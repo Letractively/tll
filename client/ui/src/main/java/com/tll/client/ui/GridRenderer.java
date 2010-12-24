@@ -29,6 +29,7 @@ public class GridRenderer implements IWidgetRenderer {
 		this.panelStyle = panelStyle;
 	}
 
+	@Override
 	public Panel render(Collection<? extends Widget> wclc) {
 		if(numCols == -1) {
 			// unbounded columns
