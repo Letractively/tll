@@ -132,6 +132,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	 * Timestamper
 	 * @author jpk
 	 */
+	@SuppressWarnings("rawtypes")
 	static class Timestamper implements EventListener4 {
 		static final Log log = LogFactory.getLog(Timestamper.class);
 
@@ -160,6 +161,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	 * Versioner
 	 * @author jpk
 	 */
+	@SuppressWarnings("rawtypes")
 	static class Versioner implements EventListener4 {
 		static final Log log = LogFactory.getLog(Versioner.class);
 
@@ -231,6 +233,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 		});
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public <E extends IEntity> List<E> findEntities(Criteria<E> criteria, final Sorting sorting)
 	throws InvalidCriteriaException, DataAccessException {

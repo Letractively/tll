@@ -1,6 +1,6 @@
-#Sat Aug 14 16:59:48 PDT 2010
+#Fri Dec 24 07:00:48 PST 2010
 eclipse.preferences.version=1
-org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.4
-org.eclipse.jdt.core.compiler.compliance=1.4
+org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.5
+org.eclipse.jdt.core.compiler.compliance=1.5
 org.eclipse.jdt.core.compiler.problem.forbiddenReference=warning
-org.eclipse.jdt.core.compiler.source=1.4
+org.eclipse.jdt.core.compiler.source=1.5

@@ -13,10 +13,10 @@ import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.tll.dao.AbstractEntityDaoTest;
 import com.tll.dao.IDbTrans;
+import com.tll.dao.db4o.AbstractDb4oDaoModule.Db4oFile;
+import com.tll.dao.db4o.test.Db4oDbShellModule;
 import com.tll.dao.db4o.test.Db4oTestDaoDecorator;
 import com.tll.dao.db4o.test.Db4oTrans;
-import com.tll.di.AbstractDb4oDaoModule.Db4oFile;
-import com.tll.di.test.Db4oDbShellModule;
 import com.tll.model.IEntity;
 
 /**
@@ -92,6 +92,7 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 		dao.getObjectContainer().close();
 		final Configuration c = injector.getInstance(Configuration.class);
 		final URI db4oUri = injector.getInstance(Key.get(URI.class, Db4oFile.class));
+		@SuppressWarnings("deprecation")
 		final ObjectContainer oc = Db4o.openFile(c, db4oUri.getPath());
 		dao.setObjectContainer(oc);
 		((Db4oTrans)getDbTrans()).setObjectContainer(oc);

@@ -31,31 +31,38 @@ abstract class AbstractMailContext implements IMailContext {
 		this.encoding = encoding;
 	}
 
+	@Override
 	public MailRouting getRouting() {
 		return routing;
 	}
 
+	@Override
 	public String getEncoding() {
 		return encoding;
 	}
 
+	@Override
 	public List<Attachment> getAttachments() {
 		return attachments;
 	}
 
+	@Override
 	public void addAttachment(String attachmentName, DataSource dataSource) {
 		attachments.add(new Attachment(attachmentName, dataSource));
 	}
 
+	@Override
 	public void addAttachment(String attachmentName, String data, String contentType) {
 		final DataSource dataSource = new StringDataSource(attachmentName, data, contentType);
 		addAttachment(attachmentName, dataSource);
 	}
 
+	@Override
 	public void markSent() {
 		this.sent = true;
 	}
 
+	@Override
 	public boolean wasSent() {
 		return sent;
 	}

@@ -16,11 +16,11 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 import com.tll.AbstractConfigAwareTest;
-import com.tll.di.test.TestPersistenceUnitModule;
 import com.tll.model.egraph.EntityBeanFactory;
 import com.tll.model.test.Account;
 import com.tll.model.test.AccountAddress;
 import com.tll.model.test.TestEntityFactory;
+import com.tll.model.test.TestPersistenceUnitModule;
 
 /**
  * ClientizePropertyPathTest

@@ -24,6 +24,7 @@ abstract class AbstractComposer<C extends IMailContext> implements IComposer<C> 
 	 */
 	protected abstract void composeImpl(MimeMessageHelper helper, C context) throws MailPreparationException;
 
+	@Override
 	public final MimeMessage compose(MimeMessage mimeMessage, C context) throws MailPreparationException {
 
 		// create a mime message helper

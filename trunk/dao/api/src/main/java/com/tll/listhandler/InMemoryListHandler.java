@@ -37,6 +37,7 @@ public class InMemoryListHandler<T> extends AbstractListHandler<T> {
 		setList(rows);
 	}
 
+	@Override
 	public final ListHandlerType getListHandlerType() {
 		return ListHandlerType.IN_MEMORY;
 	}
@@ -52,6 +53,7 @@ public class InMemoryListHandler<T> extends AbstractListHandler<T> {
 		this.rows = rows;
 	}
 
+	@Override
 	public final int size() {
 		return rows == null ? 0 : rows.size();
 	}
@@ -72,6 +74,7 @@ public class InMemoryListHandler<T> extends AbstractListHandler<T> {
 		this.sorting = sort;
 	}
 
+	@Override
 	public List<T> getElements(int offset, int pageSize, Sorting sort) throws IndexOutOfBoundsException,
 			EmptyListException, ListHandlerException {
 		final int siz = size();

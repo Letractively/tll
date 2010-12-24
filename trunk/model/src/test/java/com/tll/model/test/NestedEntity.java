@@ -5,12 +5,12 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.tll.model.BusinessKeyDef;
+import com.tll.model.BusinessObject;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.NamedEntity;
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-import com.tll.schema.Nested;
+import com.tll.model.Nested;
 
 /**
  * NestedEntity
@@ -23,6 +23,7 @@ public class NestedEntity extends NamedEntity {
 
 	private NestedData nestedData;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return NestedEntity.class;
 	}
@@ -35,6 +36,7 @@ public class NestedEntity extends NamedEntity {
 		nestedData = new NestedData();
 	}
 
+	@Override
 	@NotEmpty
 	public String getName() {
 		return name;

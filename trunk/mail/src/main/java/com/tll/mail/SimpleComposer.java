@@ -11,6 +11,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
  */
 public class SimpleComposer extends AbstractComposer<SimpleMailContext> {
 
+	@Override
 	public boolean supports(Class<SimpleMailContext> contextClass) {
 		return SimpleMailContext.class.isAssignableFrom(contextClass);
 	}

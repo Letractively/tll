@@ -21,6 +21,7 @@ public enum SortDir implements INameValueProvider<String>, IMarshalable {
 		this.jdoqlClause = jdoqlClause;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -33,6 +34,7 @@ public enum SortDir implements INameValueProvider<String>, IMarshalable {
 		return jdoqlClause;
 	}
 
+	@Override
 	public String getValue() {
 		return toString();
 	}

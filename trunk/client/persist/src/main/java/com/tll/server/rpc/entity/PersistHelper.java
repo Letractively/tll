@@ -14,8 +14,8 @@ import com.tll.common.model.Model;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.model.IEntity;
-import com.tll.schema.ISchemaInfo;
-import com.tll.schema.ISchemaProperty;
+import com.tll.model.ISchemaInfo;
+import com.tll.model.ISchemaProperty;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.util.PropertyPath;
 

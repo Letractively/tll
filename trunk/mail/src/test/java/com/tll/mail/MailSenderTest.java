@@ -13,15 +13,14 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 import com.tll.config.Config;
-import com.tll.di.MailModule;
 
 /**
  * {@link IMailSender} test.
  * @author jpk
  */
 @Test(groups = {
-	"mail",
-	"send" })
+	"mail", "send"
+})
 public class MailSenderTest {
 
 	/**
@@ -35,6 +34,7 @@ public class MailSenderTest {
 			// VelocityEngine
 			bind(VelocityEngine.class).toProvider(new Provider<VelocityEngine>() {
 
+				@Override
 				public VelocityEngine get() {
 					try {
 						final VelocityEngine ve = new VelocityEngine();

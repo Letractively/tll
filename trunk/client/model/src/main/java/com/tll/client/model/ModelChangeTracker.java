@@ -14,7 +14,7 @@ import com.tll.common.model.IModelProperty;
 import com.tll.common.model.IPropertyValue;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
-import com.tll.schema.PropertyMetadata;
+import com.tll.model.PropertyMetadata;
 
 /**
  * ModelChangeTracker - Tracks model properties whose value has changed (become

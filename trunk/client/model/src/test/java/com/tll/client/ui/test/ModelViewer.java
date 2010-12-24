@@ -21,7 +21,7 @@ import com.tll.common.model.IndexedProperty;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
 import com.tll.common.model.RelatedManyProperty;
-import com.tll.schema.PropertyType;
+import com.tll.model.PropertyType;
 
 /**
  * ModelViewer - Views model properties in a hierarchical tree widget.

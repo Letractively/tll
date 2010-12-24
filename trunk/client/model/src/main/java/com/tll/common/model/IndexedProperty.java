@@ -5,7 +5,7 @@
  */
 package com.tll.common.model;
 
-import com.tll.schema.PropertyType;
+import com.tll.model.PropertyType;
 import com.tll.util.PropertyPath;
 
 /**

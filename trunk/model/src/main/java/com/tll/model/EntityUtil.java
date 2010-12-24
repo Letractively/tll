@@ -17,8 +17,6 @@ import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.bk.BusinessKeyNotDefinedException;
 import com.tll.model.bk.BusinessKeyPropertyException;
 import com.tll.model.bk.IBusinessKeyDefinition;
-import com.tll.schema.Extended;
-import com.tll.schema.Root;
 
 /**
  * EntityUtil
@@ -120,7 +118,7 @@ public class EntityUtil {
 	 * @param e the entity to be altered
 	 */
 	@SuppressWarnings({
-		"unchecked", "boxing"
+		"unchecked", "boxing", "rawtypes"
 	})
 	public static <E extends IEntity> void makeBusinessKeyUnique(E e) {
 		IBusinessKeyDefinition<E>[] bkdefs;

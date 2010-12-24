@@ -60,7 +60,9 @@ public class MailSender implements IMailSender {
 		this.composers = composers;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({
+		"unchecked", "rawtypes"
+	})
 	private <C extends IMailContext> IComposer<C> getComposerFromContext(C context) {
 		for(final IComposer c : composers) {
 			if(c.supports(context.getClass())) {
@@ -70,6 +72,7 @@ public class MailSender implements IMailSender {
 		throw new IllegalArgumentException("Unsupported mail context type: " + context.getClass().getSimpleName());
 	}
 
+	@Override
 	public <C extends IMailContext> void send(C context) throws MailSendException {
 		final IComposer<C> composer = getComposerFromContext(context);
 		int retries;

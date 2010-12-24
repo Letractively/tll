@@ -19,7 +19,6 @@ import com.tll.AbstractConfigAwareTest;
 import com.tll.common.model.IModelProperty;
 import com.tll.common.model.Model;
 import com.tll.di.test.TestMarshalModule;
-import com.tll.di.test.TestPersistenceUnitModule;
 import com.tll.model.IEntity;
 import com.tll.model.IScalar;
 import com.tll.model.egraph.EntityBeanFactory;
@@ -30,6 +29,7 @@ import com.tll.model.test.AccountStatus;
 import com.tll.model.test.NestedEntity;
 import com.tll.model.test.TestEntityFactory;
 import com.tll.model.test.TestPersistenceUnitEntityGraphBuilder;
+import com.tll.model.test.TestPersistenceUnitModule;
 
 /**
  * MarshallerTest

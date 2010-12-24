@@ -43,6 +43,7 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 		this.junction = isConjunction;
 	}
 
+	@Override
 	public boolean isGroup() {
 		return true;
 	}
@@ -200,6 +201,7 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 		return this;
 	}
 
+	@Override
 	public Iterator<ICriterion> iterator() {
 		return group == null ? null : group.iterator();
 	}
@@ -207,6 +209,7 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	/**
 	 * Removes <em>all</em> criterion in this group.
 	 */
+	@Override
 	public void clear() {
 		if(group != null) {
 			group.clear();
@@ -218,6 +221,7 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	 * <em>all</em> held criterion are set as well.
 	 * @return true/false
 	 */
+	@Override
 	public boolean isSet() {
 		if(group == null || group.size() < 1) {
 			return false;

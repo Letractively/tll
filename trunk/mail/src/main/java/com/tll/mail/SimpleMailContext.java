@@ -39,6 +39,7 @@ class SimpleMailContext extends AbstractMailContext {
 		this.subject = subject;
 	}
 
+	@Override
 	public String getName() {
 		return getSubject();
 	}

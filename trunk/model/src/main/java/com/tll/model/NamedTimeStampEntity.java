@@ -23,6 +23,7 @@ public abstract class NamedTimeStampEntity extends TimeStampEntity implements IN
 	/**
 	 * @param name the name to set
 	 */
+	@Override
 	public final void setName(String name) {
 		this.name = name;
 	}

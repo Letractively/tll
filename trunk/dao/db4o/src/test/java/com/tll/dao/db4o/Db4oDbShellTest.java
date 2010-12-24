@@ -14,10 +14,10 @@ import com.google.inject.Module;
 import com.tll.config.Config;
 import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.IDbShell;
-import com.tll.di.AbstractDb4oDaoModule.Db4oFile;
-import com.tll.di.test.Db4oDbShellModule;
-import com.tll.di.test.TestDb4oDaoModule;
-import com.tll.di.test.TestPersistenceUnitModule;
+import com.tll.dao.db4o.AbstractDb4oDaoModule.Db4oFile;
+import com.tll.dao.db4o.test.Db4oDbShellModule;
+import com.tll.dao.db4o.test.TestDb4oDaoModule;
+import com.tll.model.test.TestPersistenceUnitModule;
 
 /**
  * Db4oDbShellTest

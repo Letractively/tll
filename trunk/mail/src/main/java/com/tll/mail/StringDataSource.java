@@ -31,19 +31,23 @@ public class StringDataSource implements DataSource {
 		this.contentType = contentType;
 	}
 
+	@Override
 	public String getContentType() {
 		return contentType;
 	}
 
+	@Override
 	public InputStream getInputStream() {
 		// Reader reader = new StringReader(data);
 		return new ByteArrayInputStream(data.getBytes());
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public OutputStream getOutputStream() throws IOException {
 		throw new IOException("No output streams available for this type of data source.");
 	}

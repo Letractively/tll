@@ -3,8 +3,8 @@
  */
 package com.tll.common.model;
 
-import com.tll.schema.PropertyMetadata;
-import com.tll.schema.PropertyType;
+import com.tll.model.PropertyMetadata;
+import com.tll.model.PropertyType;
 
 /**
  * CharacterPropertyValue - Generic holder construct for entity properties.

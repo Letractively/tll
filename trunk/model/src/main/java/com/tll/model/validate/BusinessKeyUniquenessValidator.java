@@ -23,10 +23,12 @@ public class BusinessKeyUniquenessValidator implements ConstraintValidator<Busin
 
 	private final BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
 
+	@Override
 	public void initialize(BusinessKeyUniqueness parameters) {
 		// no-op
 	}
 
+	@Override
 	public boolean isValid(Collection<?> clc, ConstraintValidatorContext constraintContext) {
 		try {
 			bkf.isBusinessKeyUnique(clc);
