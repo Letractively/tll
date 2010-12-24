@@ -3,9 +3,9 @@
  * @author jpk
  * @since Aug 30, 2009
  */
-package com.tll.di;
+package com.tll.model;
 
-import com.tll.model.SmbizEntityGraphBuilder;
+import com.tll.model.EGraphModule;
 
 
 /**

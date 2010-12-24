@@ -7,8 +7,8 @@ import javax.validation.constraints.Min;
 
 import org.hibernate.validator.constraints.Length;
 
-
 public class PaymentData implements Serializable {
+
 	private static final long serialVersionUID = 4794589680528322269L;
 
 	// bank related
@@ -63,93 +63,93 @@ public class PaymentData implements Serializable {
 		super();
 	}
 
-	@Length(max=MAXLEN_CC_ADDRESS1)
+	@Length(max = MAXLEN_CC_ADDRESS1)
 	public String getCcAddress1() {
 		return ccAddress1;
 	}
 
-	public void setCcAddress1(String ccAddress1) {
+	public void setCcAddress1(final String ccAddress1) {
 		this.ccAddress1 = ccAddress1;
 	}
 
-	@Length(max=MAXLEN_CC_ADDRESS2)
+	@Length(max = MAXLEN_CC_ADDRESS2)
 	public String getCcAddress2() {
 		return ccAddress2;
 	}
 
-	public void setCcAddress2(String ccAddress2) {
+	public void setCcAddress2(final String ccAddress2) {
 		this.ccAddress2 = ccAddress2;
 	}
 
-	@Length(max=MAXLEN_CC_CITY)
+	@Length(max = MAXLEN_CC_CITY)
 	public String getCcCity() {
 		return ccCity;
 	}
 
-	public void setCcCity(String ccCity) {
+	public void setCcCity(final String ccCity) {
 		this.ccCity = ccCity;
 	}
 
-	@Length(max=MAXLEN_CC_COUNTRY)
+	@Length(max = MAXLEN_CC_COUNTRY)
 	public String getCcCountry() {
 		return ccCountry;
 	}
 
-	public void setCcCountry(String ccCountry) {
+	public void setCcCountry(final String ccCountry) {
 		this.ccCountry = ccCountry;
 	}
 
-	@Length(max=MAXLEN_CC_STATE)
+	@Length(max = MAXLEN_CC_STATE)
 	public String getCcState() {
 		return ccState;
 	}
 
-	public void setCcState(String ccState) {
+	public void setCcState(final String ccState) {
 		this.ccState = ccState;
 	}
 
-	@Length(max=MAXLEN_CC_ZIP)
+	@Length(max = MAXLEN_CC_ZIP)
 	public String getCcZip() {
 		return ccZip;
 	}
 
-	public void setCcZip(String ccZip) {
+	public void setCcZip(final String ccZip) {
 		this.ccZip = ccZip;
 	}
 
-	@Length(max=MAXLEN_BANK_ACCOUNT_NO)
+	@Length(max = MAXLEN_BANK_ACCOUNT_NO)
 	public String getBankAccountNo() {
 		return bankAccountNo;
 	}
 
-	public void setBankAccountNo(String bankAccountNo) {
+	public void setBankAccountNo(final String bankAccountNo) {
 		this.bankAccountNo = bankAccountNo;
 	}
 
-	@Length(max=MAXLEN_BANK_NAME)
+	@Length(max = MAXLEN_BANK_NAME)
 	public String getBankName() {
 		return bankName;
 	}
 
-	public void setBankName(String bankName) {
+	public void setBankName(final String bankName) {
 		this.bankName = bankName;
 	}
 
-	@Length(max=MAXLEN_BANK_ROUTING_NUM)
+	@Length(max = MAXLEN_BANK_ROUTING_NUM)
 	public String getBankRoutingNo() {
 		return bankRoutingNo;
 	}
 
-	public void setBankRoutingNo(String bankRoutingNo) {
+	public void setBankRoutingNo(final String bankRoutingNo) {
 		this.bankRoutingNo = bankRoutingNo;
 	}
 
-	@Length(max=MAXLEN_CC_CVV2)
+	@Length(max = MAXLEN_CC_CVV2)
 	public String getCcCvv2() {
 		return ccCvv2;
 	}
 
-	public void setCcCvv2(String ccCvv2) {
+	public void setCcCvv2(final String ccCvv2) {
 		this.ccCvv2 = ccCvv2;
 	}
 
@@ -159,7 +159,7 @@ public class PaymentData implements Serializable {
 		return ccExpMonth;
 	}
 
-	public void setCcExpMonth(int ccExpMonth) {
+	public void setCcExpMonth(final int ccExpMonth) {
 		this.ccExpMonth = ccExpMonth;
 	}
 
@@ -169,16 +169,16 @@ public class PaymentData implements Serializable {
 		return ccExpYear;
 	}
 
-	public void setCcExpYear(int ccExpYear) {
+	public void setCcExpYear(final int ccExpYear) {
 		this.ccExpYear = ccExpYear;
 	}
 
-	@Length(max=MAXLEN_CC_NAME)
+	@Length(max = MAXLEN_CC_NAME)
 	public String getCcName() {
 		return ccName;
 	}
 
-	public void setCcName(String ccName) {
+	public void setCcName(final String ccName) {
 		this.ccName = ccName;
 	}
 
@@ -188,7 +188,7 @@ public class PaymentData implements Serializable {
 		return ccNum;
 	}
 
-	public void setCcNum(String ccNum) {
+	public void setCcNum(final String ccNum) {
 		this.ccNum = ccNum;
 	}
 
@@ -196,7 +196,7 @@ public class PaymentData implements Serializable {
 		return ccType;
 	}
 
-	public void setCcType(CreditCardType ccType) {
+	public void setCcType(final CreditCardType ccType) {
 		this.ccType = ccType;
 	}
 }

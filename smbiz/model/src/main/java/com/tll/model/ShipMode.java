@@ -5,16 +5,12 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-
 /**
  * The ship mode entity
  * @author jpk
  */
-@BusinessObject(businessKeys =
-	@BusinessKeyDef(name = "Account Id and Name", properties = { "account.id", INamedEntity.NAME })
-)
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Account Id and Name", properties = {
+	"account.id", INamedEntity.NAME }))
 public class ShipMode extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -8602635055012335230L;
@@ -30,6 +26,7 @@ public class ShipMode extends NamedTimeStampEntity implements IChildEntity<Accou
 
 	private Account account;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return ShipMode.class;
 	}
@@ -52,7 +49,7 @@ public class ShipMode extends NamedTimeStampEntity implements IChildEntity<Accou
 	/**
 	 * @param account The account to set.
 	 */
-	public void setAccount(Account account) {
+	public void setAccount(final Account account) {
 		this.account = account;
 	}
 
@@ -67,7 +64,7 @@ public class ShipMode extends NamedTimeStampEntity implements IChildEntity<Accou
 	/**
 	 * @param srcZip The srcZip to set.
 	 */
-	public void setSrcZip(String srcZip) {
+	public void setSrcZip(final String srcZip) {
 		this.srcZip = srcZip;
 	}
 
@@ -82,7 +79,7 @@ public class ShipMode extends NamedTimeStampEntity implements IChildEntity<Accou
 	/**
 	 * @param surcharge The surcharge to set.
 	 */
-	public void setSurcharge(float surcharge) {
+	public void setSurcharge(final float surcharge) {
 		this.surcharge = surcharge;
 	}
 
@@ -97,18 +94,21 @@ public class ShipMode extends NamedTimeStampEntity implements IChildEntity<Accou
 	/**
 	 * @param type The type to set.
 	 */
-	public void setType(ShipModeType type) {
+	public void setType(final ShipModeType type) {
 		this.type = type;
 	}
 
+	@Override
 	public Account getParent() {
 		return getAccount();
 	}
 
-	public void setParent(Account e) {
+	@Override
+	public void setParent(final Account e) {
 		setAccount(e);
 	}
 
+	@Override
 	public Object accountKey() {
 		try {
 			return getAccount().getId();

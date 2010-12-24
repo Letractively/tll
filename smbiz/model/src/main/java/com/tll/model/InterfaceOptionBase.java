@@ -3,8 +3,6 @@ package com.tll.model;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.tll.schema.Root;
-
 /**
  * Base class for interface options and interface option parameter definition
  * classes.
@@ -41,7 +39,7 @@ public abstract class InterfaceOptionBase extends NamedTimeStampEntity {
 	/**
 	 * @param code The code to set.
 	 */
-	public void setCode(String code) {
+	public void setCode(final String code) {
 		this.code = code;
 	}
 
@@ -56,7 +54,7 @@ public abstract class InterfaceOptionBase extends NamedTimeStampEntity {
 	/**
 	 * @param description The description to set.
 	 */
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 }

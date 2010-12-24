@@ -11,9 +11,6 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.tll.model.validate.BusinessKeyUniqueness;
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-import com.tll.schema.Root;
 
 /**
  * The Interface entity
@@ -80,7 +77,7 @@ public abstract class Interface extends NamedTimeStampEntity {
 	/**
 	 * @param code The code to set.
 	 */
-	public void setCode(String code) {
+	public void setCode(final String code) {
 		this.code = code;
 	}
 
@@ -96,7 +93,7 @@ public abstract class Interface extends NamedTimeStampEntity {
 	/**
 	 * @param description The description to set.
 	 */
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
@@ -111,7 +108,7 @@ public abstract class Interface extends NamedTimeStampEntity {
 	/**
 	 * @param isAvailableAsp The isAvailableAsp to set.
 	 */
-	public void setIsAvailableAsp(boolean isAvailableAsp) {
+	public void setIsAvailableAsp(final boolean isAvailableAsp) {
 		this.isAvailableAsp = isAvailableAsp;
 	}
 
@@ -126,7 +123,7 @@ public abstract class Interface extends NamedTimeStampEntity {
 	/**
 	 * @param isAvailableCustomer The isAvailableCustomer to set.
 	 */
-	public void setIsAvailableCustomer(boolean isAvailableCustomer) {
+	public void setIsAvailableCustomer(final boolean isAvailableCustomer) {
 		this.isAvailableCustomer = isAvailableCustomer;
 	}
 
@@ -141,7 +138,7 @@ public abstract class Interface extends NamedTimeStampEntity {
 	/**
 	 * @param isAvailableIsp The isAvailableIsp to set.
 	 */
-	public void setIsAvailableIsp(boolean isAvailableIsp) {
+	public void setIsAvailableIsp(final boolean isAvailableIsp) {
 		this.isAvailableIsp = isAvailableIsp;
 	}
 
@@ -156,7 +153,7 @@ public abstract class Interface extends NamedTimeStampEntity {
 	/**
 	 * @param isAvailableMerchant The isAvailableMerchant to set.
 	 */
-	public void setIsAvailableMerchant(boolean isAvailableMerchant) {
+	public void setIsAvailableMerchant(final boolean isAvailableMerchant) {
 		this.isAvailableMerchant = isAvailableMerchant;
 	}
 
@@ -171,7 +168,7 @@ public abstract class Interface extends NamedTimeStampEntity {
 	/**
 	 * @param isRequiredAsp The isRequiredAsp to set.
 	 */
-	public void setIsRequiredAsp(boolean isRequiredAsp) {
+	public void setIsRequiredAsp(final boolean isRequiredAsp) {
 		this.isRequiredAsp = isRequiredAsp;
 	}
 
@@ -186,7 +183,7 @@ public abstract class Interface extends NamedTimeStampEntity {
 	/**
 	 * @param isRequiredCustomer The isRequiredCustomer to set.
 	 */
-	public void setIsRequiredCustomer(boolean isRequiredCustomer) {
+	public void setIsRequiredCustomer(final boolean isRequiredCustomer) {
 		this.isRequiredCustomer = isRequiredCustomer;
 	}
 
@@ -201,7 +198,7 @@ public abstract class Interface extends NamedTimeStampEntity {
 	/**
 	 * @param isRequiredIsp The isRequiredIsp to set.
 	 */
-	public void setIsRequiredIsp(boolean isRequiredIsp) {
+	public void setIsRequiredIsp(final boolean isRequiredIsp) {
 		this.isRequiredIsp = isRequiredIsp;
 	}
 
@@ -216,7 +213,7 @@ public abstract class Interface extends NamedTimeStampEntity {
 	/**
 	 * @param isRequiredMerchant The isRequiredMerchant to set.
 	 */
-	public void setIsRequiredMerchant(boolean isRequiredMerchant) {
+	public void setIsRequiredMerchant(final boolean isRequiredMerchant) {
 		this.isRequiredMerchant = isRequiredMerchant;
 	}
 
@@ -232,27 +229,27 @@ public abstract class Interface extends NamedTimeStampEntity {
 	/**
 	 * @param options The options to set.
 	 */
-	public void setOptions(Set<InterfaceOption> options) {
+	public void setOptions(final Set<InterfaceOption> options) {
 		this.options = options;
 	}
 
-	public InterfaceOption getOption(Object pk) {
+	public InterfaceOption getOption(final Object pk) {
 		return findEntityInCollection(options, pk);
 	}
 
-	public InterfaceOption getOption(String nme) {
+	public InterfaceOption getOption(final String nme) {
 		return findNamedEntityInCollection(options, nme);
 	}
 
-	public void addOption(InterfaceOption e) {
+	public void addOption(final InterfaceOption e) {
 		addEntityToCollection(options, e);
 	}
 
-	public void addOptions(Collection<InterfaceOption> clc) {
+	public void addOptions(final Collection<InterfaceOption> clc) {
 		addEntitiesToCollection(clc, options);
 	}
 
-	public void removeOption(InterfaceOption e) {
+	public void removeOption(final InterfaceOption e) {
 		removeEntityFromCollection(options, e);
 	}
 

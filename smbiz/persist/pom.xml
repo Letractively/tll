@@ -125,12 +125,6 @@
 				</resources>
 			</build>
 		</profile>
-		<profile>
-			<id>jdo</id>
-			<properties>
-				<daoImpl>jdo</daoImpl>
-			</properties>
-		</profile>
 	</profiles>
 
 	<dependencies>
@@ -268,50 +262,10 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- gae/j deps -->
-		<dependency>
-			<groupId>javax.jdo</groupId>
-			<artifactId>jdo2-api</artifactId>
-		</dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-orm</artifactId>
-    </dependency>
-		<dependency>
-			<groupId>com.tll</groupId>
-			<artifactId>tll-dao-jdo-rdbms</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.tll</groupId>
-			<artifactId>tll-dao-jdo-rdbms</artifactId>
-			<classifier>testassets</classifier>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.datanucleus</groupId>
-			<artifactId>datanucleus-appengine</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google</groupId>
-			<artifactId>appengine-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google</groupId>
-			<artifactId>appengine-api-stubs</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google</groupId>
-			<artifactId>appengine-local-runtime</artifactId>
-			<scope>test</scope>
-		</dependency>
-
 		<!-- db40 deps -->
 		<dependency>
-			<groupId>db4o</groupId>
-			<artifactId>db4o</artifactId>
+			<groupId>com.db4o</groupId>
+			<artifactId>db4o-full-java5</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springextensions.db4o</groupId>

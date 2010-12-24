@@ -2,16 +2,12 @@ package com.tll.model;
 
 import javax.validation.constraints.NotNull;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-
 /**
  * product cateory binder entity
  * @author jpk
  */
-@BusinessObject(businessKeys =
-	@BusinessKeyDef(name = "Product Id and Category Id", properties = { "product.id", "category.id" })
-)
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Product Id and Category Id", properties = {
+	"product.id", "category.id" }))
 public class ProdCat extends EntityBase implements IChildEntity<ProductInventory>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -8353863817821839414L;
@@ -22,6 +18,7 @@ public class ProdCat extends EntityBase implements IChildEntity<ProductInventory
 
 	private ProductCategory category;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return ProdCat.class;
 	}
@@ -37,7 +34,7 @@ public class ProdCat extends EntityBase implements IChildEntity<ProductInventory
 	/**
 	 * @param isFeaturedProduct The bIsFeaturedProduct to set.
 	 */
-	public void setIsFeaturedProduct(boolean isFeaturedProduct) {
+	public void setIsFeaturedProduct(final boolean isFeaturedProduct) {
 		this.isFeaturedProduct = isFeaturedProduct;
 	}
 
@@ -52,7 +49,7 @@ public class ProdCat extends EntityBase implements IChildEntity<ProductInventory
 	/**
 	 * @param category The category to set.
 	 */
-	public void setCategory(ProductCategory category) {
+	public void setCategory(final ProductCategory category) {
 		this.category = category;
 	}
 
@@ -67,18 +64,21 @@ public class ProdCat extends EntityBase implements IChildEntity<ProductInventory
 	/**
 	 * @param product The product to set.
 	 */
-	public void setProduct(ProductInventory product) {
+	public void setProduct(final ProductInventory product) {
 		this.product = product;
 	}
 
+	@Override
 	public ProductInventory getParent() {
 		return getProduct();
 	}
 
-	public void setParent(ProductInventory e) {
+	@Override
+	public void setParent(final ProductInventory e) {
 		setProduct(e);
 	}
 
+	@Override
 	public Object accountKey() {
 		try {
 			return getProduct().getAccount().getId();

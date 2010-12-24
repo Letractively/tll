@@ -1,7 +1,7 @@
 /*
  * The Logic Lab
  */
-package com.tll.di;
+package com.tll.service.entity;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -25,8 +25,6 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.service.IService;
-import com.tll.service.entity.EntityServiceFactory;
-import com.tll.service.entity.IEntityServiceFactory;
 import com.tll.service.entity.account.AccountService;
 import com.tll.service.entity.account.AddAccountService;
 import com.tll.service.entity.account.CustomerAccountService;
@@ -80,14 +78,14 @@ public class SmbizEntityServiceFactoryModule extends AbstractModule {
 
 	/**
 	 * UserCacheAware<br>
-	 * Annotation indicating a {@link CacheManager} instance that supports {@link UserDetails} caching.
+	 * Annotation indicating a {@link CacheManager} instance that supports
+	 * {@link UserDetails} caching.
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
-	@Target( {
-		ElementType.FIELD,
-		ElementType.PARAMETER })
-		@BindingAnnotation
-		public @interface UserCacheAware {
+	@Target({
+		ElementType.FIELD, ElementType.PARAMETER })
+	@BindingAnnotation
+	public @interface UserCacheAware {
 	}
 
 	public static final String USER_DETAILS_CACHE_NAME = "acegiUserDetailsCache";
@@ -179,9 +177,9 @@ public class SmbizEntityServiceFactoryModule extends AbstractModule {
 			@Inject
 			IVisitorService vs;
 
+			@Override
 			public IEntityServiceFactory get() {
-				final Map<Class<? extends IService>, IService> map =
-					new HashMap<Class<? extends IService>, IService>();
+				final Map<Class<? extends IService>, IService> map = new HashMap<Class<? extends IService>, IService>();
 
 				map.put(IAuthorityService.class, auths);
 				map.put(IAccountService.class, accs);

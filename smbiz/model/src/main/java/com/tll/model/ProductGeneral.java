@@ -3,14 +3,12 @@ package com.tll.model;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-
 /**
  * General product entity
  * @author jpk
  */
-@BusinessObject(businessKeys = @BusinessKeyDef(name = "Titles", properties = { "d1", "d2" }))
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Titles", properties = {
+	"d1", "d2" }))
 public class ProductGeneral extends EntityBase {
 
 	private static final long serialVersionUID = 459067490839802092L;
@@ -31,6 +29,7 @@ public class ProductGeneral extends EntityBase {
 
 	private String image2;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return ProductGeneral.class;
 	}
@@ -47,7 +46,7 @@ public class ProductGeneral extends EntityBase {
 	/**
 	 * @param d1 The d1 to set.
 	 */
-	public void setD1(String d1) {
+	public void setD1(final String d1) {
 		this.d1 = d1;
 	}
 
@@ -63,7 +62,7 @@ public class ProductGeneral extends EntityBase {
 	/**
 	 * @param d2 The d2 to set.
 	 */
-	public void setD2(String d2) {
+	public void setD2(final String d2) {
 		this.d2 = d2;
 	}
 
@@ -79,7 +78,7 @@ public class ProductGeneral extends EntityBase {
 	/**
 	 * @param d3 The d3 to set.
 	 */
-	public void setD3(String d3) {
+	public void setD3(final String d3) {
 		this.d3 = d3;
 	}
 
@@ -95,7 +94,7 @@ public class ProductGeneral extends EntityBase {
 	/**
 	 * @param image1 The image1 to set.
 	 */
-	public void setImage1(String image1) {
+	public void setImage1(final String image1) {
 		this.image1 = image1;
 	}
 
@@ -111,7 +110,7 @@ public class ProductGeneral extends EntityBase {
 	/**
 	 * @param image2 The image2 to set.
 	 */
-	public void setImage2(String image2) {
+	public void setImage2(final String image2) {
 		this.image2 = image2;
 	}
 }

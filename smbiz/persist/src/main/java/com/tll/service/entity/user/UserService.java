@@ -36,8 +36,8 @@ import com.tll.model.IEntity;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.IUserRef;
 import com.tll.model.NameKey;
+import com.tll.model.PropertyType;
 import com.tll.model.User;
-import com.tll.schema.PropertyType;
 import com.tll.service.ChangeUserCredentialsFailedException;
 import com.tll.service.entity.NamedEntityService;
 
@@ -97,6 +97,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 		return User.class;
 	}
 
+	@Override
 	@Transactional
 	public User create(Account account, String emailAddress, String password) throws ValidationException,
 			EntityExistsException {
@@ -145,6 +146,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 	 * @throws UsernameNotFoundException
 	 * @throws DataAccessException
 	 */
+	@Override
 	@Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
 		try {
@@ -195,6 +197,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 		return user;
 	}
 
+	@Override
 	@Transactional(rollbackFor = {
 		ChangeUserCredentialsFailedException.class, RuntimeException.class })
 	public void setCredentialsById(long userId, String newUsername, String newRawPassword)
@@ -225,6 +228,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 			new QueryParam("password", PropertyType.STRING, encNewPassword) });
 	}
 
+	@Override
 	@Transactional(rollbackFor = {
 		ChangeUserCredentialsFailedException.class, RuntimeException.class })
 	public void setCredentialsByUsername(String username, String newUsername, String newRawPassword)
@@ -254,6 +258,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 		}
 	}
 
+	@Override
 	@Transactional(rollbackFor = {
 		ChangeUserCredentialsFailedException.class, RuntimeException.class })
 	public String resetPassword(Object userPk) throws ChangeUserCredentialsFailedException {

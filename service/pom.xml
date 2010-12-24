@@ -53,9 +53,9 @@
 							<goal>single</goal>
 						</goals>
 						<configuration>
-							<descriptors>
-								<descriptor>test-assets.xml</descriptor>
-							</descriptors>
+              <descriptorRefs>
+                <descriptorRef>test-assets</descriptorRef>
+              </descriptorRefs>
 						</configuration>
 					</execution>
 				</executions>
@@ -129,11 +129,6 @@
           <artifactId>commons-validator</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-schema</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>

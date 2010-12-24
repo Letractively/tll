@@ -45,28 +45,30 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 		 * Constructor
 		 * @param dao
 		 */
-		public AccountHistoryDataProvider(IEntityDao dao) {
+		public AccountHistoryDataProvider(final IEntityDao dao) {
 			super();
 			this.dao = dao;
 		}
 
-		public List<SearchResult> find(Criteria<?> criteria, Sorting sorting)
-		throws InvalidCriteriaException {
+		@Override
+		public List<SearchResult> find(final Criteria<?> criteria, final Sorting sorting) throws InvalidCriteriaException {
 			return dao.find(criteria, sorting);
 		}
 
+		@Override
 		@SuppressWarnings("unchecked")
-		public <EX> List<EX> getEntitiesFromIds(Class<EX> entityClass, Collection<?> ids,
-				Sorting sorting) {
-			return (List<EX>) dao.findByPrimaryKeys( (Class<IEntity>)entityClass, ids, sorting);
+		public <EX> List<EX> getEntitiesFromIds(final Class<EX> entityClass, final Collection<?> ids, final Sorting sorting) {
+			return (List<EX>) dao.findByPrimaryKeys((Class<IEntity>) entityClass, ids, sorting);
 		}
 
-		public List<?> getPrimaryKeys(Criteria<?> criteria, Sorting sorting) throws InvalidCriteriaException {
+		@Override
+		public List<?> getPrimaryKeys(final Criteria<?> criteria, final Sorting sorting) throws InvalidCriteriaException {
 			return dao.getPrimaryKeys(criteria, sorting);
 		}
 
-		public IPageResult<SearchResult> getPage(Criteria<?> criteria, Sorting sorting,
-				int offset, int pageSize) throws InvalidCriteriaException {
+		@Override
+		public IPageResult<SearchResult> getPage(final Criteria<?> criteria, final Sorting sorting, final int offset,
+				final int pageSize) throws InvalidCriteriaException {
 			return dao.getPage(criteria, sorting, offset, pageSize);
 		}
 	}
@@ -78,7 +80,7 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 	 * @param vfactory
 	 */
 	@Inject
-	public AccountService(IEntityDao dao, IEntityAssembler entityAssembler, ValidatorFactory vfactory) {
+	public AccountService(final IEntityDao dao, final IEntityAssembler entityAssembler, final ValidatorFactory vfactory) {
 		super(dao, entityAssembler, vfactory);
 	}
 
@@ -89,7 +91,7 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 
 	@Override
 	@Transactional
-	public void deleteAll(Collection<Account> entities) {
+	public void deleteAll(final Collection<Account> entities) {
 		if(entities != null && entities.size() > 0) {
 			for(final Account e : entities) {
 				delete(e);
@@ -104,7 +106,7 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 
 	@Override
 	@Transactional
-	public Collection<Account> persistAll(Collection<Account> entities) {
+	public Collection<Account> persistAll(final Collection<Account> entities) {
 		final Collection<Account> pec = super.persistAll(entities);
 		if(pec != null && pec.size() > 0) {
 			for(final Account a : pec) {
@@ -117,7 +119,7 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 
 	@Override
 	@Transactional
-	public Account persist(Account entity) throws EntityExistsException, ConstraintViolationException {
+	public Account persist(final Account entity) throws EntityExistsException, ConstraintViolationException {
 
 		// handle payment info
 		if(entity.getPaymentInfo() != null) {
@@ -144,7 +146,7 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 
 	@Override
 	@Transactional
-	public void purgeAll(Collection<Account> entities) {
+	public void purgeAll(final Collection<Account> entities) {
 		super.purgeAll(entities);
 		if(entities != null && entities.size() > 0) {
 			for(final Account a : entities) {
@@ -155,13 +157,14 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 
 	@Override
 	@Transactional
-	public void purge(Account entity) {
+	public void purge(final Account entity) {
 		super.purge(entity);
 		addHistoryRecord(new AccountHistoryContext(AccountHistoryOp.ACCOUNT_PURGED, entity));
 	}
 
+	@Override
 	@Transactional
-	public void delete(Account e) {
+	public void delete(final Account e) {
 		e.setStatus(AccountStatus.CLOSED);
 		super.persist(e);
 		addHistoryRecord(new AccountHistoryContext(AccountHistoryOp.ACCOUNT_DELETED, e));
@@ -172,39 +175,39 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 	 * @param context
 	 * @throws EntityExistsException
 	 */
-	private void addHistoryRecord(AccountHistoryContext context) {
+	private void addHistoryRecord(final AccountHistoryContext context) {
 		switch(context.getOp()) {
-		// add account
-		case ACCOUNT_ADDED: {
-			final AccountHistory ah =
-				entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getAccount()));
-			ah.setNotes(context.getAccount().typeDesc() + " created");
-			ah.setStatus(AccountStatus.NEW);
-			dao.persist(ah);
-			break;
-		}
-		// delete account
-		case ACCOUNT_DELETED: {
-			final AccountHistory ah =
-				entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getAccount()));
-			ah.setStatus(AccountStatus.DELETED);
-			ah.setNotes(context.getAccount().typeDesc() + " marked as DELETED");
-			dao.persist(ah);
-			break;
-		}
-		// purge account
-		case ACCOUNT_PURGED: {
-			// add history record to parentAccount
-			final Account parent = context.getAccount().getParent();
-			if(parent != null) {
-				final AccountHistory ah = entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(parent));
-				ah.setStatus(AccountStatus.DELETED);
-				ah.setNotes("Child account: " + context.getAccount().typeDesc() + "'" + context.getAccount().descriptor()
-						+ "' DELETED");
+			// add account
+			case ACCOUNT_ADDED: {
+				final AccountHistory ah =
+						entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getAccount()));
+				ah.setNotes(context.getAccount().typeDesc() + " created");
+				ah.setStatus(AccountStatus.NEW);
 				dao.persist(ah);
+				break;
 			}
-			break;
-		}
+				// delete account
+			case ACCOUNT_DELETED: {
+				final AccountHistory ah =
+						entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getAccount()));
+				ah.setStatus(AccountStatus.DELETED);
+				ah.setNotes(context.getAccount().typeDesc() + " marked as DELETED");
+				dao.persist(ah);
+				break;
+			}
+				// purge account
+			case ACCOUNT_PURGED: {
+				// add history record to parentAccount
+				final Account parent = context.getAccount().getParent();
+				if(parent != null) {
+					final AccountHistory ah = entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(parent));
+					ah.setStatus(AccountStatus.DELETED);
+					ah.setNotes("Child account: " + context.getAccount().typeDesc() + "'" + context.getAccount().descriptor()
+							+ "' DELETED");
+					dao.persist(ah);
+				}
+				break;
+			}
 
 		}// switch
 

@@ -24,6 +24,7 @@ import com.google.inject.Scopes;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.criteria.Criteria;
+import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.criteria.QueryParam;
 import com.tll.criteria.SelectNamedQueries;
@@ -33,19 +34,17 @@ import com.tll.dao.IEntityDao;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
-import com.tll.di.AbstractDb4oDaoModule;
-import com.tll.di.SmbizDb4oDaoModule;
-import com.tll.di.SmbizEGraphModule;
-import com.tll.di.SmbizEntityServiceFactoryModule;
-import com.tll.di.SmbizModelBuildModule;
-import com.tll.di.SmbizEntityServiceFactoryModule.UserCacheAware;
-import com.tll.di.test.Db4oDbShellModule;
+import com.tll.dao.db4o.AbstractDb4oDaoModule;
+import com.tll.dao.db4o.SmbizDb4oDaoModule;
+import com.tll.dao.db4o.test.Db4oDbShellModule;
 import com.tll.model.Asp;
 import com.tll.model.IEntity;
 import com.tll.model.Isp;
-import com.tll.schema.IQueryParam;
-import com.tll.schema.PropertyType;
+import com.tll.model.PropertyType;
+import com.tll.model.SmbizEGraphModule;
 import com.tll.service.entity.IEntityServiceFactory;
+import com.tll.service.entity.SmbizEntityServiceFactoryModule;
+import com.tll.service.entity.SmbizEntityServiceFactoryModule.UserCacheAware;
 import com.tll.util.ClassUtil;
 
 /**
@@ -91,7 +90,7 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 		// file lock when objectcontainer is instantiated
 		final Config cfg = getConfig();
 		cfg.setProperty(AbstractDb4oDaoModule.ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), Boolean.FALSE);
-		final Injector i = buildInjector(new SmbizModelBuildModule(), new SmbizEGraphModule(), new SmbizDb4oDaoModule(cfg), new Db4oDbShellModule());
+		final Injector i = buildInjector(new SmbizEGraphModule(), new SmbizDb4oDaoModule(cfg), new Db4oDbShellModule());
 		final IDbShell dbs = i.getInstance(IDbShell.class);
 
 		// re-stub db
@@ -130,7 +129,6 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 			}
 		});
 
-		modules.add(new SmbizModelBuildModule());
 		modules.add(new SmbizDb4oDaoModule(getConfig()));
 		modules.add(new SmbizEntityServiceFactoryModule());
 	}

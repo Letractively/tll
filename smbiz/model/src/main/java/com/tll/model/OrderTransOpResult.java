@@ -17,10 +17,12 @@ public enum OrderTransOpResult implements INameValueProvider<String>, IMarshalab
 		this.name = name;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String getValue() {
 		return name();
 	}

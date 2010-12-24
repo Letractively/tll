@@ -35,6 +35,7 @@ public class CurrencyService extends NamedEntityService<Currency> implements ICu
 		return Currency.class;
 	}
 
+	@Override
 	@Transactional
 	public Currency loadByIso4217(String iso4217) throws EntityNotFoundException {
 		try {

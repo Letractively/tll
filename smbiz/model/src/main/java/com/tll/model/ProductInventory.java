@@ -7,16 +7,12 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-
 /**
  * Product inventory entity
  * @author jpk
  */
-@BusinessObject(businessKeys =
-	@BusinessKeyDef(name = "Account Id and SKU", properties = { "account.id", "sku" })
-)
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Account Id and SKU", properties = {
+	"account.id", "sku" }))
 public class ProductInventory extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 6472483051056869008L;
@@ -48,6 +44,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 
 	private ProductGeneral productGeneral;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return ProductInventory.class;
 	}
@@ -63,7 +60,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 	/**
 	 * @param account The account to set.
 	 */
-	public void setAccount(Account account) {
+	public void setAccount(final Account account) {
 		this.account = account;
 	}
 
@@ -78,7 +75,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 	/**
 	 * @param auxDescriptor The auxDescriptor to set.
 	 */
-	public void setAuxDescriptor(String auxDescriptor) {
+	public void setAuxDescriptor(final String auxDescriptor) {
 		this.auxDescriptor = auxDescriptor;
 	}
 
@@ -95,7 +92,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 	/**
 	 * @param invCommitted The invCommitted to set.
 	 */
-	public void setInvCommitted(int invCommitted) {
+	public void setInvCommitted(final int invCommitted) {
 		this.invCommitted = invCommitted;
 	}
 
@@ -112,7 +109,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 	/**
 	 * @param invInStock The invInStock to set.
 	 */
-	public void setInvInStock(int invInStock) {
+	public void setInvInStock(final int invInStock) {
 		this.invInStock = invInStock;
 	}
 
@@ -129,7 +126,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 	/**
 	 * @param invReorderLevel The invReorderLevel to set.
 	 */
-	public void setInvReorderLevel(int invReorderLevel) {
+	public void setInvReorderLevel(final int invReorderLevel) {
 		this.invReorderLevel = invReorderLevel;
 	}
 
@@ -144,7 +141,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 	/**
 	 * @param onSale The onSale to set.
 	 */
-	public void setOnSale(boolean onSale) {
+	public void setOnSale(final boolean onSale) {
 		this.onSale = onSale;
 	}
 
@@ -160,7 +157,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 	/**
 	 * @param productGeneral The productGeneral to set.
 	 */
-	public void setProductGeneral(ProductGeneral productGeneral) {
+	public void setProductGeneral(final ProductGeneral productGeneral) {
 		this.productGeneral = productGeneral;
 	}
 
@@ -176,7 +173,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 	/**
 	 * @param retailPrice The retailPrice to set.
 	 */
-	public void setRetailPrice(float retailPrice) {
+	public void setRetailPrice(final float retailPrice) {
 		this.retailPrice = retailPrice;
 	}
 
@@ -192,7 +189,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 	/**
 	 * @param salesPrice The salesPrice to set.
 	 */
-	public void setSalesPrice(float salesPrice) {
+	public void setSalesPrice(final float salesPrice) {
 		this.salesPrice = salesPrice;
 	}
 
@@ -208,7 +205,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 	/**
 	 * @param sku The sku to set.
 	 */
-	public void setSku(String sku) {
+	public void setSku(final String sku) {
 		this.sku = sku;
 	}
 
@@ -223,7 +220,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 	/**
 	 * @param status The status to set.
 	 */
-	public void setStatus(ProductStatus status) {
+	public void setStatus(final ProductStatus status) {
 		this.status = status;
 	}
 
@@ -239,18 +236,21 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 	/**
 	 * @param weight The weight to set.
 	 */
-	public void setWeight(float weight) {
+	public void setWeight(final float weight) {
 		this.weight = weight;
 	}
 
+	@Override
 	public Account getParent() {
 		return getAccount();
 	}
 
-	public void setParent(Account e) {
+	@Override
+	public void setParent(final Account e) {
 		setAccount(e);
 	}
 
+	@Override
 	public Object accountKey() {
 		try {
 			return getAccount().getId();

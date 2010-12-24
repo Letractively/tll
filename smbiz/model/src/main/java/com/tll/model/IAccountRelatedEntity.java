@@ -1,9 +1,7 @@
 package com.tll.model;
 
-
 /**
  * Indicates that the entity is related to a particular {@link Account}.
- * 
  * @author jpk
  */
 public interface IAccountRelatedEntity {

@@ -26,10 +26,10 @@
               <goal>single</goal>
             </goals>
             <configuration>
-              <descriptors>
-                <descriptor>client-server-jar.xml</descriptor>
-                <descriptor>test-assets.xml</descriptor>
-              </descriptors>
+              <descriptorRefs>
+                <descriptorRef>client-server-jar</descriptorRef>
+                <descriptorRef>test-assets</descriptorRef>
+              </descriptorRefs>
             </configuration>
           </execution>
         </executions>

@@ -9,10 +9,6 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-import com.tll.schema.Extended;
-
 /**
  * The interface option entity
  * @author jpk
@@ -38,8 +34,9 @@ public class InterfaceOption extends InterfaceOptionBase {
 	protected float baseAnnualPrice = 0f;
 
 	protected Set<InterfaceOptionParameterDefinition> parameters =
-		new LinkedHashSet<InterfaceOptionParameterDefinition>();
+			new LinkedHashSet<InterfaceOptionParameterDefinition>();
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return InterfaceOption.class;
 	}
@@ -55,7 +52,7 @@ public class InterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @param isDefault The isDefault to set.
 	 */
-	public void setDefault(boolean isDefault) {
+	public void setDefault(final boolean isDefault) {
 		this.isDefault = isDefault;
 	}
 
@@ -72,7 +69,7 @@ public class InterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @param setUpCost The setUpCost to set.
 	 */
-	public void setSetUpCost(float setUpCost) {
+	public void setSetUpCost(final float setUpCost) {
 		this.setUpCost = setUpCost;
 	}
 
@@ -89,7 +86,7 @@ public class InterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @param monthlyCost The monthlyCost to set.
 	 */
-	public void setMonthlyCost(float monthlyCost) {
+	public void setMonthlyCost(final float monthlyCost) {
 		this.monthlyCost = monthlyCost;
 	}
 
@@ -106,7 +103,7 @@ public class InterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @param annualCost The annualCost to set.
 	 */
-	public void setAnnualCost(float annualCost) {
+	public void setAnnualCost(final float annualCost) {
 		this.annualCost = annualCost;
 	}
 
@@ -123,7 +120,7 @@ public class InterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @param baseAnnualPrice The baseAnnualPrice to set.
 	 */
-	public void setBaseAnnualPrice(float baseAnnualPrice) {
+	public void setBaseAnnualPrice(final float baseAnnualPrice) {
 		this.baseAnnualPrice = baseAnnualPrice;
 	}
 
@@ -140,7 +137,7 @@ public class InterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @param baseMonthlyPrice The baseMonthlyPrice to set.
 	 */
-	public void setBaseMonthlyPrice(float baseMonthlyPrice) {
+	public void setBaseMonthlyPrice(final float baseMonthlyPrice) {
 		this.baseMonthlyPrice = baseMonthlyPrice;
 	}
 
@@ -157,7 +154,7 @@ public class InterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @param baseSetupPrice The baseSetupPrice to set.
 	 */
-	public void setBaseSetupPrice(float baseSetupPrice) {
+	public void setBaseSetupPrice(final float baseSetupPrice) {
 		this.baseSetupPrice = baseSetupPrice;
 	}
 
@@ -172,27 +169,27 @@ public class InterfaceOption extends InterfaceOptionBase {
 	/**
 	 * @param parameters The parameters to set.
 	 */
-	public void setParameters(Set<InterfaceOptionParameterDefinition> parameters) {
+	public void setParameters(final Set<InterfaceOptionParameterDefinition> parameters) {
 		this.parameters = parameters;
 	}
 
-	public InterfaceOptionParameterDefinition getParameter(Object pk) {
+	public InterfaceOptionParameterDefinition getParameter(final Object pk) {
 		return findEntityInCollection(parameters, pk);
 	}
 
-	public InterfaceOptionParameterDefinition getParameter(String nme) {
+	public InterfaceOptionParameterDefinition getParameter(final String nme) {
 		return findNamedEntityInCollection(parameters, nme);
 	}
 
-	public void addParameter(InterfaceOptionParameterDefinition e) {
+	public void addParameter(final InterfaceOptionParameterDefinition e) {
 		addEntityToCollection(parameters, e);
 	}
 
-	public void addParameters(Collection<InterfaceOptionParameterDefinition> clc) {
+	public void addParameters(final Collection<InterfaceOptionParameterDefinition> clc) {
 		addEntitiesToCollection(clc, parameters);
 	}
 
-	public void removeParameter(InterfaceOptionParameterDefinition e) {
+	public void removeParameter(final InterfaceOptionParameterDefinition e) {
 		removeEntityFromCollection(parameters, e);
 	}
 

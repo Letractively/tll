@@ -6,10 +6,6 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-import com.tll.schema.Nested;
-
 /**
  * PaymentInfo - Wraps {@link PaymentData} (for security). A simple flat-file
  * type holder for several types of payment methods.
@@ -25,6 +21,7 @@ public class PaymentInfo extends NamedEntity {
 
 	private PaymentData paymentData;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return PaymentInfo.class;
 	}
@@ -37,6 +34,7 @@ public class PaymentInfo extends NamedEntity {
 		paymentData = new PaymentData();
 	}
 
+	@Override
 	@NotEmpty
 	@Length(max = MAXLEN_NAME)
 	public String getName() {
@@ -51,7 +49,7 @@ public class PaymentInfo extends NamedEntity {
 		return paymentData;
 	}
 
-	public void setPaymentData(PaymentData paymentData) {
+	public void setPaymentData(final PaymentData paymentData) {
 		this.paymentData = paymentData;
 	}
 

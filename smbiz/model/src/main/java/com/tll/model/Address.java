@@ -7,19 +7,15 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.tll.model.validate.PhoneNumber;
 import com.tll.model.validate.PhoneNumbers;
 import com.tll.model.validate.PostalCode;
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
 
 /**
  * @author jpk
  */
 @PhoneNumbers(value = {
-	@PhoneNumber(phonePropertyName = "phone"), @PhoneNumber(phonePropertyName = "fax") }
-)
+	@PhoneNumber(phonePropertyName = "phone"), @PhoneNumber(phonePropertyName = "fax") })
 @PostalCode()
-@BusinessObject(businessKeys =
-	@BusinessKeyDef(name = "Address 1 and Postal Code", properties = { "address1", "postalCode" })
-)
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Address 1 and Postal Code", properties = {
+	"address1", "postalCode" }))
 public class Address extends EntityBase {
 
 	private static final long serialVersionUID = 69385466934038047L;
@@ -53,6 +49,7 @@ public class Address extends EntityBase {
 	private String fax;
 	private String emailAddress;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return Address.class;
 	}
@@ -69,7 +66,7 @@ public class Address extends EntityBase {
 	/**
 	 * @param address1 The address1 to set.
 	 */
-	public void setAddress1(String address1) {
+	public void setAddress1(final String address1) {
 		this.address1 = address1;
 	}
 
@@ -84,7 +81,7 @@ public class Address extends EntityBase {
 	/**
 	 * @param address2 The address2 to set.
 	 */
-	public void setAddress2(String address2) {
+	public void setAddress2(final String address2) {
 		this.address2 = address2;
 	}
 
@@ -99,7 +96,7 @@ public class Address extends EntityBase {
 	/**
 	 * @param attn The attn to set.
 	 */
-	public void setAttn(String attn) {
+	public void setAttn(final String attn) {
 		this.attn = attn;
 	}
 
@@ -115,7 +112,7 @@ public class Address extends EntityBase {
 	/**
 	 * @param city The city to set.
 	 */
-	public void setCity(String city) {
+	public void setCity(final String city) {
 		this.city = city;
 	}
 
@@ -130,7 +127,7 @@ public class Address extends EntityBase {
 	/**
 	 * @param company The company to set.
 	 */
-	public void setCompany(String company) {
+	public void setCompany(final String company) {
 		this.company = company;
 	}
 
@@ -146,7 +143,7 @@ public class Address extends EntityBase {
 	/**
 	 * @param country The country to set.
 	 */
-	public void setCountry(String country) {
+	public void setCountry(final String country) {
 		this.country = country;
 	}
 
@@ -163,7 +160,7 @@ public class Address extends EntityBase {
 	/**
 	 * @param emailAddress The emailAddress to set.
 	 */
-	public void setEmailAddress(String emailAddress) {
+	public void setEmailAddress(final String emailAddress) {
 		this.emailAddress = emailAddress;
 	}
 
@@ -178,7 +175,7 @@ public class Address extends EntityBase {
 	/**
 	 * @param fax The fax to set.
 	 */
-	public void setFax(String fax) {
+	public void setFax(final String fax) {
 		this.fax = fax;
 	}
 
@@ -193,7 +190,7 @@ public class Address extends EntityBase {
 	/**
 	 * @param firstName The firstName to set.
 	 */
-	public void setFirstName(String firstName) {
+	public void setFirstName(final String firstName) {
 		this.firstName = firstName;
 	}
 
@@ -208,7 +205,7 @@ public class Address extends EntityBase {
 	/**
 	 * @param lastName The lastName to set.
 	 */
-	public void setLastName(String lastName) {
+	public void setLastName(final String lastName) {
 		this.lastName = lastName;
 	}
 
@@ -222,7 +219,7 @@ public class Address extends EntityBase {
 	/**
 	 * @param mi The mi to set.
 	 */
-	public void setMi(Character mi) {
+	public void setMi(final Character mi) {
 		this.mi = mi;
 	}
 
@@ -237,7 +234,7 @@ public class Address extends EntityBase {
 	/**
 	 * @param phone The phone to set.
 	 */
-	public void setPhone(String phone) {
+	public void setPhone(final String phone) {
 		this.phone = phone;
 	}
 
@@ -253,7 +250,7 @@ public class Address extends EntityBase {
 	/**
 	 * @param state The state to set.
 	 */
-	public void setProvince(String state) {
+	public void setProvince(final String state) {
 		this.province = state;
 	}
 
@@ -269,7 +266,7 @@ public class Address extends EntityBase {
 	/**
 	 * @param zip The zip to set.
 	 */
-	public void setPostalCode(String zip) {
+	public void setPostalCode(final String zip) {
 		this.postalCode = zip;
 	}
 }

@@ -3,12 +3,11 @@
  * @author jpk
  * @since Sep 21, 2009
  */
-package com.tll.di;
+package com.tll.dao.db4o;
 
 import com.db4o.config.Configuration;
 import com.tll.config.Config;
 import com.tll.dao.db4o.IDb4oNamedQueryTranslator;
-import com.tll.dao.db4o.SmbizNamedQueryTranslator;
 import com.tll.model.Account;
 import com.tll.model.Interface;
 

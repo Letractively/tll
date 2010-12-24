@@ -2,16 +2,12 @@ package com.tll.model;
 
 import javax.validation.constraints.NotNull;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-
 /**
  * Order item transaction entity
  * @author jpk
  */
-@BusinessObject(businessKeys =
-	@BusinessKeyDef(name = "Order Item Id and Order Trans Id", properties = { "orderItem.id", "orderTrans.id" })
-)
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Order Item Id and Order Trans Id", properties = {
+	"orderItem.id", "orderTrans.id" }))
 public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTrans>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -2106851598169919247L;
@@ -24,6 +20,7 @@ public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTran
 
 	private float amount = 0f;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return OrderItemTrans.class;
 	}
@@ -39,7 +36,7 @@ public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTran
 	/**
 	 * @param orderItemTransOp The orderItemTransOp to set.
 	 */
-	public void setOrderItemTransOp(OrderItemTransOp orderItemTransOp) {
+	public void setOrderItemTransOp(final OrderItemTransOp orderItemTransOp) {
 		this.orderItemTransOp = orderItemTransOp;
 	}
 
@@ -54,7 +51,7 @@ public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTran
 	/**
 	 * @param amount The amount to set.
 	 */
-	public void setAmount(float amount) {
+	public void setAmount(final float amount) {
 		this.amount = amount;
 	}
 
@@ -69,7 +66,7 @@ public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTran
 	/**
 	 * @param orderItem The orderItem to set.
 	 */
-	public void setOrderItem(OrderItem orderItem) {
+	public void setOrderItem(final OrderItem orderItem) {
 		this.orderItem = orderItem;
 	}
 
@@ -84,18 +81,21 @@ public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTran
 	/**
 	 * @param orderTrans The orderTrans to set.
 	 */
-	public void setOrderTrans(OrderTrans orderTrans) {
+	public void setOrderTrans(final OrderTrans orderTrans) {
 		this.orderTrans = orderTrans;
 	}
 
+	@Override
 	public OrderTrans getParent() {
 		return getOrderTrans();
 	}
 
-	public void setParent(OrderTrans e) {
+	@Override
+	public void setParent(final OrderTrans e) {
 		setOrderTrans(e);
 	}
 
+	@Override
 	public Object accountKey() {
 		try {
 			return getOrderItem().getOrder().getAccount().getId();

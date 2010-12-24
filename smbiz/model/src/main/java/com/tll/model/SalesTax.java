@@ -5,16 +5,12 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-
 /**
  * Sales tax entity
  * @author jpk
  */
-@BusinessObject(businessKeys =
-	@BusinessKeyDef(name = "Account Id, Province, Country and Postal Code", properties = { "account.id", "province", "county", "postalCode" })
-)
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Account Id, Province, Country and Postal Code", properties = {
+	"account.id", "province", "county", "postalCode" }))
 public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -8285702989304183918L;
@@ -33,6 +29,7 @@ public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, 
 
 	private Account account;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return SalesTax.class;
 	}
@@ -48,7 +45,7 @@ public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, 
 	/**
 	 * @param account The account to set.
 	 */
-	public void setAccount(Account account) {
+	public void setAccount(final Account account) {
 		this.account = account;
 	}
 
@@ -64,7 +61,7 @@ public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, 
 	/**
 	 * @param county The county to set.
 	 */
-	public void setCounty(String county) {
+	public void setCounty(final String county) {
 		this.county = county;
 	}
 
@@ -80,7 +77,7 @@ public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, 
 	/**
 	 * @param state The state to set.
 	 */
-	public void setProvince(String state) {
+	public void setProvince(final String state) {
 		this.province = state;
 	}
 
@@ -96,7 +93,7 @@ public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, 
 	/**
 	 * @param tax The tax to set.
 	 */
-	public void setTax(float tax) {
+	public void setTax(final float tax) {
 		this.tax = tax;
 	}
 
@@ -112,18 +109,21 @@ public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, 
 	/**
 	 * @param zip The zip to set.
 	 */
-	public void setPostalCode(String zip) {
+	public void setPostalCode(final String zip) {
 		this.postalCode = zip;
 	}
 
+	@Override
 	public Account getParent() {
 		return getAccount();
 	}
 
-	public void setParent(Account e) {
+	@Override
+	public void setParent(final Account e) {
 		setAccount(e);
 	}
 
+	@Override
 	public Object accountKey() {
 		try {
 			return getAccount().getId();

@@ -8,6 +8,7 @@ package com.tll.dao.db4o;
 import java.util.List;
 
 import com.db4o.query.Query;
+import com.tll.criteria.IQueryParam;
 import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.criteria.SelectNamedQueries;
@@ -16,8 +17,6 @@ import com.tll.model.INamedEntity;
 import com.tll.model.Interface;
 import com.tll.model.Isp;
 import com.tll.model.Merchant;
-import com.tll.schema.IQueryParam;
-
 
 /**
  * SmbizNamedQueryTranslator
@@ -27,7 +26,7 @@ public class SmbizNamedQueryTranslator implements IDb4oNamedQueryTranslator {
 
 	@Override
 	public void translateNamedQuery(ISelectNamedQueryDef queryDef, List<IQueryParam> params, Query q)
-	throws InvalidCriteriaException {
+			throws InvalidCriteriaException {
 
 		final String qname = queryDef.getQueryName();
 		if(SelectNamedQueries.ISP_LISTING.getQueryName().equals(qname)) {
@@ -64,7 +63,8 @@ public class SmbizNamedQueryTranslator implements IDb4oNamedQueryTranslator {
 			sq.constrain(Boolean.TRUE);
 		}
 
-		else throw new InvalidCriteriaException("Unhandled named query: " + qname);
+		else
+			throw new InvalidCriteriaException("Unhandled named query: " + qname);
 	}
 
 }

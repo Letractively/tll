@@ -12,7 +12,6 @@ import java.util.Set;
 import javax.validation.Valid;
 
 import com.tll.model.validate.BusinessKeyUniqueness;
-import com.tll.schema.Transient;
 
 /**
  * AccountInterface - Used for UI purposes to marshal an appropriate data
@@ -50,7 +49,7 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 		return accountKey;
 	}
 
-	public void setAccountKey(Object accountKey) {
+	public void setAccountKey(final Object accountKey) {
 		this.accountKey = accountKey;
 	}
 
@@ -58,7 +57,7 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 		return interfaceKey;
 	}
 
-	public void setInterfaceKey(Object interfaceKey) {
+	public void setInterfaceKey(final Object interfaceKey) {
 		this.interfaceKey = interfaceKey;
 	}
 
@@ -66,7 +65,7 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -74,7 +73,7 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 		return code;
 	}
 
-	public void setCode(String code) {
+	public void setCode(final String code) {
 		this.code = code;
 	}
 
@@ -82,7 +81,7 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
@@ -90,7 +89,7 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 		return isAvailableAsp;
 	}
 
-	public void setAvailableAsp(boolean isAvailableAsp) {
+	public void setAvailableAsp(final boolean isAvailableAsp) {
 		this.isAvailableAsp = isAvailableAsp;
 	}
 
@@ -98,7 +97,7 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 		return isAvailableIsp;
 	}
 
-	public void setAvailableIsp(boolean isAvailableIsp) {
+	public void setAvailableIsp(final boolean isAvailableIsp) {
 		this.isAvailableIsp = isAvailableIsp;
 	}
 
@@ -106,7 +105,7 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 		return isAvailableMerchant;
 	}
 
-	public void setAvailableMerchant(boolean isAvailableMerchant) {
+	public void setAvailableMerchant(final boolean isAvailableMerchant) {
 		this.isAvailableMerchant = isAvailableMerchant;
 	}
 
@@ -114,7 +113,7 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 		return isAvailableCustomer;
 	}
 
-	public void setAvailableCustomer(boolean isAvailableCustomer) {
+	public void setAvailableCustomer(final boolean isAvailableCustomer) {
 		this.isAvailableCustomer = isAvailableCustomer;
 	}
 
@@ -122,7 +121,7 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 		return isRequiredAsp;
 	}
 
-	public void setRequiredAsp(boolean isRequiredAsp) {
+	public void setRequiredAsp(final boolean isRequiredAsp) {
 		this.isRequiredAsp = isRequiredAsp;
 	}
 
@@ -130,7 +129,7 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 		return isRequiredIsp;
 	}
 
-	public void setRequiredIsp(boolean isRequiredIsp) {
+	public void setRequiredIsp(final boolean isRequiredIsp) {
 		this.isRequiredIsp = isRequiredIsp;
 	}
 
@@ -138,7 +137,7 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 		return isRequiredMerchant;
 	}
 
-	public void setRequiredMerchant(boolean isRequiredMerchant) {
+	public void setRequiredMerchant(final boolean isRequiredMerchant) {
 		this.isRequiredMerchant = isRequiredMerchant;
 	}
 
@@ -146,7 +145,7 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 		return isRequiredCustomer;
 	}
 
-	public void setRequiredCustomer(boolean isRequiredCustomer) {
+	public void setRequiredCustomer(final boolean isRequiredCustomer) {
 		this.isRequiredCustomer = isRequiredCustomer;
 	}
 
@@ -162,27 +161,27 @@ public class AccountInterface extends EntityBase implements IAccountRelatedEntit
 	/**
 	 * @param options The options to set.
 	 */
-	public void setOptions(Set<AccountInterfaceOption> options) {
+	public void setOptions(final Set<AccountInterfaceOption> options) {
 		this.options = options;
 	}
 
-	public AccountInterfaceOption getOption(Object pk) {
+	public AccountInterfaceOption getOption(final Object pk) {
 		return findEntityInCollection(options, pk);
 	}
 
-	public AccountInterfaceOption getOption(String nme) {
+	public AccountInterfaceOption getOption(final String nme) {
 		return findNamedEntityInCollection(options, nme);
 	}
 
-	public void addOption(AccountInterfaceOption e) {
+	public void addOption(final AccountInterfaceOption e) {
 		addEntityToCollection(options, e);
 	}
 
-	public void addOptions(Collection<AccountInterfaceOption> clc) {
+	public void addOptions(final Collection<AccountInterfaceOption> clc) {
 		addEntitiesToCollection(clc, options);
 	}
 
-	public void removeOption(AccountInterfaceOption e) {
+	public void removeOption(final AccountInterfaceOption e) {
 		removeEntityFromCollection(options, e);
 	}
 

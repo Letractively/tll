@@ -4,9 +4,6 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.security.GrantedAuthority;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-
 /**
  * Implementation of Acegi's
  * {@link org.springframework.security.GrantedAuthority} interface.
@@ -26,30 +23,34 @@ public class Authority extends EntityBase implements INamedEntity, GrantedAuthor
 	 */
 	private String authority;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return Authority.class;
 	}
 
+	@Override
 	@NotEmpty
 	@Length(max = MAXLEN_AUTHORITY)
 	public String getAuthority() {
 		return authority;
 	}
 
-	public void setAuthority(String authority) {
+	public void setAuthority(final String authority) {
 		this.authority = authority;
 	}
 
+	@Override
 	public String getName() {
 		return getAuthority();
 	}
 
-	public void setName(String name) {
+	@Override
+	public void setName(final String name) {
 		setAuthority(name);
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		// IMPT: We need to support comparisons to raw strings for ACL related
 		// functionality.
 		if(obj instanceof String) {
@@ -70,7 +71,7 @@ public class Authority extends EntityBase implements INamedEntity, GrantedAuthor
 	}
 
 	@Override
-	public int compareTo(Object o) {
+	public int compareTo(final Object o) {
 		if(o != null && o instanceof GrantedAuthority) {
 			final String rhsRole = ((GrantedAuthority) o).getAuthority();
 			if(rhsRole == null) {

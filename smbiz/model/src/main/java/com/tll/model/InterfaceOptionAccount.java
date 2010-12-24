@@ -6,16 +6,12 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-
 /**
  * Binder entity between interface options and an account
  * @author jpk
  */
-@BusinessObject(businessKeys =
-	@BusinessKeyDef(name = "Option Id and Account Id", properties = { "option.id", "account.id" })
-)
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Option Id and Account Id", properties = {
+	"option.id", "account.id" }))
 public class InterfaceOptionAccount extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 1185305612828685906L;
@@ -35,6 +31,7 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 
 	protected Map<String, String> parameters = new LinkedHashMap<String, String>();
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return InterfaceOptionAccount.class;
 	}
@@ -50,7 +47,7 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 	/**
 	 * @param option The option to set.
 	 */
-	public void setOption(InterfaceOption option) {
+	public void setOption(final InterfaceOption option) {
 		this.option = option;
 	}
 
@@ -65,7 +62,7 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 	/**
 	 * @param account The account to set.
 	 */
-	public void setAccount(Account account) {
+	public void setAccount(final Account account) {
 		this.account = account;
 	}
 
@@ -81,7 +78,7 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 	/**
 	 * @param setUpPrice The setUpPrice to set.
 	 */
-	public void setSetUpPrice(float setUpPrice) {
+	public void setSetUpPrice(final float setUpPrice) {
 		this.setUpPrice = setUpPrice;
 	}
 
@@ -97,7 +94,7 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 	/**
 	 * @param monthlyPrice The monthlyPrice to set.
 	 */
-	public void setMonthlyPrice(float monthlyPrice) {
+	public void setMonthlyPrice(final float monthlyPrice) {
 		this.monthlyPrice = monthlyPrice;
 	}
 
@@ -113,7 +110,7 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 	/**
 	 * @param annualPrice The annualPrice to set.
 	 */
-	public void setAnnualPrice(float annualPrice) {
+	public void setAnnualPrice(final float annualPrice) {
 		this.annualPrice = annualPrice;
 	}
 
@@ -128,17 +125,17 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 	/**
 	 * @param parameters The parameters to set.
 	 */
-	public void setParameters(Map<String, String> parameters) {
+	public void setParameters(final Map<String, String> parameters) {
 		this.parameters = parameters;
 	}
 
-	public void setParameter(String name, String value) {
+	public void setParameter(final String name, final String value) {
 		if(name != null && value != null) {
 			parameters.put(name, value);
 		}
 	}
 
-	public void removeParameter(String name) {
+	public void removeParameter(final String name) {
 		if(name != null && parameters != null) {
 			parameters.remove(name);
 		}
@@ -154,14 +151,17 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 		return parameters == null ? 0 : parameters.size();
 	}
 
+	@Override
 	public Account getParent() {
 		return getAccount();
 	}
 
-	public void setParent(Account e) {
+	@Override
+	public void setParent(final Account e) {
 		setAccount(e);
 	}
 
+	@Override
 	public Object accountKey() {
 		try {
 			return getAccount().getId();

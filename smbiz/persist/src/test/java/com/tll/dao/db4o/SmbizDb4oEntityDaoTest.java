@@ -13,9 +13,7 @@ import com.google.inject.Module;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.dao.IEntityDaoTestHandler;
-import com.tll.di.SmbizDb4oDaoModule;
-import com.tll.di.SmbizEGraphModule;
-import com.tll.di.SmbizModelBuildModule;
+import com.tll.model.SmbizEGraphModule;
 import com.tll.util.CommonUtil;
 
 /**
@@ -65,7 +63,6 @@ public class SmbizDb4oEntityDaoTest extends AbstractDb4oEntityDaoTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new SmbizModelBuildModule());
 		modules.add(new SmbizEGraphModule());
 		modules.add(new SmbizDb4oDaoModule(getConfig()));
 	}

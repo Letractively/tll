@@ -68,82 +68,6 @@
 	</build>
 
 	<profiles>
-		<profile>
-			<id>jdo</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<configuration>
-							<!--
-								This tells datanucleus to NOT auto-enhance since the enhancer is on the classpath! This is a manually driven
-								process since the maven plugin is limited in its functionality and we have more control invoking it manually
-							-->
-							<compilerArgument>-proc:none</compilerArgument>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>jdo-enhance-classpath</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>build-classpath</goal>
-								</goals>
-								<configuration>
-									<includeArtifactIds>log4j,asm,commons-logging,gwt-servlet,spring-security-core,tll-core,tll-model,jdo2-api,datanucleus-core,datanucleus-enhancer</includeArtifactIds>
-									<outputFile>target/jdo-enhance-cp.txt</outputFile>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>jdo-enhance</id>
-								<phase>process-classes</phase>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-									<tasks>
-										<loadfile property="ecp" srcFile="target/jdo-enhance-cp.txt" />
-										<property name="enhancer.classpath" value="target/classes;src/test/resources;${ecp}" />
-										<echo message="enhancer.classpath: ${enhancer.classpath}" />
-										<property name="jdo.files" value="META-INF/package.jdo" />
-										<ant antfile="../../model/build-jdo.xml">
-											<target name="enhance" />
-										</ant>
-									</tasks>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-			<dependencies>
-				<dependency>
-					<groupId>asm</groupId>
-					<artifactId>asm</artifactId>
-					<scope>provided</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.datanucleus</groupId>
-					<artifactId>datanucleus-core</artifactId>
-					<scope>provided</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.datanucleus</groupId>
-					<artifactId>datanucleus-enhancer</artifactId>
-					<scope>provided</scope>
-				</dependency>
-			</dependencies>
-		</profile>
 	</profiles>
 
 	<dependencies>
@@ -160,13 +84,6 @@
 			<groupId>aopalliance</groupId>
 			<artifactId>aopalliance</artifactId>
 			<scope>runtime</scope>
-		</dependency>
-
-		<!-- satisifies the possibly jdo enhanced model classes -->
-		<dependency>
-			<groupId>javax.jdo</groupId>
-			<artifactId>jdo2-api</artifactId>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -192,6 +109,11 @@
 		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-schema</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>

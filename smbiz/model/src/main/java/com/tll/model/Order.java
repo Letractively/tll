@@ -51,6 +51,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 
 	private Set<OrderTrans> transactions = new LinkedHashSet<OrderTrans>();
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return Order.class;
 	}
@@ -66,7 +67,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @param account The account to set.
 	 */
-	public void setAccount(Account account) {
+	public void setAccount(final Account account) {
 		this.account = account;
 	}
 
@@ -81,7 +82,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @param billToAddress The billToAddress to set.
 	 */
-	public void setBillToAddress(Address billToAddress) {
+	public void setBillToAddress(final Address billToAddress) {
 		this.billToAddress = billToAddress;
 	}
 
@@ -96,7 +97,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @param currency The currency to set.
 	 */
-	public void setCurrency(Currency currency) {
+	public void setCurrency(final Currency currency) {
 		this.currency = currency;
 	}
 
@@ -110,7 +111,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @param customer The customer to set.
 	 */
-	public void setCustomer(Customer customer) {
+	public void setCustomer(final Customer customer) {
 		this.customer = customer;
 	}
 
@@ -125,7 +126,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @param notes The notes to set.
 	 */
-	public void setNotes(String notes) {
+	public void setNotes(final String notes) {
 		this.notes = notes;
 	}
 
@@ -140,7 +141,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @param paymentInfo The paymentInfo to set.
 	 */
-	public void setPaymentInfo(PaymentInfo paymentInfo) {
+	public void setPaymentInfo(final PaymentInfo paymentInfo) {
 		this.paymentInfo = paymentInfo;
 	}
 
@@ -155,7 +156,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @param shipToAddress The shipToAddress to set.
 	 */
-	public void setShipToAddress(Address shipToAddress) {
+	public void setShipToAddress(final Address shipToAddress) {
 		this.shipToAddress = shipToAddress;
 	}
 
@@ -169,7 +170,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @param visitor The visitor to set.
 	 */
-	public void setVisitor(Visitor visitor) {
+	public void setVisitor(final Visitor visitor) {
 		this.visitor = visitor;
 	}
 
@@ -184,7 +185,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @param siteCode The siteCode to set.
 	 */
-	public void setSiteCode(String siteCode) {
+	public void setSiteCode(final String siteCode) {
 		this.siteCode = siteCode;
 	}
 
@@ -199,7 +200,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @param status The status to set.
 	 */
-	public void setStatus(OrderStatus status) {
+	public void setStatus(final OrderStatus status) {
 		this.status = status;
 	}
 
@@ -213,23 +214,23 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @param transactions The transactions to set.
 	 */
-	public void setTransactions(Set<OrderTrans> transactions) {
+	public void setTransactions(final Set<OrderTrans> transactions) {
 		this.transactions = transactions;
 	}
 
-	public OrderTrans getTransaction(Object pk) {
+	public OrderTrans getTransaction(final Object pk) {
 		return findEntityInCollection(transactions, pk);
 	}
 
-	public void addTransaction(OrderTrans e) {
+	public void addTransaction(final OrderTrans e) {
 		addEntityToCollection(transactions, e);
 	}
 
-	public void addTransactions(Collection<OrderTrans> clc) {
+	public void addTransactions(final Collection<OrderTrans> clc) {
 		addEntitiesToCollection(clc, transactions);
 	}
 
-	public void removeTransaction(OrderTrans e) {
+	public void removeTransaction(final OrderTrans e) {
 		removeEntityFromCollection(transactions, e);
 	}
 
@@ -252,23 +253,23 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	/**
 	 * @param orderItems The orderItems to set.
 	 */
-	public void setOrderItems(Set<OrderItem> orderItems) {
+	public void setOrderItems(final Set<OrderItem> orderItems) {
 		this.orderItems = orderItems;
 	}
 
-	public OrderItem getOrderItem(Object pk) {
+	public OrderItem getOrderItem(final Object pk) {
 		return findEntityInCollection(orderItems, pk);
 	}
 
-	public void addOrderItem(OrderItem e) {
+	public void addOrderItem(final OrderItem e) {
 		addEntityToCollection(orderItems, e);
 	}
 
-	public void addOrderItems(Collection<OrderItem> clc) {
+	public void addOrderItems(final Collection<OrderItem> clc) {
 		addEntitiesToCollection(clc, orderItems);
 	}
 
-	public void removeOrderItem(OrderItem e) {
+	public void removeOrderItem(final OrderItem e) {
 		removeEntityFromCollection(orderItems, e);
 	}
 
@@ -280,14 +281,17 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 		clearEntityCollection(orderItems);
 	}
 
+	@Override
 	public Account getParent() {
 		return getAccount();
 	}
 
-	public void setParent(Account e) {
+	@Override
+	public void setParent(final Account e) {
 		setAccount(e);
 	}
 
+	@Override
 	public Object accountKey() {
 		try {
 			return getAccount().getId();

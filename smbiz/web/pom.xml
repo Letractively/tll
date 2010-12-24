@@ -356,19 +356,6 @@
 				<daoImpl>db4o</daoImpl>
 			</properties>
 		</profile>
-		<profile>
-			<id>jdo</id>
-			<properties>
-				<daoImpl>jdo</daoImpl>
-			</properties>
-  		<dependencies>
-  			<!-- required for resolution of JDO stuff in *enhanced* .class files tll-model testassets jar  -->
-  			<dependency>
-  				<groupId>javax.jdo</groupId>
-  				<artifactId>jdo2-api</artifactId>
-  			</dependency>
-  		</dependencies>
-		</profile>
 
 		<!-- security impl profiles -->
 		<profile>

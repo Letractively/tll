@@ -58,9 +58,9 @@
               <goal>single</goal>
             </goals>
             <configuration>
-              <descriptors>
-                <descriptor>test-assets.xml</descriptor>
-              </descriptors>
+              <descriptorRefs>
+                <descriptorRef>test-assets</descriptorRef>
+              </descriptorRefs>
             </configuration>
           </execution>
         </executions>

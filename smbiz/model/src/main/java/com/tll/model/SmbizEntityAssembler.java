@@ -15,17 +15,18 @@ public final class SmbizEntityAssembler implements IEntityAssembler {
 	 * @param entityFactory required
 	 */
 	@Inject
-	public SmbizEntityAssembler(IEntityFactory<?> entityFactory) {
+	public SmbizEntityAssembler(final IEntityFactory<?> entityFactory) {
 		super();
 		this.entityFactory = entityFactory;
 	}
 
-	private <E extends IEntity> E createEntity(Class<E> entityClass) {
+	private <E extends IEntity> E createEntity(final Class<E> entityClass) {
 		return entityFactory.createEntity(entityClass, true);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> E assembleEntity(Class<E> entityType, IEntityProvider entityProvider) {
+	public <E extends IEntity> E assembleEntity(final Class<E> entityType, final IEntityProvider entityProvider) {
 		E e = null;
 		if(AccountAddress.class.equals(entityType)) {
 			final AccountAddress ae = createEntity(AccountAddress.class);
@@ -35,7 +36,7 @@ public final class SmbizEntityAssembler implements IEntityAssembler {
 			Address a = entityProvider == null ? null : entityProvider.getEntityByType(Address.class);
 			if(a == null) {
 				a = createEntity(Address.class);
-				//if(generate) assignPrimaryKey(a);
+				// if(generate) assignPrimaryKey(a);
 			}
 			ae.setAddress(a);
 			e = (E) ae;
@@ -240,7 +241,7 @@ public final class SmbizEntityAssembler implements IEntityAssembler {
 
 		else
 			throw new IllegalArgumentException("Unsupported entity type '" + entityType + "' for assembly");
-		
+
 		return e;
 	}
 }

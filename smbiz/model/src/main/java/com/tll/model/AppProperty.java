@@ -3,9 +3,6 @@ package com.tll.model;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.tll.schema.BusinessKeyDef;
-import com.tll.schema.BusinessObject;
-
 /**
  * AppProperty
  * @author jpk
@@ -20,10 +17,12 @@ public class AppProperty extends NamedEntity {
 
 	private String value;
 
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return AppProperty.class;
 	}
 
+	@Override
 	@NotEmpty
 	@Length(max = MAXLEN_NAME)
 	public String getName() {
@@ -36,7 +35,7 @@ public class AppProperty extends NamedEntity {
 		return value;
 	}
 
-	public void setValue(String value) {
+	public void setValue(final String value) {
 		this.value = value;
 	}
 }
