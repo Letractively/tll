@@ -6,7 +6,6 @@ package com.tll.client;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.TabPanel;
 
 /**
  * DOMExt - "extra" DOM methods
@@ -18,7 +17,7 @@ public abstract class DOMExt {
 	 * Determines if the given element is hidden by virtue of itself OR one of its
 	 * ancestors.
 	 * <p>
-	 * This is handy when considering such widgets as a {@link TabPanel} or
+	 * This is handy when considering such widgets as a <code>TabPanel</code> or
 	 * {@link DisclosurePanel}.
 	 * @param elem
 	 * @return true/false

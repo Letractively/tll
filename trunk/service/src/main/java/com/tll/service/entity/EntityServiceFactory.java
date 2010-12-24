@@ -22,6 +22,7 @@ public final class EntityServiceFactory implements IEntityServiceFactory {
 		this.map = map;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public <S extends IService> S instance(Class<S> type) {
 		final S s = (S) map.get(type);
@@ -31,6 +32,7 @@ public final class EntityServiceFactory implements IEntityServiceFactory {
 		return s;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public <E extends IEntity> IEntityService<E> instanceByEntityType(Class<E> entityType) {
 		for(final IService es : map.values()) {

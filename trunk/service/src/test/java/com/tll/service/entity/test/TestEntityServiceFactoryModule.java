@@ -1,7 +1,7 @@
 /*
  * The Logic Lab
  */
-package com.tll.di;
+package com.tll.service.entity.test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,10 +16,6 @@ import com.google.inject.Scopes;
 import com.tll.service.IService;
 import com.tll.service.entity.EntityServiceFactory;
 import com.tll.service.entity.IEntityServiceFactory;
-import com.tll.service.entity.test.AccountService;
-import com.tll.service.entity.test.AddressService;
-import com.tll.service.entity.test.IAccountService;
-import com.tll.service.entity.test.IAddressService;
 
 /**
  * TestEntityServiceFactoryModule
@@ -43,6 +39,7 @@ public class TestEntityServiceFactoryModule extends AbstractModule {
 			@Inject
 			IAddressService adrs;
 
+			@Override
 			public IEntityServiceFactory get() {
 				final Map<Class<? extends IService>, IService> map =
 					new HashMap<Class<? extends IService>, IService>();

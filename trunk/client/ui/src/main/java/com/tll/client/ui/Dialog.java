@@ -4,8 +4,8 @@
  */
 package com.tll.client.ui;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -62,7 +62,7 @@ public class Dialog extends DialogBox {
 			glassPanel.setVisible(false);
 		}
 		if(focusOnCloseWidget != null) {
-			DeferredCommand.addCommand(new FocusCommand(focusOnCloseWidget, true));
+			Scheduler.get().scheduleDeferred(new FocusCommand(focusOnCloseWidget, true));
 		}
 	}
 

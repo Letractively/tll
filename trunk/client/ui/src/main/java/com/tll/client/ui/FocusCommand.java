@@ -28,6 +28,7 @@ public class FocusCommand implements Command {
 		this.focus = focus;
 	}
 
+	@Override
 	public void execute() {
 		w.setFocus(focus);
 	}

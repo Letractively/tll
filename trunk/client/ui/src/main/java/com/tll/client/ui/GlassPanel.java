@@ -6,6 +6,7 @@
 package com.tll.client.ui;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -14,11 +15,10 @@ import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.Event.NativePreviewHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusPanel;
@@ -61,8 +61,9 @@ public class GlassPanel extends Composite implements NativePreviewHandler {
 			 * Removed DeferredCommand if/when GWT issue 1849 is implemented
 			 * http://code.google.com/p/google-web-toolkit/issues/detail?id=1849
 			 */
-			DeferredCommand.addCommand(new Command() {
+			Scheduler.get().scheduleDeferred(new Command() {
 
+				@Override
 				public void execute() {
 					setFocus(true);
 				}

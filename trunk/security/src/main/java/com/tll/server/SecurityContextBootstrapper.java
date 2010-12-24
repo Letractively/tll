@@ -15,7 +15,6 @@ import org.springframework.security.AuthenticationManager;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
-import com.tll.di.AcegiModule;
 
 /**
  * SecurityContextBootstrapper - Sets the {@link SecurityContext} in the

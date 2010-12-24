@@ -96,7 +96,8 @@ public final class EditEvent<T> extends GwtEvent<IEditHandler<T>> {
 		handler.onEdit(this);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({
+		"unchecked", "rawtypes" })
 	@Override
 	public GwtEvent.Type<IEditHandler<T>> getAssociatedType() {
 		return (Type) TYPE;

@@ -3,10 +3,10 @@ package com.tll.client;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -214,6 +214,7 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 	/**
 	 * This is the entry point method.
 	 */
+	@Override
 	public final void onModuleLoad() {
 
 		Log.setUncaughtExceptionHandler();
@@ -282,12 +283,14 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 		backLink.setVisible(gotoTest);
 	}
 
+	@Override
 	public final void onValueChange(final ValueChangeEvent<String> event) {
 		final String historyToken = event.getValue();
 		assert historyToken != null;
 
-		DeferredCommand.addCommand(new Command() {
+		Scheduler.get().scheduleDeferred(new Command() {
 
+			@Override
 			public void execute() {
 				if(ROOT_HISTORY_TOKEN.equals(historyToken) || backLink.getTargetHistoryToken().equals(historyToken)) {
 					if(current != null) {

@@ -136,6 +136,7 @@ public class OptionsPopup extends PopupPanel implements MouseDownHandler, MouseO
 		if(timer != null) timer.schedule(duration);
 	}
 
+	@Override
 	public void onMouseDown(final MouseDownEvent event) {
 		showAt(event.getClientX(), event.getClientY());
 	}
