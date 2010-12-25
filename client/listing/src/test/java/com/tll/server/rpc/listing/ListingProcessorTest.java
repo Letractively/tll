@@ -29,7 +29,7 @@ import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.Sorting;
 import com.tll.dao.db4o.test.Db4oDbShellModule;
 import com.tll.dao.db4o.test.TestDb4oDaoModule;
-import com.tll.dao.db4o.test.TestPersistenceUnitModule;
+import com.tll.dao.db4o.test.TestDb4oPersistenceUnitModule;
 import com.tll.di.LogExceptionHandlerModule;
 import com.tll.di.TestListingModule;
 import com.tll.di.test.TestMarshalModule;
@@ -57,7 +57,7 @@ public class ListingProcessorTest extends AbstractDbAwareTest {
 		// as it implicitly binds at the MailModule constrctor
 		modules.add(new MailModule(Config.load(new ConfigRef("config-mail.properties"))));
 
-		modules.add(new TestPersistenceUnitModule(null, TestEntityFactory.class));
+		modules.add(new TestDb4oPersistenceUnitModule(null, TestEntityFactory.class));
 		modules.add(new TestDb4oDaoModule(getConfig()));
 		modules.add(new Db4oDbShellModule());
 		modules.add(new TestEntityServiceFactoryModule());

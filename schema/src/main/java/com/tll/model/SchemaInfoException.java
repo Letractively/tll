@@ -2,7 +2,7 @@ package com.tll.model;
 
 
 /**
- * Intended for use by {@link ISchemaInfo} implementations.
+ * Intended for use by {@link SchemaInfo} implementations.
  * @author jpk
  */
 public class SchemaInfoException extends RuntimeException {
