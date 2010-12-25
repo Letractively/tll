@@ -16,7 +16,7 @@ import com.google.inject.Provider;
 import com.google.inject.Scopes;
 
 /**
- * javax.validation (jsr-303) bootstrapping.
+ * javax.validation (jsr-303) runtime bootstrapping.
  * @author jpk
  */
 public class ValidationModule extends AbstractModule {

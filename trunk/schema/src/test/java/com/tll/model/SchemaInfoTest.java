@@ -18,14 +18,6 @@ import org.testng.annotations.Test;
 
 import com.tll.IDescriptorProvider;
 import com.tll.ITypeDescriptorProvider;
-import com.tll.model.Extended;
-import com.tll.model.IEntityMetadata;
-import com.tll.model.ISchemaInfo;
-import com.tll.model.ISchemaProperty;
-import com.tll.model.Nested;
-import com.tll.model.PropertyType;
-import com.tll.model.Root;
-import com.tll.model.SchemaInfo;
 
 /**
  * SchemaInfoTest
@@ -363,7 +355,7 @@ public class SchemaInfoTest {
 
 	@Test
 	public void test() throws Exception {
-		final ISchemaInfo si = new SchemaInfo(entityMetadata);
+		final SchemaInfo si = new SchemaInfo(entityMetadata);
 		Assert.assertNotNull(si);
 		ISchemaProperty sp;
 

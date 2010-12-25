@@ -19,7 +19,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.google.inject.Inject;
 import com.tll.util.PropertyPath;
 
-public final class SchemaInfo implements ISchemaInfo {
+public final class SchemaInfo {
 
 	/**
 	 * PersistProperty - Encapsulates persistence info for a particular entity
@@ -103,7 +103,11 @@ public final class SchemaInfo implements ISchemaInfo {
 		this.entityMetadata = entityMetadata;
 	}
 
-	@Override
+	/**
+	 * Provides a map of schema properties keyed by property name for a target entity type.
+	 * @param entityClass the entity type
+	 * @return the associated schema map
+	 */
 	public Map<String, ISchemaProperty> getSchemaProperties(Class<?> entityClass) {
 		if(!schemaMap.containsKey(entityClass)) {
 			load(entityClass);
@@ -111,7 +115,13 @@ public final class SchemaInfo implements ISchemaInfo {
 		return schemaMap.get(entityClass);
 	}
 
-	@Override
+	/**
+	 * Provides the schema info for the given property for a given entity type.
+	 * @param entityClass the entity type
+	 * @param propertyName the property name
+	 * @return the corres. schema property type
+	 * @throws SchemaInfoException When the given property doesn't exist
+	 */
 	public ISchemaProperty getSchemaProperty(final Class<?> entityClass, final String propertyName)
 	throws SchemaInfoException {
 		if(propertyName == null || propertyName.length() < 1)

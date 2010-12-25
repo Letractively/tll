@@ -7,7 +7,6 @@ import org.testng.annotations.Test;
 import com.google.inject.Module;
 import com.tll.dao.IEntityDaoTestHandler;
 import com.tll.dao.db4o.test.TestDb4oDaoModule;
-import com.tll.dao.db4o.test.TestPersistenceUnitModule;
 import com.tll.dao.test.TestEntityDaoTestHandler;
 
 /**
@@ -29,7 +28,6 @@ public class Db4oEntityDaoTest extends AbstractDb4oEntityDaoTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new TestPersistenceUnitModule(null));
 		modules.add(new TestDb4oDaoModule(getConfig()));
 	}
 

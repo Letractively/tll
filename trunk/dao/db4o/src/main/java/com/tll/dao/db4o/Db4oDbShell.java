@@ -31,13 +31,10 @@ public class Db4oDbShell implements IDbShell {
 
 	private static final Log log = LogFactory.getLog(Db4oDbShell.class);
 
-	@Inject
 	private final URI dbFile;
 
-	@Inject(optional = true)
 	private final IEntityGraphPopulator populator;
 
-	@Inject(optional = true)
 	private final Provider<Configuration> c;
 
 	/**
@@ -47,6 +44,7 @@ public class Db4oDbShell implements IDbShell {
 	 *        and content.
 	 * @param c The db4o configuration (optional).
 	 */
+	@Inject
 	public Db4oDbShell(URI dbFile, IEntityGraphPopulator populator, Provider<Configuration> c) {
 		super();
 		this.dbFile = dbFile;
