@@ -9,9 +9,10 @@ import com.tll.IMarshalable;
 /**
  * IListingServiceAsync
  * @author jpk
+ * @param <S> listing search type
  * @param <R> the row type
  */
-public interface IListingServiceAsync<R extends IMarshalable> {
+public interface IListingServiceAsync<S extends IMarshalable, R extends IMarshalable> {
 
-	void process(ListingRequest listingCommand, AsyncCallback<ListingPayload<R>> callback);
+	void process(ListingRequest<S> listingCommand, AsyncCallback<ListingPayload<R>> callback);
 }

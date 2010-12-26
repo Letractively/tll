@@ -11,16 +11,17 @@ import com.tll.IMarshalable;
 
 /**
  * IListingService - Handles {@link ListingRequest}s.
+ * @param <S> listing search type
  * @param <R> The row data type
  * @author jpk
  */
 @RemoteServiceRelativePath(value = "rpc/listing")
-public interface IListingService<R extends IMarshalable> extends RemoteService {
+public interface IListingService<S extends IMarshalable, R extends IMarshalable> extends RemoteService {
 
 	/**
 	 * Processes a listing request.
 	 * @param listingRequest The listing request
 	 * @return ListingPayload The listing response
 	 */
-	ListingPayload<R> process(ListingRequest listingRequest);
+	ListingPayload<R> process(ListingRequest<S> listingRequest);
 }

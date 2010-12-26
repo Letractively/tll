@@ -18,37 +18,18 @@ import com.tll.common.data.rpc.ListingPayload.ListingStatus;
 import com.tll.common.data.rpc.ListingRequest;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
-import com.tll.criteria.Criteria;
-import com.tll.criteria.InvalidCriteriaException;
-import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.EmptyListException;
 import com.tll.listhandler.IListHandler;
-import com.tll.listhandler.IListingDataProvider;
-import com.tll.listhandler.ListHandlerException;
-import com.tll.listhandler.ListHandlerFactory;
-import com.tll.listhandler.ListHandlerType;
-import com.tll.model.IEntity;
 import com.tll.server.rpc.RpcServlet;
 
 /**
  * ListingProcessor - Handles listing requests
- * @param <R> listing row data type
  * @author jpk
  */
-abstract class AbstractListingProcessor<R extends IMarshalable> {
+final class ListingProcessor {
 
 	private final Log log = LogFactory.getLog(this.getClass());
-
-	/**
-	 * Responsible for providing the proper row data type list handler from the
-	 * raw server-side list handler.
-	 * @param listHandler the raw server-side list handler
-	 * @param listingDef the listing def
-	 * @return list handler of the row data type
-	 */
-	protected abstract IListHandler<R> getRowDataListHandler(IListHandler<SearchResult> listHandler,
-			RemoteListingDefinition<? extends IMarshalable> listingDef);
 
 	/**
 	 * Processes all listing requests.
@@ -57,8 +38,7 @@ abstract class AbstractListingProcessor<R extends IMarshalable> {
 	 * @param request the listing request
 	 * @return the resultant listing payload
 	 */
-	@SuppressWarnings("unchecked")
-	ListingPayload<R> process(final String sessionId, final ListingContext context, final ListingRequest request) {
+	<S extends IMarshalable, R extends IMarshalable> ListingPayload<R> process(final String sessionId, final ListingContext<S, R> context, final ListingRequest<S> request) {
 
 		if(context == null) throw new IllegalStateException("Null listing context");
 
@@ -119,16 +99,17 @@ abstract class AbstractListingProcessor<R extends IMarshalable> {
 
 						if(log.isDebugEnabled()) log.debug("Generating listing handler for listing: '" + listingId + "'...");
 
-						final RemoteListingDefinition<? extends IMarshalable> listingDef = request.getListingDef();
+						final RemoteListingDefinition<S> listingDef = request.getListingDef();
 						if(listingDef == null) {
 							status.addMsg("No listing def specified.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 						}
 						else {
-							final IMarshalable search = listingDef.getSearchCriteria();
+							final S search = listingDef.getSearchCriteria();
 							if(search == null) {
 								throw new ListingException(listingId, "No search criteria specified.");
 							}
 
+							/*
 							// translate client side criteria to server side criteria
 							final Criteria<IEntity> criteria;
 							try {
@@ -170,9 +151,12 @@ abstract class AbstractListingProcessor<R extends IMarshalable> {
 								// shouldn't happen
 								throw new IllegalStateException("Unable to instantiate the list handler: " + e.getMessage(), e);
 							}
+							*/
+							
 
-							// transform to marshaling list handler
-							IListHandler<R> rowListHandler = getRowDataListHandler(listHandler, listingDef);
+							// transform to row list handler
+							//IListHandler<R> rowListHandler = getRowDataListHandler(listHandler, listingDef);
+							IListHandler<R> rowListHandler = context.getRowListHandlerProvider().getRowListHandler(listingDef);
 							handler = new ListingHandler<R>(rowListHandler, listingId, listingDef.getPageSize());
 						}
 					}
