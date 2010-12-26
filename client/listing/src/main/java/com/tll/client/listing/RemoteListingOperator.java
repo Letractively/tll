@@ -51,7 +51,7 @@ public final class RemoteListingOperator<R extends IMarshalable, S extends IMars
 		return new RemoteListingOperator<R, S>(listingId, rld);
 	}
 
-	private static final IListingServiceAsync<IMarshalable> svc;
+	private static final IListingServiceAsync<IMarshalable, IMarshalable> svc;
 	static {
 		svc = GWT.create(IListingService.class);
 	}
@@ -73,7 +73,7 @@ public final class RemoteListingOperator<R extends IMarshalable, S extends IMars
 			if(sourcingWidget == null) {
 				throw new IllegalStateException("Null sourcing widget");
 			}
-			svc.process(listingRequest, (AsyncCallback) getAsyncCallback());
+			svc.process((ListingRequest) listingRequest, (AsyncCallback) getAsyncCallback());
 		}
 
 		@Override
@@ -116,7 +116,7 @@ public final class RemoteListingOperator<R extends IMarshalable, S extends IMars
 	 */
 	private final RemoteListingDefinition<S> listingDef;
 
-	private transient ListingRequest listingRequest;
+	private transient ListingRequest<S> listingRequest;
 
 	/**
 	 * Constructor
@@ -151,7 +151,7 @@ public final class RemoteListingOperator<R extends IMarshalable, S extends IMars
 	 */
 	private void fetch(int ofst, Sorting srtg, boolean refresh) {
 		this.listingRequest =
-			new ListingRequest(listingId, listingDef, refresh ? ListingOp.REFRESH : ListingOp.FETCH, Integer.valueOf(ofst), srtg);
+			new ListingRequest<S>(listingId, listingDef, refresh ? ListingOp.REFRESH : ListingOp.FETCH, Integer.valueOf(ofst), srtg);
 		execute();
 	}
 
@@ -167,7 +167,7 @@ public final class RemoteListingOperator<R extends IMarshalable, S extends IMars
 	 */
 	@Override
 	protected void doFetch(int ofst, Sorting srtg) {
-		listingRequest = new ListingRequest(listingId, Integer.valueOf(ofst), srtg);
+		listingRequest = new ListingRequest<S>(listingId, Integer.valueOf(ofst), srtg);
 		execute();
 	}
 
@@ -176,7 +176,7 @@ public final class RemoteListingOperator<R extends IMarshalable, S extends IMars
 	 * @param retainListingState Retain the listing state on the server?
 	 */
 	private void clear(boolean retainListingState) {
-		listingRequest = new ListingRequest(listingId, retainListingState);
+		listingRequest = new ListingRequest<S>(listingId, retainListingState);
 		execute();
 	}
 
