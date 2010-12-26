@@ -5,9 +5,10 @@
  */
 package com.tll.di;
 
-import com.tll.server.rpc.listing.IListingDataProviderResolver;
-import com.tll.server.rpc.listing.IListingSearchTranslator;
-import com.tll.server.rpc.listing.INamedQueryResolver;
+import com.tll.server.listing.IListingDataProviderResolver;
+import com.tll.server.listing.IListingSearchTranslator;
+import com.tll.server.listing.INamedQueryResolver;
+import com.tll.server.listing.ListingModule;
 import com.tll.server.rpc.listing.SmbizListingDataProviderResolver;
 import com.tll.server.rpc.listing.SmbizListingSearchTranslator;
 import com.tll.server.rpc.listing.SmbizNamedQueryResolver;

@@ -1,13 +1,14 @@
 package com.tll.model;
 
 import com.tll.IDescriptorProvider;
+import com.tll.IMarshalable;
 import com.tll.ITypeDescriptorProvider;
 
 /**
  * IEntity - Fundamental type for all [server side] entities.
  * @author jpk
  */
-public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvider, ITypeDescriptorProvider {
+public interface IEntity extends IMarshalable, IPersistable, IVersionSupport, IDescriptorProvider, ITypeDescriptorProvider {
 
 	/**
 	 * The name of the primary key field. This is solely the Java Bean property
@@ -27,6 +28,11 @@ public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvi
 	 * @return The root entity class of this entity.
 	 */
 	Class<? extends IEntity> rootEntityClass();
+	
+	/**
+	 * @return the entity type.
+	 */
+	String getEntityType();
 
 	/**
 	 * @return The surrogate primary key. Entity implementations are not required

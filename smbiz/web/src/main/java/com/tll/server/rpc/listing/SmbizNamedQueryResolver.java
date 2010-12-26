@@ -7,7 +7,7 @@ package com.tll.server.rpc.listing;
 
 import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.SelectNamedQueries;
-import com.tll.server.rpc.listing.INamedQueryResolver;
+import com.tll.server.listing.INamedQueryResolver;
 
 
 /**

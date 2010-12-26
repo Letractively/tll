@@ -8,16 +8,14 @@ import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.ITableCellRenderer;
-import com.tll.client.listing.ModelPropertyFormatter;
-import com.tll.client.listing.rpc.RemoteListingOperator;
+import com.tll.client.listing.RemoteListingOperator;
 import com.tll.client.ui.listing.ListingNavBar;
-import com.tll.client.ui.listing.ModelListingTable;
-import com.tll.client.ui.listing.rpc.RemoteListingWidget;
-import com.tll.common.model.Model;
-import com.tll.common.model.test.TestModelStubber;
+import com.tll.client.ui.listing.ListingTable;
+import com.tll.client.ui.listing.RemoteListingWidget;
 import com.tll.common.search.test.TestAddressSearch;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
+import com.tll.model.test.Address;
 
 /**
  * UI Tests - GWT module for the sole purpose of verifying the DOM/Style of
@@ -39,14 +37,14 @@ public final class UITests extends AbstractUITest {
 	static final class TestRowOptions extends AbstractRowOptions {
 
 		TestListingWidget listing;
-		Model address;
+		Address address;
 
 		/**
 		 * Constructor
 		 */
 		public TestRowOptions() {
 			super();
-			address = TestModelStubber.stubAddress(1);
+			address = new Address();
 		}
 
 		public void setListing(TestListingWidget listing) {
@@ -79,7 +77,7 @@ public final class UITests extends AbstractUITest {
 
 		@Override
 		public void handleAddRow() {
-			listing.addRow(TestModelStubber.stubAddress(1));
+			listing.addRow(new Address());
 		}
 
 	}
@@ -87,7 +85,7 @@ public final class UITests extends AbstractUITest {
 	/**
 	 * The test listing config.
 	 */
-	static final class TestConfig implements IListingConfig<Model> {
+	static final class TestConfig implements IListingConfig<Address> {
 
 		static final Sorting defaultSorting = new Sorting("lastName");
 
@@ -102,22 +100,22 @@ public final class UITests extends AbstractUITest {
 			Column.ROW_COUNT_COLUMN, cName, cAddress, cCity
 		};
 
-		static final ITableCellRenderer<Model> cellRenderer = new ITableCellRenderer<Model>() {
+		static final ITableCellRenderer<Address> cellRenderer = new ITableCellRenderer<Address>() {
 
 			@Override
-			public void renderCell(int rowIndex, int cellIndex, Model rowData, Column column, HTMLTable table) {
+			public void renderCell(int rowIndex, int cellIndex, Address rowData, Column column, HTMLTable table) {
 				String cval;
 				if(column == cName) {
 					final StringBuilder sb = new StringBuilder();
-					sb.append(ModelPropertyFormatter.pformat(rowData, "firstName", null));
+					sb.append(rowData.getFirstName());
 					sb.append(" ");
-					sb.append(ModelPropertyFormatter.pformat(rowData, "lastName", null));
+					sb.append(rowData.getLastName());
 					cval = sb.toString();
 				}
 				else if(column == cAddress) {
 					final StringBuilder sb = new StringBuilder();
-					sb.append(ModelPropertyFormatter.pformat(rowData, "address1", null));
-					final String a2 = ModelPropertyFormatter.pformat(rowData, "address2", null);
+					sb.append(rowData.getAddress1());
+					final String a2 = rowData.getAddress2();
 					if(a2 != null) {
 						sb.append(" ");
 						sb.append(a2);
@@ -125,7 +123,7 @@ public final class UITests extends AbstractUITest {
 					cval = sb.toString();
 				}
 				else if(column == cCity) {
-					cval = ModelPropertyFormatter.pformat(rowData, "city", null);
+					cval = rowData.getCity();
 				}
 				else {
 					throw new IllegalStateException("Un-resolvable column: " + column);
@@ -185,7 +183,7 @@ public final class UITests extends AbstractUITest {
 		}
 	} // TestConfig
 
-	static class TestListingWidget extends RemoteListingWidget<Model, ModelListingTable> {
+	static class TestListingWidget extends RemoteListingWidget<Address, ListingTable<Address>> {
 
 		static final TestConfig config = new TestConfig();
 		static final TestAddressSearch criteria = new TestAddressSearch();
@@ -197,12 +195,11 @@ public final class UITests extends AbstractUITest {
 
 		}
 
-		@SuppressWarnings("unchecked")
 		public TestListingWidget() {
-			super(config.getListingId(), config.getListingElementName(), new ModelListingTable(config, TestConfig.cellRenderer),
-					new ListingNavBar<Model>(config, addRowDelegate));
+			super(config.getListingId(), config.getListingElementName(), new ListingTable<Address>(config, TestConfig.cellRenderer),
+					new ListingNavBar<Address>(config, addRowDelegate));
 
-			RemoteListingOperator<Model, TestAddressSearch> operator =
+			RemoteListingOperator<Address, TestAddressSearch> operator =
 					RemoteListingOperator.create(config.getListingId(), ListHandlerType.PAGE, criteria, config
 							.getModelProperties(), config.getPageSize(), config.getDefaultSorting());
 

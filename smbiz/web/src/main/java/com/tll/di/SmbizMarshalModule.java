@@ -5,8 +5,8 @@
  */
 package com.tll.di;
 
+import com.tll.model.IEntityTypeResolver;
 import com.tll.server.marshal.IMarshalOptionsResolver;
-import com.tll.server.rpc.entity.IEntityTypeResolver;
 import com.tll.server.rpc.entity.SmbizEntityTypeResolver;
 import com.tll.server.rpc.entity.SmbizMarshalOptionsResolver;
 

@@ -5,7 +5,7 @@
  *
  */
 
-package com.tll.server.rpc.listing;
+package com.tll.server.listing;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 

@@ -12,7 +12,7 @@ import com.tll.client.listing.AbstractAccountListingConfig;
 import com.tll.client.listing.AbstractRowOptions;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.rpc.RemoteListingOperator;
+import com.tll.client.listing.RemoteListingOperator;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.ShowViewRequest;
 import com.tll.client.mvc.view.account.CustomerListingViewInitializer;

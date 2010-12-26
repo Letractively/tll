@@ -3,7 +3,7 @@
  * @author jpk
  * @since May 15, 2009
  */
-package com.tll.server.rpc.listing;
+package com.tll.server.listing;
 
 import com.tll.common.data.rpc.ListingRequest;
 import com.tll.listhandler.IListingDataProvider;

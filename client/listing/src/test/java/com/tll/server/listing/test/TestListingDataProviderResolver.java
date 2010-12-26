@@ -3,15 +3,14 @@
  * @author jpk
  * @since May 15, 2009
  */
-package com.tll.server.rpc.listing.test;
+package com.tll.server.listing.test;
 
 import com.google.inject.Inject;
 import com.tll.common.data.rpc.ListingRequest;
-import com.tll.common.model.IEntityType;
 import com.tll.listhandler.IListingDataProvider;
 import com.tll.model.IEntity;
-import com.tll.server.rpc.entity.IEntityTypeResolver;
-import com.tll.server.rpc.listing.IListingDataProviderResolver;
+import com.tll.model.IEntityTypeResolver;
+import com.tll.server.listing.IListingDataProviderResolver;
 import com.tll.service.entity.IEntityServiceFactory;
 
 
@@ -43,7 +42,8 @@ public class TestListingDataProviderResolver implements IListingDataProviderReso
 	public IListingDataProvider resolve(ListingRequest request)
 	throws IllegalArgumentException {
 		try {
-			final IEntityType et = request.getListingDef().getSearchCriteria().getEntityType();
+			//final String et = request.getListingDef().getSearchCriteria().getEntityType();
+			final String et = "Address";
 			return entityServiceFactory.instanceByEntityType((Class<IEntity>) etResolver.resolveEntityClass(et));
 		}
 		catch(final Exception e) {

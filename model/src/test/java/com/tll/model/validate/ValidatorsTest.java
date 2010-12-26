@@ -62,6 +62,11 @@ public class ValidatorsTest {
 			return TestEntity.class;
 		}
 
+		@Override
+		public String getEntityType() {
+			return "Test Entity";
+		}
+
 		@NotEmpty
 		@Override
 		public String getName() {

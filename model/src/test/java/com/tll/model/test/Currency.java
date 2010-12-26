@@ -34,6 +34,11 @@ public class Currency extends NamedEntity {
 	private float usdExchangeRate = 0f;
 
 	@Override
+	public String getEntityType() {
+		return "Currency";
+	}
+
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return Currency.class;
 	}

@@ -14,8 +14,8 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.di.SmbizEntityServiceFactoryModule.UserCacheAware;
+import com.tll.server.listing.ListingCache.ListingCacheAware;
 import com.tll.server.rpc.entity.PersistCache.PersistCacheAware;
-import com.tll.server.rpc.listing.ListingCache.ListingCacheAware;
 import com.tll.util.ClassUtil;
 
 

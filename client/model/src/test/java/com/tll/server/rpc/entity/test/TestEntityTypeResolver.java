@@ -7,7 +7,7 @@ package com.tll.server.rpc.entity.test;
 
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.test.TestEntityType;
-import com.tll.server.rpc.entity.IEntityTypeResolver;
+import com.tll.model.IEntityTypeResolver;
 import com.tll.util.EnumUtil;
 import com.tll.util.StringUtil;
 

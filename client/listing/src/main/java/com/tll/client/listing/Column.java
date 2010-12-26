@@ -130,6 +130,7 @@ public class Column implements IPropertyNameProvider {
 	/**
 	 * @return the property path that binds to model data
 	 */
+	@Override
 	public String getPropertyName() {
 		return propertyName;
 	}

@@ -14,7 +14,7 @@ import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IRowOptionsDelegate;
-import com.tll.client.listing.rpc.RemoteListingOperator;
+import com.tll.client.listing.RemoteListingOperator;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.EditViewInitializer;
 import com.tll.client.mvc.view.ShowViewRequest;

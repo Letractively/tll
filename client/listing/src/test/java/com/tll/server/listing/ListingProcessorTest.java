@@ -3,13 +3,14 @@
  * @author jpk
  * Jun 20, 2008
  */
-package com.tll.server.rpc.listing;
+package com.tll.server.listing;
 
 import java.net.URL;
 import java.util.List;
 
 import net.sf.ehcache.CacheManager;
 
+import org.springframework.ui.Model;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -21,7 +22,6 @@ import com.tll.common.data.ListingOp;
 import com.tll.common.data.RemoteListingDefinition;
 import com.tll.common.data.rpc.ListingPayload;
 import com.tll.common.data.rpc.ListingRequest;
-import com.tll.common.model.Model;
 import com.tll.common.search.test.TestAddressSearch;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
@@ -29,14 +29,12 @@ import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.Sorting;
 import com.tll.dao.db4o.test.Db4oDbShellModule;
 import com.tll.dao.db4o.test.TestDb4oDaoModule;
-import com.tll.dao.db4o.test.TestDb4oPersistenceUnitModule;
 import com.tll.di.LogExceptionHandlerModule;
-import com.tll.di.TestListingModule;
-import com.tll.di.test.TestMarshalModule;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.mail.MailModule;
-import com.tll.model.test.TestEntityFactory;
-import com.tll.server.rpc.listing.ListingCache.ListingCacheAware;
+import com.tll.server.listing.AbstractListingProcessor;
+import com.tll.server.listing.ListingContext;
+import com.tll.server.listing.ListingCache.ListingCacheAware;
 import com.tll.service.entity.test.TestEntityServiceFactoryModule;
 /**
  * ListingProcessorTest - Tests the {@link AbstractListingProcessor}.
@@ -57,13 +55,11 @@ public class ListingProcessorTest extends AbstractDbAwareTest {
 		// as it implicitly binds at the MailModule constrctor
 		modules.add(new MailModule(Config.load(new ConfigRef("config-mail.properties"))));
 
-		modules.add(new TestDb4oPersistenceUnitModule(null, TestEntityFactory.class));
 		modules.add(new TestDb4oDaoModule(getConfig()));
 		modules.add(new Db4oDbShellModule());
 		modules.add(new TestEntityServiceFactoryModule());
 		modules.add(new LogExceptionHandlerModule());
-		modules.add(new TestMarshalModule());
-
+	
 		// satisfy caching requirement for ListingCache
 		modules.add(new Module() {
 

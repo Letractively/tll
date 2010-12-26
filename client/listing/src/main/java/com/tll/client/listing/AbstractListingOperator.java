@@ -49,6 +49,7 @@ public abstract class AbstractListingOperator<R> implements IListingOperator<R> 
 	 * @param sourcingWidget the optional widget that will serve as the rpc event
 	 *        source
 	 */
+	@Override
 	public final void setSourcingWidget(Widget sourcingWidget) {
 		this.sourcingWidget = sourcingWidget;
 	}
@@ -77,21 +78,25 @@ public abstract class AbstractListingOperator<R> implements IListingOperator<R> 
 
 	protected boolean listingGenerated;
 
+	@Override
 	public void sort(Sorting srtg) {
 		if(!listingGenerated || (this.sorting != null && !this.sorting.equals(srtg))) {
 			fetch(offset, srtg);
 		}
 	}
 
+	@Override
 	public void firstPage() {
 		if(!listingGenerated || offset != 0) fetch(0, sorting);
 	}
 
+	@Override
 	public void gotoPage(int pageNum) {
 		final int ofst = PagingUtil.listIndexFromPageNum(pageNum, getPageSize());
 		if(!listingGenerated || this.offset != ofst) fetch(ofst, sorting);
 	}
 
+	@Override
 	public void lastPage() {
 		final int pageSize = getPageSize();
 		final int numPages = PagingUtil.numPages(listSize, pageSize);
@@ -101,11 +106,13 @@ public abstract class AbstractListingOperator<R> implements IListingOperator<R> 
 		}
 	}
 
+	@Override
 	public void nextPage() {
 		final int ofst = this.offset + getPageSize();
 		if(ofst < listSize) fetch(ofst, sorting);
 	}
 
+	@Override
 	public void previousPage() {
 		final int ofst = this.offset - getPageSize();
 		if(ofst >= 0) fetch(ofst, sorting);

@@ -47,6 +47,11 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 	}
 
 	@Override
+	public String getEntityType() {
+		return "Account Address";
+	}
+
+	@Override
 	@NotEmpty
 	@Length(max = MAXLEN_NAME)
 	public String getName() {

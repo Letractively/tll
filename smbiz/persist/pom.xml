@@ -212,6 +212,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
+			<artifactId>tll-schema</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
 			<artifactId>tll-model</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
@@ -271,6 +276,7 @@
 			<groupId>org.springextensions.db4o</groupId>
 			<artifactId>org.springextensions.db4o</artifactId>
 			<version>${springextensions.db4o.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>

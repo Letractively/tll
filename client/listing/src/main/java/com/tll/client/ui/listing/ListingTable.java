@@ -133,8 +133,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 	/**
 	 * Initializes the table.
 	 */
-	@SuppressWarnings("unchecked")
-	protected void initialize(IListingConfig config, ITableCellRenderer<R> cellRndrer) {
+	protected void initialize(IListingConfig<R> config, ITableCellRenderer<R> cellRndrer) {
 		assert config != null;
 
 		this.columns = config.getColumns();
@@ -288,6 +287,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 			pnl.remove(0);
 		}
 
+		@Override
 		public void onClick(ClickEvent event) {
 			event.stopPropagation();
 			final SortColumn sc =
@@ -392,6 +392,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		resizeRows(1);
 	}
 
+	@Override
 	public final void onListingEvent(ListingEvent<R> event) {
 		if(event.getListingOp().isQuery()) {
 			removeBodyRows();
@@ -433,6 +434,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		}
 	}
 
+	@Override
 	public final void onClick(ClickEvent event) {
 		if(event.getSource() == this) {
 			final Cell cell = getCellForEvent(event);
@@ -450,6 +452,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		// base impl no-op
 	}
 
+	@Override
 	public void onKeyDown(KeyDownEvent event) {
 		// if(sender != focusPanel) return;
 		final int keyCode = event.getNativeKeyCode();

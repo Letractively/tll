@@ -131,6 +131,7 @@ public abstract class AbstractRowOptions implements IRowOptionsDelegate {
 		// no-op
 	}
 
+	@Override
 	public final Option[] getOptions(int rowIndex) {
 		if(isStaticOptions() && staticOptions != null) {
 			return staticOptions;
@@ -151,6 +152,7 @@ public abstract class AbstractRowOptions implements IRowOptionsDelegate {
 		return arr;
 	}
 
+	@Override
 	public final void handleOptionSelection(String optionText, int rowIndex) {
 		if(isEditOption(optionText)) {
 			doEditRow(rowIndex);

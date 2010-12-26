@@ -3,14 +3,14 @@
  * @author jpk
  * @since May 20, 2009
  */
-package com.tll.server.rpc.listing;
+package com.tll.server.listing;
 
-import com.tll.common.search.IListingSearch;
+import com.tll.IMarshalable;
 import com.tll.criteria.Criteria;
 import com.tll.model.IEntity;
 
 /**
- * IListingSearchTranslator - Responsible for translating {@link IListingSearch}
+ * IListingSearchTranslator - Responsible for translating {@link IMarshalable}
  * criteria to server-side {@link Criteria}.
  * @author jpk
  */
@@ -26,6 +26,6 @@ public interface IListingSearchTranslator {
 	 * @throws IllegalArgumentException When an error occurrs during the
 	 *         translation
 	 */
-	Criteria<? extends IEntity> translateListingSearchCriteria(ListingContext context, IListingSearch listingSearch)
+	Criteria<? extends IEntity> translateListingSearchCriteria(ListingContext context, IMarshalable listingSearch)
 	throws IllegalArgumentException;
 }

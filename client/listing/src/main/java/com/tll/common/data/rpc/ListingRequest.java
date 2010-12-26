@@ -4,10 +4,10 @@
  */
 package com.tll.common.data.rpc;
 
-import com.tll.common.data.IModelRelatedRequest;
+import com.tll.IDescriptorProvider;
+import com.tll.IMarshalable;
 import com.tll.common.data.ListingOp;
 import com.tll.common.data.RemoteListingDefinition;
-import com.tll.common.search.IListingSearch;
 import com.tll.dao.Sorting;
 
 /**
@@ -15,7 +15,7 @@ import com.tll.dao.Sorting;
  * against a particular listing.
  * @author jpk
  */
-public final class ListingRequest implements IModelRelatedRequest {
+public final class ListingRequest implements IMarshalable, IDescriptorProvider {
 
 	/**
 	 * The unique listing name.
@@ -25,7 +25,7 @@ public final class ListingRequest implements IModelRelatedRequest {
 	/**
 	 * The listing definition used to generate or refresh a listing.
 	 */
-	private RemoteListingDefinition<? extends IListingSearch> listingDef;
+	private RemoteListingDefinition<? extends IMarshalable> listingDef;
 
 	private ListingOp listingOp;
 	private Integer offset;
@@ -48,7 +48,7 @@ public final class ListingRequest implements IModelRelatedRequest {
 	 * @param offset The listing index offset
 	 * @param sorting The sorting directive
 	 */
-	public ListingRequest(String listingId, RemoteListingDefinition<? extends IListingSearch> listingDef,
+	public ListingRequest(String listingId, RemoteListingDefinition<? extends IMarshalable> listingDef,
 			ListingOp listingOp, Integer offset,
 			Sorting sorting) {
 		super();
@@ -88,6 +88,7 @@ public final class ListingRequest implements IModelRelatedRequest {
 		this.retainStateOnClear = retainStateOnClear;
 	}
 
+	@Override
 	public String descriptor() {
 		return "'" + getListingId() + "' listing command";
 	}
@@ -104,7 +105,7 @@ public final class ListingRequest implements IModelRelatedRequest {
 	 * @return The listing definition used when generating or refreshing a
 	 *         listing.
 	 */
-	public RemoteListingDefinition<? extends IListingSearch> getListingDef() {
+	public RemoteListingDefinition<? extends IMarshalable> getListingDef() {
 		return listingDef;
 	}
 

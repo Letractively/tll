@@ -36,6 +36,7 @@ import com.tll.dao.SearchResult;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
+import com.tll.model.IEntityTypeResolver;
 import com.tll.model.IScalar;
 import com.tll.model.ISchemaInfo;
 import com.tll.model.ISchemaProperty;
@@ -45,7 +46,6 @@ import com.tll.model.PropertyType;
 import com.tll.model.RelationInfo;
 import com.tll.model.SchemaInfoException;
 import com.tll.model.Transient;
-import com.tll.server.rpc.entity.IEntityTypeResolver;
 import com.tll.util.Binding;
 import com.tll.util.BindingRefSet;
 

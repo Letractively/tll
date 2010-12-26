@@ -26,6 +26,11 @@ public class IdState extends EntityBase {
 	private final Map<Class<?>, Long> idMap = new HashMap<Class<?>, Long>();
 
 	@Override
+	public String getEntityType() {
+		return "IdState";
+	}
+
+	@Override
 	public Class<? extends IEntity> entityClass() {
 		return IdState.class;
 	}

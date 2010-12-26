@@ -46,6 +46,7 @@ public class EmailExceptionHandler implements IExceptionHandler {
 	 */
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
 
+	@Override
 	public void handleException(final Throwable t) {
 		if(mailManager == null) {
 			log.warn("Can't email exception because no email manager specified.");

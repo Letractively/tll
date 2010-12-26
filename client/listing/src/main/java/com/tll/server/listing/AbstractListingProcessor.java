@@ -3,7 +3,7 @@
  * @author jpk
  * @since Jun 27, 2009
  */
-package com.tll.server.rpc.listing;
+package com.tll.server.listing;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,11 +14,10 @@ import com.tll.common.data.Page;
 import com.tll.common.data.RemoteListingDefinition;
 import com.tll.common.data.Status;
 import com.tll.common.data.rpc.ListingPayload;
-import com.tll.common.data.rpc.ListingRequest;
 import com.tll.common.data.rpc.ListingPayload.ListingStatus;
+import com.tll.common.data.rpc.ListingRequest;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
-import com.tll.common.search.IListingSearch;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.SearchResult;
@@ -49,7 +48,7 @@ abstract class AbstractListingProcessor<R extends IMarshalable> {
 	 * @return list handler of the row data type
 	 */
 	protected abstract IListHandler<R> getRowDataListHandler(IListHandler<SearchResult> listHandler,
-			RemoteListingDefinition<? extends IListingSearch> listingDef);
+			RemoteListingDefinition<? extends IMarshalable> listingDef);
 
 	/**
 	 * Processes all listing requests.
@@ -120,12 +119,12 @@ abstract class AbstractListingProcessor<R extends IMarshalable> {
 
 						if(log.isDebugEnabled()) log.debug("Generating listing handler for listing: '" + listingId + "'...");
 
-						final RemoteListingDefinition<? extends IListingSearch> listingDef = request.getListingDef();
+						final RemoteListingDefinition<? extends IMarshalable> listingDef = request.getListingDef();
 						if(listingDef == null) {
 							status.addMsg("No listing def specified.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 						}
 						else {
-							final IListingSearch search = listingDef.getSearchCriteria();
+							final IMarshalable search = listingDef.getSearchCriteria();
 							if(search == null) {
 								throw new ListingException(listingId, "No search criteria specified.");
 							}
@@ -246,7 +245,7 @@ abstract class AbstractListingProcessor<R extends IMarshalable> {
 		// errors
 		if(handler != null && !status.hasErrors() && (listingOp != null && !listingOp.isClear())) {
 			if(log.isDebugEnabled()) log.debug("Sending page data for '" + listingId + "'...");
-			p.setPageData(new Page(handler.size(), handler.getPageSize(), handler.getOffset(), handler.getSorting(), handler
+			p.setPageData(new Page<R>(handler.size(), handler.getPageSize(), handler.getOffset(), handler.getSorting(), handler
 					.getElements()));
 		}
 
