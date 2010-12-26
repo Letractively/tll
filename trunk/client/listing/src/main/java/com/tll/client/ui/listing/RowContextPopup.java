@@ -47,6 +47,7 @@ public final class RowContextPopup extends OptionsPopup implements ClickHandler 
 		this.delegate = delegate;
 	}
 
+	@Override
 	public void onClick(ClickEvent event) {
 		final Cell cell = table.getCellForEvent(event);
 		final int row = cell.getRowIndex();

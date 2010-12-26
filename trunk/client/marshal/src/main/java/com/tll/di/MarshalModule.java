@@ -7,8 +7,8 @@ package com.tll.di;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
+import com.tll.model.IEntityTypeResolver;
 import com.tll.server.marshal.IMarshalOptionsResolver;
-import com.tll.server.rpc.entity.IEntityTypeResolver;
 
 /**
  * MarshalModule

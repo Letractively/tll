@@ -84,12 +84,14 @@ public final class SmbizAdmin implements EntryPoint, IAdminContextListener {
 	/**
 	 * This is the entry point method.
 	 */
+	@Override
 	public void onModuleLoad() {
 
 		App.init();
 
 		DeferredCommand.addCommand(new Command() {
 
+			@Override
 			@SuppressWarnings("synthetic-access")
 			public void execute() {
 				// declare the available views
@@ -124,6 +126,7 @@ public final class SmbizAdmin implements EntryPoint, IAdminContextListener {
 		ViewClass.addClass(AccountInterfaceView.klas);
 	}
 
+	@Override
 	public void onAdminContextChange(AdminContext ac, ChangeType changeType) {
 		final boolean shouldLogin = (changeType == ChangeType.INVALIDATE);
 		mainPanel.setVisible(!shouldLogin);

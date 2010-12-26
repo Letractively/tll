@@ -54,14 +54,17 @@ public enum SmbizEntityType implements IEntityType, INameValueProvider<String> {
 		this.name = name;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String getValue() {
 		return name();
 	}
 
+	@Override
 	public String descriptor() {
 		return getName();
 	}

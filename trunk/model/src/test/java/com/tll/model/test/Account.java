@@ -60,6 +60,11 @@ public class Account extends NamedTimeStampEntity implements IChildEntity<Accoun
 	}
 
 	@Override
+	public String getEntityType() {
+		return "Account";
+	}
+
+	@Override
 	@NotEmpty
 	@Length(max = MAXLEN_NAME)
 	public String getName() {

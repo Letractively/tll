@@ -8,9 +8,9 @@ package com.tll.di.test;
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.test.TestEntityType;
 import com.tll.di.MarshalModule;
+import com.tll.model.IEntityTypeResolver;
 import com.tll.server.marshal.IMarshalOptionsResolver;
 import com.tll.server.marshal.MarshalOptions;
-import com.tll.server.rpc.entity.IEntityTypeResolver;
 import com.tll.server.rpc.entity.test.TestEntityTypeResolver;
 
 

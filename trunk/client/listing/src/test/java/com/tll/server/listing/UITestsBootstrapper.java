@@ -3,7 +3,7 @@
  * @author jpk
  * @since Sep 21, 2009
  */
-package com.tll.server.rpc.listing;
+package com.tll.server.listing;
 
 import javax.servlet.ServletContext;
 
@@ -13,6 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import com.db4o.ObjectContainer;
 import com.google.inject.Injector;
 import com.tll.dao.IDbShell;
+import com.tll.server.listing.ListingContextBootstrapper;
 
 
 /**

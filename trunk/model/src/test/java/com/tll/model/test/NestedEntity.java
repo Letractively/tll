@@ -37,6 +37,11 @@ public class NestedEntity extends NamedEntity {
 	}
 
 	@Override
+	public String getEntityType() {
+		return "Nested Entity";
+	}
+
+	@Override
 	@NotEmpty
 	public String getName() {
 		return name;

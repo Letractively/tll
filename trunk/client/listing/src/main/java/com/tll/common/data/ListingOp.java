@@ -43,10 +43,12 @@ public enum ListingOp implements INameValueProvider<String> {
 		this.name = name;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String getValue() {
 		return name();
 	}

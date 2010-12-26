@@ -3,7 +3,7 @@
  * @author jpk
  * @since May 15, 2009
  */
-package com.tll.server.rpc.listing;
+package com.tll.server.listing;
 
 import javax.servlet.ServletContext;
 
@@ -24,7 +24,6 @@ public class ListingContext {
 
 	private final IListingSearchTranslator searchTranslator;
 	private final IListingDataProviderResolver listingDataProviderResolver;
-	private final INamedQueryResolver namedQueryResolver;
 	private final IExceptionHandler exceptionHandler;
 	private final ListingCache listingCache;
 
@@ -32,18 +31,16 @@ public class ListingContext {
 	 * Constructor
 	 * @param searchTranslator
 	 * @param listingDataProviderResolver
-	 * @param namedQueryResolver
 	 * @param exceptionHandler
 	 * @param listingCache
 	 */
 	@Inject
 	public ListingContext(IListingSearchTranslator searchTranslator,
-			IListingDataProviderResolver listingDataProviderResolver, INamedQueryResolver namedQueryResolver,
+			IListingDataProviderResolver listingDataProviderResolver,
 			IExceptionHandler exceptionHandler, ListingCache listingCache) {
 		super();
 		this.searchTranslator = searchTranslator;
 		this.listingDataProviderResolver = listingDataProviderResolver;
-		this.namedQueryResolver = namedQueryResolver;
 		this.exceptionHandler = exceptionHandler;
 		this.listingCache = listingCache;
 	}
@@ -58,10 +55,6 @@ public class ListingContext {
 
 	public IExceptionHandler getExceptionHandler() {
 		return exceptionHandler;
-	}
-
-	public INamedQueryResolver getNamedQueryResolver() {
-		return namedQueryResolver;
 	}
 
 	public ListingCache getListingCache() {

@@ -3,7 +3,7 @@
  * Copywright - 2006 - All rights reserved.
  */
 
-package com.tll.server.rpc.listing;
+package com.tll.server.listing;
 
 import java.io.Serializable;
 import java.lang.annotation.ElementType;
@@ -90,7 +90,8 @@ public final class ListingCache {
 	 * @param listingId
 	 * @return listing handler
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({
+		"unchecked", "rawtypes" })
 	public <T> ListingHandler<T> getHandler(String sessionId, String listingId) {
 		final Element e = handlerCache().get(key(sessionId, listingId));
 		return e == null ? null : (ListingHandler) e.getObjectValue();

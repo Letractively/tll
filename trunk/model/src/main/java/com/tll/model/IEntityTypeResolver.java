@@ -3,9 +3,8 @@
  * @author jpk
  * @since May 15, 2009
  */
-package com.tll.server.rpc.entity;
+package com.tll.model;
 
-import com.tll.common.model.IEntityType;
 
 /**
  * IEntityTypeResolver
@@ -14,19 +13,19 @@ import com.tll.common.model.IEntityType;
 public interface IEntityTypeResolver {
 
 	/**
-	 * Resolves the given {@link Class} to an {@link IEntityType}.
+	 * Resolves the given {@link Class} to an entity type.
 	 * @param clz the entity class type
-	 * @return the resolved {@link IEntityType}
+	 * @return the resolved entity type
 	 * @throws IllegalArgumentException when the entity class type can't be
 	 *         resolved.
 	 */
-	IEntityType resolveEntityType(Class<?> clz) throws IllegalArgumentException;
+	String resolveEntityType(Class<?> clz) throws IllegalArgumentException;
 
 	/**
-	 * Resolves the given {@link IEntityType} to a {@link Class}.
+	 * Resolves the given entity type token to a {@link Class}.
 	 * @param entityType the entity type
 	 * @return the resolved entity class type
 	 * @throws IllegalArgumentException when the entity type can't be resolved.
 	 */
-	Class<?> resolveEntityClass(IEntityType entityType) throws IllegalArgumentException;
+	Class<?> resolveEntityClass(String entityType) throws IllegalArgumentException;
 }

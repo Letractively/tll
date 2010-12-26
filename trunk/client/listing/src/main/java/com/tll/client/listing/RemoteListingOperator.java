@@ -3,22 +3,20 @@
  * @author jpk
  * @since Mar 13, 2009
  */
-package com.tll.client.listing.rpc;
+package com.tll.client.listing;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.tll.IMarshalable;
 import com.tll.client.data.rpc.RpcCommand;
-import com.tll.client.listing.AbstractListingOperator;
 import com.tll.common.data.ListingOp;
 import com.tll.common.data.Page;
 import com.tll.common.data.RemoteListingDefinition;
 import com.tll.common.data.rpc.IListingService;
 import com.tll.common.data.rpc.IListingServiceAsync;
 import com.tll.common.data.rpc.ListingPayload;
-import com.tll.common.data.rpc.ListingRequest;
 import com.tll.common.data.rpc.ListingPayload.ListingStatus;
-import com.tll.common.search.IListingSearch;
+import com.tll.common.data.rpc.ListingRequest;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
 
@@ -28,10 +26,12 @@ import com.tll.listhandler.ListHandlerType;
  * @param <S> search type
  * @author jpk
  */
-public final class RemoteListingOperator<R extends IMarshalable, S extends IListingSearch> extends AbstractListingOperator<R> {
+public final class RemoteListingOperator<R extends IMarshalable, S extends IMarshalable> extends AbstractListingOperator<R> {
 
 	/**
 	 * Factory method that creates a listing command to control acccess to a remote listing.
+	 * @param <R> row data type
+	 * @param <S> search criteria type
 	 * @param listingId the unique listing id
 	 * @param listHandlerType The remote list handler type
 	 * @param searchCriteria The search criteria that generates the remote
@@ -43,16 +43,15 @@ public final class RemoteListingOperator<R extends IMarshalable, S extends IList
 	 * @param initialSorting The initial sorting directive
 	 * @return A new {@link RemoteListingOperator}
 	 */
-	@SuppressWarnings("unchecked")
-	public static RemoteListingOperator create(
-			String listingId, ListHandlerType listHandlerType, IListingSearch searchCriteria, String[] propKeys, int pageSize, Sorting initialSorting) {
+	public static <R extends IMarshalable, S extends IMarshalable> RemoteListingOperator<R, S> create(
+			String listingId, ListHandlerType listHandlerType, S searchCriteria, String[] propKeys, int pageSize, Sorting initialSorting) {
 
-		final RemoteListingDefinition rld =
-			new RemoteListingDefinition(listHandlerType, searchCriteria, propKeys, pageSize, initialSorting);
-		return new RemoteListingOperator(listingId, rld);
+		final RemoteListingDefinition<S> rld =
+			new RemoteListingDefinition<S>(listHandlerType, searchCriteria, propKeys, pageSize, initialSorting);
+		return new RemoteListingOperator<R, S>(listingId, rld);
 	}
 
-	private static final IListingServiceAsync<IListingSearch, IMarshalable> svc;
+	private static final IListingServiceAsync<IMarshalable> svc;
 	static {
 		svc = GWT.create(IListingService.class);
 	}
@@ -64,7 +63,8 @@ public final class RemoteListingOperator<R extends IMarshalable, S extends IList
 	@SuppressWarnings("synthetic-access")
 	class ListingCommand extends RpcCommand<ListingPayload<R>> {
 
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings({
+			"unchecked", "rawtypes" })
 		@Override
 		protected void doExecute() {
 			if(listingRequest == null) {
@@ -76,7 +76,6 @@ public final class RemoteListingOperator<R extends IMarshalable, S extends IList
 			svc.process(listingRequest, (AsyncCallback) getAsyncCallback());
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		protected void handleSuccess(ListingPayload<R> payload) {
 			super.handleSuccess(payload);
@@ -95,7 +94,7 @@ public final class RemoteListingOperator<R extends IMarshalable, S extends IList
 			}
 			else {
 				// update client-side listing state
-				Page page = payload.getPage();
+				Page<R> page = payload.getPage();
 				offset = page == null ? -1 : page.getOffset();
 				sorting = page == null ? null : page.getSorting();
 				listSize = page == null ? -1 : page.getTotalSize();
@@ -186,10 +185,12 @@ public final class RemoteListingOperator<R extends IMarshalable, S extends IList
 		return listingDef.getPageSize();
 	}
 
+	@Override
 	public void refresh() {
 		fetch(offset, sorting, true);
 	}
 
+	@Override
 	public void clear() {
 		clear(true);
 	}

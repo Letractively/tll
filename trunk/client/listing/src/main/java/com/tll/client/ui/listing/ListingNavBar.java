@@ -233,6 +233,7 @@ IListingHandler<R> {
 		return this;
 	}
 
+	@Override
 	public void onClick(ClickEvent event) {
 		final Object sender = event.getSource();
 		((Focusable) sender).setFocus(false);
@@ -257,6 +258,7 @@ IListingHandler<R> {
 		}
 	}
 
+	@Override
 	public void onKeyUp(KeyUpEvent event) {
 		if(event.getSource() == tbPage) {
 			if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
@@ -265,6 +267,7 @@ IListingHandler<R> {
 		}
 	}
 
+	@Override
 	public void onChange(ChangeEvent event) {
 		if(event.getSource() == tbPage) {
 			final String s = tbPage.getText();
@@ -370,6 +373,7 @@ IListingHandler<R> {
 		}
 	}
 
+	@Override
 	public void onListingEvent(ListingEvent<R> event) {
 		if(event.getListingOp().isQuery()) {
 			hasRows = event.getPageElements() != null && event.getPageElements().size() > 0;

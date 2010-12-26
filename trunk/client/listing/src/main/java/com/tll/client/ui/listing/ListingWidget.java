@@ -222,22 +222,27 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 		return table.isRowMarkedDeleted(rowIndex);
 	}
 
+	@Override
 	public final int getTabIndex() {
 		return focusPanel.getTabIndex();
 	}
 
+	@Override
 	public final void setAccessKey(char key) {
 		focusPanel.setAccessKey(key);
 	}
 
+	@Override
 	public final void setFocus(boolean focused) {
 		focusPanel.setFocus(focused);
 	}
 
+	@Override
 	public final void setTabIndex(int index) {
 		focusPanel.setTabIndex(index);
 	}
 
+	@Override
 	public void onKeyDown(KeyDownEvent event) {
 		delegateEvent(table, event);
 	}
@@ -264,6 +269,7 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 		if(noDataRowsWidget != null) noDataRowsWidget.setVisible(noDataRows);
 	}
 
+	@Override
 	public final void onListingEvent(ListingEvent<R> event) {
 		table.onListingEvent(event);
 		if(navBar != null) navBar.onListingEvent(event);

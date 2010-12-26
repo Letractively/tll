@@ -58,6 +58,11 @@ public class Address extends EntityBase {
 		return Address.class;
 	}
 
+	@Override
+	public String getEntityType() {
+		return "Address";
+	}
+
 	/**
 	 * @return Returns the address1.
 	 */
