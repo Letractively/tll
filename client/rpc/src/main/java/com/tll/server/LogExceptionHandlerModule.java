@@ -3,15 +3,13 @@
  * @author jpk
  * @since Apr 28, 2009
  */
-package com.tll.di;
+package com.tll.server;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
-import com.tll.server.rpc.IExceptionHandler;
-import com.tll.server.rpc.LogExceptionHandler;
 
 /**
  * EmailExceptionHandlerModule

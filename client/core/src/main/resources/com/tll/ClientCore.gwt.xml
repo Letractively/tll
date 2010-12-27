@@ -1,12 +1,24 @@
 <module>
-  <inherits name="com.google.gwt.user.User" />
-  <inherits name="com.tll.Core" />
+	<inherits name="com.google.gwt.user.User" />
+	<inherits name="com.google.gwt.logging.Logging" />
+	<inherits name="com.tll.Core" />
 
-  <!-- client exclusive source path -->
-  <source path="client" />
+	<!-- client exclusive source path -->
+	<source path="client" />
 
-  <!-- shared (client/server) source path -->
-  <source path="common" />
+	<!-- shared (client/server) source path -->
+	<source path="common" />
 
-  <public path="public" />
+	<public path="public" />
+
+	<set-property name="gwt.logging.enabled" value="TRUE" />
+	<set-property name="gwt.logging.logLevel" value="DEBUG" />
+	
+	<set-property name="gwt.logging.systemHandler" value="DISABLED" />
+	<set-property name="gwt.logging.developmentModeHandler" value="DISABLED" />
+	<set-property name="gwt.logging.popupHandler" value="DISABLED" />
+	<set-property name="gwt.logging.simpleRemoteHandler" value="DISABLED" />
+	<set-property name="gwt.logging.consoleHandler" value="ENABLED" />
+	<set-property name="gwt.logging.firebugHandler" value="ENABLED" />
+
 </module>

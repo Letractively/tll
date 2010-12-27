@@ -16,6 +16,7 @@ public abstract class AbstractViewRequest extends AbstractViewKeyProvider implem
 	 *         <p>
 	 *         Default returns <code>true</code>. Concrete impls may override.
 	 */
+	@Override
 	public boolean addHistory() {
 		return true;
 	}

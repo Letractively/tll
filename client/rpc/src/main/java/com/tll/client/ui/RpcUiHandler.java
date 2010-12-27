@@ -5,7 +5,6 @@
  */
 package com.tll.client.ui;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -39,7 +38,7 @@ public class RpcUiHandler implements IRpcHandler {
 	@Override
 	public void onRpcEvent(RpcEvent event) {
 		if(overlayWidget != null && !overlayWidget.isAttached()) {
-			Log.warn("RpcUiHandler.onRpcEvent(): Overlay widget is not attached.");
+			//Log.warn("RpcUiHandler.onRpcEvent(): Overlay widget is not attached.");
 			return;
 		}
 		if(RootPanel.get() != null) {

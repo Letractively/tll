@@ -7,6 +7,7 @@ package com.tll.server.rpc;
 import javax.servlet.ServletContext;
 
 import com.tll.mail.MailManager;
+import com.tll.server.IExceptionHandler;
 import com.tll.service.IForgotPasswordHandler;
 
 /**

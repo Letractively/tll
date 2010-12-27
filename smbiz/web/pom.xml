@@ -443,10 +443,6 @@
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-servlet</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.allen_sauer.gwt.log</groupId>
-			<artifactId>gwt-log</artifactId>
-		</dependency>
 		
 		<dependency>
 			<groupId>com.tll</groupId>

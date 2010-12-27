@@ -74,6 +74,7 @@ public class StatusDisplay extends Composite implements IStatusHandler {
 		}
 	}
 
+	@Override
 	public void onStatusEvent(StatusEvent event) {
 		final Status status = event.getStatus();
 		if(status != null) {

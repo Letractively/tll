@@ -29,6 +29,7 @@ final class CView extends AbstractViewKeyProvider {
 		this.init = init;
 	}
 
+	@Override
 	public ViewKey getViewKey() {
 		return vc.getViewKey();
 	}

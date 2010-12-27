@@ -45,7 +45,8 @@ public final class RpcCommandChain implements AsyncCallback<Payload>, IRpcComman
 		chain.add(command);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({
+		"unchecked", "rawtypes" })
 	private void executeNextCommand() {
 		assert cmdIterator != null;
 		if(cmdIterator.hasNext()) {
@@ -59,6 +60,7 @@ public final class RpcCommandChain implements AsyncCallback<Payload>, IRpcComman
 		}
 	}
 
+	@Override
 	public void execute() {
 		if(cmdIterator == null) {
 			cmdIterator = chain.iterator();
@@ -66,13 +68,16 @@ public final class RpcCommandChain implements AsyncCallback<Payload>, IRpcComman
 		executeNextCommand();
 	}
 
-	@SuppressWarnings("unchecked")
+	@Override
+	@SuppressWarnings({
+		"unchecked", "rawtypes" })
 	public void onSuccess(Payload result) {
 		((RpcCommand) currentCommand).onSuccess(result);
 		currentCommand = null;
 		executeNextCommand();
 	}
 
+	@Override
 	public void onFailure(Throwable caught) {
 		// halt
 		currentCommand.onFailure(caught);

@@ -16,10 +16,10 @@ import com.tll.mail.MailManager;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.IEntityFactory;
 import com.tll.model.IEntityTypeResolver;
-import com.tll.model.ISchemaInfo;
+import com.tll.model.SchemaInfo;
+import com.tll.server.IExceptionHandler;
 import com.tll.server.marshal.IMarshalOptionsResolver;
 import com.tll.server.marshal.Marshaler;
-import com.tll.server.rpc.IExceptionHandler;
 import com.tll.server.rpc.entity.IPersistServiceImplResolver;
 import com.tll.server.rpc.entity.PersistCache;
 import com.tll.server.rpc.entity.PersistContext;
@@ -63,7 +63,7 @@ public abstract class ClientPersistModule extends AbstractModule {
 			@Inject(optional = true)
 			MailManager mailManager;
 			@Inject
-			ISchemaInfo schemaInfo;
+			SchemaInfo schemaInfo;
 			@Inject
 			Marshaler marshaler;
 			@Inject

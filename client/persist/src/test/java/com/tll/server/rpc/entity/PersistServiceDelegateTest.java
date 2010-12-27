@@ -37,7 +37,6 @@ import com.tll.dao.db4o.test.Db4oDbShellModule;
 import com.tll.dao.db4o.test.Db4oTrans;
 import com.tll.dao.db4o.test.TestDb4oDaoModule;
 import com.tll.dao.db4o.test.TestDb4oPersistenceUnitModule;
-import com.tll.di.LogExceptionHandlerModule;
 import com.tll.di.test.TestClientPersistModule;
 import com.tll.di.test.TestMarshalModule;
 import com.tll.mail.MailModule;
@@ -45,6 +44,7 @@ import com.tll.model.IEntity;
 import com.tll.model.egraph.EntityBeanFactory;
 import com.tll.model.test.Address;
 import com.tll.model.test.TestEntityFactory;
+import com.tll.server.LogExceptionHandlerModule;
 import com.tll.service.entity.test.TestEntityServiceFactoryModule;
 
 /**

@@ -4,7 +4,6 @@
  */
 package com.tll.client.ui.view;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style;
@@ -221,7 +220,7 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 
 	private void endDrag() {
 		if(mouseIsDown) {
-			Log.debug("ending dragging..");
+			//Log.debug("ending dragging..");
 			DOM.releaseCapture(dragTarget);
 			mouseIsDown = dragging = false;
 			dragOffsetX = dragOffsetY = -1;
@@ -232,7 +231,7 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 		if(isPopped()) {
 			endDrag();
 			DOM.setCapture(dragTarget);
-			Log.debug("set drag target: " + dragTarget.getInnerText());
+			//Log.debug("set drag target: " + dragTarget.getInnerText());
 
 			event.stopPropagation();
 			mouseIsDown = true;
