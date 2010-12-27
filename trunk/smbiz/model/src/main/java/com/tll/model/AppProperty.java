@@ -3,6 +3,8 @@ package com.tll.model;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.tll.model.bk.BusinessKeyDef;
+
 /**
  * AppProperty
  * @author jpk

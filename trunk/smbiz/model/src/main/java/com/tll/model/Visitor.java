@@ -5,6 +5,8 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.tll.model.bk.BusinessKeyDef;
+
 /**
  * The visitor entity (those people who visit a storefront site).
  * @author jpk

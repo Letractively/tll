@@ -1,5 +1,7 @@
 package com.tll.model;
 
+import com.tll.model.bk.BusinessKeyDef;
+
 
 /**
  * Interface option parameter definition entity

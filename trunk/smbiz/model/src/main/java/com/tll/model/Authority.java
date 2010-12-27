@@ -4,6 +4,8 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.security.GrantedAuthority;
 
+import com.tll.model.bk.BusinessKeyDef;
+
 /**
  * Implementation of Acegi's
  * {@link org.springframework.security.GrantedAuthority} interface.

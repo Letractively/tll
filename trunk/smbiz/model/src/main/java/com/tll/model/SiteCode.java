@@ -5,6 +5,8 @@ import java.util.Date;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.tll.model.bk.BusinessKeyDef;
+
 /**
  * Defines site codes (online "coupons")
  * @author jpk

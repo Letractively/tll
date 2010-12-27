@@ -11,8 +11,6 @@ import java.util.List;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.tll.model.BusinessKeyDef;
-import com.tll.model.BusinessObject;
 import com.tll.model.IEntityMetadata;
 
 /**

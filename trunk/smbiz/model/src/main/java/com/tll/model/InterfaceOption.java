@@ -9,6 +9,8 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import com.tll.model.bk.BusinessKeyDef;
+
 /**
  * The interface option entity
  * @author jpk

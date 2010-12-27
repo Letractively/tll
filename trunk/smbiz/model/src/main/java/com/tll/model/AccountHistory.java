@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
+import com.tll.model.bk.BusinessKeyDef;
+
 /**
  * The account history entity
  * @author jpk

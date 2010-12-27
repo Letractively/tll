@@ -17,6 +17,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.userdetails.UserDetails;
 
+import com.tll.model.bk.BusinessKeyDef;
+
 /**
  * The account user entity
  * @author jpk

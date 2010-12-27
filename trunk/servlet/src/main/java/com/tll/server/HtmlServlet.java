@@ -1,7 +1,7 @@
 /**
  * The Logic Lab
  */
-package com.tll.server.servlet;
+package com.tll.server;
 
 import java.io.IOException;
 

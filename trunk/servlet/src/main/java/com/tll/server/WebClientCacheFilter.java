@@ -8,7 +8,7 @@
  * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package com.tll.server.filter;
+package com.tll.server;
 
 import java.io.IOException;
 import java.util.StringTokenizer;

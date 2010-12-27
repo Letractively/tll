@@ -4,10 +4,10 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.tll.model.BusinessKeyDef;
-import com.tll.model.BusinessObject;
 import com.tll.model.EntityBase;
 import com.tll.model.IEntity;
+import com.tll.model.bk.BusinessKeyDef;
+import com.tll.model.bk.BusinessObject;
 import com.tll.model.validate.PhoneNumber;
 import com.tll.model.validate.PhoneNumbers;
 import com.tll.model.validate.PostalCode;

@@ -2,6 +2,8 @@ package com.tll.model;
 
 import javax.validation.constraints.NotNull;
 
+import com.tll.model.bk.BusinessKeyDef;
+
 /**
  * Used to hold shipping rates in terms of upper/lower bounds of a product's
  * "weight"
