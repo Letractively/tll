@@ -8,12 +8,12 @@ package com.tll.model;
 import javax.validation.constraints.NotNull;
 
 import com.tll.model.bk.BusinessKeyDef;
+import com.tll.model.bk.BusinessObject;
 
 /**
  * AccountInterfaceOptionParameter - Pseudo-entity to facilitate ui interaction.
  * @author jpk
  */
-@Transient
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Code", properties = { "code" }))
 public class AccountInterfaceOptionParameter extends InterfaceOptionBase {
 

@@ -18,7 +18,6 @@ import com.tll.model.validate.BusinessKeyUniqueness;
  * structure to/from client/server.
  * @author jpk
  */
-@Transient
 public class AccountInterface extends EntityBase implements IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 7903409644943150791L;

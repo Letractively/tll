@@ -18,6 +18,7 @@ import org.springframework.security.GrantedAuthority;
 import org.springframework.security.userdetails.UserDetails;
 
 import com.tll.model.bk.BusinessKeyDef;
+import com.tll.model.bk.BusinessObject;
 
 /**
  * The account user entity

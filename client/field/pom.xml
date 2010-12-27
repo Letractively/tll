@@ -72,9 +72,9 @@
               <finalName>war</finalName>
               <outputDirectory>target</outputDirectory>
               <appendAssemblyId>false</appendAssemblyId>
-              <descriptors>
-                <descriptor>gwt-test-war-dir.xml</descriptor>
-              </descriptors>
+              <descriptorRefs>
+                <descriptorRef>gwt-test-war-dir</descriptorRef>
+              </descriptorRefs>
             </configuration>
           </execution>
           <execution>

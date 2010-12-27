@@ -11,7 +11,7 @@
   <groupId>com.tll</groupId>
   <artifactId>tll-client-ui</artifactId>
   <name>tll-client-ui</name>
-  <version>${project.parent.version}</version>
+  <version>0.0.1-SNAPSHOT</version>
   <description>Houses common client ui widgets and supporting ui related functionality.</description>
   
   <build>
@@ -60,9 +60,9 @@
               <finalName>war</finalName>
               <outputDirectory>target</outputDirectory>
               <appendAssemblyId>false</appendAssemblyId>
-              <descriptors>
-                <descriptor>gwt-test-war-dir.xml</descriptor>
-              </descriptors>
+              <descriptorRefs>
+                <descriptorRef>gwt-test-war-dir</descriptorRef>
+              </descriptorRefs>
             </configuration>
           </execution>
           <execution>
@@ -86,21 +86,13 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
-      <version>${project.version}</version>
+      <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-client-core</artifactId>
-      <version>${project.version}</version>
+      <version>0.0.1-SNAPSHOT</version>
     </dependency>
-
-		<!-- 
-    <dependency>
-      <groupId>com.google.code.gwt-incubator</groupId>
-      <artifactId>gwt-incubator</artifactId>
-      <scope>provided</scope>
-    </dependency>
-		-->
   </dependencies>
 
 </project>
