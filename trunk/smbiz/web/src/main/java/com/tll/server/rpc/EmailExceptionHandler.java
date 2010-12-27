@@ -16,6 +16,7 @@ import com.google.inject.Inject;
 import com.tll.di.EmailExceptionHandlerModule.OnErrorEmail;
 import com.tll.mail.MailManager;
 import com.tll.mail.NameEmail;
+import com.tll.server.IExceptionHandler;
 
 /**
  * EmailExceptionHandler - Emails exception notification emails.

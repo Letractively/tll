@@ -1,6 +1,5 @@
 package com.tll.client;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -217,7 +216,6 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 	@Override
 	public final void onModuleLoad() {
 
-		Log.setUncaughtExceptionHandler();
 		History.newItem(ROOT_HISTORY_TOKEN);
 
 		// try/catch is necessary here because GWT.setUncaughtExceptionHandler()

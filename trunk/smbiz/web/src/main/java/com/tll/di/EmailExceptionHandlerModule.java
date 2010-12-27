@@ -22,8 +22,8 @@ import com.tll.config.Config;
 import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
 import com.tll.mail.NameEmail;
+import com.tll.server.IExceptionHandler;
 import com.tll.server.rpc.EmailExceptionHandler;
-import com.tll.server.rpc.IExceptionHandler;
 
 /**
  * EmailExceptionHandlerModule

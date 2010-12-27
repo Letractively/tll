@@ -9,7 +9,7 @@ import javax.servlet.ServletContext;
 
 import com.google.inject.Inject;
 import com.tll.IMarshalable;
-import com.tll.server.rpc.IExceptionHandler;
+import com.tll.server.IExceptionHandler;
 
 /**
  * @param <S> listing search criteria

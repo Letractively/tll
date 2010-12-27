@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Command;
@@ -48,7 +47,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	static final class ViewChangeHandlers extends ArrayList<IViewChangeHandler> {
 
 		public void fireEvent(ViewChangeEvent event) {
-			Log.debug("Firing " + event);
+			//Log.debug("Firing " + event);
 			// creting a new list avoids concurrent modification exception
 			// TODO use a queuing system instead! to ensure view change events are
 			// recieved in proper order by the listeners!!
@@ -225,7 +224,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 		CView e = cache.peekQueue(init.getViewKey());
 		if(e != null) return;
 		
-		Log.debug("Loading view: " + init + " ..");
+		//Log.debug("Loading view: " + init + " ..");
 		
 		// non-cached view
 		final IView<IViewInitializer> view = (IView<IViewInitializer>) init.getViewKey().getViewClass().newView();
@@ -263,7 +262,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	@SuppressWarnings("unchecked")
 	void setCurrentView(IViewInitializer init) {
 		final ViewKey key = init.getViewKey();
-		Log.debug("Setting current view: '" + key + "' ..");
+	//	Log.debug("Setting current view: '" + key + "' ..");
 
 		CView e;
 		final ViewOptions options = init.getViewKey().getViewClass().getViewOptions();
@@ -277,7 +276,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			setCurrentView(e, showPopped);
 		}
 		else {
-			Log.debug("Creating and initializing view: " + key + " ..");
+			//Log.debug("Creating and initializing view: " + key + " ..");
 			// non-cached view
 			final IView<IViewInitializer> view = (IView<IViewInitializer>) key.getViewClass().newView();
 
@@ -357,7 +356,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 
 		// unload pending cview
 		if(pendingUnload != null) {
-			Log.debug("Destroying pending unload view- " + pendingUnload.vc.getView().toString() + "..");
+			//Log.debug("Destroying pending unload view- " + pendingUnload.vc.getView().toString() + "..");
 			pendingUnload.vc.getView().onDestroy();
 			
 			// fire view un-load event
@@ -381,7 +380,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 		final CView old = cache.cache(e);
 		if(old != null) {
 			assert old != e && !old.getViewKey().equals(e.getViewKey());
-			Log.debug("Destroying view - " + old.vc.getView().toString() + "..");
+			//Log.debug("Destroying view - " + old.vc.getView().toString() + "..");
 			// view life-cycle destroy
 			old.vc.getView().onDestroy();
 			
@@ -453,7 +452,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * Removes all view artifacts from the DOM and clears the cache.
 	 */
 	public void clear() {
-		Log.debug("Clearing view cache..");
+		//Log.debug("Clearing view cache..");
 		if(cache.size() > 0) {
 			for(final Iterator<CView> itr = cache.queueIterator(); itr.hasNext();) {
 				final CView e = itr.next();
@@ -462,7 +461,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			}
 		}
 		cache.clear();
-		Log.debug("View cache cleared");
+		//Log.debug("View cache cleared");
 	}
 
 	/**
@@ -682,7 +681,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 					// need to route through history first
 					this.pendingViewRequest = request;
 					final String htoken = generateViewKeyHistoryToken(request.getViewKey());
-					Log.debug("Routing view '" + request.getViewKey() + "' through history with hash: " + htoken);
+					//Log.debug("Routing view '" + request.getViewKey() + "' through history with hash: " + htoken);
 					History.newItem(htoken);
 				}
 			}
@@ -700,7 +699,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 
 	private void doDispatch(IViewRequest request) {
 		// do actual disptach
-		Log.debug("Dispatching view request: " + request + " ..");
+		//Log.debug("Dispatching view request: " + request + " ..");
 		for(final IController c : controllers) {
 			if(c.canHandle(request)) {
 				c.handle(request);
@@ -713,7 +712,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	public void onValueChange(ValueChangeEvent<String> event) {
 		final double viewKeyHash = extractViewKeyHash(event.getValue());
 		if(viewKeyHash != -1) {
-			Log.debug("Handling view history token: " + viewKeyHash + "..");
+			//Log.debug("Handling view history token: " + viewKeyHash + "..");
 			if(pendingViewRequest != null) {
 				// dispatch the view request
 				dispatch(pendingViewRequest);
@@ -728,7 +727,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 					// resort to the visited view ref cache
 					final ViewRef r = findViewRef(viewKeyHash);
 					if(r == null) {
-						Log.warn("Un-resolved view hash: " + viewKeyHash);
+						//Log.warn("Un-resolved view hash: " + viewKeyHash);
 					}
 					else {
 						setCurrentView(r.getViewInitializer());
@@ -743,7 +742,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 					setCurrentView(e, false);
 				}
 				else {
-					Log.debug("Un-resolvable view hash: " + viewKeyHash + ". No action performed.");
+					//Log.debug("Un-resolvable view hash: " + viewKeyHash + ". No action performed.");
 				}
 			}
 		}

@@ -11,10 +11,10 @@ import com.tll.mail.MailManager;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.IEntityFactory;
 import com.tll.model.IEntityTypeResolver;
-import com.tll.model.ISchemaInfo;
+import com.tll.model.SchemaInfo;
+import com.tll.server.IExceptionHandler;
 import com.tll.server.marshal.IMarshalOptionsResolver;
 import com.tll.server.marshal.Marshaler;
-import com.tll.server.rpc.IExceptionHandler;
 import com.tll.service.entity.IEntityServiceFactory;
 
 /**
@@ -33,7 +33,7 @@ public final class PersistContext {
 	public static final String KEY = Long.toString(key);
 
 	private final MailManager mailManager;
-	private final ISchemaInfo schemaInfo;
+	private final SchemaInfo schemaInfo;
 	private final Marshaler marshaler;
 	private final IMarshalOptionsResolver marshalOptionsResolver;
 	private final IEntityTypeResolver entityTypeResolver;
@@ -57,7 +57,7 @@ public final class PersistContext {
 	 * @param persistCache
 	 */
 	@Inject
-	public PersistContext(MailManager mailManager, ISchemaInfo schemaInfo, Marshaler marshaler,
+	public PersistContext(MailManager mailManager, SchemaInfo schemaInfo, Marshaler marshaler,
 			IMarshalOptionsResolver marshalOptionsResolver, IEntityTypeResolver entityTypeResolver,
 			IEntityFactory<?> entityFactory, IEntityAssembler entityAssembler, IEntityServiceFactory entityServiceFactory,
 			IExceptionHandler exceptionHandler, PersistCache persistCache) {
@@ -90,7 +90,7 @@ public final class PersistContext {
 		return mailManager;
 	}
 
-	public ISchemaInfo getSchemaInfo() {
+	public SchemaInfo getSchemaInfo() {
 		return schemaInfo;
 	}
 

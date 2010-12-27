@@ -2,8 +2,8 @@ package com.tll.client.mvc;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.logging.Logger;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.mvc.view.ViewKey;
 import com.tll.client.mvc.view.ViewRef;
 
@@ -25,6 +25,8 @@ import com.tll.client.mvc.view.ViewRef;
  * @author jpk
  */
 final class ViewCache {
+	
+	private static Logger log = Logger.getLogger("ViewCache");
 
 	/**
 	 * The maximum number of views to cache at any given time.
@@ -76,10 +78,10 @@ final class ViewCache {
 		final ViewKey key = e.getViewKey();
 
 		// add to queue removing it first if present to maintain desired ordering
-		Log.debug("ViewCache.cache() - caching queue entry: " + key);
+		log.fine("ViewCache.cache() - caching queue entry: " + key);
 		final int qindex = searchQueue(key);
 		if(qindex >= 0) {
-			//Log.debug("ViewCache.set() - removing OLD queue cache entry: " + key);
+			//Log.fine("ViewCache.set() - removing OLD queue cache entry: " + key);
 			queue.remove(qindex);
 		}
 		// insert at head
@@ -90,13 +92,13 @@ final class ViewCache {
 		if(sindex >= 0) {
 			// in stack already - move it to head if elsewhere
 			if(sindex > 0) {
-				Log.debug("ViewCache.cache() - moving existing stack entry to head: " + key);
+				log.fine("ViewCache.cache() - moving existing stack entry to head: " + key);
 				stack.add(0, stack.remove(sindex));
 			}
 		}
 		else {
 			// not in stack - add it at head
-			Log.debug("ViewCache.cache() - adding view to stack: " + key);
+			log.fine("ViewCache.cache() - adding view to stack: " + key);
 			stack.add(0, new ViewRef(e.init, e.vc.getView().getShortViewName(), e.vc.getView().getLongViewName()));
 		}
 

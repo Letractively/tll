@@ -14,8 +14,8 @@ import com.tll.common.model.Model;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.model.IEntity;
-import com.tll.model.ISchemaInfo;
 import com.tll.model.ISchemaProperty;
+import com.tll.model.SchemaInfo;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.util.PropertyPath;
 
@@ -36,7 +36,7 @@ public class PersistHelper {
 	 * @param path
 	 * @return the clientized path
 	 */
-	public static final <T> String clientizePropertyPath(ISchemaInfo schemaInfo, Class<T> entityClass, String path) {
+	public static final <T> String clientizePropertyPath(SchemaInfo schemaInfo, Class<T> entityClass, String path) {
 		final PropertyPath p = new PropertyPath(path);
 		if(p.depth() > 2) {
 			final String ppp = p.trim(1);

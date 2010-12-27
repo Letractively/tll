@@ -3,11 +3,11 @@
  * @author jpk
  * @since Apr 28, 2009
  */
-package com.tll.server.rpc;
+package com.tll.server;
 
 
 /**
- * IExceptionHandler - Handles server-side exceptions for RPC requests.
+ * Handles server-side exceptions.
  * @author jpk
  */
 public interface IExceptionHandler {

@@ -1,6 +1,5 @@
 package com.tll.client.ui.listing;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -51,7 +50,7 @@ public final class RowContextPopup extends OptionsPopup implements ClickHandler 
 	public void onClick(ClickEvent event) {
 		final Cell cell = table.getCellForEvent(event);
 		final int row = cell.getRowIndex();
-		Log.debug("RowContextPopup - onClick row: " + row);
+		//Log.debug("RowContextPopup - onClick row: " + row);
 
 		// account for header row and deleted rows
 		if(row < 1 || table.isRowMarkedDeleted(row)) return;
@@ -70,7 +69,7 @@ public final class RowContextPopup extends OptionsPopup implements ClickHandler 
 	@Override
 	public void onOptionEvent(OptionEvent event) {
 		if(delegate == null) throw new IllegalStateException("No row op delegate set");
-		Log.debug("RowContextPopup - onOptionEvent event: " + event.toDebugString());
+		//Log.debug("RowContextPopup - onOptionEvent event: " + event.toDebugString());
 		super.onOptionEvent(event);
 		if(event.getOptionEventType() == OptionEvent.EventType.SELECTED) {
 			delegate.handleOptionSelection(event.optionText, rowIndex);

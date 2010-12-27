@@ -4,7 +4,6 @@
  */
 package com.tll.client.mvc.view;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -155,7 +154,7 @@ public abstract class AbstractView<I extends IViewInitializer> extends Composite
 	 */
 	@Override
 	public final void onDestroy() {
-		Log.debug("Destroying view " + toString());
+		//Log.debug("Destroying view " + toString());
 		doDestroy();
 	}
 

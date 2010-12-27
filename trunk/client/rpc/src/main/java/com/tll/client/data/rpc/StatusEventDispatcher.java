@@ -47,14 +47,17 @@ public final class StatusEventDispatcher implements IHasStatusHandlers {
 		super();
 	}
 
+	@Override
 	public void addStatusHandler(IStatusHandler listener) {
 		listeners.add(listener);
 	}
 
+	@Override
 	public void removeStatusHandler(IStatusHandler listener) {
 		listeners.remove(listener);
 	}
 
+	@Override
 	public void fireEvent(GwtEvent<?> event) {
 		if(event.getAssociatedType() == StatusEvent.TYPE) {
 			listeners.fire((StatusEvent) event);

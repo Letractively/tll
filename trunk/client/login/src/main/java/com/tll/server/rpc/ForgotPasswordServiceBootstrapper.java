@@ -13,6 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import com.google.inject.Injector;
 import com.tll.mail.MailManager;
 import com.tll.server.IBootstrapHandler;
+import com.tll.server.IExceptionHandler;
 import com.tll.service.IForgotPasswordHandler;
 
 /**

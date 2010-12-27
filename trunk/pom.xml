@@ -34,7 +34,6 @@
 		<mysqlConnectorVersion>5.1.6</mysqlConnectorVersion>
 
 		<gwtVersion>2.1.0</gwtVersion>
-		<gwtLogVersion>3.0.1</gwtLogVersion>
 		
 		<junitVersion>4.5</junitVersion>
 		<testNGVersion>5.10</testNGVersion>
@@ -603,11 +602,6 @@
 				<groupId>com.google.gwt</groupId>
 				<artifactId>gwt-servlet</artifactId>
 				<version>${gwtVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.allen_sauer.gwt.log</groupId>
-				<artifactId>gwt-log</artifactId>
-				<version>${gwtLogVersion}</version>
 			</dependency>
 
 			<dependency>
