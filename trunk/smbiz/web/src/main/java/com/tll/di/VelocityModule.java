@@ -67,6 +67,7 @@ public class VelocityModule extends AbstractModule {
 		// VelocityEngine
 		bind(VelocityEngine.class).toProvider(new Provider<VelocityEngine>() {
 
+			@Override
 			public VelocityEngine get() {
 				VelocityEngine ve = null;
 				try {

@@ -7,6 +7,7 @@ package com.tll.di;
 
 import org.springframework.security.userdetails.UserDetailsService;
 
+import com.tll.server.AcegiModule;
 import com.tll.service.entity.user.IUserService;
 
 

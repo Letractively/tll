@@ -46,6 +46,7 @@ public class AppModule extends AbstractModule implements IConfigAware {
 			this.key = key;
 		}
 
+		@Override
 		public String getKey() {
 			return key;
 		}
