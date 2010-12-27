@@ -45,7 +45,7 @@ public class AddAccountRequest extends AbstractModelRequest {
 		return account == null ? "Add account request" : "Add " + account + " request";
 	}
 
-	public IEntityType getEntityType() {
+	public String getEntityType() {
 		return account.getEntityType();
 	}
 

@@ -38,6 +38,7 @@ public class ForgotPasswordService extends RpcServlet implements IForgotPassword
 				ForgotPasswordServiceContext.KEY);
 	}
 
+	@Override
 	public Payload requestPassword(final String emailAddress) {
 		final Status status = new Status();
 		final Payload p = new Payload(status);
