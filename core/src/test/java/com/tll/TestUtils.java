@@ -8,7 +8,7 @@ package com.tll;
 import java.lang.reflect.Array;
 import java.util.Collection;
 
-import org.apache.commons.lang.ObjectUtils;
+import com.tll.util.ObjectUtil;
 
 /**
  * TestUtils
@@ -71,7 +71,7 @@ public final class TestUtils {
 	 * @throws Exception When the given objects are found unequal
 	 */
 	public static void validateEquals(Object src, Object tgt) throws Exception {
-		if(!ObjectUtils.equals(src, tgt))
+		if(!ObjectUtil.equals(src, tgt))
 			throw new Exception("Objects do not equal: src: " + (src == null ? "null" : src.toString()) + ", tgt: "
 					+ (tgt == null ? "null" : tgt.toString()));
 	}

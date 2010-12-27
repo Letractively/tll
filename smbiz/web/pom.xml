@@ -396,6 +396,10 @@
 			<artifactId>guice</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.google.code.guice</groupId>
+			<artifactId>guice-servlet</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache-core</artifactId>
 		</dependency>
