@@ -3,7 +3,7 @@
  * @author jpk
  * Jan 19, 2009
  */
-package com.tll.model;
+package com.tll.model.bk;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

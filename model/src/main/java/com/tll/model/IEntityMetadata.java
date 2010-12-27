@@ -27,9 +27,7 @@ public interface IEntityMetadata {
 	Class<?> getEntityClass(Object entity);
 
 	/**
-	 * Obtains the "root" entity class given an entity class by checking for the
-	 * occurrence of either {@link Root} or {@link Extended} class level
-	 * annotations.
+	 * Obtains the "root" entity class given an entity class.
 	 * <p>
 	 * The root entity class is relevant when we have an ORM related inheritance
 	 * strategy applied to a family of like entities that extend from a common

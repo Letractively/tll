@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import com.tll.model.bk.BusinessKeyDef;
+
 /**
  * Binder entity between interface options and an account
  * @author jpk

@@ -6,6 +6,8 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.tll.model.bk.BusinessKeyDef;
+
 /**
  * PaymentInfo - Wraps {@link PaymentData} (for security). A simple flat-file
  * type holder for several types of payment methods.

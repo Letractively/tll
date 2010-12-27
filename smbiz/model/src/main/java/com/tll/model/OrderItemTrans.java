@@ -2,6 +2,8 @@ package com.tll.model;
 
 import javax.validation.constraints.NotNull;
 
+import com.tll.model.bk.BusinessKeyDef;
+
 /**
  * Order item transaction entity
  * @author jpk

@@ -3,6 +3,8 @@ package com.tll.model;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import com.tll.model.bk.BusinessKeyDef;
+
 /**
  * The customer account entity
  * @author jpk

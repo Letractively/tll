@@ -5,12 +5,12 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.tll.model.BusinessKeyDef;
-import com.tll.model.BusinessObject;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.NamedTimeStampEntity;
+import com.tll.model.bk.BusinessKeyDef;
+import com.tll.model.bk.BusinessObject;
 
 /**
  * The account address entity holding a refs to a single account and single

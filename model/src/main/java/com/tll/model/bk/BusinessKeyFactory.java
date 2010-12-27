@@ -15,8 +15,6 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.NullValueInNestedPathException;
 
 import com.google.inject.Inject;
-import com.tll.model.BusinessKeyDef;
-import com.tll.model.BusinessObject;
 import com.tll.model.IEntityMetadata;
 
 /**
