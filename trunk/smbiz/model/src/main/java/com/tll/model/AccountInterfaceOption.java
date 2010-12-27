@@ -18,7 +18,6 @@ import javax.validation.constraints.NotNull;
  * AccountOptionPanel - Pseudo-entity to facilitate ui interaction.
  * @author jpk
  */
-@Transient
 public class AccountInterfaceOption extends InterfaceOptionBase {
 
 	private static final long serialVersionUID = -6577796307065099973L;

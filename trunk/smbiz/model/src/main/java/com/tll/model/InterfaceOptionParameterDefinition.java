@@ -1,6 +1,7 @@
 package com.tll.model;
 
 import com.tll.model.bk.BusinessKeyDef;
+import com.tll.model.bk.BusinessObject;
 
 
 /**

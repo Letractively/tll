@@ -11,7 +11,7 @@
   <groupId>com.tll</groupId>
   <artifactId>tll-servlet</artifactId>
   <name>tll-servlet</name>
-  <version>${project.parent.version}</version>
+  <version>0.0.1-SNAPSHOT</version>
   <description>Houses common servlet routines.</description>
 
   <dependencies>
@@ -27,7 +27,7 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-config</artifactId>
-      <version>${project.version}</version>
+      <version>0.0.1-SNAPSHOT</version>
     </dependency>
 
     <dependency>

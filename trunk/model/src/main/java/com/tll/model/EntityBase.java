@@ -162,6 +162,14 @@ public abstract class EntityBase implements IEntity {
 		return entityClass();
 	}
 
+	/*
+	 * Base impl which may be overridden.
+	 */
+	@Override
+	public String getEntityType() {
+		return typeDesc();
+	}
+
 	@Override
 	public String typeDesc() {
 		return StringUtil.camelCaseToPresentation(entityClass().getSimpleName());

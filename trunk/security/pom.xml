@@ -10,7 +10,7 @@
   <groupId>com.tll</groupId>
   <artifactId>tll-security</artifactId>
   <name>tll-security</name>
-  <version>${project.parent.version}</version>
+  <version>0.0.1-SNAPSHOT</version>
   <description>Provides security management.</description>
   
   <dependencies>
