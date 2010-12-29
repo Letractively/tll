@@ -8,7 +8,7 @@ package com.tll.common.data.rpc;
 import com.tll.IMarshalable;
 import com.tll.common.data.Page;
 import com.tll.common.data.Payload;
-import com.tll.common.data.Status;
+import com.tll.common.msg.Status;
 
 /**
  * ListingPayload - Response to a {@link ListingRequest}.

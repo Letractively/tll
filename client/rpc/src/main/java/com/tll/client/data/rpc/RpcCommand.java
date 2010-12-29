@@ -9,8 +9,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.common.data.Payload;
-import com.tll.common.data.Status;
 import com.tll.common.msg.Msg;
+import com.tll.common.msg.Status;
 import com.tll.common.msg.Msg.MsgLevel;
 
 /**

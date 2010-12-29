@@ -1,6 +1,5 @@
 package com.tll.criteria;
 
-import com.tll.util.Comparator;
 
 /**
  * Object representing a criterion definition. It contains the field name and

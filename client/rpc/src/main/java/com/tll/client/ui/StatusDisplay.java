@@ -13,8 +13,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.tll.client.data.rpc.IStatusHandler;
 import com.tll.client.data.rpc.StatusEvent;
 import com.tll.client.data.rpc.StatusEventDispatcher;
-import com.tll.common.data.Status;
 import com.tll.common.msg.Msg;
+import com.tll.common.msg.Status;
 import com.tll.common.msg.Msg.MsgAttr;
 
 /**

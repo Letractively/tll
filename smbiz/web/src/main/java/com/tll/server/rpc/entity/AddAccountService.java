@@ -10,10 +10,10 @@ import java.util.Collection;
 
 import com.tll.common.data.AddAccountRequest;
 import com.tll.common.data.ModelPayload;
-import com.tll.common.data.Status;
 import com.tll.common.data.rpc.IAddAccountService;
 import com.tll.common.model.Model;
 import com.tll.common.model.SmbizEntityType;
+import com.tll.common.msg.Status;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.model.Account;

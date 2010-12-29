@@ -51,10 +51,10 @@ import com.tll.client.ui.view.ViewLink;
 import com.tll.client.ui.view.ViewPathPanel;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
-import com.tll.common.data.Status;
 import com.tll.common.model.Model;
 import com.tll.common.model.SmbizEntityType;
 import com.tll.common.msg.Msg;
+import com.tll.common.msg.Status;
 import com.tll.common.msg.Msg.MsgAttr;
 
 /**

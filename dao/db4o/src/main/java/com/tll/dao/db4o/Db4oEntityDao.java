@@ -37,6 +37,7 @@ import com.google.inject.Inject;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.Criterion;
 import com.tll.criteria.CriterionGroup;
+import com.tll.criteria.DBType;
 import com.tll.criteria.ICriterion;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
@@ -60,7 +61,6 @@ import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.bk.BusinessKeyPropertyException;
 import com.tll.model.bk.IBusinessKey;
 import com.tll.model.bk.NonUniqueBusinessKeyException;
-import com.tll.util.DBType;
 import com.tll.util.DateRange;
 import com.tll.util.PropertyPath;
 
