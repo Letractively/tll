@@ -5,14 +5,14 @@ import java.net.URI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.db4o.config.Configuration;
+import com.db4o.config.EmbeddedConfiguration;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.dao.IDbShell;
-import com.tll.dao.db4o.Db4oDbShell;
 import com.tll.dao.db4o.AbstractDb4oDaoModule.Db4oFile;
+import com.tll.dao.db4o.Db4oDbShell;
 import com.tll.model.egraph.IEntityGraphPopulator;
 
 /**
@@ -35,7 +35,7 @@ public class Db4oDbShellModule extends AbstractModule {
 			URI db4oUri;
 
 			@Inject(optional = true)
-			Provider<Configuration> c;
+			Provider<EmbeddedConfiguration> c;
 
 			@Inject(optional = true)
 			IEntityGraphPopulator populator;

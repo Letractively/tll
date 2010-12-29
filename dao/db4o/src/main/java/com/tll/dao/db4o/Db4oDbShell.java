@@ -13,9 +13,9 @@ import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.db4o.Db4o;
+import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
-import com.db4o.config.Configuration;
+import com.db4o.config.EmbeddedConfiguration;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.tll.dao.IDbShell;
@@ -35,7 +35,7 @@ public class Db4oDbShell implements IDbShell {
 
 	private final IEntityGraphPopulator populator;
 
-	private final Provider<Configuration> c;
+	private final Provider<EmbeddedConfiguration> c;
 
 	/**
 	 * Constructor
@@ -45,7 +45,7 @@ public class Db4oDbShell implements IDbShell {
 	 * @param c The db4o configuration (optional).
 	 */
 	@Inject
-	public Db4oDbShell(URI dbFile, IEntityGraphPopulator populator, Provider<Configuration> c) {
+	public Db4oDbShell(URI dbFile, IEntityGraphPopulator populator, Provider<EmbeddedConfiguration> c) {
 		super();
 		this.dbFile = dbFile;
 		this.populator = populator;
@@ -63,14 +63,13 @@ public class Db4oDbShell implements IDbShell {
 	/**
 	 * @return A newly created db4o session.
 	 */
-	@SuppressWarnings("deprecation")
 	private ObjectContainer createDbSession() {
 		if(c == null) {
 			log.info("Instantiating db4o session for: " + dbFile + " with NO configuration");
-			return Db4o.openFile(dbFile.getPath());
+			return Db4oEmbedded.openFile(dbFile.getPath());
 		}
 		log.info("Instantiating db4o session for: " + dbFile + " with config: " + c);
-		return Db4o.openFile(c.get(), dbFile.getPath());
+		return Db4oEmbedded.openFile(c.get(), dbFile.getPath());
 	}
 
 	/**

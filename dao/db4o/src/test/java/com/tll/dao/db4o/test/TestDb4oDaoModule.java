@@ -5,7 +5,7 @@
  */
 package com.tll.dao.db4o.test;
 
-import com.db4o.config.Configuration;
+import com.db4o.config.EmbeddedConfiguration;
 import com.tll.config.Config;
 import com.tll.dao.db4o.AbstractDb4oDaoModule;
 import com.tll.dao.db4o.IDb4oNamedQueryTranslator;
@@ -33,8 +33,8 @@ public class TestDb4oDaoModule extends AbstractDb4oDaoModule {
 	}
 
 	@Override
-	protected void configureConfiguration(Configuration c) {
-		c.updateDepth(3);
+	protected void configureConfiguration(EmbeddedConfiguration c) {
+		c.common().updateDepth(3);
 	}
 
 	@Override
