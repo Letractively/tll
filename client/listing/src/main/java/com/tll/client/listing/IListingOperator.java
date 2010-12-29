@@ -6,7 +6,7 @@
 package com.tll.client.listing;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.dao.Sorting;
+import com.tll.sort.Sorting;
 
 /**
  * IListingOperator - Performs listing ops on a particular listing. This

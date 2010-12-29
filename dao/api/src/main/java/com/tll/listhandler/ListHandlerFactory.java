@@ -8,8 +8,8 @@ import com.tll.IPropertyValueProvider;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.SearchResult;
-import com.tll.dao.Sorting;
 import com.tll.model.IEntity;
+import com.tll.sort.Sorting;
 import com.tll.util.CollectionUtil;
 
 /**

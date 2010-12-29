@@ -115,11 +115,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
-			<artifactId>tll-dao-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.tll</groupId>
 			<artifactId>tll-servlet</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
@@ -163,6 +158,18 @@
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
+			<artifactId>tll-dao-api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
+			<artifactId>tll-dao-db4o</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.tll</groupId>
 			<artifactId>tll-service</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<classifier>testassets</classifier>
@@ -173,12 +180,6 @@
 			<artifactId>tll-core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<classifier>testassets</classifier>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.tll</groupId>
-			<artifactId>tll-dao-db4o</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

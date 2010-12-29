@@ -16,6 +16,7 @@ import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.egraph.EntityBeanFactory;
+import com.tll.sort.Sorting;
 
 /**
  * AbstractEntityDaoTestHandler

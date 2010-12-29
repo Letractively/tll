@@ -5,7 +5,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.tll.criteria.Criteria;
 import com.tll.dao.SearchResult;
-import com.tll.dao.Sorting;
+import com.tll.sort.Sorting;
 
 /**
  * Abstract search supporting list handler class. All search supporting list

@@ -11,7 +11,6 @@ import org.testng.annotations.Test;
 import com.tll.criteria.Criteria;
 import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.SearchResult;
-import com.tll.dao.Sorting;
 import com.tll.listhandler.IListHandler;
 import com.tll.listhandler.IListingDataProvider;
 import com.tll.listhandler.ListHandlerFactory;
@@ -19,6 +18,7 @@ import com.tll.listhandler.ListHandlerType;
 import com.tll.model.Account;
 import com.tll.model.AccountHistory;
 import com.tll.service.entity.account.IAccountService;
+import com.tll.sort.Sorting;
 
 /**
  * AccountRelatedServiceTest

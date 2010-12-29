@@ -8,7 +8,7 @@ package com.tll.client.listing;
 import com.tll.client.listing.AbstractListingConfig;
 import com.tll.client.listing.Column;
 import com.tll.common.model.Model;
-import com.tll.dao.Sorting;
+import com.tll.sort.Sorting;
 
 /**
  * AbstractAccountListingConfig

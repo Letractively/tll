@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.tll.dao.Sorting;
+import com.tll.sort.Sorting;
 
 /**
  * The decorated list handler allowing list elements to be transformed to
@@ -15,7 +15,7 @@ import com.tll.dao.Sorting;
  * @param <V> The transormed type.
  * @author jpk
  */
-public abstract class DecoratedListHandler<T, V> implements IDecoratedListHandler<T, V> {
+public abstract class DecoratedListHandler<T, V> implements IListHandler<V> {
 
 	static final Log LOG = LogFactory.getLog(DecoratedListHandler.class);
 
@@ -41,17 +41,10 @@ public abstract class DecoratedListHandler<T, V> implements IDecoratedListHandle
 		setWrappedHandler(listHandler);
 	}
 
-	@Override
-	public ListHandlerType getListHandlerType() {
-		return (listHandler == null) ? null : listHandler.getListHandlerType();
-	}
-
-	@Override
 	public IListHandler<T> getWrappedHandler() {
 		return listHandler;
 	}
 
-	@Override
 	public void setWrappedHandler(IListHandler<T> listHandler) {
 		this.listHandler = listHandler;
 	}
@@ -76,4 +69,6 @@ public abstract class DecoratedListHandler<T, V> implements IDecoratedListHandle
 
 		return decoratedRows;
 	}
+	
+	protected abstract V getDecoratedElement(T elm);
 }

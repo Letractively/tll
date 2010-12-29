@@ -12,6 +12,7 @@ import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.NameKey;
 import com.tll.model.bk.IBusinessKey;
+import com.tll.sort.Sorting;
 
 /**
  * IEntityDao - DAO definition for {@link IEntity}s.

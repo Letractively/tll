@@ -9,6 +9,7 @@ import com.tll.criteria.Criteria;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.egraph.EntityBeanFactory;
+import com.tll.sort.Sorting;
 
 /**
  * IEntityDaoTestHandler - Encapsulates entity lifecycle behavior for testing

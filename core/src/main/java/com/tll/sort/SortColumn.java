@@ -1,9 +1,10 @@
-package com.tll.dao;
+package com.tll.sort;
 
 import java.io.Serializable;
 
 import com.tll.IMarshalable;
 import com.tll.IPropertyNameProvider;
+
 
 /**
  * Represents a sort directive for a single "column".

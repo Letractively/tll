@@ -18,10 +18,10 @@ import com.tll.common.data.rpc.ListingRequest;
 import com.tll.common.msg.Status;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
-import com.tll.dao.Sorting;
 import com.tll.listhandler.EmptyListException;
 import com.tll.listhandler.IListHandler;
 import com.tll.server.rpc.RpcServlet;
+import com.tll.sort.Sorting;
 
 /**
  * ListingProcessor - Handles listing requests

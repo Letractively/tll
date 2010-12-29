@@ -13,9 +13,9 @@ import com.tll.client.ui.listing.ListingNavBar;
 import com.tll.client.ui.listing.ListingTable;
 import com.tll.client.ui.listing.RemoteListingWidget;
 import com.tll.common.search.test.TestAddressSearch;
-import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.model.test.Address;
+import com.tll.sort.Sorting;
 
 /**
  * UI Tests - GWT module for the sole purpose of verifying the DOM/Style of

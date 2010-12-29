@@ -11,7 +11,7 @@
   <groupId>com.tll</groupId>
   <artifactId>tll-client-core</artifactId>
   <name>tll-client-core</name>
-  <version>${project.parent.version}</version>
+  <version>0.0.1-SNAPSHOT</version>
   <description>Houses core client and server assets for use by all other client modules.</description>
   
   <build>

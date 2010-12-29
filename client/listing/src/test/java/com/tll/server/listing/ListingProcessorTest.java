@@ -25,12 +25,12 @@ import com.tll.common.data.rpc.ListingPayload;
 import com.tll.common.data.rpc.ListingRequest;
 import com.tll.common.search.test.TestAddressSearch;
 import com.tll.dao.AbstractDbAwareTest;
-import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.model.test.Address;
 import com.tll.server.LogExceptionHandlerModule;
 import com.tll.server.listing.ListingCache.ListingCacheAware;
 import com.tll.server.listing.test.TestRowListHandlerProvider;
+import com.tll.sort.Sorting;
 /**
  * ListingProcessorTest - Tests the {@link ListingProcessor}.
  * @author jpk
