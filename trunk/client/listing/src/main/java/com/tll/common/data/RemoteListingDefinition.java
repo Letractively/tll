@@ -6,8 +6,8 @@
 package com.tll.common.data;
 
 import com.tll.IMarshalable;
-import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
+import com.tll.sort.Sorting;
 
 /**
  * RemoteListingDefinition - Definition for server side listings. A unique

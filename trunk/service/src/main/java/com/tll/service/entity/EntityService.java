@@ -20,10 +20,10 @@ import com.tll.dao.EntityNotFoundException;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
-import com.tll.dao.Sorting;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.bk.IBusinessKey;
+import com.tll.sort.Sorting;
 
 /**
  * EntityService - Base class for all entity service implementations.

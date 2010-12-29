@@ -6,7 +6,7 @@ import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
-import com.tll.dao.Sorting;
+import com.tll.sort.Sorting;
 
 /**
  * Search supporting list handler implementation for pageable result sets.
@@ -28,11 +28,6 @@ public final class PagingSearchListHandler extends SearchListHandler {
 	 */
 	PagingSearchListHandler(IListingDataProvider dataProvider, Criteria<?> criteria, Sorting sorting) {
 		super(dataProvider, criteria, sorting);
-	}
-
-	@Override
-	public ListHandlerType getListHandlerType() {
-		return ListHandlerType.PAGE;
 	}
 
 	@Override

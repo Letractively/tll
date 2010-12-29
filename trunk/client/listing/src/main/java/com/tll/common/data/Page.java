@@ -8,7 +8,7 @@ package com.tll.common.data;
 import java.util.List;
 
 import com.tll.IMarshalable;
-import com.tll.dao.Sorting;
+import com.tll.sort.Sorting;
 
 /**
  * Encapsulates page data for an associated listing.

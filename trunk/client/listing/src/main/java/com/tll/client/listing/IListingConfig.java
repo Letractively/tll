@@ -5,7 +5,7 @@
  */
 package com.tll.client.listing;
 
-import com.tll.dao.Sorting;
+import com.tll.sort.Sorting;
 
 /**
  * IListingConfig - The listing configuration definition encompassing

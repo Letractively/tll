@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.tll.dao;
+package com.tll.sort;
 
 import java.io.Serializable;
 import java.util.Comparator;

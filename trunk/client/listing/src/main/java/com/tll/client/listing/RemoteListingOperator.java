@@ -17,8 +17,8 @@ import com.tll.common.data.rpc.IListingServiceAsync;
 import com.tll.common.data.rpc.ListingPayload;
 import com.tll.common.data.rpc.ListingPayload.ListingStatus;
 import com.tll.common.data.rpc.ListingRequest;
-import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
+import com.tll.sort.Sorting;
 
 /**
  * RemoteListingOperator

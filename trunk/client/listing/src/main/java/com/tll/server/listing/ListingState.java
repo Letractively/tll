@@ -9,7 +9,7 @@ package com.tll.server.listing;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.tll.dao.Sorting;
+import com.tll.sort.Sorting;
 
 /**
  * ListingState - Holds bare bones listing state for a single listing.

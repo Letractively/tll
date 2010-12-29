@@ -1,7 +1,8 @@
-package com.tll.dao;
+package com.tll.sort;
 
 import com.tll.IMarshalable;
 import com.tll.INameValueProvider;
+
 
 /**
  * Sort direction enumeration.

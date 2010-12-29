@@ -1,6 +1,7 @@
-package com.tll.dao;
+package com.tll.sort;
 
 import com.tll.IMarshalable;
+
 
 /**
  * Construct representing a hierarchical sorting directive.

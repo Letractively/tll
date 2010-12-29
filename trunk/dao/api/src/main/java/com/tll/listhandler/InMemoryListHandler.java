@@ -3,8 +3,8 @@ package com.tll.listhandler;
 import java.util.Collections;
 import java.util.List;
 
-import com.tll.dao.SortColumnComparator;
-import com.tll.dao.Sorting;
+import com.tll.sort.SortColumnComparator;
+import com.tll.sort.Sorting;
 
 /**
  * InMemoryListHandler - {@link IListHandler} implementation for a
@@ -37,11 +37,6 @@ public class InMemoryListHandler<T> extends AbstractListHandler<T> {
 		setList(rows);
 	}
 
-	@Override
-	public final ListHandlerType getListHandlerType() {
-		return ListHandlerType.IN_MEMORY;
-	}
-	
 	/**
 	 * Sets or resets the managed row list.
 	 * @param rows non-<code>null</code>

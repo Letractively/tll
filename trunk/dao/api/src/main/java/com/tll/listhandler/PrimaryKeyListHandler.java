@@ -6,7 +6,7 @@ import java.util.List;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.SearchResult;
-import com.tll.dao.Sorting;
+import com.tll.sort.Sorting;
 
 /**
  * Search supporting list handler implementation based on an id list.
@@ -28,11 +28,6 @@ public final class PrimaryKeyListHandler extends SearchListHandler {
 	 */
 	PrimaryKeyListHandler(IListingDataProvider dataProvider, Criteria<?> criteria, Sorting sorting) {
 		super(dataProvider, criteria, sorting);
-	}
-
-	@Override
-	public ListHandlerType getListHandlerType() {
-		return ListHandlerType.IDLIST;
 	}
 
 	@Override

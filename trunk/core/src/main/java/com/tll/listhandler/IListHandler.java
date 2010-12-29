@@ -2,7 +2,7 @@ package com.tll.listhandler;
 
 import java.util.List;
 
-import com.tll.dao.Sorting;
+import com.tll.sort.Sorting;
 
 /**
  * IListHandler - Definition for fetching chunks of an underlying, possibly very
@@ -13,11 +13,6 @@ import com.tll.dao.Sorting;
  * @author jpk
  */
 public interface IListHandler<T> {
-
-	/**
-	 * @return The {@link ListHandlerType}. This is the implementation type.
-	 */
-	ListHandlerType getListHandlerType();
 
 	/**
 	 * Fetches a chunk of list data based on the given list index (offset from

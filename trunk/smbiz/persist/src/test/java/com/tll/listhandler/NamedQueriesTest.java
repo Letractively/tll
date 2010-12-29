@@ -32,8 +32,6 @@ import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.IDbShell;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.SearchResult;
-import com.tll.dao.SortColumn;
-import com.tll.dao.Sorting;
 import com.tll.dao.db4o.AbstractDb4oDaoModule;
 import com.tll.dao.db4o.SmbizDb4oDaoModule;
 import com.tll.dao.db4o.test.Db4oDbShellModule;
@@ -45,6 +43,8 @@ import com.tll.model.SmbizEGraphModule;
 import com.tll.service.entity.IEntityServiceFactory;
 import com.tll.service.entity.SmbizEntityServiceFactoryModule;
 import com.tll.service.entity.SmbizEntityServiceFactoryModule.UserCacheAware;
+import com.tll.sort.SortColumn;
+import com.tll.sort.Sorting;
 import com.tll.util.ClassUtil;
 
 /**

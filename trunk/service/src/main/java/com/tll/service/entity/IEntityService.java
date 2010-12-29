@@ -9,11 +9,11 @@ import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.EntityExistsException;
 import com.tll.dao.EntityNotFoundException;
-import com.tll.dao.Sorting;
 import com.tll.listhandler.IListingDataProvider;
 import com.tll.model.IEntity;
 import com.tll.model.bk.IBusinessKey;
 import com.tll.service.IService;
+import com.tll.sort.Sorting;
 
 /**
  * IEntityService - Entity service definition.

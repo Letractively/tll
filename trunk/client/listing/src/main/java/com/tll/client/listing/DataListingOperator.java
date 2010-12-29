@@ -8,10 +8,10 @@ package com.tll.client.listing;
 import java.util.List;
 
 import com.tll.common.data.ListingOp;
-import com.tll.dao.Sorting;
 import com.tll.listhandler.EmptyListException;
 import com.tll.listhandler.IListHandler;
 import com.tll.listhandler.ListHandlerException;
+import com.tll.sort.Sorting;
 
 /**
  * DataListingOperator - {@link IListingOperator} based on an existing
