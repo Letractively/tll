@@ -4,8 +4,8 @@
 package com.tll.common.model;
 
 /**
- * AbstractModelRefProperty - Thin wrapper around a {@link Model} in order to realize
- * relationships in a model hierarchy.
+ * AbstractModelRefProperty - Thin wrapper around a {@link Model} in order to
+ * realize relationships in a model hierarchy.
  * @author jpk
  */
 abstract class AbstractModelRefProperty extends AbstractRelationalProperty implements IModelRefProperty {
@@ -30,16 +30,19 @@ abstract class AbstractModelRefProperty extends AbstractRelationalProperty imple
 	 * @param propName
 	 * @param reference
 	 */
-	public AbstractModelRefProperty(IEntityType relatedType, Model model, String propName, boolean reference) {
+	public AbstractModelRefProperty(final String relatedType, final Model model, final String propName,
+			final boolean reference) {
 		super(relatedType, propName, reference);
 		setModel(model, false);
 	}
 
+	@Override
 	public final Object getValue() {
 		return getModel();
 	}
 
-	public final void setValue(Object value) throws IllegalArgumentException {
+	@Override
+	public final void setValue(final Object value) throws IllegalArgumentException {
 		if(value != null && value instanceof Model == false) {
 			throw new IllegalArgumentException("The value is not a Model instance.");
 		}
@@ -50,9 +53,9 @@ abstract class AbstractModelRefProperty extends AbstractRelationalProperty imple
 	public final Model getModel() {
 		return model;
 	}
-	
+
 	@Override
-	public final void setModel(Model model) {
+	public final void setModel(final Model model) {
 		setModel(model, false);
 	}
 
@@ -60,10 +63,11 @@ abstract class AbstractModelRefProperty extends AbstractRelationalProperty imple
 	 * Responsible for setting the model and firing a property change events if
 	 * necessary.
 	 * @param model The model to set
-	 * @param fireChangeEvent when <code>true</code>, a property change event will be fired
+	 * @param fireChangeEvent when <code>true</code>, a property change event will
+	 *        be fired
 	 * @throws IllegalArgumentException
 	 */
-	protected final void setModel(Model model, boolean fireChangeEvent) throws IllegalArgumentException {
+	protected final void setModel(final Model model, final boolean fireChangeEvent) throws IllegalArgumentException {
 		final Model oldModel = this.model;
 		if(oldModel != model) {
 			if(model != null) {

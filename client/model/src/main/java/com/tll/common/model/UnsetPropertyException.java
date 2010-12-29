@@ -24,7 +24,7 @@ public final class UnsetPropertyException extends PropertyPathException {
 	 * @param parentProperty the last node path in the root relative property path
 	 *        that raised this exception.
 	 */
-	public UnsetPropertyException(final String propPath, Model parentModel, String parentProperty) {
+	public UnsetPropertyException(final String propPath, final Model parentModel, final String parentProperty) {
 		super("Property: '" + propPath + "' does not exist.", propPath);
 		this.parentModel = parentModel;
 		this.parentProperty = parentProperty;

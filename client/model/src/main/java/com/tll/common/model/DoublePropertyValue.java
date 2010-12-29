@@ -30,7 +30,7 @@ public class DoublePropertyValue extends AbstractPropertyValue {
 	 * @param propertyName
 	 * @param value
 	 */
-	public DoublePropertyValue(String propertyName, Double value) {
+	public DoublePropertyValue(final String propertyName, final Double value) {
 		this(propertyName, null, value);
 	}
 
@@ -40,25 +40,28 @@ public class DoublePropertyValue extends AbstractPropertyValue {
 	 * @param metadata
 	 * @param value
 	 */
-	public DoublePropertyValue(String propertyName, PropertyMetadata metadata, Double value) {
+	public DoublePropertyValue(final String propertyName, final PropertyMetadata metadata, final Double value) {
 		super(propertyName, metadata);
 		this.value = value;
 	}
 
+	@Override
 	public PropertyType getType() {
 		return PropertyType.DOUBLE;
 	}
 
+	@Override
 	public IPropertyValue copy() {
 		return new DoublePropertyValue(propertyName, metadata, value == null ? null : new Double(value.doubleValue()));
 	}
 
+	@Override
 	public final Object getValue() {
 		return value;
 	}
 
 	@Override
-	protected void doSetValue(Object obj) {
+	protected void doSetValue(final Object obj) {
 		if(obj == null) {
 			this.value = null;
 		}

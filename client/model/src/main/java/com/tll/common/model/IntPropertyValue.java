@@ -25,7 +25,7 @@ public class IntPropertyValue extends AbstractPropertyValue implements ISelfForm
 	 * @param propertyName
 	 * @param value
 	 */
-	public IntPropertyValue(String propertyName, Integer value) {
+	public IntPropertyValue(final String propertyName, final Integer value) {
 		this(propertyName, null, value);
 	}
 
@@ -35,29 +35,33 @@ public class IntPropertyValue extends AbstractPropertyValue implements ISelfForm
 	 * @param metadata
 	 * @param value
 	 */
-	public IntPropertyValue(String propertyName, PropertyMetadata metadata, Integer value) {
+	public IntPropertyValue(final String propertyName, final PropertyMetadata metadata, final Integer value) {
 		super(propertyName, metadata);
 		this.value = value;
 	}
 
+	@Override
 	public PropertyType getType() {
 		return PropertyType.INT;
 	}
 
+	@Override
 	public IPropertyValue copy() {
 		return new IntPropertyValue(propertyName, metadata, value == null ? null : new Integer(value.intValue()));
 	}
 
+	@Override
 	public final Object getValue() {
 		return value;
 	}
 
+	@Override
 	public String asString() {
 		return value == null ? null : value.toString();
 	}
 
 	@Override
-	protected void doSetValue(Object obj) {
+	protected void doSetValue(final Object obj) {
 		if(obj == null) {
 			this.value = null;
 		}

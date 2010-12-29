@@ -1,4 +1,4 @@
-package com.tll.common.bind;
+package com.tll.common.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;

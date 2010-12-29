@@ -5,9 +5,8 @@
  */
 package com.tll.common.search;
 
-import com.tll.common.model.IEntityType;
-import com.tll.common.model.IEntityTypeProvider;
-import com.tll.common.model.ModelKey;
+import com.tll.model.IEntityTypeProvider;
+import com.tll.model.ModelKey;
 
 
 /**
@@ -35,7 +34,7 @@ public class PrimaryKeySearch extends SearchBase implements IEntityTypeProvider 
 	}
 
 	@Override
-	public IEntityType getEntityType() {
+	public String getEntityType() {
 		return key == null ? null : key.getEntityType();
 	}
 

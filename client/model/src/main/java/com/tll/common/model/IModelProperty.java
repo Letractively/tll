@@ -7,7 +7,6 @@ package com.tll.common.model;
 
 import com.tll.IMarshalable;
 import com.tll.IPropertyNameProvider;
-import com.tll.common.bind.IBindable;
 import com.tll.model.PropertyType;
 
 /**

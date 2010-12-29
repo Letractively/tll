@@ -8,11 +8,8 @@ package com.tll.common.search;
 import java.util.Collection;
 import java.util.HashSet;
 
-import com.tll.common.model.IEntityType;
-import com.tll.common.model.IEntityTypeProvider;
-import com.tll.common.model.IPropertyValue;
+import com.tll.model.IEntityTypeProvider;
 import com.tll.util.StringUtil;
-
 
 /**
  * BusinessKeySearch
@@ -20,12 +17,11 @@ import com.tll.util.StringUtil;
  */
 public class BusinessKeySearch extends SearchBase implements IEntityTypeProvider {
 
-	private IEntityType entityType;
+	private String entityType;
 
 	private String bkName;
 
 	private Collection<IPropertyValue> props;
-
 
 	/**
 	 * Constructor
@@ -39,7 +35,7 @@ public class BusinessKeySearch extends SearchBase implements IEntityTypeProvider
 	 * @param entityType
 	 * @param bkName
 	 */
-	public BusinessKeySearch(IEntityType entityType, String bkName) {
+	public BusinessKeySearch(String entityType, String bkName) {
 		super();
 		this.entityType = entityType;
 		this.bkName = bkName;
@@ -68,7 +64,7 @@ public class BusinessKeySearch extends SearchBase implements IEntityTypeProvider
 	}
 
 	@Override
-	public IEntityType getEntityType() {
+	public String getEntityType() {
 		return entityType;
 	}
 

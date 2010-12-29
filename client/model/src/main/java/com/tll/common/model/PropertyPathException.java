@@ -19,7 +19,7 @@ public abstract class PropertyPathException extends Exception {
 	 * @param message The error message
 	 * @param propPath The property path that raised the exception
 	 */
-	protected PropertyPathException(String message, String propPath) {
+	protected PropertyPathException(final String message, final String propPath) {
 		super(message);
 		this.propPath = propPath;
 	}

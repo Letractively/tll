@@ -7,12 +7,12 @@ package com.tll.client.model;
 
 import java.util.HashSet;
 
-import com.tll.common.bind.IPropertyChangeListener;
-import com.tll.common.bind.PropertyChangeEvent;
 import com.tll.common.model.CopyCriteria;
 import com.tll.common.model.IModelProperty;
+import com.tll.common.model.IPropertyChangeListener;
 import com.tll.common.model.IPropertyValue;
 import com.tll.common.model.Model;
+import com.tll.common.model.PropertyChangeEvent;
 import com.tll.common.model.PropertyPathException;
 import com.tll.model.PropertyMetadata;
 

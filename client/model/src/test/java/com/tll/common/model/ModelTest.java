@@ -137,7 +137,7 @@ public class ModelTest {
 		}
 
 		// verify non-descendant
-		final RelatedOneProperty nondescending = new RelatedOneProperty(TestEntityType.NESTED_ENTITY, null, "nested", true);
+		final RelatedOneProperty nondescending = new RelatedOneProperty(TestEntityType.NESTED_ENTITY.name(), null, "nested", true);
 		try {
 			m.getRelPath(nondescending);
 			Assert.fail("non-descending properties shouldn't pass");

@@ -5,10 +5,7 @@
  */
 package com.tll.server.rpc.entity.test;
 
-import com.tll.common.model.IEntityType;
-import com.tll.common.model.test.TestEntityType;
 import com.tll.model.IEntityTypeResolver;
-import com.tll.util.EnumUtil;
 import com.tll.util.StringUtil;
 
 /**
@@ -20,11 +17,9 @@ public class TestEntityTypeResolver implements IEntityTypeResolver {
 	private static final String MODEL_PKG_TKN = "com.tll.model.test.";
 
 	@Override
-	public Class<?> resolveEntityClass(IEntityType entityType) throws IllegalArgumentException {
-		if(entityType instanceof TestEntityType == false) throw new IllegalArgumentException("Expeceted TestEntityType");
-		final TestEntityType set = (TestEntityType) entityType;
+	public Class<?> resolveEntityClass(String entityType) throws IllegalArgumentException {
 		try {
-			return Class.forName(MODEL_PKG_TKN + StringUtil.enumStyleToCamelCase(set.name(), true));
+			return Class.forName(MODEL_PKG_TKN + StringUtil.enumStyleToCamelCase(entityType, true));
 		}
 		catch(final ClassNotFoundException e) {
 			throw new IllegalArgumentException(e);
@@ -32,8 +27,8 @@ public class TestEntityTypeResolver implements IEntityTypeResolver {
 	}
 
 	@Override
-	public IEntityType resolveEntityType(Class<?> clz) throws IllegalArgumentException {
-		return EnumUtil.fromString(TestEntityType.class, StringUtil.camelCaseToEnumStyle(clz.getSimpleName()));
+	public String resolveEntityType(Class<?> clz) throws IllegalArgumentException {
+		return StringUtil.camelCaseToEnumStyle(clz.getSimpleName());
 	}
 
 }

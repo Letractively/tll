@@ -27,7 +27,7 @@ public class DatePropertyValue extends AbstractPropertyValue {
 	 * @param propertyName
 	 * @param value
 	 */
-	public DatePropertyValue(String propertyName, Date value) {
+	public DatePropertyValue(final String propertyName, final Date value) {
 		super(propertyName, null);
 		this.value = value;
 	}
@@ -38,25 +38,28 @@ public class DatePropertyValue extends AbstractPropertyValue {
 	 * @param metadata
 	 * @param value
 	 */
-	public DatePropertyValue(String propertyName, PropertyMetadata metadata, Date value) {
+	public DatePropertyValue(final String propertyName, final PropertyMetadata metadata, final Date value) {
 		super(propertyName, metadata);
 		this.value = value;
 	}
 
+	@Override
 	public PropertyType getType() {
 		return PropertyType.DATE;
 	}
 
+	@Override
 	public IPropertyValue copy() {
 		return new DatePropertyValue(propertyName, metadata, value == null ? null : new Date(value.getTime()));
 	}
 
+	@Override
 	public final Object getValue() {
 		return value;
 	}
 
 	@Override
-	protected void doSetValue(Object obj) {
+	protected void doSetValue(final Object obj) {
 		if(obj != null && obj instanceof Date == false) {
 			throw new IllegalArgumentException("The value must be a Date");
 		}

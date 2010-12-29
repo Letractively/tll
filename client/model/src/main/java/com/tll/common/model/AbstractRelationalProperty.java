@@ -13,7 +13,7 @@ public abstract class AbstractRelationalProperty extends AbstractModelProperty i
 	/**
 	 * The related type (needed when the model ref is null).
 	 */
-	protected IEntityType relatedType;
+	protected String relatedType;
 
 	/**
 	 * Indicates the encased model is a "reference" and the model shall NOT, by
@@ -35,21 +35,23 @@ public abstract class AbstractRelationalProperty extends AbstractModelProperty i
 	 * @param propertyName The property name
 	 * @param reference Is the relation a reference?
 	 */
-	public AbstractRelationalProperty(IEntityType relatedType, String propertyName, boolean reference) {
+	public AbstractRelationalProperty(final String relatedType, final String propertyName, final boolean reference) {
 		super(propertyName);
 		if(relatedType == null) throw new IllegalArgumentException("Null related type");
 		this.relatedType = relatedType;
 		this.reference = reference;
 	}
 
-	public final IEntityType getRelatedType() {
+	@Override
+	public final String getRelatedType() {
 		return relatedType;
 	}
 
-	protected final void setRelatedType(IEntityType relatedType) {
+	protected final void setRelatedType(final String relatedType) {
 		this.relatedType = relatedType;
 	}
 
+	@Override
 	public final boolean isReference() {
 		return reference;
 	}

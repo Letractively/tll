@@ -2,17 +2,16 @@ package com.tll.model.bk;
 
 import java.util.Arrays;
 
-import com.tll.key.AbstractKey;
-
 /**
- * Abstract base class for all business keys in the application.
+ * Business key impl.
+ * @param <E> entity type
  * @author jpk
- * @param <E>
  */
-final class BusinessKey<E> extends AbstractKey<E> implements IBusinessKey<E> {
+final class BusinessKey<E> implements IBusinessKey<E> {
 
 	private static final long serialVersionUID = 2415120120614040086L;
 
+	private final Class<E> type;
 	private final String businessKeyName;
 	private final String[] propertyNames;
 	private Object[] propertyValues;
@@ -22,7 +21,8 @@ final class BusinessKey<E> extends AbstractKey<E> implements IBusinessKey<E> {
 	 * @param def The business key definition
 	 */
 	public BusinessKey(IBusinessKeyDefinition<E> def) {
-		super(def.getType());
+		if(def == null) throw new IllegalArgumentException("No key def specified.");
+		this.type = def.getType();
 		this.businessKeyName = def.getBusinessKeyName();
 		this.propertyNames = def.getPropertyNames();
 		clear();
@@ -37,7 +37,12 @@ final class BusinessKey<E> extends AbstractKey<E> implements IBusinessKey<E> {
 		this(def);
 		copyValues(propertyValues);
 	}
-	
+
+	@Override
+	public Class<E> getType() {
+		return type;
+	}
+
 	@Override
 	public String getBusinessKeyName() {
 		return businessKeyName;
@@ -110,7 +115,7 @@ final class BusinessKey<E> extends AbstractKey<E> implements IBusinessKey<E> {
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = super.hashCode();
+		int result = 1;
 		result = prime * result + ((businessKeyName == null) ? 0 : businessKeyName.hashCode());
 		result = prime * result + Arrays.hashCode(propertyNames);
 		result = prime * result + Arrays.hashCode(propertyValues);
@@ -120,7 +125,6 @@ final class BusinessKey<E> extends AbstractKey<E> implements IBusinessKey<E> {
 	@Override
 	public boolean equals(Object obj) {
 		if(this == obj) return true;
-		if(!super.equals(obj)) return false;
 		if(getClass() != obj.getClass()) return false;
 		BusinessKey<?> other = (BusinessKey<?>) obj;
 		if(businessKeyName == null) {
@@ -136,4 +140,6 @@ final class BusinessKey<E> extends AbstractKey<E> implements IBusinessKey<E> {
 	public String toString() {
 		return getBusinessKeyName();
 	}
+	
+	
 }

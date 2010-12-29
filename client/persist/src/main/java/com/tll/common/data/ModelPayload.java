@@ -5,19 +5,20 @@
  */
 package com.tll.common.data;
 
-import com.tll.common.model.Model;
-import com.tll.common.model.ModelKey;
+import com.tll.IMarshalable;
+import com.tll.model.ModelKey;
 
 /**
  * Generic model data transport.
  * @author jpk
+ * @param <M> model type
  */
-public final class ModelPayload extends ModelDataPayload {
+public final class ModelPayload<M extends IMarshalable> extends ModelDataPayload<M> {
 
 	/**
 	 * The model.
 	 */
-	private Model model;
+	private M model;
 
 	//private Model changedModel;
 
@@ -43,16 +44,16 @@ public final class ModelPayload extends ModelDataPayload {
 	 * @param status
 	 * @param model
 	 */
-	public ModelPayload(Status status, Model model) {
+	public ModelPayload(Status status, M model) {
 		super(status);
 		this.model = model;
 	}
 
-	public Model getModel() {
+	public M getModel() {
 		return model;
 	}
 
-	public void setModel(Model model) {
+	public void setModel(M model) {
 		this.model = model;
 	}
 

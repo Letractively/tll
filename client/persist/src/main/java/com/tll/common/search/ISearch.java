@@ -4,8 +4,9 @@
  */
 package com.tll.common.search;
 
+import org.springframework.ui.Model;
+
 import com.tll.IMarshalable;
-import com.tll.common.model.Model;
 
 /**
  * ISearch - Client side search criteria definition for a single {@link Model}

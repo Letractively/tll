@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import com.tll.common.bind.PropertyChangeEvent;
+import com.tll.model.ModelKey;
 import com.tll.model.PropertyType;
 import com.tll.util.PropertyPath;
 
@@ -21,13 +21,13 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	/**
 	 * The list of indexed props.
 	 */
-	private /*final*/ArrayList<IndexedProperty> list = new ArrayList<IndexedProperty>();
+	private final/*final*/ArrayList<IndexedProperty> list = new ArrayList<IndexedProperty>();
 
 	/**
 	 * The value collection whereby each indexed model corresponds to the wrapped
 	 * model in the {@link #list}.
 	 */
-	private ArrayList<Model> mlist = new ArrayList<Model>();
+	private final ArrayList<Model> mlist = new ArrayList<Model>();
 
 	/**
 	 * Constructor
@@ -43,22 +43,25 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	 * @param reference
 	 * @param clc Collection of {@link Model}s.
 	 */
-	public RelatedManyProperty(final IEntityType manyType, final String propName, final boolean reference,
+	public RelatedManyProperty(final String manyType, final String propName, final boolean reference,
 			final Collection<Model> clc) {
 		super(manyType, propName, reference);
 		setValue(clc);
 	}
 
+	@Override
 	public PropertyType getType() {
 		return PropertyType.RELATED_MANY;
 	}
 
+	@Override
 	public Object getValue() {
 		return getModelList();
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
-	public void setValue(Object value) throws IllegalArgumentException {
+	public void setValue(final Object value) throws IllegalArgumentException {
 		if(this.mlist == value) return;
 
 		if(value == null) {
@@ -68,7 +71,7 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 			getChangeSupport().firePropertyChange(propertyName, old, mlist);
 		}
 		else if(value instanceof Collection) {
-			final Collection<Model> clc = (Collection) value;
+			final Collection<Model> clc = (Collection<Model>) value;
 			final Object old = mlist;
 			list.clear();
 			mlist.clear();
@@ -98,7 +101,7 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	 *         entity type does not match this properties reference type.
 	 * @throws IndexOutOfBoundsException when the index is out of bounds
 	 */
-	public void insert(Model model, int index) throws IllegalArgumentException, IndexOutOfBoundsException {
+	public void insert(final Model model, final int index) throws IllegalArgumentException, IndexOutOfBoundsException {
 		if(model == null) throw new IllegalArgumentException("Null index models not allowed.");
 		if(!this.relatedType.equals(model.getEntityType())) throw new IllegalArgumentException("Entity type mismatch.");
 		list.add(new IndexedProperty(relatedType, model, propertyName, isReference(), index));
@@ -113,8 +116,8 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	 * @return the removed model
 	 * @throws IndexOutOfBoundsException when the index is out of bounds
 	 */
-	public Model remove(int index) {
-		Model m = mlist.remove(index);
+	public Model remove(final int index) {
+		final Model m = mlist.remove(index);
 		list.remove(index);
 		return m;
 	}
@@ -126,10 +129,10 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	 * @param key
 	 * @return <code>true</code> if the model was found and removed.
 	 */
-	public boolean remove(ModelKey key) {
-		Model m = Model.findInCollection(mlist, key);
+	public boolean remove(final ModelKey key) {
+		final Model m = Model.findInCollection(mlist, key);
 		if(m == null) return false;
-		for(IndexedProperty ip : list) {
+		for(final IndexedProperty ip : list) {
 			if(ip.model == m) {
 				list.remove(ip);
 				mlist.remove(m);
@@ -156,16 +159,18 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	 * @throws IndexOutOfBoundsException
 	 * @return The {@link IndexedProperty} at the given index.
 	 */
-	public IndexedProperty getIndexedProperty(int index) throws IndexOutOfBoundsException {
+	public IndexedProperty getIndexedProperty(final int index) throws IndexOutOfBoundsException {
 		return list.get(index);
 	}
 
+	@Override
 	public Iterator<IndexedProperty> iterator() {
 		return list.iterator();
 	}
 
 	@Override
-	public void setProperty(String propPath, Object value) throws PropertyPathException, IllegalArgumentException {
+	public void setProperty(final String propPath, final Object value) throws PropertyPathException,
+			IllegalArgumentException {
 		final PropertyPath pp = new PropertyPath(propPath);
 		if(pp.isIndexed()) {
 			if(value != null && value instanceof Model == false) {

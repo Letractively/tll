@@ -5,8 +5,6 @@
  */
 package com.tll.common.model;
 
-
-
 /**
  * IRelationalProperty - Indicates a relationship within a model.
  * @author jpk
@@ -16,7 +14,7 @@ public interface IRelationalProperty extends IModelProperty {
 	/**
 	 * @return The related entity/model type.
 	 */
-	IEntityType getRelatedType();
+	String getRelatedType();
 
 	/**
 	 * @return <code>true</code> when this property is a "reference" to another

@@ -13,8 +13,6 @@ import com.tll.model.IEntityFactory;
 import com.tll.model.IEntityTypeResolver;
 import com.tll.model.SchemaInfo;
 import com.tll.server.IExceptionHandler;
-import com.tll.server.marshal.IMarshalOptionsResolver;
-import com.tll.server.marshal.Marshaler;
 import com.tll.service.entity.IEntityServiceFactory;
 
 /**
@@ -34,8 +32,6 @@ public final class PersistContext {
 
 	private final MailManager mailManager;
 	private final SchemaInfo schemaInfo;
-	private final Marshaler marshaler;
-	private final IMarshalOptionsResolver marshalOptionsResolver;
 	private final IEntityTypeResolver entityTypeResolver;
 	private final IEntityFactory<?> entityFactory;
 	private final IEntityAssembler entityAssembler;
@@ -47,8 +43,6 @@ public final class PersistContext {
 	 * Constructor
 	 * @param mailManager
 	 * @param schemaInfo
-	 * @param marshaler
-	 * @param marshalOptionsResolver
 	 * @param entityTypeResolver
 	 * @param entityFactory
 	 * @param entityAssembler
@@ -57,15 +51,12 @@ public final class PersistContext {
 	 * @param persistCache
 	 */
 	@Inject
-	public PersistContext(MailManager mailManager, SchemaInfo schemaInfo, Marshaler marshaler,
-			IMarshalOptionsResolver marshalOptionsResolver, IEntityTypeResolver entityTypeResolver,
+	public PersistContext(MailManager mailManager, SchemaInfo schemaInfo, IEntityTypeResolver entityTypeResolver,
 			IEntityFactory<?> entityFactory, IEntityAssembler entityAssembler, IEntityServiceFactory entityServiceFactory,
 			IExceptionHandler exceptionHandler, PersistCache persistCache) {
 		super();
 		this.mailManager = mailManager;
 		this.schemaInfo = schemaInfo;
-		this.marshaler = marshaler;
-		this.marshalOptionsResolver = marshalOptionsResolver;
 		this.entityTypeResolver = entityTypeResolver;
 		this.entityFactory = entityFactory;
 		this.entityAssembler = entityAssembler;
@@ -94,20 +85,12 @@ public final class PersistContext {
 		return schemaInfo;
 	}
 
-	public Marshaler getMarshaler() {
-		return marshaler;
-	}
-
 	public IExceptionHandler getExceptionHandler() {
 		return exceptionHandler;
 	}
 
 	public IEntityTypeResolver getEntityTypeResolver() {
 		return entityTypeResolver;
-	}
-
-	public IMarshalOptionsResolver getMarshalOptionsResolver() {
-		return marshalOptionsResolver;
 	}
 
 	public PersistCache getPersistCache() {
