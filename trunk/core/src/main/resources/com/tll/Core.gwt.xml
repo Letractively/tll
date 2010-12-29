@@ -1,6 +1,5 @@
 <module>
 	<source path=""><!-- (i.e. the current dir) -->
-		<include name="IProvider.java" />
 		<include name="IPropertyNameProvider.java" />
 		<include name="IPropertyValueProvider.java" />
 		<include name="INameValueProvider.java" />
@@ -19,7 +18,6 @@
 		<include name="FNum.java" />
 		<include name="ObjectUtil.java" />
 		<include name="PropertyPath.java" />
-		<include name="RefSet.java" />
 		<include name="StringUtil.java" />
 	</source>
 	<source path="key">

@@ -25,7 +25,7 @@ public class StringPropertyValue extends AbstractPropertyValue implements ISelfF
 	 * @param propertyName
 	 * @param value
 	 */
-	public StringPropertyValue(String propertyName, String value) {
+	public StringPropertyValue(final String propertyName, final String value) {
 		this(propertyName, null, value);
 	}
 
@@ -35,7 +35,7 @@ public class StringPropertyValue extends AbstractPropertyValue implements ISelfF
 	 * @param metadata
 	 * @param value
 	 */
-	public StringPropertyValue(String propertyName, PropertyMetadata metadata, String value) {
+	public StringPropertyValue(final String propertyName, final PropertyMetadata metadata, final String value) {
 		super(propertyName, metadata);
 		this.value = value;
 
@@ -45,24 +45,28 @@ public class StringPropertyValue extends AbstractPropertyValue implements ISelfF
 		return "String property";
 	}
 
+	@Override
 	public PropertyType getType() {
 		return PropertyType.STRING;
 	}
 
+	@Override
 	public IPropertyValue copy() {
 		return new StringPropertyValue(propertyName, metadata, value);
 	}
 
+	@Override
 	public final Object getValue() {
 		return value;
 	}
 
+	@Override
 	public String asString() {
 		return value;
 	}
 
 	@Override
-	protected void doSetValue(Object obj) {
+	protected void doSetValue(final Object obj) {
 		if(obj != null && obj instanceof String == false) {
 			throw new IllegalArgumentException("The value must be a String");
 		}

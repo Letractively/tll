@@ -1,6 +1,6 @@
 package com.tll.model;
 
-import com.tll.key.AbstractKey;
+import com.tll.IDescriptorProvider;
 
 /**
  * NameKey - Simple entity key that holds an entity name and also identifies the
@@ -8,11 +8,13 @@ import com.tll.key.AbstractKey;
  * @param <T> key type
  * @author jpk
  */
-public class NameKey<T> extends AbstractKey<T> {
+public class NameKey<T> implements IDescriptorProvider {
 
 	private static final long serialVersionUID = -3217664978174156618L;
 
 	public static final String DEFAULT_FIELDNAME = INamedEntity.NAME;
+
+	private final Class<T> type;
 
 	/**
 	 * The name used to identify the field that holds the name.
@@ -43,14 +45,19 @@ public class NameKey<T> extends AbstractKey<T> {
 
 	/**
 	 * Constructor
-	 * @param entityClass
+	 * @param type the entity class
 	 * @param name
 	 * @param propertyName
 	 */
-	public NameKey(Class<T> entityClass, String name, String propertyName) {
-		super(entityClass);
+	public NameKey(Class<T> type, String name, String propertyName) {
+		if(type == null) throw new IllegalArgumentException("A key type must be specified.");
+		this.type = type;
 		setName(name);
 		setNameProperty(propertyName);
+	}
+
+	public Class<T> getType() {
+		return type;
 	}
 
 	public String getName() {
@@ -82,13 +89,30 @@ public class NameKey<T> extends AbstractKey<T> {
 		return getNameProperty() + ": " + getName();
 	}
 
-	@Override
 	public void clear() {
 		this.name = null;
 	}
 
-	@Override
 	public boolean isSet() {
 		return name != null;
+	}
+
+	@Override
+	public int hashCode() {
+		return 31 + ((type == null) ? 0 : type.toString().hashCode());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(obj == null) return false;
+		if(getClass() != obj.getClass()) return false;
+		NameKey<T> other = (NameKey<T>) obj;
+		if(type == null) {
+			if(other.type != null) return false;
+		}
+		else if(!type.equals(other.type)) return false;
+		return true;
 	}
 }

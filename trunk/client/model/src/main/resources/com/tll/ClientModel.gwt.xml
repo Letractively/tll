@@ -3,9 +3,7 @@
 	<inherits name="com.tll.ClientCore" />
 
 	<source path="client" />
-	
-	<source path="common">
-		<exclude name="model/ObjectPropertyValue.java" />
-	</source>
+
+	<source path="common" />
 
 </module>

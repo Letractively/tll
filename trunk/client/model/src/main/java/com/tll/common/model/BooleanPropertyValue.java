@@ -26,7 +26,7 @@ public class BooleanPropertyValue extends AbstractPropertyValue {
 	 * @param propertyName
 	 * @param value
 	 */
-	public BooleanPropertyValue(String propertyName, Boolean value) {
+	public BooleanPropertyValue(final String propertyName, final Boolean value) {
 		this(propertyName, null, value);
 	}
 
@@ -36,25 +36,28 @@ public class BooleanPropertyValue extends AbstractPropertyValue {
 	 * @param metadata
 	 * @param value
 	 */
-	public BooleanPropertyValue(String propertyName, PropertyMetadata metadata, Boolean value) {
+	public BooleanPropertyValue(final String propertyName, final PropertyMetadata metadata, final Boolean value) {
 		super(propertyName, metadata);
 		this.value = value;
 	}
 
+	@Override
 	public PropertyType getType() {
 		return PropertyType.BOOL;
 	}
 
+	@Override
 	public IPropertyValue copy() {
 		return new BooleanPropertyValue(propertyName, metadata, value == null ? null : new Boolean(value.booleanValue()));
 	}
 
+	@Override
 	public final Object getValue() {
 		return value;
 	}
 
 	@Override
-	protected void doSetValue(Object obj) {
+	protected void doSetValue(final Object obj) {
 		if(obj != null && obj instanceof Boolean == false) {
 			throw new IllegalArgumentException("The value must be a Boolean");
 		}

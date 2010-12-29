@@ -8,26 +8,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.tll.common.model.IEntityType;
-import com.tll.common.model.Model;
+import com.tll.IMarshalable;
 
 /**
  * Construct to hold model data based on what is requested in model related
  * request.
+ * @param <M> model type
  * @see ModelDataRequest
  * @author jpk
  */
-public class ModelDataPayload extends Payload {
+public class ModelDataPayload<M extends IMarshalable> extends Payload {
 
 	/**
 	 * Map of entity lists keyed by the entity type.
 	 */
-	protected Map<IEntityType, List<Model>> entityMap;
+	protected Map<String, List<M>> entityMap;
 
 	/**
 	 * Set of entity prototypes
 	 */
-	protected Set<Model> entityPrototypes;
+	protected Set<M> entityPrototypes;
 
 	/**
 	 * Constructor
@@ -44,19 +44,19 @@ public class ModelDataPayload extends Payload {
 		super(status);
 	}
 
-	public Map<IEntityType, List<Model>> getEntityMap() {
+	public Map<String, List<M>> getEntityMap() {
 		return entityMap;
 	}
 
-	public void setEntityMap(Map<IEntityType, List<Model>> entityMap) {
+	public void setEntityMap(Map<String, List<M>> entityMap) {
 		this.entityMap = entityMap;
 	}
 
-	public Set<Model> getEntityPrototypes() {
+	public Set<M> getEntityPrototypes() {
 		return entityPrototypes;
 	}
 
-	public void setEntityPrototypes(Set<Model> entityPrototypes) {
+	public void setEntityPrototypes(Set<M> entityPrototypes) {
 		this.entityPrototypes = entityPrototypes;
 	}
 

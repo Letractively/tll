@@ -35,11 +35,13 @@ public final class IndexedProperty extends AbstractModelRefProperty {
 	 * @param reference
 	 * @param index The index
 	 */
-	IndexedProperty(IEntityType indexedType, Model model, String propName, boolean reference, int index) {
+	IndexedProperty(final String indexedType, final Model model, final String propName, final boolean reference,
+			final int index) {
 		super(indexedType, model, PropertyPath.index(propName, index), reference);
 		this.index = index;
 	}
 
+	@Override
 	public PropertyType getType() {
 		return PropertyType.INDEXED;
 	}

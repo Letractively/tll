@@ -18,8 +18,6 @@ import com.tll.model.IEntityFactory;
 import com.tll.model.IEntityTypeResolver;
 import com.tll.model.SchemaInfo;
 import com.tll.server.IExceptionHandler;
-import com.tll.server.marshal.IMarshalOptionsResolver;
-import com.tll.server.marshal.Marshaler;
 import com.tll.server.rpc.entity.IPersistServiceImplResolver;
 import com.tll.server.rpc.entity.PersistCache;
 import com.tll.server.rpc.entity.PersistContext;
@@ -65,10 +63,6 @@ public abstract class ClientPersistModule extends AbstractModule {
 			@Inject
 			SchemaInfo schemaInfo;
 			@Inject
-			Marshaler marshaler;
-			@Inject
-			IMarshalOptionsResolver marshalOptionsResolver;
-			@Inject
 			IEntityTypeResolver entityTypeResolver;
 			@Inject
 			IEntityFactory<?> entityFactory;
@@ -83,8 +77,8 @@ public abstract class ClientPersistModule extends AbstractModule {
 
 			@Override
 			public PersistContext get() {
-				return new PersistContext(mailManager, schemaInfo, marshaler, marshalOptionsResolver,
-						entityTypeResolver, entityFactory, entityAssembler, entityServiceFactory, exceptionHandler, persistCache);
+				return new PersistContext(mailManager, schemaInfo, entityTypeResolver, entityFactory, entityAssembler,
+						entityServiceFactory, exceptionHandler, persistCache);
 			}
 		}).in(Scopes.SINGLETON);
 

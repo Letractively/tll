@@ -18,6 +18,7 @@ public interface IPropertyValue extends IModelProperty {
 	 * @param value The value to be set
 	 * @throws IllegalArgumentException When the value is invalid
 	 */
+	@Override
 	void setValue(Object value) throws IllegalArgumentException;
 
 	/**

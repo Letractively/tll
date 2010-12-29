@@ -61,7 +61,7 @@ public class CopyCriteria {
 	 * @param whiteList the subset of model properties to copy over
 	 * @return the subset model
 	 */
-	public static CopyCriteria subset(Set<IModelProperty> whiteList) {
+	public static CopyCriteria subset(final Set<IModelProperty> whiteList) {
 		return new CopyCriteria(CopyMode.SUBSET, whiteList);
 	}
 
@@ -71,7 +71,7 @@ public class CopyCriteria {
 	 * @param whiteList
 	 * @return the "changed" model
 	 */
-	public static CopyCriteria changes(Set<IModelProperty> whiteList) {
+	public static CopyCriteria changes(final Set<IModelProperty> whiteList) {
 		return new CopyCriteria(CopyMode.CHANGES, whiteList);
 	}
 
@@ -86,7 +86,7 @@ public class CopyCriteria {
 	 * @param whiteList list of properties that are copied. If <code>null</code>,
 	 *        all properties are considered.
 	 */
-	private CopyCriteria(CopyMode mode, Set<IModelProperty> whiteList) {
+	private CopyCriteria(final CopyMode mode, final Set<IModelProperty> whiteList) {
 		super();
 		this.mode = mode;
 		this.whiteList = whiteList;

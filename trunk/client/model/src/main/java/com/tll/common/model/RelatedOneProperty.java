@@ -28,10 +28,12 @@ public final class RelatedOneProperty extends AbstractModelRefProperty {
 	 * @param propName
 	 * @param reference
 	 */
-	public RelatedOneProperty(IEntityType relatedType, Model model, String propName, boolean reference) {
+	public RelatedOneProperty(final String relatedType, final Model model, final String propName,
+			final boolean reference) {
 		super(relatedType, model, propName, reference);
 	}
 
+	@Override
 	public PropertyType getType() {
 		return PropertyType.RELATED_ONE;
 	}

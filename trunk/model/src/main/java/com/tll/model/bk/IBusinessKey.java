@@ -5,14 +5,14 @@
  */
 package com.tll.model.bk;
 
-import com.tll.key.IKey;
+import com.tll.IDescriptorProvider;
 
 /**
  * IBusinessKey
  * @param <E> The entity type (not necessarily an IEntity)
  * @author jpk
  */
-public interface IBusinessKey<E> extends IBusinessKeyDefinition<E>, IKey<E> {
+public interface IBusinessKey<E> extends IBusinessKeyDefinition<E>, IDescriptorProvider {
 
 	/**
 	 * Get the property value given a property name.
@@ -41,11 +41,15 @@ public interface IBusinessKey<E> extends IBusinessKeyDefinition<E>, IKey<E> {
 	 * @param value
 	 */
 	void setPropertyValue(int index, Object value);
+	
+	/**
+	 * @return true if the key is set.
+	 */
+	boolean isSet();
 
 	/**
 	 * Clear the state of this key resetting all defining properties to their
 	 * default values.
 	 */
-	@Override
 	void clear();
 }

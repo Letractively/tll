@@ -3,21 +3,21 @@
  * @author jpk
  * @since Mar 14, 2009
  */
-package com.tll.common.model;
+package com.tll.model;
 
-import com.tll.key.IKey;
+import com.tll.IDescriptorProvider;
+import com.tll.IMarshalable;
 
 /**
  * ModelKey
  * @author jpk
  */
-@SuppressWarnings("serial")
-public class ModelKey implements IKey<Model>, IEntityTypeProvider {
+public class ModelKey implements IMarshalable, IEntityTypeProvider, IDescriptorProvider {
 
 	/**
 	 * The entity type.
 	 */
-	private IEntityType type;
+	private String type;
 
 	/**
 	 * The entity id.
@@ -42,22 +42,18 @@ public class ModelKey implements IKey<Model>, IEntityTypeProvider {
 	 * @param id the entity id
 	 * @param name the optional entity name
 	 */
-	public ModelKey(IEntityType type, String id, String name) {
+	public ModelKey(final String type, final String id, final String name) {
 		setEntityType(type);
 		setId(id);
 		setName(name);
 	}
 
 	@Override
-	public Class<Model> getType() {
-		return Model.class;
-	}
-
-	public IEntityType getEntityType() {
+	public String getEntityType() {
 		return type;
 	}
 
-	public void setEntityType(IEntityType type) {
+	public void setEntityType(final String type) {
 		if(type == null) {
 			throw new IllegalArgumentException("Null entity type");
 		}
@@ -68,7 +64,7 @@ public class ModelKey implements IKey<Model>, IEntityTypeProvider {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(final String id) {
 		this.id = id;
 	}
 
@@ -76,26 +72,23 @@ public class ModelKey implements IKey<Model>, IEntityTypeProvider {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
-	@Override
 	public void clear() {
 		type = null;
 		id = null;
 		name = null;
 	}
 
-	@Override
 	public boolean isSet() {
 		return type != null && id != null;
 	}
 
 	@Override
 	public String descriptor() {
-		return isSet() ? (name != null) ? type.descriptor() + " '" + name + '\'' : type.descriptor()
-				: "-unset-";
+		return isSet() ? (name != null) ? type + " '" + name + '\'' : type : "-unset-";
 	}
 
 	@Override
@@ -108,7 +101,7 @@ public class ModelKey implements IKey<Model>, IEntityTypeProvider {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if(this == obj) return true;
 		if(obj == null) return false;
 		if(getClass() != obj.getClass()) return false;

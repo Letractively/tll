@@ -8,17 +8,15 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.tll.common.model.IEntityType;
-
 /**
  * Way to request model data when issuing an RPC call.
  * @author jpk
  */
 public final class ModelDataRequest implements IModelRelatedRequest {
 
-	private Set<IEntityType> entityTypes;
+	private Set<String> entityTypes;
 
-	private Set<IEntityType> entityPrototypes;
+	private Set<String> entityPrototypes;
 
 	@Override
 	public String descriptor() {
@@ -29,25 +27,25 @@ public final class ModelDataRequest implements IModelRelatedRequest {
 	 * Request a listing of a particular entity type.
 	 * @param entityType The entity type
 	 */
-	public void requestEntityList(IEntityType entityType) {
+	public void requestEntityList(String entityType) {
 		if(entityTypes == null) {
-			entityTypes = new HashSet<IEntityType>();
+			entityTypes = new HashSet<String>();
 		}
 		entityTypes.add(entityType);
 	}
 
-	public void requestEntityPrototype(IEntityType entityType) {
+	public void requestEntityPrototype(String entityType) {
 		if(entityPrototypes == null) {
-			entityPrototypes = new HashSet<IEntityType>();
+			entityPrototypes = new HashSet<String>();
 		}
 		entityPrototypes.add(entityType);
 	}
 
-	public Iterator<IEntityType> getEntityRequests() {
+	public Iterator<String> getEntityRequests() {
 		return entityTypes == null ? null : entityTypes.iterator();
 	}
 
-	public Iterator<IEntityType> getEntityPrototypeRequests() {
+	public Iterator<String> getEntityPrototypeRequests() {
 		return entityPrototypes == null ? null : entityPrototypes.iterator();
 	}
 

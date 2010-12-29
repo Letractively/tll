@@ -143,8 +143,6 @@
 			<groupId>com.google.code.guice</groupId>
 			<artifactId>guice</artifactId>
 		</dependency>
-
-		<!-- for guice 2.0 -->
 		<dependency>
 			<groupId>aopalliance</groupId>
 			<artifactId>aopalliance</artifactId>

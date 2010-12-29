@@ -30,27 +30,30 @@ public class StringMapPropertyValue extends AbstractPropertyValue {
 	 * @param metadata
 	 * @param map
 	 */
-	public StringMapPropertyValue(String name, PropertyMetadata metadata, Map<String, String> map) {
+	public StringMapPropertyValue(final String name, final PropertyMetadata metadata, final Map<String, String> map) {
 		super(name, metadata);
 		setStringMap(map);
 	}
 
+	@Override
 	public PropertyType getType() {
 		return PropertyType.STRING_MAP;
 	}
 
+	@Override
 	public IPropertyValue copy() {
 		return new StringMapPropertyValue(propertyName, metadata, map == null ? null : new LinkedHashMap<String, String>(
 				map));
 	}
 
+	@Override
 	public final Object getValue() {
 		return map;
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	protected void doSetValue(Object obj) {
+	protected void doSetValue(final Object obj) {
 		if(obj == null) {
 			this.map = null;
 		}
@@ -66,7 +69,7 @@ public class StringMapPropertyValue extends AbstractPropertyValue {
 		return map;
 	}
 
-	private void setStringMap(Map<String, String> map) {
+	private void setStringMap(final Map<String, String> map) {
 		if(map == null) return;
 		if(this.map == null) {
 			this.map = new LinkedHashMap<String, String>();

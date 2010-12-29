@@ -4,9 +4,6 @@
  */
 package com.tll.common.model;
 
-import com.tll.common.bind.IPropertyChangeListener;
-import com.tll.common.bind.ISourcesPropertyChangeEvents;
-import com.tll.common.bind.PropertyChangeSupport;
 
 /**
  * AbstractModelProperty - Base class for all implemented {@link IModelProperty}
@@ -31,36 +28,40 @@ public abstract class AbstractModelProperty implements IModelProperty {
 	 */
 	public AbstractModelProperty() {
 		super();
-		//Log.debug("AbstractModelProperty() - default constructor!");
+		// Log.debug("AbstractModelProperty() - default constructor!");
 	}
 
 	/**
 	 * Constructor
 	 * @param propertyName
 	 */
-	protected AbstractModelProperty(String propertyName) {
+	protected AbstractModelProperty(final String propertyName) {
 		super();
 		/* we can't check for this due to RPC constraints.
 		if(KStringUtil.isEmpty(propertyName)) {
 			throw new IllegalArgumentException("A property name must be specified");
 		}
 		 */
-		//Log.debug("Creating model property: " + propertyName);
-		//assert propertyName != null;
+		// Log.debug("Creating model property: " + propertyName);
+		// assert propertyName != null;
 		this.propertyName = propertyName;
 	}
 
+	@Override
 	public final String getPropertyName() {
 		return propertyName;
 	}
 
 	// NOTE: we ignore the propPath
-	public Object getProperty(String propPath) {
+	@Override
+	public Object getProperty(final String propPath) {
 		return getValue();
 	}
 
 	// NOTE: we ignore the propPath
-	public void setProperty(String propPath, Object value) throws PropertyPathException, IllegalArgumentException {
+	@Override
+	public void setProperty(final String propPath, final Object value) throws PropertyPathException,
+			IllegalArgumentException {
 		setValue(value);
 	}
 
@@ -71,19 +72,23 @@ public abstract class AbstractModelProperty implements IModelProperty {
 		return changeSupport;
 	}
 
-	public final void addPropertyChangeListener(IPropertyChangeListener listener) {
+	@Override
+	public final void addPropertyChangeListener(final IPropertyChangeListener listener) {
 		getChangeSupport().addPropertyChangeListener(listener);
 	}
 
-	public final void addPropertyChangeListener(String propName, IPropertyChangeListener listener) {
+	@Override
+	public final void addPropertyChangeListener(final String propName, final IPropertyChangeListener listener) {
 		getChangeSupport().addPropertyChangeListener(propName, listener);
 	}
 
-	public final void removePropertyChangeListener(IPropertyChangeListener listener) {
+	@Override
+	public final void removePropertyChangeListener(final IPropertyChangeListener listener) {
 		getChangeSupport().removePropertyChangeListener(listener);
 	}
 
-	public final void removePropertyChangeListener(String propName, IPropertyChangeListener listener) {
+	@Override
+	public final void removePropertyChangeListener(final String propName, final IPropertyChangeListener listener) {
 		getChangeSupport().removePropertyChangeListener(propName, listener);
 	}
 
@@ -91,7 +96,7 @@ public abstract class AbstractModelProperty implements IModelProperty {
 	 * We want physical (by memory address) comparison ONLY
 	 */
 	@Override
-	public final boolean equals(Object obj) {
+	public final boolean equals(final Object obj) {
 		return super.equals(obj);
 	}
 

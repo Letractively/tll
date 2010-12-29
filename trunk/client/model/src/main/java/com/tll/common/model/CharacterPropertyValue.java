@@ -25,7 +25,7 @@ public class CharacterPropertyValue extends AbstractPropertyValue implements ISe
 	 * @param propertyName
 	 * @param value
 	 */
-	public CharacterPropertyValue(String propertyName, Character value) {
+	public CharacterPropertyValue(final String propertyName, final Character value) {
 		this(propertyName, null, value);
 	}
 
@@ -35,29 +35,33 @@ public class CharacterPropertyValue extends AbstractPropertyValue implements ISe
 	 * @param metadata
 	 * @param value
 	 */
-	public CharacterPropertyValue(String propertyName, PropertyMetadata metadata, Character value) {
+	public CharacterPropertyValue(final String propertyName, final PropertyMetadata metadata, final Character value) {
 		super(propertyName, metadata);
 		this.value = value;
 	}
 
+	@Override
 	public PropertyType getType() {
 		return PropertyType.CHAR;
 	}
 
+	@Override
 	public IPropertyValue copy() {
 		return new CharacterPropertyValue(propertyName, metadata, value == null ? null : new Character(value.charValue()));
 	}
 
+	@Override
 	public final Object getValue() {
 		return value;
 	}
 
+	@Override
 	public String asString() {
 		return value == null ? null : value.toString();
 	}
 
 	@Override
-	protected void doSetValue(Object obj) {
+	protected void doSetValue(final Object obj) {
 		if(obj != null && obj instanceof Character == false) {
 			if(obj instanceof String && ((String) obj).length() == 1) {
 				this.value = Character.valueOf(((String) obj).charAt(0));

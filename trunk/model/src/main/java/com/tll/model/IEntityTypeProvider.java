@@ -3,8 +3,7 @@
  * @author jpk
  * @since May 14, 2009
  */
-package com.tll.common.model;
-
+package com.tll.model;
 
 /**
  * IEntityTypeProvider
@@ -15,5 +14,5 @@ public interface IEntityTypeProvider {
 	/**
 	 * @return the entity type.
 	 */
-	IEntityType getEntityType();
+	String getEntityType();
 }

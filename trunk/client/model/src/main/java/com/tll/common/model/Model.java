@@ -16,15 +16,12 @@ import java.util.Set;
 import com.tll.IDescriptorProvider;
 import com.tll.IMarshalable;
 import com.tll.IPropertyValueProvider;
-import com.tll.common.bind.IBindable;
-import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.model.CopyCriteria.CopyMode;
+import com.tll.model.IEntityTypeProvider;
+import com.tll.model.ModelKey;
 import com.tll.model.PropertyMetadata;
 import com.tll.model.PropertyType;
-import com.tll.util.Binding;
-import com.tll.util.BindingRefSet;
 import com.tll.util.PropertyPath;
-import com.tll.util.RefSet;
 import com.tll.util.StringUtil;
 
 /**
@@ -34,13 +31,106 @@ import com.tll.util.StringUtil;
  */
 public final class Model implements IMarshalable, IBindable, IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty>, IPropertyValueProvider {
 
+	@SuppressWarnings("serial")
+	public static class RefSet<E> extends HashSet<E> {
+
+		public boolean exists(E arg) {
+			for(final E e : this) {
+				if(e == arg) return true;
+			}
+			return false;
+		}
+	}
+
+	/**
+	 * Binding - Simple encapsulation of two instances of prescribed types.
+	 * @author jpk
+	 * @param <S> the "source" type
+	 * @param <T> the "target" type
+	 */
+	public static class Binding<S, T> {
+
+		public S src;
+		public T tgt;
+
+		/**
+		 * Constructor
+		 * @param src the "source" ref
+		 * @param tgt the "target" ref
+		 */
+		public Binding(S src, T tgt) {
+			super();
+			this.src = src;
+			this.tgt = tgt;
+		}
+
+		@Override
+		public String toString() {
+			return "src: " + src + ", tgt: " + tgt;
+		}
+	}
+
+	/**
+	 * BindingRefSet
+	 * @author jpk
+	 * @param <S> the "source" type
+	 * @param <T> the "target" type
+	 */
+	@SuppressWarnings("serial")
+	public static class BindingRefSet<S, T> extends HashSet<Binding<S, T>> {
+
+		public T findTarget(S arg) {
+			for(final Binding<S, T> bndg : this) {
+				if(bndg.src == arg) return bndg.tgt;
+			}
+			return null;
+		}
+
+		public S findSource(T arg) {
+			for(final Binding<S, T> bndg : this) {
+				if(bndg.tgt == arg) return bndg.src;
+			}
+			return null;
+		}
+
+		public Binding<S, T> findBindingBySource(S arg) {
+			for(final Binding<S, T> bndg : this) {
+				if(bndg.src == arg) return bndg;
+			}
+			return null;
+		}
+
+		public Binding<S, T> findBindingByTarget(T arg) {
+			for(final Binding<S, T> bndg : this) {
+				if(bndg.tgt == arg) return bndg;
+			}
+			return null;
+		}
+
+		public Iterator<S> sourceIterator() {
+			final HashSet<S> set = new HashSet<S>(this.size());
+			for(final Binding<S, T> b : this) {
+				set.add(b.src);
+			}
+			return set.iterator();
+		}
+
+		public Iterator<T> targetIterator() {
+			final HashSet<T> set = new HashSet<T>(this.size());
+			for(final Binding<S, T> b : this) {
+				set.add(b.tgt);
+			}
+			return set.iterator();
+		}
+	}
+
 	/**
 	 * ModelPropSet
 	 * @author jpk
 	 */
 	static class ModelPropSet implements Iterable<IModelProperty>, IMarshalable {
 
-		private /*final*/ LinkedHashSet<IModelProperty> set = new LinkedHashSet<IModelProperty>();
+		private final/*final*/LinkedHashSet<IModelProperty> set = new LinkedHashSet<IModelProperty>();
 
 		public ModelPropSet() {
 			super();
@@ -52,7 +142,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 		 * @param mp the model property to add
 		 * @return true if the property was added
 		 */
-		public boolean add(IModelProperty mp) {
+		public boolean add(final IModelProperty mp) {
 			if(mp == null) return false;
 			if(mp.getPropertyName() == null) throw new IllegalArgumentException();
 			// we need to ensure the name is unique among the other model props (but
@@ -70,7 +160,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 		 * same property name, it is replaced by the one given.
 		 * @param mp The {@link IModelProperty} to set
 		 */
-		public void set(IModelProperty mp) {
+		public void set(final IModelProperty mp) {
 			if(mp == null) return;
 			if(mp.getPropertyName() == null) throw new IllegalArgumentException();
 			final IModelProperty prop = get(mp.getPropertyName());
@@ -87,7 +177,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 		 * @param propName
 		 * @return The found model property or <code>null<code> if not found
 		 */
-		public IModelProperty get(String propName) {
+		public IModelProperty get(final String propName) {
 			for(final IModelProperty m : set) {
 				if(m.getPropertyName().equals(propName)) return m;
 			}
@@ -158,7 +248,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 		 * @param rootRelPath
 		 * @param nearestParentRefPath
 		 */
-		WhitelistElement(IModelProperty srcProp, String rootRelPath, String nearestParentRefPath) {
+		WhitelistElement(final IModelProperty srcProp, final String rootRelPath, final String nearestParentRefPath) {
 			super();
 			this.srcProp = srcProp;
 			this.rootRelPath = rootRelPath;
@@ -180,7 +270,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	static class AllPropsPredicate implements ICopyPredicate {
 
 		@Override
-		public boolean evaluateSourceAndCopy(Model source, Model copy) {
+		public boolean evaluateSourceAndCopy(final Model source, final Model copy) {
 			copy.markedDeleted = source.markedDeleted;
 			return true; // no-op
 		}
@@ -191,7 +281,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 		}
 
 		@Override
-		public boolean evaluateProperty(IModelProperty srcProp, String rootRelPath) {
+		public boolean evaluateProperty(final IModelProperty srcProp, final String rootRelPath) {
 			return true; // default
 		}
 
@@ -204,7 +294,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	static class NoReferencesPredicate extends AllPropsPredicate {
 
 		@Override
-		public boolean evaluateProperty(IModelProperty srcProp, String rootRelPath) {
+		public boolean evaluateProperty(final IModelProperty srcProp, final String rootRelPath) {
 			if(srcProp instanceof IModelRefProperty) {
 				return !((IModelRefProperty) srcProp).isReference();
 			}
@@ -237,7 +327,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 		 * Constructor
 		 * @param whitelistModelProps
 		 */
-		public SubsetPredicate(Set<IModelProperty> whitelistModelProps) {
+		public SubsetPredicate(final Set<IModelProperty> whitelistModelProps) {
 			super();
 			// create whitelist elements needed for the main copy routine
 			if(whitelistModelProps != null) {
@@ -268,7 +358,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 		}
 
 		@Override
-		public boolean evaluateSourceAndCopy(Model source, Model copy) {
+		public boolean evaluateSourceAndCopy(final Model source, final Model copy) {
 			// core model props to always have
 			copy.markedDeleted = source.markedDeleted;
 			copy.setId(source.getId());
@@ -281,21 +371,22 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 		 * @param rootRelPath the current root relative path to check for copying
 		 * @return true/false
 		 */
-		public boolean evaluateProperty(IModelProperty srcProp, String rootRelPath) {
+		@Override
+		public boolean evaluateProperty(final IModelProperty srcProp, final String rootRelPath) {
 			if(size() > 0) {
 				final boolean relational = srcProp.getType().isRelational();
 				final boolean indexed = srcProp.getType() == PropertyType.INDEXED;
 				for(final WhitelistElement wle : this) {
 					if(relational || indexed) {
 						if(wle.nearestParentRefPath.indexOf(rootRelPath) == 0) {
-							//Log.debug("Allowing relational/indexed [" + rootRelPath + "]");
+							// Log.debug("Allowing relational/indexed [" + rootRelPath + "]");
 							return true;
 						}
 					}
 					else {
 						if(wle.rootRelPath.equals(rootRelPath) || rootRelPath.endsWith(ID_PROPERTY)
 								|| rootRelPath.endsWith(VERSION_PROPERTY)) {
-							//Log.debug("Allowing value/nested [" + rootRelPath + "]");
+							// Log.debug("Allowing value/nested [" + rootRelPath + "]");
 							return true;
 						}
 					}
@@ -313,12 +404,12 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 		 * Constructor
 		 * @param whitelistModelProps
 		 */
-		public ChangesPredicate(Set<IModelProperty> whitelistModelProps) {
+		public ChangesPredicate(final Set<IModelProperty> whitelistModelProps) {
 			super(whitelistModelProps);
 		}
 
 		@Override
-		public boolean evaluateSourceAndCopy(Model source, Model copy) {
+		public boolean evaluateSourceAndCopy(final Model source, final Model copy) {
 			super.evaluateSourceAndCopy(source, copy);
 			// when in change mode, only copy id and version when a model is marked as
 			// deleted
@@ -334,7 +425,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 		 * @return true/false
 		 */
 		@Override
-		public boolean evaluateProperty(IModelProperty srcProp, String rootRelPath) {
+		public boolean evaluateProperty(final IModelProperty srcProp, final String rootRelPath) {
 			if(srcProp instanceof IModelRefProperty) {
 				final Model m = ((IModelRefProperty) srcProp).getModel();
 				if(m != null && m.isMarkedDeleted()) {
@@ -388,9 +479,9 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * @return the found instance or <code>null</code> if not found in the
 	 *         collection.
 	 */
-	public static Model findInCollection(Collection<Model> mclc, ModelKey key) {
+	public static Model findInCollection(final Collection<Model> mclc, final ModelKey key) {
 		if(mclc == null) return null;
-		for(Model m : mclc) {
+		for(final Model m : mclc) {
 			if(m.getKey().equals(key)) return m;
 		}
 		return null;
@@ -405,8 +496,8 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * @param visited
 	 * @return the root relative path or <code>null</code> if not a descendant.
 	 */
-	private static String resolveModelProperty(final IModelProperty descendant, IModelProperty current,
-			String parentPath, RefSet<Model> visited) {
+	private static String resolveModelProperty(final IModelProperty descendant, final IModelProperty current,
+			final String parentPath, final RefSet<Model> visited) {
 
 		if(current.getType().isModelRef()) {
 			final Model m = ((IModelRefProperty) current).getModel();
@@ -456,7 +547,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 *        model source and the target is the model copy
 	 * @return the copied model
 	 */
-	private static Model copy(String parentPropPath, final Model source, ICopyPredicate cp,
+	private static Model copy(final String parentPropPath, final Model source, final ICopyPredicate cp,
 			final BindingRefSet<Model, Model> visited) {
 
 		if(source == null) return null;
@@ -491,7 +582,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 			if(srcprop instanceof RelatedOneProperty) {
 				final IModelRefProperty mrp = (IModelRefProperty) srcprop;
 				final Model srcModel = mrp.getModel();
-				boolean keepRef = mrp.isReference() ? cp.maintainReference() : false;
+				final boolean keepRef = mrp.isReference() ? cp.maintainReference() : false;
 				final Model cpyModel = srcModel == null ? null : keepRef ? srcModel : copy(crntPropPath, srcModel, cp, visited);
 				copy.set(new RelatedOneProperty(mrp.getRelatedType(), cpyModel, mrp.getPropertyName(), mrp.isReference()));
 			}
@@ -504,7 +595,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 					final String ipath = PropertyPath.index(crntPropPath, ip.getIndex());
 					if(cp.evaluateProperty(ip, ipath)) {
 						final Model im = ip.getModel();
-						boolean keepRef = ip.isReference() ? cp.maintainReference() : false;
+						final boolean keepRef = ip.isReference() ? cp.maintainReference() : false;
 						final Model cim = keepRef ? im : copy(ipath, im, cp, visited);
 						if(cim != null) clist.add(cim);
 					}
@@ -529,8 +620,8 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 *        reference?
 	 * @param visited
 	 */
-	private static void clearProps(Model model, final boolean clearReferences, final boolean retainIdAndVersion,
-			RefSet<Model> visited) {
+	private static void clearProps(final Model model, final boolean clearReferences, final boolean retainIdAndVersion,
+			final RefSet<Model> visited) {
 
 		if(model == null) return;
 
@@ -577,12 +668,12 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * The set of model properties. <br>
 	 * NOTE: can't mark as final for GWT RPC compatibility
 	 */
-	private /*final*/ModelPropSet props = new ModelPropSet();
+	private final/*final*/ModelPropSet props = new ModelPropSet();
 
 	/**
 	 * The bound entity type.
 	 */
-	private IEntityType entityType;
+	private String entityType;
 
 	/**
 	 * The marked deleted flag. When <code>true</code>, this indicates this model
@@ -607,7 +698,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * Constructor
 	 * @param entityType required since we depend on the model key for equality!
 	 */
-	public Model(IEntityType entityType) {
+	public Model(final String entityType) {
 		super();
 		this.entityType = entityType;
 	}
@@ -615,7 +706,8 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	/**
 	 * @return the ref type
 	 */
-	public IEntityType getEntityType() {
+	@Override
+	public String getEntityType() {
 		return entityType;
 	}
 
@@ -640,7 +732,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * Sets the id property creating it if not present.
 	 * @param id
 	 */
-	public void setId(String id) {
+	public void setId(final String id) {
 		setProperty(ID_PROPERTY, id, PropertyType.STRING);
 	}
 
@@ -656,7 +748,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * Sets the name property creating it if not present.
 	 * @param name
 	 */
-	public void setName(String name) {
+	public void setName(final String name) {
 		setProperty(NAME_PROPERTY, name, PropertyType.STRING);
 	}
 
@@ -687,7 +779,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 		return prop == null ? null : prop.getString();
 	}
 
-	public void setVersion(String version) {
+	public void setVersion(final String version) {
 		setProperty(VERSION_PROPERTY, version, PropertyType.STRING);
 	}
 
@@ -706,7 +798,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * @return The found {@link IPropertyValue} or <code>null</code> if not
 	 *         present.
 	 */
-	public IModelProperty get(String name) {
+	public IModelProperty get(final String name) {
 		return props.get(name);
 	}
 
@@ -718,15 +810,18 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * <em><b>IMPT:</b> This method does not fire property change events.</em>
 	 * @param mprop The replacing {@link IPropertyValue}
 	 */
-	public void set(IModelProperty mprop) {
+	public void set(final IModelProperty mprop) {
 		props.set(mprop);
 	}
 
-	public Object getProperty(String propPath) throws PropertyPathException {
+	@Override
+	public Object getProperty(final String propPath) throws PropertyPathException {
 		return getModelProperty(propPath).getValue();
 	}
 
-	public void setProperty(String propPath, Object value) throws PropertyPathException, IllegalArgumentException {
+	@Override
+	public void setProperty(final String propPath, final Object value) throws PropertyPathException,
+			IllegalArgumentException {
 		setPropertyInternal(propPath, value, null);
 	}
 
@@ -734,11 +829,11 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * IPropertyValueProvider implementation
 	 */
 	@Override
-	public Object getPropertyValue(String propertyPath) {
+	public Object getPropertyValue(final String propertyPath) {
 		try {
 			return getProperty(propertyPath);
 		}
-		catch(PropertyPathException e) {
+		catch(final PropertyPathException e) {
 			throw new IllegalArgumentException("Unable to get property value: " + e.getMessage(), e);
 		}
 	}
@@ -752,7 +847,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * @throws IllegalArgumentException When the targeted property is relational
 	 *         or is not self-formatting.
 	 */
-	public String asString(String propPath) throws IllegalArgumentException {
+	public String asString(final String propPath) throws IllegalArgumentException {
 		IModelProperty prop = null;
 		try {
 			prop = getModelProperty(propPath);
@@ -776,7 +871,8 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * @param ptype the expected property type
 	 * @throws IllegalArgumentException When setting the property fails
 	 */
-	public void setProperty(String propPath, Object value, PropertyType ptype) throws IllegalArgumentException {
+	public void setProperty(final String propPath, final Object value, final PropertyType ptype)
+			throws IllegalArgumentException {
 		try {
 			setPropertyInternal(propPath, value, ptype);
 		}
@@ -792,7 +888,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * @param value
 	 * @throws IllegalArgumentException When setting the string property fails
 	 */
-	public void setString(String propPath, String value) throws IllegalArgumentException {
+	public void setString(final String propPath, final String value) throws IllegalArgumentException {
 		setProperty(propPath, value, PropertyType.STRING);
 	}
 
@@ -801,7 +897,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * @param propPath The property path to test
 	 * @return true/false
 	 */
-	public boolean propertyExists(String propPath) {
+	public boolean propertyExists(final String propPath) {
 		try {
 			return getModelProperty(propPath) != null;
 		}
@@ -824,7 +920,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * @return The resolved non-<code>null</code> model property
 	 * @throws PropertyPathException When the model property can't be resolved.
 	 */
-	public IModelProperty getModelProperty(String propPath) throws PropertyPathException {
+	public IModelProperty getModelProperty(final String propPath) throws PropertyPathException {
 		return StringUtil.isEmpty(propPath) ? getSelfRef() : resolvePropertyPath(propPath);
 	}
 
@@ -840,7 +936,8 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * @throws PropertyPathException When the property path is mal-formed or
 	 *         doesn't point to an existing model property.
 	 */
-	public IPropertyValue getValueProperty(String propPath) throws PropPathNodeMismatchException, PropertyPathException {
+	public IPropertyValue getValueProperty(final String propPath) throws PropPathNodeMismatchException,
+			PropertyPathException {
 		final IModelProperty prop = getModelProperty(propPath);
 		if(prop == null) return null;
 		if(!prop.getType().isValue()) {
@@ -860,7 +957,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * @throws IllegalArgumentException When the given property path can't be
 	 *         resolved or does not map to an {@link IModelRefProperty}.
 	 */
-	public Model nestedModel(String propPath) throws IllegalArgumentException {
+	public Model nestedModel(final String propPath) throws IllegalArgumentException {
 		try {
 			final IModelProperty prop = getModelProperty(propPath);
 			assert prop != null;
@@ -890,7 +987,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * @throws IllegalArgumentException When the given property path can't be
 	 *         resolved or does not map to related one property.
 	 */
-	public RelatedOneProperty relatedOne(String propPath) throws IllegalArgumentException {
+	public RelatedOneProperty relatedOne(final String propPath) throws IllegalArgumentException {
 		try {
 			final IModelProperty prop = getModelProperty(propPath);
 			assert prop != null;
@@ -920,7 +1017,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * @throws IllegalArgumentException When the given property path can't be
 	 *         resolved or does not map to a related many property.
 	 */
-	public RelatedManyProperty relatedMany(String propPath) throws IllegalArgumentException {
+	public RelatedManyProperty relatedMany(final String propPath) throws IllegalArgumentException {
 		try {
 			final IModelProperty prop = getModelProperty(propPath);
 			assert prop != null;
@@ -951,7 +1048,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * @throws IllegalArgumentException When the given property path can't be
 	 *         resolved or does not map to an indexed property.
 	 */
-	public IndexedProperty indexed(String propPath) throws IllegalArgumentException {
+	public IndexedProperty indexed(final String propPath) throws IllegalArgumentException {
 		try {
 			final IModelProperty prop = getModelProperty(propPath);
 			assert prop != null;
@@ -971,7 +1068,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 		}
 	}
 
-	public PropertyMetadata getPropertyMetadata(String propPath) {
+	public PropertyMetadata getPropertyMetadata(final String propPath) {
 		try {
 			return getValueProperty(propPath).getMetadata();
 		}
@@ -989,7 +1086,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * @throws IllegalArgumentException When the given model property is not a
 	 *         descendant of this model instance.
 	 */
-	public String getRelPath(IModelProperty descendant) throws IllegalArgumentException {
+	public String getRelPath(final IModelProperty descendant) throws IllegalArgumentException {
 		if(descendant == null) throw new IllegalArgumentException("Null descendant arg");
 		if(descendant == selfRef) return "";
 		if(descendant instanceof IModelRefProperty) {
@@ -1037,7 +1134,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * @param propPath Identifies the property value to clear
 	 * @throws PropertyPathException
 	 */
-	public void clearPropertyValue(String propPath) throws PropertyPathException {
+	public void clearPropertyValue(final String propPath) throws PropertyPathException {
 		getValueProperty(propPath).clear();
 	}
 
@@ -1048,7 +1145,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 *        reference?
 	 * @param retainIdAndVersion
 	 */
-	public void clearPropertyValues(boolean clearReferences, boolean retainIdAndVersion) {
+	public void clearPropertyValues(final boolean clearReferences, final boolean retainIdAndVersion) {
 		clearProps(this, clearReferences, retainIdAndVersion, new RefSet<Model>());
 	}
 
@@ -1057,6 +1154,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * @return An iterator traversing only the immediate child model propertis of
 	 *         this intance.
 	 */
+	@Override
 	public Iterator<IModelProperty> iterator() {
 		return props.iterator();
 	}
@@ -1072,15 +1170,17 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * Sets the makred for deletion flag.
 	 * @param markedDeleted
 	 */
-	public void setMarkedDeleted(boolean markedDeleted) {
+	public void setMarkedDeleted(final boolean markedDeleted) {
 		this.markedDeleted = markedDeleted;
 	}
 
-	public void addPropertyChangeListener(IPropertyChangeListener listener) {
+	@Override
+	public void addPropertyChangeListener(final IPropertyChangeListener listener) {
 		throw new UnsupportedOperationException();
 	}
 
-	public void addPropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
+	@Override
+	public void addPropertyChangeListener(final String propertyName, final IPropertyChangeListener listener) {
 		try {
 			resolvePropertyPath(propertyName).addPropertyChangeListener(listener);
 		}
@@ -1093,11 +1193,13 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 		throw new UnsupportedOperationException();
 	}
 
-	public void removePropertyChangeListener(IPropertyChangeListener listener) {
+	@Override
+	public void removePropertyChangeListener(final IPropertyChangeListener listener) {
 		throw new UnsupportedOperationException();
 	}
 
-	public void removePropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
+	@Override
+	public void removePropertyChangeListener(final String propertyName, final IPropertyChangeListener listener) {
 		try {
 			resolvePropertyPath(propertyName).removePropertyChangeListener(listener);
 		}
@@ -1158,8 +1260,8 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 	 * @throws PropertyPathException
 	 * @throws IllegalArgumentException
 	 */
-	private void setPropertyInternal(String propPath, Object value, PropertyType ptype) throws PropertyPathException,
-			IllegalArgumentException {
+	private void setPropertyInternal(final String propPath, final Object value, final PropertyType ptype)
+			throws PropertyPathException, IllegalArgumentException {
 		try {
 			IModelProperty mprop = null;
 			if(PropertyPath.isIndexed(propPath)) {
@@ -1235,8 +1337,8 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 			// related one prop val
 			else if(pvType == PropertyType.RELATED_ONE) {
 				if(indexed) {
-					throw new PropPathNodeMismatchException(pp.toString(), pname, pvType.toString(), PropertyType.RELATED_MANY
-							.toString());
+					throw new PropPathNodeMismatchException(pp.toString(), pname, pvType.toString(),
+							PropertyType.RELATED_MANY.toString());
 				}
 				final IModelRefProperty mrp = (IModelRefProperty) prop;
 				if(atEnd) {

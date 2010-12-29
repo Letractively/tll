@@ -48,7 +48,7 @@ public class TestModelStubber {
 	 * @return the stubbed model
 	 */
 	public static Model stubModel(TestEntityType type, String version, boolean timestamping, String name) {
-		final Model m = new Model(type);
+		final Model m = new Model(type.name());
 		m.set(new StringPropertyValue(Model.ID_PROPERTY, new PropertyMetadata(PropertyType.STRING, false, true, 10),
 				Integer.toString(++nextUniqueId)));
 		m.set(new StringPropertyValue(Model.VERSION_PROPERTY, version));
@@ -82,7 +82,7 @@ public class TestModelStubber {
 			addresses.add(aa1);
 			addresses.add(aa2);
 		}
-		account.set(new RelatedManyProperty(TestEntityType.ACCOUNT_ADDRESS, "addresses", false, addresses));
+		account.set(new RelatedManyProperty(TestEntityType.ACCOUNT_ADDRESS.name(), "addresses", false, addresses));
 
 		return account;
 	}
@@ -112,9 +112,9 @@ public class TestModelStubber {
 		.set(new DatePropertyValue("nextChargeDate", new PropertyMetadata(PropertyType.DATE, false, true, 32),
 				new Date()));
 		m.set(new DatePropertyValue("dateCancelled", new PropertyMetadata(PropertyType.DATE, false, true, 32), new Date()));
-		m.set(new RelatedOneProperty(TestEntityType.CURRENCY, stubCurrency(), "currency", true));
-		m.set(new RelatedOneProperty(TestEntityType.PAYMENT_INFO, stubPaymentInfo(), "paymentInfo", false));
-		m.set(new RelatedOneProperty(TestEntityType.ACCOUNT, parentAccount, "parent", true));
+		m.set(new RelatedOneProperty(TestEntityType.CURRENCY.name(), stubCurrency(), "currency", true));
+		m.set(new RelatedOneProperty(TestEntityType.PAYMENT_INFO.name(), stubPaymentInfo(), "paymentInfo", false));
+		m.set(new RelatedOneProperty(TestEntityType.ACCOUNT.name(), parentAccount, "parent", true));
 		return m;
 	}
 
@@ -129,8 +129,8 @@ public class TestModelStubber {
 		final Model m = stubModel(TestEntityType.ACCOUNT_ADDRESS, null, true, ("Adrs " + num));
 		m.set(new EnumPropertyValue("type", new PropertyMetadata(PropertyType.ENUM, false, true, 8),
 				AddressType.values()[num - 1]));
-		m.set(new RelatedOneProperty(TestEntityType.ACCOUNT, account, "account", true));
-		m.set(new RelatedOneProperty(TestEntityType.ADDRESS, address, "address", false));
+		m.set(new RelatedOneProperty(TestEntityType.ACCOUNT.name(), account, "account", true));
+		m.set(new RelatedOneProperty(TestEntityType.ADDRESS.name(), address, "address", false));
 		return m;
 	}
 

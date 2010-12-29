@@ -5,14 +5,15 @@
  */
 package com.tll.common.data;
 
-import com.tll.common.model.Model;
-import com.tll.common.model.ModelKey;
+import com.tll.IMarshalable;
+import com.tll.model.ModelKey;
 
 /**
  * EntityPurgeRequest
+ * @param <M> model type
  * @author jpk
  */
-public class PurgeRequest extends AbstractModelRequest {
+public class PurgeRequest<M extends IMarshalable> extends AbstractModelRequest {
 
 	/**
 	 * This member is set when the purge request is for a server side defined
@@ -24,7 +25,7 @@ public class PurgeRequest extends AbstractModelRequest {
 	 * This member is set when the purge request is non-entity based and is
 	 * implementation specific.
 	 */
-	private Model model;
+	private M model;
 
 	/**
 	 * Constructor
@@ -49,7 +50,7 @@ public class PurgeRequest extends AbstractModelRequest {
 	 * specific.
 	 * @param model
 	 */
-	public PurgeRequest(Model model) {
+	public PurgeRequest(M model) {
 		super();
 		if(model == null) throw new IllegalArgumentException("Null model");
 		this.model = model;
@@ -57,7 +58,7 @@ public class PurgeRequest extends AbstractModelRequest {
 
 	@Override
 	public String descriptor() {
-		return entityRef == null ? model == null ? "Persist Request" : "Persist Request for: " + model.descriptor()
+		return entityRef == null ? model == null ? "Persist Request" : "Persist Request for: " + model
 				: "Persist Request for: " + entityRef.descriptor();
 	}
 
@@ -72,7 +73,7 @@ public class PurgeRequest extends AbstractModelRequest {
 	 * @return the non-entity model data that indicates what is to be purged and
 	 *         is impl specific.
 	 */
-	public Model getModel() {
+	public M getModel() {
 		return model;
 	}
 }

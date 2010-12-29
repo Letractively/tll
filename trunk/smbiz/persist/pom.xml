@@ -26,14 +26,6 @@
 					<source>1.6</source>
 					<target>1.6</target>
           <complianceLevel>1.6</complianceLevel>
-					<!-- NO: this places the tll-server classes into this project's target output dir!
-					<weaveDependencies>
-						<weaveDependency>
-							<groupId>com.tll</groupId>
-							<artifactId>tll-service</artifactId>
-						</weaveDependency>
-					</weaveDependencies>
-					-->
 					<aspectLibraries>
 						<aspectLibrary>
 							<groupId>org.springframework</groupId>
@@ -196,6 +188,12 @@
 		</dependency>
 
 		<dependency>
+		  <groupId>javax.persistence</groupId>
+		  <artifactId>persistence-api</artifactId>
+		  <version>1.0</version>
+		  <scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
 		</dependency>
@@ -276,7 +274,6 @@
 			<groupId>org.springextensions.db4o</groupId>
 			<artifactId>org.springextensions.db4o</artifactId>
 			<version>${springextensions.db4o.version}</version>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>

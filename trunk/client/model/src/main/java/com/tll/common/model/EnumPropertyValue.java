@@ -12,7 +12,6 @@ import com.tll.model.PropertyType;
  * StringPropertyValue - Generic holder construct for entity properties.
  * @author jpk
  */
-@SuppressWarnings("unchecked")
 public class EnumPropertyValue extends AbstractPropertyValue implements ISelfFormattingPropertyValue {
 
 	/**
@@ -36,7 +35,7 @@ public class EnumPropertyValue extends AbstractPropertyValue implements ISelfFor
 	 * @param propertyName
 	 * @param value
 	 */
-	public EnumPropertyValue(String propertyName, Enum<?> value) {
+	public EnumPropertyValue(final String propertyName, final Enum<?> value) {
 		this(propertyName, null, value);
 	}
 
@@ -46,15 +45,17 @@ public class EnumPropertyValue extends AbstractPropertyValue implements ISelfFor
 	 * @param metadata
 	 * @param value
 	 */
-	public EnumPropertyValue(String propertyName, PropertyMetadata metadata, Enum<?> value) {
+	public EnumPropertyValue(final String propertyName, final PropertyMetadata metadata, final Enum<?> value) {
 		super(propertyName, metadata);
 		doSetValue(value);
 	}
 
+	@Override
 	public PropertyType getType() {
 		return PropertyType.ENUM;
 	}
 
+	@Override
 	public IPropertyValue copy() {
 		return new EnumPropertyValue(propertyName, metadata, (Enum<?>) value);
 	}
@@ -64,7 +65,7 @@ public class EnumPropertyValue extends AbstractPropertyValue implements ISelfFor
 	}
 
 	@Override
-	protected void doSetValue(Object val) {
+	protected void doSetValue(final Object val) {
 		if(val != null && (val instanceof Enum == false || val instanceof IMarshalable == false)) {
 			throw new IllegalArgumentException("The value must be both an Enum and implement IMarshalable ("
 					+ val.getClass().getName() + ")");
@@ -72,13 +73,15 @@ public class EnumPropertyValue extends AbstractPropertyValue implements ISelfFor
 		this.value = (IMarshalable) val;
 	}
 
+	@Override
 	public Object getValue() {
 		return value;
 	}
 
+	@Override
 	public String asString() {
 		if(value instanceof INameValueProvider) {
-			return ((INameValueProvider) value).getName();
+			return ((INameValueProvider<?>) value).getName();
 		}
 		return value == null ? null : ((Enum<?>) value).name();
 	}

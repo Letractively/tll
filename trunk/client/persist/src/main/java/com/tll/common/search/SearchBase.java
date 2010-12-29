@@ -18,6 +18,7 @@ public abstract class SearchBase implements ISearch {
 		super();
 	}
 
+	@Override
 	public void clear() {
 		// base impl no-op
 	}

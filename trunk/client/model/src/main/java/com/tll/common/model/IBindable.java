@@ -3,9 +3,8 @@
  * @author jpk
  * Dec 22, 2008
  */
-package com.tll.common.bind;
+package com.tll.common.model;
 
-import com.tll.common.model.PropertyPathException;
 
 /**
  * Indicates the ability to be "bound". The meaning of bound is context

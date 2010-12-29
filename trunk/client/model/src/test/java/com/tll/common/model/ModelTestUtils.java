@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.tll.client.TestUtils;
+import com.tll.TestUtils;
 import com.tll.common.model.CopyCriteria.CopyMode;
 import com.tll.model.PropertyType;
 
