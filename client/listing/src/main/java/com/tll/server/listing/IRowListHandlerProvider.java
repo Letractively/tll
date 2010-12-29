@@ -9,19 +9,17 @@ import com.tll.IMarshalable;
 import com.tll.common.data.RemoteListingDefinition;
 import com.tll.listhandler.IListHandler;
 
-
 /**
- * General contract for providing fresh row list handlers given "raw" search criteria.
+ * General contract for providing fresh row list handlers given "raw" search
+ * criteria.
  * @author jpk
- * @param <S> raw search criteria
- * @param <R> row data type
  */
-public interface IRowListHandlerProvider<S extends IMarshalable, R extends IMarshalable> {
+public interface IRowListHandlerProvider {
 
 	/**
 	 * Generates a row list handler from a listing definition
 	 * @param listingDef
 	 * @return newly created row list handler
 	 */
-	IListHandler<R> getRowListHandler(RemoteListingDefinition<S> listingDef);
+	IListHandler<? extends IMarshalable> getRowListHandler(RemoteListingDefinition<? extends IMarshalable> listingDef);
 }

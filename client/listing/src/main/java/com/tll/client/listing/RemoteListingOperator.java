@@ -17,8 +17,7 @@ import com.tll.common.data.rpc.IListingServiceAsync;
 import com.tll.common.data.rpc.ListingPayload;
 import com.tll.common.data.rpc.ListingPayload.ListingStatus;
 import com.tll.common.data.rpc.ListingRequest;
-import com.tll.listhandler.ListHandlerType;
-import com.tll.sort.Sorting;
+import com.tll.dao.Sorting;
 
 /**
  * RemoteListingOperator
@@ -33,7 +32,6 @@ public final class RemoteListingOperator<R extends IMarshalable, S extends IMars
 	 * @param <R> row data type
 	 * @param <S> search criteria type
 	 * @param listingId the unique listing id
-	 * @param listHandlerType The remote list handler type
 	 * @param searchCriteria The search criteria that generates the remote
 	 *        listing.
 	 * @param propKeys Optional OGNL formatted property names representing a
@@ -44,14 +42,14 @@ public final class RemoteListingOperator<R extends IMarshalable, S extends IMars
 	 * @return A new {@link RemoteListingOperator}
 	 */
 	public static <R extends IMarshalable, S extends IMarshalable> RemoteListingOperator<R, S> create(
-			String listingId, ListHandlerType listHandlerType, S searchCriteria, String[] propKeys, int pageSize, Sorting initialSorting) {
+			String listingId, S searchCriteria, String[] propKeys, int pageSize, Sorting initialSorting) {
 
 		final RemoteListingDefinition<S> rld =
-			new RemoteListingDefinition<S>(listHandlerType, searchCriteria, propKeys, pageSize, initialSorting);
+			new RemoteListingDefinition<S>(searchCriteria, propKeys, pageSize, initialSorting);
 		return new RemoteListingOperator<R, S>(listingId, rld);
 	}
 
-	private static final IListingServiceAsync<IMarshalable, IMarshalable> svc;
+	private static final IListingServiceAsync svc;
 	static {
 		svc = GWT.create(IListingService.class);
 	}

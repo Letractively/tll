@@ -5,16 +5,20 @@
  */
 package com.tll.server.listing;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.List;
 
 import net.sf.ehcache.CacheManager;
 
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.inject.Binder;
-import com.google.inject.Key;
+import com.google.inject.Inject;
 import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
@@ -25,12 +29,15 @@ import com.tll.common.data.rpc.ListingPayload;
 import com.tll.common.data.rpc.ListingRequest;
 import com.tll.common.search.test.TestAddressSearch;
 import com.tll.dao.AbstractDbAwareTest;
-import com.tll.listhandler.ListHandlerType;
+import com.tll.dao.Sorting;
+import com.tll.model.IEntityFactory;
+import com.tll.model.egraph.EntityBeanFactory;
+import com.tll.model.egraph.EntityGraph;
 import com.tll.model.test.Address;
+import com.tll.model.test.TestEntityFactory;
 import com.tll.server.LogExceptionHandlerModule;
 import com.tll.server.listing.ListingCache.ListingCacheAware;
 import com.tll.server.listing.test.TestRowListHandlerProvider;
-import com.tll.sort.Sorting;
 /**
  * ListingProcessorTest - Tests the {@link ListingProcessor}.
  * @author jpk
@@ -53,6 +60,52 @@ public class ListingProcessorTest extends AbstractDbAwareTest {
 
 			@Override
 			public void configure(Binder binder) {
+				
+				// IEntityFactory<?>
+				binder.bind(new TypeLiteral<IEntityFactory<?>>() {}).toProvider(new Provider<IEntityFactory<?>>() {
+					
+					@Override
+					public IEntityFactory<?> get() {
+						return new TestEntityFactory();
+					}
+				}).in(Scopes.SINGLETON);
+				
+				// ListableBeanFactory
+				binder.bind(ListableBeanFactory.class).toProvider(new Provider<ListableBeanFactory>() {
+					
+					@Override
+					public ListableBeanFactory get() {
+						try {
+							URI uri = new URI("com/tll/model/test/mock-entities.xml");
+							return EntityBeanFactory.loadBeanDefinitions(uri);
+						}
+						catch(URISyntaxException e) {
+							throw new RuntimeException(e);
+						}
+					}
+				}).in(Scopes.SINGLETON);
+				
+				// EntityGraph
+				binder.bind(EntityGraph.class).toProvider(new Provider<EntityGraph>() {
+					
+					@Inject
+					EntityBeanFactory ebf;
+					
+					@Override
+					public EntityGraph get() {
+						Collection<Address> addresses = ebf.getNEntityCopies(Address.class, 500, true);
+						EntityGraph eg = new EntityGraph();
+						try {
+							eg.setEntities(addresses);
+						}
+						catch(Exception e) {
+							throw new RuntimeException(e);
+						}
+						return eg;
+					}
+				}).in(Scopes.SINGLETON);
+				
+				// CacheManager
 				binder.bind(CacheManager.class).annotatedWith(ListingCacheAware.class).toProvider(new Provider<CacheManager>() {
 
 					@Override
@@ -62,6 +115,7 @@ public class ListingProcessorTest extends AbstractDbAwareTest {
 					}
 				}).in(Scopes.SINGLETON);
 				
+				// IRowListHandlerProvider
 				binder.bind(IRowListHandlerProvider.class).to(TestRowListHandlerProvider.class).in(Scopes.SINGLETON);
 			}
 		});
@@ -80,7 +134,7 @@ public class ListingProcessorTest extends AbstractDbAwareTest {
 	 */
 	RemoteListingDefinition<TestAddressSearch> getListingDef() {
 		final RemoteListingDefinition<TestAddressSearch> def =
-			new RemoteListingDefinition<TestAddressSearch>(ListHandlerType.PAGE, new TestAddressSearch(), null, 2,
+			new RemoteListingDefinition<TestAddressSearch>(new TestAddressSearch(), null, 2,
 					new Sorting("lastName"));
 		return def;
 	}
@@ -90,7 +144,7 @@ public class ListingProcessorTest extends AbstractDbAwareTest {
 	 * @throws Exception
 	 */
 	public void testRefresh() throws Exception {
-		final ListingContext<TestAddressSearch, Address> context = injector.getInstance(Key.get(new TypeLiteral<ListingContext<TestAddressSearch, Address>>() {}));
+		final ListingContext context = injector.getInstance(ListingContext.class);
 
 		final ListingRequest<TestAddressSearch> request = new ListingRequest<TestAddressSearch>(listingId1, getListingDef(), ListingOp.REFRESH, Integer.valueOf(0), null);
 

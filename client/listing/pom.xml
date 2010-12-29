@@ -160,7 +160,12 @@
 			<groupId>com.tll</groupId>
 			<artifactId>tll-dao-api</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.tll</groupId>
+					<artifactId>tll-model</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>

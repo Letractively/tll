@@ -5,7 +5,7 @@
  */
 package com.tll.client.listing;
 
-import com.tll.sort.Sorting;
+import com.tll.dao.Sorting;
 
 
 /**

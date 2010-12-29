@@ -36,8 +36,8 @@ import com.tll.common.model.SmbizEntityType;
 import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.common.search.NamedQuerySearch;
+import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
-import com.tll.sort.Sorting;
 
 /**
  * InterfaceStack - {@link StackPanel} enumerating the system defined interface

@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.tll.sort.Sorting;
+import com.tll.dao.Sorting;
 
 /**
  * The decorated list handler allowing list elements to be transformed to

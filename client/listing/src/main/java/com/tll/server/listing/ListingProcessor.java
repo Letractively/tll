@@ -15,13 +15,13 @@ import com.tll.common.data.RemoteListingDefinition;
 import com.tll.common.data.rpc.ListingPayload;
 import com.tll.common.data.rpc.ListingPayload.ListingStatus;
 import com.tll.common.data.rpc.ListingRequest;
-import com.tll.common.msg.Status;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
+import com.tll.common.msg.Status;
+import com.tll.dao.Sorting;
 import com.tll.listhandler.EmptyListException;
 import com.tll.listhandler.IListHandler;
 import com.tll.server.rpc.RpcServlet;
-import com.tll.sort.Sorting;
 
 /**
  * ListingProcessor - Handles listing requests
@@ -30,18 +30,17 @@ import com.tll.sort.Sorting;
 final class ListingProcessor {
 
 	private final Log log = LogFactory.getLog(this.getClass());
-
+	
 	/**
 	 * Processes all listing requests.
+	 * @param <S> search type
+	 * @param <R> row data type
 	 * @param sessionId the unique user session id
-	 * @param context the listing context
+	 * @param context required listing context
 	 * @param request the listing request
 	 * @return the resultant listing payload
 	 */
-	<S extends IMarshalable, R extends IMarshalable> ListingPayload<R> process(final String sessionId, final ListingContext<S, R> context, final ListingRequest<S> request) {
-
-		if(context == null) throw new IllegalStateException("Null listing context");
-
+	public <S extends IMarshalable, R extends IMarshalable> ListingPayload<R> process(final String sessionId, final ListingContext context, final ListingRequest<S> request) {
 		final Status status = new Status();
 
 		if(request == null) {
@@ -104,12 +103,12 @@ final class ListingProcessor {
 							status.addMsg("No listing def specified.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 						}
 						else {
+							/*
 							final S search = listingDef.getSearchCriteria();
 							if(search == null) {
 								throw new ListingException(listingId, "No search criteria specified.");
 							}
 
-							/*
 							// translate client side criteria to server side criteria
 							final Criteria<IEntity> criteria;
 							try {
@@ -152,11 +151,10 @@ final class ListingProcessor {
 								throw new IllegalStateException("Unable to instantiate the list handler: " + e.getMessage(), e);
 							}
 							*/
-							
 
 							// transform to row list handler
-							//IListHandler<R> rowListHandler = getRowDataListHandler(listHandler, listingDef);
-							IListHandler<R> rowListHandler = context.getRowListHandlerProvider().getRowListHandler(listingDef);
+							@SuppressWarnings("unchecked")
+							IListHandler<R> rowListHandler = (IListHandler<R>) context.getRowListHandlerProvider().getRowListHandler(listingDef);
 							handler = new ListingHandler<R>(rowListHandler, listingId, listingDef.getPageSize());
 						}
 					}

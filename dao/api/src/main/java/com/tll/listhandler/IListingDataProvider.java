@@ -7,7 +7,7 @@ import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
-import com.tll.sort.Sorting;
+import com.tll.dao.Sorting;
 
 /**
  * IListHandlerDataProvider - Definition for providing data to

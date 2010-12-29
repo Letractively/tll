@@ -33,8 +33,6 @@ import com.tll.model.bk.BusinessKeyNotDefinedException;
 import com.tll.model.bk.IBusinessKey;
 import com.tll.model.bk.IBusinessKeyDefinition;
 import com.tll.model.egraph.EntityBeanFactory;
-import com.tll.sort.SortColumn;
-import com.tll.sort.Sorting;
 
 /**
  * AbstractEntityDaoTest

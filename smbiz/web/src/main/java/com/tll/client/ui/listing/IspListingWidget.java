@@ -25,8 +25,8 @@ import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.Model;
 import com.tll.common.model.SmbizEntityType;
 import com.tll.common.search.NamedQuerySearch;
+import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
-import com.tll.sort.Sorting;
 
 /**
  * IspListingWidget
