@@ -15,9 +15,9 @@ import org.springextensions.db4o.Db4oTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.aspectj.AnnotationTransactionAspect;
 
-import com.db4o.Db4o;
+import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
-import com.db4o.config.Configuration;
+import com.db4o.config.EmbeddedConfiguration;
 import com.google.inject.AbstractModule;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
@@ -106,7 +106,7 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 	 * E.g.: setting updateDepth(...) and/or cascadeOnUpdate(...).
 	 * @param c
 	 */
-	protected abstract void configureConfiguration(Configuration c);
+	protected abstract void configureConfiguration(EmbeddedConfiguration c);
 
 	/**
 	 * @return The db4o named query translator implmentation type.
@@ -137,12 +137,11 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 
 		// Configuration (db4o)
 		// NOTE: we need to always generate a fresh instance to avoid db4o exception being thrown
-		bind(Configuration.class).toProvider(new Provider<Configuration>() {
+		bind(EmbeddedConfiguration.class).toProvider(new Provider<EmbeddedConfiguration>() {
 
 			@Override
-			public Configuration get() {
-				@SuppressWarnings("deprecation")
-				final Configuration c = Db4o.newConfiguration();
+			public EmbeddedConfiguration get() {
+				final EmbeddedConfiguration c = Db4oEmbedded.newConfiguration();
 				// configure the db4o configuration
 				configureConfiguration(c);
 				return c;
@@ -158,13 +157,12 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 			URI db4oUri;
 
 			@Inject
-			Provider<Configuration> c;
+			Provider<EmbeddedConfiguration> c;
 
-			@SuppressWarnings("deprecation")
 			@Override
 			public ObjectContainer get() {
 				log.info("Creating db4o session for: " + db4oUri);
-				return Db4o.openFile(c.get(), db4oUri.getPath());
+				return Db4oEmbedded.openFile(c.get(), db4oUri.getPath());
 			}
 		}).in(Scopes.SINGLETON);
 
