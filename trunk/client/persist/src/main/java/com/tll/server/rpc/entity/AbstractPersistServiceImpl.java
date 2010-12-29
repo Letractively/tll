@@ -8,11 +8,11 @@ package com.tll.server.rpc.entity;
 import javax.validation.ConstraintViolationException;
 
 import com.tll.common.data.ModelPayload;
-import com.tll.common.data.Status;
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.IPropertyValue;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
+import com.tll.common.msg.Status;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.common.search.BusinessKeySearch;

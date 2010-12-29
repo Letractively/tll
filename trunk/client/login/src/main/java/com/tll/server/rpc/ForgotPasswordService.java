@@ -11,8 +11,8 @@ import java.util.Map;
 import org.springframework.mail.MailSendException;
 
 import com.tll.common.data.Payload;
-import com.tll.common.data.Status;
 import com.tll.common.data.rpc.IForgotPasswordService;
+import com.tll.common.msg.Status;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.dao.EntityNotFoundException;

@@ -20,11 +20,11 @@ import com.tll.client.ui.msg.Msgs;
 import com.tll.common.cache.ModelDataType;
 import com.tll.common.data.ModelDataPayload;
 import com.tll.common.data.ModelDataRequest;
-import com.tll.common.data.Status;
 import com.tll.common.data.rpc.IModelDataService;
 import com.tll.common.data.rpc.IModelDataServiceAsync;
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
+import com.tll.common.msg.Status;
 
 /**
  * Retrieves model data from the server.

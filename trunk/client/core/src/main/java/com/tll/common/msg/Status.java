@@ -1,13 +1,12 @@
 /**
  * 
  */
-package com.tll.common.data;
+package com.tll.common.msg;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.tll.IMarshalable;
-import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
 

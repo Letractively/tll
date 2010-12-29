@@ -6,8 +6,8 @@
 package com.tll.common.data.rpc;
 
 import com.tll.common.data.Payload;
-import com.tll.common.data.Status;
 import com.tll.common.model.Model;
+import com.tll.common.msg.Status;
 
 /**
  * AdminContextPayload - Payload for initializing the client-side admin

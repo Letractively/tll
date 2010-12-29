@@ -6,7 +6,7 @@
 package com.tll.client.data.rpc;
 
 import com.google.gwt.event.shared.GwtEvent;
-import com.tll.common.data.Status;
+import com.tll.common.msg.Status;
 
 /**
  * StatusEvent

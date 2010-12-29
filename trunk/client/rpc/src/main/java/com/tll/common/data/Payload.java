@@ -6,6 +6,7 @@
 package com.tll.common.data;
 
 import com.tll.IMarshalable;
+import com.tll.common.msg.Status;
 
 /**
  * Payload - Common container with which to send data to client.

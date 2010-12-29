@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.tll.IMarshalable;
+import com.tll.common.msg.Status;
 
 /**
  * Construct to hold model data based on what is requested in model related

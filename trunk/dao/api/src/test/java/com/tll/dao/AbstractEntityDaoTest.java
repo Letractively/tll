@@ -18,6 +18,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
+import com.tll.criteria.Comparator;
 import com.tll.criteria.Criteria;
 import com.tll.dao.test.EntityDaoTestDecorator;
 import com.tll.model.EntityMetadata;
@@ -32,7 +33,6 @@ import com.tll.model.bk.BusinessKeyNotDefinedException;
 import com.tll.model.bk.IBusinessKey;
 import com.tll.model.bk.IBusinessKeyDefinition;
 import com.tll.model.egraph.EntityBeanFactory;
-import com.tll.util.Comparator;
 
 /**
  * AbstractEntityDaoTest

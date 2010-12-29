@@ -1,4 +1,4 @@
-package com.tll.util;
+package com.tll.criteria;
 
 /**
  * DBType - Simple enum to identify datastore specific value representations.
