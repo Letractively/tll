@@ -15,6 +15,7 @@ import com.tll.dao.EntityExistsException;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
+import com.tll.dao.Sorting;
 import com.tll.listhandler.IListingDataProvider;
 import com.tll.model.Account;
 import com.tll.model.AccountHistory;
@@ -24,7 +25,6 @@ import com.tll.model.IEntity;
 import com.tll.model.IEntityAssembler;
 import com.tll.service.entity.NamedEntityService;
 import com.tll.service.entity.account.AccountHistoryContext.AccountHistoryOp;
-import com.tll.sort.Sorting;
 
 /**
  * AccountService - {@link IAccountService} impl

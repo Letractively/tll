@@ -8,7 +8,7 @@ import com.tll.IDescriptorProvider;
 import com.tll.IMarshalable;
 import com.tll.common.data.ListingOp;
 import com.tll.common.data.RemoteListingDefinition;
-import com.tll.sort.Sorting;
+import com.tll.dao.Sorting;
 
 /**
  * ListingRequest - Request data for performing server-side listing operations

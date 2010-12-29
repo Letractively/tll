@@ -4,19 +4,18 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import com.tll.IPropertyValueProvider;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.SearchResult;
+import com.tll.dao.Sorting;
 import com.tll.model.IEntity;
-import com.tll.sort.Sorting;
 import com.tll.util.CollectionUtil;
 
 /**
  * Factory for creating concrete {@link IListHandler}s.
  * @author jpk
  */
-public abstract class ListHandlerFactory {
+public final class ListHandlerFactory {
 
 	/**
 	 * Creates an {@link InMemoryListHandler} given a {@link Collection} and
@@ -32,7 +31,7 @@ public abstract class ListHandlerFactory {
 	 * @throws IllegalArgumentException When the given collection is
 	 *         <code>null</code>
 	 */
-	public static <T extends IPropertyValueProvider> IListHandler<T> create(Collection<T> c, Sorting sorting) throws ListHandlerException,
+	public static <T> IListHandler<T> create(Collection<T> c, Sorting sorting) throws ListHandlerException,
 	IllegalArgumentException {
 		try {
 			final InMemoryListHandler<T> listHandler = new InMemoryListHandler<T>(CollectionUtil.listFromCollection(c));
@@ -90,5 +89,11 @@ public abstract class ListHandlerFactory {
 		}
 
 		return slh;
+	}
+
+	/**
+	 * Constructor
+	 */
+	private ListHandlerFactory() {
 	}
 }

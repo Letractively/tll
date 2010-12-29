@@ -26,8 +26,8 @@ import com.tll.common.model.ModelKey;
 import com.tll.common.model.SmbizEntityType;
 import com.tll.common.model.StringPropertyValue;
 import com.tll.common.search.NamedQuerySearch;
+import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
-import com.tll.sort.Sorting;
 
 /**
  * CustomerListingWidget

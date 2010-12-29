@@ -47,6 +47,8 @@ import com.tll.dao.IEntityDao;
 import com.tll.dao.IPageResult;
 import com.tll.dao.NonUniqueResultException;
 import com.tll.dao.SearchResult;
+import com.tll.dao.SortColumn;
+import com.tll.dao.Sorting;
 import com.tll.model.EntityMetadata;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
@@ -59,8 +61,6 @@ import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.bk.BusinessKeyPropertyException;
 import com.tll.model.bk.IBusinessKey;
 import com.tll.model.bk.NonUniqueBusinessKeyException;
-import com.tll.sort.SortColumn;
-import com.tll.sort.Sorting;
 import com.tll.util.DateRange;
 import com.tll.util.PropertyPath;
 

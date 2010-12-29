@@ -1,7 +1,6 @@
 package com.tll.model.egraph;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -28,7 +27,7 @@ public final class EntityBeanFactory {
 	/**
 	 * The default path file name of the [Spring] bean context file.
 	 */
-	private static final String DEFAULT_BEAN_DEF_FILENAME = "mock-entities.xml";
+	public static final String DEFAULT_BEAN_DEF_FILENAME = "mock-entities.xml";
 
 	private static final Log log = LogFactory.getLog(EntityBeanFactory.class);
 
@@ -39,13 +38,6 @@ public final class EntityBeanFactory {
 	 * @return newly created {@link ListableBeanFactory} impl instance
 	 */
 	public static ListableBeanFactory loadBeanDefinitions(URI beanDefRef) {
-		if(beanDefRef == null) try {
-			beanDefRef = new URI(DEFAULT_BEAN_DEF_FILENAME);
-		}
-		catch(final URISyntaxException e1) {
-			throw new IllegalStateException("Can't locate entity bean def file: " + DEFAULT_BEAN_DEF_FILENAME);
-		}
-
 		// NOTE: we revert to the system class loader as opposed to Spring's
 		// default current thread context class loader
 		// so gmaven invoked groovy scripts don't blow up

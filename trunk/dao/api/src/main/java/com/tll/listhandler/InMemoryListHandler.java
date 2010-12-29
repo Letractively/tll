@@ -3,8 +3,8 @@ package com.tll.listhandler;
 import java.util.Collections;
 import java.util.List;
 
-import com.tll.sort.SortColumnComparator;
-import com.tll.sort.Sorting;
+import com.tll.dao.SortColumnComparator;
+import com.tll.dao.Sorting;
 
 /**
  * InMemoryListHandler - {@link IListHandler} implementation for a

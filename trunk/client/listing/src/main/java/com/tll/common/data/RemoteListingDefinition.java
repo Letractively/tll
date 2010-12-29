@@ -6,8 +6,7 @@
 package com.tll.common.data;
 
 import com.tll.IMarshalable;
-import com.tll.listhandler.ListHandlerType;
-import com.tll.sort.Sorting;
+import com.tll.dao.Sorting;
 
 /**
  * RemoteListingDefinition - Definition for server side listings. A unique
@@ -17,7 +16,6 @@ import com.tll.sort.Sorting;
  */
 public final class RemoteListingDefinition<S extends IMarshalable> implements IMarshalable {
 
-	private ListHandlerType listHandlerType;
 	private S searchCriteria;
 	private String[] propKeys;
 	private int pageSize;
@@ -32,28 +30,18 @@ public final class RemoteListingDefinition<S extends IMarshalable> implements IM
 
 	/**
 	 * Constructor
-	 * @param listHandlerType The required list handler type
 	 * @param searchCriteria The required search criteria
 	 * @param propKeys The optional property keys filter array
 	 * @param pageSize The required page size. <code>-1</code> means no paging.
 	 * @param initialSorting The required default sorting directive
 	 */
-	public RemoteListingDefinition(ListHandlerType listHandlerType, S searchCriteria, String[] propKeys, int pageSize,
+	public RemoteListingDefinition(S searchCriteria, String[] propKeys, int pageSize,
 			Sorting initialSorting) {
 		super();
-		this.listHandlerType = listHandlerType;
 		this.searchCriteria = searchCriteria;
 		this.propKeys = propKeys;
 		this.pageSize = pageSize;
 		this.initialSorting = initialSorting;
-	}
-
-	/**
-	 * @return The list handling type. Controls how paging is performed on the
-	 *         server.
-	 */
-	public ListHandlerType getListHandlerType() {
-		return listHandlerType;
 	}
 
 	/**

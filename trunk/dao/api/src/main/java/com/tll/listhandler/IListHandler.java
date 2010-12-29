@@ -2,7 +2,7 @@ package com.tll.listhandler;
 
 import java.util.List;
 
-import com.tll.sort.Sorting;
+import com.tll.dao.Sorting;
 
 /**
  * IListHandler - Definition for fetching chunks of an underlying, possibly very
