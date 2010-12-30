@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+  <inherits name="com.tll.ClientCore" />
+  <inherits name="com.tll.Listing" />
+  <inherits name="com.tll.Login" />
+</module>
