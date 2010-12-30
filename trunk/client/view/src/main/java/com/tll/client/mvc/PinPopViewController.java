@@ -13,19 +13,21 @@ import com.tll.client.mvc.view.PinPopViewRequest;
  */
 class PinPopViewController implements IController {
 
-	public boolean canHandle(IViewRequest request) {
+	@Override
+	public boolean canHandle(final IViewRequest request) {
 		return request instanceof PinPopViewRequest;
 	}
 
 	@Override
-	public void handle(IViewRequest request) {
+	public void handle(final IViewRequest request) {
 		final PinPopViewRequest r = (PinPopViewRequest) request;
 		if(r.isPop()) {
 			// pop the view...
 			ViewManager.get().popCurrentView();
 		}
 		else {
-			// pin the view (deferring it to ensure we are clear of the history "pump" since we subsequently fire a view change event)...
+			// pin the view (deferring it to ensure we are clear of the history "pump"
+			// since we subsequently fire a view change event)...
 			ViewManager.get().pinPoppedView(r.getViewKey());
 		}
 	}

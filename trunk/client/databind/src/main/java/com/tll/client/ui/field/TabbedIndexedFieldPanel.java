@@ -36,10 +36,11 @@ import com.tll.common.model.Model;
 
 /**
  * TabbedIndexedFieldPanel - {@link IndexedFieldPanel} implementation employing
- * a {@link TabPanel} to show the indexed field panels.
+ * a TabPanel to show the indexed field panels.
  * @param <I> the index field panel type
  * @author jpk
  */
+@SuppressWarnings("deprecation")
 public abstract class TabbedIndexedFieldPanel<I extends AbstractBindableFieldPanel<?>> extends IndexedFieldPanel<FlowPanel, I>
 implements SelectionHandler<Integer>, BeforeSelectionHandler<Integer> {
 
@@ -116,6 +117,7 @@ implements SelectionHandler<Integer>, BeforeSelectionHandler<Integer> {
 				final Button button = new Button("Click to add a new " + getIndexTypeName() + "..");
 				button.addClickHandler(new ClickHandler() {
 
+					@Override
 					public void onClick(ClickEvent event) {
 						add();
 						tabPanel.setVisible(true);
@@ -212,10 +214,10 @@ implements SelectionHandler<Integer>, BeforeSelectionHandler<Integer> {
 
 	/**
 	 * Responsible for creating a single {@link Widget} that is placed in the UI
-	 * tab of the {@link TabPanel}.
+	 * tab of the TabPanel.
 	 * @param index The index ref
 	 * @param isUiAdd Are we adding a new index via the UI?
-	 * @return The {@link Widget} to be used for the tab in the {@link TabPanel}
+	 * @return The {@link Widget} to be used for the tab in the TabPanel
 	 *         at the index assoc. with the given index field panel.
 	 */
 	private Widget getTabWidget(I index, boolean isUiAdd) {
@@ -230,6 +232,7 @@ implements SelectionHandler<Integer>, BeforeSelectionHandler<Integer> {
 			btnDeleteTgl.getElement().setPropertyBoolean(UI_ADD, isUiAdd);
 			btnDeleteTgl.addClickHandler(new ClickHandler() {
 
+				@Override
 				public void onClick(ClickEvent event) {
 					if(Element.as(event.getNativeEvent().getEventTarget()).getPropertyBoolean(UI_ADD)) {
 						remove(tabPanel.getTabBar().getSelectedTab(), true);
@@ -263,6 +266,7 @@ implements SelectionHandler<Integer>, BeforeSelectionHandler<Integer> {
 			// auto-select the added tab
 			DeferredCommand.addCommand(new Command() {
 
+				@Override
 				public void execute() {
 					tabPanel.selectTab(insertIndex);
 				}

@@ -6,7 +6,7 @@ package com.tll.client.model;
 
 import com.google.gwt.event.shared.GwtEvent;
 import com.tll.common.model.Model;
-import com.tll.model.ModelKey;
+import com.tll.common.model.ModelKey;
 
 /**
  * Used to dissemminate <em>successful</em> model changes.

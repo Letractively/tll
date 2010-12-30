@@ -39,7 +39,7 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 		}
 
 		@Override
-		public void onChange(ChangeEvent event) {
+		public void onChange(final ChangeEvent event) {
 			ValueChangeEvent.fire(this, getValue());
 		}
 
@@ -55,7 +55,7 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 		}
 
 		@Override
-		public void setValue(Collection<V> value, boolean fireEvents) {
+		public void setValue(final Collection<V> value, final boolean fireEvents) {
 			setValue(value);
 			if(fireEvents) {
 				ValueChangeEvent.fire(this, getValue());
@@ -63,7 +63,7 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 		}
 
 		@Override
-		public void setValue(Collection<V> value) {
+		public void setValue(final Collection<V> value) {
 			setSelectedIndex(-1);
 			if(value != null) {
 				for(int i = 0; i < super.getItemCount(); i++) {
@@ -78,7 +78,7 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 		}
 
 		@Override
-		public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Collection<V>> handler) {
+		public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<Collection<V>> handler) {
 			return addHandler(handler, ValueChangeEvent.getType());
 		}
 	}
@@ -96,7 +96,8 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 	 * @param helpText
 	 * @param data
 	 */
-	MultiSelectField(String name, String propName, String labelText, String helpText, Map<V, String> data) {
+	MultiSelectField(final String name, final String propName, final String labelText, final String helpText,
+			final Map<V, String> data) {
 		super(name, propName, labelText, helpText);
 		lb = new Impl();
 		lb.addValueChangeHandler(this);
@@ -110,7 +111,7 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 	 * @param data The options to set
 	 */
 	@Override
-	public void setData(Map<V, String> data) {
+	public void setData(final Map<V, String> data) {
 		super.setData(data);
 		lb.clear();
 		if(data != null) {
@@ -122,13 +123,13 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 	}
 
 	@Override
-	public void addDataItem(String name, V value) {
+	public void addDataItem(final String name, final V value) {
 		super.addDataItem(name, value);
 		lb.addItem(name);
 	}
 
 	@Override
-	public void removeDataItem(V value) {
+	public void removeDataItem(final V value) {
 		super.removeDataItem(value);
 		for(int i = 0; i < lb.getItemCount(); i++) {
 			if(lb.getValue(i).equals(getToken(value))) {
@@ -147,15 +148,15 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 		return lb.getItemCount();
 	}
 
-	public boolean isItemSelected(int index) {
+	public boolean isItemSelected(final int index) {
 		return lb.isItemSelected(index);
 	}
 
-	public String getItemText(int index) {
+	public String getItemText(final int index) {
 		return lb.getItemText(index);
 	}
 
-	public void setItemText(int index, String text) {
+	public void setItemText(final int index, final String text) {
 		lb.setItemText(index, text);
 	}
 
@@ -184,12 +185,13 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 		return sb.length() == 0 ? "" : sb.substring(1);
 	}
 
-	public void setText(String text) {
+	@Override
+	public void setText(final String text) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void setEnabled(boolean enabled) {
+	public void setEnabled(final boolean enabled) {
 		lb.setEnabled(enabled);
 		super.setEnabled(enabled);
 	}

@@ -4,7 +4,8 @@
  */
 package com.tll.client.ui.field;
 
-import com.allen_sauer.gwt.log.client.Log;
+import java.util.logging.Logger;
+
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.Binding;
 import com.tll.client.bind.BindingException;
@@ -22,6 +23,8 @@ import com.tll.common.model.Model;
  */
 public abstract class AbstractBindableFieldPanel<W extends Widget> extends AbstractFieldPanel<W> implements IFieldBoundWidget {
 
+	private static final Logger logger = Logger.getLogger("BindableFieldPanel");
+	
 	/**
 	 * The model that is updated with the field data.
 	 */
@@ -105,7 +108,7 @@ public abstract class AbstractBindableFieldPanel<W extends Widget> extends Abstr
 	 */
 	private void createBindings() throws BindingException {
 		assert !isBound();
-		Log.debug("Building binding instance..");
+		logger.fine("Building binding instance..");
 		final IFieldBindingBuilder fbb = getFieldBindingBuilder();
 		fbb.set(this);
 		fbb.createBindings(binding);
@@ -117,19 +120,19 @@ public abstract class AbstractBindableFieldPanel<W extends Widget> extends Abstr
 		if(this.model != null && model == this.model) {
 			return;
 		}
-		Log.debug(this + " setting model: [" + model + "]..");
+		logger.fine(this + " setting model: [" + model + "]..");
 
 		unbind(); // if not bound no-op
 
 		// clear out the field values since we have different model data
 		// NOTE: we don't want to lazily instantite the field group here
 		if(group != null) {
-			Log.debug("Clearing field values..");
+			logger.fine("Clearing field values..");
 			group.clearValue();
 		}
 
 		this.model = model;
-		Log.debug("model set");
+		logger.fine("model set");
 
 		if(model != null) {
 			bind();
@@ -137,7 +140,7 @@ public abstract class AbstractBindableFieldPanel<W extends Widget> extends Abstr
 
 			// apply property metadata and model new flag (sets incremental validation flag)
 			// TODO iterate the field group and set manually!
-			//Log.debug("Applying prop metadata to fields..");
+			//logger.fine("Applying prop metadata to fields..");
 			//getFieldGroup().applyPropertyMetadata(model, model.isNew());
 		}
 	}
@@ -226,20 +229,20 @@ public abstract class AbstractBindableFieldPanel<W extends Widget> extends Abstr
 		}
 		createBindings();
 
-		Log.debug("Binding: " + this);
+		logger.fine("Binding: " + this);
 		binding.bind();
 	}
 
 	@Override
 	public final void unbind() {
 		if(isBound()) {
-			Log.debug("Un-binding: " + this);
+			logger.fine("Un-binding: " + this);
 
 			// unbind indexed first
 			final IIndexedFieldBoundWidget[] indexedWidgets = getIndexedChildren();
 			if(indexedWidgets != null) {
 				for(final IIndexedFieldBoundWidget iw : indexedWidgets) {
-					Log.debug("Un-binding indexed: " + iw);
+					logger.fine("Un-binding indexed: " + iw);
 					iw.clearIndexed();
 				}
 			}

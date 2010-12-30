@@ -6,8 +6,8 @@
 package com.tll.server.rpc.entity;
 
 import com.tll.common.model.IEntityType;
+import com.tll.common.model.IEntityTypeResolver;
 import com.tll.common.model.SmbizEntityType;
-import com.tll.model.IEntityTypeResolver;
 import com.tll.util.EnumUtil;
 import com.tll.util.StringUtil;
 

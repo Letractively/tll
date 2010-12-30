@@ -241,6 +241,7 @@ public final class UITests extends AbstractUITest {
 		@SuppressWarnings("unchecked")
 		private void generateFields() {
 			group = new FieldProvider().getFieldGroup();
+			@SuppressWarnings("rawtypes")
 			final ValueChangeHandler vch = new ValueChangeHandler() {
 
 				@Override

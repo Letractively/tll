@@ -8,17 +8,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.IProvider;
 import com.tll.client.convert.IConverter;
 import com.tll.client.ui.BindableWidgetAdapter;
 import com.tll.client.validate.ErrorClassifier;
-import com.tll.common.bind.IPropertyChangeListener;
+import com.tll.common.model.IPropertyChangeListener;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
 import com.tll.util.PropertyPath;
@@ -40,12 +39,14 @@ import com.tll.util.PropertyPath;
  */
 public abstract class IndexedFieldPanel<W extends Widget, I extends AbstractBindableFieldPanel<?>> extends AbstractBindableFieldPanel<W> implements IIndexedFieldBoundWidget {
 
+	private static final Logger logger = Logger.getLogger("IndexedFieldPanel");
+	
 	/**
 	 * Index - Wrapper class for each field panel at an index encapsulating the
 	 * field panel and its own field binding action.
 	 * @author jpk
 	 */
-	private final class Index implements IProvider<I> {
+	private final class Index {
 
 		int index = -1;
 		final I fieldPanel;
@@ -59,11 +60,6 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends AbstractBind
 			super();
 			this.fieldPanel = fieldPanel;
 			setIndex(index, true);
-		}
-
-		@Override
-		public I get() {
-			return fieldPanel;
 		}
 
 		/**
@@ -83,7 +79,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends AbstractBind
 				final String existing = PropertyPath.index(getIndexedPropertyName(), this.index);
 				fieldPanel.getFieldGroup().replaceParentPropertyPath(existing, tgt);
 			}
-			final String name = fieldPanel.getModel().getEntityType().descriptor();
+			final String name = fieldPanel.getModel().getEntityType();
 			fieldPanel.getFieldGroup().setName(name + " - " + (index + 1));
 			this.index = index;
 		}
@@ -136,7 +132,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends AbstractBind
 				// w/ changes or the root panel may have changes!
 			}
 			catch(final Exception e) {
-				Log.debug("Unable to get index model collection (" + e.getMessage() + ")", e);
+				logger.fine("Unable to get index model collection (" + e.getMessage() + ")");
 				if(e instanceof RuntimeException) {
 					throw (RuntimeException) e;
 				}
@@ -149,7 +145,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends AbstractBind
 
 	@Override
 	public void setValue(Collection<Model> value) {
-		Log.debug("Setting value: " + this);
+		logger.fine("Setting value: " + this);
 		clearIndexed();
 		if(value != null) {
 			for(final Model m : value) {
@@ -203,7 +199,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends AbstractBind
 	 *         field in the underlying group.
 	 */
 	private void add(Model model, boolean isUiAdd) throws IllegalArgumentException {
-		Log.debug("IndexedFieldPanel.add() - START");
+		logger.fine("IndexedFieldPanel.add() - START");
 
 		final I ip = createIndexPanel();
 		//ip.setErrorHandler(getErrorHandler());
@@ -290,6 +286,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends AbstractBind
 		}
 	}
 
+	@Override
 	public final void clearIndexed() {
 		// remove in reverse to avoid spurious index group re-names
 		for(int i = size() - 1; i >= 0; i--) {
@@ -335,7 +332,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends AbstractBind
 	/**
 	 * @return A newly created iterator over the indexed field panels.
 	 */
-	protected final Iterator<? extends IProvider<I>> getIndexIterator() {
+	protected final Iterator<Index> getIndexIterator() {
 		return indexPanels.iterator();
 	}
 

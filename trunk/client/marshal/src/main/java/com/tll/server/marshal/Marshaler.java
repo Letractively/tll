@@ -23,11 +23,13 @@ import com.tll.common.model.CharacterPropertyValue;
 import com.tll.common.model.DatePropertyValue;
 import com.tll.common.model.DoublePropertyValue;
 import com.tll.common.model.EnumPropertyValue;
-import com.tll.common.model.IEntityType;
+import com.tll.common.model.IEntityTypeResolver;
 import com.tll.common.model.IModelProperty;
 import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.LongPropertyValue;
 import com.tll.common.model.Model;
+import com.tll.common.model.Model.Binding;
+import com.tll.common.model.Model.BindingRefSet;
 import com.tll.common.model.RelatedManyProperty;
 import com.tll.common.model.RelatedOneProperty;
 import com.tll.common.model.StringMapPropertyValue;
@@ -36,18 +38,15 @@ import com.tll.dao.SearchResult;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
-import com.tll.model.IEntityTypeResolver;
 import com.tll.model.IScalar;
-import com.tll.model.ISchemaInfo;
 import com.tll.model.ISchemaProperty;
 import com.tll.model.IVersionSupport;
 import com.tll.model.PropertyMetadata;
 import com.tll.model.PropertyType;
 import com.tll.model.RelationInfo;
+import com.tll.model.SchemaInfo;
 import com.tll.model.SchemaInfoException;
 import com.tll.model.Transient;
-import com.tll.util.Binding;
-import com.tll.util.BindingRefSet;
 
 /**
  * Marshaler - Converts server-side entities to client-bound value objects and
@@ -65,7 +64,7 @@ public final class Marshaler {
 
 	private final IEntityTypeResolver etResolver;
 	private final IEntityFactory<?> entityFactory;
-	private final ISchemaInfo schemaInfo;
+	private final SchemaInfo schemaInfo;
 
 	/**
 	 * Constructor
@@ -75,7 +74,7 @@ public final class Marshaler {
 	 */
 	@Inject
 	public Marshaler(final IEntityTypeResolver etResolver, final IEntityFactory<?> entityFactory,
-			final ISchemaInfo schemaInfo) {
+			final SchemaInfo schemaInfo) {
 		this.etResolver = etResolver;
 		this.entityFactory = entityFactory;
 		this.schemaInfo = schemaInfo;
@@ -238,13 +237,13 @@ public final class Marshaler {
 				if(shouldMarshalRelation(reference, depth, options)) {
 					final IEntity e = (IEntity) obj;
 					final Model m = e == null ? null : marshalEntity(e, options, visited, depth + 1);
-					final IEntityType etype =
+					final String etype =
 							ri.getRelatedType() == null ? null : etResolver.resolveEntityType(e == null ? ri.getRelatedType() : e
 									.entityClass());
 					prop = new RelatedOneProperty(etype, m, pname, reference);
 				}
 			}
-			
+
 			// related many
 			else if(propType == PropertyType.RELATED_MANY) {
 				final RelationInfo ri = (RelationInfo) schemaProp;
@@ -265,7 +264,7 @@ public final class Marshaler {
 
 			// string map
 			else if(propType == PropertyType.STRING_MAP) {
-				prop = new StringMapPropertyValue(pname, (PropertyMetadata) schemaProp, (Map) obj);
+				prop = new StringMapPropertyValue(pname, (PropertyMetadata) schemaProp, (Map<String, String>) obj);
 			}
 
 			else if(propType.isNested()) {
@@ -274,7 +273,8 @@ public final class Marshaler {
 					if(bw2.isWritableProperty(pd2.getName()) && isMarshalableProperty(pd2)) {
 						try {
 							final Object oval = bw2.getPropertyValue(pd2.getName());
-							final PropertyMetadata pmd = (PropertyMetadata) getSchemaProperty(source.entityClass(), (pname + "." + pd2.getName()));
+							final PropertyMetadata pmd =
+									(PropertyMetadata) getSchemaProperty(source.entityClass(), (pname + "." + pd2.getName()));
 							model.set(createValueProperty(pd2.getPropertyType(), (pname + "_" + pd2.getName()), oval, pmd));
 						}
 						catch(final RuntimeException e) {
@@ -283,12 +283,12 @@ public final class Marshaler {
 					}
 				}
 			}
-			
+
 			// value prop
 			else if(propType.isValue()) {
 				prop = createValueProperty(ptype, pname, obj, (PropertyMetadata) schemaProp);
 			}
-			
+
 			else {
 				throw new IllegalStateException("Unhandled schema property type: " + schemaProp);
 			}
@@ -311,7 +311,7 @@ public final class Marshaler {
 	 * @throws RuntimeException upon any error encountered.
 	 */
 	@SuppressWarnings("unchecked")
-	private void marshalModel(Model model, IEntity crntEntity, final BindingRefSet visited, int depth) {
+	private void marshalModel(Model model, IEntity crntEntity, final BindingRefSet<Model, IEntity> visited, int depth) {
 
 		// max depth check
 		if(!depthCheck(depth, -1)) {
@@ -359,7 +359,7 @@ public final class Marshaler {
 
 					case RELATED_ONE: {
 						final Model rltdOne = (Model) pval;
-						final IEntityType rltdEntityType =
+						final String rltdEntityType =
 								rltdOne == null ? ((RelatedOneProperty) mprop).getRelatedType() : rltdOne.getEntityType();
 						assert rltdEntityType != null;
 						IEntity toOne;
@@ -403,7 +403,7 @@ public final class Marshaler {
 							// re-build the rm entity set
 							for(final Model indexedModel : rmModelList) {
 								assert indexedModel != null;
-								final IEntityType indexedEntityType = indexedModel.getEntityType();
+								final String indexedEntityType = indexedModel.getEntityType();
 								final Class<IEntity> indexedEntityClass =
 										(Class<IEntity>) etResolver.resolveEntityClass(indexedEntityType);
 
@@ -414,7 +414,7 @@ public final class Marshaler {
 								if(imid != null) { // may be null (gae)
 									for(final IEntity ie : newRmEntitySet) {
 										assert ie.getId() != null;
-										if(((IEntityFactory) entityFactory).primaryKeyToString(ie.getId()).equals(imid)) {
+										if(((IEntityFactory<Long>) entityFactory).primaryKeyToString(ie.getId()).equals(imid)) {
 											indexedEntity = ie;
 											break;
 										}
@@ -448,7 +448,7 @@ public final class Marshaler {
 								}
 								// satisify bi-di relationship
 								if(indexedEntity instanceof IChildEntity) {
-									((IChildEntity) indexedEntity).setParent(crntEntity);
+									((IChildEntity<IEntity>) indexedEntity).setParent(crntEntity);
 								}
 							} // indexed model loop
 							val = newRmEntitySet;
@@ -542,7 +542,7 @@ public final class Marshaler {
 
 		// convert server side ids to strings client-side
 		else if(IEntity.PK_FIELDNAME.equals(pname)) {
-			String mid = ((IEntityFactory) entityFactory).primaryKeyToString(obj);
+			String mid = ((IEntityFactory<Long>) entityFactory).primaryKeyToString((Long) obj);
 			prop = new StringPropertyValue(pname, pdata, obj == null ? null : mid);
 		}
 

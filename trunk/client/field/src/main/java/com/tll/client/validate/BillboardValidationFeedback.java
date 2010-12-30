@@ -21,7 +21,7 @@ public final class BillboardValidationFeedback extends AbstractErrorHandler impl
 	 * @param msgDisplayWidget the message display widget to which messages are
 	 *        appended by way of this error handler.
 	 */
-	public BillboardValidationFeedback(IMsgDisplay msgDisplayWidget) {
+	public BillboardValidationFeedback(final IMsgDisplay msgDisplayWidget) {
 		setMsgDisplay(msgDisplayWidget);
 	}
 
@@ -36,24 +36,26 @@ public final class BillboardValidationFeedback extends AbstractErrorHandler impl
 	}
 
 	@Override
-	public void setMsgDisplay(IMsgDisplay msgDisplay) {
+	public void setMsgDisplay(final IMsgDisplay msgDisplay) {
 		if(msgDisplay == null) throw new IllegalArgumentException("Null msg display");
 		this.msgDisplayWidget = msgDisplay;
 	}
 
 	@Override
-	protected void doHandleError(Error error) {
+	protected void doHandleError(final Error error) {
 		assert error != null;
 		if(error.getTarget() == null) {
-			msgDisplayWidget.add(error.getMessages(), error.getClassifier() == null ? null :  Integer.valueOf(error.getClassifier().hashCode()));
+			msgDisplayWidget.add(error.getMessages(),
+					error.getClassifier() == null ? null : Integer.valueOf(error.getClassifier().hashCode()));
 		}
 		else {
-			msgDisplayWidget.add(error.getTarget(), error.getMessages(), error.getClassifier() == null ? null : Integer.valueOf(error.getClassifier().hashCode()));
+			msgDisplayWidget.add(error.getTarget(), error.getMessages(),
+					error.getClassifier() == null ? null : Integer.valueOf(error.getClassifier().hashCode()));
 		}
 	}
 
 	@Override
-	protected void doResolveError(IWidgetRef source, ErrorClassifier classifier) {
+	protected void doResolveError(final IWidgetRef source, final ErrorClassifier classifier) {
 		if(source == null) {
 			msgDisplayWidget.removeUnsourced(classifier == null ? null : Integer.valueOf(classifier.hashCode()));
 		}
@@ -63,7 +65,7 @@ public final class BillboardValidationFeedback extends AbstractErrorHandler impl
 	}
 
 	@Override
-	public void clear(ErrorClassifier classifier) {
+	public void clear(final ErrorClassifier classifier) {
 		msgDisplayWidget.remove(classifier.hashCode());
 	}
 

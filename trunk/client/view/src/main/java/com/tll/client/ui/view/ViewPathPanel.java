@@ -56,7 +56,7 @@ public class ViewPathPanel extends Composite implements IViewChangeHandler {
 	 * Constructor
 	 * @param capacity the max number of view links to display
 	 */
-	public ViewPathPanel(int capacity) {
+	public ViewPathPanel(final int capacity) {
 		this(DEFAULT_SPACER_HTML, capacity);
 	}
 
@@ -65,7 +65,7 @@ public class ViewPathPanel extends Composite implements IViewChangeHandler {
 	 * @param spacerHtml The html text to use for the spacer token
 	 * @param capacity the max number of view links to display
 	 */
-	public ViewPathPanel(String spacerHtml, int capacity) {
+	public ViewPathPanel(final String spacerHtml, final int capacity) {
 		this.spacerHtml = spacerHtml;
 		this.capacity = capacity;
 		container.addStyleName(Styles.HNAV);
@@ -74,7 +74,8 @@ public class ViewPathPanel extends Composite implements IViewChangeHandler {
 		initWidget(container);
 	}
 
-	public void onViewChange(ViewChangeEvent event) {
+	@Override
+	public void onViewChange(final ViewChangeEvent event) {
 		ulPanel.clear();
 		final ViewRef[] viewPath = ViewManager.get().getViewRefs(capacity, false, true);
 		if(viewPath != null && viewPath.length > 0) {

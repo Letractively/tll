@@ -2,7 +2,7 @@ package com.tll.client.ui;
 
 import com.google.gwt.user.client.ui.HasValue;
 import com.tll.client.convert.IHasConverter;
-import com.tll.common.bind.IBindable;
+import com.tll.common.model.IBindable;
 
 /**
  * Extension of {@link IBindable} relevant to ui widgets capable of

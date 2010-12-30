@@ -5,9 +5,8 @@
  */
 package com.tll.dao.db4o;
 
-import com.db4o.config.Configuration;
+import com.db4o.config.EmbeddedConfiguration;
 import com.tll.config.Config;
-import com.tll.dao.db4o.IDb4oNamedQueryTranslator;
 import com.tll.model.Account;
 import com.tll.model.Interface;
 
@@ -34,9 +33,9 @@ public class SmbizDb4oDaoModule extends AbstractDb4oDaoModule {
 	}
 
 	@Override
-	protected void configureConfiguration(Configuration c) {
-		c.objectClass(Account.class).updateDepth(3);
-		c.objectClass(Interface.class).updateDepth(4);
+	protected void configureConfiguration(EmbeddedConfiguration c) {
+		c.common().objectClass(Account.class).updateDepth(3);
+		c.common().objectClass(Interface.class).updateDepth(4);
 		// TODO finish
 	}
 

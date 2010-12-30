@@ -31,7 +31,7 @@ public final class RecentViewsPanel extends Composite implements IViewChangeHand
 		 */
 		public static final String RECENT_VIEWS = "recentviews";
 	}
-	
+
 	private final int capacity;
 
 	/**
@@ -48,14 +48,15 @@ public final class RecentViewsPanel extends Composite implements IViewChangeHand
 	 * Constructor
 	 * @param capacity the max number of view links to display
 	 */
-	public RecentViewsPanel(int capacity) {
+	public RecentViewsPanel(final int capacity) {
 		this.capacity = capacity;
 		container.setStyleName(Styles.RECENT_VIEWS);
 		container.add(ulPanel);
 		initWidget(container);
 	}
 
-	public void onViewChange(ViewChangeEvent event) {
+	@Override
+	public void onViewChange(final ViewChangeEvent event) {
 		// NOTE: rebuild the ulPanel (it's MUCH easier than trying to remove/insert)
 		ulPanel.clear();
 

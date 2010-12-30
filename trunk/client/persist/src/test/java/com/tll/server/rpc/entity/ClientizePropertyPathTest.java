@@ -16,11 +16,9 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 import com.tll.AbstractConfigAwareTest;
-import com.tll.dao.db4o.test.TestDb4oPersistenceUnitModule;
 import com.tll.model.egraph.EntityBeanFactory;
 import com.tll.model.test.Account;
 import com.tll.model.test.AccountAddress;
-import com.tll.model.test.TestEntityFactory;
 
 /**
  * ClientizePropertyPathTest
@@ -33,7 +31,8 @@ public class ClientizePropertyPathTest extends AbstractConfigAwareTest {
 
 	@Override
 	protected void addModules(List<Module> modules) {
-		modules.add(new TestDb4oPersistenceUnitModule(null, TestEntityFactory.class));
+		// TODO fix
+		//modules.add(new TestDb4oPersistenceUnitModule(null, TestEntityFactory.class));
 	}
 
 	private Account getTestEntity() {

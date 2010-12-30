@@ -14,7 +14,7 @@ public class DecimalValidator implements IValidator {
 	 * Constructor
 	 * @param numberFormat
 	 */
-	public DecimalValidator(NumberFormat numberFormat) {
+	public DecimalValidator(final NumberFormat numberFormat) {
 		if(numberFormat == null) {
 			throw new IllegalArgumentException("A number format must be specified.");
 		}
@@ -25,14 +25,15 @@ public class DecimalValidator implements IValidator {
 	 * Constructor
 	 * @param pattern
 	 */
-	public DecimalValidator(String pattern) {
+	public DecimalValidator(final String pattern) {
 		if(pattern == null) {
 			throw new IllegalArgumentException("A number pattern must be specified.");
 		}
 		numberFormat = NumberFormat.getFormat(pattern);
 	}
 
-	public Object validate(Object value) throws ValidationException {
+	@Override
+	public Object validate(final Object value) throws ValidationException {
 		if(value == null) return null;
 		final double d;
 		try {

@@ -9,7 +9,6 @@ import java.util.Collection;
 
 import com.tll.client.ui.IWidgetRef;
 
-
 /**
  * AbstractErrorHandler
  * @author jpk
@@ -17,7 +16,7 @@ import com.tll.client.ui.IWidgetRef;
 public abstract class AbstractErrorHandler implements IErrorHandler {
 
 	@Override
-	public final void handleError(Error error, int displayFlags) {
+	public final void handleError(final Error error, final int displayFlags) {
 		if(error != null) {
 			final int ef = getDisplayType().flag();
 			if((displayFlags & ef) == ef) {
@@ -27,7 +26,7 @@ public abstract class AbstractErrorHandler implements IErrorHandler {
 	}
 
 	@Override
-	public final void handleErrors(Collection<Error> errors, int displayFlags) {
+	public final void handleErrors(final Collection<Error> errors, final int displayFlags) {
 		if(errors != null) {
 			for(final Error error : errors) {
 				handleError(error, displayFlags);
@@ -36,7 +35,7 @@ public abstract class AbstractErrorHandler implements IErrorHandler {
 	}
 
 	@Override
-	public final void resolveError(IWidgetRef source, ErrorClassifier classifier, int displayFlags) {
+	public final void resolveError(final IWidgetRef source, final ErrorClassifier classifier, final int displayFlags) {
 		final int ef = getDisplayType().flag();
 		if((displayFlags & ef) == ef) {
 			doResolveError(source, classifier);

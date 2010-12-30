@@ -51,7 +51,7 @@ public class GridFieldComposer extends AbstractFieldComposer {
 	}
 
 	@Override
-	public void setCanvas(Panel canvas) {
+	public void setCanvas(final Panel canvas) {
 		if(this.canvas != null && this.canvas == canvas) return;
 		super.setCanvas(canvas);
 		grid = new Grid(0, 2);
@@ -61,7 +61,7 @@ public class GridFieldComposer extends AbstractFieldComposer {
 	}
 
 	@Override
-	public void add(FieldLabel fldLbl, Widget w) {
+	public void add(final FieldLabel fldLbl, final Widget w) {
 		grid.resizeRows(++rowIndex + 1);
 		if(fldLbl != null) {
 			grid.getCellFormatter().setStyleName(rowIndex, 0, Styles.CELL_LABEL);
@@ -72,17 +72,17 @@ public class GridFieldComposer extends AbstractFieldComposer {
 	}
 
 	@Override
-	public void addWidget(Widget w) {
+	public void addWidget(final Widget w) {
 		add(null, w);
 	}
 
 	@Override
-	public void addWidget(String label, Widget w) {
+	public void addWidget(final String label, final Widget w) {
 		add(label == null ? null : new FieldLabel(label), w);
 	}
 
 	@Override
-	public void addField(IFieldWidget<?> field) {
+	public void addField(final IFieldWidget<?> field) {
 		add(field.getFieldLabel(), field.getWidget());
 	}
 }

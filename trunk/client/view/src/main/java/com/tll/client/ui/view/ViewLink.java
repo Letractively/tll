@@ -13,8 +13,7 @@ import com.tll.client.mvc.view.ViewRef;
 import com.tll.client.ui.SimpleHyperLink;
 
 /**
- * ViewLink - Link that delegates a show view request to the mvc
- * dispatcher.
+ * ViewLink - Link that delegates a show view request to the mvc dispatcher.
  * @author jpk
  */
 public final class ViewLink extends SimpleHyperLink {
@@ -33,7 +32,7 @@ public final class ViewLink extends SimpleHyperLink {
 
 			@SuppressWarnings("synthetic-access")
 			@Override
-			public void onClick(ClickEvent event) {
+			public void onClick(final ClickEvent event) {
 				if(ViewLink.this.init == null) throw new IllegalStateException();
 				ViewManager.get().dispatch(new ShowViewRequest(ViewLink.this.init));
 			}
@@ -45,7 +44,7 @@ public final class ViewLink extends SimpleHyperLink {
 	 * @param shortViewName
 	 * @param longViewName
 	 */
-	public ViewLink(String shortViewName, String longViewName) {
+	public ViewLink(final String shortViewName, final String longViewName) {
 		this(shortViewName, longViewName, null);
 	}
 
@@ -55,7 +54,7 @@ public final class ViewLink extends SimpleHyperLink {
 	 * @param longViewName
 	 * @param init
 	 */
-	public ViewLink(String shortViewName, String longViewName, IViewInitializer init) {
+	public ViewLink(final String shortViewName, final String longViewName, final IViewInitializer init) {
 		this();
 		setViewNames(shortViewName, longViewName);
 		setViewInitializer(init);
@@ -65,7 +64,7 @@ public final class ViewLink extends SimpleHyperLink {
 	 * Constructor
 	 * @param viewRef
 	 */
-	public ViewLink(ViewRef viewRef) {
+	public ViewLink(final ViewRef viewRef) {
 		this(viewRef.getShortViewName(), viewRef.getLongViewName(), viewRef.getViewInitializer());
 	}
 
@@ -82,7 +81,7 @@ public final class ViewLink extends SimpleHyperLink {
 	 * @param shortName
 	 * @param longName
 	 */
-	public void setViewNames(String shortName, String longName) {
+	public void setViewNames(final String shortName, final String longName) {
 		setText(shortName);
 		setTitle(longName);
 	}

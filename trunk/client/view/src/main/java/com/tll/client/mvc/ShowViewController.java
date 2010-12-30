@@ -13,11 +13,13 @@ import com.tll.client.mvc.view.ShowViewRequest;
  */
 class ShowViewController implements IController {
 
-	public boolean canHandle(IViewRequest request) {
+	@Override
+	public boolean canHandle(final IViewRequest request) {
 		return request instanceof ShowViewRequest;
 	}
 
-	public void handle(IViewRequest request) {
+	@Override
+	public void handle(final IViewRequest request) {
 		final ShowViewRequest r = (ShowViewRequest) request;
 		ViewManager.get().setCurrentView(r.getViewInitializer());
 	}

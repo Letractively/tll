@@ -25,7 +25,7 @@ import com.tll.client.mvc.view.ViewRef;
  * @author jpk
  */
 final class ViewCache {
-	
+
 	private static Logger log = Logger.getLogger("ViewCache");
 
 	/**
@@ -50,7 +50,7 @@ final class ViewCache {
 	 * @param capacity The max number of queue cache elements to store at any
 	 *        given time
 	 */
-	ViewCache(int capacity) {
+	ViewCache(final int capacity) {
 		this.capacity = capacity;
 		this.queue = new ArrayList<CView>(capacity);
 		this.stack = new ArrayList<ViewRef>();
@@ -73,7 +73,7 @@ final class ViewCache {
 	 * @return The removed cache element or <code>null</code> if the queue cache
 	 *         is not yet at capacity.
 	 */
-	CView cache(CView e) {
+	CView cache(final CView e) {
 		assert e != null;
 		final ViewKey key = e.getViewKey();
 
@@ -81,7 +81,7 @@ final class ViewCache {
 		log.fine("ViewCache.cache() - caching queue entry: " + key);
 		final int qindex = searchQueue(key);
 		if(qindex >= 0) {
-			//Log.fine("ViewCache.set() - removing OLD queue cache entry: " + key);
+			// Log.fine("ViewCache.set() - removing OLD queue cache entry: " + key);
 			queue.remove(qindex);
 		}
 		// insert at head
@@ -117,7 +117,7 @@ final class ViewCache {
 	 * Remove a view from cache. <br>
 	 * @param key the key of the element to remove
 	 */
-	void remove(ViewKey key) {
+	void remove(final ViewKey key) {
 		removeAt(searchQueue(key));
 	}
 
@@ -125,7 +125,7 @@ final class ViewCache {
 	 * Removes a view from the view stack.
 	 * @param key the key of the element to remove
 	 */
-	void removeFromStack(ViewKey key) {
+	void removeFromStack(final ViewKey key) {
 		stack.remove(searchStack(key));
 	}
 
@@ -135,7 +135,7 @@ final class ViewCache {
 	 * @param index the index at which to remove the element
 	 * @return The removed element.
 	 */
-	CView removeAt(int index) {
+	CView removeAt(final int index) {
 		return queue.remove(index);
 	}
 
@@ -168,7 +168,7 @@ final class ViewCache {
 	 * @param key The view key
 	 * @return The matching cache list index or <code>-1</code> if not present.
 	 */
-	int searchQueue(ViewKey key) {
+	int searchQueue(final ViewKey key) {
 		for(int i = 0; i < queue.size(); i++) {
 			if(key.equals(queue.get(i).getViewKey())) return i;
 		}
@@ -181,7 +181,7 @@ final class ViewCache {
 	 * @param key the view key
 	 * @return the matching element or <code>null</code> if not present.
 	 */
-	CView peekQueue(ViewKey key) {
+	CView peekQueue(final ViewKey key) {
 		for(int i = 0; i < queue.size(); i++) {
 			final CView e = queue.get(i);
 			if(key.equals(e.getViewKey())) return e;
@@ -194,7 +194,7 @@ final class ViewCache {
 	 * @param key The view key
 	 * @return The matching cache list index or <code>-1</code> if not present.
 	 */
-	private int searchStack(ViewKey key) {
+	private int searchStack(final ViewKey key) {
 		for(int i = 0; i < stack.size(); i++) {
 			if(stack.get(i).getViewInitializer().getViewKey().equals(key)) return i;
 		}

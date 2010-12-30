@@ -61,7 +61,7 @@ public class FlowPanelFieldComposer extends AbstractFieldComposer implements Has
 	}
 
 	@Override
-	public void setCanvas(Panel canvas) {
+	public void setCanvas(final Panel canvas) {
 		if(this.canvas != null && this.canvas == canvas) return;
 		super.setCanvas(canvas);
 		vp = new VerticalPanel();
@@ -82,7 +82,7 @@ public class FlowPanelFieldComposer extends AbstractFieldComposer implements Has
 	}
 
 	@Override
-	public void add(FieldLabel fldLbl, Widget w) {
+	public void add(final FieldLabel fldLbl, final Widget w) {
 		FlowPanel fp;
 		if(!atCurrent) {
 			fp = new FlowPanel();
@@ -106,17 +106,17 @@ public class FlowPanelFieldComposer extends AbstractFieldComposer implements Has
 	}
 
 	@Override
-	public void addWidget(Widget w) {
+	public void addWidget(final Widget w) {
 		add(null, w);
 	}
 
 	@Override
-	public void addWidget(String label, Widget w) {
+	public void addWidget(final String label, final Widget w) {
 		add(label == null ? null : new FieldLabel(label), w);
 	}
 
 	@Override
-	public void addField(IFieldWidget<?> field) {
+	public void addField(final IFieldWidget<?> field) {
 		add(field.getFieldLabel(), field.getWidget());
 		field.setFieldContainer(last.getParent());
 		field.setFieldLabelContainer(last.getParent());
@@ -171,7 +171,7 @@ public class FlowPanelFieldComposer extends AbstractFieldComposer implements Has
 	 * @param w
 	 * @param style
 	 */
-	public void addFieldContainerStyle(Widget w, String style) {
+	public void addFieldContainerStyle(final Widget w, final String style) {
 		final Widget p = w.getParent();
 		if(p.getStyleName() == null || p.getStyleName().indexOf(Styles.FIELD_CONTAINER) < 0) {
 			throw new IllegalArgumentException("Not a field contained widget");
@@ -179,19 +179,23 @@ public class FlowPanelFieldComposer extends AbstractFieldComposer implements Has
 		p.addStyleName(style);
 	}
 
+	@Override
 	public HorizontalAlignmentConstant getHorizontalAlignment() {
 		return getCurrentRow().getHorizontalAlignment();
 	}
 
-	public void setHorizontalAlignment(HorizontalAlignmentConstant align) {
+	@Override
+	public void setHorizontalAlignment(final HorizontalAlignmentConstant align) {
 		getCurrentRow().setHorizontalAlignment(align);
 	}
 
+	@Override
 	public VerticalAlignmentConstant getVerticalAlignment() {
 		return getCurrentRow().getVerticalAlignment();
 	}
 
-	public void setVerticalAlignment(VerticalAlignmentConstant align) {
+	@Override
+	public void setVerticalAlignment(final VerticalAlignmentConstant align) {
 		getCurrentRow().setVerticalAlignment(align);
 	}
 }

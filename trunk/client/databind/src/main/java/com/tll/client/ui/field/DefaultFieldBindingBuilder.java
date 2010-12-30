@@ -6,14 +6,14 @@
 package com.tll.client.ui.field;
 
 import java.util.List;
+import java.util.logging.Logger;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.bind.Binding;
 import com.tll.client.bind.BindingException;
 import com.tll.client.convert.IConverter;
 import com.tll.client.model.ModelChangeTracker;
 import com.tll.client.ui.IBindableWidget;
-import com.tll.common.bind.IPropertyChangeListener;
+import com.tll.common.model.IPropertyChangeListener;
 import com.tll.common.model.Model;
 
 /**
@@ -25,6 +25,8 @@ import com.tll.common.model.Model;
  */
 public class DefaultFieldBindingBuilder implements IFieldBindingBuilder {
 
+	private static final Logger logger = Logger.getLogger("FieldBindingBuilder");
+	
 	private IFieldBoundWidget widget;
 
 	/**
@@ -86,19 +88,19 @@ public class DefaultFieldBindingBuilder implements IFieldBindingBuilder {
 	 */
 	static Binding createBindings(FieldGroup group, Model model, ModelChangeTracker modelChangeTracker)
 	throws BindingException {
-		Log.debug("Binding field group: " + group + " to model [" + model + "]..");
+		logger.fine("Binding field group: " + group + " to model [" + model + "]..");
 		final Binding b = new Binding();
 		// create bindings for all provided field widgets in the root field group
 		for(final IFieldWidget<?> fw : group.getFieldWidgets(null)) {
 			// clear the current value to re-mark the field's initial value
 			fw.clearValue();
 			try {
-				Log.debug("Binding field: " + fw + " to model prop [" + fw.getPropertyName() + "]..");
+				logger.fine("Binding field: " + fw + " to model prop [" + fw.getPropertyName() + "]..");
 				final Binding cb = createBinding(model, null, fw.getPropertyName(), modelChangeTracker, fw, null, null);
 				b.getChildren().add(cb);
 			}
 			catch(final Exception e) {
-				Log.warn("Skipping field binding for property: " + fw.getPropertyName() + " due to " + e.getMessage());
+				logger.warning("Skipping field binding for property: " + fw.getPropertyName() + " due to " + e.getMessage());
 			}
 		}
 		return b;
@@ -128,7 +130,7 @@ public class DefaultFieldBindingBuilder implements IFieldBindingBuilder {
 	@Override
 	public final void createBindings(Binding binding) throws BindingException {
 		ensureSet();
-		Log.debug("Creating bindings for: " + widget);
+		logger.fine("Creating bindings for: " + widget);
 
 		final FieldGroup group = widget.getFieldGroup();
 		final List<Binding> bchildren = binding.getChildren();
@@ -138,12 +140,12 @@ public class DefaultFieldBindingBuilder implements IFieldBindingBuilder {
 			// clear the current value to re-mark the field's initial value
 			fw.clearValue();
 			try {
-				Log.debug("Binding field: " + fw + " to model prop [" + fw.getPropertyName() + "]..");
+				logger.fine("Binding field: " + fw + " to model prop [" + fw.getPropertyName() + "]..");
 				b = createFieldBinding(fw);
 				bchildren.add(b);
 			}
 			catch(final BindingException e) {
-				Log.warn("Skipping field binding for property: " + fw.getPropertyName() + " due to " + e.getMessage());
+				logger.warning("Skipping field binding for property: " + fw.getPropertyName() + " due to " + e.getMessage());
 			}
 		}
 
@@ -151,7 +153,7 @@ public class DefaultFieldBindingBuilder implements IFieldBindingBuilder {
 		final IIndexedFieldBoundWidget[] indexedWidgets = widget.getIndexedChildren();
 		if(indexedWidgets != null) {
 			for(final IIndexedFieldBoundWidget iw : indexedWidgets) {
-				Log.debug("Creating indexed bindings for: " + iw);
+				logger.fine("Creating indexed bindings for: " + iw);
 				// add binding to the many value collection only
 				b =
 					new Binding(widget.getModel(), iw.getIndexedPropertyName(), null, null, null, iw,

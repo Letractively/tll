@@ -12,7 +12,8 @@ import com.tll.client.ui.msg.MsgPopupRegistry;
 public abstract class ErrorHandlerBuilder {
 
 	/**
-	 * Assembles an appropriate {@link IErrorHandler} in the form of an {@link ErrorHandlerDelegate}.
+	 * Assembles an appropriate {@link IErrorHandler} in the form of an
+	 * {@link ErrorHandlerDelegate}.
 	 * @param billboard include global (billboard) error display?
 	 *        <em><code>msgDisplay</code> must be specified</em>
 	 * @param field include local field error feedback?
@@ -20,7 +21,7 @@ public abstract class ErrorHandlerBuilder {
 	 *        providing field validation feedback
 	 * @return A new {@link IErrorHandler} impl instance.
 	 */
-	public static ErrorHandlerDelegate build(boolean billboard, boolean field, IMsgDisplay msgDisplay) {
+	public static ErrorHandlerDelegate build(final boolean billboard, final boolean field, final IMsgDisplay msgDisplay) {
 		FieldErrorHandler feh = null;
 		BillboardValidationFeedback bvf = null;
 

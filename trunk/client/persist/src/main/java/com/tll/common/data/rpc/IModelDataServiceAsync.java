@@ -6,12 +6,11 @@
 package com.tll.common.data.rpc;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.tll.IMarshalable;
 import com.tll.common.data.ModelDataPayload;
 import com.tll.common.data.ModelDataRequest;
 
-public interface IModelDataServiceAsync<M extends IMarshalable> {
+public interface IModelDataServiceAsync {
 
-	void handleModelDataRequest(ModelDataRequest request, AsyncCallback<ModelDataPayload<M>> callback);
+	void handleModelDataRequest(ModelDataRequest request, AsyncCallback<ModelDataPayload> callback);
 
 }

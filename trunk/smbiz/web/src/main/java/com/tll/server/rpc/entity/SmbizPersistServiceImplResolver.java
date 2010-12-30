@@ -13,6 +13,7 @@ import com.tll.common.data.PurgeRequest;
 import com.tll.common.data.rpc.ListingRequest;
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.IEntityTypeProvider;
+import com.tll.common.model.IEntityTypeResolver;
 import com.tll.common.search.AccountInterfaceDataSearch;
 import com.tll.common.search.ISearch;
 import com.tll.model.Account;
@@ -22,7 +23,6 @@ import com.tll.model.Authority;
 import com.tll.model.CustomerAccount;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
-import com.tll.model.IEntityTypeResolver;
 import com.tll.model.Interface;
 import com.tll.model.User;
 

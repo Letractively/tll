@@ -9,7 +9,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import com.tll.common.data.ModelPayload;
-import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
@@ -71,7 +70,7 @@ public class PersistHelper {
 	 * @return new {@link Model} instance
 	 * @throws RuntimeException upon marshaling related error
 	 */
-	public static Model marshal(PersistContext context, IEntityType entityType, IEntity entity) throws RuntimeException {
+	public static Model marshal(PersistContext context, String entityType, IEntity entity) throws RuntimeException {
 		MarshalOptions mo;
 		try {
 			mo = context.getMarshalOptionsResolver().resolve(entityType);

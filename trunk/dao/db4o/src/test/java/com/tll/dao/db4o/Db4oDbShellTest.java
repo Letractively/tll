@@ -17,7 +17,7 @@ import com.tll.dao.IDbShell;
 import com.tll.dao.db4o.AbstractDb4oDaoModule.Db4oFile;
 import com.tll.dao.db4o.test.Db4oDbShellModule;
 import com.tll.dao.db4o.test.TestDb4oDaoModule;
-import com.tll.model.EGraphModule;
+import com.tll.model.egraph.EGraphModule;
 import com.tll.model.test.TestPersistenceUnitEntityGraphBuilder;
 
 /**

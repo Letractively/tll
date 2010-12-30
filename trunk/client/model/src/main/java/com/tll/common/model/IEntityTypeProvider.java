@@ -3,7 +3,7 @@
  * @author jpk
  * @since May 14, 2009
  */
-package com.tll.model;
+package com.tll.common.model;
 
 /**
  * IEntityTypeProvider

@@ -24,7 +24,8 @@ public class CreditCardValidator implements IValidator {
 		super();
 	}
 
-	public Object validate(Object value) throws ValidationException {
+	@Override
+	public Object validate(final Object value) throws ValidationException {
 		if(value != null) {
 			final String creditCard = value.toString();
 			final char[] chars = creditCard.toCharArray();

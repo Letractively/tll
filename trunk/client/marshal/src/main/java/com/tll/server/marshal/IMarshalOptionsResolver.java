@@ -5,9 +5,6 @@
  */
 package com.tll.server.marshal;
 
-import com.tll.common.model.IEntityType;
-
-
 /**
  * IMarshalOptionsResolver
  * @author jpk
@@ -21,5 +18,5 @@ public interface IMarshalOptionsResolver {
 	 * @throws IllegalArgumentException when the options can't be resolved for the
 	 *         given entity type
 	 */
-	MarshalOptions resolve(IEntityType entityType) throws IllegalArgumentException;
+	MarshalOptions resolve(String entityType) throws IllegalArgumentException;
 }

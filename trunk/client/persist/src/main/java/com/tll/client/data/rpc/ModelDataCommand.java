@@ -14,15 +14,14 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.ModelCache;
+import com.tll.client.cache.ModelCache.ModelDataType;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.model.ModelChangeEvent.ModelChangeOp;
 import com.tll.client.ui.msg.Msgs;
-import com.tll.common.cache.ModelDataType;
 import com.tll.common.data.ModelDataPayload;
 import com.tll.common.data.ModelDataRequest;
 import com.tll.common.data.rpc.IModelDataService;
 import com.tll.common.data.rpc.IModelDataServiceAsync;
-import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
 import com.tll.common.msg.Status;
 
@@ -47,10 +46,10 @@ public class ModelDataCommand extends RpcCommand<ModelDataPayload> {
 		final ModelDataRequest sadr = new ModelDataRequest();
 
 		// entities
-		Iterator<IEntityType> ets = adr.getEntityRequests();
+		Iterator<String> ets = adr.getEntityRequests();
 		if(ets != null) {
 			while(ets.hasNext()) {
-				final IEntityType et = ets.next();
+				final String et = ets.next();
 				if(!adc.isCached(ModelDataType.ENTITY, et)) {
 					sadr.requestEntityList(et);
 				}
@@ -61,7 +60,7 @@ public class ModelDataCommand extends RpcCommand<ModelDataPayload> {
 		ets = adr.getEntityPrototypeRequests();
 		if(ets != null) {
 			while(ets.hasNext()) {
-				final IEntityType et = ets.next();
+				final String et = ets.next();
 				if(!adc.isCached(ModelDataType.ENTITY_PROTOTYPE, et)) {
 					sadr.requestEntityPrototype(et);
 				}
@@ -80,9 +79,9 @@ public class ModelDataCommand extends RpcCommand<ModelDataPayload> {
 		final ModelCache mc = ModelCache.get();
 
 		// entity lists
-		final Map<IEntityType, List<Model>> egm = payload.getEntityMap();
+		final Map<String, List<Model>> egm = payload.getEntityMap();
 		if(egm != null) {
-			for(final Map.Entry<IEntityType, List<Model>> e : egm.entrySet()) {
+			for(final Map.Entry<String, List<Model>> e : egm.entrySet()) {
 				mc.cacheEntityList(e.getKey(), e.getValue());
 			}
 		}

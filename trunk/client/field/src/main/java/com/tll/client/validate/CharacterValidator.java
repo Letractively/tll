@@ -18,7 +18,8 @@ public class CharacterValidator implements IValidator {
 		super();
 	}
 
-	public Object validate(Object value) throws ValidationException {
+	@Override
+	public Object validate(final Object value) throws ValidationException {
 		if(value == null || value instanceof Character) return value;
 		final String s = value.toString();
 		if(s.length() == 0) return null;

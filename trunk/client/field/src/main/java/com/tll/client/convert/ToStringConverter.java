@@ -23,6 +23,7 @@ public class ToStringConverter<I> implements IConverter<String, I> {
 	 * @param o the object to convert
 	 * @return A never <code>null</code> {@link String}.
 	 */
+	@Override
 	public String convert(Object o) {
 		return o == null ? "" : o.toString();
 	}

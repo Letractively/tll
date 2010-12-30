@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import com.tll.model.ModelKey;
 import com.tll.model.PropertyType;
 import com.tll.util.PropertyPath;
 

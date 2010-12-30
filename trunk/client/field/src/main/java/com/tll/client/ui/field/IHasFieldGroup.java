@@ -5,7 +5,6 @@
  */
 package com.tll.client.ui.field;
 
-
 /**
  * IHasFieldGroup
  * @author jpk

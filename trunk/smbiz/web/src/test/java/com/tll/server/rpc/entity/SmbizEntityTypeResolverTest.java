@@ -11,9 +11,9 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.tll.common.model.IEntityType;
+import com.tll.common.model.IEntityTypeResolver;
 import com.tll.common.model.SmbizEntityType;
 import com.tll.model.EntityBase;
-import com.tll.model.IEntityTypeResolver;
 import com.tll.util.CommonUtil;
 
 

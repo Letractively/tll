@@ -33,7 +33,7 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 	final class Impl extends FocusPanel implements IEditable<V> {
 
 		@Override
-		public HandlerRegistration addValueChangeHandler(ValueChangeHandler<V> handler) {
+		public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<V> handler) {
 			return addHandler(handler, ValueChangeEvent.getType());
 		}
 
@@ -48,7 +48,7 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 		}
 
 		@Override
-		public void setValue(V value, boolean fireEvents) {
+		public void setValue(final V value, final boolean fireEvents) {
 			final V old = fireEvents ? getValue() : null;
 			setValue(value);
 			if(fireEvents) {
@@ -60,7 +60,7 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 		}
 
 		@Override
-		public void setValue(V value) {
+		public void setValue(final V value) {
 			for(final RadioButton rb : radioButtons) {
 				if(getDataValue(rb.getFormValue()).equals(value)) {
 					rb.setValue(Boolean.TRUE);
@@ -109,8 +109,8 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 	 * @param renderer the render to employ for rendering the radio buttons
 	 * @param data
 	 */
-	RadioGroupField(String name, String propName, String labelText, String helpText, GridRenderer renderer,
-			Map<V, String> data) {
+	RadioGroupField(final String name, final String propName, final String labelText, final String helpText,
+			final GridRenderer renderer, final Map<V, String> data) {
 		super(name, propName, labelText, helpText);
 		this.renderer = renderer == null ? DEFAULT_RENDERER : renderer;
 		fp.addValueChangeHandler(this);
@@ -125,7 +125,7 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 	}
 
 	@Override
-	public void setEnabled(boolean enabled) {
+	public void setEnabled(final boolean enabled) {
 		for(final RadioButton rb : radioButtons) {
 			rb.setEnabled(enabled);
 		}
@@ -138,7 +138,7 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 		fp.add(renderer.render(radioButtons));
 	}
 
-	private RadioButton create(String name) {
+	private RadioButton create(final String name) {
 		final RadioButton rb = new RadioButton("rg_" + getDomId(), name);
 		rb.setFormValue(name);
 		rb.addStyleName(Styles.CBRB);
@@ -146,7 +146,7 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 
 			@SuppressWarnings("synthetic-access")
 			@Override
-			public void onClick(ClickEvent event) {
+			public void onClick(final ClickEvent event) {
 				assert event.getSource() instanceof RadioButton;
 				final RadioButton radio = (RadioButton) event.getSource();
 				// fire a value change event..
@@ -163,7 +163,7 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 	 * @param data
 	 */
 	@Override
-	public void setData(Map<V, String> data) {
+	public void setData(final Map<V, String> data) {
 		super.setData(data);
 		radioButtons.clear();
 		if(data != null) {
@@ -175,14 +175,14 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 	}
 
 	@Override
-	public void addDataItem(String name, V value) {
+	public void addDataItem(final String name, final V value) {
 		super.addDataItem(name, value);
 		radioButtons.add(create(name));
 		if(isAttached()) render();
 	}
 
 	@Override
-	public void removeDataItem(V value) {
+	public void removeDataItem(final V value) {
 		super.removeDataItem(value);
 		for(final RadioButton rb : radioButtons) {
 			if(rb.getValue().equals(value)) {
@@ -203,7 +203,8 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 		return getToken(fp.getValue());
 	}
 
-	public void setText(String text) {
+	@Override
+	public void setText(final String text) {
 		throw new UnsupportedOperationException();
 	}
 

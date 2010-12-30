@@ -5,12 +5,12 @@
 package com.tll.client.ui.edit;
 
 import java.util.List;
+import java.util.logging.Logger;
 
-import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -72,6 +72,8 @@ public abstract class AbstractEditPanel<T, P extends AbstractFieldPanel<?>> exte
 		public static final String PORTAL = "portal";
 	}
 
+	Logger logger = Logger.getLogger("EditPanel");
+	
 	/**
 	 * The composite's target widget
 	 */
@@ -233,6 +235,7 @@ public abstract class AbstractEditPanel<T, P extends AbstractFieldPanel<?>> exte
 	 */
 	protected abstract T getEditContent();
 	
+	@Override
 	public final void onClick(ClickEvent event) {
 		final Object sender = event.getSource();
 		if(sender == btnSave) {
@@ -262,16 +265,16 @@ public abstract class AbstractEditPanel<T, P extends AbstractFieldPanel<?>> exte
 
 	@Override
 	protected void onLoad() {
-		Log.debug("EditPanel.onLoad()..");
+		logger.fine("EditPanel.onLoad()..");
 		super.onLoad();
 		if(btnCancel != null) {
-			DeferredCommand.addCommand(new FocusCommand(btnCancel, true));
+			Scheduler.get().scheduleDeferred(new FocusCommand(btnCancel, true));
 		}
 	}
 
 	@Override
 	protected void onUnload() {
-		Log.debug("EditPanel.onUnload()..");
+		logger.fine("EditPanel.onUnload()..");
 		super.onUnload();
 	}
 }

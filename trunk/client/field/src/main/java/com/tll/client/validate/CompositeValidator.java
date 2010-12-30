@@ -17,18 +17,18 @@ public class CompositeValidator implements IValidator {
 	 * @throws IllegalArgumentException When the validator already exists or one
 	 *         of the same type (class) exists.
 	 */
-	public CompositeValidator add(IValidator validator) throws IllegalArgumentException {
+	public CompositeValidator add(final IValidator validator) throws IllegalArgumentException {
 		toAddCheck(validator);
 		validators.add(validator);
 		return this;
 	}
-	
+
 	/**
 	 * Removes a validator by reference only.
 	 * @param validator The validator to remove
 	 * @return <code>true</code> if the validator was successfully remvoed.
 	 */
-	public boolean remove(IValidator validator) {
+	public boolean remove(final IValidator validator) {
 		return validators.remove(validator);
 	}
 
@@ -38,7 +38,7 @@ public class CompositeValidator implements IValidator {
 	 * @param type the validator type
 	 * @return true/false
 	 */
-	public boolean remove(Class<? extends IValidator> type) {
+	public boolean remove(final Class<? extends IValidator> type) {
 		IValidator rmv = null;
 		for(final IValidator v : validators) {
 			if(v.getClass() == type) {
@@ -58,7 +58,7 @@ public class CompositeValidator implements IValidator {
 	 * @param validator
 	 * @throws IllegalArgumentException
 	 */
-	private void toAddCheck(IValidator validator) throws IllegalArgumentException {
+	private void toAddCheck(final IValidator validator) throws IllegalArgumentException {
 		if(validator == null) throw new IllegalArgumentException("A validator must be specified.");
 		for(final IValidator v : validators) {
 			if(v == validator || v.getClass() == validator.getClass()) {
@@ -67,7 +67,8 @@ public class CompositeValidator implements IValidator {
 		}
 	}
 
-	public Object validate(Object value) throws ValidationException {
+	@Override
+	public Object validate(final Object value) throws ValidationException {
 		Object retValue = value;
 		for(final IValidator v : validators) {
 			retValue = v.validate(retValue);

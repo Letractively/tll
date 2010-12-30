@@ -21,7 +21,5 @@ public interface IPersistServiceImplResolver {
 	 * @throws IllegalArgumentException When the model related requesst class
 	 *         can't be resolved to a service impl type
 	 */
-	Class<? extends IPersistServiceImpl> resolve(
-			IModelRelatedRequest request)
-			throws IllegalArgumentException;
+	Class<? extends IPersistServiceImpl> resolve(IModelRelatedRequest request) throws IllegalArgumentException;
 }

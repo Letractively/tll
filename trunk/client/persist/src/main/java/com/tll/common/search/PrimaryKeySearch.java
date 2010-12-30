@@ -5,8 +5,8 @@
  */
 package com.tll.common.search;
 
-import com.tll.model.IEntityTypeProvider;
-import com.tll.model.ModelKey;
+import com.tll.common.model.IEntityTypeProvider;
+import com.tll.common.model.ModelKey;
 
 
 /**

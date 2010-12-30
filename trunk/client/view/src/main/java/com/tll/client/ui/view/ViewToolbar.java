@@ -32,12 +32,13 @@ public class ViewToolbar extends Toolbar implements HasMouseDownHandlers, HasMou
 	 * @author jpk
 	 */
 	protected static class Styles {
+
 		public static final String VIEW_TOOLBAR = "viewToolbar";
 		public static final String VIEW_TITLE = "viewTitle";
 	} // Styles
 
 	private static final ViewToolbarClientBundle resources = GWT.create(ViewToolbarClientBundle.class);
-	
+
 	public static final ViewToolbarClientBundle resources() {
 		return resources;
 	}
@@ -61,32 +62,37 @@ public class ViewToolbar extends Toolbar implements HasMouseDownHandlers, HasMou
 	 *        of view toolbars.
 	 * @param clickHandler For click events occurring w/in this toolbar.
 	 */
-	public ViewToolbar(String viewDisplayName, ViewOptions viewOptions, ClickHandler clickHandler) {
+	public ViewToolbar(final String viewDisplayName, final ViewOptions viewOptions, final ClickHandler clickHandler) {
 		super();
 		assert viewDisplayName != null && viewOptions != null && clickHandler != null;
 		viewTitle = new Label(viewDisplayName);
 		btnMinimize =
-			viewOptions.isMinimizable() ? new ToggleButton(AbstractImagePrototype.create(resources.arrow_sm_down()).createImage(), AbstractImagePrototype.create(resources
-					.arrow_sm_right()).createImage(), clickHandler) : null;
-			btnPop =
-				viewOptions.isPopable() ? new ToggleButton(AbstractImagePrototype.create(resources.external()).createImage(), AbstractImagePrototype.create(resources.permalink())
-						.createImage(), clickHandler) : null;
+				viewOptions.isMinimizable() ? new ToggleButton(AbstractImagePrototype.create(resources.arrow_sm_down())
+						.createImage(), AbstractImagePrototype.create(resources.arrow_sm_right()).createImage(), clickHandler)
+						: null;
+		btnPop =
+				viewOptions.isPopable() ? new ToggleButton(AbstractImagePrototype.create(resources.external()).createImage(),
+						AbstractImagePrototype.create(resources.permalink()).createImage(), clickHandler) : null;
 
-				btnClose = viewOptions.isClosable() ? new PushButton(AbstractImagePrototype.create(resources.close()).createImage(), clickHandler) : null;
-				btnRefresh = viewOptions.isRefreshable() ? new PushButton(AbstractImagePrototype.create(resources.refresh()).createImage(), clickHandler) : null;
+		btnClose =
+				viewOptions.isClosable() ? new PushButton(AbstractImagePrototype.create(resources.close()).createImage(),
+						clickHandler) : null;
+		btnRefresh =
+				viewOptions.isRefreshable() ? new PushButton(AbstractImagePrototype.create(resources.refresh()).createImage(),
+						clickHandler) : null;
 
-				addStyleName(Styles.VIEW_TOOLBAR);
-				viewTitle.setStyleName(Styles.VIEW_TITLE);
+		addStyleName(Styles.VIEW_TOOLBAR);
+		viewTitle.setStyleName(Styles.VIEW_TITLE);
 
-				if(btnMinimize != null) addButton(btnMinimize, TITLE_MINIMIZE);
-				add(viewTitle);
+		if(btnMinimize != null) addButton(btnMinimize, TITLE_MINIMIZE);
+		add(viewTitle);
 
-				// NOTE: we do this here as this is intrinsic behavior
-				setWidgetContainerWidth(viewTitle, "100%");
+		// NOTE: we do this here as this is intrinsic behavior
+		setWidgetContainerWidth(viewTitle, "100%");
 
-				if(btnPop != null) addButton(btnPop, TITLE_POP);
-				if(btnRefresh != null) addButton(btnRefresh, TITLE_REFRESH);
-				if(btnClose != null) addButton(btnClose, TITLE_CLOSE);
+		if(btnPop != null) addButton(btnPop, TITLE_POP);
+		if(btnRefresh != null) addButton(btnRefresh, TITLE_REFRESH);
+		if(btnClose != null) addButton(btnClose, TITLE_CLOSE);
 
 	}
 
@@ -95,20 +101,23 @@ public class ViewToolbar extends Toolbar implements HasMouseDownHandlers, HasMou
 	 * @param b
 	 * @param title
 	 */
-	public void addViewOpButton(ButtonBase b, String title) {
+	public void addViewOpButton(final ButtonBase b, final String title) {
 		insertButton(b, title, btnMinimize == null ? 1 : 2 + numViewOpBtns);
 		numViewOpBtns++;
 	}
 
-	public HandlerRegistration addMouseDownHandler(MouseDownHandler handler) {
+	@Override
+	public HandlerRegistration addMouseDownHandler(final MouseDownHandler handler) {
 		return viewTitle.addMouseDownHandler(handler);
 	}
 
-	public HandlerRegistration addMouseUpHandler(MouseUpHandler handler) {
+	@Override
+	public HandlerRegistration addMouseUpHandler(final MouseUpHandler handler) {
 		return viewTitle.addMouseUpHandler(handler);
 	}
 
-	public HandlerRegistration addMouseMoveHandler(MouseMoveHandler handler) {
+	@Override
+	public HandlerRegistration addMouseMoveHandler(final MouseMoveHandler handler) {
 		return viewTitle.addMouseMoveHandler(handler);
 	}
 }

@@ -3,12 +3,11 @@
  * @author jpk
  * @since Jun 27, 2009
  */
-package com.tll.di;
+package com.tll.server.marshal;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
-import com.tll.model.IEntityTypeResolver;
-import com.tll.server.marshal.IMarshalOptionsResolver;
+import com.tll.common.model.IEntityTypeResolver;
 
 /**
  * MarshalModule

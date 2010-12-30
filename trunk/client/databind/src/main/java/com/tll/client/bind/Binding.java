@@ -6,8 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.convert.IConverter;
 import com.tll.client.ui.IWidgetRef;
 import com.tll.client.validate.ErrorClassifier;
@@ -15,10 +15,10 @@ import com.tll.client.validate.ErrorDisplay;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
-import com.tll.common.bind.IBindable;
-import com.tll.common.bind.IPropertyChangeListener;
-import com.tll.common.bind.IndexedPropertyChangeEvent;
-import com.tll.common.bind.PropertyChangeEvent;
+import com.tll.common.model.IBindable;
+import com.tll.common.model.IPropertyChangeListener;
+import com.tll.common.model.IndexedPropertyChangeEvent;
+import com.tll.common.model.PropertyChangeEvent;
 import com.tll.util.PropertyPath;
 
 /**
@@ -33,6 +33,8 @@ import com.tll.util.PropertyPath;
 @SuppressWarnings("synthetic-access")
 public final class Binding {
 
+	private static final Logger logger = Logger.getLogger("Binding");
+	
 	/**
 	 * A data class containing the relevant data for one half of a binding
 	 * relationship.
@@ -113,6 +115,7 @@ public final class Binding {
 			this.target = target;
 		}
 
+		@Override
 		public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
 			Object value = propertyChangeEvent.getNewValue();
 
@@ -151,7 +154,7 @@ public final class Binding {
 					PropertyPath.index(targetProperty, ((IndexedPropertyChangeEvent) propertyChangeEvent).getIndex());
 			}
 
-			Log.debug("Setting prop val on [ " + target.object + " ] for " + targetProperty + "..");
+			logger.fine("Setting prop val on [ " + target.object + " ] for " + targetProperty + "..");
 			try {
 				target.object.setProperty(targetProperty, value);
 			}
@@ -268,7 +271,7 @@ public final class Binding {
 	 */
 	public void setLeft() throws BindingException {
 		if((left != null) && (right != null)) {
-			//Log.debug("Binding.setLeft..");
+			logger.fine("Binding.setLeft..");
 			try {
 				right.firePropertyChange(new PropertyChangeEvent(right.object, right.property, null, right.object
 						.getProperty(right.property)));
@@ -289,7 +292,7 @@ public final class Binding {
 	 */
 	public void setRight() throws BindingException {
 		if((left != null) && (right != null)) {
-			//Log.debug("Binding.setRight..");
+			logger.fine("Binding.setRight..");
 			try {
 				left.firePropertyChange(new PropertyChangeEvent(left.object, left.property, null, left.object
 						.getProperty(left.property)));
@@ -413,7 +416,8 @@ public final class Binding {
 		return instance;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({
+		"unchecked", "rawtypes" })
 	private IBindable getDiscriminatedObject(Object collectionOrArray, String discriminator) {
 		final int equalsIndex = discriminator.indexOf("=");
 

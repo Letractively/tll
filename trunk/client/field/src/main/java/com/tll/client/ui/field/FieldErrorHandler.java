@@ -48,12 +48,12 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	 * Constructor
 	 * @param mregistry
 	 */
-	public FieldErrorHandler(MsgPopupRegistry mregistry) {
+	public FieldErrorHandler(final MsgPopupRegistry mregistry) {
 		super(mregistry);
 	}
 
 	@Override
-	protected void doHandleError(Error error) {
+	protected void doHandleError(final Error error) {
 		super.doHandleError(error);
 		final Widget target = error.getTarget() == null ? null : error.getTarget().getWidget();
 		if(target != null) {
@@ -78,7 +78,7 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	}
 
 	@Override
-	protected void doResolveError(IWidgetRef source, ErrorClassifier classifier) {
+	protected void doResolveError(final IWidgetRef source, final ErrorClassifier classifier) {
 		super.doResolveError(source, classifier);
 		if(source instanceof IFieldWidget<?>) {
 			// handle styling
@@ -98,7 +98,7 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	}
 
 	@Override
-	public void onMouseOver(MouseOverEvent event) {
+	public void onMouseOver(final MouseOverEvent event) {
 		final IFieldWidget<?> field = resolveField(event);
 		if(field != null) {
 			mregistry.getOperator(field.getWidget(), false).showMsgs(true);
@@ -106,7 +106,7 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	}
 
 	@Override
-	public void clear(ErrorClassifier classifier) {
+	public void clear(final ErrorClassifier classifier) {
 		super.clear(classifier);
 		if(classifier != null && classifier.isServer()) {
 			// NOTE: to reset incr. validation, we iterate over all invalids
@@ -129,14 +129,14 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	}
 
 	@Override
-	public void onMouseOut(MouseOutEvent event) {
+	public void onMouseOut(final MouseOutEvent event) {
 		final IFieldWidget<?> field = resolveField(event);
 		if(field != null) {
 			mregistry.getOperator(field.getWidget(), false).showMsgs(false);
 		}
 	}
 
-	private IFieldWidget<?> resolveField(MouseEvent<?> event) {
+	private IFieldWidget<?> resolveField(final MouseEvent<?> event) {
 		final Object src = event.getSource();
 		for(final IFieldWidget<?> fw : invalids.keySet()) {
 			if(src == fw || src == fw.getFieldLabel()) return fw;
@@ -150,7 +150,7 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	 * @param mouseRegs the associated mouse registrations for the given field
 	 * @param track track (add) or don't track (remove)?
 	 */
-	private void trackHover(IFieldWidget<?> field, MouseRegs mouseRegs, boolean track) {
+	private void trackHover(final IFieldWidget<?> field, final MouseRegs mouseRegs, final boolean track) {
 		// resolve the hoverable
 		if(track) {
 			final IHasHoverHandlers hoverable = field.getFieldLabel() == null ? field.getEditable() : field.getFieldLabel();

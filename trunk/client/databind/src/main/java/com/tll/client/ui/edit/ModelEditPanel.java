@@ -5,7 +5,8 @@
  */
 package com.tll.client.ui.edit;
 
-import com.allen_sauer.gwt.log.client.Log;
+import java.util.logging.Logger;
+
 import com.tll.client.model.ModelChangeTracker;
 import com.tll.client.ui.Position;
 import com.tll.client.ui.field.AbstractBindableFieldPanel;
@@ -22,6 +23,8 @@ import com.tll.common.msg.Msg.MsgLevel;
  * @author jpk
  */
 public class ModelEditPanel extends AbstractEditPanel<IModelEditContent, AbstractBindableFieldPanel<?>> {
+
+	private static final Logger logger = Logger.getLogger("ModelEditPanel");
 
 	/**
 	 * Constructor
@@ -41,33 +44,33 @@ public class ModelEditPanel extends AbstractEditPanel<IModelEditContent, Abstrac
 	}
 
 	public void setModel(Model model) {
-		Log.debug("ModelEditPanel.setModel() - START");
+		logger.fine("ModelEditPanel.setModel() - START");
 		fieldPanel.setModel(model);
 		if(model != null) {
 			setEditMode(model.isNew());
 			/*
 			// deferred attachment to guaranting model and aux data is available
 			if(fieldPanel.getParent() == null) {
-				Log.debug("EditPanel.setModel() attaching fieldPanel..");
+				logger.fine("EditPanel.setModel() attaching fieldPanel..");
 				getPortal().add(fieldPanel);
 			}
 			*/
 		}
-		Log.debug("ModelEditPanel.setModel() - END");
+		logger.fine("ModelEditPanel.setModel() - END");
 	}
 
 	@Override
 	protected IModelEditContent getEditContent() {
 		try {
-			Log.debug("EditPanel - Saving..");
+			logger.fine("EditPanel - Saving..");
 			fieldPanel.updateModel();
 			return new IModelEditContent() {
-				
+
 				@Override
 				public Model getModel() {
 					return fieldPanel.getModel();
 				}
-				
+
 				@Override
 				public Model getChangedModel() {
 					return fieldPanel.getChangedModel();
@@ -88,7 +91,7 @@ public class ModelEditPanel extends AbstractEditPanel<IModelEditContent, Abstrac
 				emsg = e.getClass().toString();
 			}
 			assert emsg != null;
-			Log.error(emsg);
+			logger.severe(emsg);
 		}
 		return null;
 	}

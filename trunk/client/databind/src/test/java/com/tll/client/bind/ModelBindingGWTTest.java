@@ -11,13 +11,13 @@ import java.util.List;
 import junit.framework.Assert;
 
 import com.google.gwt.junit.client.GWTTestCase;
-import com.tll.common.bind.IBindable;
-import com.tll.common.bind.PropertyChangeSupport;
 import com.tll.common.model.CopyCriteria;
+import com.tll.common.model.IBindable;
 import com.tll.common.model.IModelProperty;
 import com.tll.common.model.IndexOutOfRangeInPropPathException;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelTestUtils;
+import com.tll.common.model.PropertyChangeSupport;
 import com.tll.common.model.test.TestModelStubber;
 
 /**

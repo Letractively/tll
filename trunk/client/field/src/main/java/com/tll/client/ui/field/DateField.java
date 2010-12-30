@@ -46,22 +46,22 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 		}
 
 		@Override
-		public HandlerRegistration addBlurHandler(BlurHandler handler) {
+		public HandlerRegistration addBlurHandler(final BlurHandler handler) {
 			return addDomHandler(handler, BlurEvent.getType());
 		}
 
 		@Override
-		public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
+		public HandlerRegistration addMouseOverHandler(final MouseOverHandler handler) {
 			return addDomHandler(handler, MouseOverEvent.getType());
 		}
 
 		@Override
-		public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
+		public HandlerRegistration addMouseOutHandler(final MouseOutHandler handler) {
 			return addDomHandler(handler, MouseOutEvent.getType());
 		}
 
 		@Override
-		public HandlerRegistration addFocusHandler(FocusHandler handler) {
+		public HandlerRegistration addFocusHandler(final FocusHandler handler) {
 			return addDomHandler(handler, FocusEvent.getType());
 		}
 	}
@@ -74,7 +74,7 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 
 		@SuppressWarnings("synthetic-access")
 		@Override
-		public Date convert(Object in) throws IllegalArgumentException {
+		public Date convert(final Object in) throws IllegalArgumentException {
 			try {
 				return (Date) DateValidator.get(dateFormat).validate(in);
 			}
@@ -103,7 +103,8 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 	 * @param helpText
 	 * @param format
 	 */
-	DateField(String name, String propName, String labelText, String helpText, GlobalFormat format) {
+	DateField(final String name, final String propName, final String labelText, final String helpText,
+			final GlobalFormat format) {
 		super(name, propName, labelText, helpText);
 		dbox = new Impl();
 		dbox.addValueChangeHandler(this);
@@ -112,15 +113,17 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 		setFormat(format);
 	}
 
+	@Override
 	public GlobalFormat getFormat() {
 		return dateFormat;
 	}
 
-	public void setFormat(GlobalFormat format) {
+	@Override
+	public void setFormat(final GlobalFormat format) {
 		if(format != null && !format.isDateFormat()) throw new IllegalArgumentException();
 		this.dateFormat = format == null ? GlobalFormat.DATE : format;
 		dbox.setFormat(new DefaultFormat(Fmt.getDateTimeFormat(dateFormat)));
-		//setConverter(new ToDateConverter());
+		// setConverter(new ToDateConverter());
 	}
 
 	@Override
@@ -133,12 +136,13 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 		return dbox.getTextBox().getText();
 	}
 
-	public void setText(String text) {
+	@Override
+	public void setText(final String text) {
 		dbox.getTextBox().setText(text);
 	}
 
 	@Override
-	public void setEnabled(boolean enabled) {
+	public void setEnabled(final boolean enabled) {
 		dbox.setEnabled(enabled);
 		super.setEnabled(enabled);
 	}

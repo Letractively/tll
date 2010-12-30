@@ -38,7 +38,7 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 		}
 
 		@Override
-		public void onChange(ChangeEvent event) {
+		public void onChange(final ChangeEvent event) {
 			ValueChangeEvent.fire(this, getValue());
 		}
 
@@ -50,7 +50,7 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 		}
 
 		@Override
-		public void setValue(V value) {
+		public void setValue(final V value) {
 			setSelectedIndex(-1);
 			if(value != null) {
 				// NOTE: we start from index of 1 since the first index is always
@@ -66,7 +66,7 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 		}
 
 		@Override
-		public void setValue(V value, boolean fireEvents) {
+		public void setValue(final V value, final boolean fireEvents) {
 			final V old = fireEvents ? getValue() : null;
 			setValue(value);
 			if(fireEvents) {
@@ -78,7 +78,7 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 		}
 
 		@Override
-		public HandlerRegistration addValueChangeHandler(ValueChangeHandler<V> handler) {
+		public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<V> handler) {
 			return addHandler(handler, ValueChangeEvent.getType());
 		}
 	}
@@ -96,7 +96,8 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 	 * @param helpText
 	 * @param data
 	 */
-	SelectField(String name, String propName, String labelText, String helpText, Map<V, String> data) {
+	SelectField(final String name, final String propName, final String labelText, final String helpText,
+			final Map<V, String> data) {
 		super(name, propName, labelText, helpText);
 		lb = new Impl();
 		lb.addValueChangeHandler(this);
@@ -106,13 +107,13 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 	}
 
 	@Override
-	public void setEnabled(boolean enabled) {
+	public void setEnabled(final boolean enabled) {
 		lb.setEnabled(enabled);
 		super.setEnabled(enabled);
 	}
 
 	@Override
-	public void setData(Map<V, String> data) {
+	public void setData(final Map<V, String> data) {
 		super.setData(data);
 		final V oldval = lb.getValue();
 		lb.clear();
@@ -128,13 +129,13 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 	}
 
 	@Override
-	public void addDataItem(String name, V value) {
+	public void addDataItem(final String name, final V value) {
 		super.addDataItem(name, value);
 		lb.addItem(name);
 	}
 
 	@Override
-	public void removeDataItem(V value) {
+	public void removeDataItem(final V value) {
 		super.removeDataItem(value);
 		for(int i = 0; i < lb.getItemCount(); i++) {
 			if(lb.getValue(i).equals(value)) {
@@ -153,15 +154,15 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 		return lb.getItemCount();
 	}
 
-	public boolean isItemSelected(int index) {
+	public boolean isItemSelected(final int index) {
 		return lb.isItemSelected(index);
 	}
 
-	public String getItemText(int index) {
+	public String getItemText(final int index) {
 		return lb.getItemText(index);
 	}
 
-	public void setItemText(int index, String text) {
+	public void setItemText(final int index, final String text) {
 		lb.setItemText(index, text);
 	}
 
@@ -182,7 +183,8 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 		return lb.getSelectedIndex() == -1 ? null : lb.getItemText(lb.getSelectedIndex());
 	}
 
-	public void setText(String text) {
+	@Override
+	public void setText(final String text) {
 		throw new UnsupportedOperationException();
 	}
 }

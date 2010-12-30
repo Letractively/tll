@@ -16,11 +16,11 @@ import com.tll.client.convert.IConverter;
  * @author jpk
  */
 public abstract class AbstractCollectionDataField<V> extends AbstractDataField<V, Collection<V>> {
-	
+
 	protected final IConverter<String, V> renderer = new IConverter<String, V>() {
 
 		@Override
-		public String convert(V in) throws IllegalArgumentException {
+		public String convert(final V in) throws IllegalArgumentException {
 			return getToken(in);
 		}
 	};
@@ -32,7 +32,8 @@ public abstract class AbstractCollectionDataField<V> extends AbstractDataField<V
 	 * @param labelText
 	 * @param helpText
 	 */
-	public AbstractCollectionDataField(String name, String propName, String labelText, String helpText) {
+	public AbstractCollectionDataField(final String name, final String propName, final String labelText,
+			final String helpText) {
 		super(name, propName, labelText, helpText);
 	}
 }

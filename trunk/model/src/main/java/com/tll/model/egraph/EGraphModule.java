@@ -1,7 +1,7 @@
 /*
  * The Logic Lab
  */
-package com.tll.model;
+package com.tll.model.egraph;
 
 import java.net.URI;
 
@@ -13,9 +13,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
-import com.tll.model.egraph.EntityBeanFactory;
-import com.tll.model.egraph.EntityGraph;
-import com.tll.model.egraph.IEntityGraphPopulator;
+import com.tll.model.IEntityFactory;
 import com.tll.util.ClassUtil;
 
 /**

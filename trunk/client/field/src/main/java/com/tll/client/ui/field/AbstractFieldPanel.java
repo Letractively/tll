@@ -5,12 +5,12 @@
  */
 package com.tll.client.ui.field;
 
-import com.allen_sauer.gwt.log.client.Log;
+import java.util.logging.Logger;
+
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.IHasErrorHandler;
-
 
 /**
  * Base class for all concrete field panels.
@@ -19,6 +19,8 @@ import com.tll.client.validate.IHasErrorHandler;
  * @author jpk
  */
 public abstract class AbstractFieldPanel<W extends Widget> extends Composite implements IHasFieldGroup, IHasErrorHandler {
+
+	Logger logger = Logger.getLogger("FieldPanel");
 
 	/**
 	 * Styles (field.css)
@@ -55,7 +57,7 @@ public abstract class AbstractFieldPanel<W extends Widget> extends Composite imp
 	}
 
 	@Override
-	protected void initWidget(Widget widget) {
+	protected void initWidget(final Widget widget) {
 		widget.addStyleName(Styles.FIELD_PANEL);
 		super.initWidget(widget);
 	}
@@ -66,7 +68,7 @@ public abstract class AbstractFieldPanel<W extends Widget> extends Composite imp
 	}
 
 	@Override
-	public final void setErrorHandler(IErrorHandler errorHandler) {
+	public final void setErrorHandler(final IErrorHandler errorHandler) {
 		this.errorHandler = errorHandler;
 	}
 
@@ -100,14 +102,14 @@ public abstract class AbstractFieldPanel<W extends Widget> extends Composite imp
 			if(!canGenerateFieldGroup()) {
 				throw new IllegalStateException();
 			}
-			Log.debug(this + " generating fields..");
+			logger.fine(this + " generating fields..");
 			setFieldGroup(generateFieldGroup());
 		}
 		return group;
 	}
 
 	@Override
-	public void setFieldGroup(FieldGroup fields) {
+	public void setFieldGroup(final FieldGroup fields) {
 		if(fields == null) throw new IllegalArgumentException("Null fields");
 		if(this.group == fields) return;
 		this.group = fields;
@@ -115,7 +117,7 @@ public abstract class AbstractFieldPanel<W extends Widget> extends Composite imp
 
 		// propagate the binding's error handler and model change tracker
 		if(errorHandler != null) {
-			Log.debug("Propagating error handler for: " + this);
+			logger.fine("Propagating error handler for: " + this);
 			group.setErrorHandler(errorHandler);
 		}
 	}
@@ -135,7 +137,7 @@ public abstract class AbstractFieldPanel<W extends Widget> extends Composite imp
 	protected void draw() {
 		final IFieldRenderer<W> renderer = getRenderer();
 		if(renderer != null) {
-			Log.debug(this + ": rendering..");
+			logger.fine(this + ": rendering..");
 			renderer.render(getWidget(), getFieldGroup());
 		}
 	}
@@ -152,19 +154,19 @@ public abstract class AbstractFieldPanel<W extends Widget> extends Composite imp
 	 * member fields shall be rendered non-interactable.
 	 * @param enable Enable or disable?
 	 */
-	public void enable(boolean enable) {
+	public void enable(final boolean enable) {
 		if(group == null) group.setEnabled(enable);
 	}
 
 	@Override
 	protected void onAttach() {
-		Log.debug("Attaching " + this + "..");
+		logger.fine("Attaching " + this + "..");
 		super.onAttach();
 	}
 
 	@Override
 	protected void onLoad() {
-		Log.debug("Loading " + toString() + "..");
+		logger.fine("Loading " + toString() + "..");
 		super.onLoad();
 		if(!drawn) {
 			draw();
@@ -174,7 +176,7 @@ public abstract class AbstractFieldPanel<W extends Widget> extends Composite imp
 
 	@Override
 	protected void onDetach() {
-		Log.debug("Detatching " + toString() + "..");
+		logger.fine("Detatching " + toString() + "..");
 		super.onDetach();
 	}
 

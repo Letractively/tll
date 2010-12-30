@@ -128,7 +128,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	 *        hovers.
 	 * @throws IllegalArgumentException When no field name is given
 	 */
-	public AbstractField(String name, String propName, String labelText, String helpText) {
+	public AbstractField(final String name, final String propName, final String labelText, final String helpText) {
 		setName(name);
 		setPropertyName(propName);
 		domId = 'f' + Integer.toString(++fieldCounter);
@@ -145,7 +145,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	}
 
 	@Override
-	public final HandlerRegistration addValueChangeHandler(ValueChangeHandler<V> handler) {
+	public final HandlerRegistration addValueChangeHandler(final ValueChangeHandler<V> handler) {
 		return addHandler(handler, ValueChangeEvent.getType());
 	}
 
@@ -167,7 +167,8 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	 * apply certain styling to the appropriate dom node.
 	 * @param fieldContainer The desired containing Widget
 	 */
-	public final void setFieldContainer(Widget fieldContainer) {
+	@Override
+	public final void setFieldContainer(final Widget fieldContainer) {
 		this.container = fieldContainer;
 	}
 
@@ -176,7 +177,8 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	 * necessary to apply certain styling to the appropriate dom node.
 	 * @param labelContainer The desired Widget containing the label
 	 */
-	public final void setFieldLabelContainer(Widget labelContainer) {
+	@Override
+	public final void setFieldLabelContainer(final Widget labelContainer) {
 		this.labelContainer = labelContainer;
 	}
 
@@ -185,10 +187,12 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	 *         <em>NOTE: </em>The field label is <em>NOT</em> a child of this
 	 *         composite Widget.
 	 */
+	@Override
 	public final FieldLabel getFieldLabel() {
 		return fldLbl;
 	}
 
+	@Override
 	public String getLabelText() {
 		return fldLbl == null ? "" : fldLbl.getText();
 	}
@@ -198,7 +202,8 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	 * @param labelText The label text. If <code>null</code>, the label will be
 	 *        removed.
 	 */
-	public void setLabelText(String labelText) {
+	@Override
+	public void setLabelText(final String labelText) {
 		if(labelText != null) {
 			if(fldLbl == null) {
 				fldLbl = new FieldLabel();
@@ -215,25 +220,30 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 		return domId;
 	}
 
+	@Override
 	public final String getName() {
 		return name;
 	}
 
-	public final void setName(String name) {
+	@Override
+	public final void setName(final String name) {
 		if(StringUtil.isEmpty(name)) {
 			throw new IllegalArgumentException("A field must have a name.");
 		}
 		this.name = name;
 	}
 
+	@Override
 	public final String getPropertyName() {
 		return property;
 	}
 
-	public final void setPropertyName(String propName) {
+	@Override
+	public final void setPropertyName(final String propName) {
 		this.property = propName;
 	}
 
+	@Override
 	public final void clearValue() {
 		setValue(null);
 		// remove all msgs, edit and validation styling
@@ -244,11 +254,13 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 		this.oldValue = null;
 	}
 
+	@Override
 	public final boolean isReadOnly() {
 		return readOnly;
 	}
 
-	public void setReadOnly(boolean readOnly) {
+	@Override
+	public void setReadOnly(final boolean readOnly) {
 		// hide the field label required indicator if we are in read-only state
 		if(fldLbl != null) fldLbl.setRequired(readOnly ? false : required);
 
@@ -256,11 +268,13 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 		if(isAttached()) draw();
 	}
 
+	@Override
 	public final boolean isRequired() {
 		return required;
 	}
 
-	public final void setRequired(boolean required) {
+	@Override
+	public final void setRequired(final boolean required) {
 		// show/hide the field label required indicator
 		if(fldLbl != null) {
 			fldLbl.setRequired(readOnly ? false : required);
@@ -274,11 +288,13 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 		}
 	}
 
+	@Override
 	public final boolean isEnabled() {
 		return enabled;
 	}
 
-	public void setEnabled(boolean enabled) {
+	@Override
+	public void setEnabled(final boolean enabled) {
 		this.enabled = enabled;
 		if(isAttached()) draw();
 	}
@@ -288,7 +304,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	 * visibility to the field and label containers.
 	 */
 	@Override
-	public final void setVisible(boolean visible) {
+	public final void setVisible(final boolean visible) {
 		super.setVisible(visible);
 
 		if(fldLbl != null) {
@@ -306,6 +322,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	/**
 	 * @return the helpText
 	 */
+	@Override
 	public final String getHelpText() {
 		return helpText;
 	}
@@ -313,7 +330,8 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	/**
 	 * @param helpText the helpText to set
 	 */
-	public final void setHelpText(String helpText) {
+	@Override
+	public final void setHelpText(final String helpText) {
 		if(!ObjectUtil.equals(this.helpText, helpText)) {
 			this.helpText = helpText;
 			if(isAttached()) draw();
@@ -324,6 +342,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	 * Obtains the editable form control Widget.
 	 * @return The form control Widget
 	 */
+	@Override
 	public abstract IEditable<V> getEditable();
 
 	/**
@@ -341,7 +360,8 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 		}
 	}
 
-	public final void addValidator(IValidator vldtr) {
+	@Override
+	public final void addValidator(final IValidator vldtr) {
 		if(vldtr != null) {
 			if(this.validator == null) {
 				this.validator = new CompositeValidator();
@@ -410,8 +430,9 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 		validateIncrementally(!isNewModelData);
 	}
 	*/
-	
-	public final void removeValidator(Class<? extends IValidator> type) {
+
+	@Override
+	public final void removeValidator(final Class<? extends IValidator> type) {
 		if(validator != null) validator.remove(type);
 	}
 
@@ -419,7 +440,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	 * Resolves client-side errors.
 	 * @param displayFlags
 	 */
-	private void resolveError(int displayFlags) {
+	private void resolveError(final int displayFlags) {
 		if(errorHandler != null) {
 			errorHandler.resolveError(this, ErrorClassifier.CLIENT, displayFlags);
 		}
@@ -429,16 +450,18 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	 * Handles client-side errors.
 	 * @param errors
 	 */
-	private void handleError(List<Error> errors) {
+	private void handleError(final List<Error> errors) {
 		if(errorHandler != null) {
 			errorHandler.handleErrors(errors, ErrorDisplay.LOCAL.flag());
 		}
 	}
 
+	@Override
 	public final void validate() throws ValidationException {
 		validate(getValue());
 	}
 
+	@Override
 	public final Object validate(Object value) throws ValidationException {
 		if(validator != null) {
 			try {
@@ -453,7 +476,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 		}
 		return value;
 	}
-	
+
 	/**
 	 * @return The raw field text which may be <code>null</code>.
 	 */
@@ -545,30 +568,30 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	}
 
 	@Override
-	public final void setTabIndex(int index) {
+	public final void setTabIndex(final int index) {
 		if(!readOnly) getEditable().setTabIndex(index);
 	}
 
 	@Override
-	public final void setAccessKey(char key) {
+	public final void setAccessKey(final char key) {
 		if(!readOnly) getEditable().setAccessKey(key);
 	}
 
 	@Override
-	public final void setFocus(boolean focused) {
+	public final void setFocus(final boolean focused) {
 		if(!readOnly) getEditable().setFocus(focused);
 	}
 
 	@Override
-	public void onFocus(FocusEvent event) {
+	public void onFocus(final FocusEvent event) {
 		addStyleName(Styles.ACTIVE);
 	}
 
 	@Override
-	public void onBlur(BlurEvent event) {
+	public void onBlur(final BlurEvent event) {
 		removeStyleName(Styles.ACTIVE);
 		if(incrValFlag) {
-			resolveError(ErrorDisplay.LOCAL.flag());	// clear out old first
+			resolveError(ErrorDisplay.LOCAL.flag()); // clear out old first
 			try {
 				validate();
 				dirtyCheck();
@@ -580,14 +603,15 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	}
 
 	@Override
-	public final void onValueChange(ValueChangeEvent<V> event) {
+	public final void onValueChange(final ValueChangeEvent<V> event) {
 		assert event.getSource() == getEditable();
 		final V old = oldValue;
 		oldValue = event.getValue();
 		if(!ObjectUtil.equals(old, oldValue)) {
 			ValueChangeEvent.fire(this, oldValue);
 			// we don't want auto-transfer!!!
-			//adapter.getChangeSupport().firePropertyChange(PROPERTY_VALUE, old, oldValue);
+			// adapter.getChangeSupport().firePropertyChange(PROPERTY_VALUE, old,
+			// oldValue);
 		}
 	}
 
@@ -597,12 +621,12 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	}
 
 	@Override
-	public final void setValue(V value) {
+	public final void setValue(final V value) {
 		setValue(value, false);
 	}
 
 	@Override
-	public final void setValue(V value, boolean fireEvents) {
+	public final void setValue(final V value, final boolean fireEvents) {
 		getEditable().setValue(value, fireEvents);
 		if(!initialValueSet) {
 			initialValue = getValue();
@@ -610,6 +634,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 		}
 	}
 
+	@Override
 	public final void reset() {
 		if(initialValueSet) {
 			setValue(initialValue);
@@ -624,12 +649,12 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	}
 
 	@Override
-	public final void setErrorHandler(IErrorHandler errorHandler) {
+	public final void setErrorHandler(final IErrorHandler errorHandler) {
 		this.errorHandler = errorHandler;
 	}
 
 	@Override
-	public final void validateIncrementally(boolean validate) {
+	public final void validateIncrementally(final boolean validate) {
 		this.incrValFlag = validate;
 	}
 
@@ -647,13 +672,12 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	/**
 	 * Fields are considered if their property names match.
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public final boolean equals(Object obj) {
+	public final boolean equals(final Object obj) {
 		if(this == obj) return true;
 		if(obj == null) return false;
 		if(getClass() != obj.getClass()) return false;
-		return (!name.equals(((AbstractField) obj).name));
+		return (!name.equals(((AbstractField<?>) obj).name));
 	}
 
 	@Override

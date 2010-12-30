@@ -17,7 +17,7 @@ import com.tll.client.ui.BindableWidgetAdapter;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
-import com.tll.common.bind.IPropertyChangeListener;
+import com.tll.common.model.IPropertyChangeListener;
 import com.tll.common.model.PropertyPathException;
 
 /**
