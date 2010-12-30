@@ -43,18 +43,19 @@ public final class PasswordField extends AbstractField<String> implements IHasMa
 	 * @param helpText
 	 * @param visibleLength
 	 */
-	PasswordField(String name, String propName, String lblText, String helpText, int visibleLength) {
+	PasswordField(final String name, final String propName, final String lblText, final String helpText,
+			final int visibleLength) {
 		super(name, propName, lblText, helpText);
 		tb = new Impl();
 		setVisibleLen(visibleLength);
 		tb.addValueChangeHandler(this);
 		tb.addFocusHandler(this);
 		tb.addBlurHandler(this);
-		//setConverter(ToStringConverter.INSTANCE);
+		// setConverter(ToStringConverter.INSTANCE);
 		addHandler(new KeyPressHandler() {
 
 			@Override
-			public void onKeyPress(KeyPressEvent event) {
+			public void onKeyPress(final KeyPressEvent event) {
 				if(event.getCharCode() == KeyCodes.KEY_ENTER) {
 					setFocus(false);
 					setFocus(true);
@@ -67,15 +68,17 @@ public final class PasswordField extends AbstractField<String> implements IHasMa
 		return tb.getVisibleLength();
 	}
 
-	public void setVisibleLen(int visibleLength) {
+	public void setVisibleLen(final int visibleLength) {
 		tb.setVisibleLength(visibleLength < 0 ? 256 : visibleLength);
 	}
 
+	@Override
 	public int getMaxLen() {
 		return tb.getMaxLength();
 	}
 
-	public void setMaxLen(int maxLen) {
+	@Override
+	public void setMaxLen(final int maxLen) {
 		tb.setMaxLength(maxLen < 0 ? 256 : maxLen);
 		if(maxLen == -1) {
 			removeValidator(StringLengthValidator.class);
@@ -90,12 +93,13 @@ public final class PasswordField extends AbstractField<String> implements IHasMa
 		return tb.getText();
 	}
 
-	public void setText(String text) {
+	@Override
+	public void setText(final String text) {
 		tb.setText(text);
 	}
 
 	@Override
-	public void setEnabled(boolean enabled) {
+	public void setEnabled(final boolean enabled) {
 		tb.setEnabled(enabled);
 		super.setEnabled(enabled);
 	}

@@ -36,15 +36,13 @@ import com.tll.dao.db4o.AbstractDb4oDaoModule;
 import com.tll.dao.db4o.test.Db4oDbShellModule;
 import com.tll.dao.db4o.test.Db4oTrans;
 import com.tll.dao.db4o.test.TestDb4oDaoModule;
-import com.tll.dao.db4o.test.TestDb4oPersistenceUnitModule;
-import com.tll.di.test.TestClientPersistModule;
-import com.tll.di.test.TestMarshalModule;
 import com.tll.mail.MailModule;
 import com.tll.model.IEntity;
 import com.tll.model.egraph.EntityBeanFactory;
 import com.tll.model.test.Address;
-import com.tll.model.test.TestEntityFactory;
 import com.tll.server.LogExceptionHandlerModule;
+import com.tll.server.marshal.test.TestMarshalModule;
+import com.tll.server.test.TestClientPersistModule;
 import com.tll.service.entity.test.TestEntityServiceFactoryModule;
 
 /**
@@ -60,7 +58,8 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 		// as it implicitly binds at the MailModule constrctor
 		modules.add(new MailModule(Config.load(new ConfigRef("config-mail.properties"))));
 
-		modules.add(new TestDb4oPersistenceUnitModule(null, TestEntityFactory.class));
+		// TODO fix
+		//modules.add(new TestDb4oPersistenceUnitModule(null, TestEntityFactory.class));
 		modules.add(new TestDb4oDaoModule(getConfig()));
 		modules.add(new Db4oDbShellModule());
 		modules.add(new TestEntityServiceFactoryModule());
@@ -128,7 +127,7 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 		addEntityToDb(a);
 
 		final PersistServiceDelegate delegate = getDelegate();
-		final PrimaryKeySearch search = new PrimaryKeySearch(new ModelKey(TestEntityType.ADDRESS, id.toString(), null));
+		final PrimaryKeySearch search = new PrimaryKeySearch(new ModelKey(TestEntityType.ADDRESS.name(), id.toString(), null));
 		final LoadRequest<PrimaryKeySearch> request = new LoadRequest<PrimaryKeySearch>(search);
 		final ModelPayload p = delegate.load(request);
 
@@ -149,7 +148,7 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 	public void testAdd() throws Exception {
 		final PersistServiceDelegate delegate = getDelegate();
 
-		Model m = new Model(TestEntityType.ADDRESS);
+		Model m = new Model(TestEntityType.ADDRESS.name());
 		m.set(new StringPropertyValue(Model.ID_PROPERTY, "10000"));
 		m.set(new StringPropertyValue("address1", "1 tee streetU"));
 		m.set(new StringPropertyValue("address2", "2 bee"));
@@ -189,7 +188,7 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 
 		final PersistServiceDelegate delegate = getDelegate();
 
-		Model m = new Model(TestEntityType.ADDRESS);
+		Model m = new Model(TestEntityType.ADDRESS.name());
 		m.set(new StringPropertyValue(Model.VERSION_PROPERTY, "0"));
 		m.set(new StringPropertyValue(Model.ID_PROPERTY, id.toString()));
 		m.set(new StringPropertyValue("address1", "1 changed street"));
@@ -220,7 +219,7 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 		addEntityToDb(a);
 
 		final PersistServiceDelegate delegate = getDelegate();
-		final ModelKey origMk = new ModelKey(TestEntityType.ADDRESS, id.toString(), null);
+		final ModelKey origMk = new ModelKey(TestEntityType.ADDRESS.name(), id.toString(), null);
 		final ModelPayload p = delegate.purge(new PurgeRequest(origMk));
 		assert p != null;
 		final ModelKey mk = p.getRef();
@@ -236,8 +235,8 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 	public void testLoadModelData() throws Exception {
 		final PersistServiceDelegate delegate = getDelegate();
 		final ModelDataRequest adr = new ModelDataRequest();
-		adr.requestEntityList(TestEntityType.ADDRESS);
-		adr.requestEntityPrototype(TestEntityType.ADDRESS);
+		adr.requestEntityList(TestEntityType.ADDRESS.name());
+		adr.requestEntityPrototype(TestEntityType.ADDRESS.name());
 		final ModelDataPayload p = delegate.loadModelData(adr);
 		assert p != null;
 		assert p.getEntityMap() != null && p.getEntityMap().size() > 0;

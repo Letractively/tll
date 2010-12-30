@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-
 /**
  * ValidationException - The one and only validation exception type.
  * @author jpk
@@ -25,7 +24,7 @@ public final class ValidationException extends Exception {
 	 * Constructor
 	 * @param error
 	 */
-	public ValidationException(Error error) {
+	public ValidationException(final Error error) {
 		if(error == null) throw new IllegalArgumentException("Null error");
 		this.errors.add(error);
 	}
@@ -34,7 +33,7 @@ public final class ValidationException extends Exception {
 	 * Constructor
 	 * @param errors a collection of errors
 	 */
-	public ValidationException(Collection<Error> errors) {
+	public ValidationException(final Collection<Error> errors) {
 		if(errors == null || errors.size() < 1) throw new IllegalArgumentException("No errors");
 		this.errors.addAll(errors);
 	}

@@ -8,9 +8,9 @@ package com.tll.server.rpc.listing;
 import com.google.inject.Inject;
 import com.tll.common.data.rpc.ListingRequest;
 import com.tll.common.model.IEntityType;
+import com.tll.common.model.IEntityTypeResolver;
 import com.tll.listhandler.IListingDataProvider;
 import com.tll.model.IEntity;
-import com.tll.model.IEntityTypeResolver;
 import com.tll.server.listing.IListingDataProviderResolver;
 import com.tll.service.entity.IEntityServiceFactory;
 

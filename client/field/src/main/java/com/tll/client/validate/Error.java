@@ -30,7 +30,7 @@ public class Error {
 	 * @param target
 	 * @param errorMsg
 	 */
-	public Error(ErrorClassifier classifier, IWidgetRef target, String errorMsg) {
+	public Error(final ErrorClassifier classifier, final IWidgetRef target, final String errorMsg) {
 		this.classifier = classifier;
 		errorMsgs.add(new Msg(errorMsg, MsgLevel.ERROR));
 		this.target = target;
@@ -42,7 +42,7 @@ public class Error {
 	 * @param target
 	 * @param errorMsgs
 	 */
-	public Error(ErrorClassifier classifier, IWidgetRef target, List<Msg> errorMsgs) {
+	public Error(final ErrorClassifier classifier, final IWidgetRef target, final List<Msg> errorMsgs) {
 		this.classifier = classifier;
 		this.errorMsgs.addAll(errorMsgs);
 		this.target = target;
@@ -52,7 +52,7 @@ public class Error {
 		return target;
 	}
 
-	public void setTarget(IWidgetRef target) {
+	public void setTarget(final IWidgetRef target) {
 		this.target = target;
 	}
 

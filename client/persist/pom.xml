@@ -132,6 +132,16 @@
 			<artifactId>tll-client-rpc</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-client-model</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-client-marshal</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-client-ui</artifactId>

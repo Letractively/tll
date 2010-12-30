@@ -16,7 +16,8 @@ public class NotEmptyValidator implements IValidator {
 	private NotEmptyValidator() {
 	}
 
-	public Object validate(Object value) throws ValidationException {
+	@Override
+	public Object validate(final Object value) throws ValidationException {
 		if(value instanceof Collection<?>) {
 			final Collection<?> clc = (Collection<?>) value;
 			if(clc.size() < 1) {

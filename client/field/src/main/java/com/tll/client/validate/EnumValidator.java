@@ -19,13 +19,13 @@ public class EnumValidator implements IValidator {
 	 * Constructor
 	 * @param enumType
 	 */
-	public EnumValidator(Class<? extends Enum<?>> enumType) {
+	public EnumValidator(final Class<? extends Enum<?>> enumType) {
 		super();
 		this.enumType = enumType;
 	}
 
 	@Override
-	public Object validate(Object value) throws ValidationException {
+	public Object validate(final Object value) throws ValidationException {
 		if(value == null) return null;
 		final String sval = value.toString();
 		for(final Enum<?> e : enumType.getEnumConstants()) {

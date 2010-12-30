@@ -5,16 +5,15 @@
  */
 package com.tll.common.data;
 
-import com.tll.IMarshalable;
+import com.tll.common.model.Model;
 
 /**
  * PersistRequest - Model data transport for add/update crud ops.
- * @param <M> model type
  * @author jpk
  */
-public class PersistRequest<M extends IMarshalable> extends AbstractModelRequest {
+public class PersistRequest extends AbstractModelRequest {
 
-	private M model;
+	private Model model;
 
 	private boolean dirtyProps;
 
@@ -31,7 +30,7 @@ public class PersistRequest<M extends IMarshalable> extends AbstractModelRequest
 	 * @param dirtyProps Signifies the held model data is for updating and
 	 *        contains <em>only</em> those properties that were marked as dirty during the ui edit process.
 	 */
-	public PersistRequest(M model, boolean dirtyProps) {
+	public PersistRequest(Model model, boolean dirtyProps) {
 		super();
 		this.model = model;
 		this.dirtyProps = dirtyProps;
@@ -45,7 +44,7 @@ public class PersistRequest<M extends IMarshalable> extends AbstractModelRequest
 	/**
 	 * @return the entity
 	 */
-	public M getModel() {
+	public Model getModel() {
 		return model;
 	}
 

@@ -14,7 +14,8 @@ public class IntegerValidator implements IValidator {
 	private IntegerValidator() {
 	}
 
-	public Object validate(Object value) throws ValidationException {
+	@Override
+	public Object validate(final Object value) throws ValidationException {
 		if(value == null || value instanceof Integer) return value;
 		try {
 			return Integer.valueOf(value.toString());

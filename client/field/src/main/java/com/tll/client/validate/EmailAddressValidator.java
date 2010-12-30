@@ -28,7 +28,8 @@ public class EmailAddressValidator implements IValidator {
 		super();
 	}
 
-	public Object validate(Object value) throws ValidationException {
+	@Override
+	public Object validate(final Object value) throws ValidationException {
 		if(value == null) return null;
 		final String string = value.toString();
 		if(string.length() == 0) return string;

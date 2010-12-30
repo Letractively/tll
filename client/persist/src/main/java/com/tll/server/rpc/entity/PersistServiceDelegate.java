@@ -15,20 +15,19 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.inject.Inject;
-import com.tll.common.data.ModelDataPayload;
-import com.tll.common.data.ModelDataRequest;
+import com.tll.common.data.AbstractModelRequest;
 import com.tll.common.data.IModelRelatedRequest;
 import com.tll.common.data.LoadRequest;
+import com.tll.common.data.ModelDataPayload;
+import com.tll.common.data.ModelDataRequest;
 import com.tll.common.data.ModelPayload;
-import com.tll.common.data.AbstractModelRequest;
 import com.tll.common.data.Payload;
 import com.tll.common.data.PersistRequest;
 import com.tll.common.data.PurgeRequest;
-import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
-import com.tll.common.msg.Status;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
+import com.tll.common.msg.Status;
 import com.tll.common.search.ISearch;
 import com.tll.model.IEntity;
 import com.tll.server.marshal.MarshalOptions;
@@ -65,7 +64,7 @@ public final class PersistServiceDelegate {
 	 *        type
 	 * @return Never-<code>null</code> instance.
 	 */
-	private static MarshalOptions getMarshalOptions(PersistContext context, IEntityType entityType,
+	private static MarshalOptions getMarshalOptions(PersistContext context, String entityType,
 			MarshalOptions fallback) {
 		try {
 			return context.getMarshalOptionsResolver().resolve(entityType);
@@ -86,7 +85,7 @@ public final class PersistServiceDelegate {
 			final ModelDataPayload payload) {
 
 		//Map<RefDataType, Map<String, String>> appRefDataMap = null;
-		Map<IEntityType, List<Model>> entityMap = null;
+		Map<String, List<Model>> entityMap = null;
 		Set<Model> entityPrototypes = null;
 
 		// app ref data
@@ -109,17 +108,17 @@ public final class PersistServiceDelegate {
 		*/
 
 		// entity collection
-		Iterator<IEntityType> etitr = auxDataRequest.getEntityRequests();
+		Iterator<String> etitr = auxDataRequest.getEntityRequests();
 		if(etitr != null) {
 			while(etitr.hasNext()) {
-				final IEntityType et = etitr.next();
+				final String et = etitr.next();
 				final Class<? extends IEntity> entityClass =
 					(Class<? extends IEntity>) context.getEntityTypeResolver().resolveEntityClass(et);
 				final IEntityService<? extends IEntity> svc =
 					context.getEntityServiceFactory().instanceByEntityType(entityClass);
 				final List<? extends IEntity> list = svc.loadAll();
 				if(list == null || list.size() < 1) {
-					payload.getStatus().addMsg("Unable to obtain " + et.descriptor() + " entities for aux data.",
+					payload.getStatus().addMsg("Unable to obtain " + et + " entities for aux data.",
 							MsgLevel.ERROR, MsgAttr.STATUS.flag);
 				}
 				else {
@@ -130,7 +129,7 @@ public final class PersistServiceDelegate {
 						elist.add(group);
 					}
 					if(entityMap == null) {
-						entityMap = new HashMap<IEntityType, List<Model>>();
+						entityMap = new HashMap<String, List<Model>>();
 					}
 					entityMap.put(et, elist);
 				}
@@ -140,7 +139,7 @@ public final class PersistServiceDelegate {
 		// entity prototypes
 		etitr = auxDataRequest.getEntityPrototypeRequests();
 		while(etitr != null && etitr.hasNext()) {
-			final IEntityType et = etitr.next();
+			final String et = etitr.next();
 			final IEntity e =
 				context.getEntityAssembler().assembleEntity(
 						(Class<IEntity>) context.getEntityTypeResolver().resolveEntityClass(et), null);

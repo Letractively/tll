@@ -32,17 +32,16 @@ import com.tll.client.mvc.view.UnloadViewRequest;
 import com.tll.client.mvc.view.ViewKey;
 import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.ui.DragEvent;
+import com.tll.client.ui.DragEvent.DragMode;
 import com.tll.client.ui.IDragHandler;
 import com.tll.client.ui.IHasDragHandlers;
-import com.tll.client.ui.DragEvent.DragMode;
 
 /**
  * ViewContainer - UI container for {@link IView} implementations.
  * @author jpk
  */
 @SuppressWarnings("synthetic-access")
-public final class ViewContainer extends SimplePanel implements MouseDownHandler, MouseMoveHandler,
-MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
+public final class ViewContainer extends SimplePanel implements MouseDownHandler, MouseMoveHandler, MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 
 	/**
 	 * Styles - (view.css)
@@ -91,14 +90,14 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 	 */
 	private static final class MyVerticalPanel extends VerticalPanel {
 
-		Element getTd(Widget w) {
+		Element getTd(final Widget w) {
 			if(w.getParent() != this) {
 				return null;
 			}
 			return w.getElement().getParentElement();
 		}
 
-		Element getWidgetTr(Widget w) {
+		Element getWidgetTr(final Widget w) {
 			final Element td = getTd(w);
 			return td == null ? null : td.getParentElement();
 		}
@@ -110,7 +109,7 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 	 * @param options The view display options
 	 * @param key The view key
 	 */
-	public ViewContainer(IView<?> view, ViewOptions options, ViewKey key) {
+	public ViewContainer(final IView<?> view, final ViewOptions options, final ViewKey key) {
 		super();
 		if(view == null || key == null) throw new IllegalArgumentException("Null view and/or view key");
 		this.view = view;
@@ -124,7 +123,7 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 	}
 
 	@Override
-	public void onPreviewNativeEvent(NativePreviewEvent event) {
+	public void onPreviewNativeEvent(final NativePreviewEvent event) {
 		// NOTE: we should only be in the popped state for previewing events
 		// assert isPopped() == true; (commented out for performance - but asserts
 		// ok)
@@ -150,7 +149,7 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 				// Don't eat events if event capture is enabled, as this can interfere
 				// with dialog dragging, for example.
 				if(DOM.getCaptureElement() != null) {
-					//Log.debug("ViewContainer.onPreviewNativeEvent() - we're in capture mode..");
+					// Log.debug("ViewContainer.onPreviewNativeEvent() - we're in capture mode..");
 					return;
 				}
 				break;
@@ -168,7 +167,7 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 		// NOTE: we dis-allow UI interaction with content NOT contained w/in this
 		// view container!
 		if(!eventTargetsPopup) {
-			//Log.debug("ViewContainer.onPreviewNativeEvent() - cancelling event..");
+			// Log.debug("ViewContainer.onPreviewNativeEvent() - cancelling event..");
 			event.cancel();
 		}
 	}
@@ -187,10 +186,12 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 	public IViewState getViewState() {
 		return new IViewState() {
 
+			@Override
 			public boolean isPopped() {
 				return ViewContainer.this.isPopped();
 			}
 
+			@Override
 			public boolean isMinimized() {
 				return ViewContainer.this.isMinimized();
 			}
@@ -206,7 +207,7 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 	}
 
 	@Override
-	public HandlerRegistration addDragHandler(IDragHandler handler) {
+	public HandlerRegistration addDragHandler(final IDragHandler handler) {
 		return addHandler(handler, DragEvent.TYPE);
 	}
 
@@ -220,34 +221,37 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 
 	private void endDrag() {
 		if(mouseIsDown) {
-			//Log.debug("ending dragging..");
+			// Log.debug("ending dragging..");
 			DOM.releaseCapture(dragTarget);
 			mouseIsDown = dragging = false;
 			dragOffsetX = dragOffsetY = -1;
 		}
 	}
 
-	public void onMouseDown(MouseDownEvent event) {
+	@Override
+	public void onMouseDown(final MouseDownEvent event) {
 		if(isPopped()) {
 			endDrag();
 			DOM.setCapture(dragTarget);
-			//Log.debug("set drag target: " + dragTarget.getInnerText());
+			// Log.debug("set drag target: " + dragTarget.getInnerText());
 
 			event.stopPropagation();
 			mouseIsDown = true;
 			dragOffsetX = event.getClientX() - getAbsoluteLeft();
 			dragOffsetY = event.getClientY() - getAbsoluteTop();
-			//Log.debug("onMouseDown() - dragOffsetX:" + dragOffsetX + ",dragOffsetY:" + dragOffsetY);
+			// Log.debug("onMouseDown() - dragOffsetX:" + dragOffsetX +
+			// ",dragOffsetY:" + dragOffsetY);
 		}
 	}
 
-	public void onMouseMove(MouseMoveEvent event) {
+	@Override
+	public void onMouseMove(final MouseMoveEvent event) {
 		final int dc = getHandlerCount(DragEvent.TYPE);
 		final boolean fireDrag = (dc > 0);
 		if(mouseIsDown) {
 			if(!dragging) {
 				dragging = true;
-				//Log.debug("onMouseMove() - drag start..");
+				// Log.debug("onMouseMove() - drag start..");
 				if(fireDrag) fireEvent(new DragEvent(DragMode.START, dragOffsetX, dragOffsetY));
 			}
 
@@ -258,7 +262,8 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 			// keep the drag handle within the viewable area!
 			if(nx < 0) nx = 0;
 			if(ny < 0) ny = 0;
-			//Log.debug("onMouseMove() - x:" + x + ",y:" + y + " | nx:" + nx + ",ny:" + ny);
+			// Log.debug("onMouseMove() - x:" + x + ",y:" + y + " | nx:" + nx + ",ny:"
+			// + ny);
 
 			final int bx = fireDrag ? getAbsoluteLeft() : 0;
 			final int by = fireDrag ? getAbsoluteTop() : 0;
@@ -268,13 +273,15 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 			es.setPropertyPx("top", ny);
 
 			if(fireDrag) {
-				//Log.debug("onMouseMove() deltaX:" + (nx - bx) + ",deltaY:" + (ny - by));
+				// Log.debug("onMouseMove() deltaX:" + (nx - bx) + ",deltaY:" + (ny -
+				// by));
 				fireEvent(new DragEvent(DragMode.DRAGGING, nx - bx, ny - by));
 			}
 		}
 	}
 
-	public void onMouseUp(MouseUpEvent event) {
+	@Override
+	public void onMouseUp(final MouseUpEvent event) {
 		if(mouseIsDown) {
 			endDrag();
 			if(getHandlerCount(DragEvent.TYPE) > 0) fireEvent(new DragEvent(DragMode.END));
@@ -288,7 +295,7 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 	 * @param refWidget The reference Widget used to determine the popped
 	 *        position.
 	 */
-	public void pop(Widget refWidget) {
+	public void pop(final Widget refWidget) {
 		assert refWidget != null;
 		pop(refWidget.getAbsoluteTop() + 15, refWidget.getAbsoluteLeft() + 15);
 	}
@@ -299,7 +306,7 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 	 * @param top The top pixel position
 	 * @param left The left pixel position
 	 */
-	private void pop(int top, int left) {
+	private void pop(final int top, final int left) {
 		if(!isPopped()) {
 			assert top > 0 && left > 0;
 
@@ -330,7 +337,7 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 			toolbar.btnPop.setDown(true);
 			toolbar.btnPop.setTitle(ViewToolbar.TITLE_PIN);
 
-			//assert hrMouseDown == hrMouseMove == hrMouseUp == null;
+			// assert hrMouseDown == hrMouseMove == hrMouseUp == null;
 			hrMouseDown = toolbar.addMouseDownHandler(this);
 			hrMouseMove = toolbar.addMouseMoveHandler(this);
 			hrMouseUp = toolbar.addMouseUpHandler(this);
@@ -339,7 +346,7 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 			hrEventPreview = Event.addNativePreviewHandler(this);
 		}
 	}
-	
+
 	/**
 	 * Sets the state of this container to be ready for pinning to a Panel.
 	 */
@@ -408,7 +415,8 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 		}
 	}
 
-	public void onClick(ClickEvent event) {
+	@Override
+	public void onClick(final ClickEvent event) {
 		final Object sender = event.getSource();
 
 		// pop the view

@@ -33,6 +33,7 @@ public class TestFieldPanel extends AbstractFieldPanel<FlowPanel> {
 		public IFieldRenderer<FlowPanel> getRenderer() {
 			return new IFieldRenderer<FlowPanel>() {
 
+				@Override
 				public void render(FlowPanel pnl, FieldGroup fg) {
 					final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 					cmpsr.setCanvas(pnl);
@@ -144,6 +145,7 @@ public class TestFieldPanel extends AbstractFieldPanel<FlowPanel> {
 	public IFieldRenderer<FlowPanel> getRenderer() {
 		return new IFieldRenderer<FlowPanel>() {
 
+			@Override
 			public void render(FlowPanel widget, FieldGroup fg) {
 				final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 				cmpsr.setCanvas(widget);
@@ -189,6 +191,7 @@ public class TestFieldPanel extends AbstractFieldPanel<FlowPanel> {
 	protected FieldGroup generateFieldGroup() {
 		final FieldGroup fg = (new IFieldGroupProvider() {
 
+			@Override
 			public FieldGroup getFieldGroup() {
 				final FieldGroup fgroup = (new TestFieldGroupProviders.AccountFieldsProvider()).getFieldGroup();
 				fgroup.addField("paymentInfo", (new TestFieldGroupProviders.PaymentInfoFieldsProvider()).getFieldGroup());

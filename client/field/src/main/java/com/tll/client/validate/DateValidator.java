@@ -13,8 +13,8 @@ import com.tll.util.StringUtil;
  */
 public class DateValidator implements IValidator {
 
-	private static final DateValidator TIMESTAMP_VALIDATOR =
-			new DateValidator(Fmt.getDateTimeFormat(GlobalFormat.TIMESTAMP));
+	private static final DateValidator TIMESTAMP_VALIDATOR = new DateValidator(
+			Fmt.getDateTimeFormat(GlobalFormat.TIMESTAMP));
 
 	private static final DateValidator DATE_VALIDATOR = new DateValidator(Fmt.getDateTimeFormat(GlobalFormat.DATE));
 
@@ -27,7 +27,7 @@ public class DateValidator implements IValidator {
 	 * @throws IllegalArgumentException When the given date format is
 	 *         <code>null</code> or invalid.
 	 */
-	public static final DateValidator get(GlobalFormat dateFormat) {
+	public static final DateValidator get(final GlobalFormat dateFormat) {
 		switch(dateFormat) {
 			case DATE:
 				return DATE_VALIDATOR;
@@ -45,7 +45,7 @@ public class DateValidator implements IValidator {
 	 * Constructor
 	 * @param pattern
 	 */
-	public DateValidator(String pattern) {
+	public DateValidator(final String pattern) {
 		if(pattern == null) {
 			throw new IllegalArgumentException("A date format must be specified.");
 		}
@@ -56,7 +56,7 @@ public class DateValidator implements IValidator {
 	 * Constructor
 	 * @param dateFormat
 	 */
-	public DateValidator(DateTimeFormat dateFormat) {
+	public DateValidator(final DateTimeFormat dateFormat) {
 		super();
 		if(dateFormat == null) {
 			throw new IllegalArgumentException("A date pattern must be specified.");
@@ -64,7 +64,8 @@ public class DateValidator implements IValidator {
 		this.dateFormat = dateFormat;
 	}
 
-	public Object validate(Object value) throws ValidationException {
+	@Override
+	public Object validate(final Object value) throws ValidationException {
 		if(value == null || value instanceof Date) return value;
 		final String s = value.toString();
 		if(StringUtil.isEmpty(s)) return value;

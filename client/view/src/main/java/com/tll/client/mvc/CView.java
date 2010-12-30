@@ -6,8 +6,8 @@ import com.tll.client.mvc.view.ViewKey;
 import com.tll.client.ui.view.ViewContainer;
 
 /**
- * CView - Simple encapsulation of a view and its initializer ensuring
- * that the view key in the view equals that in the initializer.
+ * CView - Simple encapsulation of a view and its initializer ensuring that the
+ * view key in the view equals that in the initializer.
  * @author jpk
  */
 final class CView extends AbstractViewKeyProvider {
@@ -20,7 +20,7 @@ final class CView extends AbstractViewKeyProvider {
 	 * @param vc
 	 * @param init
 	 */
-	public CView(ViewContainer vc, IViewInitializer init) {
+	public CView(final ViewContainer vc, final IViewInitializer init) {
 		if(vc == null || init == null) throw new IllegalArgumentException("Null view and/or init.");
 		if(!vc.getViewKey().equals(init.getViewKey())) {
 			throw new IllegalArgumentException("Un-equal view keys");

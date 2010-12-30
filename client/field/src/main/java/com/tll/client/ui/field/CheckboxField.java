@@ -23,18 +23,18 @@ public final class CheckboxField extends AbstractField<Boolean> {
 		 * Constructor
 		 * @param label
 		 */
-		public Impl(String label) {
+		public Impl(final String label) {
 			super(label);
 			setStyleName(Styles.CBRB);
 		}
 
 		@Override
-		public void setValue(Boolean value) {
+		public void setValue(final Boolean value) {
 			super.setValue(value == null ? Boolean.FALSE : value);
 		}
 
 		@Override
-		public void setValue(Boolean value, boolean fireEvents) {
+		public void setValue(final Boolean value, final boolean fireEvents) {
 			super.setValue(value == null ? Boolean.FALSE : value, fireEvents);
 		}
 	}
@@ -54,9 +54,9 @@ public final class CheckboxField extends AbstractField<Boolean> {
 	 * @param labelText
 	 * @param helpText
 	 */
-	CheckboxField(String name, String propName, String labelText, String helpText) {
+	CheckboxField(final String name, final String propName, final String labelText, final String helpText) {
 		super(name, propName, null, helpText);
-		//setConverter(ToBooleanConverter.DEFAULT);
+		// setConverter(ToBooleanConverter.DEFAULT);
 		this.cblabelText = labelText;
 		cb = new Impl(cblabelText);
 		cb.addFocusHandler(this);
@@ -73,18 +73,18 @@ public final class CheckboxField extends AbstractField<Boolean> {
 		return cb.getValue() == Boolean.TRUE;
 	}
 
-	public void setChecked(boolean checked) {
+	public void setChecked(final boolean checked) {
 		cb.setValue(checked ? Boolean.TRUE : Boolean.FALSE);
 	}
 
 	@Override
-	public void setEnabled(boolean enabled) {
+	public void setEnabled(final boolean enabled) {
 		cb.setEnabled(enabled);
 		super.setEnabled(enabled);
 	}
 
 	@Override
-	public void setReadOnly(boolean readOnly) {
+	public void setReadOnly(final boolean readOnly) {
 		if(cb != null) cb.setText(readOnly ? "" : cblabelText);
 		super.setReadOnly(readOnly);
 	}
@@ -94,7 +94,8 @@ public final class CheckboxField extends AbstractField<Boolean> {
 		return ToStringConverter.INSTANCE.convert(getValue());
 	}
 
-	public void setText(String text) {
+	@Override
+	public void setText(final String text) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -104,7 +105,7 @@ public final class CheckboxField extends AbstractField<Boolean> {
 	}
 
 	@Override
-	public void setLabelText(String labelText) {
+	public void setLabelText(final String labelText) {
 		this.cblabelText = labelText == null ? "" : labelText;
 		if(cb != null) cb.setText(cblabelText);
 	}

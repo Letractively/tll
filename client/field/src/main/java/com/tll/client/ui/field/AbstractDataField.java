@@ -27,7 +27,7 @@ public abstract class AbstractDataField<E, V> extends AbstractField<V> {
 	 * @param labelText
 	 * @param helpText
 	 */
-	public AbstractDataField(String name, String propName, String labelText, String helpText) {
+	public AbstractDataField(final String name, final String propName, final String labelText, final String helpText) {
 		super(name, propName, labelText, helpText);
 	}
 
@@ -36,10 +36,10 @@ public abstract class AbstractDataField<E, V> extends AbstractField<V> {
 	 * @param data Map of value/name pairs keyed by <em>value</em> where each key
 	 *        holds the token for use in the ui.
 	 */
-	public void setData(Map<E, String> data) {
+	public void setData(final Map<E, String> data) {
 		this.data = data;
 	}
-	
+
 	/**
 	 * @return the data map
 	 */
@@ -52,7 +52,7 @@ public abstract class AbstractDataField<E, V> extends AbstractField<V> {
 	 * @param name the presentation name
 	 * @param value the field value
 	 */
-	public void addDataItem(String name, E value) {
+	public void addDataItem(final String name, final E value) {
 		data.put(value, name);
 	}
 
@@ -60,15 +60,15 @@ public abstract class AbstractDataField<E, V> extends AbstractField<V> {
 	 * Removes a single data item
 	 * @param value the field value data item value to remove
 	 */
-	public void removeDataItem(E value) {
+	public void removeDataItem(final E value) {
 		data.remove(value);
 	}
 
-	public final String getToken(E value) {
+	public final String getToken(final E value) {
 		return data.get(value);
 	}
 
-	public final E getDataValue(String key) {
+	public final E getDataValue(final String key) {
 		for(final E val : data.keySet()) {
 			if(data.get(val).equals(key)) {
 				return val;

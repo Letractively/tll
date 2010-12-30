@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Panel;
@@ -46,13 +46,13 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	@SuppressWarnings("serial")
 	static final class ViewChangeHandlers extends ArrayList<IViewChangeHandler> {
 
-		public void fireEvent(ViewChangeEvent event) {
-			//Log.debug("Firing " + event);
+		public void fireEvent(final ViewChangeEvent event) {
+			// Log.debug("Firing " + event);
 			// creting a new list avoids concurrent modification exception
 			// TODO use a queuing system instead! to ensure view change events are
 			// recieved in proper order by the listeners!!
 			// TODO if we do queue view change events, do we then need to defer them??
-			ArrayList<IViewChangeHandler> ihandlers = new ArrayList<IViewChangeHandler>(this);
+			final ArrayList<IViewChangeHandler> ihandlers = new ArrayList<IViewChangeHandler>(this);
 			for(final IViewChangeHandler handler : ihandlers) {
 				handler.onViewChange(event);
 			}
@@ -64,7 +64,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * @param e the view
 	 * @return Newly created {@link ViewRef}.
 	 */
-	private static ViewRef ref(CView e) {
+	private static ViewRef ref(final CView e) {
 		return new ViewRef(e.init, e.vc.getView().getShortViewName(), e.vc.getView().getLongViewName());
 	}
 
@@ -80,7 +80,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * @param key
 	 * @return the complimenting history token.
 	 */
-	private static String generateViewKeyHistoryToken(ViewKey key) {
+	private static String generateViewKeyHistoryToken(final ViewKey key) {
 		return VIEW_TOKEN_PREFIX + Double.toString(key.hashCode());
 	}
 
@@ -92,7 +92,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 *         if the history token is not a view history token.
 	 */
 	@SuppressWarnings("null")
-	private static double extractViewKeyHash(String historyToken) {
+	private static double extractViewKeyHash(final String historyToken) {
 		final int len = historyToken == null ? 0 : historyToken.length();
 		if(len < 2) return -1;
 		if(historyToken.charAt(0) != VIEW_TOKEN_PREFIX) return -1;
@@ -107,7 +107,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 *        container. Must not be <code>null</code>.
 	 * @param cacheCapacity The limit of the number of views to hold in memory.
 	 */
-	public static void initialize(ComplexPanel parentViewPanel, int cacheCapacity) {
+	public static void initialize(final ComplexPanel parentViewPanel, final int cacheCapacity) {
 		instance = new ViewManager(parentViewPanel, cacheCapacity);
 	}
 
@@ -131,7 +131,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 
 	/**
 	 * The parent view panel. This property must be set so that views can attach
-	 * to the DOM.  The panel must support multiple children.
+	 * to the DOM. The panel must support multiple children.
 	 */
 	private final ComplexPanel parentViewPanel;
 
@@ -179,7 +179,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * @param cacheCapacity
 	 * @see ViewManager#initialize(ComplexPanel, int)
 	 */
-	private ViewManager(ComplexPanel parentPanel, int cacheCapacity) {
+	private ViewManager(final ComplexPanel parentPanel, final int cacheCapacity) {
 		parentViewPanel = parentPanel;
 		cache = new ViewCache(cacheCapacity);
 		History.addValueChangeHandler(this);
@@ -191,12 +191,12 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	}
 
 	@Override
-	public void addViewChangeHandler(IViewChangeHandler handler) {
+	public void addViewChangeHandler(final IViewChangeHandler handler) {
 		viewChangeHandlers.add(handler);
 	}
 
 	@Override
-	public void removeViewChangeHandler(IViewChangeHandler handler) {
+	public void removeViewChangeHandler(final IViewChangeHandler handler) {
 		viewChangeHandlers.remove(handler);
 	}
 
@@ -213,19 +213,19 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	public ViewKey getCurrentViewKey() {
 		return current == null ? null : current.vc.getViewKey();
 	}
-	
+
 	/**
 	 * Loads the view into cache but does't add it to the dom.
 	 * @param init
 	 */
 	@SuppressWarnings("unchecked")
-	public void loadView(IViewInitializer init) {
+	public void loadView(final IViewInitializer init) {
 		// first check if not already cached
 		CView e = cache.peekQueue(init.getViewKey());
 		if(e != null) return;
-		
-		//Log.debug("Loading view: " + init + " ..");
-		
+
+		// Log.debug("Loading view: " + init + " ..");
+
 		// non-cached view
 		final IView<IViewInitializer> view = (IView<IViewInitializer>) init.getViewKey().getViewClass().newView();
 
@@ -233,7 +233,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 		view.initialize(init);
 
 		e = new CView(new ViewContainer(view, init.getViewKey().getViewClass().getViewOptions(), init.getViewKey()), init);
-		
+
 		cacheView(e);
 
 		view.apply(e.vc, e.vc.getToolbar());
@@ -248,11 +248,11 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * @param key the view key
 	 * @return The matching cached view or <code>null</code> if not found.
 	 */
-	public IView<?> resolveView(ViewKey key) {
-		CView cv = cache.peekQueue(key);
+	public IView<?> resolveView(final ViewKey key) {
+		final CView cv = cache.peekQueue(key);
 		return cv == null ? null : cv.vc.getView();
 	}
-	
+
 	/**
 	 * Sets the current view. The current view is defined as the visible pinned
 	 * view.
@@ -260,9 +260,9 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 *        in the view cache
 	 */
 	@SuppressWarnings("unchecked")
-	void setCurrentView(IViewInitializer init) {
+	void setCurrentView(final IViewInitializer init) {
 		final ViewKey key = init.getViewKey();
-	//	Log.debug("Setting current view: '" + key + "' ..");
+		// Log.debug("Setting current view: '" + key + "' ..");
 
 		CView e;
 		final ViewOptions options = init.getViewKey().getViewClass().getViewOptions();
@@ -276,7 +276,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			setCurrentView(e, showPopped);
 		}
 		else {
-			//Log.debug("Creating and initializing view: " + key + " ..");
+			// Log.debug("Creating and initializing view: " + key + " ..");
 			// non-cached view
 			final IView<IViewInitializer> view = (IView<IViewInitializer>) key.getViewClass().newView();
 
@@ -298,7 +298,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * @param e primary cache element
 	 * @param showPopped show popped or pinned?
 	 */
-	private void setCurrentView(CView e, boolean showPopped) {
+	private void setCurrentView(final CView e, final boolean showPopped) {
 		final ViewContainer vc = e.vc;
 		final ViewOptions options = e.init.getViewKey().getViewClass().getViewOptions();
 
@@ -313,7 +313,8 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			final boolean crntIsPopped = current != null && current.vc.isPopped();
 
 			final boolean rmvCrnt = current != null && ((!sameView && !crntIsPopped) || (sameView && pndgIsPopped));
-			final boolean pinPndg = (rmvCrnt || (sameView && crntIsPopped) || !sameView || (!e.vc.isAttached() || !e.vc.isVisible()));
+			final boolean pinPndg =
+					(rmvCrnt || (sameView && crntIsPopped) || !sameView || (!e.vc.isAttached() || !e.vc.isVisible()));
 
 			if(rmvCrnt) {
 				// remove or hide the current pinned view
@@ -339,9 +340,9 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			}
 			// set as current
 			current = e;
-			
+
 			// fire view load event
-			DeferredCommand.addCommand(new Command() {
+			Scheduler.get().scheduleDeferred(new Command() {
 
 				@SuppressWarnings("synthetic-access")
 				@Override
@@ -356,11 +357,12 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 
 		// unload pending cview
 		if(pendingUnload != null) {
-			//Log.debug("Destroying pending unload view- " + pendingUnload.vc.getView().toString() + "..");
+			// Log.debug("Destroying pending unload view- " +
+			// pendingUnload.vc.getView().toString() + "..");
 			pendingUnload.vc.getView().onDestroy();
-			
+
 			// fire view un-load event
-			DeferredCommand.addCommand(new Command() {
+			Scheduler.get().scheduleDeferred(new Command() {
 
 				@SuppressWarnings("synthetic-access")
 				@Override
@@ -374,18 +376,18 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 		// set the initial view if not set
 		if(initial == null) initial = e;
 	}
-	
-	private void cacheView(CView e) {
+
+	private void cacheView(final CView e) {
 		// add the view to the cache
 		final CView old = cache.cache(e);
 		if(old != null) {
 			assert old != e && !old.getViewKey().equals(e.getViewKey());
-			//Log.debug("Destroying view - " + old.vc.getView().toString() + "..");
+			// Log.debug("Destroying view - " + old.vc.getView().toString() + "..");
 			// view life-cycle destroy
 			old.vc.getView().onDestroy();
-			
+
 			// fire view un-load event
-			DeferredCommand.addCommand(new Command() {
+			Scheduler.get().scheduleDeferred(new Command() {
 
 				@SuppressWarnings("synthetic-access")
 				@Override
@@ -404,7 +406,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * @param destroy Remove the view from the queue of current views?
 	 * @param erradicate Physically remove the view from cache entirely?
 	 */
-	void unloadView(ViewKey key, boolean destroy, boolean erradicate) {
+	void unloadView(final ViewKey key, final boolean destroy, final boolean erradicate) {
 		final CView e = findView(key);
 		if(e == null) return;
 
@@ -435,7 +437,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			if(pendingUnload != null) {
 				pendingUnload.vc.getView().onDestroy();
 				// fire view un-load event
-				DeferredCommand.addCommand(new Command() {
+				Scheduler.get().scheduleDeferred(new Command() {
 
 					@SuppressWarnings("synthetic-access")
 					@Override
@@ -452,7 +454,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * Removes all view artifacts from the DOM and clears the cache.
 	 */
 	public void clear() {
-		//Log.debug("Clearing view cache..");
+		// Log.debug("Clearing view cache..");
 		if(cache.size() > 0) {
 			for(final Iterator<CView> itr = cache.queueIterator(); itr.hasNext();) {
 				final CView e = itr.next();
@@ -461,7 +463,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			}
 		}
 		cache.clear();
-		//Log.debug("View cache cleared");
+		// Log.debug("View cache cleared");
 	}
 
 	/**
@@ -470,7 +472,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 *        <code>null</code>.
 	 * @return The first found view or <code>null</code> if no match found.
 	 */
-	private CView findFirstView(CView exclude) {
+	private CView findFirstView(final CView exclude) {
 		final Iterator<CView> itr = cache.queueIterator();
 		if(itr != null) {
 			while(itr.hasNext()) {
@@ -489,7 +491,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * @return The found {@link IView} or <code>null</code> if not present in the
 	 *         view cache.
 	 */
-	private CView findView(ViewKey key) {
+	private CView findView(final ViewKey key) {
 		final Iterator<CView> itr = cache.queueIterator();
 		if(itr != null) {
 			while(itr.hasNext()) {
@@ -508,7 +510,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * @return The found {@link IView} or <code>null</code> if not present in the
 	 *         view cache.
 	 */
-	private CView findView(double viewKeyHash) {
+	private CView findView(final double viewKeyHash) {
 		final Iterator<CView> itr = cache.queueIterator();
 		if(itr != null) {
 			while(itr.hasNext()) {
@@ -533,7 +535,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * @param viewKeyHash
 	 * @return The found view ref or <code>null</code> if not found.
 	 */
-	private ViewRef findViewRef(double viewKeyHash) {
+	private ViewRef findViewRef(final double viewKeyHash) {
 		// try visited view ref cache
 		final Iterator<ViewRef> vitr = cache.visitedRefIterator();
 		if(vitr != null) {
@@ -575,7 +577,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 *        NOTE: This view is <em>always</em> retained.
 	 * @return A newly created never <code>null</code> array of view references.
 	 */
-	public ViewRef[] getViewRefs(int capacity, boolean includePopped, boolean includeFirst) {
+	public ViewRef[] getViewRefs(int capacity, final boolean includePopped, final boolean includeFirst) {
 		if(initial == null) return new ViewRef[0];
 		assert current != null;
 
@@ -653,7 +655,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * Pins a popped view.
 	 * @param key the view key of the popped view to pin
 	 */
-	void pinPoppedView(ViewKey key) {
+	void pinPoppedView(final ViewKey key) {
 		final CView e = findView(key);
 		if(e == null) throw new IllegalStateException();
 		if(e.vc.isPopped()) {
@@ -665,7 +667,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * Dispatches the view request event to the appropriate controller.
 	 * @param request The view request
 	 */
-	public void dispatch(IViewRequest request) {
+	public void dispatch(final IViewRequest request) {
 		if(request == null) throw new IllegalArgumentException("No view request specified.");
 
 		if(pendingViewRequest == null) {
@@ -681,7 +683,8 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 					// need to route through history first
 					this.pendingViewRequest = request;
 					final String htoken = generateViewKeyHistoryToken(request.getViewKey());
-					//Log.debug("Routing view '" + request.getViewKey() + "' through history with hash: " + htoken);
+					// Log.debug("Routing view '" + request.getViewKey() +
+					// "' through history with hash: " + htoken);
 					History.newItem(htoken);
 				}
 			}
@@ -697,9 +700,9 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 		}
 	}
 
-	private void doDispatch(IViewRequest request) {
+	private void doDispatch(final IViewRequest request) {
 		// do actual disptach
-		//Log.debug("Dispatching view request: " + request + " ..");
+		// Log.debug("Dispatching view request: " + request + " ..");
 		for(final IController c : controllers) {
 			if(c.canHandle(request)) {
 				c.handle(request);
@@ -709,10 +712,11 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 		throw new IllegalStateException("Unhandled view request: " + request);
 	}
 
-	public void onValueChange(ValueChangeEvent<String> event) {
+	@Override
+	public void onValueChange(final ValueChangeEvent<String> event) {
 		final double viewKeyHash = extractViewKeyHash(event.getValue());
 		if(viewKeyHash != -1) {
-			//Log.debug("Handling view history token: " + viewKeyHash + "..");
+			// Log.debug("Handling view history token: " + viewKeyHash + "..");
 			if(pendingViewRequest != null) {
 				// dispatch the view request
 				dispatch(pendingViewRequest);
@@ -727,7 +731,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 					// resort to the visited view ref cache
 					final ViewRef r = findViewRef(viewKeyHash);
 					if(r == null) {
-						//Log.warn("Un-resolved view hash: " + viewKeyHash);
+						// Log.warn("Un-resolved view hash: " + viewKeyHash);
 					}
 					else {
 						setCurrentView(r.getViewInitializer());
@@ -742,7 +746,8 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 					setCurrentView(e, false);
 				}
 				else {
-					//Log.debug("Un-resolvable view hash: " + viewKeyHash + ". No action performed.");
+					// Log.debug("Un-resolvable view hash: " + viewKeyHash +
+					// ". No action performed.");
 				}
 			}
 		}

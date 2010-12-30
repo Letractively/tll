@@ -41,13 +41,14 @@ public class TextAreaField extends AbstractField<String> implements IHasMaxLengt
 	 * @param numRows if -1, value won't be set
 	 * @param numCols if -1, value won't be set
 	 */
-	TextAreaField(String name, String propName, String labelText, String helpText, int numRows, int numCols) {
+	TextAreaField(final String name, final String propName, final String labelText, final String helpText,
+			final int numRows, final int numCols) {
 		super(name, propName, labelText, helpText);
 		ta = new Impl();
 		ta.addValueChangeHandler(this);
 		ta.addFocusHandler(this);
 		ta.addBlurHandler(this);
-		//setConverter(ToStringConverter.INSTANCE);
+		// setConverter(ToStringConverter.INSTANCE);
 		setNumRows(numRows);
 		setNumCols(numCols);
 	}
@@ -56,7 +57,7 @@ public class TextAreaField extends AbstractField<String> implements IHasMaxLengt
 		return ta.getVisibleLines();
 	}
 
-	public void setNumRows(int numRows) {
+	public void setNumRows(final int numRows) {
 		ta.setVisibleLines(numRows);
 	}
 
@@ -64,15 +65,17 @@ public class TextAreaField extends AbstractField<String> implements IHasMaxLengt
 		return ta.getCharacterWidth();
 	}
 
-	public void setNumCols(int numCols) {
+	public void setNumCols(final int numCols) {
 		ta.setCharacterWidth(numCols);
 	}
 
+	@Override
 	public int getMaxLen() {
 		return maxLen;
 	}
 
-	public void setMaxLen(int maxLen) {
+	@Override
+	public void setMaxLen(final int maxLen) {
 		this.maxLen = maxLen;
 		if(maxLen == -1) {
 			removeValidator(StringLengthValidator.class);
@@ -87,12 +90,13 @@ public class TextAreaField extends AbstractField<String> implements IHasMaxLengt
 		return ta.getText();
 	}
 
-	public void setText(String text) {
+	@Override
+	public void setText(final String text) {
 		ta.setText(text);
 	}
 
 	@Override
-	public void setEnabled(boolean enabled) {
+	public void setEnabled(final boolean enabled) {
 		ta.setEnabled(enabled);
 		super.setEnabled(enabled);
 	}

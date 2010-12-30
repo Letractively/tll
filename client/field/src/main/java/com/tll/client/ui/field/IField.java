@@ -79,7 +79,8 @@ public interface IField extends HasName, IWidgetRef, IHasErrorHandler {
 	 * @param isNewModelData Is the model data new or existing?
 	 */
 	// NO - this is too close to the model
-	//void applyPropertyMetadata(IPropertyMetadataProvider provider, boolean isNewModelData);
+	// void applyPropertyMetadata(IPropertyMetadataProvider provider, boolean
+	// isNewModelData);
 
 	/**
 	 * Adds a validator.

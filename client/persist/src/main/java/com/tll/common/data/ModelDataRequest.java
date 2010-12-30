@@ -8,11 +8,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.tll.IDescriptorProvider;
+import com.tll.IMarshalable;
+
 /**
  * Way to request model data when issuing an RPC call.
  * @author jpk
  */
-public final class ModelDataRequest implements IModelRelatedRequest {
+public final class ModelDataRequest implements IDescriptorProvider, IMarshalable {
 
 	private Set<String> entityTypes;
 

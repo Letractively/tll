@@ -26,11 +26,12 @@ public class BooleanValidator implements IValidator {
 	 * Constructor
 	 * @param trueStr
 	 */
-	public BooleanValidator(String trueStr) {
+	public BooleanValidator(final String trueStr) {
 		this.trueStr = trueStr;
 	}
 
-	public Object validate(Object value) {
+	@Override
+	public Object validate(final Object value) {
 		if(value == null || value instanceof Boolean) {
 			return value;
 		}

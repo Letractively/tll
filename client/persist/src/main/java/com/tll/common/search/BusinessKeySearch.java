@@ -8,7 +8,8 @@ package com.tll.common.search;
 import java.util.Collection;
 import java.util.HashSet;
 
-import com.tll.model.IEntityTypeProvider;
+import com.tll.common.model.IEntityTypeProvider;
+import com.tll.common.model.IPropertyValue;
 import com.tll.util.StringUtil;
 
 /**

@@ -36,7 +36,7 @@ public final class FieldLabel extends Widget implements HasText, HasClickHandler
 	 *        <code>null</code>.
 	 * @param required Is the associated field required?
 	 */
-	public FieldLabel(String text, String fldId, boolean required) {
+	public FieldLabel(final String text, final String fldId, final boolean required) {
 		setElement(DOM.createLabel());
 		this.required = required;
 		setText(text);
@@ -49,7 +49,7 @@ public final class FieldLabel extends Widget implements HasText, HasClickHandler
 	 * Constructor
 	 * @param text
 	 */
-	public FieldLabel(String text) {
+	public FieldLabel(final String text) {
 		this(text, null, false);
 	}
 
@@ -61,17 +61,17 @@ public final class FieldLabel extends Widget implements HasText, HasClickHandler
 	}
 
 	@Override
-	public HandlerRegistration addClickHandler(ClickHandler handler) {
+	public HandlerRegistration addClickHandler(final ClickHandler handler) {
 		return addDomHandler(handler, ClickEvent.getType());
 	}
 
 	@Override
-	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
+	public HandlerRegistration addMouseOverHandler(final MouseOverHandler handler) {
 		return addDomHandler(handler, MouseOverEvent.getType());
 	}
 
 	@Override
-	public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
+	public HandlerRegistration addMouseOutHandler(final MouseOutHandler handler) {
 		return addDomHandler(handler, MouseOutEvent.getType());
 	}
 
@@ -79,21 +79,23 @@ public final class FieldLabel extends Widget implements HasText, HasClickHandler
 	 * Sets the for attrubute.
 	 * @param fldId The DOM element id of the associated form field.
 	 */
-	public void setFor(String fldId) {
+	public void setFor(final String fldId) {
 		impl.setFor(getElement(), fldId);
 	}
 
+	@Override
 	public String getText() {
 		return text;
 	}
 
+	@Override
 	public void setText(String text) {
 		if(StringUtil.isEmpty(text)) text = "";
 		getElement().setInnerHTML(required ? text + requiredToken : text);
 		this.text = text;
 	}
 
-	public void setRequired(boolean required) {
+	public void setRequired(final boolean required) {
 		if(this.required != required) {
 			getElement().setInnerHTML(required ? text + requiredToken : text);
 			this.required = required;

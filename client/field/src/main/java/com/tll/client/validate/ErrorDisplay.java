@@ -32,7 +32,7 @@ public enum ErrorDisplay {
 	/**
 	 * Constructor
 	 */
-	private ErrorDisplay(int flag) {
+	private ErrorDisplay(final int flag) {
 		this.flag = flag;
 	}
 

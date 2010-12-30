@@ -10,9 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.tll.common.cache.ModelDataType;
 import com.tll.common.model.CopyCriteria;
-import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
 
 /**
@@ -20,6 +18,11 @@ import com.tll.common.model.Model;
  * @author jpk
  */
 public final class ModelCache {
+
+	public static enum ModelDataType {
+		ENTITY,
+		ENTITY_PROTOTYPE;
+	}
 
 	private static ModelCache instance;
 
@@ -33,7 +36,7 @@ public final class ModelCache {
 	/**
 	 * Map of entity lists keyed by the entity class name.
 	 */
-	private Map<IEntityType, List<Model>> entityMap;
+	private Map<String, List<Model>> entityMap;
 
 	/**
 	 * Cache of entity prototypes
@@ -51,9 +54,9 @@ public final class ModelCache {
 	 * @param entityType
 	 * @param list
 	 */
-	public void cacheEntityList(IEntityType entityType, List<Model> list) {
+	public void cacheEntityList(String entityType, List<Model> list) {
 		if(entityMap == null) {
-			entityMap = new HashMap<IEntityType, List<Model>>();
+			entityMap = new HashMap<String, List<Model>>();
 		}
 		entityMap.put(entityType, list);
 	}
@@ -73,7 +76,7 @@ public final class ModelCache {
 	 * @param entityType
 	 * @return the cached entity list or <code>null</code> if it isn't cached.
 	 */
-	public List<Model> getEntityList(IEntityType entityType) {
+	public List<Model> getEntityList(String entityType) {
 		return entityMap == null ? null : entityMap.get(entityType);
 	}
 
@@ -85,11 +88,12 @@ public final class ModelCache {
 	 *         type or <code>null</code> if no prototype model of the given entity
 	 *         type is cached.
 	 */
-	public Model getEntityPrototype(IEntityType entityType) {
+	public Model getEntityPrototype(String entityType) {
 		if(entityPrototypes != null && entityType != null) {
 			for(final Model p : entityPrototypes) {
 				if(p.getEntityType().equals(entityType)) {
-					return p.copy(CopyCriteria.all()); // IMPT: provide a distinct instance
+					return p.copy(CopyCriteria.all()); // IMPT: provide a distinct
+																							// instance
 				}
 			}
 		}
@@ -105,19 +109,19 @@ public final class ModelCache {
 	public boolean isCached(ModelDataType type, Object obj) {
 		if(obj == null) return false;
 		switch(type) {
-		case ENTITY:
-			return entityMap == null ? false : entityMap.containsKey(obj);
-		case ENTITY_PROTOTYPE: {
-			if(entityPrototypes != null) {
-				final IEntityType et = (IEntityType) obj;
-				for(final Model p : entityPrototypes) {
-					if(et.equals(p.getEntityType())) return true;
+			case ENTITY:
+				return entityMap == null ? false : entityMap.containsKey(obj);
+			case ENTITY_PROTOTYPE: {
+				if(entityPrototypes != null) {
+					final String et = (String) obj;
+					for(final Model p : entityPrototypes) {
+						if(et.equals(p.getEntityType())) return true;
+					}
 				}
+				return false;
 			}
-			return false;
-		}
-		default:
-			return false;
+			default:
+				return false;
 		}
 	}
 

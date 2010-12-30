@@ -10,9 +10,9 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.convert.IConverter;
-import com.tll.common.bind.IPropertyChangeListener;
-import com.tll.common.bind.PropertyChangeSupport;
+import com.tll.common.model.IPropertyChangeListener;
 import com.tll.common.model.MalformedPropPathException;
+import com.tll.common.model.PropertyChangeSupport;
 import com.tll.common.model.PropertyPathException;
 
 /**

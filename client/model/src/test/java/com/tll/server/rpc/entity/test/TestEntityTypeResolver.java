@@ -5,7 +5,7 @@
  */
 package com.tll.server.rpc.entity.test;
 
-import com.tll.model.IEntityTypeResolver;
+import com.tll.common.model.IEntityTypeResolver;
 import com.tll.util.StringUtil;
 
 /**

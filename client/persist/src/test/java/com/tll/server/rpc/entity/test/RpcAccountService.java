@@ -4,7 +4,6 @@
  */
 package com.tll.server.rpc.entity.test;
 
-import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
 import com.tll.common.model.RelatedOneProperty;
 import com.tll.common.model.StringPropertyValue;
@@ -26,17 +25,17 @@ public class RpcAccountService extends AbstractPersistServiceImpl {
 	}
 
 	@Override
-	protected Model entityToModel(IEntityType entityType, IEntity e) throws Exception {
+	protected Model entityToModel(String entityType, IEntity e) throws Exception {
 		final Model m = super.entityToModel(entityType, e);
 		assert m != null;
 		final Account a = (Account) e;
 		if(a.getParent() != null) {
 			final IAccountService svc = context.getEntityServiceFactory().instance(IAccountService.class);
 			final Account parent = svc.load(a.getParent().getId());
-			final Model mparent = new Model(TestEntityType.ACCOUNT);
+			final Model mparent = new Model(TestEntityType.ACCOUNT.name());
 			mparent.set(new StringPropertyValue(Model.ID_PROPERTY, parent.getId().toString()));
 			mparent.set(new StringPropertyValue(Model.NAME_PROPERTY, parent.getName()));
-			m.set(new RelatedOneProperty(TestEntityType.ACCOUNT, mparent, "parent", true));
+			m.set(new RelatedOneProperty(TestEntityType.ACCOUNT.name(), mparent, "parent", true));
 		}
 		return m;
 	}

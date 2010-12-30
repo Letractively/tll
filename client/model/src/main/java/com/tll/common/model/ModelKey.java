@@ -3,7 +3,7 @@
  * @author jpk
  * @since Mar 14, 2009
  */
-package com.tll.model;
+package com.tll.common.model;
 
 import com.tll.IDescriptorProvider;
 import com.tll.IMarshalable;

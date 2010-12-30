@@ -18,7 +18,7 @@ public class StringLengthValidator implements IValidator {
 	 * @return The validated Object
 	 * @throws ValidationException When the String's length is out of bounds.
 	 */
-	public static Object validate(Object value, int min, int max) throws ValidationException {
+	public static Object validate(final Object value, final int min, final int max) throws ValidationException {
 		final int len = (value == null ? 0 : value.toString().length());
 		if(min == -1 && max != -1) {
 			if(len > max) throw new ValidationException("Max value length is " + max + " characters.");
@@ -37,7 +37,7 @@ public class StringLengthValidator implements IValidator {
 	 * @param minCharacters
 	 * @param maxCharacters
 	 */
-	public StringLengthValidator(int minCharacters, int maxCharacters) {
+	public StringLengthValidator(final int minCharacters, final int maxCharacters) {
 		if(maxCharacters <= minCharacters) {
 			throw new IllegalArgumentException("Invalid min/max lengths");
 		}
@@ -45,7 +45,8 @@ public class StringLengthValidator implements IValidator {
 		this.max = maxCharacters;
 	}
 
-	public Object validate(Object value) throws ValidationException {
+	@Override
+	public Object validate(final Object value) throws ValidationException {
 		return validate(value, min, max);
 	}
 }

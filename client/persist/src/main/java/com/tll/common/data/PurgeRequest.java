@@ -5,15 +5,13 @@
  */
 package com.tll.common.data;
 
-import com.tll.IMarshalable;
-import com.tll.model.ModelKey;
+import com.tll.common.model.Model;
+import com.tll.common.model.ModelKey;
 
 /**
- * EntityPurgeRequest
- * @param <M> model type
  * @author jpk
  */
-public class PurgeRequest<M extends IMarshalable> extends AbstractModelRequest {
+public class PurgeRequest extends AbstractModelRequest {
 
 	/**
 	 * This member is set when the purge request is for a server side defined
@@ -25,7 +23,7 @@ public class PurgeRequest<M extends IMarshalable> extends AbstractModelRequest {
 	 * This member is set when the purge request is non-entity based and is
 	 * implementation specific.
 	 */
-	private M model;
+	private Model model;
 
 	/**
 	 * Constructor
@@ -50,7 +48,7 @@ public class PurgeRequest<M extends IMarshalable> extends AbstractModelRequest {
 	 * specific.
 	 * @param model
 	 */
-	public PurgeRequest(M model) {
+	public PurgeRequest(Model model) {
 		super();
 		if(model == null) throw new IllegalArgumentException("Null model");
 		this.model = model;
@@ -73,7 +71,7 @@ public class PurgeRequest<M extends IMarshalable> extends AbstractModelRequest {
 	 * @return the non-entity model data that indicates what is to be purged and
 	 *         is impl specific.
 	 */
-	public M getModel() {
+	public Model getModel() {
 		return model;
 	}
 }

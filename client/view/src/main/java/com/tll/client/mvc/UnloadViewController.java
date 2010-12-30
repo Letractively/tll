@@ -13,12 +13,13 @@ import com.tll.client.mvc.view.UnloadViewRequest;
  */
 class UnloadViewController implements IController {
 
-	public boolean canHandle(IViewRequest request) {
+	@Override
+	public boolean canHandle(final IViewRequest request) {
 		return request instanceof UnloadViewRequest;
 	}
 
 	@Override
-	public void handle(IViewRequest request) {
+	public void handle(final IViewRequest request) {
 		final UnloadViewRequest r = (UnloadViewRequest) request;
 		ViewManager.get().unloadView(r.getViewKey(), r.isDestroy(), r.isErradicate());
 	}

@@ -5,7 +5,7 @@
  */
 package com.tll.common.search;
 
-import com.tll.model.IEntityTypeProvider;
+import com.tll.common.model.IEntityTypeProvider;
 import com.tll.util.StringUtil;
 
 /**

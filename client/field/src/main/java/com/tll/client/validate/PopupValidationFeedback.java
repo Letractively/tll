@@ -21,7 +21,7 @@ public class PopupValidationFeedback extends AbstractErrorHandler implements IHa
 	 * Constructor
 	 * @param mregistry The required message popup registry
 	 */
-	public PopupValidationFeedback(MsgPopupRegistry mregistry) {
+	public PopupValidationFeedback(final MsgPopupRegistry mregistry) {
 		setMsgPopupRegistry(mregistry);
 	}
 
@@ -36,13 +36,13 @@ public class PopupValidationFeedback extends AbstractErrorHandler implements IHa
 	}
 
 	@Override
-	public void setMsgPopupRegistry(MsgPopupRegistry mregistry) {
+	public void setMsgPopupRegistry(final MsgPopupRegistry mregistry) {
 		if(mregistry == null) throw new IllegalArgumentException("Null mregistry");
 		this.mregistry = mregistry;
 	}
 
 	@Override
-	protected void doHandleError(Error error) {
+	protected void doHandleError(final Error error) {
 		// we only handle sourced errors
 		if(error.getTarget() != null) {
 			final ErrorClassifier sourcing = error.getClassifier();
@@ -52,7 +52,7 @@ public class PopupValidationFeedback extends AbstractErrorHandler implements IHa
 	}
 
 	@Override
-	protected void doResolveError(IWidgetRef source, ErrorClassifier classifier) {
+	protected void doResolveError(final IWidgetRef source, final ErrorClassifier classifier) {
 		if(source != null) {
 			if(classifier == null) {
 				mregistry.getOperator(source.getWidget(), false).clearMsgs();
@@ -64,7 +64,7 @@ public class PopupValidationFeedback extends AbstractErrorHandler implements IHa
 	}
 
 	@Override
-	public void clear(ErrorClassifier classifier) {
+	public void clear(final ErrorClassifier classifier) {
 		mregistry.getAllOperator().removeMsgs(classifier.hashCode());
 	}
 

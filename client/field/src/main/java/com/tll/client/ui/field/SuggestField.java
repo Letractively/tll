@@ -61,18 +61,18 @@ public final class SuggestField extends AbstractDataField<String, String> {
 		 * @param value the value
 		 * @return the "show" value for the given value.
 		 */
-		private String resolveShowValue(String value) {
+		private String resolveShowValue(final String value) {
 			final String tkn = getToken(value);
 			return tkn == null ? value : tkn;
 		}
 
 		@Override
-		public void setValue(String newValue) {
+		public void setValue(final String newValue) {
 			super.setValue(resolveShowValue(newValue));
 		}
 
 		@Override
-		public void setValue(String value, boolean fireEvents) {
+		public void setValue(final String value, final boolean fireEvents) {
 			super.setValue(resolveShowValue(value), fireEvents);
 		}
 
@@ -81,22 +81,22 @@ public final class SuggestField extends AbstractDataField<String, String> {
 		}
 
 		@Override
-		public HandlerRegistration addFocusHandler(FocusHandler handler) {
+		public HandlerRegistration addFocusHandler(final FocusHandler handler) {
 			return addDomHandler(handler, FocusEvent.getType());
 		}
 
 		@Override
-		public HandlerRegistration addBlurHandler(BlurHandler handler) {
+		public HandlerRegistration addBlurHandler(final BlurHandler handler) {
 			return addDomHandler(handler, BlurEvent.getType());
 		}
 
 		@Override
-		public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
+		public HandlerRegistration addMouseOverHandler(final MouseOverHandler handler) {
 			return addDomHandler(handler, MouseOverEvent.getType());
 		}
 
 		@Override
-		public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
+		public HandlerRegistration addMouseOutHandler(final MouseOutHandler handler) {
 			return addDomHandler(handler, MouseOutEvent.getType());
 		}
 	}
@@ -111,7 +111,8 @@ public final class SuggestField extends AbstractDataField<String, String> {
 	 * @param helpText
 	 * @param data
 	 */
-	SuggestField(String name, String propName, String labelText, String helpText, Map<String, String> data) {
+	SuggestField(final String name, final String propName, final String labelText, final String helpText,
+			final Map<String, String> data) {
 		super(name, propName, labelText, helpText);
 		sb = new Impl();
 		// fires when suggest box is manually edited
@@ -122,13 +123,13 @@ public final class SuggestField extends AbstractDataField<String, String> {
 
 			@SuppressWarnings("synthetic-access")
 			@Override
-			public void onSelection(SelectionEvent<Suggestion> event) {
+			public void onSelection(final SelectionEvent<Suggestion> event) {
 				ValueChangeEvent.fire(sb, getDataValue(event.getSelectedItem().getReplacementString()));
 			}
 		});
 		sb.addFocusHandler(this);
 		sb.addBlurHandler(this);
-		//setConverter(ToStringConverter.INSTANCE);
+		// setConverter(ToStringConverter.INSTANCE);
 		setData(data);
 	}
 
@@ -144,25 +145,25 @@ public final class SuggestField extends AbstractDataField<String, String> {
 	}
 
 	@Override
-	public void setEnabled(boolean enabled) {
+	public void setEnabled(final boolean enabled) {
 		sb.getTextBox().setEnabled(enabled);
 		super.setEnabled(enabled);
 	}
 
 	@Override
-	public void setData(Map<String, String> data) {
+	public void setData(final Map<String, String> data) {
 		super.setData(data);
 		buildOracle();
 	}
 
 	@Override
-	public void addDataItem(String name, String value) {
+	public void addDataItem(final String name, final String value) {
 		super.addDataItem(name, value);
 		sb.getOracle().add(name);
 	}
 
 	@Override
-	public void removeDataItem(String value) {
+	public void removeDataItem(final String value) {
 		super.removeDataItem(value);
 		buildOracle();
 	}
@@ -172,7 +173,8 @@ public final class SuggestField extends AbstractDataField<String, String> {
 		return sb.getText();
 	}
 
-	public void setText(String text) {
+	@Override
+	public void setText(final String text) {
 		sb.setText(text);
 	}
 

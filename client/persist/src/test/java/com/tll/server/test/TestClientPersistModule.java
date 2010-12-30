@@ -3,11 +3,11 @@
  * @author jpk
  * @since Oct 4, 2009
  */
-package com.tll.di.test;
+package com.tll.server.test;
 
 import net.sf.ehcache.CacheManager;
 
-import com.tll.di.ClientPersistModule;
+import com.tll.server.ClientPersistModule;
 import com.tll.server.rpc.entity.IPersistServiceImplResolver;
 import com.tll.server.rpc.entity.PersistCache.PersistCacheAware;
 import com.tll.server.rpc.entity.test.TestPersistServiceImplResolver;

@@ -17,8 +17,6 @@ import com.tll.IDescriptorProvider;
 import com.tll.IMarshalable;
 import com.tll.IPropertyValueProvider;
 import com.tll.common.model.CopyCriteria.CopyMode;
-import com.tll.model.IEntityTypeProvider;
-import com.tll.model.ModelKey;
 import com.tll.model.PropertyMetadata;
 import com.tll.model.PropertyType;
 import com.tll.util.PropertyPath;

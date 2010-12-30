@@ -5,7 +5,6 @@
  */
 package com.tll.client.ui.field;
 
-
 /**
  * AbstractFieldGroupProvider - Common base class for all
  * {@link IFieldGroupProvider} impls.
@@ -13,6 +12,7 @@ package com.tll.client.ui.field;
  */
 public abstract class AbstractFieldGroupProvider extends FieldFactory implements IFieldGroupProvider {
 
+	@Override
 	public final FieldGroup getFieldGroup() {
 		final FieldGroup fg = new FieldGroup(getFieldGroupName());
 		populateFieldGroup(fg);
@@ -40,7 +40,8 @@ public abstract class AbstractFieldGroupProvider extends FieldFactory implements
 	 * @param fnamePrefix The optional field name prefix to maintain field name
 	 *        uniqueness
 	 */
-	protected final void addModelCommon(FieldGroup fg, boolean name, boolean timestamping, String fnamePrefix) {
+	protected final void addModelCommon(final FieldGroup fg, final boolean name, final boolean timestamping,
+			final String fnamePrefix) {
 		if(name) {
 			fg.addField(entityNameField(fnamePrefix));
 		}

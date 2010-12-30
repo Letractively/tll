@@ -8,13 +8,12 @@ package com.tll.server.rpc.entity;
 import javax.validation.ConstraintViolationException;
 
 import com.tll.common.data.ModelPayload;
-import com.tll.common.model.IEntityType;
 import com.tll.common.model.IPropertyValue;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
-import com.tll.common.msg.Status;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
+import com.tll.common.msg.Status;
 import com.tll.common.search.BusinessKeySearch;
 import com.tll.common.search.EntityNameSearch;
 import com.tll.common.search.ISearch;
@@ -58,7 +57,7 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 		}
 		else {
 			IEntity e = null;
-			IEntityType et = null;
+			String et = null;
 			if(search instanceof PrimaryKeySearch) {
 				final PrimaryKeySearch pks = (PrimaryKeySearch) search;
 				e = loadEntityByPrimaryKey(pks, payload.getStatus());
@@ -101,7 +100,7 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	 * @return the translated model instance
 	 * @throws Exception upon error
 	 */
-	protected Model entityToModel(IEntityType entityType, IEntity e) throws Exception {
+	protected Model entityToModel(String entityType, IEntity e) throws Exception {
 		// default simply marshals the entity
 		try {
 			return PersistHelper.marshal(context, entityType, e);
@@ -208,7 +207,7 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	}
 
 	@SuppressWarnings("unchecked")
-	protected final Class<IEntity> resolveEntityClass(IEntityType entityType) {
+	protected final Class<IEntity> resolveEntityClass(String entityType) {
 		return (Class<IEntity>) context.getEntityTypeResolver().resolveEntityClass(entityType);
 	}
 
@@ -218,7 +217,7 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	 * @return the resolved entity service
 	 * @throws IllegalArgumentException when the service can't be resolved
 	 */
-	protected final IEntityService<IEntity> getEntityService(IEntityType entityType) throws IllegalArgumentException {
+	protected final IEntityService<IEntity> getEntityService(String entityType) throws IllegalArgumentException {
 		return context.getEntityServiceFactory().instanceByEntityType(resolveEntityClass(entityType));
 	}
 
@@ -230,7 +229,7 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	protected IEntity loadEntityByPrimaryKey(PrimaryKeySearch search, Status status) {
 		try {
 			final ModelKey mkey = search.getKey();
-			final IEntityType et = mkey.getEntityType();
+			final String et = mkey.getEntityType();
 			final IEntityService<IEntity> svc = getEntityService(et);
 			final Object id = context.getEntityFactory().stringToPrimaryKey(mkey.getId());
 			final IEntity e = svc.load(id);
@@ -255,7 +254,7 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	@SuppressWarnings("unchecked")
 	protected IEntity loadEntityByBusinesKey(BusinessKeySearch search, Status status) {
 		try {
-			final IEntityType et = search.getEntityType();
+			final String et = search.getEntityType();
 			final Class<IEntity> ec = (Class<IEntity>) context.getEntityTypeResolver().resolveEntityClass(et);
 			final String bkName = search.getBusinessKeyName();
 			final IPropertyValue[] pvs = search.getProperties();
@@ -290,17 +289,18 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 	 * @param search guaranteed non-<code>null</code> search criteria
 	 * @param status the status to which messages are posted
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({
+		"unchecked", "rawtypes" })
 	protected IEntity loadEntityByName(EntityNameSearch search, Status status) {
 		try {
-			final IEntityType et = search.getEntityType();
+			final String et = search.getEntityType();
 			final Class<IEntity> ec = (Class<IEntity>) context.getEntityTypeResolver().resolveEntityClass(et);
 			final String name = search.getName();
 			final IEntityService<IEntity> svc = getEntityService(et);
 			if(svc instanceof INamedEntityService == false) {
 				throw new RuntimeException("Entity type: " + et + "doesn't support loading by name.");
 			}
-			final IEntity e = ((INamedEntityService) svc).load(new NameKey(ec, name));
+			final IEntity e = ((INamedEntityService) svc).load(new NameKey<IEntity>(ec, name));
 			// final Model m = marshal(et, e);
 			// payload.setModel(m);
 			status.addMsg(e.descriptor() + " loaded.", MsgLevel.INFO, MsgAttr.STATUS.flag);

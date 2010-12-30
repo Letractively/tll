@@ -12,8 +12,8 @@ package com.tll.client.ui.field;
 public interface IHasMaxLength {
 
 	/**
-	 * @return The maximum allowed length. If <code>-1</code>, the max length
-	 *         is <em>not</em> specified.
+	 * @return The maximum allowed length. If <code>-1</code>, the max length is
+	 *         <em>not</em> specified.
 	 */
 	int getMaxLen();
 
