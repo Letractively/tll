@@ -9,17 +9,17 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.mvc.ViewManager;
-import com.tll.client.mvc.view.ShowViewRequest;
-import com.tll.client.mvc.view.ViewAInit;
-import com.tll.client.mvc.view.ViewBInit;
-import com.tll.client.mvc.view.ViewC;
-import com.tll.client.mvc.view.ViewD;
-import com.tll.client.mvc.view.ViewE;
-import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.ui.view.RecentViewsPanel;
 import com.tll.client.ui.view.ViewPathPanel;
 import com.tll.client.ui.view.ViewToolbar;
+import com.tll.client.view.ShowViewRequest;
+import com.tll.client.view.ViewAInit;
+import com.tll.client.view.ViewBInit;
+import com.tll.client.view.ViewC;
+import com.tll.client.view.ViewD;
+import com.tll.client.view.ViewE;
+import com.tll.client.view.ViewManager;
+import com.tll.client.view.ViewOptions;
 
 /**
  * UI Tests - GWT module for the sole purpose of verifying the DOM/Style of
@@ -139,14 +139,14 @@ public final class UITests extends AbstractUITest {
 
 					@Override
 					public void onClick(ClickEvent event) {
-						ViewManager.get().dispatch(new ShowViewRequest(new ViewAInit()));
+						ViewManager.get().dispatch(new ShowViewRequest(new ViewAInit(), null));
 					}
 				}),
 				new Button("View B", new ClickHandler() {
 
 					@Override
 					public void onClick(ClickEvent event) {
-						ViewManager.get().dispatch(new ShowViewRequest(new ViewBInit(dyn)));
+						ViewManager.get().dispatch(new ShowViewRequest(new ViewBInit(dyn), null));
 					}
 				}),
 				new Button("View C", new ClickHandler() {

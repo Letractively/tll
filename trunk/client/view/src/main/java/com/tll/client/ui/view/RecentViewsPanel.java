@@ -4,14 +4,15 @@
  */
 package com.tll.client.ui.view;
 
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.mvc.ViewManager;
-import com.tll.client.mvc.view.IViewChangeHandler;
-import com.tll.client.mvc.view.ViewChangeEvent;
-import com.tll.client.mvc.view.ViewRef;
 import com.tll.client.ui.HtmlListPanel;
+import com.tll.client.view.IViewChangeHandler;
+import com.tll.client.view.ViewChangeEvent;
+import com.tll.client.view.ViewManager;
+import com.tll.client.view.ViewRef;
 
 /**
  * RecentViewsPanel - Displays view links vertically that are currently in the
@@ -60,7 +61,7 @@ public final class RecentViewsPanel extends Composite implements IViewChangeHand
 		// NOTE: rebuild the ulPanel (it's MUCH easier than trying to remove/insert)
 		ulPanel.clear();
 
-		final ViewRef[] refs = ViewManager.get().getViewRefs(capacity, false, false);
+		final ViewRef[] refs = ViewManager.get().getViewRefs(capacity, false);
 		final int count = refs.length;
 
 		// re-build the recent view list
@@ -69,17 +70,23 @@ public final class RecentViewsPanel extends Composite implements IViewChangeHand
 			ulPanel.append(new ViewLink(refs[i]));
 		}
 	}
+	
+	private HandlerRegistration vch;
 
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		ViewManager.get().addViewChangeHandler(this);
+		if(vch != null) throw new IllegalStateException();
+		vch = ViewManager.get().addViewChangeHandler(this);
 	}
 
 	@Override
 	protected void onUnload() {
 		super.onUnload();
-		ViewManager.get().removeViewChangeHandler(this);
+		if(vch != null) {
+			vch.removeHandler();
+			vch = null;
+		}
 	}
 
 }

@@ -3,15 +3,16 @@
  */
 package com.tll.client.ui.view;
 
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.mvc.ViewManager;
-import com.tll.client.mvc.view.IViewChangeHandler;
-import com.tll.client.mvc.view.ViewChangeEvent;
-import com.tll.client.mvc.view.ViewRef;
 import com.tll.client.ui.HtmlListPanel;
 import com.tll.client.ui.P;
+import com.tll.client.view.IViewChangeHandler;
+import com.tll.client.view.ViewChangeEvent;
+import com.tll.client.view.ViewManager;
+import com.tll.client.view.ViewRef;
 
 /**
  * ViewPathPanel - Renders the current view path.
@@ -77,7 +78,7 @@ public class ViewPathPanel extends Composite implements IViewChangeHandler {
 	@Override
 	public void onViewChange(final ViewChangeEvent event) {
 		ulPanel.clear();
-		final ViewRef[] viewPath = ViewManager.get().getViewRefs(capacity, false, true);
+		final ViewRef[] viewPath = ViewManager.get().getViewRefs(capacity, false);
 		if(viewPath != null && viewPath.length > 0) {
 			final int count = viewPath.length;
 			for(int i = count - 1; i >= 0; i--) {
@@ -98,15 +99,21 @@ public class ViewPathPanel extends Composite implements IViewChangeHandler {
 		}
 	}
 
+	private HandlerRegistration vch;
+
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		ViewManager.get().addViewChangeHandler(this);
+		if(vch != null) throw new IllegalStateException();
+		vch = ViewManager.get().addViewChangeHandler(this);
 	}
 
 	@Override
 	protected void onUnload() {
 		super.onUnload();
-		ViewManager.get().removeViewChangeHandler(this);
+		if(vch != null) {
+			vch.removeHandler();
+			vch = null;
+		}
 	}
 }
