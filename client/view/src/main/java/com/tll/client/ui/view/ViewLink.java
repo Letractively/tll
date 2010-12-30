@@ -6,11 +6,11 @@ package com.tll.client.ui.view;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.tll.client.mvc.ViewManager;
-import com.tll.client.mvc.view.IViewInitializer;
-import com.tll.client.mvc.view.ShowViewRequest;
-import com.tll.client.mvc.view.ViewRef;
 import com.tll.client.ui.SimpleHyperLink;
+import com.tll.client.view.IViewInitializer;
+import com.tll.client.view.ShowViewRequest;
+import com.tll.client.view.ViewManager;
+import com.tll.client.view.ViewRef;
 
 /**
  * ViewLink - Link that delegates a show view request to the mvc dispatcher.
@@ -34,7 +34,7 @@ public final class ViewLink extends SimpleHyperLink {
 			@Override
 			public void onClick(final ClickEvent event) {
 				if(ViewLink.this.init == null) throw new IllegalStateException();
-				ViewManager.get().dispatch(new ShowViewRequest(ViewLink.this.init));
+				ViewManager.get().dispatch(new ShowViewRequest(ViewLink.this.init, null));
 			}
 		});
 	}

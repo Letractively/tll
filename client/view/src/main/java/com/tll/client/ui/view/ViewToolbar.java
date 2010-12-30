@@ -18,8 +18,8 @@ import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ToggleButton;
-import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.ui.toolbar.Toolbar;
+import com.tll.client.view.ViewOptions;
 
 /**
  * ViewToolbar - A UI toolbar for user management of views.
