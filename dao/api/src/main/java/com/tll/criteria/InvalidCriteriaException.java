@@ -1,6 +1,5 @@
 package com.tll.criteria;
 
-import com.tll.model.IEntity;
 
 /**
  * Throw when {@link Criteria} derived instances are found to be invalid due to
@@ -31,7 +30,7 @@ public class InvalidCriteriaException extends CriteriaException {
 	 * Constructor
 	 * @param entityClass the entity class
 	 */
-	public InvalidCriteriaException(Class<? extends IEntity> entityClass) {
+	public InvalidCriteriaException(Class<?> entityClass) {
 		super("Invalid or empty criteria for %1", entityClass.getSimpleName());
 	}
 

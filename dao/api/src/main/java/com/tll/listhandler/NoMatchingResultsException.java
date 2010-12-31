@@ -1,7 +1,6 @@
 package com.tll.listhandler;
 
 import com.tll.criteria.CriteriaException;
-import com.tll.model.IEntity;
 
 /**
  * NoMatchingResultsException
@@ -30,7 +29,7 @@ public class NoMatchingResultsException extends CriteriaException {
 	 * Constructor
 	 * @param entityClass the entity class
 	 */
-	public NoMatchingResultsException(Class<? extends IEntity> entityClass) {
+	public NoMatchingResultsException(Class<?> entityClass) {
 		super("No matching results found for %1", entityClass.getSimpleName());
 	}
 
