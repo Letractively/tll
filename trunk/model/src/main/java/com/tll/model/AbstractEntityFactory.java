@@ -12,10 +12,9 @@ import com.tll.util.StringUtil;
 
 /**
  * AbstractEntityFactory
- * @param <PK> the primary key type
- * @author jpk
+= * @author jpk
  */
-public abstract class AbstractEntityFactory<PK> implements IEntityFactory<PK> {
+public abstract class AbstractEntityFactory implements IEntityFactory {
 
 	protected final Log log = LogFactory.getLog(getClass());
 

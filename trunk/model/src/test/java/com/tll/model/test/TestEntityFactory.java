@@ -18,7 +18,7 @@ import com.tll.model.IEntityFactory;
  * sessions</em>.
  * @author jpk
  */
-public class TestEntityFactory extends AbstractEntityFactory<Long> {
+public class TestEntityFactory extends AbstractEntityFactory {
 
 	private static final Map<Class<?>, Long> idMap = new HashMap<Class<?>, Long>();
 
@@ -39,15 +39,4 @@ public class TestEntityFactory extends AbstractEntityFactory<Long> {
 		entity.setGenerated(nextId);
 		return nextId;
 	}
-
-	@Override
-	public String primaryKeyToString(Long pk) {
-		return pk == null ? null : pk.toString();
-	}
-
-	@Override
-	public Long stringToPrimaryKey(String s) {
-		return s == null ? null : Long.valueOf(s);
-	}
-
 }

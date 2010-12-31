@@ -17,7 +17,6 @@ import com.google.inject.Inject;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
-import com.google.inject.TypeLiteral;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.AbstractDbAwareTest;
@@ -121,7 +120,7 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 			@Override
 			public void configure(Binder binder) {
 				// IEntityFactory
-				binder.bind(new TypeLiteral<IEntityFactory<?>>() {}).to(TestEntityFactory.class).in(Scopes.SINGLETON);
+				binder.bind(IEntityFactory.class).to(TestEntityFactory.class).in(Scopes.SINGLETON);
 				
 				binder.bind(IListingDataProvider.class).to(TestDataProvider.class)
 						.in(Scopes.SINGLETON);

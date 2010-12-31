@@ -9,8 +9,6 @@ import org.apache.commons.lang.math.RandomUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 import com.tll.dao.EntityNotFoundException;
 import com.tll.model.Account;
 import com.tll.model.AccountInterface;
@@ -113,7 +111,7 @@ public class AccountInterfaceTest extends AbstractEntityServiceTest {
 	 * @param persist
 	 */
 	private AccountInterface stubAccountInterface(Interface intf, Account a, boolean persist) {
-		final IEntityFactory<Long> efactory = injector.getInstance(Key.get(new TypeLiteral<IEntityFactory<Long>>() {}));
+		final IEntityFactory efactory = injector.getInstance(IEntityFactory.class);
 		final AccountInterface ai = efactory.createEntity(AccountInterface.class, false);
 		ai.setAccountKey(a.getId());
 		ai.setInterfaceKey(intf.getId());

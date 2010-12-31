@@ -12,14 +12,14 @@ import com.tll.model.IEntityProvider;
  */
 public final class TestPersistenceUnitEntityAssembler implements IEntityAssembler {
 
-	private final IEntityFactory<?> entityFactory;
+	private final IEntityFactory entityFactory;
 
 	/**
 	 * Constructor
 	 * @param entityFactory required
 	 */
 	@Inject
-	public TestPersistenceUnitEntityAssembler(IEntityFactory<?> entityFactory) {
+	public TestPersistenceUnitEntityAssembler(IEntityFactory entityFactory) {
 		super();
 		this.entityFactory = entityFactory;
 	}
