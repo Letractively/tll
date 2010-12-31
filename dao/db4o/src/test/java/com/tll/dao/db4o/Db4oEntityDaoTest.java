@@ -8,6 +8,8 @@ import com.google.inject.Module;
 import com.tll.dao.IEntityDaoTestHandler;
 import com.tll.dao.db4o.test.TestDb4oDaoModule;
 import com.tll.dao.test.TestEntityDaoTestHandler;
+import com.tll.model.egraph.EGraphModule;
+import com.tll.model.test.TestPersistenceUnitEntityGraphBuilder;
 
 /**
  * Db4oEntityDaoTest
@@ -29,6 +31,7 @@ public class Db4oEntityDaoTest extends AbstractDb4oEntityDaoTest {
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
 		modules.add(new TestDb4oDaoModule(getConfig()));
+		modules.add(new EGraphModule(TestPersistenceUnitEntityGraphBuilder.class));
 	}
 
 }

@@ -8,6 +8,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
@@ -17,14 +18,17 @@ import com.tll.dao.IDbShell;
 import com.tll.dao.db4o.AbstractDb4oDaoModule.Db4oFile;
 import com.tll.dao.db4o.test.Db4oDbShellModule;
 import com.tll.dao.db4o.test.TestDb4oDaoModule;
+import com.tll.model.IEntityFactory;
 import com.tll.model.egraph.EGraphModule;
+import com.tll.model.test.TestEntityFactory;
 import com.tll.model.test.TestPersistenceUnitEntityGraphBuilder;
 
 /**
  * Db4oDbShellTest
  * @author jpk
  */
-@Test(groups = { "dao", "db4o" } )
+@Test(groups = {
+	"dao", "db4o" })
 public class Db4oDbShellTest extends AbstractDbAwareTest {
 
 	/**
@@ -47,8 +51,16 @@ public class Db4oDbShellTest extends AbstractDbAwareTest {
 
 	@Override
 	protected void addModules(List<Module> modules) {
-		modules.add(new TestDb4oDaoModule(getConfig()));
 		modules.add(new EGraphModule(TestPersistenceUnitEntityGraphBuilder.class));
+		// modules.add(new TestDb4oDaoModule(getConfig()));
+		modules.add(new AbstractModule() {
+
+			@Override
+			protected void configure() {
+				bind(IEntityFactory.class).to(TestEntityFactory.class);
+				bind(URI.class).annotatedWith(Db4oFile.class).toInstance(AbstractDb4oDaoModule.getDb4oFileRef("target/testshelldb"));
+			}
+		});
 		modules.add(new Db4oDbShellModule());
 	}
 

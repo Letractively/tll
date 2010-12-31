@@ -47,9 +47,8 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 	 * Db4oFile annotation
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
-	@Target( {
-		ElementType.FIELD, ElementType.PARAMETER
-	})
+	@Target({
+		ElementType.FIELD, ElementType.PARAMETER })
 	@BindingAnnotation
 	public @interface Db4oFile {
 	}
@@ -75,6 +74,27 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 			return key;
 		}
 	} // ConfigKeys
+
+	/**
+	 * @param path the db4o file path
+	 * @return the corresponding URI
+	 */
+	public static URI getDb4oFileRef(String path) {
+		try {
+			// first attempt to load existing file
+			final URL url = AbstractDb4oDaoModule.class.getClassLoader().getResource(path);
+			URI uri = url == null ? null : url.toURI();
+			if(uri == null) {
+				// create in working dir
+				final File f = new File(path);
+				uri = f.toURI();
+			}
+			return uri;
+		}
+		catch(final URISyntaxException e) {
+			throw new IllegalStateException(e);
+		}
+	}
 
 	Config config;
 
@@ -117,25 +137,12 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 		log.info("Loading db4o dao module...");
 
 		// db40 db file URI
-		final String path = config == null ? DEFAULT_DB4O_FILENAME : config.getString(ConfigKeys.DB4O_FILENAME.getKey());
-		// if(path.indexOf('/') >= 0) thr
-		try {
-			// first attempt to load existing file
-			final URL url = AbstractDb4oDaoModule.class.getClassLoader().getResource(path);
-			URI uri = url == null ? null : url.toURI();
-			if(uri == null) {
-				// create in working dir
-				final File f = new File(path);
-				uri = f.toURI();
-			}
-			bind(URI.class).annotatedWith(Db4oFile.class).toInstance(uri);
-		}
-		catch(final URISyntaxException e) {
-			throw new IllegalStateException(e);
-		}
+		bind(URI.class).annotatedWith(Db4oFile.class).toInstance(
+				getDb4oFileRef(config == null ? DEFAULT_DB4O_FILENAME : config.getString(ConfigKeys.DB4O_FILENAME.getKey())));
 
 		// Configuration (db4o)
-		// NOTE: we need to always generate a fresh instance to avoid db4o exception being thrown
+		// NOTE: we need to always generate a fresh instance to avoid db4o exception
+		// being thrown
 		bind(EmbeddedConfiguration.class).toProvider(new Provider<EmbeddedConfiguration>() {
 
 			@Override
@@ -171,8 +178,8 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 		// which locks the db4o db file which is problematic when working with the
 		// db4o db shell
 		final boolean dst =
-			config == null ? DEFAULT_EMPLOY_SPRING_TRANSACTIONS : config.getBoolean(ConfigKeys.DB_TRANS_BINDTOSPRING
-					.getKey(), DEFAULT_EMPLOY_SPRING_TRANSACTIONS);
+				config == null ? DEFAULT_EMPLOY_SPRING_TRANSACTIONS : config.getBoolean(
+						ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), DEFAULT_EMPLOY_SPRING_TRANSACTIONS);
 		if(dst) {
 			log.info("Binding Spring's Db4oTransactionManager to Spring's @Transactional annotation..");
 			// PlatformTransactionManager (for transactions)
@@ -187,8 +194,8 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 
 					// set the transaction timeout
 					final int timeout =
-						config == null ? DEFAULT_TRANS_TIMEOUT : config.getInt(ConfigKeys.DB_TRANS_TIMEOUT.getKey(),
-								DEFAULT_TRANS_TIMEOUT);
+							config == null ? DEFAULT_TRANS_TIMEOUT : config.getInt(ConfigKeys.DB_TRANS_TIMEOUT.getKey(),
+									DEFAULT_TRANS_TIMEOUT);
 					db4oTm.setDefaultTimeout(timeout);
 					log.info("Set DB4O default transaction timeout to: " + timeout);
 
@@ -211,7 +218,7 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 			// @Transactional!
 		}
 
-		// IEntityFactory<Long>
+		// IEntityFactory
 		bind(IEntityFactory.class).to(Db4oEntityFactory.class).in(Scopes.SINGLETON);
 
 		// IDb4oNamedQueryTranslator
@@ -220,5 +227,4 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 		// IEntityDao
 		bind(IEntityDao.class).to(Db4oEntityDao.class).in(Scopes.SINGLETON);
 	}
-
 }
