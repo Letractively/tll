@@ -19,7 +19,7 @@ import com.tll.model.Visitor;
  */
 public class CustomerAccountDaoTestHandler extends AbstractEntityDaoTestHandler<CustomerAccount> {
 
-	Object pkCurrency, pkAccount, pkCustomer, pkVisitor;
+	Long pkCurrency, pkAccount, pkCustomer, pkVisitor;
 
 	@Override
 	public Class<CustomerAccount> entityClass() {

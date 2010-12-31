@@ -254,7 +254,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 	}
 
 	@Override
-	public Object accountKey() {
+	public Long accountKey() {
 		try {
 			return getAccount().getId();
 		}

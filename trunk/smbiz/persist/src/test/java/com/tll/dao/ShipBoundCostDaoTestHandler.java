@@ -17,7 +17,7 @@ import com.tll.model.ShipMode;
  */
 public class ShipBoundCostDaoTestHandler extends AbstractEntityDaoTestHandler<ShipBoundCost> {
 
-	private Object pkC, pkA, pkS;
+	private Long pkC, pkA, pkS;
 
 	@Override
 	public Class<ShipBoundCost> entityClass() {

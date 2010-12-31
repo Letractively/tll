@@ -112,7 +112,7 @@ public class ShipMode extends NamedTimeStampEntity implements IChildEntity<Accou
 	}
 
 	@Override
-	public Object accountKey() {
+	public Long accountKey() {
 		try {
 			return getAccount().getId();
 		}

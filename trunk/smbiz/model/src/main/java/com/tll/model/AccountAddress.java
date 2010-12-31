@@ -96,7 +96,7 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 	}
 
 	@Override
-	public Object accountKey() {
+	public Long accountKey() {
 		try {
 			return getAccount().getId();
 		}

@@ -16,7 +16,7 @@ import com.tll.model.Visitor;
  */
 public class VisitorDaoTestHandler extends AbstractEntityDaoTestHandler<Visitor> {
 
-	private Object pkC, pkA;
+	private Long pkC, pkA;
 
 	@Override
 	public Class<Visitor> entityClass() {

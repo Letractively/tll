@@ -16,7 +16,7 @@ import com.tll.model.Currency;
  */
 public class AccountHistoryDaoTestHandler extends AbstractEntityDaoTestHandler<AccountHistory> {
 
-	private Object pkC, pkA;
+	private Long pkC, pkA;
 
 	@Override
 	public Class<AccountHistory> entityClass() {

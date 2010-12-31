@@ -221,7 +221,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 		}
 	}
 
-	private void setCredentials(Object pk, String newUsername, String encNewPassword) {
+	private void setCredentials(Long pk, String newUsername, String encNewPassword) {
 		dao.executeQuery("user.setCredentials", new QueryParam[] {
 			new QueryParam(IEntity.PK_FIELDNAME, PropertyType.STRING, pk),
 			new QueryParam("username", PropertyType.STRING, newUsername),
@@ -261,7 +261,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 	@Override
 	@Transactional(rollbackFor = {
 		ChangeUserCredentialsFailedException.class, RuntimeException.class })
-	public String resetPassword(Object userPk) throws ChangeUserCredentialsFailedException {
+	public String resetPassword(Long userPk) throws ChangeUserCredentialsFailedException {
 
 		try {
 			// get the user

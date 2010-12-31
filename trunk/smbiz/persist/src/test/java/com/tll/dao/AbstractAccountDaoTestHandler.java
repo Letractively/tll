@@ -20,7 +20,7 @@ import com.tll.model.PaymentInfo;
  */
 public abstract class AbstractAccountDaoTestHandler<A extends Account> extends AbstractEntityDaoTestHandler<A> {
 
-	Object pkPaymentInfo, pkCurrency, pkAccountParent;
+	Long pkPaymentInfo, pkCurrency, pkAccountParent;
 
 	@Override
 	public void doPersistDependentEntities() {

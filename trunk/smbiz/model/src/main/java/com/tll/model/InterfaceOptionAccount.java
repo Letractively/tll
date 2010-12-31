@@ -165,7 +165,7 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 	}
 
 	@Override
-	public Object accountKey() {
+	public Long accountKey() {
 		try {
 			return getAccount().getId();
 		}

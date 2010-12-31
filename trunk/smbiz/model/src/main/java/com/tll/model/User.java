@@ -218,7 +218,7 @@ public class User extends NamedTimeStampEntity implements UserDetails, IChildEnt
 	}
 
 	@Override
-	public Object accountKey() {
+	public Long accountKey() {
 		try {
 			return getAccount().getId();
 		}

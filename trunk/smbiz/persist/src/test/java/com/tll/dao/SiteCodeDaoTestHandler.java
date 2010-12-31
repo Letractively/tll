@@ -16,7 +16,7 @@ import com.tll.model.SiteCode;
  */
 public class SiteCodeDaoTestHandler extends AbstractEntityDaoTestHandler<SiteCode> {
 
-	private Object pkC, pkA;
+	private Long pkC, pkA;
 
 	@Override
 	public Class<SiteCode> entityClass() {

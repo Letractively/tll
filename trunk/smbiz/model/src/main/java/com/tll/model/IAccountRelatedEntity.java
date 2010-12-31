@@ -9,5 +9,5 @@ public interface IAccountRelatedEntity {
 	/**
 	 * @return The primary key of the account to which this entity is related.
 	 */
-	Object accountKey();
+	Long accountKey();
 }

@@ -91,7 +91,7 @@ public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Accou
 	}
 
 	@Override
-	public Object accountKey() {
+	public Long accountKey() {
 		try {
 			return getAccount().getId();
 		}

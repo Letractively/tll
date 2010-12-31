@@ -16,7 +16,7 @@ import com.tll.model.ProductCategory;
  */
 public class ProductCategoryDaoTestHandler extends AbstractEntityDaoTestHandler<ProductCategory> {
 
-	private Object pkC, pkA;
+	private Long pkC, pkA;
 
 	@Override
 	public Class<ProductCategory> entityClass() {

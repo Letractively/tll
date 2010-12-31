@@ -96,7 +96,7 @@ public class ProductCategory extends NamedTimeStampEntity implements IChildEntit
 	}
 
 	@Override
-	public Object accountKey() {
+	public Long accountKey() {
 		try {
 			return getAccount().getId();
 		}

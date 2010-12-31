@@ -127,7 +127,7 @@ public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, 
 	}
 
 	@Override
-	public Object accountKey() {
+	public Long accountKey() {
 		try {
 			return getAccount().getId();
 		}

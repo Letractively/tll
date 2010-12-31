@@ -21,7 +21,7 @@ public interface IInterfaceService extends INamedEntityService<Interface> {
 	 * @param interfaceKey
 	 * @return the never-<code>null</code> account interface.
 	 */
-	AccountInterface loadAccountInterface(Object accountKey, Object interfaceKey);
+	AccountInterface loadAccountInterface(Long accountKey, Long interfaceKey);
 
 	/**
 	 * Adds or replaces the given account interface.
@@ -42,11 +42,11 @@ public interface IInterfaceService extends INamedEntityService<Interface> {
 	 * @param accountKey
 	 * @param interfaceKey
 	 */
-	void purgeAccountInterface(Object accountKey, Object interfaceKey);
+	void purgeAccountInterface(Long accountKey, Long interfaceKey);
 
 	/**
 	 * Purges all subscribed interface options for a given account.
 	 * @param accountKey
 	 */
-	void purgeAccountInterfacess(Object accountKey);
+	void purgeAccountInterfacess(Long accountKey);
 }

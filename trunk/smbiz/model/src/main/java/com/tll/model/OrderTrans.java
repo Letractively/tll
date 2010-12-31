@@ -223,7 +223,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 	}
 
 	@Override
-	public Object accountKey() {
+	public Long accountKey() {
 		try {
 			return getOrder().getAccount().getId();
 		}
@@ -233,7 +233,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		}
 	}
 
-	public Object orderId() {
+	public Long orderId() {
 		try {
 			return getOrder().getId();
 		}

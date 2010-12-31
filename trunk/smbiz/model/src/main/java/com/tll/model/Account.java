@@ -266,7 +266,7 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	}
 
 	@Override
-	public Object accountKey() {
+	public Long accountKey() {
 		return super.getId();
 	}
 }

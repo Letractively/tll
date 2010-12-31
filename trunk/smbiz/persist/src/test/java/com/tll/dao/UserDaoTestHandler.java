@@ -17,7 +17,7 @@ import com.tll.model.User;
  */
 public class UserDaoTestHandler extends AbstractEntityDaoTestHandler<User> {
 
-	private Object pkC, pkA, pkT;
+	private Long pkC, pkA, pkT;
 
 	@Override
 	public Class<User> entityClass() {
