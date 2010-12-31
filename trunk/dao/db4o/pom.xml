@@ -136,13 +136,6 @@
 			<version>${project.version}</version>
 		</dependency>
 
-		<!-- 
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-servlet</artifactId>
-		</dependency>
-		-->
-
 		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-core</artifactId>
@@ -164,12 +157,7 @@
 			<classifier>testassets</classifier>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>${testNGVersion}</version>
-			<scope>test</scope>
-		</dependency>
+
 	</dependencies>
 
 </project>

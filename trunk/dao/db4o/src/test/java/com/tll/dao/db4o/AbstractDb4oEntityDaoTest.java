@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.testng.annotations.Test;
 
-import com.db4o.Db4o;
+import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
-import com.db4o.config.Configuration;
+import com.db4o.config.EmbeddedConfiguration;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Provider;
@@ -67,7 +67,7 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 	}
 
 	@Override
-	protected <E extends IEntity> E getEntityFromDb(Class<E> entityType, Object pk) {
+	protected <E extends IEntity> E getEntityFromDb(Class<E> entityType, Long pk) {
 		return dao.load(entityType, pk);
 	}
 
@@ -90,10 +90,9 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 		getDbTrans().setComplete();
 		getDbTrans().endTrans();
 		dao.getObjectContainer().close();
-		final Configuration c = injector.getInstance(Configuration.class);
+		final EmbeddedConfiguration c = injector.getInstance(EmbeddedConfiguration.class);
 		final URI db4oUri = injector.getInstance(Key.get(URI.class, Db4oFile.class));
-		@SuppressWarnings("deprecation")
-		final ObjectContainer oc = Db4o.openFile(c, db4oUri.getPath());
+		final ObjectContainer oc = Db4oEmbedded.openFile(c, db4oUri.getPath());
 		dao.setObjectContainer(oc);
 		((Db4oTrans)getDbTrans()).setObjectContainer(oc);
 		((Db4oEntityFactory)getEntityFactory()).setObjectContainer(new Provider<ObjectContainer>() {

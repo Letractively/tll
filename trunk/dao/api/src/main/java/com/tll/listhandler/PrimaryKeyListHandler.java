@@ -17,7 +17,7 @@ public final class PrimaryKeyListHandler extends SearchListHandler {
 	/**
 	 * The id list - list of entity pks matching the search criteria.
 	 */
-	private List<?> pks;
+	private List<Long> pks;
 
 	/**
 	 * Constructor
@@ -61,7 +61,7 @@ public final class PrimaryKeyListHandler extends SearchListHandler {
 		// adjust the end index if it exceeds the bounds of the id list
 		if(ei > size - 1) ei = size - 1;
 
-		final List<?> subids = pks.subList(offset, ei);
+		final List<Long> subids = pks.subList(offset, ei);
 
 		final List<?> list = dataProvider.getEntitiesFromIds(criteria.getEntityClass(), subids, sort);
 		if(list == null || list.size() != subids.size()) {

@@ -48,7 +48,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	 * @author jpk
 	 */
 	protected static final class PkAndType {
-		public final Object pk;
+		public final Long pk;
 		public final Class<? extends IEntity> entityType;
 		
 		/**
@@ -56,7 +56,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		 * @param entityType
 		 * @param pk
 		 */
-		public PkAndType(Class<? extends IEntity> entityType, Object pk) {
+		public PkAndType(Class<? extends IEntity> entityType, Long pk) {
 			super();
 			this.pk = pk;
 			this.entityType = entityType;
@@ -280,7 +280,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	 * @param pk The primary key
 	 * @return The sought entity direct from the datastore.
 	 */
-	protected abstract <E extends IEntity> E getEntityFromDb(Class<E> entityType, Object pk);
+	protected abstract <E extends IEntity> E getEntityFromDb(Class<E> entityType, Long pk);
 
 	/**
 	 * Run the dao test for all given entity types.
@@ -354,7 +354,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		IEntity e = getTestEntity();
 		Assert.assertTrue(e.isNew(), "The created test entity is not new and should be");
 
-		Object pk = null;
+		Long pk = null;
 
 		// create
 		e = dao.persist(e);
@@ -488,7 +488,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 		getDbTrans().startTrans();
 		Assert.assertNotNull(e, "Null generated test entity");
-		final ArrayList<Object> ids = new ArrayList<Object>(1);
+		final ArrayList<Long> ids = new ArrayList<Long>(1);
 		ids.add(e.getId());
 		final List<IEntity> list = dao.findByPrimaryKeys(entityHandler.entityClass(), ids, null);
 		getDbTrans().endTrans();
@@ -507,7 +507,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		}
 
 		final List<IEntity> entityList = getNUniqueTestEntities(entityHandler.entityClass(), 5);
-		final ArrayList<Object> idList = new ArrayList<Object>(5);
+		final ArrayList<Long> idList = new ArrayList<Long>(5);
 		for(IEntity e : entityList) {
 			e = dao.persist(e);
 			idList.add(e.getId());
@@ -519,7 +519,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 		// get ids
 		getDbTrans().startTrans();
-		final List<?> dbIdList = dao.getPrimaryKeys(criteria, simpleIdSorting);
+		final List<Long> dbIdList = dao.getPrimaryKeys(criteria, simpleIdSorting);
 		Assert.assertTrue(EntityUtil.entitiesAndIdsEquals(dbIdList, entityList), "getIds list is empty or has incorrect ids");
 		getDbTrans().endTrans();
 
@@ -542,7 +542,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		}
 
 		final List<IEntity> entityList = getNUniqueTestEntities(entityHandler.entityClass(), 5);
-		final ArrayList<Object> idList = new ArrayList<Object>(5);
+		final ArrayList<Long> idList = new ArrayList<Long>(5);
 		for(IEntity e : entityList) {
 			e = dao.persist(e);
 			idList.add(e.getId());
@@ -606,7 +606,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 	final void daoPurgeNonExistantEntity() throws Exception {
 		IEntity e = getTestEntity();
-		final Object pk = e.getId();
+		final Long pk = e.getId();
 
 		// save it first
 		e = dao.persist(e);

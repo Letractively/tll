@@ -14,7 +14,7 @@ import com.tll.model.NameKey;
 import com.tll.model.bk.IBusinessKey;
 
 /**
- * IEntityDao - DAO definition for {@link IEntity}s.
+ * Entity DAO definition.
  * <p>
  * <b>NOTE:</b> All dao methods are subject to throwing a
  * {@link DataAccessException}.
@@ -31,7 +31,7 @@ public interface IEntityDao extends IDao {
 	 * @throws EntityNotFoundException
 	 * @throws DataAccessException
 	 */
-	<E extends IEntity> E load(Class<E> entityType, Object pk) throws EntityNotFoundException, DataAccessException;
+	<E extends IEntity> E load(Class<E> entityType, Long pk) throws EntityNotFoundException, DataAccessException;
 
 	/**
 	 * Loads a single entity specified by a business key.
@@ -111,7 +111,7 @@ public interface IEntityDao extends IDao {
 	 * @throws EntityNotFoundException
 	 * @throws DataAccessException
 	 */
-	<E extends IEntity> void purge(Class<E> entityType, Object pk) throws EntityNotFoundException, DataAccessException;
+	<E extends IEntity> void purge(Class<E> entityType, Long pk) throws EntityNotFoundException, DataAccessException;
 
 	/**
 	 * Physical deletion of all entities specified in the input. Use this method
@@ -177,7 +177,7 @@ public interface IEntityDao extends IDao {
 	 * @return List of entities or empty list if none found
 	 * @throws DataAccessException
 	 */
-	<E extends IEntity> List<E> findByPrimaryKeys(Class<E> entityType, Collection<?> ids, Sorting sorting)
+	<E extends IEntity> List<E> findByPrimaryKeys(Class<E> entityType, Collection<Long> ids, Sorting sorting)
 	throws DataAccessException;
 
 	/**
@@ -192,7 +192,7 @@ public interface IEntityDao extends IDao {
 	 *         found to be invalid.
 	 * @throws DataAccessException
 	 */
-	<E extends IEntity> List<?> getPrimaryKeys(Criteria<E> criteria, Sorting sorting)
+	<E extends IEntity> List<Long> getPrimaryKeys(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException,
 	DataAccessException;
 

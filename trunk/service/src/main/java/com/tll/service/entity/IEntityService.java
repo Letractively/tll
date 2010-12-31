@@ -37,7 +37,7 @@ public interface IEntityService<E extends IEntity> extends IListingDataProvider,
 	 * @return the loaded entity
 	 * @throws EntityNotFoundException
 	 */
-	E load(Object pk) throws EntityNotFoundException;
+	E load(Long pk) throws EntityNotFoundException;
 
 	/**
 	 * Load by business key.

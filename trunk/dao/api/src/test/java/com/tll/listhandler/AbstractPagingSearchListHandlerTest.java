@@ -74,7 +74,7 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public <E> List<E> getEntitiesFromIds(Class<E> entityClass, Collection<?> pks, Sorting sorting) {
+		public <E> List<E> getEntitiesFromIds(Class<E> entityClass, Collection<Long> pks, Sorting sorting) {
 			trans.startTrans();
 			try {
 				return (List<E>) dao.findByPrimaryKeys(Address.class, pks, sorting);
@@ -97,7 +97,7 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 		}
 
 		@Override
-		public List<?> getPrimaryKeys(Criteria<?> criteria, Sorting sorting) throws InvalidCriteriaException {
+		public List<Long> getPrimaryKeys(Criteria<?> criteria, Sorting sorting) throws InvalidCriteriaException {
 			trans.startTrans();
 			try {
 				return dao.getPrimaryKeys(criteria, sorting);

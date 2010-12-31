@@ -38,7 +38,7 @@ public interface IListingDataProvider {
 	 *         results are found.
 	 * @throws InvalidCriteriaException
 	 */
-	List<?> getPrimaryKeys(Criteria<?> criteria, Sorting sorting) throws InvalidCriteriaException;
+	List<Long> getPrimaryKeys(Criteria<?> criteria, Sorting sorting) throws InvalidCriteriaException;
 
 	/**
 	 * Retrieves entities from a collection of primary keys.
@@ -49,7 +49,7 @@ public interface IListingDataProvider {
 	 *        of the results is "undefined".
 	 * @return list of matching entities.
 	 */
-	<E> List<E> getEntitiesFromIds(Class<E> entityClass, Collection<?> pks, Sorting sorting);
+	<E> List<E> getEntitiesFromIds(Class<E> entityClass, Collection<Long> pks, Sorting sorting);
 
 	/**
 	 * Returns a page of matching results for the given criteria.

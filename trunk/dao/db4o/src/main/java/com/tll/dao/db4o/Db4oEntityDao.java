@@ -222,7 +222,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	}
 
 	@Override
-	public <E extends IEntity> List<E> findByPrimaryKeys(Class<E> entityType, final Collection<?> ids, Sorting sorting)
+	public <E extends IEntity> List<E> findByPrimaryKeys(Class<E> entityType, final Collection<Long> ids, Sorting sorting)
 	throws DataAccessException {
 		return getDb4oTemplate().query(new Predicate<E>(entityType) {
 
@@ -409,7 +409,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	}
 
 	@Override
-	public <E extends IEntity> List<?> getPrimaryKeys(Criteria<E> criteria, Sorting sorting)
+	public <E extends IEntity> List<Long> getPrimaryKeys(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException, DataAccessException {
 		final List<E> list = findEntities(criteria, sorting);
 		if(list == null) {
@@ -480,7 +480,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	}
 
 	@Override
-	public <E extends IEntity> E load(Class<E> entityType, final Object key) throws EntityNotFoundException, DataAccessException {
+	public <E extends IEntity> E load(Class<E> entityType, final Long key) throws EntityNotFoundException, DataAccessException {
 		logger.debug("Loading entity by PK: " + key);
 		return loadByPredicate(new Predicate<E>(entityType) {
 
@@ -578,7 +578,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	}
 
 	@Override
-	public <E extends IEntity> void purge(Class<E> entityType, Object pk) throws EntityNotFoundException, DataAccessException {
+	public <E extends IEntity> void purge(Class<E> entityType, Long pk) throws EntityNotFoundException, DataAccessException {
 		final E existing = load(entityType, pk);
 		if(existing == null) throw new EntityNotFoundException("Entity of primary key: " + pk + " not found for purging");
 		getDb4oTemplate().delete(existing);
