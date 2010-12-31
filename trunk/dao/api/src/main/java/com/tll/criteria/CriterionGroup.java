@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.tll.model.IEntity;
 import com.tll.model.NameKey;
 import com.tll.model.bk.IBusinessKey;
 import com.tll.util.DateRange;
@@ -129,7 +128,7 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	 * @param isCaseSensitive
 	 * @return this for method chaining
 	 */
-	public CriterionGroup addCriterion(IBusinessKey<? extends IEntity> key, boolean isCaseSensitive) {
+	public CriterionGroup addCriterion(IBusinessKey<?> key, boolean isCaseSensitive) {
 		for(final String fname : key.getPropertyNames()) {
 			addCriterion(fname, key.getPropertyValue(fname), Comparator.EQUALS, isCaseSensitive);
 		}
@@ -154,7 +153,7 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	 *        NULL identifier will be specified in the created criterion.
 	 * @return this for method chaining
 	 */
-	public CriterionGroup addCriterion(String relatedPropertyName, Class<? extends IEntity> relatedEntityType,
+	public CriterionGroup addCriterion(String relatedPropertyName, Class<?> relatedEntityType,
 			Object foreignKey) {
 		final String fkname = relatedPropertyName + "." + PK_FIELDNAME;
 		if(foreignKey == null) {
