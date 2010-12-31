@@ -57,12 +57,12 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 
 		@Override
 		@SuppressWarnings("unchecked")
-		public <EX> List<EX> getEntitiesFromIds(final Class<EX> entityClass, final Collection<?> ids, final Sorting sorting) {
+		public <EX> List<EX> getEntitiesFromIds(final Class<EX> entityClass, final Collection<Long> ids, final Sorting sorting) {
 			return (List<EX>) dao.findByPrimaryKeys((Class<IEntity>) entityClass, ids, sorting);
 		}
 
 		@Override
-		public List<?> getPrimaryKeys(final Criteria<?> criteria, final Sorting sorting) throws InvalidCriteriaException {
+		public List<Long> getPrimaryKeys(final Criteria<?> criteria, final Sorting sorting) throws InvalidCriteriaException {
 			return dao.getPrimaryKeys(criteria, sorting);
 		}
 

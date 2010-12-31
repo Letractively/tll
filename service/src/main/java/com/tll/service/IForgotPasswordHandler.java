@@ -29,5 +29,5 @@ public interface IForgotPasswordHandler {
 	 * @return the new reset password
 	 * @throws ChangeUserCredentialsFailedException When the operation fails
 	 */
-	String resetPassword(Object userPk) throws ChangeUserCredentialsFailedException;
+	String resetPassword(Long userPk) throws ChangeUserCredentialsFailedException;
 }

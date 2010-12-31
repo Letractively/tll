@@ -292,7 +292,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	}
 
 	@Override
-	public Object accountKey() {
+	public Long accountKey() {
 		try {
 			return getAccount().getId();
 		}
@@ -302,7 +302,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 		}
 	}
 
-	public Object customerId() {
+	public Long customerId() {
 		try {
 			return getCustomer().getId();
 		}

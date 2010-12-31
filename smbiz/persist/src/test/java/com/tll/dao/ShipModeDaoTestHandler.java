@@ -16,7 +16,7 @@ import com.tll.model.ShipMode;
  */
 public class ShipModeDaoTestHandler extends AbstractEntityDaoTestHandler<ShipMode> {
 
-	private Object pkC, pkA;
+	private Long pkC, pkA;
 
 	@Override
 	public Class<ShipMode> entityClass() {

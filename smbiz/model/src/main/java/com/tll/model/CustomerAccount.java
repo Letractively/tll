@@ -117,7 +117,7 @@ public class CustomerAccount extends TimeStampEntity implements IChildEntity<Acc
 	}
 
 	@Override
-	public Object accountKey() {
+	public Long accountKey() {
 		try {
 			return getAccount().getId();
 		}

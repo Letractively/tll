@@ -19,7 +19,7 @@ import com.tll.model.InterfaceSwitch;
  */
 public class InterfaceOptionAccountDaoTestHandler extends AbstractEntityDaoTestHandler<InterfaceOptionAccount> {
 
-	private Object pkC, pkA, pkI;
+	private Long pkC, pkA, pkI;
 
 	private int numParameters = 0;
 	private String removedParamName;

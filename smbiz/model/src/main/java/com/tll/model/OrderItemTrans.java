@@ -99,7 +99,7 @@ public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTran
 	}
 
 	@Override
-	public Object accountKey() {
+	public Long accountKey() {
 		try {
 			return getOrderItem().getOrder().getAccount().getId();
 		}
@@ -109,7 +109,7 @@ public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTran
 		}
 	}
 
-	public Object orderItemId() {
+	public Long orderItemId() {
 		try {
 			return getOrderItem().getId();
 		}
@@ -118,7 +118,7 @@ public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTran
 		}
 	}
 
-	public Object orderTransId() {
+	public Long orderTransId() {
 		try {
 			return getOrderTrans().getId();
 		}

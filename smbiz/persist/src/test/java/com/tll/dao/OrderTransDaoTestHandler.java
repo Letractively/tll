@@ -18,7 +18,7 @@ import com.tll.model.OrderTransOp;
  */
 public class OrderTransDaoTestHandler extends AbstractEntityDaoTestHandler<OrderTrans> {
 
-	private Object pkC, pkA, pkO;
+	private Long pkC, pkA, pkO;
 
 	@Override
 	public Class<OrderTrans> entityClass() {

@@ -100,7 +100,7 @@ public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipM
 	}
 
 	@Override
-	public Object accountKey() {
+	public Long accountKey() {
 		try {
 			return getShipMode().getAccount().getId();
 		}
@@ -110,7 +110,7 @@ public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipM
 		}
 	}
 
-	public Object shipModeKey() {
+	public Long shipModeKey() {
 		try {
 			return getShipMode().getId();
 		}

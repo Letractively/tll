@@ -116,7 +116,7 @@ public class AccountHistory extends TimeStampEntity implements IChildEntity<Acco
 	}
 
 	@Override
-	public Object accountKey() {
+	public Long accountKey() {
 		try {
 			return getAccount().getId();
 		}

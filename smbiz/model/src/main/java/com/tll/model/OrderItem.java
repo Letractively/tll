@@ -245,7 +245,7 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 	}
 
 	@Override
-	public Object accountKey() {
+	public Long accountKey() {
 		try {
 			return getOrder().getAccount().getId();
 		}
@@ -255,7 +255,7 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 		}
 	}
 
-	public Object orderId() {
+	public Long orderId() {
 		try {
 			return getOrder().getId();
 		}

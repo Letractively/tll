@@ -19,7 +19,7 @@ import com.tll.model.ProductInventory;
  */
 public class ProdCatDaoTestHandler extends AbstractEntityDaoTestHandler<ProdCat> {
 
-	private Object pkC, pkA, pkP, pkCa;
+	private Long pkC, pkA, pkP, pkCa;
 
 	@Override
 	public Class<ProdCat> entityClass() {

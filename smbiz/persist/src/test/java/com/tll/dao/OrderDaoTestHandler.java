@@ -20,7 +20,7 @@ import com.tll.model.Visitor;
  */
 public class OrderDaoTestHandler extends AbstractEntityDaoTestHandler<Order> {
 
-	private Object pkC, pkAdr1, pkAdr2, pkPI, pkA, pkV, pkCust;
+	private Long pkC, pkAdr1, pkAdr2, pkPI, pkA, pkV, pkCust;
 
 	@Override
 	public Class<Order> entityClass() {

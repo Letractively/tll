@@ -82,7 +82,7 @@ public class ProdCat extends EntityBase implements IChildEntity<ProductInventory
 	}
 
 	@Override
-	public Object accountKey() {
+	public Long accountKey() {
 		try {
 			return getProduct().getAccount().getId();
 		}
@@ -92,7 +92,7 @@ public class ProdCat extends EntityBase implements IChildEntity<ProductInventory
 		}
 	}
 
-	public Object productId() {
+	public Long productId() {
 		try {
 			return getProduct().getId();
 		}
@@ -101,7 +101,7 @@ public class ProdCat extends EntityBase implements IChildEntity<ProductInventory
 		}
 	}
 
-	public Object categoryKey() {
+	public Long categoryKey() {
 		try {
 			return getCategory().getId();
 		}

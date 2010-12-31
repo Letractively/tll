@@ -16,7 +16,7 @@ import com.tll.model.SalesTax;
  */
 public class SalesTaxDaoTestHandler extends AbstractEntityDaoTestHandler<SalesTax> {
 
-	private Object pkC, pkA;
+	private Long pkC, pkA;
 
 	@Override
 	public Class<SalesTax> entityClass() {

@@ -17,7 +17,7 @@ import com.tll.model.OrderItem;
  */
 public class OrderItemDaoTestHandler extends AbstractEntityDaoTestHandler<OrderItem> {
 
-	private Object pkC, pkA, pkO;
+	private Long pkC, pkA, pkO;
 
 	@Override
 	public Class<OrderItem> entityClass() {

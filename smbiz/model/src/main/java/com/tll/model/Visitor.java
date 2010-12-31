@@ -126,7 +126,7 @@ public class Visitor extends TimeStampEntity implements IChildEntity<Account>, I
 	}
 
 	@Override
-	public Object accountKey() {
+	public Long accountKey() {
 		try {
 			return getAccount().getId();
 		}
