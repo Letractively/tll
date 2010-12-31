@@ -291,8 +291,6 @@
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
-			<classifier>jdk15</classifier>
-			<version>${testNGVersion}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
