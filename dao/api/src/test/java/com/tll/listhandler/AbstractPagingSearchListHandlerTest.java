@@ -17,6 +17,7 @@ import com.google.inject.Inject;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
+import com.google.inject.TypeLiteral;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.AbstractDbAwareTest;
@@ -41,7 +42,7 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 	 * TestDataProvider
 	 * @author jpk
 	 */
-	static final class TestDataProvider implements IListingDataProvider {
+	static final class TestDataProvider implements IListingDataProvider<Address> {
 
 		final IEntityDao dao;
 		final IDbTrans trans;
@@ -59,7 +60,7 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 		}
 
 		@Override
-		public List<SearchResult> find(Criteria<?> criteria, Sorting sorting) throws InvalidCriteriaException {
+		public List<SearchResult> find(Criteria<Address> criteria, Sorting sorting) throws InvalidCriteriaException {
 			trans.startTrans();
 			try {
 				return dao.find(criteria, sorting);
@@ -69,12 +70,11 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 			}
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
-		public <E> List<E> getEntitiesFromIds(Class<E> entityClass, Collection<Long> pks, Sorting sorting) {
+		public List<Address> getEntitiesFromIds(Class<Address> entityClass, Collection<Long> pks, Sorting sorting) {
 			trans.startTrans();
 			try {
-				return (List<E>) dao.findByPrimaryKeys(Address.class, pks, sorting);
+				return dao.findByPrimaryKeys(Address.class, pks, sorting);
 			}
 			finally {
 				trans.endTrans();
@@ -82,7 +82,7 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 		}
 
 		@Override
-		public IPageResult<SearchResult> getPage(Criteria<?> criteria, Sorting sorting, int offset, int pageSize)
+		public IPageResult<SearchResult> getPage(Criteria<Address> criteria, Sorting sorting, int offset, int pageSize)
 				throws InvalidCriteriaException {
 			trans.startTrans();
 			try {
@@ -94,7 +94,7 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 		}
 
 		@Override
-		public List<Long> getPrimaryKeys(Criteria<?> criteria, Sorting sorting) throws InvalidCriteriaException {
+		public List<Long> getPrimaryKeys(Criteria<Address> criteria, Sorting sorting) throws InvalidCriteriaException {
 			trans.startTrans();
 			try {
 				return dao.getPrimaryKeys(criteria, sorting);
@@ -118,7 +118,8 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 
 			@Override
 			public void configure(Binder binder) {
-				binder.bind(IListingDataProvider.class).to(TestDataProvider.class).in(Scopes.SINGLETON);
+				binder.bind(new TypeLiteral<IListingDataProvider<Address>>() {}).to(TestDataProvider.class)
+						.in(Scopes.SINGLETON);
 			}
 		});
 	}
@@ -137,8 +138,8 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 		return injector.getInstance(IEntityDao.class);
 	}
 
-	protected final IListingDataProvider getTestEntityService() {
-		return injector.getInstance(Key.get(IListingDataProvider.class));
+	protected final IListingDataProvider<Address> getTestEntityService() {
+		return injector.getInstance(Key.get(new TypeLiteral<IListingDataProvider<Address>>() {}));
 	}
 
 	protected final EntityBeanFactory getEntityBeanFactory() {
@@ -165,8 +166,7 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 		assert elements.size() >= 10 : "At least 10 list elements must be present for this test";
 		final int pageSize = 3;
 
-		final IListingDataProvider dataProvider = getTestEntityService();
-
+		final IListingDataProvider<Address> dataProvider = getTestEntityService();
 		final Criteria<Address> criteria = new Criteria<Address>(Address.class);
 		final Sorting sorting = new Sorting(new SortColumn("emailAddress"));
 		final IListHandler<SearchResult> listHandler =

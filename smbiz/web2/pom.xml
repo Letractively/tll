@@ -71,6 +71,9 @@
     <!-- dao impl profiles -->
     <profile>
       <id>db4o</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <properties>
         <daoImpl>db4o</daoImpl>
       </properties>
@@ -155,11 +158,6 @@
       <artifactId>tll-servlet</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-security</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
 
     <dependency>
       <groupId>com.tll</groupId>
@@ -194,12 +192,6 @@
       <version>0.9.0-SNAPSHOT</version>
       <classifier>sources</classifier>
       <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 

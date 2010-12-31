@@ -10,9 +10,10 @@ import com.tll.dao.Sorting;
 
 /**
  * Search supporting list handler implementation for pageable result sets.
+ * @param <E> entity type
  * @author jpk
  */
-public final class PagingSearchListHandler extends SearchListHandler {
+public final class PagingSearchListHandler<E> extends SearchListHandler<E> {
 
 	/**
 	 * The current page of results
@@ -26,7 +27,7 @@ public final class PagingSearchListHandler extends SearchListHandler {
 	 * @param criteria The criteria used to generate the underlying list
 	 * @param sorting The required sorting directive.
 	 */
-	PagingSearchListHandler(IListingDataProvider dataProvider, Criteria<?> criteria, Sorting sorting) {
+	PagingSearchListHandler(IListingDataProvider<E> dataProvider, Criteria<E> criteria, Sorting sorting) {
 		super(dataProvider, criteria, sorting);
 	}
 

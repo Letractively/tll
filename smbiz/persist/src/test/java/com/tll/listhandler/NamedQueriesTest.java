@@ -138,7 +138,7 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 	 * @param entityClass
 	 * @return The {@link IListingDataProvider} subject to testing.
 	 */
-	protected <E extends IEntity> IListingDataProvider getListHandlerDataProvider(Class<E> entityClass) {
+	protected <E extends IEntity> IListingDataProvider<E> getListHandlerDataProvider(Class<E> entityClass) {
 		return injector.getInstance(IEntityServiceFactory.class).instanceByEntityType(entityClass);
 	}
 
@@ -213,7 +213,7 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 	@SuppressWarnings("unchecked")
 	public void test() throws Exception {
 		for(final SelectNamedQueries nq : SelectNamedQueries.values()) {
-			final IListingDataProvider dataProvider = getListHandlerDataProvider((Class<IEntity>) nq.getEntityType());
+			final IListingDataProvider<IEntity> dataProvider = getListHandlerDataProvider((Class<IEntity>) nq.getEntityType());
 			final CriteriaAndSorting cas = createCriteriaAndSorting(nq);
 			final Criteria<IEntity> criteria = cas.criteria;
 			final Sorting sorting = cas.sorting;

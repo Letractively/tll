@@ -10,9 +10,10 @@ import com.tll.dao.Sorting;
 
 /**
  * Search supporting list handler implementation based on an id list.
+ * @param <E> entity type
  * @author jpk
  */
-public final class PrimaryKeyListHandler extends SearchListHandler {
+public final class PrimaryKeyListHandler<E> extends SearchListHandler<E> {
 
 	/**
 	 * The id list - list of entity pks matching the search criteria.
@@ -26,7 +27,7 @@ public final class PrimaryKeyListHandler extends SearchListHandler {
 	 * @param criteria The criteria used to generate the underlying list
 	 * @param sorting
 	 */
-	PrimaryKeyListHandler(IListingDataProvider dataProvider, Criteria<?> criteria, Sorting sorting) {
+	PrimaryKeyListHandler(IListingDataProvider<E> dataProvider, Criteria<E> criteria, Sorting sorting) {
 		super(dataProvider, criteria, sorting);
 	}
 
@@ -63,7 +64,7 @@ public final class PrimaryKeyListHandler extends SearchListHandler {
 
 		final List<Long> subids = pks.subList(offset, ei);
 
-		final List<?> list = dataProvider.getEntitiesFromIds(criteria.getEntityClass(), subids, sort);
+		final List<E> list = dataProvider.getEntitiesFromIds(criteria.getEntityClass(), subids, sort);
 		if(list == null || list.size() != subids.size()) {
 			throw new ListHandlerException("id and entity count mismatch");
 		}

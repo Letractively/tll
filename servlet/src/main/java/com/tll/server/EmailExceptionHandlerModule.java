@@ -3,7 +3,7 @@
  * @author jpk
  * @since Apr 28, 2009
  */
-package com.tll.di;
+package com.tll.server;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -22,8 +22,6 @@ import com.tll.config.Config;
 import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
 import com.tll.mail.NameEmail;
-import com.tll.server.IExceptionHandler;
-import com.tll.server.rpc.EmailExceptionHandler;
 
 /**
  * EmailExceptionHandlerModule

@@ -270,11 +270,11 @@
 			<groupId>com.db4o</groupId>
 			<artifactId>db4o-full-java5</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springextensions.db4o</groupId>
-			<artifactId>org.springextensions.db4o</artifactId>
-			<version>${springextensions.db4o.version}</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.springextensions.db4o</groupId>-->
+<!--			<artifactId>org.springextensions.db4o</artifactId>-->
+<!--			<version>${springextensions.db4o.version}</version>-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-dao-db4o</artifactId>

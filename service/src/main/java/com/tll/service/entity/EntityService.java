@@ -160,30 +160,29 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<SearchResult> find(Criteria<?> criteria, Sorting sorting)
+	public List<SearchResult> find(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
 		return dao.find(criteria, sorting);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public <EX> List<EX> getEntitiesFromIds(Class<EX> entityClass, Collection<Long> pks, Sorting sorting) {
+	public List<E> getEntitiesFromIds(Class<E> entityClass, Collection<Long> pks, Sorting sorting) {
 		if(!IEntity.class.isAssignableFrom(entityClass)) {
 			throw new IllegalArgumentException("Non-IEntity class");
 		}
-		return (List<EX>) dao.findByPrimaryKeys((Class<IEntity>)entityClass, pks, sorting);
+		return dao.findByPrimaryKeys(entityClass, pks, sorting);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<Long> getPrimaryKeys(Criteria<?> criteria, Sorting sorting) throws InvalidCriteriaException {
+	public List<Long> getPrimaryKeys(Criteria<E> criteria, Sorting sorting) throws InvalidCriteriaException {
 		return dao.getPrimaryKeys(criteria, sorting);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public IPageResult<SearchResult> getPage(Criteria<?> criteria, Sorting sorting, int offset,
+	public IPageResult<SearchResult> getPage(Criteria<E> criteria, Sorting sorting, int offset,
 			int pageSize)
 			throws InvalidCriteriaException {
 		return dao.getPage(criteria, sorting, offset, pageSize);

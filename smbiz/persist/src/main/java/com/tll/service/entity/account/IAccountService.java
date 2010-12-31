@@ -12,5 +12,5 @@ public interface IAccountService extends INamedEntityService<Account>, IStateful
 	 * Provides the ability to list-handle {@link AccountHistory} entities.
 	 * @return Listing data provider for account history entities.
 	 */
-	IListingDataProvider getAccountHistoryDataProvider();
+	IListingDataProvider<AccountHistory> getAccountHistoryDataProvider();
 }
