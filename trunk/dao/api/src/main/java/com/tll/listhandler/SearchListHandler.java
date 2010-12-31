@@ -10,21 +10,22 @@ import com.tll.dao.Sorting;
 /**
  * Abstract search supporting list handler class. All search supporting list
  * handler implementations should derive from this class.
+ * @param <E> entity type
  * @author jpk
  */
-public abstract class SearchListHandler extends AbstractListHandler<SearchResult> {
+public abstract class SearchListHandler<E> extends AbstractListHandler<SearchResult> {
 
 	protected final Log LOG = LogFactory.getLog(this.getClass());
 
 	/**
 	 * The list handler data provider.
 	 */
-	protected final IListingDataProvider dataProvider;
+	protected final IListingDataProvider<E> dataProvider;
 
 	/**
 	 * The search criteria.
 	 */
-	protected Criteria<?> criteria;
+	protected Criteria<E> criteria;
 
 	/**
 	 * Constructor
@@ -35,7 +36,7 @@ public abstract class SearchListHandler extends AbstractListHandler<SearchResult
 	 * @throws IllegalArgumentException When one or more required args are not
 	 *         specifeid
 	 */
-	public SearchListHandler(IListingDataProvider dataProvider, Criteria<?> criteria, Sorting sorting)
+	public SearchListHandler(IListingDataProvider<E> dataProvider, Criteria<E> criteria, Sorting sorting)
 	throws IllegalArgumentException {
 		super();
 		if(dataProvider == null) {

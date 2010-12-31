@@ -1,7 +1,7 @@
 /*
  * The Logic Lab
  */
-package com.tll.di;
+package com.tll.server;
 
 import java.io.File;
 import java.io.FileReader;

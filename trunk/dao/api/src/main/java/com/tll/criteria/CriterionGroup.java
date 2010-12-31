@@ -21,6 +21,8 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 
 	private static final long serialVersionUID = 502701212641369513L;
 
+	public static final String PK_FIELDNAME = "id";
+	
 	private boolean junction = true; // default to AND junction
 
 	private Set<ICriterion> group;
@@ -116,8 +118,8 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	 * @param pk the primary key
 	 * @return this for method chaining
 	 */
-	public CriterionGroup addCriterion(Class<? extends IEntity> entityType, Object pk) {
-		addCriterion(IEntity.PK_FIELDNAME, pk, Comparator.EQUALS, true);
+	public CriterionGroup addCriterion(Class<?> entityType, Object pk) {
+		addCriterion(PK_FIELDNAME, pk, Comparator.EQUALS, true);
 		return this;
 	}
 
@@ -154,7 +156,7 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	 */
 	public CriterionGroup addCriterion(String relatedPropertyName, Class<? extends IEntity> relatedEntityType,
 			Object foreignKey) {
-		final String fkname = relatedPropertyName + "." + IEntity.PK_FIELDNAME;
+		final String fkname = relatedPropertyName + "." + PK_FIELDNAME;
 		if(foreignKey == null) {
 			return addCriterion(fkname, DBType.NULL, Comparator.IS, false);
 		}

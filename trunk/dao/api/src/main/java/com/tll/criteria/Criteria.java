@@ -3,15 +3,13 @@ package com.tll.criteria;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.tll.model.IEntity;
-
 /**
  * Criteria - Holds fairly versatile criterion for querying entity data through
  * the dao api.
  * @param <E> entity type
  * @author jpk
  */
-public final class Criteria<E extends IEntity> {
+public final class Criteria<E> {
 
 	private static final long serialVersionUID = 4274638102260498756L;
 

@@ -23,7 +23,7 @@ import com.tll.service.IService;
  * @author jpk
  * @param <E> the entity type
  */
-public interface IEntityService<E extends IEntity> extends IListingDataProvider, IService {
+public interface IEntityService<E extends IEntity> extends IListingDataProvider<E>, IService {
 
 	/**
 	 * Returns the class of the entity managed by this service.

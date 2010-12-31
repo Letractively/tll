@@ -8,7 +8,6 @@ import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
-import com.tll.model.IEntity;
 import com.tll.util.CollectionUtil;
 
 /**
@@ -62,11 +61,11 @@ public final class ListHandlerFactory {
 	 *         specified but mal-formed.
 	 * @throws IllegalStateException when the list handler type is un-supported.
 	 */
-	public static <E extends IEntity> IListHandler<SearchResult> create(Criteria<E> criteria, Sorting sorting,
-			ListHandlerType type, IListingDataProvider dataProvider) throws InvalidCriteriaException, EmptyListException,
+	public static <E> IListHandler<SearchResult> create(Criteria<E> criteria, Sorting sorting,
+			ListHandlerType type, IListingDataProvider<E> dataProvider) throws InvalidCriteriaException, EmptyListException,
 			ListHandlerException, IllegalStateException {
 
-		SearchListHandler slh = null;
+		SearchListHandler<E> slh = null;
 
 		switch(type) {
 
@@ -77,11 +76,11 @@ public final class ListHandlerFactory {
 			if(criteria.getCriteriaType().isQuery()) {
 				throw new InvalidCriteriaException("Id list handling does not support query based criteria");
 			}
-			slh = new PrimaryKeyListHandler(dataProvider, criteria, sorting);
+			slh = new PrimaryKeyListHandler<E>(dataProvider, criteria, sorting);
 			break;
 
 		case PAGE:
-			slh = new PagingSearchListHandler(dataProvider, criteria, sorting);
+			slh = new PagingSearchListHandler<E>(dataProvider, criteria, sorting);
 			break;
 
 		default:

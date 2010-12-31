@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Feb 11, 2009
  */
-package com.tll.server.rpc;
+package com.tll.server;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,10 +13,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.google.inject.Inject;
-import com.tll.di.EmailExceptionHandlerModule.OnErrorEmail;
 import com.tll.mail.MailManager;
 import com.tll.mail.NameEmail;
-import com.tll.server.IExceptionHandler;
+import com.tll.server.EmailExceptionHandlerModule.OnErrorEmail;
 
 /**
  * EmailExceptionHandler - Emails exception notification emails.
