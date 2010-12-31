@@ -14,7 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.db4o.Db4oEmbedded;
-import com.db4o.ObjectContainer;
+import com.db4o.EmbeddedObjectContainer;
 import com.db4o.config.EmbeddedConfiguration;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -63,7 +63,7 @@ public class Db4oDbShell implements IDbShell {
 	/**
 	 * @return A newly created db4o session.
 	 */
-	private ObjectContainer createDbSession() {
+	private EmbeddedObjectContainer createDbSession() {
 		if(c == null) {
 			log.info("Instantiating db4o session for: " + dbFile + " with NO configuration");
 			return Db4oEmbedded.openFile(dbFile.getPath());
@@ -76,7 +76,7 @@ public class Db4oDbShell implements IDbShell {
 	 * Closes a db session.
 	 * @param session A db4o session
 	 */
-	private void killDbSession(ObjectContainer session) {
+	private void killDbSession(EmbeddedObjectContainer session) {
 		if(session != null) {
 			log.info("Killing db4o session for: " + dbFile);
 			while(!session.close()) {}
@@ -94,7 +94,7 @@ public class Db4oDbShell implements IDbShell {
 		if(f.exists()) return;
 		log.info("Creating db4o db: " + f.getPath());
 		f = null;
-		ObjectContainer db = null;
+		EmbeddedObjectContainer db = null;
 		try {
 			db = createDbSession();
 		}
@@ -113,7 +113,7 @@ public class Db4oDbShell implements IDbShell {
 
 	@Override
 	public void addData() {
-		ObjectContainer dbSession = null;
+		EmbeddedObjectContainer dbSession = null;
 		try {
 			log.info("Stubbing db4o db for db4o db: " + dbFile);
 			dbSession = createDbSession();

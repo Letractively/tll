@@ -26,11 +26,9 @@ import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
-import com.tll.model.IEntityFactory;
 import com.tll.model.egraph.EGraphModule;
 import com.tll.model.egraph.EntityBeanFactory;
 import com.tll.model.test.Address;
-import com.tll.model.test.TestEntityFactory;
 import com.tll.model.test.TestPersistenceUnitEntityGraphBuilder;
 
 /**
@@ -51,7 +49,7 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 		/**
 		 * Constructor
 		 * @param dao
-		 * @param trans 
+		 * @param trans
 		 */
 		@Inject
 		public TestDataProvider(IEntityDao dao, IDbTrans trans) {
@@ -115,18 +113,14 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
+		modules.add(new EGraphModule(TestPersistenceUnitEntityGraphBuilder.class, null));
 		modules.add(new Module() {
 
 			@Override
 			public void configure(Binder binder) {
-				// IEntityFactory
-				binder.bind(IEntityFactory.class).to(TestEntityFactory.class).in(Scopes.SINGLETON);
-				
-				binder.bind(IListingDataProvider.class).to(TestDataProvider.class)
-						.in(Scopes.SINGLETON);
+				binder.bind(IListingDataProvider.class).to(TestDataProvider.class).in(Scopes.SINGLETON);
 			}
 		});
-		modules.add(new EGraphModule(TestPersistenceUnitEntityGraphBuilder.class, null));
 	}
 
 	@BeforeClass(alwaysRun = true)
