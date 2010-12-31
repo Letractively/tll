@@ -16,8 +16,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 import com.tll.criteria.Comparator;
 import com.tll.criteria.Criteria;
 import com.tll.dao.test.EntityDaoTestDecorator;
@@ -222,8 +220,8 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	/**
 	 * @return The injected {@link IEntityFactory}
 	 */
-	protected final IEntityFactory<?> getEntityFactory() {
-		return injector.getInstance(Key.get(new TypeLiteral<IEntityFactory<?>>() {}));
+	protected final IEntityFactory getEntityFactory() {
+		return injector.getInstance(IEntityFactory.class);
 	}
 
 	/**

@@ -8,14 +8,14 @@ import com.google.inject.Inject;
  */
 public final class SmbizEntityAssembler implements IEntityAssembler {
 
-	private final IEntityFactory<?> entityFactory;
+	private final IEntityFactory entityFactory;
 
 	/**
 	 * Constructor
 	 * @param entityFactory required
 	 */
 	@Inject
-	public SmbizEntityAssembler(final IEntityFactory<Long> entityFactory) {
+	public SmbizEntityAssembler(final IEntityFactory entityFactory) {
 		super();
 		this.entityFactory = entityFactory;
 	}

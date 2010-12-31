@@ -72,7 +72,7 @@ public class EGraphModule extends AbstractModule {
 		bind(EntityBeanFactory.class).toProvider(new Provider<EntityBeanFactory>() {
 
 			@Inject(optional = true)
-			IEntityFactory<?> entityFactory;
+			IEntityFactory entityFactory;
 
 			@Override
 			public EntityBeanFactory get() {

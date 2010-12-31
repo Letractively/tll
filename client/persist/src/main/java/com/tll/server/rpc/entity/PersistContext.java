@@ -37,7 +37,7 @@ public final class PersistContext {
 	private final Marshaler marshaler;
 	private final IMarshalOptionsResolver marshalOptionsResolver;
 	private final IEntityTypeResolver entityTypeResolver;
-	private final IEntityFactory<Long> entityFactory;
+	private final IEntityFactory entityFactory;
 	private final IEntityAssembler entityAssembler;
 	private final IEntityServiceFactory entityServiceFactory;
 	private final IExceptionHandler exceptionHandler;
@@ -59,7 +59,7 @@ public final class PersistContext {
 	@Inject
 	public PersistContext(MailManager mailManager, SchemaInfo schemaInfo, Marshaler marshaler,
 			IMarshalOptionsResolver marshalOptionsResolver, IEntityTypeResolver entityTypeResolver,
-			IEntityFactory<Long> entityFactory, IEntityAssembler entityAssembler, IEntityServiceFactory entityServiceFactory,
+			IEntityFactory entityFactory, IEntityAssembler entityAssembler, IEntityServiceFactory entityServiceFactory,
 			IExceptionHandler exceptionHandler, PersistCache persistCache) {
 		super();
 		this.mailManager = mailManager;
@@ -78,7 +78,7 @@ public final class PersistContext {
 		return entityServiceFactory;
 	}
 
-	public IEntityFactory<Long> getEntityFactory() {
+	public IEntityFactory getEntityFactory() {
 		return entityFactory;
 	}
 

@@ -6,11 +6,10 @@
 package com.tll.model;
 
 /**
- * IEntityFactory - Contract for creating new entities.
- * @param <PK> the primary key type
+ * Contract for creating new entities.
  * @author jpk
  */
-public interface IEntityFactory<PK> {
+public interface IEntityFactory {
 
 	/**
 	 * Are primary keys generatable? I.e.: are they able to be created in their
@@ -43,21 +42,5 @@ public interface IEntityFactory<PK> {
 	 * @return the newly created primary key that was set in the given entity
 	 *         returned as a convenience
 	 */
-	PK generatePrimaryKey(IEntity entity);
-
-	/**
-	 * Converts an entity primary key to a String with the added provision that
-	 * the resultant string is able to be converted back to the original primary
-	 * key behaving exactly like the one given.
-	 * @param pk the primary key to convert
-	 * @return A full representation of the primary key as a string.
-	 */
-	String primaryKeyToString(PK pk);
-
-	/**
-	 * The reverse of {@link #primaryKeyToString(Object)}
-	 * @param s the string to convert to a primary key
-	 * @return A primary key
-	 */
-	PK stringToPrimaryKey(String s);
+	Long generatePrimaryKey(IEntity entity);
 }

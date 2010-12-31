@@ -23,7 +23,6 @@ import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
-import com.google.inject.TypeLiteral;
 import com.tll.config.Config;
 import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
@@ -213,7 +212,7 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 		}
 
 		// IEntityFactory<Long>
-		bind(new TypeLiteral<IEntityFactory<Long>>() {}).to(Db4oEntityFactory.class).in(Scopes.SINGLETON);
+		bind(IEntityFactory.class).to(Db4oEntityFactory.class).in(Scopes.SINGLETON);
 
 		// IDb4oNamedQueryTranslator
 		bind(IDb4oNamedQueryTranslator.class).to(getNamedQueryTranslatorImpl()).in(Scopes.SINGLETON);

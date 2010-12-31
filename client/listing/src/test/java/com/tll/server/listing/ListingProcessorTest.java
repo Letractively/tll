@@ -22,7 +22,6 @@ import com.google.inject.Inject;
 import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
-import com.google.inject.TypeLiteral;
 import com.tll.common.data.ListingOp;
 import com.tll.common.data.RemoteListingDefinition;
 import com.tll.common.data.rpc.ListingPayload;
@@ -62,10 +61,10 @@ public class ListingProcessorTest extends AbstractDbAwareTest {
 			public void configure(Binder binder) {
 				
 				// IEntityFactory<Long>
-				binder.bind(new TypeLiteral<IEntityFactory<Long>>() {}).toProvider(new Provider<IEntityFactory<Long>>() {
+				binder.bind(IEntityFactory.class).toProvider(new Provider<IEntityFactory>() {
 					
 					@Override
-					public IEntityFactory<Long> get() {
+					public IEntityFactory get() {
 						return new TestEntityFactory();
 					}
 				}).in(Scopes.SINGLETON);

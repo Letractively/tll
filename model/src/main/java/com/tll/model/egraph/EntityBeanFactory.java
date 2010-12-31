@@ -63,7 +63,7 @@ public final class EntityBeanFactory {
 
 	private final ListableBeanFactory beanFactory;
 
-	private final IEntityFactory<?> entityFactory;
+	private final IEntityFactory entityFactory;
 
 	/**
 	 * Constructor
@@ -71,7 +71,7 @@ public final class EntityBeanFactory {
 	 * @param entityFactory Optional, responsible for generating surrogate primary keys
 	 */
 	@Inject
-	public EntityBeanFactory(ListableBeanFactory beanFactory, IEntityFactory<?> entityFactory) {
+	public EntityBeanFactory(ListableBeanFactory beanFactory, IEntityFactory entityFactory) {
 		super();
 		if(beanFactory == null) throw new IllegalArgumentException("The beanFactory is null");
 		this.beanFactory = beanFactory;

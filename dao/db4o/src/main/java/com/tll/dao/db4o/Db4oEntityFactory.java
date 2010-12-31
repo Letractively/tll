@@ -15,7 +15,7 @@ import com.tll.model.IEntity;
  * Db4oEntityFactory
  * @author jpk
  */
-public class Db4oEntityFactory extends AbstractEntityFactory<Long> {
+public class Db4oEntityFactory extends AbstractEntityFactory {
 
 	private Provider<ObjectContainer> oc;
 	private IdState state;
@@ -42,16 +42,6 @@ public class Db4oEntityFactory extends AbstractEntityFactory<Long> {
 	public void setObjectContainer(Provider<ObjectContainer> oc) {
 		if(oc == null) throw new NullPointerException();
 		this.oc = oc;
-	}
-
-	@Override
-	public String primaryKeyToString(Long pk) {
-		return pk == null ? null : pk.toString();
-	}
-
-	@Override
-	public Long stringToPrimaryKey(String s) {
-		return s == null ? null : Long.valueOf(s);
 	}
 
 	@Override
