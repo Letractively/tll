@@ -54,7 +54,7 @@ public class EntityDaoTestDecorator<T extends IEntityDao> implements IEntityDao 
 	}
 
 	@Override
-	public <E extends IEntity> List<E> findByPrimaryKeys(Class<E> entityType, Collection<?> ids, Sorting sorting) {
+	public <E extends IEntity> List<E> findByPrimaryKeys(Class<E> entityType, Collection<Long> ids, Sorting sorting) {
 		return rawDao.findByPrimaryKeys(entityType, ids, sorting);
 	}
 
@@ -71,7 +71,7 @@ public class EntityDaoTestDecorator<T extends IEntityDao> implements IEntityDao 
 	}
 
 	@Override
-	public <E extends IEntity> List<?> getPrimaryKeys(Criteria<E> criteria, Sorting sorting)
+	public <E extends IEntity> List<Long> getPrimaryKeys(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
 		return rawDao.getPrimaryKeys(criteria, sorting);
 	}
@@ -94,7 +94,7 @@ public class EntityDaoTestDecorator<T extends IEntityDao> implements IEntityDao 
 	}
 
 	@Override
-	public <E extends IEntity> E load(Class<E> entityType, Object pk) throws EntityNotFoundException, DataAccessException {
+	public <E extends IEntity> E load(Class<E> entityType, Long pk) throws EntityNotFoundException, DataAccessException {
 		return rawDao.load(entityType, pk);
 	}
 
@@ -119,7 +119,7 @@ public class EntityDaoTestDecorator<T extends IEntityDao> implements IEntityDao 
 	}
 
 	@Override
-	public <E extends IEntity> void purge(Class<E> entityType, Object pk) throws EntityNotFoundException, DataAccessException {
+	public <E extends IEntity> void purge(Class<E> entityType, Long pk) throws EntityNotFoundException, DataAccessException {
 		rawDao.purge(entityType, pk);
 	}
 

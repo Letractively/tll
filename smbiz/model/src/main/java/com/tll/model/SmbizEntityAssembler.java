@@ -15,7 +15,7 @@ public final class SmbizEntityAssembler implements IEntityAssembler {
 	 * @param entityFactory required
 	 */
 	@Inject
-	public SmbizEntityAssembler(final IEntityFactory<?> entityFactory) {
+	public SmbizEntityAssembler(final IEntityFactory<Long> entityFactory) {
 		super();
 		this.entityFactory = entityFactory;
 	}

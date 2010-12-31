@@ -67,7 +67,7 @@ public abstract class ClientPersistModule extends AbstractModule {
 			@Inject
 			IEntityTypeResolver entityTypeResolver;
 			@Inject
-			IEntityFactory<?> entityFactory;
+			IEntityFactory<Long> entityFactory;
 			@Inject
 			IEntityAssembler entityAssembler;
 			@Inject

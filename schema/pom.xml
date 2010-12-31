@@ -18,12 +18,9 @@
 		<resources>
 			<resource>
 				<directory>src/main/java</directory>
-				<includes>
-					<include>**/schema/AbstractSchemaProperty.java</include>
-					<include>**/schema/ISchemaProperty.java</include>
-					<include>**/schema/PropertyMetadata.java</include>
-					<include>**/schema/PropertyType.java</include>
-				</includes>
+				<excludes>
+					<exclude>**/SchemaInfo.java</exclude>
+				</excludes>
 			</resource>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -61,12 +58,6 @@
 			<groupId>com.tll</groupId>
 			<artifactId>tll-core</artifactId>
       <version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>${testNGVersion}</version>
-			<scope>test</scope>
 		</dependency>
 
 	</dependencies>

@@ -212,14 +212,14 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 			// @Transactional!
 		}
 
-		// IEntityFactory
-		bind(new TypeLiteral<IEntityFactory<?>>() {}).to(Db4oEntityFactory.class).in(Scopes.SINGLETON);
+		// IEntityFactory<Long>
+		bind(new TypeLiteral<IEntityFactory<Long>>() {}).to(Db4oEntityFactory.class).in(Scopes.SINGLETON);
 
 		// IDb4oNamedQueryTranslator
 		bind(IDb4oNamedQueryTranslator.class).to(getNamedQueryTranslatorImpl()).in(Scopes.SINGLETON);
 
 		// IEntityDao
-		bind(IEntityDao.class).to(com.tll.dao.db4o.Db4oEntityDao.class).in(Scopes.SINGLETON);
+		bind(IEntityDao.class).to(Db4oEntityDao.class).in(Scopes.SINGLETON);
 	}
 
 }

@@ -61,11 +61,11 @@ public class ListingProcessorTest extends AbstractDbAwareTest {
 			@Override
 			public void configure(Binder binder) {
 				
-				// IEntityFactory<?>
-				binder.bind(new TypeLiteral<IEntityFactory<?>>() {}).toProvider(new Provider<IEntityFactory<?>>() {
+				// IEntityFactory<Long>
+				binder.bind(new TypeLiteral<IEntityFactory<Long>>() {}).toProvider(new Provider<IEntityFactory<Long>>() {
 					
 					@Override
-					public IEntityFactory<?> get() {
+					public IEntityFactory<Long> get() {
 						return new TestEntityFactory();
 					}
 				}).in(Scopes.SINGLETON);

@@ -24,7 +24,7 @@ import com.tll.util.DateRange;
 public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Account> {
 
 	// dependent entities
-	Object pkNestedEntity, pkCurrency, pkAccountParent;
+	Long pkNestedEntity, pkCurrency, pkAccountParent;
 
 	@Override
 	public Class<Account> entityClass() {

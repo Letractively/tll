@@ -30,16 +30,11 @@
 					<include>**/ITypeDescriptorProvider.java</include>
 					<include>**/IMarshalable.java</include>
 					<include>**/ApplicationException.java</include>
-			    <include>**/util/Binding.java</include>
-			    <include>**/util/BindingRefSet.java</include>
-			    <include>**/util/Comparator.java</include>
 			    <include>**/util/DataPoint.java</include>
 			    <include>**/util/DateRange.java</include>
-			    <include>**/util/DBType.java</include>
 			    <include>**/util/FNum.java</include>
 			    <include>**/util/ObjectUtil.java</include>
 			    <include>**/util/PropertyPath.java</include>
-			    <include>**/util/RefSet.java</include>
 			    <include>**/util/StringUtil.java</include>
 				</includes>
 			</resource>
@@ -94,7 +89,7 @@
       </exclusions>
     </dependency>
     
-    <dependency><!-- soley for IsSerializable ref -->
+    <dependency><!-- solely for IsSerializable ref -->
     	<groupId>com.google.gwt</groupId>
     	<artifactId>gwt-servlet</artifactId>
     </dependency>
@@ -102,7 +97,7 @@
     <dependency>
     	<groupId>com.tll</groupId>
     	<artifactId>tll-config</artifactId>
-      <version>${project.version}</version>
+      <version>0.0.1-SNAPSHOT</version>
     	<scope>test</scope>
     </dependency>
     <dependency>
@@ -110,16 +105,9 @@
       <artifactId>guice</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- for guice 2.0 -->
     <dependency>
       <groupId>aopalliance</groupId>
       <artifactId>aopalliance</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <version>${testNGVersion}</version>
       <scope>test</scope>
     </dependency>
     

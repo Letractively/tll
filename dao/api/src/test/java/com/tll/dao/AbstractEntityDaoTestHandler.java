@@ -18,7 +18,6 @@ import com.tll.model.INamedEntity;
 import com.tll.model.egraph.EntityBeanFactory;
 
 /**
- * AbstractEntityDaoTestHandler
  * @param <E> The entity type
  * @author jpk
  */
@@ -87,7 +86,7 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	 * @param pk primary key
 	 * @return the loaded entity
 	 */
-	protected final <E1 extends IEntity> E1 load(Class<E1> entityType, Object pk) {
+	protected final <E1 extends IEntity> E1 load(Class<E1> entityType, Long pk) {
 		try {
 			maybeStartTrans();
 			log.debug("Loading entity by primary key: " + pk);
@@ -135,7 +134,7 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	 * Purges the given entity from the datastore by primary key.
 	 * @param key
 	 */
-	protected final void purge(Class<? extends IEntity> entityType, Object key) {
+	protected final void purge(Class<? extends IEntity> entityType, Long key) {
 		try {
 			maybeStartTrans();
 			log.debug("Purging entity by primary key: " + key);

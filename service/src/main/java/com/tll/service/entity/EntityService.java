@@ -134,7 +134,7 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 
 	@Override
 	@Transactional(readOnly = true)
-	public E load(Object pk) throws EntityNotFoundException {
+	public E load(Long pk) throws EntityNotFoundException {
 		return dao.load(getEntityClass(), pk);
 	}
 
@@ -168,7 +168,7 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	@Override
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public <EX> List<EX> getEntitiesFromIds(Class<EX> entityClass, Collection<?> pks, Sorting sorting) {
+	public <EX> List<EX> getEntitiesFromIds(Class<EX> entityClass, Collection<Long> pks, Sorting sorting) {
 		if(!IEntity.class.isAssignableFrom(entityClass)) {
 			throw new IllegalArgumentException("Non-IEntity class");
 		}
@@ -177,7 +177,7 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<?> getPrimaryKeys(Criteria<?> criteria, Sorting sorting) throws InvalidCriteriaException {
+	public List<Long> getPrimaryKeys(Criteria<?> criteria, Sorting sorting) throws InvalidCriteriaException {
 		return dao.getPrimaryKeys(criteria, sorting);
 	}
 

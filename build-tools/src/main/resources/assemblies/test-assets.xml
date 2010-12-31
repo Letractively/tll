@@ -20,7 +20,6 @@
       <!-- exclude concrete tests that test util related! -->
       <excludes>
         <exclude>**/*UtilTest*</exclude>
-        <exclude>**/SimpleEntityDaoTest*</exclude><!-- hack -->
       </excludes>
       <includes>
         <include>**/META-INF/**</include>

@@ -60,7 +60,7 @@ public class Db4oTestDaoDecorator extends EntityDaoTestDecorator<Db4oEntityDao> 
 	}
 
 	@Override
-	public <E extends IEntity> List<E> findByPrimaryKeys(Class<E> entityType, Collection<?> ids, Sorting sorting) {
+	public <E extends IEntity> List<E> findByPrimaryKeys(Class<E> entityType, Collection<Long> ids, Sorting sorting) {
 		final List<E> r = super.findByPrimaryKeys(entityType, ids, sorting);
 		hook();
 		return r;
@@ -83,9 +83,9 @@ public class Db4oTestDaoDecorator extends EntityDaoTestDecorator<Db4oEntityDao> 
 	}
 
 	@Override
-	public <E extends IEntity> List<?> getPrimaryKeys(Criteria<E> criteria, Sorting sorting)
+	public <E extends IEntity> List<Long> getPrimaryKeys(Criteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
-		final List<?> r = super.getPrimaryKeys(criteria, sorting);
+		final List<Long> r = super.getPrimaryKeys(criteria, sorting);
 		hook();
 		return r;
 	}
@@ -114,7 +114,7 @@ public class Db4oTestDaoDecorator extends EntityDaoTestDecorator<Db4oEntityDao> 
 	}
 
 	@Override
-	public <E extends IEntity> E load(Class<E> entityType, Object pk) throws EntityNotFoundException, DataAccessException {
+	public <E extends IEntity> E load(Class<E> entityType, Long pk) throws EntityNotFoundException, DataAccessException {
 		final E r = super.load(entityType, pk);
 		hook();
 		return r;
@@ -148,7 +148,7 @@ public class Db4oTestDaoDecorator extends EntityDaoTestDecorator<Db4oEntityDao> 
 	}
 
 	@Override
-	public <E extends IEntity> void purge(Class<E> entityType, Object pk) throws EntityNotFoundException, DataAccessException {
+	public <E extends IEntity> void purge(Class<E> entityType, Long pk) throws EntityNotFoundException, DataAccessException {
 		super.purge(entityType, pk);
 		hook();
 	}

@@ -36,7 +36,7 @@
 		<gwtVersion>2.1.1</gwtVersion>
 		
 		<junitVersion>4.8.2</junitVersion>
-		<testNGVersion>5.14.5</testNGVersion>
+		<testNGVersion>5.14.6</testNGVersion>
 	</properties>
 
 	<developers>
@@ -665,6 +665,16 @@
 			<artifactId>log4j</artifactId>
 			<scope>test</scope>
 		</dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <scope>test</scope>
+    </dependency>
 	</dependencies>
 
 </project>

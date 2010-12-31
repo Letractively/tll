@@ -19,8 +19,6 @@
   		<resource>
   			<directory>src/main/java</directory>
   			<includes>
-  				<include>**/criteria/CriteriaType.java</include>
-  				<include>**/criteria/IQueryParam.java</include>
   				<include>**/dao/SortColumn.java</include>
   				<include>**/dao/SortDir.java</include>
   				<include>**/dao/Sorting.java</include>
@@ -41,25 +39,6 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <!-- tweak to include additional dao test specific test assets -->
-          <execution>
-            <id>test-assets</id>
-            <configuration>
-              <includes>
-                <include>**/Abstract*Test*</include>
-                <include>**/*Test*Util*</include>
-                <include>**/test/**</include>
-                <include>**/IEntityDaoTestHandler*</include>
-              </includes>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
           <execution>
@@ -75,7 +54,6 @@
           </execution>
         </executions>
       </plugin>
-
     </plugins>
   </build>
   
@@ -171,13 +149,6 @@
       <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <version>${testNGVersion}</version>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 
 </project>

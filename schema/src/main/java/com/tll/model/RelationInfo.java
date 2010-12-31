@@ -5,7 +5,6 @@
  */
 package com.tll.model;
 
-
 /**
  * RelationInfo - Defines key information about a defined relation (betw. 2
  * entities) in the schema.
@@ -27,8 +26,7 @@ public final class RelationInfo extends AbstractSchemaProperty {
 	 * @param propertyType
 	 * @param reference
 	 */
-	public RelationInfo(final Class<?> relatedType, final PropertyType propertyType,
-			final boolean reference) {
+	public RelationInfo(final Class<?> relatedType, final PropertyType propertyType, final boolean reference) {
 		super(propertyType);
 		this.relatedType = relatedType;
 		this.reference = reference;

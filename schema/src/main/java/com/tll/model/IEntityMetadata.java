@@ -5,13 +5,12 @@
  */
 package com.tll.model;
 
-
 /**
  * Holds key facts about a particular entity hierarchy (set of model types).
  * @author jpk
  */
 public interface IEntityMetadata {
-	
+
 	/**
 	 * Determines if the given class is an entity class.
 	 * @param claz class to test
@@ -46,7 +45,7 @@ public interface IEntityMetadata {
 	 * @return presentation worthy descriptor
 	 */
 	String getEntityTypeDescriptor(Object entity);
-	
+
 	/**
 	 * Gets a descriptor based on the current entity state as well as its type.
 	 * @param entity entity instance
