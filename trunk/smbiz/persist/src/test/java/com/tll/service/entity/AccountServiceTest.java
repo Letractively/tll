@@ -25,7 +25,7 @@ import com.tll.service.entity.account.IAccountService;
  * @author jpk
  */
 @Test(groups = "service.entity")
-public abstract class AccountServiceTest extends AccountRelatedServiceTest {
+public class AccountServiceTest extends AccountRelatedServiceTest {
 
 	/**
 	 * Constructor

@@ -6,24 +6,31 @@
 package com.tll.model.bk;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.math.RandomUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.NullValueInNestedPathException;
 
 import com.google.inject.Inject;
+import com.tll.model.EntityMetadata;
+import com.tll.model.IEntity;
 import com.tll.model.IEntityMetadata;
 
 /**
- * BusinessKeyFactory - Defines all entity business keys in the application and
- * provides utility methods relating to them.
+ * Defines all entity business keys in the application and provides utility
+ * methods relating to them.
  * @author jpk
  */
-@SuppressWarnings("unchecked")
 public final class BusinessKeyFactory {
+
+	private static final Log log = LogFactory.getLog(BusinessKeyFactory.class);
 
 	/**
 	 * BusinessKeyDefinition - Local impl of {@link IBusinessKeyDefinition}.
@@ -61,7 +68,101 @@ public final class BusinessKeyFactory {
 			return propertyNames;
 		}
 	}
-	
+
+	/**
+	 * Use a static counter for created business key wise unique entity copies to
+	 * ensure no collisions!
+	 */
+	public static int uniqueTokenCounter = 0;
+
+	/**
+	 * Makes the provided entity [quasi] business key unique by altering one of
+	 * the business key field values for all available business keys of the given
+	 * entity.
+	 * @param <E>
+	 * @param e the entity to be altered
+	 */
+	@SuppressWarnings("unchecked")
+	public static <E extends IEntity> void makeBusinessKeyUnique(E e) {
+		IBusinessKeyDefinition<E>[] bkdefs;
+		try {
+			BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
+			bkdefs = bkf.definitions((Class<E>) e.entityClass());
+		}
+		catch(final BusinessKeyNotDefinedException ex) {
+			// ok
+			return;
+		}
+		final String pktoken = '.' + IEntity.PK_FIELDNAME;
+		final BeanWrapperImpl bw = new BeanWrapperImpl(e);
+		boolean entityAltered = false;
+		for(final IBusinessKeyDefinition<?> bkdef : bkdefs) {
+			for(final String fname : bkdef.getPropertyNames()) {
+				// don't interrogate pk related key properties
+				if(!fname.endsWith(pktoken)) {
+					final Object fval = bw.getPropertyValue(fname);
+					final Class<?> ptype = fval == null ? null : fval.getClass();
+					if(fval instanceof String) {
+						String sval = fval.toString();
+						final String ut = nextUniqueToken();
+						if(sval.length() > ut.length()) {
+							sval = sval.substring(0, sval.length() - ut.length()) + ut;
+						}
+						else {
+							sval += ut;
+						}
+						bw.setPropertyValue(fname, sval);
+						entityAltered = true;
+						break;
+					}
+					else if(fval instanceof Date) {
+						final Date altered =
+								new Date(((Date) fval).getTime() + (nextUniqueInt() * 10000) + RandomUtils.nextInt(10000)
+										+ nextUniqueInt() + 1);
+						bw.setPropertyValue(fname, altered);
+						entityAltered = true;
+						break;
+					}
+					else if(int.class == ptype || Integer.class == ptype) {
+						final Integer n = (Integer) fval;
+						bw.setPropertyValue(fname, Integer.valueOf(n.intValue() + nextUniqueInt()));
+						entityAltered = true;
+						break;
+					}
+					else if(long.class == ptype || Long.class == ptype) {
+						final Long n = (Long) fval;
+						bw.setPropertyValue(fname, Long.valueOf(n.intValue() + nextUniqueInt()));
+						entityAltered = true;
+						break;
+					}
+					else if(float.class == ptype || Float.class == ptype) {
+						final Float n = (Float) fval;
+						bw.setPropertyValue(fname, Float.valueOf(n.floatValue() + nextUniqueInt()));
+						entityAltered = true;
+						break;
+					}
+					else if(double.class == ptype || Double.class == ptype) {
+						final Double n = (Double) fval;
+						bw.setPropertyValue(fname, Double.valueOf(n.doubleValue() + nextUniqueInt()));
+						entityAltered = true;
+						break;
+					}
+				}
+			}
+		}
+		if(!entityAltered) {
+			log.warn(e.descriptor() + " was not made business key unique");
+		}
+	}
+
+	private static int nextUniqueInt() {
+		return ++uniqueTokenCounter;
+	}
+
+	private static String nextUniqueToken() {
+		return Integer.toString(nextUniqueInt());
+	}
+
 	private final IEntityMetadata entityMetadata;
 
 	/**
@@ -105,7 +206,7 @@ public final class BusinessKeyFactory {
 		}
 		return set;
 	}
-	
+
 	/**
 	 * Does the given entity type have any defined business keys?
 	 * @param <E>
@@ -130,9 +231,9 @@ public final class BusinessKeyFactory {
 	 * @throws BusinessKeyNotDefinedException Whe no business keys are defined for
 	 *         the given entity type.
 	 */
-	@SuppressWarnings("rawtypes")
-	public <E> IBusinessKeyDefinition<E>[] definitions(Class<E> entityClass)
-			throws BusinessKeyNotDefinedException {
+	@SuppressWarnings({
+		"rawtypes", "unchecked" })
+	public <E> IBusinessKeyDefinition<E>[] definitions(Class<E> entityClass) throws BusinessKeyNotDefinedException {
 
 		if(!map.containsKey(entityClass)) {
 			map.put(entityClass, (Set) discoverBusinessKeys(entityClass));
@@ -142,7 +243,7 @@ public final class BusinessKeyFactory {
 		if(set == null) {
 			throw new BusinessKeyNotDefinedException(entityClass);
 		}
-		
+
 		return (IBusinessKeyDefinition<E>[]) set.toArray(new IBusinessKeyDefinition[set.size()]);
 	}
 
@@ -175,9 +276,9 @@ public final class BusinessKeyFactory {
 	 * @throws BusinessKeyNotDefinedException When no business keys are defined
 	 *         for the given entity type.
 	 */
-	public <E> IBusinessKey<E>[] create(Class<E> entityClass)
-			throws BusinessKeyNotDefinedException {
+	public <E> IBusinessKey<E>[] create(Class<E> entityClass) throws BusinessKeyNotDefinedException {
 		final IBusinessKeyDefinition<E>[] defs = definitions(entityClass);
+		@SuppressWarnings("unchecked")
 		final BusinessKey<E>[] bks = new BusinessKey[defs.length];
 		for(int i = 0; i < defs.length; ++i) {
 			bks[i] = new BusinessKey<E>(defs[i]);
@@ -195,8 +296,7 @@ public final class BusinessKeyFactory {
 	 *         given entity type or no business key is found having the specified
 	 *         name.
 	 */
-	public static <E> IBusinessKey<E> create(IBusinessKeyDefinition<E> def)
-			throws BusinessKeyNotDefinedException {
+	public static <E> IBusinessKey<E> create(IBusinessKeyDefinition<E> def) throws BusinessKeyNotDefinedException {
 		return new BusinessKey<E>(def);
 	}
 
@@ -211,8 +311,7 @@ public final class BusinessKeyFactory {
 	 *         given entity type or no business key is found having the specified
 	 *         name.
 	 */
-	public <E> IBusinessKey<E> create(Class<E> entityClass, String businessKeyName)
-			throws BusinessKeyNotDefinedException {
+	public <E> IBusinessKey<E> create(Class<E> entityClass, String businessKeyName) throws BusinessKeyNotDefinedException {
 		return create(getDefinition(entityClass, businessKeyName));
 	}
 
@@ -227,8 +326,8 @@ public final class BusinessKeyFactory {
 	 * @throws BusinessKeyPropertyException When a business key property is unable
 	 *         to be set.
 	 */
-	public <E> IBusinessKey<E>[] create(E entity) throws BusinessKeyNotDefinedException,
-			BusinessKeyPropertyException {
+	@SuppressWarnings("unchecked")
+	public <E> IBusinessKey<E>[] create(E entity) throws BusinessKeyNotDefinedException, BusinessKeyPropertyException {
 		final IBusinessKeyDefinition<E>[] defs = definitions((Class<E>) entityMetadata.getEntityClass(entity));
 		final BusinessKey<E>[] bks = new BusinessKey[defs.length];
 		for(int i = 0; i < defs.length; ++i) {
@@ -271,15 +370,17 @@ public final class BusinessKeyFactory {
 	 * @throws BusinessKeyPropertyException When a business key property is unable
 	 *         to be set.
 	 */
-	@SuppressWarnings("rawtypes")
-	public <E> BusinessKey<E> create(E entity, String businessKeyName)
-			throws BusinessKeyNotDefinedException, BusinessKeyPropertyException {
-		final IBusinessKeyDefinition<E> theDef = getDefinition((Class<E>) entityMetadata.getEntityClass(entity), businessKeyName);
+	@SuppressWarnings({
+		"rawtypes", "unchecked" })
+	public <E> BusinessKey<E> create(E entity, String businessKeyName) throws BusinessKeyNotDefinedException,
+			BusinessKeyPropertyException {
+		final IBusinessKeyDefinition<E> theDef =
+				getDefinition((Class<E>) entityMetadata.getEntityClass(entity), businessKeyName);
 		final BusinessKey<E>[] bks = new BusinessKey[] { new BusinessKey(theDef) };
 		fill(entity, bks);
 		return bks[0];
 	}
-	
+
 	/**
 	 * Fills the given business key with values held in the given entity.
 	 * @param <E> The entity type
@@ -327,7 +428,8 @@ public final class BusinessKeyFactory {
 				bw.setPropertyValue(pname, bk.getPropertyValue(pname));
 			}
 			catch(NullValueInNestedPathException e) {
-				throw new BusinessKeyPropertyException(entityMetadata.getEntityClass(entity), bk.getBusinessKeyName(), e.getPropertyName());
+				throw new BusinessKeyPropertyException(entityMetadata.getEntityClass(entity), bk.getBusinessKeyName(),
+						e.getPropertyName());
 			}
 		}
 	}
@@ -361,8 +463,8 @@ public final class BusinessKeyFactory {
 			}
 			catch(BusinessKeyNotDefinedException e) {
 				// shouldn't happen
-				throw new IllegalArgumentException("No business keys defined for: " + entityMetadata.getEntityTypeDescriptor(entity)
-						+ " yet a business key of that type was provided.");
+				throw new IllegalArgumentException("No business keys defined for: "
+						+ entityMetadata.getEntityTypeDescriptor(entity) + " yet a business key of that type was provided.");
 			}
 			catch(BusinessKeyPropertyException e) {
 				// woops

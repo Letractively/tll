@@ -157,9 +157,9 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 			Object foreignKey) {
 		final String fkname = relatedPropertyName + "." + PK_FIELDNAME;
 		if(foreignKey == null) {
-			return addCriterion(fkname, DBType.NULL, Comparator.IS, false);
+			return addCriterion(fkname, DBType.NULL, Comparator.IS, true);
 		}
-		return addCriterion(fkname, foreignKey, Comparator.EQUALS, false);
+		return addCriterion(fkname, foreignKey, Comparator.EQUALS, true);
 	}
 
 	/**
@@ -174,7 +174,7 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	 */
 	public CriterionGroup addCriterion(String fieldName, String searchToken, boolean isCaseSensitive) {
 		if(searchToken == null) {
-			return addCriterion(fieldName, null, Comparator.IS, false);
+			return addCriterion(fieldName, null, Comparator.IS, true);
 		}
 		return addCriterion(fieldName, searchToken, (searchToken.indexOf('%') < 0) ? Comparator.EQUALS : Comparator.LIKE,
 				isCaseSensitive);
@@ -187,7 +187,7 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	 * @return this for method chaining
 	 */
 	public CriterionGroup addCriterion(String fieldName, DateRange dateRange) {
-		return addCriterion(fieldName, dateRange, Comparator.BETWEEN, false);
+		return addCriterion(fieldName, dateRange, Comparator.BETWEEN, true);
 	}
 
 	/**

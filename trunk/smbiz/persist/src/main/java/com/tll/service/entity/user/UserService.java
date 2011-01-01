@@ -9,16 +9,16 @@ import javax.validation.ValidatorFactory;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.dao.DataAccessException;
-import org.springframework.security.Authentication;
-import org.springframework.security.context.SecurityContext;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
-import org.springframework.security.providers.dao.UserCache;
-import org.springframework.security.providers.encoding.Md5PasswordEncoder;
-import org.springframework.security.providers.encoding.PasswordEncoder;
-import org.springframework.security.userdetails.UserDetails;
-import org.springframework.security.userdetails.UserDetailsService;
-import org.springframework.security.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
+import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserCache;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
@@ -124,8 +124,10 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 		user.setLocked(false);
 
 		// set the role as user by default
-		user.addAuthority(dao.load(new NameKey<Authority>(Authority.class, AuthorityRoles.ROLE_USER.toString(),
-				Authority.FIELDNAME_AUTHORITY)));
+		Authority userAuth =
+				dao.load(new NameKey<Authority>(Authority.class, AuthorityRoles.ROLE_USER.toString(),
+						Authority.FIELDNAME_AUTHORITY));
+		user.addAuthority(userAuth);
 
 		persist(user);
 
@@ -211,7 +213,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 			final String encNewPassword = encodePassword(newRawPassword, newUsername);
 
 			// set the credentials
-			setCredentials(userId, newUsername, encNewPassword);
+			setCredentials(Long.valueOf(userId), newUsername, encNewPassword);
 
 			updateSecurityContextIfNecessary(oldUsername, newUsername, newRawPassword, false);
 		}

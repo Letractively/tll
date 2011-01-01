@@ -128,4 +128,8 @@ public final class NameKey<T> implements IDescriptorProvider {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "NameKey [type=" + type + ", nameProperty=" + nameProperty + ", name=" + name + "]";
+	}
 }

@@ -18,8 +18,10 @@ import com.google.inject.Module;
 import com.tll.AbstractConfigAwareTest;
 import com.tll.common.model.IModelProperty;
 import com.tll.common.model.Model;
+import com.tll.model.EntityMetadata;
 import com.tll.model.IEntity;
 import com.tll.model.IScalar;
+import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.egraph.EntityBeanFactory;
 import com.tll.model.egraph.EntityGraph;
 import com.tll.model.test.Account;
@@ -75,7 +77,9 @@ public class MarshalerTest extends AbstractConfigAwareTest {
 	public void testCircularEntity() throws Exception {
 		final TestPersistenceUnitEntityGraphBuilder entityGraphBuilder =
 			new TestPersistenceUnitEntityGraphBuilder(getEntityBeanFactory());
-		final EntityGraph entityGraph = new EntityGraph();
+		EntityMetadata emd = new EntityMetadata();
+		BusinessKeyFactory bkf = new BusinessKeyFactory(emd);
+		final EntityGraph entityGraph = new EntityGraph(emd, bkf);
 		entityGraphBuilder.setEntityGraph(entityGraph);
 		entityGraphBuilder.populateEntityGraph();
 		final Marshaler marshaler = getMarshaler();
@@ -102,7 +106,7 @@ public class MarshalerTest extends AbstractConfigAwareTest {
 	public void testNestedEntity() throws Exception {
 		final Marshaler marshaler = getMarshaler();
 		Assert.assertTrue(marshaler != null);
-		final IEntity e = getEntityBeanFactory().getEntityCopy(NestedEntity.class, false);
+		final IEntity e = getEntityBeanFactory().getEntityCopy(NestedEntity.class);
 		Assert.assertNotNull(e);
 
 		final Model model = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
@@ -153,7 +157,7 @@ public class MarshalerTest extends AbstractConfigAwareTest {
 	public void testEmptyRelatedMany() throws Exception {
 		final Marshaler marshaler = getMarshaler();
 		Assert.assertTrue(marshaler != null);
-		final Account e = getEntityBeanFactory().getEntityCopy(Account.class, false);
+		final Account e = getEntityBeanFactory().getEntityCopy(Account.class);
 		Assert.assertTrue(e != null);
 		e.setAddresses(null);
 		final Model m = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
@@ -165,8 +169,8 @@ public class MarshalerTest extends AbstractConfigAwareTest {
 	public void testEmptyNested() throws Exception {
 		final Marshaler marshaler = getMarshaler();
 		Assert.assertTrue(marshaler != null);
-		final Account e = getEntityBeanFactory().getEntityCopy(Account.class, false);
-		final NestedEntity n = getEntityBeanFactory().getEntityCopy(NestedEntity.class, false);
+		final Account e = getEntityBeanFactory().getEntityCopy(Account.class);
+		final NestedEntity n = getEntityBeanFactory().getEntityCopy(NestedEntity.class);
 		Assert.assertTrue(e != null && n != null);
 		e.setNestedEntity(n);
 		final Model m = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
@@ -178,8 +182,8 @@ public class MarshalerTest extends AbstractConfigAwareTest {
 	public void testEmptyNestedTarget() throws Exception {
 		final Marshaler marshaler = getMarshaler();
 		Assert.assertTrue(marshaler != null);
-		final Account e = getEntityBeanFactory().getEntityCopy(Account.class, false);
-		final NestedEntity n = getEntityBeanFactory().getEntityCopy(NestedEntity.class, false);
+		final Account e = getEntityBeanFactory().getEntityCopy(Account.class);
+		final NestedEntity n = getEntityBeanFactory().getEntityCopy(NestedEntity.class);
 		Assert.assertTrue(e != null && n != null);
 		e.setNestedEntity(n);
 		e.getNestedEntity().setNestedData(null);
@@ -192,10 +196,10 @@ public class MarshalerTest extends AbstractConfigAwareTest {
 	public void testUnmarshalAgainstExistingEntity() throws Exception {
 		final Marshaler marshaler = getMarshaler();
 		Assert.assertTrue(marshaler != null);
-		final Account e = getEntityBeanFactory().getEntityCopy(Account.class, false);
+		final Account e = getEntityBeanFactory().getEntityCopy(Account.class);
 		e.setVersion(1);
-		final AccountAddress aa1 = getEntityBeanFactory().getEntityCopy(AccountAddress.class, false);
-		final AccountAddress aa2 = getEntityBeanFactory().getEntityCopy(AccountAddress.class, true);
+		final AccountAddress aa1 = getEntityBeanFactory().getEntityCopy(AccountAddress.class);
+		final AccountAddress aa2 = getEntityBeanFactory().getEntityCopy(AccountAddress.class);
 		e.addAccountAddress(aa1);
 		e.addAccountAddress(aa2);
 

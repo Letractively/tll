@@ -13,9 +13,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import com.google.inject.Inject;
-import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
+import com.tll.model.bk.BusinessKeyFactory;
 
 /**
  * EntityBeanFactory - Provides prototype entity instances via a Spring bean
@@ -116,19 +116,16 @@ public final class EntityBeanFactory {
 	 * Gets an entity copy by type.
 	 * @param <E>
 	 * @param entityClass
-	 * @param makeUnique Attempt to make the copied entity business key unique?
 	 * @return A fresh entity copy or <code>null</code> if there are no instances
 	 *         present having the given entity type (class).
 	 */
-	public <E extends IEntity> E getEntityCopy(Class<E> entityClass, boolean makeUnique) {
+	public <E extends IEntity> E getEntityCopy(Class<E> entityClass) {
 		final E e = getBean(entityClass);
 		if(e != null) {
 			if(entityFactory != null && entityFactory.isPrimaryKeyGeneratable()) {
 				entityFactory.generatePrimaryKey(e);
 			}
-			if(makeUnique) {
-				EntityUtil.makeBusinessKeyUnique(e);
-			}
+			BusinessKeyFactory.makeBusinessKeyUnique(e);
 		}
 		log.debug("Entity copy created: " + e);
 		return e;
@@ -139,15 +136,14 @@ public final class EntityBeanFactory {
 	 * @param <E>
 	 * @param entityClass the desired entity type
 	 * @param n The number of copies to provide
-	 * @param makeUnique Attempt to make the copied entities business key unique?
 	 * @return Set of <code>n</code> entity copies of the given type that may be
 	 *         business key unique or an empty set of no entities of the given
 	 *         type exist.
 	 */
-	public <E extends IEntity> Set<E> getNEntityCopies(Class<E> entityClass, int n, boolean makeUnique) {
+	public <E extends IEntity> Set<E> getNEntityCopies(Class<E> entityClass, int n) {
 		final Set<E> set = new LinkedHashSet<E>(n);
 		for(int i = 0; i < n; i++) {
-			final E e = getEntityCopy(entityClass, makeUnique);
+			final E e = getEntityCopy(entityClass);
 			if(e != null) set.add(e);
 		}
 		return set;

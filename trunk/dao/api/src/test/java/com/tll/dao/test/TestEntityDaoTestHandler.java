@@ -9,7 +9,7 @@ import org.testng.Assert;
 
 import com.tll.criteria.Criteria;
 import com.tll.dao.AbstractEntityDaoTestHandler;
-import com.tll.model.EntityUtil;
+import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.test.Account;
 import com.tll.model.test.AccountAddress;
 import com.tll.model.test.Address;
@@ -84,8 +84,8 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 		super.makeUnique(e);
 		if(e.getAddresses() != null) {
 			for(final AccountAddress aa : e.getAddresses()) {
-				EntityUtil.makeBusinessKeyUnique(aa);
-				EntityUtil.makeBusinessKeyUnique(aa.getAddress());
+				BusinessKeyFactory.makeBusinessKeyUnique(aa);
+				BusinessKeyFactory.makeBusinessKeyUnique(aa.getAddress());
 			}
 		}
 	}

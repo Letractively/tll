@@ -8,10 +8,14 @@ import org.testng.annotations.Test;
 import com.db4o.Db4oEmbedded;
 import com.db4o.EmbeddedObjectContainer;
 import com.db4o.config.EmbeddedConfiguration;
+import com.google.inject.Binder;
+import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Provider;
+import com.google.inject.Scopes;
 import com.tll.dao.AbstractEntityDaoTest;
+import com.tll.dao.IDbShell;
 import com.tll.dao.IDbTrans;
 import com.tll.dao.db4o.AbstractDb4oDaoModule.Db4oFile;
 import com.tll.dao.db4o.test.Db4oDbShellModule;
@@ -37,28 +41,31 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 	}
 
 	@Override
-	protected void resetDb() {
-		getDbShell().drop();
-		getDbShell().create();
-	}
-
-	/*
-	 * We have to reverse the order of operations for db4o dao test prep
-	 * as the Db4oDbShell is dependent on the EmbeddedObjectContainer!
-	 */
-	@Override
-	protected void prepare() {
-		// build the test injector
-		buildTestInjector();
-
-		// reset the db
-		resetDb();
-	}
-
-	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
 		modules.add(new Db4oDbShellModule());
+	}
+
+	@Override
+	protected void resetDb() {
+		// re-create db
+		final Injector i = buildInjector(new Module() {
+			
+			@Override
+			public void configure(Binder binder) {
+				binder.bind(Key.get(URI.class, Db4oFile.class)).toProvider(new Provider<URI>() {
+					
+					@Override
+					public URI get() {
+						String dbPath = getConfig().getString(AbstractDb4oDaoModule.ConfigKeys.DB4O_FILENAME.getKey());
+						return AbstractDb4oDaoModule.getDb4oFileRef(dbPath);
+					}
+				}).in(Scopes.SINGLETON);
+			}
+		}, new Db4oDbShellModule());
+		IDbShell dbShell = i.getInstance(IDbShell.class);
+		dbShell.drop();
+		dbShell.create();
 	}
 
 	@Override

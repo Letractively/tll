@@ -8,9 +8,9 @@ import org.testng.Assert;
 import com.tll.model.Account;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
-import com.tll.model.EntityUtil;
 import com.tll.model.ProductGeneral;
 import com.tll.model.ProductInventory;
+import com.tll.model.bk.BusinessKeyFactory;
 
 /**
  * ProductInventoryDaoTestHandler
@@ -52,7 +52,7 @@ public class ProductInventoryDaoTestHandler extends AbstractEntityDaoTestHandler
 	@Override
 	public void makeUnique(ProductInventory e) {
 		super.makeUnique(e);
-		EntityUtil.makeBusinessKeyUnique(e.getProductGeneral());
+		BusinessKeyFactory.makeBusinessKeyUnique(e.getProductGeneral());
 	}
 
 	@Override

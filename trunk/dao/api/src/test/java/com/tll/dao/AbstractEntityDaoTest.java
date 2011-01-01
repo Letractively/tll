@@ -8,6 +8,7 @@ package com.tll.dao;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
 
@@ -20,7 +21,6 @@ import com.tll.criteria.Comparator;
 import com.tll.criteria.Criteria;
 import com.tll.dao.test.EntityDaoTestDecorator;
 import com.tll.model.EntityMetadata;
-import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
 import com.tll.model.INamedEntity;
@@ -28,6 +28,7 @@ import com.tll.model.ITimeStampEntity;
 import com.tll.model.NameKey;
 import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.bk.BusinessKeyNotDefinedException;
+import com.tll.model.bk.BusinessKeyPropertyException;
 import com.tll.model.bk.IBusinessKey;
 import com.tll.model.bk.IBusinessKeyDefinition;
 import com.tll.model.egraph.EntityBeanFactory;
@@ -60,6 +61,59 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 			this.entityType = entityType;
 		}
 	} // PkAndType
+
+	/**
+	 * Compare a clc of entity ids and entites ensuring the id list is referenced
+	 * w/in the entity list
+	 * @param <E>
+	 * @param ids
+	 * @param entities
+	 * @return true/false
+	 */
+	protected static final <E extends IEntity> boolean entitiesAndIdsEquals(Collection<?> ids, Collection<E> entities) {
+		if(ids == null || entities == null) {
+			return false;
+		}
+		if(ids.size() != entities.size()) {
+			return false;
+		}
+		for(final E e : entities) {
+			boolean found = false;
+			for(final Object id : ids) {
+				if(id.equals(e.getId())) {
+					found = true;
+					break;
+				}
+			}
+			if(!found) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Ensures two entities are non-unique by business key.
+	 * @param <E>
+	 * @param e1
+	 * @param e2
+	 */
+	protected static final <E extends IEntity> void ensureNonUnique(E e1, E e2) {
+		if(e2 instanceof ITimeStampEntity) {
+			((ITimeStampEntity) e2).setDateCreated(((ITimeStampEntity) e2).getDateCreated());
+			((ITimeStampEntity) e2).setDateModified(((ITimeStampEntity) e2).getDateModified());
+		}
+		try {
+			BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
+			bkf.apply(e2, bkf.create(e1));
+		}
+		catch(final BusinessKeyNotDefinedException e) {
+			// assume ok
+		}
+		catch(final BusinessKeyPropertyException e) {
+			throw new IllegalStateException("Unable to unique-ify entities: " + e.getMessage(), e);
+		}
+	}
 
 	protected static final Sorting simpleIdSorting = new Sorting(new SortColumn(IEntity.PK_FIELDNAME));
 
@@ -243,7 +297,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	@SuppressWarnings("unchecked")
 	protected <E extends IEntity> E getTestEntity() throws Exception {
 		logger.debug("Creating test entity..");
-		final E e = (E) getEntityBeanFactory().getEntityCopy(entityHandler.entityClass(), false);
+		final E e = (E) getEntityBeanFactory().getEntityCopy(entityHandler.entityClass());
 		entityHandler.assembleTestEntity(e);
 		BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
 		if(bkf.hasBusinessKeys(entityHandler.entityClass())) {
@@ -518,14 +572,14 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 		// get ids
 		getDbTrans().startTrans();
 		final List<Long> dbIdList = dao.getPrimaryKeys(criteria, simpleIdSorting);
-		Assert.assertTrue(EntityUtil.entitiesAndIdsEquals(dbIdList, entityList), "getIds list is empty or has incorrect ids");
+		Assert.assertTrue(entitiesAndIdsEquals(dbIdList, entityList), "getIds list is empty or has incorrect ids");
 		getDbTrans().endTrans();
 
 		// get entities
 		getDbTrans().startTrans();
 		final List<IEntity> dbEntityList = dao.findByPrimaryKeys(entityHandler.entityClass(), idList, null);
 		Assert.assertNotNull(idList, "getEntities list is null");
-		Assert.assertTrue(EntityUtil.entitiesAndIdsEquals(idList, dbEntityList), "getEntities list is empty or has incorrect ids");
+		Assert.assertTrue(entitiesAndIdsEquals(idList, dbEntityList), "getEntities list is empty or has incorrect ids");
 		getDbTrans().endTrans();
 	}
 
@@ -589,7 +643,7 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 
 		getDbTrans().startTrans();
 		final IEntity e2 = getTestEntity();
-		EntityUtil.ensureNonUnique(e, e2);
+		ensureNonUnique(e, e2);
 		try {
 			dao.persist(e2);
 			getDbTrans().setComplete();

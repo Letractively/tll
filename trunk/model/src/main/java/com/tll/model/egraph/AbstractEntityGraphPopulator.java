@@ -12,10 +12,10 @@ import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.ITimeStampEntity;
+import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.bk.NonUniqueBusinessKeyException;
 
 /**
@@ -86,7 +86,7 @@ public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopula
 	 * @return The generated entity.
 	 */
 	protected final <E extends IEntity> E generateEntity(Class<E> entityType, boolean makeUnique) {
-		return entityBeanFactory.getEntityCopy(entityType, makeUnique);
+		return entityBeanFactory.getEntityCopy(entityType);
 	}
 
 	/**
@@ -152,7 +152,7 @@ public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopula
 	 * @return The generated entity set that was added to the graph.
 	 */
 	protected final <E extends IEntity> Set<E> addN(Class<E> entityType, boolean makeUnique, int n) {
-		final Set<E> set = entityBeanFactory.getNEntityCopies(entityType, n, makeUnique);
+		final Set<E> set = entityBeanFactory.getNEntityCopies(entityType, n);
 		for(final E e : set) {
 			addEntity(e);
 		}
@@ -244,7 +244,7 @@ public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopula
 	 * @param e
 	 */
 	protected final <E extends IEntity> void makeUnique(E e) {
-		EntityUtil.makeBusinessKeyUnique(e);
+		BusinessKeyFactory.makeBusinessKeyUnique(e);
 	}
 
 	/**

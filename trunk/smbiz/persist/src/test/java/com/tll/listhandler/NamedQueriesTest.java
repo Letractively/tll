@@ -5,6 +5,7 @@
  */
 package com.tll.listhandler;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,12 +16,14 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.db4o.ObjectContainer;
+import com.db4o.EmbeddedObjectContainer;
 import com.google.inject.Binder;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
+import com.tll.SmbizDb4oPersistModule;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.criteria.Criteria;
@@ -30,22 +33,21 @@ import com.tll.criteria.QueryParam;
 import com.tll.criteria.SelectNamedQueries;
 import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.IDbShell;
+import com.tll.dao.IDbTrans;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.dao.db4o.AbstractDb4oDaoModule;
-import com.tll.dao.db4o.SmbizDb4oDaoModule;
+import com.tll.dao.db4o.AbstractDb4oDaoModule.Db4oFile;
+import com.tll.dao.db4o.Db4oDbShell;
 import com.tll.dao.db4o.test.Db4oDbShellModule;
+import com.tll.dao.db4o.test.Db4oTrans;
 import com.tll.model.Asp;
 import com.tll.model.IEntity;
 import com.tll.model.Isp;
 import com.tll.model.PropertyType;
-import com.tll.model.SmbizEGraphModule;
 import com.tll.service.entity.IEntityServiceFactory;
-import com.tll.service.entity.SmbizEntityServiceFactoryModule;
-import com.tll.service.entity.SmbizEntityServiceFactoryModule.UserCacheAware;
-import com.tll.util.ClassUtil;
 
 /**
  * NamedQueriesTest
@@ -86,51 +88,49 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 
 	@Override
 	protected void beforeClass() {
-		// create the db shell first (before test injector creation) to avoid db4o
-		// file lock when objectcontainer is instantiated
-		final Config cfg = getConfig();
-		cfg.setProperty(AbstractDb4oDaoModule.ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), Boolean.FALSE);
-		final Injector i = buildInjector(new SmbizEGraphModule(), new SmbizDb4oDaoModule(cfg), new Db4oDbShellModule());
-		final IDbShell dbs = i.getInstance(IDbShell.class);
-
-		// re-stub db
-		dbs.drop();
-		dbs.create();
-		dbs.addData();
-
-		i.getInstance(ObjectContainer.class).close();
-
-		cfg.setProperty(AbstractDb4oDaoModule.ConfigKeys.DB_TRANS_BINDTOSPRING.getKey(), Boolean.TRUE);
+		// re-create db
+		final Injector i = buildInjector(new Module() {
+			
+			@Override
+			public void configure(Binder binder) {
+				binder.bind(Key.get(URI.class, Db4oFile.class)).toProvider(new Provider<URI>() {
+					
+					@Override
+					public URI get() {
+						String dbPath = getConfig().getString(AbstractDb4oDaoModule.ConfigKeys.DB4O_FILENAME.getKey());
+						return AbstractDb4oDaoModule.getDb4oFileRef(dbPath);
+					}
+				}).in(Scopes.SINGLETON);
+			}
+		}, new Db4oDbShellModule());
+		IDbShell dbShell = i.getInstance(IDbShell.class);
+		dbShell.drop();
+		dbShell.create();
 		super.beforeClass();
 	}
 
 	@Override
 	protected void afterClass() {
-		injector.getInstance(ObjectContainer.class).close();
+		super.afterClass();
+		Db4oDbShell dbShell = (Db4oDbShell) getDbShell();
+		dbShell.killDbSession(injector.getInstance(EmbeddedObjectContainer.class));
 		injector.getInstance(CacheManager.class).shutdown();
 	}
 
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-
-		// satisfy caching requirement for UserService
+		modules.add(new SmbizDb4oPersistModule(getConfig()));
+		
+		// test related
+		modules.add(new Db4oDbShellModule());
 		modules.add(new Module() {
-
+			
 			@Override
 			public void configure(Binder binder) {
-				binder.bind(CacheManager.class).annotatedWith(UserCacheAware.class).toProvider(new Provider<CacheManager>() {
-
-					@Override
-					public CacheManager get() {
-						return new CacheManager(ClassUtil.getResource("ehcache-smbiz-persist.xml"));
-					}
-				}).in(Scopes.SINGLETON);
+				binder.bind(IDbTrans.class).to(Db4oTrans.class).in(Scopes.SINGLETON);
 			}
 		});
-
-		modules.add(new SmbizDb4oDaoModule(getConfig()));
-		modules.add(new SmbizEntityServiceFactoryModule());
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 
 	@Override
 	protected Config doGetConfig() {
-		return Config.load(new ConfigRef("db40-config.properties"));
+		return Config.load(new ConfigRef("db4o-config.properties"));
 	}
 
 	/**
@@ -212,6 +212,10 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 
 	@SuppressWarnings("unchecked")
 	public void test() throws Exception {
+		
+		// stub data
+		((Db4oDbShell)getDbShell()).addData(injector.getInstance(EmbeddedObjectContainer.class));
+		
 		for(final SelectNamedQueries nq : SelectNamedQueries.values()) {
 			final IListingDataProvider<IEntity> dataProvider = getListHandlerDataProvider((Class<IEntity>) nq.getEntityType());
 			final CriteriaAndSorting cas = createCriteriaAndSorting(nq);

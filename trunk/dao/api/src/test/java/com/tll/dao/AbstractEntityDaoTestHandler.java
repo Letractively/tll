@@ -12,9 +12,9 @@ import org.apache.commons.logging.LogFactory;
 import org.testng.Assert;
 
 import com.tll.criteria.Criteria;
-import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
+import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.egraph.EntityBeanFactory;
 
 /**
@@ -44,7 +44,7 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	/**
 	 * Provides a fresh entity copy of a desired type.
 	 * <p>
-	 * Shortcut to {@link EntityBeanFactory#getEntityCopy(Class, boolean)}.
+	 * Shortcut to {@link EntityBeanFactory#getEntityCopy(Class)}.
 	 * @param <D>
 	 * @param entityType
 	 * @param makeUnique
@@ -52,7 +52,7 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	 */
 	protected final <D extends IEntity> D create(Class<D> entityType, boolean makeUnique) {
 		log.debug("Creating " + (makeUnique ? "UNIQUE" : "NON-UNIQUE") + " entity of type: " + entityType);
-		return entityBeanFactory.getEntityCopy(entityType, makeUnique);
+		return entityBeanFactory.getEntityCopy(entityType);
 	}
 
 	/**
@@ -156,7 +156,7 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	protected final <D extends IEntity> D createAndPersist(Class<D> entityType, boolean makeUnique) {
 		try {
 			maybeStartTrans();
-			return entityDao.persist(entityBeanFactory.getEntityCopy(entityType, makeUnique));
+			return entityDao.persist(entityBeanFactory.getEntityCopy(entityType));
 		}
 		finally {
 			endAnyTrans();
@@ -202,7 +202,7 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	
 	@Override
 	public void makeUnique(E e) {
-		EntityUtil.makeBusinessKeyUnique(e);
+		BusinessKeyFactory.makeBusinessKeyUnique(e);
 	}
 
 	@Override

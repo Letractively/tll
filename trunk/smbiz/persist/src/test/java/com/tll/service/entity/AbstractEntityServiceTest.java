@@ -3,7 +3,6 @@
  */
 package com.tll.service.entity;
 
-import java.io.File;
 import java.net.URI;
 import java.util.List;
 
@@ -19,19 +18,22 @@ import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.SmbizDb4oPersistModule;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.dao.AbstractDbAwareTest;
+import com.tll.dao.IDbShell;
 import com.tll.dao.IDbTrans;
 import com.tll.dao.IEntityDao;
+import com.tll.dao.db4o.AbstractDb4oDaoModule;
 import com.tll.dao.db4o.AbstractDb4oDaoModule.Db4oFile;
 import com.tll.dao.db4o.Db4oDbShell;
 import com.tll.dao.db4o.test.Db4oDbShellModule;
 import com.tll.dao.db4o.test.Db4oTrans;
-import com.tll.dao.db4o.test.TestDb4oDaoModule;
 import com.tll.model.IEntity;
+import com.tll.model.IEntityFactory;
 import com.tll.model.egraph.EntityBeanFactory;
 
 /**
@@ -79,11 +81,24 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 
 	@Override
 	protected void beforeClass() {
-		// kill the existing db4o file if present
-		final Config cfg = Config.load();
-		final Injector i = buildInjector(new TestDb4oDaoModule(cfg));
-		final File f = new File(i.getInstance(Key.get(URI.class, Db4oFile.class)));
-		f.delete();
+		// re-create db
+		final Injector i = buildInjector(new Module() {
+			
+			@Override
+			public void configure(Binder binder) {
+				binder.bind(Key.get(URI.class, Db4oFile.class)).toProvider(new Provider<URI>() {
+					
+					@Override
+					public URI get() {
+						String dbPath = getConfig().getString(AbstractDb4oDaoModule.ConfigKeys.DB4O_FILENAME.getKey());
+						return AbstractDb4oDaoModule.getDb4oFileRef(dbPath);
+					}
+				}).in(Scopes.SINGLETON);
+			}
+		}, new Db4oDbShellModule());
+		IDbShell dbShell = i.getInstance(IDbShell.class);
+		dbShell.drop();
+		dbShell.create();
 		super.beforeClass();
 	}
 
@@ -99,10 +114,10 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 	protected void beforeMethod() {
 		super.beforeMethod();
 		// reset data
-		Db4oDbShell dbShell = (Db4oDbShell) getDbShell();
+		//Db4oDbShell dbShell = (Db4oDbShell) getDbShell();
 		EmbeddedObjectContainer dbSession = injector.getInstance(EmbeddedObjectContainer.class);
 		Db4oDbShell.clearData(dbSession);
-		dbShell.addData(dbSession);
+		//dbShell.addData(dbSession);
 	}
 
 	/**
@@ -112,11 +127,15 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 	 * @return The newly created entity
 	 */
 	protected <E extends IEntity> E stub(Class<E> etype, boolean persist) {
-		final E e = getEntityBeanFactory().getEntityCopy(etype, false);
+		final E e = getEntityBeanFactory().getEntityCopy(etype);
 		if(persist) getDao().persist(e);
 		return e;
 	}
 
+	protected final IEntityFactory getEntityFactory() {
+		return injector.getInstance(IEntityFactory.class);
+	}
+	
 	protected final IEntityDao getDao() {
 		return injector.getInstance(IEntityDao.class);
 	}

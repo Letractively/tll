@@ -10,8 +10,8 @@ import com.tll.model.AccountAddress;
 import com.tll.model.Address;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
-import com.tll.model.EntityUtil;
 import com.tll.model.PaymentInfo;
+import com.tll.model.bk.BusinessKeyFactory;
 
 /**
  * AbstractAccountDaoTestHandler
@@ -66,8 +66,8 @@ public abstract class AbstractAccountDaoTestHandler<A extends Account> extends A
 		super.makeUnique(e);
 		if(e.getAddresses() != null) {
 			for(final AccountAddress aa : e.getAddresses()) {
-				EntityUtil.makeBusinessKeyUnique(aa);
-				EntityUtil.makeBusinessKeyUnique(aa.getAddress());
+				BusinessKeyFactory.makeBusinessKeyUnique(aa);
+				BusinessKeyFactory.makeBusinessKeyUnique(aa.getAddress());
 			}
 		}
 	}

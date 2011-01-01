@@ -29,7 +29,10 @@ import com.tll.common.data.rpc.ListingRequest;
 import com.tll.common.search.test.TestAddressSearch;
 import com.tll.dao.AbstractDbAwareTest;
 import com.tll.dao.Sorting;
+import com.tll.model.EntityMetadata;
 import com.tll.model.IEntityFactory;
+import com.tll.model.IEntityMetadata;
+import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.egraph.EntityBeanFactory;
 import com.tll.model.egraph.EntityGraph;
 import com.tll.model.test.Address;
@@ -84,16 +87,25 @@ public class ListingProcessorTest extends AbstractDbAwareTest {
 					}
 				}).in(Scopes.SINGLETON);
 				
+				// IEntityMetadata
+				binder.bind(IEntityMetadata.class).to(EntityMetadata.class).in(Scopes.SINGLETON);
+				
 				// EntityGraph
 				binder.bind(EntityGraph.class).toProvider(new Provider<EntityGraph>() {
 					
 					@Inject
 					EntityBeanFactory ebf;
 					
+					@Inject
+					IEntityMetadata emd;
+					
+					@Inject
+					BusinessKeyFactory bkf;
+					
 					@Override
 					public EntityGraph get() {
-						Collection<Address> addresses = ebf.getNEntityCopies(Address.class, 500, true);
-						EntityGraph eg = new EntityGraph();
+						Collection<Address> addresses = ebf.getNEntityCopies(Address.class, 500);
+						EntityGraph eg = new EntityGraph(emd, bkf);
 						try {
 							eg.setEntities(addresses);
 						}

@@ -37,10 +37,10 @@ public class ClientizePropertyPathTest extends AbstractConfigAwareTest {
 
 	private Account getTestEntity() {
 		final EntityBeanFactory ebf = injector.getInstance(EntityBeanFactory.class);
-		final Account account = ebf.getEntityCopy(Account.class, true);
-		final Account parent = ebf.getEntityCopy(Account.class, true);
-		final AccountAddress aa1 = ebf.getEntityCopy(AccountAddress.class, true);
-		final AccountAddress aa2 = ebf.getEntityCopy(AccountAddress.class, true);
+		final Account account = ebf.getEntityCopy(Account.class);
+		final Account parent = ebf.getEntityCopy(Account.class);
+		final AccountAddress aa1 = ebf.getEntityCopy(AccountAddress.class);
+		final AccountAddress aa2 = ebf.getEntityCopy(AccountAddress.class);
 
 		account.setParent(parent);
 		account.addAccountAddress(aa1);
