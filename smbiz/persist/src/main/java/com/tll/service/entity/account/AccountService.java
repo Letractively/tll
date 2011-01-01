@@ -1,6 +1,7 @@
 package com.tll.service.entity.account;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.validation.ConstraintViolationException;
@@ -105,10 +106,14 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 	@Override
 	@Transactional
 	public Collection<Account> persistAll(final Collection<Account> entities) {
+		HashMap<Account, Boolean> newmap = new HashMap<Account, Boolean>(entities.size());
+		for(Account a : entities) {
+			newmap.put(a, a.isNew()? Boolean.TRUE : Boolean.FALSE);
+		}
 		final Collection<Account> pec = super.persistAll(entities);
 		if(pec != null && pec.size() > 0) {
 			for(final Account a : pec) {
-				final AccountHistoryOp op = a.isNew() ? AccountHistoryOp.ACCOUNT_ADDED : AccountHistoryOp.ACCOUNT_UPDATED;
+				final AccountHistoryOp op = newmap.get(a).booleanValue()? AccountHistoryOp.ACCOUNT_ADDED : AccountHistoryOp.ACCOUNT_UPDATED;
 				addHistoryRecord(new AccountHistoryContext(op, a));
 			}
 		}
@@ -119,6 +124,8 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 	@Transactional
 	public Account persist(final Account entity) throws EntityExistsException, ConstraintViolationException {
 
+		final boolean isNew = entity.isNew();
+		
 		// handle payment info
 		if(entity.getPaymentInfo() != null) {
 			if(entity.getPersistPymntInfo()) {
@@ -135,7 +142,7 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 
 		// handle account history
 		if(pe != null) {
-			final AccountHistoryOp op = entity.isNew() ? AccountHistoryOp.ACCOUNT_ADDED : AccountHistoryOp.ACCOUNT_UPDATED;
+			final AccountHistoryOp op = isNew ? AccountHistoryOp.ACCOUNT_ADDED : AccountHistoryOp.ACCOUNT_UPDATED;
 			addHistoryRecord(new AccountHistoryContext(op, pe));
 		}
 

@@ -3,6 +3,7 @@
  */
 package com.tll.server.filter;
 
+
 import java.io.IOException;
 
 import javax.servlet.FilterChain;
@@ -13,9 +14,9 @@ import javax.servlet.ServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.security.providers.anonymous.AnonymousAuthenticationProvider;
-import org.springframework.security.userdetails.memory.UserAttribute;
-import org.springframework.security.userdetails.memory.UserAttributeEditor;
+import org.springframework.security.authentication.AnonymousAuthenticationProvider;
+import org.springframework.security.core.userdetails.memory.UserAttribute;
+import org.springframework.security.core.userdetails.memory.UserAttributeEditor;
 
 /**
  * AnonymousProcessingFilter

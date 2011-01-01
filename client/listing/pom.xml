@@ -151,6 +151,12 @@
 		</dependency>
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>tll-schema</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>tll-model</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>test</scope>

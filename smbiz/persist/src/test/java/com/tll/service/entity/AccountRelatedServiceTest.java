@@ -45,16 +45,16 @@ public abstract class AccountRelatedServiceTest extends AbstractEntityServiceTes
 		try {
 			final IEntityDao dao = getDao();
 
-			account = getEntityBeanFactory().getEntityCopy(Asp.class, false);
-			final AccountAddress aa = getEntityBeanFactory().getEntityCopy(AccountAddress.class, false);
-			final Address a = getEntityBeanFactory().getEntityCopy(Address.class, false);
+			account = getEntityBeanFactory().getEntityCopy(Asp.class);
+			final AccountAddress aa = getEntityBeanFactory().getEntityCopy(AccountAddress.class);
+			final Address a = getEntityBeanFactory().getEntityCopy(Address.class);
 			aa.setAddress(a);
 			account.addAccountAddress(aa);
 
-			final Currency c = dao.persist(getEntityBeanFactory().getEntityCopy(Currency.class, false));
+			final Currency c = dao.persist(getEntityBeanFactory().getEntityCopy(Currency.class));
 			account.setCurrency(c);
 
-			pi = dao.persist(getEntityBeanFactory().getEntityCopy(PaymentInfo.class, false));
+			pi = dao.persist(getEntityBeanFactory().getEntityCopy(PaymentInfo.class));
 			account.setPaymentInfo(pi);
 
 			if(persist) {

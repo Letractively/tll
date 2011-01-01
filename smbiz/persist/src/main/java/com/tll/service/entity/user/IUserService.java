@@ -5,7 +5,7 @@ package com.tll.service.entity.user;
 
 import javax.validation.ValidationException;
 
-import org.springframework.security.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import com.tll.dao.EntityExistsException;
 import com.tll.model.Account;

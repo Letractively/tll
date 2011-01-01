@@ -115,23 +115,6 @@
 					</resource>
 				</resources>
 			</build>
-      <dependencies>
-        <!-- db40 deps -->
-        <dependency>
-          <groupId>com.db4o</groupId>
-          <artifactId>db4o-full-java5</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>org.springextensions.db4o</groupId>
-          <artifactId>org.springextensions.db4o</artifactId>
-          <version>${springextensions.db4o.version}</version>
-        </dependency>
-        <dependency>
-          <groupId>com.tll</groupId>
-          <artifactId>tll-dao-db4o</artifactId>
-          <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-      </dependencies>
 		</profile>
 	</profiles>
 
@@ -188,8 +171,28 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-core</artifactId>
+    </dependency>
 
-		<dependency>
+    <!-- db40 deps -->
+    <dependency>
+      <groupId>com.db4o</groupId>
+      <artifactId>db4o-full-java5</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springextensions.db4o</groupId>
+      <artifactId>org.springextensions.db4o</artifactId>
+      <version>${springextensions.db4o.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-db4o</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+		
+    <dependency>
 		  <groupId>javax.persistence</groupId>
 		  <artifactId>persistence-api</artifactId>
 		  <scope>provided</scope>

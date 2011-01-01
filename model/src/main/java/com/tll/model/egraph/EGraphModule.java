@@ -14,6 +14,8 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.model.IEntityFactory;
+import com.tll.model.IEntityMetadata;
+import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.util.ClassUtil;
 
 /**
@@ -90,10 +92,16 @@ public class EGraphModule extends AbstractModule {
 
 			@Inject
 			IEntityGraphPopulator builder;
+			
+			@Inject
+			IEntityMetadata emd;
+			
+			@Inject
+			BusinessKeyFactory bkf;
 
 			@Override
 			public EntityGraph get() {
-				final EntityGraph graph = new EntityGraph();
+				final EntityGraph graph = new EntityGraph(emd, bkf);
 				builder.setEntityGraph(graph);
 				// builder.populateEntityGraph();
 				return graph;

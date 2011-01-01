@@ -10,6 +10,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.tll.model.AbstractEntityFactory;
 import com.tll.model.IEntity;
+import com.tll.model.IEntityMetadata;
 
 /**
  * Db4oEntityFactory
@@ -17,16 +18,20 @@ import com.tll.model.IEntity;
  */
 public class Db4oEntityFactory extends AbstractEntityFactory {
 
+	private final IEntityMetadata entityMetadata;
 	private Provider<EmbeddedObjectContainer> oc;
 	private IdState state;
 
 	/**
 	 * Constructor
 	 * @param oc Required {@link EmbeddedObjectContainer} provider
+	 * @param entityMetadata required to resolve root entities thus avoiding
+	 *        potentially non-unique business keys!
 	 */
 	@Inject
-	public Db4oEntityFactory(Provider<EmbeddedObjectContainer> oc) {
+	public Db4oEntityFactory(IEntityMetadata entityMetadata, Provider<EmbeddedObjectContainer> oc) {
 		super();
+		this.entityMetadata = entityMetadata;
 		setObjectContainer(oc);
 	}
 
@@ -59,14 +64,17 @@ public class Db4oEntityFactory extends AbstractEntityFactory {
 		}
 
 		assert state != null;
-		Long current = state.getCurrentId(entity.entityClass());
+		
+		Class<?> entityClass = entityMetadata.getEntityClass(entity);
+		Class<?> rootEntityClass = entityMetadata.getRootEntityClass(entityClass);
+		Long current = state.getCurrentId(rootEntityClass);
 
-		final long next = current == null ? 1L : current + 1;
-		state.setCurrentId(entity.entityClass(), next);
+		final Long next = Long.valueOf(current == null ? 1L : current.longValue() + 1);
+		state.setCurrentId(rootEntityClass, next);
 		oc.get().store(state);
 		entity.setGenerated(next);
-		log.info("Generated new Db4o primary key: " + next + " for type: " + entity.entityClass());
-		return Long.valueOf(next);
+		log.info("Generated Db4o primary key: " + next + " for: " + rootEntityClass.getSimpleName());
+		return next;
 	}
 
 }

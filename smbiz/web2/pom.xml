@@ -20,7 +20,6 @@
   </properties>
 
   <build>
-    <!-- Generate compiled stuff in the folder used for developing mode -->
     <outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory>
 
     <plugins>
@@ -180,19 +179,19 @@
       <artifactId>smbiz-model</artifactId>
       <version>0.9.0-SNAPSHOT</version>
     </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>smbiz-persist</artifactId>
-      <version>0.9.0-SNAPSHOT</version>
-      <classifier>${daoImpl}</classifier>
-    </dependency>
-    <dependency><!-- needed for GWT compile -->
-      <groupId>com.tll</groupId>
-      <artifactId>smbiz-persist</artifactId>
-      <version>0.9.0-SNAPSHOT</version>
-      <classifier>sources</classifier>
-      <scope>provided</scope>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>com.tll</groupId>-->
+<!--      <artifactId>smbiz-persist</artifactId>-->
+<!--      <version>0.9.0-SNAPSHOT</version>-->
+<!--      <classifier>${daoImpl}</classifier>-->
+<!--    </dependency>-->
+<!--    <dependency> needed for GWT compile -->
+<!--      <groupId>com.tll</groupId>-->
+<!--      <artifactId>smbiz-persist</artifactId>-->
+<!--      <version>0.9.0-SNAPSHOT</version>-->
+<!--      <classifier>sources</classifier>-->
+<!--      <scope>provided</scope>-->
+<!--    </dependency>-->
   </dependencies>
 
 </project>

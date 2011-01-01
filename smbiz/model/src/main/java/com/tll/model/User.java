@@ -14,8 +14,8 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.userdetails.UserDetails;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.tll.model.bk.BusinessKeyDef;
 import com.tll.model.bk.BusinessObject;
@@ -232,9 +232,11 @@ public class User extends NamedTimeStampEntity implements UserDetails, IChildEnt
 	 * Acegi implementation must not return null
 	 * @return array of granted authorities
 	 */
+	@SuppressWarnings({
+		"unchecked", "rawtypes" })
 	@Override
-	public GrantedAuthority[] getAuthorities() {
-		return authorities == null ? new Authority[0] : authorities.toArray(new Authority[authorities.size()]);
+	public Collection<GrantedAuthority> getAuthorities() {
+		return (Collection) authorities;
 	}
 
 	@Override

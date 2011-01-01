@@ -25,6 +25,7 @@ public class SmbizDb4oEntityDaoTest extends AbstractDb4oEntityDaoTest {
 
 	@Override
 	protected IEntityDaoTestHandler<?>[] getDaoTestHandlers() {
+		
 		try {
 			final Class<?>[] handlerTypes =
 				CommonUtil.getClasses("com.tll.dao", IEntityDaoTestHandler.class, true, null, null);
@@ -47,24 +48,22 @@ public class SmbizDb4oEntityDaoTest extends AbstractDb4oEntityDaoTest {
 			throw new IllegalStateException("Unable to access an entity dao test handler: " + e.getMessage(), e);
 		}
 
-		/*
-		return new IEntityDaoTestHandler<?>[] {
-			new AspAccountDaoTestHandler(),
-			new MerchantDaoTestHandler(),
-			new CustomerAccountDaoTestHandler(),
-			new InterfaceSingleDaoTestHandler(),
-			new InterfaceSwitchDaoTestHandler(),
-		};
-		 */
+//		return new IEntityDaoTestHandler<?>[] {
+//			new AspAccountDaoTestHandler(),
+//			new MerchantDaoTestHandler(),
+//			new CustomerAccountDaoTestHandler(),
+//			new InterfaceSingleDaoTestHandler(),
+//			new InterfaceSwitchDaoTestHandler(),
+//		};
 
-		//return new IEntityDaoTestHandler<?>[] { new AuthorityDaoTestHandler() };
+//		return new IEntityDaoTestHandler<?>[] { new AuthorityDaoTestHandler() };
 	}
 
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new SmbizEGraphModule());
 		modules.add(new SmbizDb4oDaoModule(getConfig()));
+		modules.add(new SmbizEGraphModule());
 	}
 
 	@Override

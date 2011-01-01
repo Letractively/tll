@@ -2,14 +2,12 @@ package com.tll.model;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.security.GrantedAuthority;
+import org.springframework.security.core.GrantedAuthority;
 
 import com.tll.model.bk.BusinessKeyDef;
 import com.tll.model.bk.BusinessObject;
 
 /**
- * Implementation of Acegi's
- * {@link org.springframework.security.GrantedAuthority} interface.
  * @author jpk
  */
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Authority", properties = { Authority.FIELDNAME_AUTHORITY }))
@@ -73,17 +71,17 @@ public class Authority extends EntityBase implements INamedEntity, GrantedAuthor
 		return super.hashCode();
 	}
 
-	@Override
-	public int compareTo(final Object o) {
-		if(o != null && o instanceof GrantedAuthority) {
-			final String rhsRole = ((GrantedAuthority) o).getAuthority();
-			if(rhsRole == null) {
-				return -1;
-			}
-			return authority.compareTo(rhsRole);
-		}
-		return -1;
-	}
+//	@Override
+//	public int compareTo(final Object o) {
+//		if(o != null && o instanceof GrantedAuthority) {
+//			final String rhsRole = ((GrantedAuthority) o).getAuthority();
+//			if(rhsRole == null) {
+//				return -1;
+//			}
+//			return authority.compareTo(rhsRole);
+//		}
+//		return -1;
+//	}
 
 	@Override
 	public String descriptor() {

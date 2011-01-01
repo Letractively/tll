@@ -41,5 +41,4 @@ public class TestDb4oDaoModule extends AbstractDb4oDaoModule {
 	protected Class<? extends IDb4oNamedQueryTranslator> getNamedQueryTranslatorImpl() {
 		return LoadAllQueryTranslator.class;
 	}
-
 }

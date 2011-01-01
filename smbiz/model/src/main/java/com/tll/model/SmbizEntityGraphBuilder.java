@@ -39,7 +39,7 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphPopulator 
 			stubUsers();
 		}
 		catch(final Exception e) {
-			throw new IllegalStateException("Unable to stub entity graph: " + e.getMessage());
+			throw new IllegalStateException("Unable to stub entity graph: " + e.getMessage(), e);
 		}
 	}
 

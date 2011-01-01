@@ -18,7 +18,9 @@ import com.tll.dao.IDbShell;
 import com.tll.dao.db4o.AbstractDb4oDaoModule.Db4oFile;
 import com.tll.dao.db4o.test.Db4oDbShellModule;
 import com.tll.dao.db4o.test.TestDb4oDaoModule;
+import com.tll.model.EntityMetadata;
 import com.tll.model.IEntityFactory;
+import com.tll.model.IEntityMetadata;
 import com.tll.model.egraph.EGraphModule;
 import com.tll.model.test.TestEntityFactory;
 import com.tll.model.test.TestPersistenceUnitEntityGraphBuilder;
@@ -56,6 +58,7 @@ public class Db4oDbShellTest extends AbstractDbAwareTest {
 
 			@Override
 			protected void configure() {
+				bind(IEntityMetadata.class).to(EntityMetadata.class);
 				bind(IEntityFactory.class).to(TestEntityFactory.class);
 				bind(URI.class).annotatedWith(Db4oFile.class).toInstance(AbstractDb4oDaoModule.getDb4oFileRef("target/testshelldb"));
 			}

@@ -15,9 +15,9 @@ import net.sf.ehcache.CacheManager;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.security.providers.dao.UserCache;
-import org.springframework.security.providers.dao.cache.EhCacheBasedUserCache;
-import org.springframework.security.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserCache;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.cache.EhCacheBasedUserCache;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.BindingAnnotation;

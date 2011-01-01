@@ -11,9 +11,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.tll.model.EntityMetadata;
-import com.tll.model.EntityUtil;
+import com.google.inject.Inject;
 import com.tll.model.IEntity;
+import com.tll.model.IEntityMetadata;
 import com.tll.model.IEntityProvider;
 import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.bk.BusinessKeyPropertyException;
@@ -25,18 +25,25 @@ import com.tll.model.bk.NonUniqueBusinessKeyException;
  */
 public final class EntityGraph implements IEntityProvider {
 
+	private final IEntityMetadata entityMetadata;
+	
+	private final BusinessKeyFactory bkf;
+	
 	/**
 	 * The "graph" of entities held in a map keyed by entity type.
 	 */
 	private final LinkedHashMap<Class<? extends IEntity>, LinkedHashSet<? extends IEntity>> graph;
 	
-	private final BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
-
 	/**
 	 * Constructor
+	 * @param entityMetadata 
+	 * @param bkf 
 	 */
-	public EntityGraph() {
+	@Inject
+	public EntityGraph(IEntityMetadata entityMetadata, BusinessKeyFactory bkf) {
 		super();
+		this.entityMetadata = entityMetadata;
+		this.bkf = bkf;
 		this.graph = new LinkedHashMap<Class<? extends IEntity>, LinkedHashSet<? extends IEntity>>();
 	}
 
@@ -83,7 +90,7 @@ public final class EntityGraph implements IEntityProvider {
 	 */
 	@SuppressWarnings("unchecked")
 	private <E extends IEntity> Set<? extends E> getRootEntitySet(Class<E> entityType) {
-		return (Set<? extends E>) graph.get(EntityUtil.getRootEntityClass(entityType));
+		return (Set<? extends E>) graph.get(entityMetadata.getRootEntityClass(entityType));
 
 	}
 
@@ -96,7 +103,7 @@ public final class EntityGraph implements IEntityProvider {
 	 */
 	@SuppressWarnings("unchecked")
 	Set<? extends IEntity> getNonNullEntitySet(Class<? extends IEntity> entityType) {
-		final Class<? extends IEntity> rootType = (Class<? extends IEntity>) EntityUtil.getRootEntityClass(entityType);
+		final Class<? extends IEntity> rootType = (Class<? extends IEntity>) entityMetadata.getRootEntityClass(entityType);
 		LinkedHashSet<? extends IEntity> set = graph.get(rootType);
 		if(set == null) {
 			set = new LinkedHashSet<IEntity>();

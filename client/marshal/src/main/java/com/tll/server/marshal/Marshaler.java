@@ -334,7 +334,7 @@ public final class Marshaler {
 			log.debug("marshalModel - propName: " + propName);
 
 			if(Model.ID_PROPERTY.equals(propName)) {
-				val = pval == null ? null : Long.parseLong(pval.toString());
+				val = pval == null ? null : Long.valueOf(Long.parseLong(pval.toString()));
 			}
 			else if(Model.VERSION_PROPERTY.equals(propName)) {
 				val = pval == null ? null : Long.valueOf((String) pval);

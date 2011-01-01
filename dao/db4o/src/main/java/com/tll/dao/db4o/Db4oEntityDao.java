@@ -521,7 +521,13 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 
 			@Override
 			public boolean match(INamedEntity candidate) {
-				return nameKey.getNameProperty().equals(candidate.getName());
+				final String name = nameKey.getName();
+				if(nameKey.getNameProperty().equals(NameKey.DEFAULT_FIELDNAME)) {
+					return name == null ? candidate.getName() == null : name.equals(candidate.getName());
+				}
+				BeanWrapper bw = new BeanWrapperImpl(candidate);
+				Object val = bw.getPropertyValue(nameKey.getNameProperty());
+				return name == null ? val == null : name.equals(val);
 			}
 		}, nameKey);
 	}

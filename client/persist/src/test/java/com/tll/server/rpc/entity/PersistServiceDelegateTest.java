@@ -122,7 +122,7 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 	public void testLoad() throws Exception {
 
 		// add test entity to db first
-		final Address a = getEntityBeanFactory().getEntityCopy(Address.class, true);
+		final Address a = getEntityBeanFactory().getEntityCopy(Address.class);
 		final Long id = a.getId();
 		addEntityToDb(a);
 
@@ -182,7 +182,7 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 	@Test
 	public void testUpdate() throws Exception {
 		// add test entity to db first
-		final Address a = getEntityBeanFactory().getEntityCopy(Address.class, true);
+		final Address a = getEntityBeanFactory().getEntityCopy(Address.class);
 		final Long id = a.getId();
 		addEntityToDb(a);
 
@@ -214,7 +214,7 @@ public class PersistServiceDelegateTest extends AbstractDbAwareTest {
 	@Test
 	public void testDelete() throws Exception {
 		// add test entity to db first
-		final Address a = getEntityBeanFactory().getEntityCopy(Address.class, true);
+		final Address a = getEntityBeanFactory().getEntityCopy(Address.class);
 		final Long id = a.getId();
 		addEntityToDb(a);
 

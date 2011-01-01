@@ -27,7 +27,7 @@ public class UserServiceTest extends AccountRelatedServiceTest {
 		getDbTrans().startTrans();
 		try {
 			for(final AuthorityRoles role : AuthorityRoles.values()) {
-				final Authority a = getEntityBeanFactory().getEntityCopy(Authority.class, false);
+				final Authority a = getEntityBeanFactory().getEntityCopy(Authority.class);
 				a.setAuthority(role.toString());
 				dao.persist(a);
 			}
@@ -46,7 +46,7 @@ public class UserServiceTest extends AccountRelatedServiceTest {
 		final String[][] args = new String[][] {
 			{
 				"superuser", "abc123" }, {
-					"jopaki@gmail.com", "bleamin" } };
+				"jopaki@gmail.com", "bleamin" } };
 		for(final String[] arg : args) {
 			System.out.println(arg[0] + ": " + UserService.encodePassword(arg[1], arg[0]));
 		}
@@ -68,7 +68,7 @@ public class UserServiceTest extends AccountRelatedServiceTest {
 			Assert.assertNotNull(user);
 
 			getDbTrans().startTrans();
-			final User dbUser = AbstractDbAwareTest.getEntityFromDb(getDao(), User.class, user);
+			final User dbUser = AbstractDbAwareTest.getEntityFromDb(getDao(), User.class, user.getId());
 			getDbTrans().endTrans();
 			Assert.assertEquals(dbUser, user);
 		}
