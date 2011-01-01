@@ -37,4 +37,9 @@ public interface IListHandler<T> {
 	 *         <code>0<code> if no fetching has yet occurred.
 	 */
 	int size();
+	
+	/**
+	 * @return the current sorting.
+	 */
+	Sorting getSorting();
 }

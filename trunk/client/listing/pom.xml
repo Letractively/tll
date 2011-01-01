@@ -149,6 +149,12 @@
 			<artifactId>db4o-full-java5</artifactId>
 			<scope>test</scope>
 		</dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-model</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-model</artifactId>
@@ -165,6 +171,10 @@
 					<groupId>com.tll</groupId>
 					<artifactId>tll-model</artifactId>
 				</exclusion>
+        <exclusion>
+    			<groupId>org.springframework</groupId>
+    			<artifactId>spring-beans</artifactId>
+        </exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -215,6 +225,11 @@
 			<classifier>testassets</classifier>
 			<scope>test</scope>
 		</dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <scope>test</scope>
+    </dependency>
 	</dependencies>
 
 </project>

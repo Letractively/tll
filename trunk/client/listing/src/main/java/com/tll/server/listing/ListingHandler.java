@@ -31,11 +31,6 @@ public final class ListingHandler<R> {
 	private List<R> elements;
 
 	/**
-	 * The sorting directive.
-	 */
-	private Sorting sorting;
-
-	/**
 	 * Constructor
 	 * @param listHandler The wrapped list handler
 	 * @param listingId The unique listing name
@@ -81,7 +76,7 @@ public final class ListingHandler<R> {
 	}
 
 	public Sorting getSorting() {
-		return sorting;
+		return listHandler.getSorting();
 	}
 
 	public void query(int ofst, Sorting srtg, boolean force) throws EmptyListException, IndexOutOfBoundsException,
@@ -96,13 +91,10 @@ public final class ListingHandler<R> {
 		}
 
 		// do we need to actually re-query?
-		if(!force && elements != null && this.offset == ofst && this.sorting != null && this.sorting.equals(srtg)) {
+		final Sorting sorting = getSorting();
+		if(!force && elements != null && this.offset == ofst && sorting != null && sorting.equals(srtg)) {
 			return;
 		}
-
-		// update sorting (irregardless of whether or not we have resultant
-		// elements)
-		this.sorting = srtg;
 
 		// query
 		final int psize = pageSize == -1 ? listHandler.size() : pageSize;

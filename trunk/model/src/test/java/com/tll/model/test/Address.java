@@ -4,6 +4,7 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.tll.IPropertyValueProvider;
 import com.tll.model.EntityBase;
 import com.tll.model.IEntity;
 import com.tll.model.bk.BusinessKeyDef;
@@ -20,7 +21,7 @@ import com.tll.model.validate.PostalCode;
 @PostalCode()
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Address 1 and Postal Code", properties = {
 	"address1", "postalCode" }))
-public class Address extends EntityBase {
+public class Address extends EntityBase implements IPropertyValueProvider {
 
 	private static final long serialVersionUID = 69385466934038047L;
 
@@ -277,5 +278,14 @@ public class Address extends EntityBase {
 	 */
 	public void setPostalCode(String zip) {
 		this.postalCode = zip;
+	}
+
+	@Override
+	public Object getPropertyValue(String propertyPath) {
+		if("firstName".equals(propertyPath)) return firstName;
+		if("lastName".equals(propertyPath)) return lastName;
+		if("address1".equals(propertyPath)) return address1;
+		if("address2".equals(propertyPath)) return address2;
+		throw new IllegalArgumentException();
 	}
 }

@@ -89,19 +89,17 @@
       <groupId>com.tll</groupId>
       <artifactId>tll-schema</artifactId>
       <version>${project.version}</version>
+      <optional>true</optional><!-- when only criteria/listhandler packages are needed -->
     </dependency>
   	<dependency>
   		<groupId>com.tll</groupId>
   		<artifactId>tll-model</artifactId>
   		<version>${project.version}</version>
+      <optional>true</optional><!-- when only criteria/listhandler packages are needed -->
       <exclusions>
         <exclusion>
           <groupId>oro</groupId>
           <artifactId>oro</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-lang</groupId>
-          <artifactId>commons-lang</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.hibernate</groupId>
@@ -109,13 +107,6 @@
         </exclusion>
       </exclusions>
   	</dependency>
-
-		<!-- 
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-servlet</artifactId>
-		</dependency>
-		-->
 
     <dependency>
       <groupId>com.tll</groupId>
@@ -128,7 +119,6 @@
       <artifactId>guice</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- for guice 2.0 -->
     <dependency>
       <groupId>aopalliance</groupId>
       <artifactId>aopalliance</artifactId>

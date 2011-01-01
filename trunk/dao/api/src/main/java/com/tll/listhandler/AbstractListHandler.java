@@ -18,4 +18,18 @@ public abstract class AbstractListHandler<T> implements IListHandler<T> {
 	 * The sorting directive.
 	 */
 	protected Sorting sorting;
+
+	/**
+	 * Constructor
+	 * @param sorting
+	 */
+	protected AbstractListHandler(Sorting sorting) {
+		super();
+		this.sorting = sorting;
+	}
+
+	@Override
+	public final Sorting getSorting() {
+		return sorting;
+	}
 }

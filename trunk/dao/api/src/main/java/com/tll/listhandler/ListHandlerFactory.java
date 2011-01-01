@@ -32,16 +32,7 @@ public final class ListHandlerFactory {
 	 */
 	public static <T> IListHandler<T> create(Collection<T> c, Sorting sorting) throws ListHandlerException,
 	IllegalArgumentException {
-		try {
-			final InMemoryListHandler<T> listHandler = new InMemoryListHandler<T>(CollectionUtil.listFromCollection(c));
-			if(sorting != null) {
-				listHandler.sort(sorting);
-			}
-			return listHandler;
-		}
-		catch(final EmptyListException ele) {
-			throw ele;
-		}
+		return new InMemoryListHandler<T>(CollectionUtil.listFromCollection(c), sorting);
 	}
 
 	/**

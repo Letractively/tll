@@ -16,7 +16,7 @@ import com.tll.IPropertyValueProvider;
  * @author jpk
  */
 @SuppressWarnings("unchecked")
-public final class SortColumnComparator<T> implements Comparator<T>, Serializable {
+public final class SortColumnComparator<T extends IPropertyValueProvider> implements Comparator<T>, Serializable {
 
 	static final long serialVersionUID = 5681155061446144523L;
 
@@ -43,11 +43,8 @@ public final class SortColumnComparator<T> implements Comparator<T>, Serializabl
 
 		String propPath = sortColumn.getPropertyName();
 		Object v1, v2;
-		if(o1 instanceof IPropertyValueProvider && o2 instanceof IPropertyValueProvider) {
-				v1 = ((IPropertyValueProvider) o1).getPropertyValue(propPath);
-				v2 = ((IPropertyValueProvider) o2).getPropertyValue(propPath);
-		}
-		else throw new IllegalStateException();
+		v1 = o1.getPropertyValue(propPath);
+		v2 = o2.getPropertyValue(propPath);
 
 		if(v1 == null && v2 == null) {
 			return 0;
