@@ -5,7 +5,7 @@
  */
 package com.tll.dao.db4o;
 
-import com.db4o.ObjectContainer;
+import com.db4o.EmbeddedObjectContainer;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.tll.model.AbstractEntityFactory;
@@ -17,15 +17,15 @@ import com.tll.model.IEntity;
  */
 public class Db4oEntityFactory extends AbstractEntityFactory {
 
-	private Provider<ObjectContainer> oc;
+	private Provider<EmbeddedObjectContainer> oc;
 	private IdState state;
 
 	/**
 	 * Constructor
-	 * @param oc Required {@link ObjectContainer} provider
+	 * @param oc Required {@link EmbeddedObjectContainer} provider
 	 */
 	@Inject
-	public Db4oEntityFactory(Provider<ObjectContainer> oc) {
+	public Db4oEntityFactory(Provider<EmbeddedObjectContainer> oc) {
 		super();
 		setObjectContainer(oc);
 	}
@@ -39,7 +39,7 @@ public class Db4oEntityFactory extends AbstractEntityFactory {
 	 * Sets the object container provider.
 	 * @param oc required
 	 */
-	public void setObjectContainer(Provider<ObjectContainer> oc) {
+	public void setObjectContainer(Provider<EmbeddedObjectContainer> oc) {
 		if(oc == null) throw new NullPointerException();
 		this.oc = oc;
 	}
@@ -65,7 +65,7 @@ public class Db4oEntityFactory extends AbstractEntityFactory {
 		state.setCurrentId(entity.entityClass(), next);
 		oc.get().store(state);
 		entity.setGenerated(next);
-		log.info("Generated new Db4o primary key: " + next);
+		log.info("Generated new Db4o primary key: " + next + " for type: " + entity.entityClass());
 		return Long.valueOf(next);
 	}
 

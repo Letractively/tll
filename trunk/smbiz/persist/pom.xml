@@ -22,10 +22,11 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>aspectj-maven-plugin</artifactId>
 				<configuration>
-					<showWeaveInfo>false</showWeaveInfo>
+					<showWeaveInfo>true</showWeaveInfo>
 					<source>1.6</source>
 					<target>1.6</target>
           <complianceLevel>1.6</complianceLevel>
+          <inpath>com/tll/service/entity/**</inpath>
 					<aspectLibraries>
 						<aspectLibrary>
 							<groupId>org.springframework</groupId>
@@ -35,7 +36,7 @@
 				</configuration>
 				<executions>
 					<execution>
-						<id>aspectj-weave</id>
+						<id>aj compile smbiz</id>
 						<goals>
 							<goal>compile</goal>
 							<goal>test-compile</goal>
@@ -43,12 +44,10 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- direct unit test invocations to the testng.xml file -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<skip>false</skip><!-- TODO debug -->
 					<suiteXmlFiles>
 						<suiteXmlFile>${pom.basedir}/src/test/resources/test-dao.xml</suiteXmlFile>
 						<suiteXmlFile>${pom.basedir}/src/test/resources/test-service.xml</suiteXmlFile>
@@ -116,6 +115,23 @@
 					</resource>
 				</resources>
 			</build>
+      <dependencies>
+        <!-- db40 deps -->
+        <dependency>
+          <groupId>com.db4o</groupId>
+          <artifactId>db4o-full-java5</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.springextensions.db4o</groupId>
+          <artifactId>org.springextensions.db4o</artifactId>
+          <version>${springextensions.db4o.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.tll</groupId>
+          <artifactId>tll-dao-db4o</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+      </dependencies>
 		</profile>
 	</profiles>
 
@@ -163,20 +179,6 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-aop</artifactId>
-				</exclusion>
-				<exclusion>
-					<artifactId>aopalliance</artifactId>
-					<groupId>aopalliance</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aspects</artifactId>
 			<exclusions>
@@ -190,7 +192,6 @@
 		<dependency>
 		  <groupId>javax.persistence</groupId>
 		  <artifactId>persistence-api</artifactId>
-		  <version>1.0</version>
 		  <scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -265,21 +266,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- db40 deps -->
-		<dependency>
-			<groupId>com.db4o</groupId>
-			<artifactId>db4o-full-java5</artifactId>
-		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>org.springextensions.db4o</groupId>-->
-<!--			<artifactId>org.springextensions.db4o</artifactId>-->
-<!--			<version>${springextensions.db4o.version}</version>-->
-<!--		</dependency>-->
-		<dependency>
-			<groupId>com.tll</groupId>
-			<artifactId>tll-dao-db4o</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-dao-db4o</artifactId>

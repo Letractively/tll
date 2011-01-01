@@ -28,6 +28,7 @@
 		<slfVersion>1.5.6</slfVersion>
 
 		<!-- javax.* versions -->
+    <javaxPersistenceVersion>1.0</javaxPersistenceVersion>
 		<javaxTransactionVersion>1.1</javaxTransactionVersion>
 		<javaxServletVersion>2.5</javaxServletVersion>
 		
@@ -478,6 +479,11 @@
 			</dependency>
 
 			<!-- javax.* jars -->
+      <dependency>
+  		  <groupId>javax.persistence</groupId>
+  		  <artifactId>persistence-api</artifactId>
+        <version>${javaxPersistenceVersion}</version>
+      </dependency>
 			<dependency>
 				<groupId>javax.transaction</groupId>
 				<artifactId>transaction-api</artifactId>

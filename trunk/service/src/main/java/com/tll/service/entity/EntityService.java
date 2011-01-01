@@ -168,9 +168,6 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	@Override
 	@Transactional(readOnly = true)
 	public List<E> getEntitiesFromIds(Class<E> entityClass, Collection<Long> pks, Sorting sorting) {
-		if(!IEntity.class.isAssignableFrom(entityClass)) {
-			throw new IllegalArgumentException("Non-IEntity class");
-		}
 		return dao.findByPrimaryKeys(entityClass, pks, sorting);
 	}
 

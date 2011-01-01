@@ -6,7 +6,7 @@ import java.util.List;
 import org.testng.annotations.Test;
 
 import com.db4o.Db4oEmbedded;
-import com.db4o.ObjectContainer;
+import com.db4o.EmbeddedObjectContainer;
 import com.db4o.config.EmbeddedConfiguration;
 import com.google.inject.Key;
 import com.google.inject.Module;
@@ -44,7 +44,7 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 
 	/*
 	 * We have to reverse the order of operations for db4o dao test prep
-	 * as the Db4oDbShell is dependent on the ObjectContainer!
+	 * as the Db4oDbShell is dependent on the EmbeddedObjectContainer!
 	 */
 	@Override
 	protected void prepare() {
@@ -74,7 +74,7 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 	@Override
 	protected final IDbTrans getDbTrans() {
 		if(dbtrans == null) {
-			dbtrans = new Db4oTrans(dao.getObjectContainer());
+			dbtrans = new Db4oTrans((EmbeddedObjectContainer) dao.getObjectContainer());
 		}
 		return dbtrans;
 	}
@@ -92,13 +92,13 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 		dao.getObjectContainer().close();
 		final EmbeddedConfiguration c = injector.getInstance(EmbeddedConfiguration.class);
 		final URI db4oUri = injector.getInstance(Key.get(URI.class, Db4oFile.class));
-		final ObjectContainer oc = Db4oEmbedded.openFile(c, db4oUri.getPath());
+		final EmbeddedObjectContainer oc = Db4oEmbedded.openFile(c, db4oUri.getPath());
 		dao.setObjectContainer(oc);
-		((Db4oTrans)getDbTrans()).setObjectContainer(oc);
-		((Db4oEntityFactory)getEntityFactory()).setObjectContainer(new Provider<ObjectContainer>() {
-			
+		((Db4oTrans) getDbTrans()).setObjectContainer(oc);
+		((Db4oEntityFactory) getEntityFactory()).setObjectContainer(new Provider<EmbeddedObjectContainer>() {
+
 			@Override
-			public ObjectContainer get() {
+			public EmbeddedObjectContainer get() {
 				return oc;
 			}
 		});

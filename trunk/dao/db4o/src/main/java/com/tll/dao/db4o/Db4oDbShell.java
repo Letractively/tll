@@ -15,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.db4o.Db4oEmbedded;
 import com.db4o.EmbeddedObjectContainer;
+import com.db4o.ObjectSet;
 import com.db4o.config.EmbeddedConfiguration;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -63,7 +64,7 @@ public class Db4oDbShell implements IDbShell {
 	/**
 	 * @return A newly created db4o session.
 	 */
-	private EmbeddedObjectContainer createDbSession() {
+	public EmbeddedObjectContainer createDbSession() {
 		if(c == null) {
 			log.info("Instantiating db4o session for: " + dbFile + " with NO configuration");
 			return Db4oEmbedded.openFile(dbFile.getPath());
@@ -76,16 +77,32 @@ public class Db4oDbShell implements IDbShell {
 	 * Closes a db session.
 	 * @param session A db4o session
 	 */
-	private void killDbSession(EmbeddedObjectContainer session) {
+	public void killDbSession(EmbeddedObjectContainer session) {
 		if(session != null) {
 			log.info("Killing db4o session for: " + dbFile);
 			while(!session.close()) {}
 		}
 	}
+	
+	public static void clearData(EmbeddedObjectContainer container) {
+		ObjectSet<Object> set = container.queryByExample(null);
+		if(set != null) {
+			for(Object obj : set) {
+				container.delete(obj);
+			}
+		}
+	}
 
 	@Override
 	public void clearData() {
-		throw new UnsupportedOperationException("Db4o db's can't be cleared.");
+		EmbeddedObjectContainer container = createDbSession();
+		log.info("Killing db4o session for: " + dbFile);
+		try {
+			clearData(container);
+		}
+		finally {
+			killDbSession(container);
+		}
 	}
 
 	@Override
@@ -110,35 +127,39 @@ public class Db4oDbShell implements IDbShell {
 		log.info("Deleting db4o db: " + f.getPath());
 		if(!f.delete()) throw new IllegalStateException("Unable to delete db4o file: " + f.getAbsolutePath());
 	}
-
+	
+	public void addData(EmbeddedObjectContainer dbSession) {
+		if(populator == null) throw new IllegalStateException("No populator set");
+		try {
+			populator.populateEntityGraph();
+			final EntityGraph eg = populator.getEntityGraph();
+			final Iterator<Class<? extends IEntity>> itr = eg.getEntityTypes();
+			while(itr.hasNext()) {
+				final Class<? extends IEntity> et = itr.next();
+				log.info("Storing entities of type: " + et.getSimpleName() + "...");
+				final Collection<? extends IEntity> ec = eg.getEntitiesByType(et);
+				for(final IEntity e : ec) {
+					log.info("Storing entity: " + et + "...");
+					dbSession.store(e);
+				}
+			}
+		}
+		catch(final Exception e) {
+			log.error("Unable to stub db: " + e.getMessage(), e);
+			if(e instanceof RuntimeException) {
+				throw (RuntimeException) e;
+			}
+			throw new RuntimeException(e);
+		}
+	}
+	
 	@Override
 	public void addData() {
 		EmbeddedObjectContainer dbSession = null;
 		try {
 			log.info("Stubbing db4o db for db4o db: " + dbFile);
 			dbSession = createDbSession();
-			try {
-				if(populator == null) throw new IllegalStateException("No populator set");
-				populator.populateEntityGraph();
-				final EntityGraph eg = populator.getEntityGraph();
-				final Iterator<Class<? extends IEntity>> itr = eg.getEntityTypes();
-				while(itr.hasNext()) {
-					final Class<? extends IEntity> et = itr.next();
-					log.info("Storing entities of type: " + et.getSimpleName() + "...");
-					final Collection<? extends IEntity> ec = eg.getEntitiesByType(et);
-					for(final IEntity e : ec) {
-						log.info("Storing entity: " + et + "...");
-						dbSession.store(e);
-					}
-				}
-			}
-			catch(final Exception e) {
-				log.error("Unable to stub db: " + e.getMessage(), e);
-				if(e instanceof RuntimeException) {
-					throw (RuntimeException) e;
-				}
-				throw new RuntimeException(e);
-			}
+			addData(dbSession);
 		}
 		finally {
 			killDbSession(dbSession);

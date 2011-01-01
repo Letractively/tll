@@ -8,9 +8,10 @@ package com.tll.dao.db4o;
 import java.util.Collection;
 import java.util.List;
 
-import com.db4o.ObjectContainer;
+import com.db4o.EmbeddedObjectContainer;
 import com.google.inject.Inject;
 import com.tll.dao.IPCHDao;
+import com.tll.model.bk.BusinessKeyFactory;
 
 
 /**
@@ -24,10 +25,11 @@ public class PCHDao extends Db4oEntityDao implements IPCHDao {
 	 * Constructor
 	 * @param oc
 	 * @param namedQueryTranslator
+	 * @param businessKeyFactory
 	 */
 	@Inject
-	public PCHDao(ObjectContainer oc, IDb4oNamedQueryTranslator namedQueryTranslator) {
-		super(oc, namedQueryTranslator);
+	public PCHDao(EmbeddedObjectContainer oc, IDb4oNamedQueryTranslator namedQueryTranslator, BusinessKeyFactory businessKeyFactory) {
+		super(oc, namedQueryTranslator, businessKeyFactory);
 	}
 
 	@Override

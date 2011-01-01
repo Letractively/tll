@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.testng.annotations.Test;
 
-import com.db4o.ObjectContainer;
+import com.db4o.EmbeddedObjectContainer;
 import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -62,7 +62,7 @@ public class Db4oPagingSearchListHandlerTest extends AbstractPagingSearchListHan
 	protected void afterClass() {
 		super.afterClass();
 		// kill db4o's object container
-		injector.getInstance(ObjectContainer.class).close();
+		injector.getInstance(EmbeddedObjectContainer.class).close();
 	}
 
 }
