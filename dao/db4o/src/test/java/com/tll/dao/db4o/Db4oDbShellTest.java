@@ -52,7 +52,6 @@ public class Db4oDbShellTest extends AbstractDbAwareTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		modules.add(new EGraphModule(TestPersistenceUnitEntityGraphBuilder.class));
-		// modules.add(new TestDb4oDaoModule(getConfig()));
 		modules.add(new AbstractModule() {
 
 			@Override

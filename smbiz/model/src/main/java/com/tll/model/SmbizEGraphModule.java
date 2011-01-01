@@ -7,8 +7,6 @@ package com.tll.model;
 
 import com.tll.model.egraph.EGraphModule;
 
-
-
 /**
  * SmbizEGraphModule
  * @author jpk

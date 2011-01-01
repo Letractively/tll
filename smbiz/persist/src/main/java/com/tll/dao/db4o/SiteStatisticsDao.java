@@ -5,9 +5,10 @@
  */
 package com.tll.dao.db4o;
 
-import com.db4o.ObjectContainer;
+import com.db4o.EmbeddedObjectContainer;
 import com.google.inject.Inject;
 import com.tll.dao.ISiteStatisticsDao;
+import com.tll.model.bk.BusinessKeyFactory;
 
 
 /**
@@ -21,10 +22,11 @@ public class SiteStatisticsDao extends Db4oEntityDao implements ISiteStatisticsD
 	 * Constructor
 	 * @param oc
 	 * @param namedQueryTranslator
+	 * @param businessKeyFactory
 	 */
 	@Inject
-	public SiteStatisticsDao(ObjectContainer oc, IDb4oNamedQueryTranslator namedQueryTranslator) {
-		super(oc, namedQueryTranslator);
+	public SiteStatisticsDao(EmbeddedObjectContainer oc, IDb4oNamedQueryTranslator namedQueryTranslator, BusinessKeyFactory businessKeyFactory) {
+		super(oc, namedQueryTranslator, businessKeyFactory);
 	}
 
 	@Override

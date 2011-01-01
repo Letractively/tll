@@ -23,6 +23,7 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.dao.DataAccessException;
 
+import com.db4o.EmbeddedObjectContainer;
 import com.db4o.ObjectContainer;
 import com.db4o.events.Event4;
 import com.db4o.events.EventArgs;
@@ -68,7 +69,8 @@ import com.tll.util.PropertyPath;
  * Db4oEntityDao
  * @author jpk
  */
-@SuppressWarnings( { "unchecked", "serial" })
+@SuppressWarnings({
+	"unchecked", "serial" })
 public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 
 	/**
@@ -134,6 +136,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	 */
 	@SuppressWarnings("rawtypes")
 	static class Timestamper implements EventListener4 {
+
 		static final Log log = LogFactory.getLog(Timestamper.class);
 
 		private final boolean creating;
@@ -163,6 +166,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	 */
 	@SuppressWarnings("rawtypes")
 	static class Versioner implements EventListener4 {
+
 		static final Log log = LogFactory.getLog(Versioner.class);
 
 		@Override
@@ -180,16 +184,21 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 
 	private final IDb4oNamedQueryTranslator nqt;
 
+	private BusinessKeyFactory businessKeyFactory;
+
 	/**
 	 * Constructor
 	 * @param container The required db4o object container
 	 * @param namedQueryTranslator optional named query translator to handle named
 	 *        query based queries
+	 * @param businessKeyFactory
 	 */
 	@Inject
-	public Db4oEntityDao(ObjectContainer container, IDb4oNamedQueryTranslator namedQueryTranslator) {
+	public Db4oEntityDao(EmbeddedObjectContainer container, IDb4oNamedQueryTranslator namedQueryTranslator,
+			BusinessKeyFactory businessKeyFactory) {
 		super();
 		this.nqt = namedQueryTranslator;
+		this.businessKeyFactory = businessKeyFactory;
 		setObjectContainer(container);
 	}
 
@@ -207,7 +216,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 
 	@Override
 	public <E extends IEntity> List<SearchResult> find(Criteria<E> criteria, Sorting sorting)
-	throws InvalidCriteriaException, DataAccessException {
+			throws InvalidCriteriaException, DataAccessException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
 		}
@@ -223,7 +232,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 
 	@Override
 	public <E extends IEntity> List<E> findByPrimaryKeys(Class<E> entityType, final Collection<Long> ids, Sorting sorting)
-	throws DataAccessException {
+			throws DataAccessException {
 		return getDb4oTemplate().query(new Predicate<E>(entityType) {
 
 			@Override
@@ -236,7 +245,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public <E extends IEntity> List<E> findEntities(Criteria<E> criteria, final Sorting sorting)
-	throws InvalidCriteriaException, DataAccessException {
+			throws InvalidCriteriaException, DataAccessException {
 		if(criteria == null) throw new InvalidCriteriaException("No criteria specified.");
 
 		final Query query = getDb4oTemplate().query();
@@ -271,103 +280,103 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 					}
 
 					switch(ctn.getComparator()) {
-					case BETWEEN: {
-						Object min, max;
-						if(checkValue instanceof NumberRange) {
-							final NumberRange range = (NumberRange) checkValue;
-							min = range.getMinimumNumber();
-							max = range.getMaximumNumber();
-						}
-						else if(checkValue instanceof DateRange) {
-							final DateRange range = (DateRange) checkValue;
-							min = range.getStartDate();
-							max = range.getEndDate();
-						}
-						else {
-							// presume an object array
-							final Object[] oarr = (Object[]) checkValue;
-							min = oarr[0];
-							max = oarr[1];
-						}
-						pquery.constrain(min).greater().equal().or(pquery.constrain(max).smaller().equal());
-						break;
-					}
-					case CONTAINS:
-						pquery.constrain(checkValue).contains();
-						break;
-					case ENDS_WITH:
-						pquery.constrain(checkValue).endsWith(ctn.isCaseSensitive());
-						break;
-					case EQUALS:
-						if(!ctn.isCaseSensitive())
-							throw new InvalidCriteriaException("Case insensitive equals checking is currently not supported");
-						pquery.constrain(checkValue);
-						break;
-					case GREATER_THAN:
-						pquery.constrain(checkValue).greater();
-						break;
-					case GREATER_THAN_EQUALS:
-						pquery.constrain(checkValue).greater().equal();
-						break;
-					case IN: {
-						Object[] arr;
-						if(checkValue.getClass().isArray()) {
-							arr = (Object[]) checkValue;
-						}
-						else if(checkValue instanceof Collection<?>) {
-							arr = ((Collection) checkValue).toArray();
-						}
-						else if(checkValue instanceof String) {
-							// assume comma-delimited string
-							arr =
-								org.springframework.util.ObjectUtils.toObjectArray(org.springframework.util.StringUtils
-										.commaDelimitedListToStringArray((String) checkValue));
-						}
-						else {
-							throw new InvalidCriteriaException(
-									"Unsupported or null type for IN comparator: " + checkValue == null ? "<null>" : checkValue
-											.getClass().toString());
-						}
-						Constraint c = null;
-						for(final Object o : arr) {
-							if(c == null) {
-								c = pquery.constrain(o);
+						case BETWEEN: {
+							Object min, max;
+							if(checkValue instanceof NumberRange) {
+								final NumberRange range = (NumberRange) checkValue;
+								min = range.getMinimumNumber();
+								max = range.getMaximumNumber();
+							}
+							else if(checkValue instanceof DateRange) {
+								final DateRange range = (DateRange) checkValue;
+								min = range.getStartDate();
+								max = range.getEndDate();
 							}
 							else {
-								c.or(pquery.constrain(o));
+								// presume an object array
+								final Object[] oarr = (Object[]) checkValue;
+								min = oarr[0];
+								max = oarr[1];
 							}
+							pquery.constrain(min).greater().equal().or(pquery.constrain(max).smaller().equal());
+							break;
 						}
-						break;
-					}
-					case IS:
-						if(checkValue instanceof DBType == false) {
-							throw new InvalidCriteriaException("IS clauses support only check values of type: "
-									+ DBType.class.getSimpleName());
+						case CONTAINS:
+							pquery.constrain(checkValue).contains();
+							break;
+						case ENDS_WITH:
+							pquery.constrain(checkValue).endsWith(ctn.isCaseSensitive());
+							break;
+						case EQUALS:
+							if(!ctn.isCaseSensitive())
+								throw new InvalidCriteriaException("Case insensitive equals checking is currently not supported");
+							pquery.constrain(checkValue);
+							break;
+						case GREATER_THAN:
+							pquery.constrain(checkValue).greater();
+							break;
+						case GREATER_THAN_EQUALS:
+							pquery.constrain(checkValue).greater().equal();
+							break;
+						case IN: {
+							Object[] arr;
+							if(checkValue.getClass().isArray()) {
+								arr = (Object[]) checkValue;
+							}
+							else if(checkValue instanceof Collection<?>) {
+								arr = ((Collection) checkValue).toArray();
+							}
+							else if(checkValue instanceof String) {
+								// assume comma-delimited string
+								arr =
+										org.springframework.util.ObjectUtils.toObjectArray(org.springframework.util.StringUtils
+												.commaDelimitedListToStringArray((String) checkValue));
+							}
+							else {
+								throw new InvalidCriteriaException(
+										"Unsupported or null type for IN comparator: " + checkValue == null ? "<null>" : checkValue
+												.getClass().toString());
+							}
+							Constraint c = null;
+							for(final Object o : arr) {
+								if(c == null) {
+									c = pquery.constrain(o);
+								}
+								else {
+									c.or(pquery.constrain(o));
+								}
+							}
+							break;
 						}
-						final DBType dbType = (DBType) checkValue;
-						if(dbType == DBType.NULL) {
-							// null
-							pquery.constrain(null);
-						}
-						else {
-							// not null
-							pquery.constrain(null).not();
-						}
-					case LESS_THAN:
-						pquery.constrain(checkValue).smaller();
-						break;
-					case LESS_THAN_EQUALS:
-						pquery.constrain(checkValue).smaller().equal();
-						break;
-					case LIKE:
-						pquery.constrain(checkValue).like();
-						break;
-					case NOT_EQUALS:
-						pquery.constrain(checkValue).not();
-						break;
-					case STARTS_WITH:
-						pquery.constrain(checkValue).startsWith(ctn.isCaseSensitive());
-						break;
+						case IS:
+							if(checkValue instanceof DBType == false) {
+								throw new InvalidCriteriaException("IS clauses support only check values of type: "
+										+ DBType.class.getSimpleName());
+							}
+							final DBType dbType = (DBType) checkValue;
+							if(dbType == DBType.NULL) {
+								// null
+								pquery.constrain(null);
+							}
+							else {
+								// not null
+								pquery.constrain(null).not();
+							}
+						case LESS_THAN:
+							pquery.constrain(checkValue).smaller();
+							break;
+						case LESS_THAN_EQUALS:
+							pquery.constrain(checkValue).smaller().equal();
+							break;
+						case LIKE:
+							pquery.constrain(checkValue).like();
+							break;
+						case NOT_EQUALS:
+							pquery.constrain(checkValue).not();
+							break;
+						case STARTS_WITH:
+							pquery.constrain(checkValue).startsWith(ctn.isCaseSensitive());
+							break;
 					} // comparator switch
 				}
 			}
@@ -396,7 +405,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 
 	@Override
 	public <E extends IEntity> E findEntity(Criteria<E> criteria) throws InvalidCriteriaException,
-	EntityNotFoundException, NonUniqueResultException, DataAccessException {
+			EntityNotFoundException, NonUniqueResultException, DataAccessException {
 		final List<E> list = findEntities(criteria, null);
 		if(list == null || list.size() < 1) {
 			throw new EntityNotFoundException("No matching entity found.");
@@ -410,7 +419,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 
 	@Override
 	public <E extends IEntity> List<Long> getPrimaryKeys(Criteria<E> criteria, Sorting sorting)
-	throws InvalidCriteriaException, DataAccessException {
+			throws InvalidCriteriaException, DataAccessException {
 		final List<E> list = findEntities(criteria, sorting);
 		if(list == null) {
 			return null;
@@ -463,10 +472,11 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	 * @param key The key that identifies the entity to be loaded
 	 * @return All matching entities
 	 */
-	private <E extends IEntity> E loadByPredicate(Predicate<E> p, Object key) throws EntityNotFoundException, DataAccessException {
+	private <E extends IEntity> E loadByPredicate(Predicate<E> p, Object key) throws EntityNotFoundException,
+			DataAccessException {
 		final List<E> list = getDb4oTemplate().query(p);
 		if(list == null || list.size() < 1) {
-			final String msg = "No matching entity found for key: [" + key +  ']';
+			final String msg = "No matching entity found for key: [" + key + ']';
 			logger.debug(msg);
 			throw new EntityNotFoundException(msg);
 		}
@@ -480,7 +490,8 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	}
 
 	@Override
-	public <E extends IEntity> E load(Class<E> entityType, final Long key) throws EntityNotFoundException, DataAccessException {
+	public <E extends IEntity> E load(Class<E> entityType, final Long key) throws EntityNotFoundException,
+			DataAccessException {
 		logger.debug("Loading entity by PK: " + key);
 		return loadByPredicate(new Predicate<E>(entityType) {
 
@@ -505,7 +516,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 
 	@Override
 	public <N extends INamedEntity> N load(final NameKey<N> nameKey) throws EntityNotFoundException,
-	NonUniqueResultException, DataAccessException {
+			NonUniqueResultException, DataAccessException {
 		return loadByPredicate(new Predicate<N>(nameKey.getType()) {
 
 			@Override
@@ -529,7 +540,12 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 
 	@Override
 	public <E extends IEntity> E persist(E entity) throws EntityExistsException, DataAccessException {
+		// we require a pre-set id
+		if(entity.isNew() && entity.getId() == null)
+			throw new IllegalArgumentException("No entity id set");
+
 		logger.debug("Persisting entity: " + entity);
+		
 		// must check for business key uniqueness first!
 		try {
 			final List<E> list = (List<E>) loadAll(entity.entityClass());
@@ -548,8 +564,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 					}
 				}
 			}
-			BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
-			bkf.isBusinessKeyUnique(mlist);
+			businessKeyFactory.isBusinessKeyUnique(mlist);
 		}
 		catch(final NonUniqueBusinessKeyException e) {
 			throw new EntityExistsException(e.getMessage());
@@ -557,7 +572,20 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 		catch(final BusinessKeyPropertyException e) {
 			throw new IllegalStateException(e);
 		}
+
+		// we must purge the existing entity first!
+		if(!entity.isNew()) {
+			try {
+				purge(entity);
+				if(logger.isDebugEnabled()) logger.debug("Purged existing entity by id before updating: " + entity);
+			}
+			catch(EntityNotFoundException e) {
+				// ok
+			}
+		}
+
 		getDb4oTemplate().store(entity);
+
 		return entity;
 	}
 
@@ -578,7 +606,8 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	}
 
 	@Override
-	public <E extends IEntity> void purge(Class<E> entityType, Long pk) throws EntityNotFoundException, DataAccessException {
+	public <E extends IEntity> void purge(Class<E> entityType, Long pk) throws EntityNotFoundException,
+			DataAccessException {
 		final E existing = load(entityType, pk);
 		if(existing == null) throw new EntityNotFoundException("Entity of primary key: " + pk + " not found for purging");
 		getDb4oTemplate().delete(existing);

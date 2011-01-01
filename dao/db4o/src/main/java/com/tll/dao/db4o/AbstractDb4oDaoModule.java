@@ -16,7 +16,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.aspectj.AnnotationTransactionAspect;
 
 import com.db4o.Db4oEmbedded;
-import com.db4o.ObjectContainer;
+import com.db4o.EmbeddedObjectContainer;
 import com.db4o.config.EmbeddedConfiguration;
 import com.google.inject.AbstractModule;
 import com.google.inject.BindingAnnotation;
@@ -27,7 +27,9 @@ import com.tll.config.Config;
 import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
 import com.tll.dao.IEntityDao;
+import com.tll.model.EntityMetadata;
 import com.tll.model.IEntityFactory;
+import com.tll.model.IEntityMetadata;
 
 /**
  * AbstractDb4oDaoModule - Db4o dao impl module.
@@ -156,7 +158,7 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 		}).in(Scopes.NO_SCOPE);
 
 		// ObjectContainer
-		bind(ObjectContainer.class).toProvider(new Provider<ObjectContainer>() {
+		bind(EmbeddedObjectContainer.class).toProvider(new Provider<EmbeddedObjectContainer>() {
 
 			@Inject
 			@Db4oFile
@@ -166,7 +168,7 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 			Provider<EmbeddedConfiguration> c;
 
 			@Override
-			public ObjectContainer get() {
+			public EmbeddedObjectContainer get() {
 				log.info("Creating db4o session for: " + db4oUri);
 				return Db4oEmbedded.openFile(c.get(), db4oUri.getPath());
 			}
@@ -186,7 +188,7 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 			bind(PlatformTransactionManager.class).toProvider(new Provider<PlatformTransactionManager>() {
 
 				@Inject
-				ObjectContainer oc;
+				EmbeddedObjectContainer oc;
 
 				@Override
 				public PlatformTransactionManager get() {
@@ -217,6 +219,9 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 			// IMPT: asEagerSingleton() to force binding trans manager to
 			// @Transactional!
 		}
+		
+		// IEntityMetadata (the IEntity flavored impl)
+		bind(IEntityMetadata.class).to(EntityMetadata.class);
 
 		// IEntityFactory
 		bind(IEntityFactory.class).to(Db4oEntityFactory.class).in(Scopes.SINGLETON);

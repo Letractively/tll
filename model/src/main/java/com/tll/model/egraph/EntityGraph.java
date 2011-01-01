@@ -29,6 +29,8 @@ public final class EntityGraph implements IEntityProvider {
 	 * The "graph" of entities held in a map keyed by entity type.
 	 */
 	private final LinkedHashMap<Class<? extends IEntity>, LinkedHashSet<? extends IEntity>> graph;
+	
+	private final BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
 
 	/**
 	 * Constructor
@@ -225,7 +227,6 @@ public final class EntityGraph implements IEntityProvider {
 	private <E extends IEntity> void validateEntitySet(Class<E> entityType) throws NonUniqueBusinessKeyException {
 		final Set<? extends IEntity> set = getRootEntitySet(entityType);
 		try {
-			BusinessKeyFactory bkf = new BusinessKeyFactory(new EntityMetadata());
 			bkf.isBusinessKeyUnique(set);
 		}
 		catch(final BusinessKeyPropertyException e) {

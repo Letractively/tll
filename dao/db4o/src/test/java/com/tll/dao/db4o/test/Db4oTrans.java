@@ -12,7 +12,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.db4o.ObjectContainer;
+import com.db4o.EmbeddedObjectContainer;
 import com.google.inject.Inject;
 import com.tll.dao.IDbTrans;
 
@@ -47,14 +47,14 @@ public class Db4oTrans implements IDbTrans {
 	 */
 	private boolean transCompleteFlag = false;
 
-	private final ObjectContainer oc;
+	private final EmbeddedObjectContainer oc;
 
 	/**
 	 * Constructor
 	 * @param oc The required db4o object container
 	 */
 	@Inject
-	public Db4oTrans(ObjectContainer oc) {
+	public Db4oTrans(EmbeddedObjectContainer oc) {
 		super();
 		this.oc = oc;
 	}
@@ -65,10 +65,10 @@ public class Db4oTrans implements IDbTrans {
 	}
 
 	/**
-	 * Hook to [re-]set the {@link ObjectContainer} ref.
+	 * Hook to [re-]set the {@link EmbeddedObjectContainer} ref.
 	 * @param oc the object container to set
 	 */
-	public void setObjectContainer(ObjectContainer oc) {
+	public void setObjectContainer(EmbeddedObjectContainer oc) {
 		getTransMgr().setObjectContainer(oc);
 	}
 
