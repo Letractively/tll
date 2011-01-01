@@ -10,6 +10,7 @@ import java.util.Collection;
 import com.google.inject.Inject;
 import com.tll.IMarshalable;
 import com.tll.common.data.RemoteListingDefinition;
+import com.tll.dao.Sorting;
 import com.tll.listhandler.IListHandler;
 import com.tll.listhandler.ListHandlerFactory;
 import com.tll.model.egraph.EntityGraph;
@@ -35,7 +36,7 @@ public class TestRowListHandlerProvider implements IRowListHandlerProvider {
 		try {
 			// just create a list handler full of test address entities
 			Collection<Address> clc = egraph.getEntitiesByType(Address.class);
-			return ListHandlerFactory.create(clc, null);
+			return ListHandlerFactory.create(clc, new Sorting("address1"));
 		}
 		catch(Exception e) {
 			throw new RuntimeException(e);

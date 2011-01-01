@@ -1,15 +1,10 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="client-persist-tests">
+<suite name="client-listing-tests">
 
   <test name="client-listing-tests" annotations="JDK">
-    <groups>
-      <run>
-        <include name="listing" />
-      </run>
-    </groups>
-    <packages>
-      <package name="com.tll.server.*" />
-    </packages>
+    <classes>
+      <class name="com.tll.server.listing.ListingProcessorTest" />
+    </classes>
   </test>
 
 </suite>

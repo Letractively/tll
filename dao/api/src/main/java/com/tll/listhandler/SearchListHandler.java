@@ -38,7 +38,7 @@ public abstract class SearchListHandler<E> extends AbstractListHandler<SearchRes
 	 */
 	public SearchListHandler(IListingDataProvider<E> dataProvider, Criteria<E> criteria, Sorting sorting)
 	throws IllegalArgumentException {
-		super();
+		super(sorting);
 		if(dataProvider == null) {
 			throw new IllegalArgumentException("A data provider must be specified.");
 		}
@@ -50,6 +50,5 @@ public abstract class SearchListHandler<E> extends AbstractListHandler<SearchRes
 		}
 		this.dataProvider = dataProvider;
 		this.criteria = criteria;
-		this.sorting = sorting;
 	}
 }
