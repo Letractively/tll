@@ -1,0 +1,28 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="smbiz-dao-tests">
+  
+  <test name="jdo-dao-tests" annotations="JDK">
+    <groups>
+      <run>
+        <include name="dao" />
+        <include name="jdo" />
+      </run>
+    </groups>
+    <packages>
+      <package name="com.tll.dao.jdo" />
+    </packages>
+  </test>
+  
+  <test name="db4o-dao-tests" annotations="JDK">
+    <groups>
+      <run>
+        <include name="dao" />
+        <include name="db4o" />
+      </run>
+    </groups>
+    <packages>
+      <package name="com.tll.dao.db4o" />
+    </packages>
+  </test>
+  
+</suite>

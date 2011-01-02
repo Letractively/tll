@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jdo xmlns="http://java.sun.com/xml/ns/jdo/jdo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/jdo/jdo
+        http://java.sun.com/xml/ns/jdo/jdo_2_0.xsd">
+
+	<package name="com.tll.model">
+
+		<class name="Address" detachable="true">
+			<field name="firstName" />
+			<field name="lastName" />
+			<field name="mi" />
+			<field name="company" />
+			<field name="attn" />
+			<field name="address1" />
+			<field name="address2" />
+			<field name="city" />
+			<field name="province" />
+			<field name="postalCode" />
+			<field name="country" />
+			<field name="phone" />
+			<field name="fax" />
+			<field name="emailAddress" />
+		</class>
+
+		<class name="Currency" detachable="true">
+			<field name="iso4217" />
+			<field name="symbol" />
+			<field name="usdExchangeRate" />
+		</class>
+
+		<class name="AppProperty" detachable="true">
+			<field name="value" />
+		</class>
+
+		<class name="PaymentInfo" detachable="true">
+			<field name="paymentData" serialized="true" persistence-modifier="persistent" />
+		</class>
+
+		<class name="Authority" detachable="true">
+			<field name="authority" />
+		</class>
+
+		<class name="Account" detachable="true">
+			<inheritance strategy="new-table">
+				<discriminator strategy="value-map" value="ACCOUNT" />
+			</inheritance>
+			<field name="parent" />
+			<field name="status" />
+			<field name="persistPymntInfo" />
+			<field name="billingModel" />
+			<field name="billingCycle" />
+			<field name="dateLastCharged" />
+			<field name="nextChargeDate" />
+			<field name="dateCancelled" />
+			<field name="paymentInfo" />
+			<field name="currency" />
+			<field name="addresses" mapped-by="account">
+				<collection element-type="AccountAddress" />
+			</field>
+		</class>
+
+		<class name="Asp" detachable="true">
+			<inheritance strategy="superclass-table">
+				<discriminator value="ASP" />
+			</inheritance>
+		</class>
+
+		<class name="Isp" detachable="true">
+			<inheritance strategy="superclass-table">
+				<discriminator value="ASP" />
+			</inheritance>
+		</class>
+
+		<class name="Merchant" detachable="true">
+			<inheritance strategy="superclass-table">
+				<discriminator value="ASP" />
+			</inheritance>
+			<field name="storeName" />
+		</class>
+
+		<class name="Customer" detachable="true">
+			<inheritance strategy="superclass-table">
+				<discriminator value="ASP" />
+			</inheritance>
+		</class>
+
+		<class name="AccountAddress" detachable="true">
+			<field name="type" />
+			<field name="account" default-fetch-group="true" />
+			<field name="address" default-fetch-group="true" />
+		</class>
+
+		<class name="AccountHistory" detachable="true">
+			<field name="account" />
+			<field name="transDate" />
+			<field name="status" />
+			<field name="notes" />
+			<field name="pymntTrans" />
+		</class>
+
+		<class name="CustomerAccount" detachable="true">
+			<field name="customer" />
+			<field name="account" />
+			<field name="source" />
+			<field name="status" />
+			<field name="initialVisitorRecord" />
+		</class>
+
+		<class name="Interface" detachable="true">
+			<inheritance strategy="new-table">
+				<discriminator strategy="value-map">
+					<column name="type" jdbc-type="VARCHAR" length="20" allows-null="false" />
+				</discriminator>
+			</inheritance>
+			<field name="code" />
+			<field name="description" />
+			<field name="isAvailableAsp" />
+			<field name="isAvailableIsp" />
+			<field name="isAvailableMerchant" />
+			<field name="isAvailableCustomer" />
+			<field name="isRequiredAsp" />
+			<field name="isRequiredIsp" />
+			<field name="isRequiredMerchant" />
+			<field name="isRequiredCustomer" />
+			<field name="options">
+				<collection element-type="InterfaceOption" />
+			</field>
+		</class>
+
+		<class name="InterfaceMulti" detachable="true">
+			<inheritance strategy="superclass-table">
+				<discriminator value="MULTI" />
+			</inheritance>
+		</class>
+
+		<class name="InterfaceSingle" detachable="true">
+			<inheritance strategy="superclass-table">
+				<discriminator value="SINGLE" />
+			</inheritance>
+		</class>
+
+		<class name="InterfaceSwitch" detachable="true">
+			<inheritance strategy="superclass-table">
+				<discriminator value="SWITCH" />
+			</inheritance>
+		</class>
+
+		<class name="InterfaceOptionBase" detachable="true">
+			<inheritance strategy="new-table">
+				<discriminator strategy="value-map" />
+			</inheritance>
+			<field name="code" />
+			<field name="description" />
+		</class>
+
+		<class name="InterfaceOption" detachable="true">
+			<inheritance strategy="superclass-table">
+				<discriminator value="OPTION" />
+			</inheritance>
+			<field name="isDefault" />
+			<field name="setUpCost" />
+			<field name="monthlyCost" />
+			<field name="baseSetupPrice" />
+			<field name="baseMonthlyPrice" />
+			<field name="baseAnnualPrice" />
+			<field name="parameters">
+				<collection element-type="InterfaceOptionParameterDefinition" />
+			</field>
+		</class>
+
+		<class name="InterfaceOptionParameterDefinition" detachable="true">
+			<inheritance strategy="superclass-table">
+				<discriminator value="PARAM" />
+			</inheritance>
+		</class>
+
+		<class name="InterfaceOptionAccount" detachable="true">
+			<field name="option" />
+			<field name="account" />
+			<field name="setUpPrice" />
+			<field name="monthlyPrice" />
+			<field name="annualPrice" />
+			<field name="parameters" serialized="true" persistence-modifier="persistent" default-fetch-group="true" />
+		</class>
+
+		<class name="Order" detachable="true">
+			<field name="status" />
+			<field name="notes" />
+			<field name="siteCode" />
+			<field name="account" />
+			<field name="visitor" />
+			<field name="customer" />
+			<field name="currency" />
+			<field name="paymentInfo" />
+			<field name="billToAddress" />
+			<field name="shipToAddress" />
+			<field name="orderItems" mapped-by="order">
+				<collection element-type="OrderItem" />
+			</field>
+			<field name="transactions" mapped-by="order">
+				<collection element-type="OrderTrans" />
+			</field>
+		</class>
+
+		<class name="OrderItem" detachable="true">
+			<field name="order" />
+			<field name="sku" />
+			<field name="itemStatus" />
+			<field name="payStatus" />
+			<field name="qty" />
+			<field name="weight" />
+			<field name="description" />
+			<field name="image" />
+			<field name="transactions" mapped-by="orderItem">
+				<collection element-type="OrderItemTrans" />
+			</field>
+		</class>
+
+		<class name="OrderItemTrans" detachable="true">
+			<field name="orderItem" />
+			<field name="orderTrans" />
+			<field name="orderItemTransOp" />
+			<field name="amount" />
+		</class>
+
+		<class name="OrderTrans" detachable="true">
+			<field name="order" />
+			<field name="username" />
+			<field name="orderTransOp" />
+			<field name="orderTransResult" />
+			<field name="shipModeName" />
+			<field name="shipRoutingNum" />
+			<field name="itemTotal" />
+			<field name="salesTax" />
+			<field name="shipCost" />
+			<field name="total" />
+			<field name="billToAddress" />
+			<field name="shipToAddress" />
+			<field name="pymntInfo" />
+			<field name="pymntTrans" />
+			<field name="itemTransactions" mapped-by="orderTrans">
+				<collection element-type="OrderItemTrans" />
+			</field>
+		</class>
+
+		<class name="PaymentTrans" detachable="true">
+			<field name="payTransDate" />
+			<field name="payOp" />
+			<field name="payType" />
+			<field name="amount" />
+			<field name="paymentProcessor" />
+			<field name="authNum" />
+			<field name="refNum" />
+			<field name="response" />
+			<field name="responseMsg" />
+			<field name="notes" />
+		</class>
+
+		<class name="ProdCat" detachable="true">
+			<field name="isFeaturedProduct" />
+			<field name="product" />
+			<field name="category" />
+		</class>
+
+		<class name="ProductCategory" detachable="true">
+			<field name="account" />
+			<field name="description" />
+			<field name="image" />
+		</class>
+
+		<class name="ProductGeneral" detachable="true">
+			<field name="d1" />
+			<field name="d2" />
+			<field name="d3" />
+			<field name="image1" />
+			<field name="image2" />
+		</class>
+
+		<class name="ProductInventory" detachable="true">
+			<field name="sku" />
+			<field name="status" />
+			<field name="retailPrice" />
+			<field name="salesPrice" />
+			<field name="weight" />
+			<field name="onSale" />
+			<field name="auxDescriptor" />
+			<field name="invInStock" />
+			<field name="invCommitted" />
+			<field name="invReorderLevel" />
+			<field name="account" />
+			<field name="productGeneral" />
+		</class>
+
+		<class name="SalesTax" detachable="true">
+			<field name="province" />
+			<field name="county" />
+			<field name="postalCode" />
+			<field name="tax" />
+			<field name="account" />
+		</class>
+
+		<class name="ShipBoundCost" detachable="true">
+			<field name="lbound" />
+			<field name="ubound" />
+			<field name="cost" />
+			<field name="shipMode" />
+		</class>
+
+		<class name="ShipMode" detachable="true">
+			<field name="type" />
+			<field name="surcharge" />
+			<field name="srcZip" />
+			<field name="account" />
+		</class>
+
+		<class name="SiteCode" detachable="true">
+			<field name="code" />
+			<field name="expirationDate" />
+			<field name="account" />
+		</class>
+
+		<class name="User" detachable="true">
+			<field name="emailAddress" />
+			<field name="password" />
+			<field name="locked" />
+			<field name="enabled" />
+			<field name="expires" />
+			<field name="authorities" persistence-modifier="persistent">
+				<collection element-type="Authority" />
+				<join />
+			</field>
+			<field name="account" />
+			<field name="address" />
+		</class>
+
+		<class name="Visitor" detachable="true">
+			<field name="remoteHost" />
+			<field name="remoteAddr" />
+			<field name="remoteUser" />
+			<field name="mc" />
+			<field name="account" />
+		</class>
+
+	</package>
+
+</jdo>
