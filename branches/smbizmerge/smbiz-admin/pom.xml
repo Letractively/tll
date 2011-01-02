@@ -5,15 +5,15 @@
 
   <parent>
     <groupId>com.tll</groupId>
-    <artifactId>smbiz</artifactId>
-    <version>0.9.0-SNAPSHOT</version>
+    <artifactId>tll</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
   </parent>
 
   <groupId>com.tll</groupId>
-  <artifactId>smbiz-web2</artifactId>
+  <artifactId>smbiz-admin</artifactId>
   <packaging>war</packaging>
   <version>0.0.1-SNAPSHOT</version>
-  <name>Smbiz Admin 2</name>
+  <name>Smbiz Admin webapp</name>
   <description>Redux of smbiz-web but using gwt 2.1+ features.</description>
   <inceptionYear>2011</inceptionYear>
 
@@ -175,6 +175,11 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>tll-dao-db4o</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>tll-service</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
@@ -200,23 +205,6 @@
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
 
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>smbiz-model</artifactId>
-      <version>0.9.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>smbiz-persist</artifactId>
-      <version>0.9.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>smbiz-persist</artifactId>
-      <version>0.9.0-SNAPSHOT</version>
-      <classifier>sources</classifier>
-      <scope>provided</scope>
-    </dependency>
   </dependencies>
 
 </project>
