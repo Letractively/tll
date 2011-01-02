@@ -26,7 +26,6 @@
 					<source>1.6</source>
 					<target>1.6</target>
           <complianceLevel>1.6</complianceLevel>
-          <inpath>com/tll/service/entity/**</inpath>
 					<aspectLibraries>
 						<aspectLibrary>
 							<groupId>org.springframework</groupId>
