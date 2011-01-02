@@ -1,0 +1,759 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<orm xmlns="http://java.sun.com/xml/ns/jdo/orm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/jdo/orm
+        http://java.sun.com/xml/ns/jdo/orm_2_0.xsd">
+
+	<package name="com.tll.model">
+
+		<class name="Address" table="address">
+			<unique name="address1__postal_code">
+				<column name="address_1" />
+				<column name="postal_code" />
+			</unique>
+			<field name="firstName">
+				<column name="first_name" jdbc-type="VARCHAR" length="64" />
+			</field>
+			<field name="lastName">
+				<column name="last_name" jdbc-type="VARCHAR" length="64" />
+			</field>
+			<field name="mi">
+				<column name="mi" jdbc-type="CHAR" length="1" />
+			</field>
+			<field name="company">
+				<column name="company" jdbc-type="VARCHAR" length="64" />
+			</field>
+			<field name="attn">
+				<column name="attn" jdbc-type="VARCHAR" length="64" />
+			</field>
+			<field name="address1">
+				<column name="address_1" jdbc-type="VARCHAR" length="128" allows-null="false" />
+			</field>
+			<field name="address2">
+				<column name="address_2" jdbc-type="VARCHAR" length="128" />
+			</field>
+			<field name="city">
+				<column name="city" jdbc-type="VARCHAR" length="128" allows-null="false" />
+			</field>
+			<field name="province">
+				<column name="province" jdbc-type="VARCHAR" length="128" allows-null="false" />
+			</field>
+			<field name="postalCode">
+				<column name="postal_code" jdbc-type="VARCHAR" length="15" allows-null="false" />
+			</field>
+			<field name="country">
+				<column name="country" jdbc-type="VARCHAR" length="128" allows-null="false" />
+			</field>
+			<field name="phone">
+				<column name="phone" jdbc-type="VARCHAR" length="15" />
+			</field>
+			<field name="fax">
+				<column name="fax" jdbc-type="VARCHAR" length="15" />
+			</field>
+			<field name="emailAddress">
+				<column name="email_address" jdbc-type="VARCHAR" length="128" />
+			</field>
+		</class>
+
+		<class name="Currency" table="currency">
+			<unique>
+				<column name="name" />
+			</unique>
+			<field name="iso4217" unique="true">
+				<column name="iso_4217" jdbc-type="VARCHAR" length="16" allows-null="false" />
+			</field>
+			<field name="symbol" unique="true">
+				<column name="symbol" jdbc-type="VARCHAR" length="8" allows-null="false" />
+			</field>
+			<field name="usdExchangeRate">
+				<column name="usd_exchange_rate" jdbc-type="FLOAT" default-value="0" />
+			</field>
+		</class>
+
+		<class name="AppProperty" table="app_property">
+			<unique>
+				<column name="name" />
+			</unique>
+			<column name="name" jdbc-type="VARCHAR" length="128" allows-null="false" />
+			<field name="value">
+				<column name="value" jdbc-type="VARCHAR" length="255" allows-null="false" />
+			</field>
+		</class>
+
+		<class name="PaymentInfo" table="payment_info">
+			<field name="paymentData">
+				<column name="data" jdbc-type="BLOB" allows-null="false" />
+			</field>
+		</class>
+
+		<class name="Authority" table="authority">
+			<field name="authority" unique="true">
+				<column name="authority" jdbc-type="VARCHAR" length="50" allows-null="false" />
+			</field>
+		</class>
+
+		<class name="Account" table="account">
+			<inheritance strategy="new-table">
+				<discriminator strategy="value-map" value="ACCOUNT">
+					<column name="account_type" jdbc-type="VARCHAR" length="32" allows-null="false" />
+				</discriminator>
+			</inheritance>
+			<unique>
+				<column name="name" />
+			</unique>
+			<field name="parent">
+				<column name="parent_aid" jdbc-type="BIGINT" />
+				<foreign-key name="fk_prnt_acnt" delete-action="null" />
+			</field>
+			<field name="status">
+				<column name="status" jdbc-type="TINYINT" allows-null="false" />
+			</field>
+			<field name="persistPymntInfo">
+				<column name="persist_pymnt_info" jdbc-type="BIT" />
+			</field>
+			<field name="billingModel">
+				<column name="billing_model" jdbc-type="VARCHAR" length="32" />
+			</field>
+			<field name="billingCycle">
+				<column name="billing_cycle" jdbc-type="VARCHAR" length="32" />
+			</field>
+			<field name="dateLastCharged">
+				<column name="date_last_charged" jdbc-type="TIMESTAMP" />
+			</field>
+			<field name="nextChargeDate">
+				<column name="next_charge_date" jdbc-type="TIMESTAMP" />
+			</field>
+			<field name="dateCancelled">
+				<column name="date_cancelled" jdbc-type="TIMESTAMP" />
+			</field>
+			<field name="paymentInfo">
+				<column name="pi_id" jdbc-type="BIGINT" />
+				<foreign-key name="fk_a_pi" delete-action="null" />
+			</field>
+			<field name="currency">
+				<column name="cur_id" jdbc-type="BIGINT" />
+				<foreign-key name="fk_a_c" delete-action="null" />
+			</field>
+		</class>
+
+		<class name="Asp">
+		</class>
+
+		<class name="Isp">
+		</class>
+
+		<class name="Merchant">
+			<field name="storeName">
+				<column name="store_name" jdbc-type="VARCHAR" length="128" />
+			</field>
+		</class>
+
+		<class name="Customer" table="customer">
+		</class>
+
+		<class name="AccountAddress" table="account_address">
+			<unique>
+				<column name="aid" />
+				<column name="address_id" />
+			</unique>
+			<unique>
+				<column name="aid" />
+				<column name="name" />
+			</unique>
+			<field name="type">
+				<column name="type" jdbc-type="VARCHAR" length="32" allows-null="false" />
+			</field>
+			<field name="account">
+				<column name="aid" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_aadr_a" delete-action="cascade" />
+			</field>
+			<field name="address">
+				<column name="address_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_aadr_adr" delete-action="cascade" />
+			</field>
+		</class>
+
+		<class name="AccountHistory" table="account_history">
+			<field name="account">
+				<column name="aid" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_ah_a" delete-action="cascade" />
+			</field>
+			<field name="transDate">
+				<column name="trans_date" jdbc-type="TIMESTAMP" allows-null="false" />
+			</field>
+			<field name="status">
+				<column name="status" jdbc-type="TINYINT" allows-null="false" />
+			</field>
+			<field name="notes">
+				<column name="notes" jdbc-type="LONGVARCHAR" />
+			</field>
+			<field name="pymntTrans">
+				<column name="pt_id" jdbc-type="BIGINT" allows-null="true" />
+				<foreign-key name="fk_ah_pt" delete-action="null" />
+			</field>
+		</class>
+
+		<class name="CustomerAccount" table="customer_account">
+			<field name="customer">
+				<column name="customer_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_ca_c" delete-action="cascade" />
+			</field>
+			<field name="account">
+				<column name="aid" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_ca_a" delete-action="cascade" />
+			</field>
+			<field name="source">
+				<column name="source" jdbc-type="TINYINT" allows-null="false" />
+			</field>
+			<field name="status">
+				<column name="status" jdbc-type="TINYINT" allows-null="false" />
+			</field>
+			<field name="initialVisitorRecord">
+				<column name="visitor_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_ca_s" delete-action="null" />
+			</field>
+		</class>
+
+		<class name="Visitor" table="visitor">
+			<unique>
+				<column name="aid" />
+				<column name="date_created" />
+				<column name="remote_host" />
+			</unique>
+			<field name="remoteHost">
+				<column name="remote_host" jdbc-type="VARCHAR" length="64" allows-null="false" />
+			</field>
+			<field name="remoteAddr">
+				<column name="remote_addr" jdbc-type="VARCHAR" length="64" />
+			</field>
+			<field name="remoteUser">
+				<column name="remote_user" jdbc-type="VARCHAR" length="64" />
+			</field>
+			<field name="mc">
+				<column name="mc" jdbc-type="VARCHAR" length="16" />
+			</field>
+			<field name="account">
+				<column name="aid" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_s_a" delete-action="cascade" />
+			</field>
+		</class>
+
+		<class name="User" table="user">
+			<field name="emailAddress" unique="true">
+				<column name="email_address" jdbc-type="VARCHAR" length="128" />
+			</field>
+			<field name="password">
+				<column name="password" jdbc-type="VARCHAR" length="255" allows-null="false" />
+			</field>
+			<field name="locked">
+				<column name="locked" jdbc-type="BIT" allows-null="false" />
+			</field>
+			<field name="enabled">
+				<column name="enabled" jdbc-type="BIT" allows-null="false" />
+			</field>
+			<field name="expires">
+				<column name="expires" jdbc-type="DATE" allows-null="false" />
+			</field>
+			<field name="authorities" table="user_authority">
+				<join>
+					<column name="uid" jdbc-type="BIGINT" allows-null="false" />
+				</join>
+				<element>
+					<column name="aid" jdbc-type="BIGINT" allows-null="false" />
+				</element>
+			</field>
+			<field name="account">
+				<column name="aid" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_au_a" delete-action="cascade" />
+			</field>
+			<field name="address">
+				<column name="adr_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_au_adr" delete-action="null" />
+			</field>
+		</class>
+
+		<class name="Interface" table="interface">
+			<field name="code" unique="true">
+				<column name="code" jdbc-type="VARCHAR" length="50" allows-null="false" />
+			</field>
+			<field name="description">
+				<column name="description" jdbc-type="VARCHAR" length="128" />
+			</field>
+			<field name="isAvailableAsp">
+				<column name="is_available_asp" jdbc-type="BIT" allows-null="false" default-value="false" />
+			</field>
+			<field name="isAvailableIsp">
+				<column name="is_available_isp" jdbc-type="BIT" allows-null="false" default-value="false" />
+			</field>
+			<field name="isAvailableMerchant">
+				<column name="is_available_merchant" jdbc-type="BIT" allows-null="false" default-value="false" />
+			</field>
+			<field name="isAvailableCustomer">
+				<column name="is_available_customer" jdbc-type="BIT" allows-null="false" default-value="false" />
+			</field>
+			<field name="isRequiredAsp">
+				<column name="is_required_asp" jdbc-type="BIT" allows-null="false" default-value="false" />
+			</field>
+			<field name="isRequiredIsp">
+				<column name="is_required_isp" jdbc-type="BIT" allows-null="false" default-value="false" />
+			</field>
+			<field name="isRequiredMerchant">
+				<column name="is_required_merchant" jdbc-type="BIT" allows-null="false" default-value="false" />
+			</field>
+			<field name="isRequiredCustomer">
+				<column name="is_required_customer" jdbc-type="BIT" allows-null="false" default-value="false" />
+			</field>
+			<field name="options">
+				<element column="interface_id" />
+			</field>
+		</class>
+
+		<class name="InterfaceMulti">
+		</class>
+
+		<class name="InterfaceSingle">
+		</class>
+
+		<class name="InterfaceSwitch">
+		</class>
+
+		<class name="InterfaceOptionBase" table="iopd">
+			<inheritance strategy="new-table">
+				<discriminator strategy="value-map">
+					<column name="record_type" jdbc-type="VARCHAR" length="32" allows-null="false" />
+				</discriminator>
+			</inheritance>
+			<column name="interface_id" jdbc-type="BIGINT" default-value="null" />
+			<column name="option_id" jdbc-type="BIGINT" default-value="null" />
+			<field name="code">
+				<column name="code" jdbc-type="VARCHAR" length="50" allows-null="false" />
+			</field>
+			<field name="description">
+				<column name="description" jdbc-type="VARCHAR" length="128" allows-null="false" />
+			</field>
+		</class>
+
+		<class name="InterfaceOption">
+			<field name="isDefault">
+				<column name="is_default" jdbc-type="BIT" allows-null="false" default-value="false" />
+			</field>
+			<field name="setUpCost">
+				<column name="set_up_cost" jdbc-type="FLOAT" allows-null="false" default-value="0" />
+			</field>
+			<field name="monthlyCost">
+				<column name="monthly_cost" jdbc-type="FLOAT" allows-null="false" default-value="0" />
+			</field>
+			<field name="baseSetupPrice">
+				<column name="base_setup_price" jdbc-type="FLOAT" allows-null="false" default-value="0" />
+			</field>
+			<field name="baseMonthlyPrice">
+				<column name="base_monthly_price" jdbc-type="FLOAT" allows-null="false" default-value="0" />
+			</field>
+			<field name="baseAnnualPrice">
+				<column name="base_annual_price" jdbc-type="FLOAT" allows-null="false" default-value="0" />
+			</field>
+			<field name="parameters">
+				<element column="option_id" />
+			</field>
+		</class>
+
+		<class name="InterfaceOptionParameterDefinition" table="iopd">
+		</class>
+
+		<class name="InterfaceOptionAccount" table="ioa">
+			<unique>
+				<column name="aid" />
+				<column name="option_id" />
+			</unique>
+			<field name="option">
+				<column name="option_id" jdbc-type="BIGINT" allows-null="true" />
+				<foreign-key name="fk_ia_i" delete-action="cascade" />
+			</field>
+			<field name="account">
+				<column name="aid" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_ia_a" delete-action="cascade" />
+			</field>
+			<field name="setUpPrice">
+				<column name="set_up_price" jdbc-type="FLOAT" allows-null="false" default-value="0" />
+			</field>
+			<field name="monthlyPrice">
+				<column name="monthly_price" jdbc-type="FLOAT" allows-null="false" default-value="0" />
+			</field>
+			<field name="annualPrice">
+				<column name="annual_price" jdbc-type="FLOAT" allows-null="false" default-value="0" />
+			</field>
+			<field name="parameters">
+				<column name="params" jdbc-type="BLOB" />
+			</field>
+		</class>
+
+		<class name="Order" table="orders">
+			<field name="status">
+				<column name="status" jdbc-type="TINYINT" allows-null="false" />
+			</field>
+			<field name="notes">
+				<column name="notes" jdbc-type="VARCHAR" length="255" />
+			</field>
+			<field name="siteCode">
+				<column name="site_code" jdbc-type="VARCHAR" length="32" />
+			</field>
+			<field name="account">
+				<column name="aid" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_o_a" delete-action="cascade" />
+			</field>
+			<field name="visitor">
+				<column name="visitor_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_o_s" delete-action="null" />
+			</field>
+			<field name="customer">
+				<column name="cust_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_o_c" delete-action="null" />
+			</field>
+			<field name="currency">
+				<column name="crncy_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_o_crncy" delete-action="null" />
+			</field>
+			<field name="paymentInfo">
+				<column name="pymntinfo_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_o_pi" delete-action="null" />
+			</field>
+			<field name="billToAddress">
+				<column name="billto_adr_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_o_adr_bill" delete-action="null" />
+			</field>
+			<field name="shipToAddress">
+				<column name="shipto_adr_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_o_adr_ship" delete-action="null" />
+			</field>
+			<field name="orderItems">
+			</field>
+			<field name="transactions">
+			</field>
+		</class>
+
+		<class name="OrderItem" table="order_item">
+			<unique>
+				<column name="o_id" />
+				<column name="sku" />
+			</unique>
+			<field name="order">
+				<column name="o_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_oi_o" delete-action="cascade" />
+			</field>
+			<field name="sku">
+				<column name="sku" jdbc-type="VARCHAR" length="64" allows-null="false" />
+			</field>
+			<field name="itemStatus">
+				<column name="item_status" jdbc-type="TINYINT" allows-null="false" />
+			</field>
+			<field name="payStatus">
+				<column name="pay_status" jdbc-type="TINYINT" allows-null="false" />
+			</field>
+			<field name="qty">
+				<column name="qty" jdbc-type="INTEGER" />
+			</field>
+			<field name="price">
+				<column name="price" jdbc-type="FLOAT" default-value="0" />
+			</field>
+			<field name="weight">
+				<column name="weight" jdbc-type="FLOAT" default-value="0" />
+			</field>
+			<field name="description">
+				<column name="description" jdbc-type="VARCHAR" length="255" />
+			</field>
+			<field name="image">
+				<column name="image" jdbc-type="VARCHAR" length="32" />
+			</field>
+		</class>
+
+		<class name="OrderTrans" table="order_trans">
+			<unique>
+				<column name="o_id" />
+				<column name="date_created" />
+				<column name="username" />
+			</unique>
+			<field name="order">
+				<column name="o_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_ot_o" delete-action="cascade" />
+			</field>
+			<field name="username">
+				<column name="username" jdbc-type="VARCHAR" length="32" allows-null="false" />
+			</field>
+			<field name="orderTransOp">
+				<column name="order_trans_op" jdbc-type="TINYINT" allows-null="false" />
+			</field>
+			<field name="orderTransResult">
+				<column name="order_trans_result" jdbc-type="TINYINT" allows-null="false" />
+			</field>
+			<field name="shipModeName">
+				<column name="ship_mode_name" jdbc-type="VARCHAR" length="64" />
+			</field>
+			<field name="shipRoutingNum">
+				<column name="ship_routing_num" jdbc-type="VARCHAR" length="64" />
+			</field>
+			<field name="itemTotal">
+				<column name="item_total" jdbc-type="FLOAT" default-value="0" />
+			</field>
+			<field name="salesTax">
+				<column name="sales_tax" jdbc-type="FLOAT" default-value="0" />
+			</field>
+			<field name="shipCost">
+				<column name="ship_cost" jdbc-type="FLOAT" default-value="0" />
+			</field>
+			<field name="total">
+				<column name="total" jdbc-type="FLOAT" default-value="0" />
+			</field>
+			<field name="billToAddress">
+				<column name="bta_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_ot_adr_bill" delete-action="null" />
+			</field>
+			<field name="shipToAddress">
+				<column name="sta_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_ot_adr_ship" delete-action="null" />
+			</field>
+			<field name="pymntInfo">
+				<column name="pi_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_ot_pi" delete-action="null" />
+			</field>
+			<field name="pymntTrans">
+				<column name="pt_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_ot_pt" delete-action="null" />
+			</field>
+			<field name="itemTransactions">
+			</field>
+		</class>
+
+		<class name="OrderItemTrans" table="order_item_trans">
+			<unique>
+				<column name="oi_id" />
+				<column name="ot_id" />
+			</unique>
+			<field name="orderItem">
+				<column name="oi_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_oit_oi" delete-action="cascade" />
+			</field>
+			<field name="orderTrans">
+				<column name="ot_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_oit_ot" delete-action="cascade" />
+			</field>
+			<field name="orderItemTransOp">
+				<column name="order_item_trans_op" jdbc-type="TINYINT" allows-null="false" />
+			</field>
+			<field name="amount">
+				<column name="amount" jdbc-type="FLOAT" default-value="0" />
+			</field>
+		</class>
+
+		<class name="PaymentTrans" table="payment_trans">
+			<unique>
+				<column name="pay_trans_date" />
+				<column name="pay_op" />
+				<column name="pay_type" />
+			</unique>
+			<field name="payTransDate">
+				<column name="pay_trans_date" jdbc-type="TIMESTAMP" allows-null="false" />
+			</field>
+			<field name="payOp">
+				<column name="pay_op" jdbc-type="TINYINT" allows-null="false" />
+			</field>
+			<field name="payType">
+				<column name="pay_type" jdbc-type="TINYINT" allows-null="false" />
+			</field>
+			<field name="amount">
+				<column name="amount" jdbc-type="FLOAT" default-value="0" />
+			</field>
+			<field name="paymentProcessor">
+				<column name="payment_processor" jdbc-type="TINYINT" />
+			</field>
+			<field name="authNum">
+				<column name="auth_num" jdbc-type="VARCHAR" length="32" />
+			</field>
+			<field name="refNum" unique="true">
+				<column name="ref_num" jdbc-type="VARCHAR" length="32" allows-null="false" />
+			</field>
+			<field name="response">
+				<column name="response" jdbc-type="VARCHAR" length="32" />
+			</field>
+			<field name="responseMsg">
+				<column name="response_msg" jdbc-type="VARCHAR" length="128" />
+			</field>
+			<field name="notes">
+				<column name="notes" jdbc-type="LONGVARCHAR" />
+			</field>
+		</class>
+
+		<class name="ProdCat" table="prod_cat">
+			<unique>
+				<column name="prodinv_id" />
+				<column name="prodcat_id" />
+			</unique>
+			<field name="isFeaturedProduct">
+				<column name="is_featured_product" jdbc-type="BIT" allows-null="false" default-value="false" />
+			</field>
+			<field name="product">
+				<column name="prodinv_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_prodcat_pc" delete-action="cascade" />
+			</field>
+			<field name="category">
+				<column name="prodcat_id" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_prodcat_pc" delete-action="cascade" />
+			</field>
+		</class>
+
+		<class name="ProductCategory" table="product_category">
+			<unique>
+				<column name="aid" />
+				<column name="name" />
+			</unique>
+			<field name="account">
+				<column name="aid" jdbc-type="BIGINT" allows-null="false" />
+				<foreign-key name="fk_pc_a" delete-action="cascade" />
+			</field>
+			<field name="description">
+				<column name="description" jdbc-type="VARCHAR" length="255" />
+			</field>
+			<field name="image">
+				<column name="image" jdbc-type="VARCHAR" length="64" />
+			</field>
+		</class>
+
+		<class name="ProductGeneral" table="product_general">
+			<unique>
+				<column name="d1" />
+				<column name="d2" />
+			</unique>
+			<field name="d1">
+				<column name="d1" jdbc-type="VARCHAR" length="255" allows-null="false" />
+			</field>
+			<field name="d2">
+				<column name="d2" jdbc-type="VARCHAR" length="255" allows-null="false" />
+			</field>
+			<field name="d3">
+				<column name="d3" jdbc-type="VARCHAR" length="255" allows-null="false" />
+			</field>
+			<field name="image1">
+				<column name="image1" jdbc-type="VARCHAR" length="64" />
+			</field>
+			<field name="image2">
+				<column name="image2" jdbc-type="VARCHAR" length="64" />
+			</field>
+		</class>
+
+		<class name="ProductInventory" table="product_inventory">
+			<field name="sku">
+				<column name="sku" jdbc-type="VARCHAR" length="64" allows-null="false" />
+			</field>
+			<field name="status">
+				<column name="status" jdbc-type="TINYINT" allows-null="false" />
+			</field>
+			<field name="retailPrice">
+				<column name="retail_price" jdbc-type="FLOAT" allows-null="false" default-value="0" />
+			</field>
+			<field name="salesPrice">
+				<column name="sales_price" jdbc-type="FLOAT" allows-null="false" default-value="0" />
+			</field>
+			<field name="weight">
+				<column name="weight" jdbc-type="FLOAT" default-value="0" />
+			</field>
+			<field name="onSale">
+				<column name="on_sale" jdbc-type="BIT" allows-null="false" default-value="false" />
+			</field>
+			<field name="auxDescriptor">
+				<column name="aux_descriptor" jdbc-type="VARCHAR" length="255" />
+			</field>
+			<field name="invInStock">
+				<column name="inv_in_stock" jdbc-type="INTEGER" allows-null="false" default-value="0" />
+			</field>
+			<field name="invCommitted">
+				<column name="inv_committed" jdbc-type="INTEGER" allows-null="false" default-value="0" />
+			</field>
+			<field name="invReorderLevel">
+				<column name="inv_reorder_level" jdbc-type="INTEGER" allows-null="false" default-value="0" />
+			</field>
+			<field name="account">
+				<column name="aid" jdbc-type="BIGINT" allows-null="true" />
+				<foreign-key name="fk_pg_a" delete-action="cascade" />
+			</field>
+			<field name="productGeneral">
+				<column name="pg_id" jdbc-type="BIGINT" allows-null="true" />
+				<foreign-key name="fk_pi_pg" delete-action="cascade" />
+			</field>
+		</class>
+
+		<class name="SalesTax" table="sales_tax">
+			<unique>
+				<column name="aid" />
+				<column name="province" />
+				<column name="county" />
+				<column name="postal_code" />
+			</unique>
+			<field name="province">
+				<column name="province" jdbc-type="VARCHAR" length="64" allows-null="false" />
+			</field>
+			<field name="county">
+				<column name="county" jdbc-type="VARCHAR" length="64" allows-null="false" />
+			</field>
+			<field name="postalCode">
+				<column name="postal_code" jdbc-type="VARCHAR" length="16" allows-null="false" />
+			</field>
+			<field name="tax">
+				<column name="tax" jdbc-type="FLOAT" allows-null="false" default-value="0" />
+			</field>
+			<field name="account">
+				<column name="aid" jdbc-type="BIGINT" allows-null="true" />
+				<foreign-key name="fk_st_a" delete-action="cascade" />
+			</field>
+		</class>
+
+		<class name="ShipMode" table="ship_mode">
+			<field name="type">
+				<column name="type" jdbc-type="TINYINT" allows-null="false" />
+			</field>
+			<field name="surcharge">
+				<column name="surcharge" jdbc-type="FLOAT" default-value="0" />
+			</field>
+			<field name="srcZip">
+				<column name="src_zip" jdbc-type="VARCHAR" length="16" />
+			</field>
+			<field name="account">
+				<column name="aid" jdbc-type="BIGINT" allows-null="true" />
+				<foreign-key name="fk_sm_a" delete-action="cascade" />
+			</field>
+		</class>
+
+		<class name="ShipBoundCost" table="ship_bound_cost">
+			<unique>
+				<column name="sm_id" />
+				<column name="l_bound" />
+				<column name="u_bound" />
+			</unique>
+			<field name="lbound">
+				<column name="l_bound" jdbc-type="FLOAT" allows-null="false" default-value="0" />
+			</field>
+			<field name="ubound">
+				<column name="u_bound" jdbc-type="FLOAT" allows-null="false" default-value="0" />
+			</field>
+			<field name="cost">
+				<column name="cost" jdbc-type="FLOAT" allows-null="false" default-value="0" />
+			</field>
+			<field name="shipMode">
+				<column name="sm_id" jdbc-type="BIGINT" allows-null="true" />
+				<foreign-key name="fk_sbc_sm" delete-action="cascade" />
+			</field>
+		</class>
+
+		<class name="SiteCode" table="site_code">
+			<field name="code" unique="true">
+				<column name="code" jdbc-type="VARCHAR" length="16" allows-null="false" />
+			</field>
+			<field name="expirationDate">
+				<column name="expiration_date" jdbc-type="TIMESTAMP" allows-null="false" />
+			</field>
+			<field name="account">
+				<column name="aid" jdbc-type="BIGINT" allows-null="true" />
+				<foreign-key name="fk_sc_a" delete-action="cascade" />
+			</field>
+		</class>
+
+	</package>
+
+</orm>

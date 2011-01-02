@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+
+  <display-name>smbiz Admin</display-name>
+  <description>smbiz Administration UI</description>
+
+  <session-config>
+    <session-timeout>30</session-timeout>
+  </session-config>
+
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+
+  <listener>
+    <listener-class>com.tll.server.SmbizGuiceServletConfig</listener-class>
+  </listener>
+
+  <filter>
+    <filter-name>guiceFilter</filter-name>
+    <filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>guiceFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <!-- GWT RPC Servlets -->
+  <servlet>
+    <servlet-name>CrudAuxDataService</servlet-name>
+    <servlet-class>com.tll.server.rpc.entity.CrudAuxDataService</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CrudAuxDataService</servlet-name>
+    <url-pattern>/smbizAdmin/rpc/crud</url-pattern>
+    <url-pattern>/smbizAdmin/rpc/aux</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>AddAccountService</servlet-name>
+    <servlet-class>com.tll.server.rpc.entity.AddAccountService</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AddAccountService</servlet-name>
+    <url-pattern>/smbizAdmin/rpc/aa</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ListingService</servlet-name>
+    <servlet-class>com.tll.server.rpc.listing.ListingService</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ListingService</servlet-name>
+    <url-pattern>/smbizAdmin/rpc/listing</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>AdminContextService</servlet-name>
+    <servlet-class>com.tll.server.rpc.AdminContextService</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AdminContextService</servlet-name>
+    <url-pattern>/smbizAdmin/rpc/adminContext</url-pattern>
+  </servlet-mapping>
+  <!-- END GWT RPC Servlets -->
+
+</web-app>

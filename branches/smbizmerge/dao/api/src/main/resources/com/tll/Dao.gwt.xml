@@ -1,0 +1,19 @@
+<module>
+  
+  <source path="dao">
+    <include name="Sorting.java" />
+    <include name="SortDir.java" />
+    <include name="SortColumn.java" />
+    <include name="SortColumnComparator.java" />
+  </source>
+
+	<source path="listhandler">
+		<include name="EmptyListException.java" />
+		<include name="IListHandler.java" />
+		<include name="AbstractListHandler.java" />
+		<include name="InMemoryListHandler.java" />
+		<include name="ListHandlerException.java" />
+		<include name="ListHandlerType.java" />
+	</source>
+
+</module>

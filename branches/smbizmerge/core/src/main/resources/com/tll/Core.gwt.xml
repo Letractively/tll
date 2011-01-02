@@ -1,0 +1,19 @@
+<module>
+	<source path=""><!-- (i.e. the current dir) -->
+		<include name="IPropertyNameProvider.java" />
+		<include name="IPropertyValueProvider.java" />
+		<include name="INameValueProvider.java" />
+		<include name="IDescriptorProvider.java" />
+		<include name="ITypeDescriptorProvider.java" />
+		<include name="IMarshalable.java" />
+		<include name="ApplicationException.java" />
+	</source>
+	<source path="util">
+		<include name="DataPoint.java" />
+		<include name="DateRange.java" />
+		<include name="FNum.java" />
+		<include name="ObjectUtil.java" />
+		<include name="PropertyPath.java" />
+		<include name="StringUtil.java" />
+	</source>
+</module>
