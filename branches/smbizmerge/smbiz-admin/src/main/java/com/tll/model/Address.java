@@ -20,6 +20,10 @@ import com.tll.model.validate.PostalCode;
 	"address1", "postalCode" }))
 public class Address extends EntityBase {
 
+	public static Address findAddress(Long id) {
+		return EMF.get().instanceByEntityType(Address.class).load(id);
+	}
+	
 	private static final long serialVersionUID = 69385466934038047L;
 
 	public static final int MAXLEN_FIRST_NAME = 128;

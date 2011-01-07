@@ -18,6 +18,10 @@ import com.tll.model.bk.BusinessObject;
 	@BusinessKeyDef(name = "ISO4217", properties = { "iso4217" }) })
 public class Currency extends NamedEntity {
 
+	public static Currency findCurrency(Long id) {
+		return EMF.get().instanceByEntityType(Currency.class).load(id);
+	}
+
 	private static final long serialVersionUID = -1627972414433764825L;
 
 	public static final int MAXLEN_NAME = 64;

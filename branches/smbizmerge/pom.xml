@@ -23,9 +23,9 @@
 		<db4oVersion>8.0-SNAPSHOT</db4oVersion>
 		<springextensions.db4o.version>1.0.0e</springextensions.db4o.version>
 
-		<aspectjVersion>1.6.7</aspectjVersion>
+		<aspectjVersion>1.6.9</aspectjVersion>
 		<springVersion>3.0.5.RELEASE</springVersion>
-		<slfVersion>1.5.6</slfVersion>
+		<slfVersion>1.6.1</slfVersion>
 
 		<!-- javax.* versions -->
     <javaxPersistenceVersion>1.0</javaxPersistenceVersion>
@@ -370,7 +370,7 @@
 			<dependency>
 				<groupId>log4j</groupId>
 				<artifactId>log4j</artifactId>
-				<version>1.2.14</version>
+				<version>1.2.16</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>

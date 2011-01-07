@@ -20,6 +20,10 @@ import com.tll.model.bk.BusinessObject;
 		"account.id", INamedEntity.NAME }) })
 public class AccountAddress extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
+	public static AccountAddress findAccountAddress(Long id) {
+		return EMF.get().instanceByEntityType(AccountAddress.class).load(id);
+	}
+
 	private static final long serialVersionUID = 7356724207827323290L;
 
 	public static final int MAXLEN_NAME = 32;

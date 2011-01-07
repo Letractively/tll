@@ -155,8 +155,8 @@ public abstract class AbstractPersistServiceImpl implements IPersistServiceImpl 
 		IEntity e = svc.load(Long.valueOf(id));
 
 		// ensure versions match!
-		if(!ObjectUtil.equals(Long.valueOf(modelChanges.getVersion()), Long.valueOf(e.getVersion()))) {
-			throw new VersionMismatchException(eclass, Long.valueOf(e.getVersion()), Long.valueOf(modelChanges.getVersion()));
+		if(!ObjectUtil.equals(Long.valueOf(modelChanges.getVersion()), e.getVersion())) {
+			throw new VersionMismatchException(eclass, e.getVersion(), Integer.valueOf(modelChanges.getVersion()));
 		}
 
 		// marshal the changes only

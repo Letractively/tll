@@ -22,10 +22,10 @@ public abstract class EntityBase implements IEntity {
 	private boolean generated;
 
 	/**
-	 * At object creation, a version of <code>-1</code> is assigined indicating a
+	 * At object creation, a version of null is assigined indicating a
 	 * <em>transient</em> (not persisted yet) entity.
 	 */
-	private long version = -1;
+	private Integer version;
 
 	/**
 	 * finds an entity of the given id in the set or null if not found. If the
@@ -176,23 +176,23 @@ public abstract class EntityBase implements IEntity {
 	}
 
 	@Override
-	public Long getId() {
+	public final Long getId() {
 		return id;
 	}
 
 	@Override
-	public void setId(Long id) {
+	public final void setId(Long id) {
 		this.id = id;
 	}
 
 	@Managed
 	@Override
-	public final long getVersion() {
+	public final Integer getVersion() {
 		return version;
 	}
 
 	@Override
-	public final void setVersion(long version) {
+	public final void setVersion(Integer version) {
 		this.version = version;
 	}
 	
@@ -213,9 +213,8 @@ public abstract class EntityBase implements IEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		final Object sid = getId();
-		result = prime * result + ((sid == null) ? 0 : sid.hashCode());
-		result = prime * result + (int) (version ^ (version >>> 32));
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((version == null) ? 0 : version.hashCode());
 		return result;
 	}
 
@@ -225,12 +224,11 @@ public abstract class EntityBase implements IEntity {
 		if(obj == null) return false;
 		if(getClass() != obj.getClass()) return false;
 		final EntityBase other = (EntityBase) obj;
-		final Object sid = getId(), otherId = other.getId();
-		if(sid == null) {
+		final Long otherId = other.getId();
+		if(id == null) {
 			if(otherId != null) return false;
 		}
-		else if(!sid.equals(otherId)) return false;
-		if(version != other.version) return false;
+		else if(!id.equals(otherId)) return false;
 		return true;
 	}
 
@@ -241,7 +239,7 @@ public abstract class EntityBase implements IEntity {
 
 	@Override
 	public final boolean isNew() {
-		return version == -1;
+		return version == null;
 	}
 
 	/*

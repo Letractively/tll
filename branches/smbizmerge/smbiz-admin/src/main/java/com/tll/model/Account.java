@@ -17,19 +17,31 @@ import com.tll.model.validate.AtLeastOne;
 import com.tll.model.validate.BusinessKeyUniqueness;
 
 /**
- * Account - Base class for account type entities.
+ * Base class for account type entities.
  * @author jpk
  */
 @Root
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Name", properties = INamedEntity.NAME))
-public abstract class Account extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
+public /*abstract*/ class Account extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
+	
+	public static Account findAccount(Long id) {
+		return EMF.get().instanceByEntityType(Account.class).load(id);
+	}
+	
+	public void persist() {
+		EMF.get().instanceByEntityType(Account.class).persist(this);
+	}
+	
+	public void remove() {
+		EMF.get().instanceByEntityType(Account.class).purge(this);
+	}
 
 	private static final long serialVersionUID = -684966689440840694L;
 
-	static final String ASP_VALUE = "0";
-	static final String ISP_VALUE = "1";
-	static final String MERCHANT_VALUE = "2";
-	static final String CUSTOMER_VALUE = "3";
+//	static final String ASP_VALUE = "0";
+//	static final String ISP_VALUE = "1";
+//	static final String MERCHANT_VALUE = "2";
+//	static final String CUSTOMER_VALUE = "3";
 
 	public static final int MAXLEN_NAME = 32;
 	public static final int MAXLEN_BILLING_MODEL = 32;
@@ -66,6 +78,11 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 
 	@Override
 	public final Class<? extends IEntity> rootEntityClass() {
+		return Account.class;
+	}
+
+	@Override
+	public Class<? extends IEntity> entityClass() {
 		return Account.class;
 	}
 

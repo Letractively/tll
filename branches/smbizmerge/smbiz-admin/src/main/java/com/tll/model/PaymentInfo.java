@@ -19,7 +19,12 @@ import com.tll.model.bk.BusinessObject;
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Name", properties = { INamedEntity.NAME }))
 public class PaymentInfo extends NamedEntity {
 
+	public static PaymentInfo findPaymentInfo(Long id) {
+		return EMF.get().instanceByEntityType(PaymentInfo.class).load(id);
+	}
+	
 	private static final long serialVersionUID = -8237732782824087760L;
+
 	public static final int MAXLEN_NAME = 64;
 
 	private PaymentData paymentData;

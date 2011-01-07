@@ -197,7 +197,7 @@ public class MarshalerTest extends AbstractConfigAwareTest {
 		final Marshaler marshaler = getMarshaler();
 		Assert.assertTrue(marshaler != null);
 		final Account e = getEntityBeanFactory().getEntityCopy(Account.class);
-		e.setVersion(1);
+		e.setVersion(Integer.valueOf(1));
 		final AccountAddress aa1 = getEntityBeanFactory().getEntityCopy(AccountAddress.class);
 		final AccountAddress aa2 = getEntityBeanFactory().getEntityCopy(AccountAddress.class);
 		e.addAccountAddress(aa1);
@@ -209,7 +209,7 @@ public class MarshalerTest extends AbstractConfigAwareTest {
 		final Account rea = marshaler.marshalModel(m, e);
 		Assert.assertTrue(e == rea);
 		Assert.assertTrue(e.equals(rea));
-		Assert.assertEquals(Long.valueOf(rea.getVersion()), Long.valueOf(m.getVersion()));
+		Assert.assertEquals(rea.getVersion(), Integer.valueOf(m.getVersion()));
 		Assert.assertTrue(e.getAddresses() != null);
 		Assert.assertTrue(e.getAddresses().size() == 1);
 		Assert.assertTrue(e.getAddresses().iterator().next().equals(aa2));

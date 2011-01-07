@@ -16,6 +16,9 @@
   <listener>
     <listener-class>com.tll.server.SmbizGuiceServletConfig</listener-class>
   </listener>
+  <listener>
+    <listener-class>com.tll.server.Db4oServletContextListener</listener-class>
+  </listener>
 
   <filter>
     <filter-name>guiceFilter</filter-name>

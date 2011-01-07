@@ -10,13 +10,13 @@ import net.sf.ehcache.CacheManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.google.inject.Binder;
-import com.google.inject.Module;
+import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.config.Config;
 import com.tll.config.IConfigAware;
 import com.tll.dao.db4o.SmbizDb4oDaoModule;
+import com.tll.model.EMF;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.SmbizEGraphModule;
 import com.tll.model.SmbizEntityAssembler;
@@ -30,7 +30,7 @@ import com.tll.util.ClassUtil;
  * la db4o.
  * @author jpk
  */
-public class SmbizDb4oPersistModule implements Module, IConfigAware {
+public class SmbizDb4oPersistModule extends AbstractModule implements IConfigAware {
 	
 	static final Log log = LogFactory.getLog(SmbizDb4oPersistModule.class);
 
@@ -51,20 +51,23 @@ public class SmbizDb4oPersistModule implements Module, IConfigAware {
 	}
 	
 	@Override
-	public void configure(Binder binder) {
+	public void configure() {
 		log.info("Loading smbiz db4o persist related modules...");
-		binder.install(new ValidationModule());
-		binder.install(new SmbizEGraphModule());
-		binder.install(new SmbizDb4oDaoModule(config));
-		binder.bind(IEntityAssembler.class).to(SmbizEntityAssembler.class).in(Scopes.SINGLETON);
+		install(new ValidationModule());
+		install(new SmbizEGraphModule());
+		install(new SmbizDb4oDaoModule(config));
+		bind(IEntityAssembler.class).to(SmbizEntityAssembler.class).in(Scopes.SINGLETON);
 		// satisfy caching requirement for UserService
-		binder.bind(CacheManager.class).annotatedWith(UserCacheAware.class).toProvider(new Provider<CacheManager>() {
+		bind(CacheManager.class).annotatedWith(UserCacheAware.class).toProvider(new Provider<CacheManager>() {
 
 			@Override
 			public CacheManager get() {
 				return new CacheManager(ClassUtil.getResource("ehcache-smbiz-persist.xml"));
 			}
 		}).in(Scopes.SINGLETON);
-		binder.install(new SmbizEntityServiceFactoryModule());
+		install(new SmbizEntityServiceFactoryModule());
+		
+		// required for satisfying GWT's RequestFactory (entity-RPC) feature
+		requestStaticInjection(EMF.class);
 	}
 }

@@ -2,11 +2,17 @@
 <module>
   <inherits name='com.google.gwt.activity.Activity' />
   <inherits name='com.google.gwt.place.Place' />
-  <inherits name='com.google.gwt.requestfactory.RequestFactory'/>
+  <inherits name='com.google.gwt.requestfactory.RequestFactory' />
 
   <inherits name="com.tll.ClientCore" />
   <inherits name="com.tll.Listing" />
   <inherits name="com.tll.Login" />
 
-  <inherits name='com.google.gwt.logging.Logging'/>
+  <inherits name='com.google.gwt.logging.Logging' />
+
+  <!-- default ClientFactory impl -->
+  <replace-with class="com.tll.client.ClientFactory">
+    <when-type-is class="com.hellomvp.client.IClientFactory" />
+  </replace-with>
+
 </module>

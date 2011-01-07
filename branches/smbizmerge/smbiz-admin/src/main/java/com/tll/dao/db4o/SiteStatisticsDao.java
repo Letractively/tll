@@ -5,15 +5,24 @@
  */
 package com.tll.dao.db4o;
 
+import java.util.List;
+
 import com.db4o.EmbeddedObjectContainer;
 import com.google.inject.Inject;
 import com.tll.dao.ISiteStatisticsDao;
+import com.tll.model.Address;
+import com.tll.model.Customer;
+import com.tll.model.Interface;
+import com.tll.model.Isp;
+import com.tll.model.Merchant;
+import com.tll.model.Order;
+import com.tll.model.ProductCategory;
+import com.tll.model.ProductInventory;
+import com.tll.model.User;
+import com.tll.model.Visitor;
 import com.tll.model.bk.BusinessKeyFactory;
 
-
 /**
- * SiteStatisticsDao
- * TODO implement
  * @author jpk
  */
 public class SiteStatisticsDao extends Db4oEntityDao implements ISiteStatisticsDao {
@@ -25,58 +34,69 @@ public class SiteStatisticsDao extends Db4oEntityDao implements ISiteStatisticsD
 	 * @param businessKeyFactory
 	 */
 	@Inject
-	public SiteStatisticsDao(EmbeddedObjectContainer oc, IDb4oNamedQueryTranslator namedQueryTranslator, BusinessKeyFactory businessKeyFactory) {
+	public SiteStatisticsDao(EmbeddedObjectContainer oc, IDb4oNamedQueryTranslator namedQueryTranslator,
+			BusinessKeyFactory businessKeyFactory) {
 		super(oc, namedQueryTranslator, businessKeyFactory);
 	}
 
 	@Override
 	public int numAddresses() {
-		return 0;
+		List<Address> clc = loadAllOfType(Address.class, null);
+		return clc == null ? 0 : clc.size();
 	}
 
 	@Override
 	public int numCustomers() {
-		return 0;
+		List<Customer> clc = loadAllOfType(Customer.class, null);
+		return clc == null ? 0 : clc.size();
 	}
 
 	@Override
 	public int numInterfaces() {
-		return 0;
+		List<Interface> clc = loadAllOfType(Interface.class, null);
+		return clc == null ? 0 : clc.size();
 	}
 
 	@Override
 	public int numIsps() {
-		return 0;
+		List<Isp> clc = loadAllOfType(Isp.class, null);
+		return clc == null ? 0 : clc.size();
 	}
 
 	@Override
 	public int numMerchants() {
-		return 0;
+		List<Merchant> clc = loadAllOfType(Merchant.class, null);
+		return clc == null ? 0 : clc.size();
 	}
 
 	@Override
 	public int numOrders() {
-		return 0;
+		List<Order> clc = loadAllOfType(Order.class, null);
+		return clc == null ? 0 : clc.size();
 	}
 
 	@Override
 	public int numProductCategories() {
-		return 0;
+		List<ProductCategory> clc = loadAllOfType(ProductCategory.class, null);
+		return clc == null ? 0 : clc.size();
 	}
 
 	@Override
 	public int numProducts() {
-		return 0;
+		List<ProductInventory> clc = loadAllOfType(ProductInventory.class, null);
+		return clc == null ? 0 : clc.size();
 	}
 
 	@Override
 	public int numShoppers() {
-		return 0;
+		List<Visitor> clc = loadAllOfType(Visitor.class, null);
+		return clc == null ? 0 : clc.size();
 	}
 
 	@Override
 	public int numUsers() {
-		return 0;
+		List<User> clc = loadAllOfType(User.class, null);
+		return clc == null ? 0 : clc.size();
 	}
 
 }
