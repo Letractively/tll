@@ -655,6 +655,11 @@
 				<artifactId>gwt-servlet</artifactId>
 				<version>${gwtVersion}</version>
 			</dependency>
+      <dependency>
+        <groupId>com.google.gwt</groupId>
+        <artifactId>gwt-dev</artifactId>
+        <version>${gwtVersion}</version>
+      </dependency>
 
 			<dependency>
 				<groupId>org.testng</groupId>

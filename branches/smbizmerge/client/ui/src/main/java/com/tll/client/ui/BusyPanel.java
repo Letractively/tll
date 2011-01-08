@@ -15,7 +15,6 @@
  */
 package com.tll.client.ui;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Grid;
@@ -53,17 +52,12 @@ public class BusyPanel extends GlassPanel {
 	}
 
 	/**
-	 * The default throbber image ref.
-	 */
-	static final String DEFAULT_THROBBER_URL = GWT.getModuleBaseURL() + "/images/throbber.gif";
-
-	/**
 	 * Constructor
 	 * @param autoHide
 	 */
 	public BusyPanel(boolean autoHide) {
 		super(autoHide);
-		setThrobImage(new Image(DEFAULT_THROBBER_URL));
+		setThrobImage(new Image(Styles.resources().throbber()));
 	}
 
 	/**

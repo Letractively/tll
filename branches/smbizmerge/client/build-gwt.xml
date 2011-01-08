@@ -78,11 +78,11 @@
 	</target>
 	
 	<target name="build-shell-exec-file" description="Builds a batch file to invoke the gwt shell.">
-		<echo file="shell.bat" message="java -Xss1024k -Xms128m -Xmx512m -ea -cp ${gwt.compile.classpath} com.google.gwt.dev.DevMode -war target/war -logLevel INFO -startupUrl ${gwt.shell.startupUrl} ${gwt.shell.entryModule}" />
+		<echo file="shell.bat" message="java -Xss1024k -Xms128m -Xmx512m -ea -cp &quot;${gwt.compile.classpath}&quot; com.google.gwt.dev.DevMode -war target/war -logLevel INFO -startupUrl ${gwt.shell.startupUrl} ${gwt.shell.entryModule}" />
 	</target>
 
 	<target name="build-shell-debug-exec-file" description="Builds a batch file to invoke the gwt shell with a jvm debug hook at port 8000.">
-		<echo file="debug.bat" message="java -Xss1024k -Xms128m -Xmx512m -ea -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,address=8000 -Djava.compiler=NONE -cp ${gwt.compile.classpath} com.google.gwt.dev.DevMode -war target/war -logLevel INFO -startupUrl ${gwt.shell.startupUrl} ${gwt.shell.entryModule}" />
+		<echo file="debug.bat" message="java -Xss1024k -Xms128m -Xmx512m -ea -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,address=8000 -Djava.compiler=NONE -cp &quot;${gwt.compile.classpath}&quot; com.google.gwt.dev.DevMode -war target/war -logLevel INFO -startupUrl ${gwt.shell.startupUrl} ${gwt.shell.entryModule}" />
 	</target>
 
 </project>

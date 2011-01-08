@@ -28,6 +28,7 @@ import com.tll.client.listing.ListingEvent;
 import com.tll.client.ui.Position;
 import com.tll.client.ui.msg.Msgs;
 import com.tll.client.ui.toolbar.Toolbar;
+import com.tll.client.ui.toolbar.ToolbarStyles;
 import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.util.StringUtil;
@@ -153,7 +154,7 @@ IListingHandler<R> {
 
 			// separator
 			split = AbstractImagePrototype.create(imageBundle.split()).createImage();
-			split.setStylePrimaryName(Toolbar.Styles.SPLIT);
+			split.setStylePrimaryName(ToolbarStyles.css().separator());
 			add(split);
 
 			// Page x of y
@@ -166,7 +167,7 @@ IListingHandler<R> {
 
 			// separator
 			split = AbstractImagePrototype.create(imageBundle.split()).createImage();
-			split.setStylePrimaryName(Toolbar.Styles.SPLIT);
+			split.setStylePrimaryName(ToolbarStyles.css().separator());
 			add(split);
 
 			// next buttons (divs)
@@ -182,7 +183,7 @@ IListingHandler<R> {
 			if(pageSize > 0) {
 				// separator
 				split = AbstractImagePrototype.create(imageBundle.split()).createImage();
-				split.setStylePrimaryName(Toolbar.Styles.SPLIT);
+				split.setStylePrimaryName(ToolbarStyles.css().separator());
 				add(split);
 			}
 			addButton(btnRefresh, "Refresh");
@@ -196,7 +197,7 @@ IListingHandler<R> {
 			if(pageSize > 0 || config.isShowRefreshBtn()) {
 				// separator
 				split = AbstractImagePrototype.create(imageBundle.split()).createImage();
-				split.setStylePrimaryName(Toolbar.Styles.SPLIT);
+				split.setStylePrimaryName(ToolbarStyles.css().separator());
 				add(split);
 			}
 			addButton(btnAdd, title);
@@ -206,7 +207,7 @@ IListingHandler<R> {
 		// separator
 		if(pageSize > 0 || config.isShowRefreshBtn() || addRowHandler != null) {
 			split = AbstractImagePrototype.create(imageBundle.split()).createImage();
-			split.setStylePrimaryName(Toolbar.Styles.SPLIT);
+			split.setStylePrimaryName(ToolbarStyles.css().separator());
 			add(split);
 		}
 

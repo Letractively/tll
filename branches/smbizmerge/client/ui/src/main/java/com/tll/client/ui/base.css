@@ -1,6 +1,4 @@
-@CHARSET "ISO-8859-1";
-
-:active,:focus{outline-style:none;-moz-outline-style:none;}
+/*:active,:focus{outline-style:none;-moz-outline-style:none;}*/
 
 a{text-decoration:none;}
 a:hover{cursor:pointer;}

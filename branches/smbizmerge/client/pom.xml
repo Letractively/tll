@@ -43,6 +43,7 @@
         <includes>
           <include>**/client/**</include>
           <include>**/common/**</include>
+          <include>**/*.gwt.xml</include>
         </includes>
       </resource>
     </resources>
@@ -55,6 +56,7 @@
         <includes>
           <include>**/client/**</include>
           <include>**/common/**</include>
+          <include>**/*.gwt.xml</include>
         </includes>
       </testResource>
     </testResources>
@@ -146,6 +148,11 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

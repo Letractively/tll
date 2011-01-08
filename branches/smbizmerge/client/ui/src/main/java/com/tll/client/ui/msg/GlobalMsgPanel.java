@@ -19,23 +19,6 @@ import com.tll.common.msg.Msg.MsgLevel;
  */
 public class GlobalMsgPanel extends Composite implements IMsgDisplay {
 
-	/**
-	 * Styles - (msg.css)
-	 * @author jpk
-	 */
-	static class Styles {
-
-		/**
-		 * The root message style
-		 */
-		public static final String MSG = "msg";
-
-		/**
-		 * Style for the container widget.
-		 */
-		public static final String GLOBAL = "gmsg";
-	}
-
 	private static final MsgLevel[] order = new MsgLevel[] {
 		MsgLevel.FATAL, MsgLevel.ERROR, MsgLevel.WARN, MsgLevel.INFO };
 
@@ -58,8 +41,8 @@ public class GlobalMsgPanel extends Composite implements IMsgDisplay {
 	 */
 	public GlobalMsgPanel() {
 		container = new FlowPanel();
-		container.addStyleName(Styles.MSG);
-		container.addStyleName(Styles.GLOBAL);
+		container.addStyleName(MsgStyles.css().msg());
+		container.addStyleName(MsgStyles.css().gmsg());
 		MutableMsgLevelPanel p;
 		for(final MsgLevel l : order) {
 			p = new MutableMsgLevelPanel(l);

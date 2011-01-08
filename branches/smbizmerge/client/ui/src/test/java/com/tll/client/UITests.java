@@ -7,12 +7,12 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -28,8 +28,8 @@ import com.tll.client.ui.IWidgetRef;
 import com.tll.client.ui.Position;
 import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.client.ui.msg.IMsgOperator;
-import com.tll.client.ui.msg.MsgLevelImageBundle;
 import com.tll.client.ui.msg.MsgPopupRegistry;
+import com.tll.client.ui.msg.MsgStyles;
 import com.tll.client.ui.msg.Msgs;
 import com.tll.client.ui.option.IOptionHandler;
 import com.tll.client.ui.option.Option;
@@ -37,7 +37,7 @@ import com.tll.client.ui.option.OptionEvent;
 import com.tll.client.ui.option.OptionsPanel;
 import com.tll.client.ui.option.OptionsPopup;
 import com.tll.client.ui.toolbar.Toolbar;
-import com.tll.client.ui.toolbar.ToolbarImageBundle;
+import com.tll.client.ui.toolbar.ToolbarStyles;
 import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgLevel;
 
@@ -95,7 +95,6 @@ public final class UITests extends AbstractUITest {
 		@Override
 		protected void init() {
 			pnl = new FlowPanel();
-			RootPanel.get().getElement().getStyle().setProperty("backgroundColor", "silver");
 			lblA = new Label("Label A");
 			lblB = new Label("Label B");
 			pnl.add(lblA);
@@ -934,9 +933,9 @@ public final class UITests extends AbstractUITest {
 
 			b1 = new PushButton("Push Button 1");
 			b1.getElement().getStyle().setProperty("margin", "1em");
-			b2 = new PushButton(AbstractImagePrototype.create(MsgLevelImageBundle.INSTANCE.error()).createImage());
+			b2 = new PushButton(new Image(MsgStyles.resources().error()));
 			b2.getElement().getStyle().setProperty("margin", "1em");
-			b3 = new PushButton(AbstractImagePrototype.create(MsgLevelImageBundle.INSTANCE.warn()).createImage());
+			b3 = new PushButton(new Image(MsgStyles.resources().warn()));
 			b3.getElement().getStyle().setProperty("margin", "1em");
 			contextArea.add(b1);
 			contextArea.add(b2);
@@ -982,21 +981,21 @@ public final class UITests extends AbstractUITest {
 			contextArea.add(tb);
 
 			// add contents to the the toolbar
-			final PushButton pb = new PushButton(AbstractImagePrototype.create(MsgLevelImageBundle.INSTANCE.info()).createImage());
+			final PushButton pb = new PushButton(new Image(MsgStyles.resources().info()));
 			pb.setEnabled(false);
 			tb.addButton(pb, "Info");
-			tb.add(AbstractImagePrototype.create(ToolbarImageBundle.INSTANCE.split()).createImage());
-			tb.addButton(new PushButton(AbstractImagePrototype.create(MsgLevelImageBundle.INSTANCE.error()).createImage()), "Error");
-			tb.add(AbstractImagePrototype.create(ToolbarImageBundle.INSTANCE.split()).createImage());
-			tb.addButton(new PushButton(AbstractImagePrototype.create(MsgLevelImageBundle.INSTANCE.warn()).createImage()), "Warn");
-			tb.addButton(new PushButton(AbstractImagePrototype.create(MsgLevelImageBundle.INSTANCE.warn()).createImage()), "Warn");
-			tb.addButton(new PushButton(AbstractImagePrototype.create(MsgLevelImageBundle.INSTANCE.warn()).createImage()), "Warn");
-			tb.add(AbstractImagePrototype.create(ToolbarImageBundle.INSTANCE.split()).createImage());
+			tb.add(new Image(ToolbarStyles.resources().split()));
+			tb.addButton(new PushButton(new Image(MsgStyles.resources().info())));
+			tb.add(new Image(ToolbarStyles.resources().split()));
+			tb.addButton(new PushButton(new Image(MsgStyles.resources().warn())));
+			tb.addButton(new PushButton(new Image(MsgStyles.resources().error())));
+			tb.addButton(new PushButton(new Image(MsgStyles.resources().warn())));
+			tb.add(new Image(ToolbarStyles.resources().split()));
 			final Label lbl = new Label("This is a label");
 			lbl.setWidth("100%");
 			tb.add(lbl);
 
-			tb.add(new PushButton(AbstractImagePrototype.create(MsgLevelImageBundle.INSTANCE.fatal()).createImage()));
+			tb.addButton(new PushButton(new Image(MsgStyles.resources().fatal())));
 		}
 
 		@Override
