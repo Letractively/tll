@@ -61,18 +61,37 @@
       </testResource>
     </testResources>
 
-	<pluginManagement>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>gwt-maven-plugin</artifactId>
-				<version>2.1.0-1</version>
-			</plugin>
-		</plugins>
-	</pluginManagement>
+  	<pluginManagement>
+  		<plugins>
+  			<plugin>
+  				<groupId>org.codehaus.mojo</groupId>
+  				<artifactId>gwt-maven-plugin</artifactId>
+  				<version>2.1.0-1</version>
+  			</plugin>
+  		</plugins>
+  	</pluginManagement>
     
     <plugins>
 
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>gwt-maven-plugin</artifactId>
+        <configuration>
+          <includes>**/*GWTTest.java</includes>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <mode>htmlunit</mode>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
       <!--
         currently, gwt surefire driven GWTTest derived tests create these project dirs 
         which should be removed during the clean phase.
@@ -93,16 +112,16 @@
         </configuration>
       </plugin>
   
-      <!-- tweak surefire to run JUnit tests extending GWTTestCase -->
+      <!-- exclude GWT unit tests from surefire -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <useSystemClassLoader>false</useSystemClassLoader>
-          <argLine>-Xms128m -Xmx512m -ea</argLine>
-          <includes>
-            <include>**/*GWTTest.java</include>
-          </includes>
+<!--          <useSystemClassLoader>false</useSystemClassLoader>-->
+<!--          <argLine>-Xms128m -Xmx512m -ea</argLine>-->
+          <excludes>
+            <exclude>**/*GWTTest.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
       

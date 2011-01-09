@@ -1,5 +1,3 @@
-@CHARSET "ISO-8859-1";
-
 /* StatusDisplay widget */
 .statusDisplay {
 	background-color: black;
@@ -33,16 +31,3 @@
 	color: red;
 	font-weight: bold;
 }
-/*
-.statusDisplay .success {
-	color: white;
-}
-
-.statusDisplay .debug {
-	color: green;
-}
-
-.statusDisplay .trace {
-	color: silver;
-}
-*/

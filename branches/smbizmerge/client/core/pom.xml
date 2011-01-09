@@ -28,7 +28,7 @@
             <configuration>
               <descriptorRefs>
                 <descriptorRef>client-server-jar</descriptorRef>
-                <descriptorRef>test-assets</descriptorRef>
+<!--                <descriptorRef>test-assets</descriptorRef>-->
               </descriptorRefs>
             </configuration>
           </execution>
