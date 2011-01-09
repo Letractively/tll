@@ -3,23 +3,16 @@
  * @author jpk
  * Feb 13, 2009
  */
-package com.tll.client.util;
+package com.tll.util;
 
-import junit.framework.Assert;
-
-import com.google.gwt.junit.client.GWTTestCase;
-import com.tll.util.StringUtil;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 /**
- * FormatGWTTest - Tests {@link Fmt}.
  * @author jpk
  */
-public class StringUtilGWTTest extends GWTTestCase {
-
-	@Override
-	public String getModuleName() {
-		return "com.tll.ClientCore";
-	}
+@Test(groups = "util")
+public class StringUtilGWTTest {
 
 	public void testAbbr() {
 		Assert.assertEquals("abbr...", StringUtil.abbr("abbreviated", 7));
