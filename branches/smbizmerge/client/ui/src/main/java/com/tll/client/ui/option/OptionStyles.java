@@ -3,12 +3,14 @@ package com.tll.client.ui.option;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.CssResource.ImportedWithPrefix;
 
 /**
  * @author jpk
  */
 public class OptionStyles {
 
+	@ImportedWithPrefix("tll-option")
 	public interface IOptionsCss extends CssResource {
 		
 		String options();

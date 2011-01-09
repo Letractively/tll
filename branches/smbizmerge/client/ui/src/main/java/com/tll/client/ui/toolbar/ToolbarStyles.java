@@ -3,6 +3,7 @@ package com.tll.client.ui.toolbar;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.CssResource.ImportedWithPrefix;
 import com.google.gwt.resources.client.ImageResource;
 
 /**
@@ -10,6 +11,7 @@ import com.google.gwt.resources.client.ImageResource;
  */
 public class ToolbarStyles {
 
+	@ImportedWithPrefix("tll-toolbar")
 	public interface Toolbar extends CssResource {
 		
 		String toolbar();

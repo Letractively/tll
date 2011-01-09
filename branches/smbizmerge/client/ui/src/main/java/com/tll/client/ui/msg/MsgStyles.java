@@ -4,6 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.CssResource.Import;
+import com.google.gwt.resources.client.CssResource.ImportedWithPrefix;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.Image;
 import com.tll.client.ui.Styles.TllWidget;
@@ -14,6 +15,7 @@ import com.tll.common.msg.Msg.MsgLevel;
  */
 public class MsgStyles {
 
+	@ImportedWithPrefix("tll-msg")
 	public interface IMsgCss extends CssResource {
 
 		String info();

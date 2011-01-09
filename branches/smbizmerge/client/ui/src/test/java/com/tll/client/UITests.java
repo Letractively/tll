@@ -2,11 +2,12 @@ package com.tll.client;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -21,9 +22,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.ui.ThrobbingGlassPanel;
-import com.tll.client.ui.Dialog;
-import com.tll.client.ui.GlassPanel;
 import com.tll.client.ui.IWidgetRef;
 import com.tll.client.ui.Position;
 import com.tll.client.ui.msg.GlobalMsgPanel;
@@ -31,6 +29,7 @@ import com.tll.client.ui.msg.IMsgOperator;
 import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.ui.msg.MsgStyles;
 import com.tll.client.ui.msg.Msgs;
+import com.tll.client.ui.msg.StatusDisplay;
 import com.tll.client.ui.option.IOptionHandler;
 import com.tll.client.ui.option.Option;
 import com.tll.client.ui.option.OptionEvent;
@@ -40,6 +39,7 @@ import com.tll.client.ui.toolbar.Toolbar;
 import com.tll.client.ui.toolbar.ToolbarStyles;
 import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgLevel;
+import com.tll.common.msg.Status;
 
 /**
  * UI Tests - GWT module for the sole purpose of verifying the DOM/Style of
@@ -58,14 +58,69 @@ public final class UITests extends AbstractUITest {
 			new MsgsText(),
 			new MsgPopupRegistryTest(),
 			new GlobalMsgPanelTest(),
-			new BusyPanelTest(),
-			new DialogTest(),
 			new OptionsPanelTest(),
 			new OptionsPopupTest(),
 			new OptionsPopupTest2(),
 			new PushButtonStyleTest(),
 			new ToolbarStyleTest(),
+			new StatusDisplayTest(),
 		};
+	}
+	
+	static final class StatusDisplayTest extends DefaultUITestCase {
+		
+		static Random rnd = new Random();
+		
+		static String[] msgTexts = {
+			"UiBinder instances are factories that generate a UI structure and glue it to an owning Java class. The UiBinder<U, O> interface declares two parameter types",
+			"In this example U is DivElement and O is HelloWorld.",
+			"ow suppose you need to programatically read and write the text in the span (the one with the ui:field='nameSpan' attribute) above. You'd probably like to write actual Java code to do things like that, so UiBinder templates have an associated owner class that allows programmatic access to the UI constructs declared in the template. An owner class for the above template might look like this"
+		};
+		
+		StatusDisplay statusDisplay;
+
+		public StatusDisplayTest() {
+			super("StatusDisplay", "Tests the StatusDisplay widget");
+		}
+
+		@Override
+		protected Widget getContext() {
+			return statusDisplay;
+		}
+		
+		@Override
+		protected void init() {
+			super.init();
+			statusDisplay = new StatusDisplay();
+			statusDisplay.getElement().getStyle().setWidth(400, Unit.PX);
+			statusDisplay.getElement().getStyle().setHeight(300, Unit.PX);
+		}
+
+		@Override
+		protected void teardown() {
+			super.teardown();
+			if(statusDisplay != null) {
+				if(statusDisplay.isAttached()) statusDisplay.removeFromParent();
+				statusDisplay = null;
+			}
+		}
+
+		@Override
+		protected Button[] getTestActions() {
+			return new Button[] {
+				new Button("Add Random Status", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						MsgLevel level = MsgLevel.values()[rnd.nextInt(MsgLevel.values().length)];
+						String msgText = msgTexts[rnd.nextInt(msgTexts.length)];
+						Msg msg = new Msg(msgText, level);
+						Status status = new Status(msg);
+						statusDisplay.addStatus(status);
+					}
+				}), 
+			};
+		}
 	}
 
 	static final class MsgsText extends DefaultUITestCase {
@@ -319,86 +374,6 @@ public final class UITests extends AbstractUITest {
 	} // MsgPopupRegistryTest
 
 	/**
-	 * BusyPanelTest - Tests the {@link ThrobbingGlassPanel}.
-	 * @author jpk
-	 */
-	static final class BusyPanelTest extends UITestCase {
-
-		HorizontalPanel layout;
-		VerticalPanel buttonPanel;
-		FlowPanel context;
-		AbsolutePanel localOverlay;
-		GlassPanel busyPanel;
-
-		@Override
-		public String getName() {
-			return "BusyPanel";
-		}
-
-		@Override
-		public String getDescription() {
-			return "Tests the BusyPanel globally and locally.";
-		}
-
-		private void stubContext() {
-			context = new FlowPanel();
-			context.setSize("200px", "200px");
-			context.getElement().getStyle().setProperty("border", "1px solid gray");
-			context.getElement().getStyle().setProperty("padding", "10px");
-			busyPanel = new ThrobbingGlassPanel(true);
-		}
-
-		private void stubTestButtons() {
-			buttonPanel = new VerticalPanel();
-
-			buttonPanel.add(new Button("Test Local", new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					if(localOverlay != null) {
-						RootPanel.get().remove(localOverlay);
-					}
-					localOverlay = ThrobbingGlassPanel.createOverlay(context);
-					localOverlay.add(busyPanel, 0, 0);
-				}
-			}));
-			buttonPanel.add(new Button("Test Global", new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					RootPanel.get().add(busyPanel, 0, 0);
-				}
-			}));
-		}
-
-		@Override
-		public void load() {
-			stubContext();
-			stubTestButtons();
-			layout = new HorizontalPanel();
-			// realize scrolling for testing purposes
-			layout.setWidth("1000px");
-			layout.setHeight("1000px");
-			layout.add(buttonPanel);
-			layout.add(context);
-			layout.getElement().getStyle().setProperty("margin", "1em");
-			layout.setSpacing(5);
-			RootPanel.get().add(layout);
-		}
-
-		@Override
-		public void unload() {
-			busyPanel.removeFromParent();
-			busyPanel = null;
-			layout.removeFromParent();
-			context = null;
-			buttonPanel = null;
-			layout = null;
-		}
-
-	} // BusyPanelTest
-
-	/**
 	 * GlobalMsgPanelTest
 	 * @author jpk
 	 */
@@ -638,85 +613,6 @@ public final class UITests extends AbstractUITest {
 			};
 		}
 	} // GlobalMsgPanelTest
-
-	/**
-	 * DialogTest
-	 * @author jpk
-	 */
-	static final class DialogTest extends UITestCase {
-
-		VerticalPanel vp;
-		Dialog dlg;
-		Button btnShow, btnShowOverlay, btnHide;
-
-		@Override
-		public String getName() {
-			return "Dialog";
-		}
-
-		@Override
-		public String getDescription() {
-			return "Tests the Dialog widget.";
-		}
-
-		@Override
-		public void unload() {
-			if(vp != null) {
-				vp.removeFromParent();
-				if(dlg != null) {
-					dlg.hide();
-					dlg = null;
-				}
-			}
-		}
-
-		void buildDialog(boolean showOverlay) {
-			btnHide = new Button("Hide", new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					dlg.hide();
-					dlg = null;
-				}
-			});
-
-			final SimplePanel p = new SimplePanel();
-			p.setWidth("300px");
-			p.setHeight("300px");
-			p.add(btnHide);
-
-			dlg = new Dialog(btnShow, showOverlay);
-			dlg.setText("A Dialog");
-			dlg.setWidget(p);
-		}
-
-		@Override
-		public void load() {
-			vp = new VerticalPanel();
-			RootPanel.get().add(vp);
-
-			btnShow = new Button("Show", new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					buildDialog(false);
-					dlg.center();
-				}
-			});
-			vp.add(btnShow);
-
-			btnShowOverlay = new Button("Show with Overlay", new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					buildDialog(true);
-					dlg.center();
-				}
-			});
-			vp.add(btnShowOverlay);
-		}
-
-	} // DialogTest
 
 	/**
 	 * OptionsPanelTest

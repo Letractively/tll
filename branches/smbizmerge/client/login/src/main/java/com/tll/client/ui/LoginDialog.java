@@ -7,11 +7,12 @@ package com.tll.client.ui;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.DialogBox;
 
 /**
  * @author jpk
  */
-public class LoginDialog extends Dialog {
+public class LoginDialog extends DialogBox {
 
 	final LoginPanel loginPanel;
 
