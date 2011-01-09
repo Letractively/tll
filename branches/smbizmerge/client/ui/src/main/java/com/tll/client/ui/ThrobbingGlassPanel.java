@@ -16,8 +16,6 @@
 package com.tll.client.ui;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -25,10 +23,10 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 /**
- * BusyPanel - Overlay panel used to prohibit ui interaction to serve as a
+ * Overlay panel used to prohibit ui interaction to serve as a
  * visual way to indicate busy-ness.
  */
-public class BusyPanel extends GlassPanel {
+public class ThrobbingGlassPanel extends GlassPanel {
 
 	/**
 	 * ThrobbingPanel - Simple panel (table) w/ the throbber image in the center.
@@ -61,27 +59,9 @@ public class BusyPanel extends GlassPanel {
 	 * Constructor
 	 * @param autoHide
 	 */
-	public BusyPanel(boolean autoHide) {
+	public ThrobbingGlassPanel(boolean autoHide) {
 		super(autoHide);
 		setThrobImage(new Image(DEFAULT_THROBBER_URL));
-	}
-
-	/**
-	 * Sets the background color of the panel.
-	 * @param color
-	 */
-	public void setColor(String color) {
-		DOM.setStyleAttribute(getElement(), "backgroundColor", color == null ? "#000" : color);
-	}
-
-	/**
-	 * Set the opacity from 0 (invisible) to 100 (opaque).
-	 * @param opacity
-	 */
-	public void setOpacity(int opacity) {
-		final Element elm = getElement();
-		DOM.setStyleAttribute(elm, "filter", "alpha(opacity=" + opacity + ")");
-		DOM.setStyleAttribute(elm, "opacity", Float.toString(opacity / 100f));
 	}
 
 	/**

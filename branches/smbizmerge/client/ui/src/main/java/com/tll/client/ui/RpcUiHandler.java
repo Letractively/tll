@@ -8,14 +8,12 @@ package com.tll.client.ui;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.data.rpc.IRpcHandler;
-import com.tll.client.data.rpc.RpcEvent;
 
 /**
- * RpcUiHandler - Provides UI indication that an RPC call is in progress.
+ * Provides UI indication that an RPC call is in progress.
  * @author jpk
  */
-public class RpcUiHandler implements IRpcHandler {
+public class RpcUiHandler {
 
 	private final Widget overlayWidget;
 
@@ -32,9 +30,49 @@ public class RpcUiHandler implements IRpcHandler {
 	public RpcUiHandler(Widget overlayWidget) {
 		super();
 		this.overlayWidget = overlayWidget;
-		this.busyPanel = new BusyPanel(false);
+		this.busyPanel = new ThrobbingGlassPanel(false);
+	}
+	
+	private boolean validate() {
+		if(RootPanel.get() == null || overlayWidget != null && !overlayWidget.isAttached()) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Adds the overlay to the dom.
+	 */
+	public void overlay() {
+		if(!validate()) return;
+		if(overlayWidget != null) {
+			// local overlay
+			overlay = ThrobbingGlassPanel.createOverlay(overlayWidget);
+			overlay.add(busyPanel, 0, 0);
+		}
+		else {
+			// global overlay
+			if(RootPanel.get() != null) RootPanel.get().add(busyPanel, 0, 0);
+		}
+	}
+	
+	/**
+	 * Removes the overlay from the dom.
+	 */
+	public void unOverlay() {
+		if(!validate()) return;
+		if(overlay != null) {
+			// local overlay
+			RootPanel.get().remove(overlay);
+			overlay = null;
+		}
+		else {
+			// global overlay
+			RootPanel.get().remove(busyPanel);
+		}
 	}
 
+	/*
 	@Override
 	public void onRpcEvent(RpcEvent event) {
 		if(overlayWidget != null && !overlayWidget.isAttached()) {
@@ -47,7 +85,7 @@ public class RpcUiHandler implements IRpcHandler {
 					// add overlay
 					if(overlayWidget != null) {
 						// local overlay
-						overlay = BusyPanel.createOverlay(overlayWidget);
+						overlay = ThrobbingGlassPanel.createOverlay(overlayWidget);
 						overlay.add(busyPanel, 0, 0);
 					}
 					else {
@@ -70,5 +108,5 @@ public class RpcUiHandler implements IRpcHandler {
 			}
 		}
 	}
-
+	*/
 }

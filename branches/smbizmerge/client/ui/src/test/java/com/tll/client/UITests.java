@@ -21,7 +21,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.ui.BusyPanel;
+import com.tll.client.ui.ThrobbingGlassPanel;
 import com.tll.client.ui.Dialog;
 import com.tll.client.ui.GlassPanel;
 import com.tll.client.ui.IWidgetRef;
@@ -319,7 +319,7 @@ public final class UITests extends AbstractUITest {
 	} // MsgPopupRegistryTest
 
 	/**
-	 * BusyPanelTest - Tests the {@link BusyPanel}.
+	 * BusyPanelTest - Tests the {@link ThrobbingGlassPanel}.
 	 * @author jpk
 	 */
 	static final class BusyPanelTest extends UITestCase {
@@ -345,7 +345,7 @@ public final class UITests extends AbstractUITest {
 			context.setSize("200px", "200px");
 			context.getElement().getStyle().setProperty("border", "1px solid gray");
 			context.getElement().getStyle().setProperty("padding", "10px");
-			busyPanel = new BusyPanel(true);
+			busyPanel = new ThrobbingGlassPanel(true);
 		}
 
 		private void stubTestButtons() {
@@ -358,7 +358,7 @@ public final class UITests extends AbstractUITest {
 					if(localOverlay != null) {
 						RootPanel.get().remove(localOverlay);
 					}
-					localOverlay = BusyPanel.createOverlay(context);
+					localOverlay = ThrobbingGlassPanel.createOverlay(context);
 					localOverlay.add(busyPanel, 0, 0);
 				}
 			}));

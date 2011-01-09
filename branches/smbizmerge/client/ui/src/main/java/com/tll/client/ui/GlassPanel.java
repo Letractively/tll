@@ -15,6 +15,7 @@ import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.Event.NativePreviewHandler;
@@ -71,8 +72,6 @@ public class GlassPanel extends Composite implements NativePreviewHandler {
 		}
 	}
 
-	static final GlassPanelImpl impl = GWT.create(GlassPanelImpl.class);
-
 	/**
 	 * Creates an {@link AbsolutePanel} that overlays the given widget and is
 	 * added to the {@link RootPanel}.
@@ -85,6 +84,9 @@ public class GlassPanel extends Composite implements NativePreviewHandler {
 		RootPanel.get().add(ap, w.getAbsoluteLeft(), w.getAbsoluteTop());
 		return ap;
 	}
+
+	
+	static final GlassPanelImpl impl = GWT.create(GlassPanelImpl.class);
 
 	private HandlerRegistration hrResize, hrNp;
 
@@ -114,6 +116,24 @@ public class GlassPanel extends Composite implements NativePreviewHandler {
 		pnl = new SimplePanel();
 		initWidget(pnl);
 		setStyleName(Styles.tllWidgetStyle().glassPanel());
+	}
+
+	/**
+	 * Sets the background color of the panel.
+	 * @param color
+	 */
+	public void setColor(String color) {
+		DOM.setStyleAttribute(getElement(), "backgroundColor", color == null ? "#000" : color);
+	}
+
+	/**
+	 * Set the opacity from 0 (invisible) to 100 (opaque).
+	 * @param opacity
+	 */
+	public void setOpacity(int opacity) {
+		final Element elm = getElement();
+		DOM.setStyleAttribute(elm, "filter", "alpha(opacity=" + opacity + ")");
+		DOM.setStyleAttribute(elm, "opacity", Float.toString(opacity / 100f));
 	}
 
 	@Override
@@ -154,6 +174,7 @@ public class GlassPanel extends Composite implements NativePreviewHandler {
 		if(parent == RootPanel.get()) {
 			impl.matchDocumentSize(this, false);
 			//timer.scheduleRepeating(100);
+			assert hrResize == null;
 			hrResize = Window.addResizeHandler(new ResizeHandler() {
 
 				@Override
@@ -166,6 +187,7 @@ public class GlassPanel extends Composite implements NativePreviewHandler {
 			impl.matchParentSize(this, parent);
 		}
 		if(autoHide) {
+			assert hrNp == null;
 			hrNp = Event.addNativePreviewHandler(this);
 		}
 
@@ -174,14 +196,15 @@ public class GlassPanel extends Composite implements NativePreviewHandler {
 
 	@Override
 	protected void onDetach() {
-		super.onDetach();
-		//timer.cancel();
 		if(hrResize != null) {
 			hrResize.removeHandler();
 			hrResize = null;
 		}
 		if(hrNp != null) {
 			hrNp.removeHandler();
+			hrNp = null;
 		}
+		//timer.cancel();
+		super.onDetach();
 	}
 }

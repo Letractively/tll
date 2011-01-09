@@ -10,19 +10,16 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.tll.client.data.rpc.IStatusHandler;
-import com.tll.client.data.rpc.StatusEvent;
-import com.tll.client.data.rpc.StatusEventDispatcher;
 import com.tll.common.msg.Msg;
-import com.tll.common.msg.Status;
 import com.tll.common.msg.Msg.MsgAttr;
+import com.tll.common.msg.Status;
 
 /**
- * StatusDisplay - Console like window that displays messages contained w/in a
+ * Console like window that displays messages contained w/in a
  * Status object.
  * @author jpk
  */
-public class StatusDisplay extends Composite implements IStatusHandler {
+public class StatusDisplay extends Composite {
 
 	/**
 	 * Styles - (status.css)
@@ -65,7 +62,7 @@ public class StatusDisplay extends Composite implements IStatusHandler {
 		this.attribs = attribs;
 	}
 
-	private void handleStatus(Status status) {
+	public void handleStatus(Status status) {
 		final List<Msg> msgs = status.getMsgs(attribs);
 		if(msgs != null) {
 			for(final Msg msg : msgs) {
@@ -73,25 +70,4 @@ public class StatusDisplay extends Composite implements IStatusHandler {
 			}
 		}
 	}
-
-	@Override
-	public void onStatusEvent(StatusEvent event) {
-		final Status status = event.getStatus();
-		if(status != null) {
-			handleStatus(status);
-		}
-	}
-
-	@Override
-	protected void onLoad() {
-		super.onLoad();
-		StatusEventDispatcher.get().addStatusHandler(this);
-	}
-
-	@Override
-	protected void onUnload() {
-		super.onUnload();
-		StatusEventDispatcher.get().removeStatusHandler(this);
-	}
-
 }
