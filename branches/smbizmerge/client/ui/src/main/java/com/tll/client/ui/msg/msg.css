@@ -24,7 +24,7 @@
   font-size: 12px;
   line-height: 120%;
   white-space: nowrap;
-  margin: 2px 2px 0 -2px;
+/*  margin: 2px 2px 0 -2px;*/
 }
 
 .msg a:hover {
@@ -82,12 +82,14 @@
 .container{}
 
 .gmsg .container {
-  /*margin: 2px;*/
-  padding-left: 2px;
-  padding-right: 2px;
+  margin: 2px;
 }
 
 .gmsg .tll-imageContainer {
 	float:left;
 	margin-right:5px;
+}
+
+.gmsg .msg p, .gmsg .msg a {
+  margin: 2px 2px 0 -2px;
 }

@@ -285,14 +285,14 @@ public final class UITests extends AbstractUITest {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					registry.getOperator(refWidget, false).addMsgs(Arrays.asList(allMsgs), null);
+					registry.getOrCreateOperator(refWidget).addMsgs(Arrays.asList(allMsgs), null);
 				}
 			}));
 			buttonPanel.add(new Button("Add classified Messages", new ClickHandler() {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					registry.getOperator(refWidget, false).addMsgs(Arrays.asList(allCMsgs), Integer.valueOf(classifier));
+					registry.getOrCreateOperator(refWidget).addMsgs(Arrays.asList(allCMsgs), Integer.valueOf(classifier));
 				}
 			}));
 			buttonPanel.add(new Button("Remove classified Messages", new ClickHandler() {

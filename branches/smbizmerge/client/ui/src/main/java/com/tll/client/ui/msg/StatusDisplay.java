@@ -23,10 +23,10 @@ import com.tll.common.msg.Status;
  */
 public class StatusDisplay extends Composite {
 
-	interface MyUiBinder extends UiBinder<Widget, StatusDisplay> {
+	interface Binder extends UiBinder<Widget, StatusDisplay> {
 	}
 
-	private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
+	private static Binder uiBinder = GWT.create(Binder.class);
 
 	/**
 	 * StatusMsgDisplay
