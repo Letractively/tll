@@ -12,7 +12,7 @@ import org.testng.annotations.Test;
  * @author jpk
  */
 @Test(groups = "util")
-public class StringUtilGWTTest {
+public class StringUtilTest {
 
 	public void testAbbr() {
 		Assert.assertEquals("abbr...", StringUtil.abbr("abbreviated", 7));
