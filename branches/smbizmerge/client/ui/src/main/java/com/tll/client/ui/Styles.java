@@ -3,8 +3,8 @@ package com.tll.client.ui;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.CssResource.ImportedWithPrefix;
 import com.google.gwt.resources.client.CssResource.NotStrict;
-import com.google.gwt.resources.client.ImageResource;
 
 /**
  * @author jpk
@@ -27,6 +27,7 @@ public class Styles {
 	}
 	*/
 	
+	@ImportedWithPrefix("tll")
 	public interface TllWidget extends CssResource {
 
 		String imageContainer();
@@ -51,12 +52,10 @@ public class Styles {
 		@Source("widget-tll.css")
 		@NotStrict
 		TllWidget tllWidgetCss();
-		
-		/**
-		 * The "throbber" gif (used in BusyPanel for ex)
-		 */
-		@Source("throbber.gif")
-		ImageResource throbber();
+
+// NOTE: since this image is animated, it doesn't work in GWT's ImageBundle
+//		@Source("throbber.gif")
+//		ImageResource throbber();
 	}
 	
 	private static Resources resources;

@@ -56,7 +56,7 @@ MouseOutHandler, IHasOptionHandlers {
 		super();
 		setWidget(vp);
 		addKeyDownHandler(this);
-		setStyleName(OptionStyles.getOptions().option());
+		setStyleName(OptionStyles.getOptions().options());
 	}
 
 	@Override

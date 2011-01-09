@@ -16,12 +16,11 @@
 	margin: 0 4px 0 4px;
 }
 
-.toolbar td.tbbutton {
-}
-
 .toolbar * {
 	white-space: nowrap;
 }
+
+@external tbbutton,tbbutton-up, tbbutton-up-hovering, tbbutton-up-disabled, tbbutton-down, tbbutton-down-hovering, tbbutton-down-disabled;
 
 /* PushButton and ToggleButton custom styling for inside a view toolbar. */
 .tbbutton-up,

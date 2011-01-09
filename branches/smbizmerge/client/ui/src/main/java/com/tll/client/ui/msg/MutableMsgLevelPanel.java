@@ -116,7 +116,7 @@ public class MutableMsgLevelPanel extends Composite {
 
 	private void init() {
 		container.setStyleName(MsgStyles.css().container());
-		container.addStyleName(mlevel.getName().toLowerCase());
+		container.addStyleName(MsgStyles.getMsgLevelStyle(mlevel));
 		initWidget(container);
 
 		final ImageResource img = MsgStyles.getMsgLevelImage(mlevel);
@@ -243,7 +243,7 @@ public class MutableMsgLevelPanel extends Composite {
 	 * @param classifier optional classifier id
 	 */
 	public void remove(IWidgetRef wref, Integer classifier) {
-		final List<Entry> elist = entries.get(wref.getWidget());
+		final List<Entry> elist = entries.get(wref == null ? null : wref.getWidget());
 		if(elist != null) {
 			final ArrayList<Entry> tormv = new ArrayList<Entry>();
 			for(final Entry entry : elist) {

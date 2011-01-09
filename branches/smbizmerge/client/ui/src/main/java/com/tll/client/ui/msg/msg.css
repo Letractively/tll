@@ -1,5 +1,9 @@
-.cmsg {
-}
+.info{}
+.warn{}
+.error{}
+.fatal{}
+
+.cmsg {}
 
 .cmsg .msg {
 }
@@ -8,7 +12,7 @@
   margin: 1px;
 }
 
-.msg .ic {
+.msg .tll-imageContainer {
   margin: 2px;
 }
 
@@ -20,7 +24,7 @@
   font-size: 12px;
   line-height: 120%;
   white-space: nowrap;
-  margin: 2px 2px 0 2px;
+  margin: 2px 2px 0 -2px;
 }
 
 .msg a:hover {
@@ -64,9 +68,7 @@
 }
 
 /* global msg panel specific */
-.gmsg {
-  
-}
+.gmsg {}
 
 .gmsg .title {
   padding: 2px;
@@ -74,8 +76,10 @@
 
 .gmsg li {
   list-style-type: disc;
-  margin-left: 35px;
+  margin-left: 40px;
 }
+
+.container{}
 
 .gmsg .container {
   /*margin: 2px;*/
@@ -83,6 +87,7 @@
   padding-right: 2px;
 }
 
-.gmsg .ic {
+.gmsg .tll-imageContainer {
 	float:left;
+	margin-right:5px;
 }

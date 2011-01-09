@@ -1,16 +1,10 @@
 <module>
   <inherits name="com.tll.ClientCore" />
   
-  <!-- css reset (based on YUI) -->
+  <!-- Don't force these on our clients -->
 <!--  <stylesheet src="css/reset.css" />-->
-<!---->
 <!--  <stylesheet src="css/base.css" />-->
-<!--  <stylesheet src="css/widget-gwt.css" />-->
-<!--  <stylesheet src="css/widget-tll.css" />-->
 <!--  <stylesheet src="css/hnav.css" />-->
-<!--  <stylesheet src="css/msg.css" />-->
-<!--  <stylesheet src="css/options.css" />-->
-<!--  <stylesheet src="css/toolbar.css" />-->
 
   <replace-with class="com.tll.client.ui.impl.GlassPanelImplStandard">
     <when-type-is class="com.tll.client.ui.impl.GlassPanelImpl"/>

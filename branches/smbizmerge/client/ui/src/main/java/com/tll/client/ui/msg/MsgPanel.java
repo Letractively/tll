@@ -236,7 +236,7 @@ public class MsgPanel extends Composite {
 		// (child widget FORMAT: [{msg level img}]{ul html list of msg texts})
 		mlp = new HorizontalPanel();
 		mlp.addStyleName(MsgStyles.css().msg());
-		mlp.addStyleName(level.getName().toLowerCase());
+		mlp.addStyleName(MsgStyles.getMsgLevelStyle(level));
 		mlp.getElement().setPropertyInt(ELEM_PROP_MSG_LEVEL, level.ordinal());
 		mlp.add(new HtmlListPanel(false));
 		container.add(mlp);

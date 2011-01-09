@@ -3,9 +3,10 @@ package com.tll.client.ui.msg;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.resources.client.CssResource.NotStrict;
+import com.google.gwt.resources.client.CssResource.Import;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.Image;
+import com.tll.client.ui.Styles.TllWidget;
 import com.tll.common.msg.Msg.MsgLevel;
 
 /**
@@ -13,8 +14,13 @@ import com.tll.common.msg.Msg.MsgLevel;
  */
 public class MsgStyles {
 
-	public interface MsgCss extends CssResource {
+	public interface IMsgCss extends CssResource {
 
+		String info();
+		String warn();
+		String error();
+		String fatal();
+		
 		String msg();
 		
 		String cmsg();
@@ -26,12 +32,12 @@ public class MsgStyles {
 		String title();
 	}
 	
-	public interface MsgResources extends ClientBundle {
+	public interface IMsgResources extends ClientBundle {
 
-		//@Import({Reset.class, Base.class})
 		@Source("msg.css")
-		@NotStrict
-		MsgCss css();
+		//@NotStrict
+		@Import(TllWidget.class)
+		IMsgCss css();
 
 		/**
 		 * info
@@ -63,6 +69,25 @@ public class MsgStyles {
 	}
 	
 	/**
+	 * Provides a style name associated with the given msg level.
+	 * @param level The message level
+	 * @return style name
+	 */
+	public static String getMsgLevelStyle(MsgLevel level) {
+		switch(level) {
+			case WARN:
+				return css().warn();
+			case ERROR:
+				return css().error();
+			case FATAL:
+				return css().fatal();
+			default:
+			case INFO:
+				return css().info();
+		}
+	}
+	
+	/**
 	 * Provides a new {@link Image} containing the associated msg level icon.
 	 * @param level The message level
 	 * @return Image
@@ -81,18 +106,18 @@ public class MsgStyles {
 		}
 	}
 	
-	private static MsgResources resources;
+	private static IMsgResources resources;
 	
 	static {
-    resources = GWT.create(MsgResources.class);
+    resources = GWT.create(IMsgResources.class);
     resources.css().ensureInjected();
 	}
 	
-  public static MsgCss css() {
+  public static IMsgCss css() {
     return resources.css();
   }
 
-  public static MsgResources resources() {
+  public static IMsgResources resources() {
     return resources;
   }
 }

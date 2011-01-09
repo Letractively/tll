@@ -19,6 +19,8 @@ import com.google.gwt.user.client.ui.Widget;
  * @author jpk
  */
 public class Toolbar extends Composite {
+	
+	private final String TBBUTTON_STYLE = "tbbutton";
 
 	private final HorizontalPanel pnl = new HorizontalPanel();
 
@@ -113,8 +115,8 @@ public class Toolbar extends Composite {
 	 */
 	private void buttonize(ButtonBase b, String title) {
 		final Element td = b.getElement().getParentElement();
-		td.setClassName(ToolbarStyles.css().tbbutton());
-		b.setStylePrimaryName(ToolbarStyles.css().tbbutton());
+		td.setClassName(TBBUTTON_STYLE);
+		b.setStylePrimaryName(TBBUTTON_STYLE);
 		if(title != null) {
 			b.setTitle(title);
 		}

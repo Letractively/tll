@@ -1,9 +1,9 @@
-@CHARSET "ISO-8859-1";
-
 .options {
 	background-color: white;
 	border: 1px solid silver;
 }
+
+.active{}
 
 .options .active {
 	background-color: #EAEAEA;

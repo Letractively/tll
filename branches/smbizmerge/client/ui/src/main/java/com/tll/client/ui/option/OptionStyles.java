@@ -3,39 +3,40 @@ package com.tll.client.ui.option;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.resources.client.CssResource.NotStrict;
 
 /**
  * @author jpk
  */
 public class OptionStyles {
 
-	public interface Options extends CssResource {
+	public interface IOptionsCss extends CssResource {
+		
+		String options();
 		
 		String option();
 		
 		String active();
 	}
 	
-	public interface Resources extends ClientBundle {
+	public interface IResources extends ClientBundle {
 		
 		@Source("options.css")
-		@NotStrict
-		Options css();
+		//@NotStrict
+		IOptionsCss css();
 	}
 	
-	private static Resources resources;
+	private static IResources resources;
 	
 	static {
-		resources = GWT.create(Resources.class);
+		resources = GWT.create(IResources.class);
 		resources.css().ensureInjected();
 	}
 	
-	public static Resources getResources() {
+	public static IResources getResources() {
 		return resources;
 	}
 	
-	public static Options getOptions() {
+	public static IOptionsCss getOptions() {
 		return resources.css();
 	}
 }

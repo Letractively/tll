@@ -113,7 +113,7 @@ public class GlassPanel extends Composite implements NativePreviewHandler {
 		this.autoHide = autoHide;
 		pnl = new SimplePanel();
 		initWidget(pnl);
-		setStyleName("tll-GlassPanel");
+		setStyleName(Styles.tllWidgetStyle().glassPanel());
 	}
 
 	@Override
