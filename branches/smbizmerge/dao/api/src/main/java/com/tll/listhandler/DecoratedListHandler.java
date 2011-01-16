@@ -55,6 +55,11 @@ public abstract class DecoratedListHandler<T, V> implements IListHandler<V> {
 	}
 
 	@Override
+	public Sorting getSorting() {
+		return (listHandler == null) ? null : listHandler.getSorting();
+	}
+
+	@Override
 	public List<V> getElements(int offset, int pageSize, Sorting sorting) throws IndexOutOfBoundsException,
 			EmptyListException, ListHandlerException {
 		if(listHandler == null) return null;

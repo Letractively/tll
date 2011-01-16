@@ -113,6 +113,21 @@
 			<artifactId>tll-core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-api</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.tll</groupId>
+          <artifactId>tll-model</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-beans</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-servlet</artifactId>
@@ -144,11 +159,16 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>com.db4o</groupId>
-			<artifactId>db4o-full-java5</artifactId>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>com.google.code.guice</groupId>
+      <artifactId>guice-servlet</artifactId>
+      <scope>test</scope>
+    </dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.db4o</groupId>-->
+<!--			<artifactId>db4o-full-java5</artifactId>-->
+<!--			<scope>test</scope>-->
+<!--		</dependency>-->
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-schema</artifactId>
@@ -168,34 +188,26 @@
 			<classifier>testassets</classifier>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.tll</groupId>
-			<artifactId>tll-dao-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.tll</groupId>
-					<artifactId>tll-model</artifactId>
-				</exclusion>
-        <exclusion>
-    			<groupId>org.springframework</groupId>
-    			<artifactId>spring-beans</artifactId>
-        </exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.tll</groupId>
-			<artifactId>tll-dao-db4o</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.tll</groupId>
-			<artifactId>tll-service</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<classifier>testassets</classifier>
-			<scope>test</scope>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.tll</groupId>-->
+<!--			<artifactId>tll-dao-db4o</artifactId>-->
+<!--			<version>0.0.1-SNAPSHOT</version>-->
+<!--			<scope>test</scope>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>com.tll</groupId>-->
+<!--			<artifactId>tll-service</artifactId>-->
+<!--			<version>0.0.1-SNAPSHOT</version>-->
+<!--			<classifier>testassets</classifier>-->
+<!--			<scope>test</scope>-->
+<!--		</dependency>-->
+<!--    <dependency>-->
+<!--      <groupId>com.tll</groupId>-->
+<!--      <artifactId>tll-dao-db4o</artifactId>-->
+<!--      <version>0.0.1-SNAPSHOT</version>-->
+<!--      <classifier>testassets</classifier>-->
+<!--      <scope>test</scope>-->
+<!--    </dependency>-->
 		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-core</artifactId>
@@ -210,13 +222,13 @@
 			<classifier>testassets</classifier>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.tll</groupId>
-			<artifactId>tll-dao-db4o</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<classifier>testassets</classifier>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-servlet</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <classifier>testassets</classifier>
+      <scope>test</scope>
+    </dependency>
 		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-client-core</artifactId>

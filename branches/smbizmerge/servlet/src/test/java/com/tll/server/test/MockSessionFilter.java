@@ -3,7 +3,7 @@
  * @author jpk
  * @since Mar 18, 2009
  */
-package com.tll.server.filter.test;
+package com.tll.server.test;
 
 import java.io.IOException;
 
@@ -15,10 +15,13 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.inject.Singleton;
+
 /**
  * MockSessionFilter - Stubs a session if there isn't one.
  * @author jpk
  */
+@Singleton
 public class MockSessionFilter implements Filter {
 
 	@Override
