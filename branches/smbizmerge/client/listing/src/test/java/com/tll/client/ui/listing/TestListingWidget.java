@@ -1,5 +1,8 @@
 package com.tll.client.ui.listing;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.tll.common.dto.test.AddressDto;
@@ -13,7 +16,9 @@ public class TestListingWidget extends CellTable<AddressDto> {
 		
 	}
 	
-	/**
+  private final List<SortableHeader> allHeaders = new ArrayList<SortableHeader>();
+	
+  /**
 	 * Constructor
 	 */
 	public TestListingWidget() {
