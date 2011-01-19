@@ -98,7 +98,7 @@ public class IspListingWidget extends ModelListingWidget<ModelListingTable> {
 
 		@Override
 		protected void doEditRow(int rowIndex) {
-			Log.debug("doEditRow - rowIndex: " + rowIndex);
+		 Logger.debug("doEditRow - rowIndex: " + rowIndex);
 			ViewManager.get().dispatch(
 					new ShowViewRequest(new EditViewInitializer(AccountEditView.klas, getRowKey(rowIndex))));
 		}

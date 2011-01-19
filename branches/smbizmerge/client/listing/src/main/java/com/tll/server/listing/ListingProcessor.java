@@ -5,8 +5,8 @@
  */
 package com.tll.server.listing;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.tll.IMarshalable;
 import com.tll.common.data.ListingOp;
@@ -29,7 +29,7 @@ import com.tll.server.rpc.RpcServlet;
  */
 final class ListingProcessor {
 
-	private final Log log = LogFactory.getLog(this.getClass());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	
 	/**
 	 * Processes all listing requests.

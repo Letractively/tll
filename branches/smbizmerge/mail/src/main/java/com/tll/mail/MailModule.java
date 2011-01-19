@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
@@ -32,7 +32,7 @@ import com.tll.config.IConfigKey;
  */
 public final class MailModule extends AbstractModule implements IConfigAware {
 
-	private static final Log log = LogFactory.getLog(MailModule.class);
+	private static final Logger log = LoggerFactory.getLogger(MailModule.class);
 
 	/**
 	 * ConfigKeys - Config keys for the mail module.

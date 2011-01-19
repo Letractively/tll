@@ -28,7 +28,7 @@ public abstract class AbstractModelProperty implements IModelProperty {
 	 */
 	public AbstractModelProperty() {
 		super();
-		// Log.debug("AbstractModelProperty() - default constructor!");
+		// Logger.debug("AbstractModelProperty() - default constructor!");
 	}
 
 	/**
@@ -42,7 +42,7 @@ public abstract class AbstractModelProperty implements IModelProperty {
 			throw new IllegalArgumentException("A property name must be specified");
 		}
 		 */
-		// Log.debug("Creating model property: " + propertyName);
+		// Logger.debug("Creating model property: " + propertyName);
 		// assert propertyName != null;
 		this.propertyName = propertyName;
 	}

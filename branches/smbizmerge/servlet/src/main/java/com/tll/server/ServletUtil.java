@@ -10,8 +10,8 @@ package com.tll.server;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Servlet utility methods.
@@ -19,7 +19,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class ServletUtil {
 
-	private static final Log log = LogFactory.getLog(ServletUtil.class);
+	private static final Logger log = LoggerFactory.getLogger(ServletUtil.class);
 
 	/**
 	 * @param request

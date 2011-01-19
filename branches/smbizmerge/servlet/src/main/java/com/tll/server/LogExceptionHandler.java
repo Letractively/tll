@@ -4,8 +4,8 @@
  */
 package com.tll.server;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * LogExceptionHandler - Logs exceptions.
@@ -13,7 +13,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class LogExceptionHandler implements IExceptionHandler {
 
-	private static final Log log = LogFactory.getLog(LogExceptionHandler.class);
+	private static final Logger log = LoggerFactory.getLogger(LogExceptionHandler.class);
 
 	@Override
 	public void handleException(final Throwable t) {

@@ -251,7 +251,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 			this.srcProp = srcProp;
 			this.rootRelPath = rootRelPath;
 			this.nearestParentRefPath = nearestParentRefPath;
-			// Log.debug("ChangesPredicate elm: " + this);
+			// Logger.debug("ChangesPredicate elm: " + this);
 		}
 
 		@Override
@@ -377,14 +377,14 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 				for(final WhitelistElement wle : this) {
 					if(relational || indexed) {
 						if(wle.nearestParentRefPath.indexOf(rootRelPath) == 0) {
-							// Log.debug("Allowing relational/indexed [" + rootRelPath + "]");
+							// Logger.debug("Allowing relational/indexed [" + rootRelPath + "]");
 							return true;
 						}
 					}
 					else {
 						if(wle.rootRelPath.equals(rootRelPath) || rootRelPath.endsWith(ID_PROPERTY)
 								|| rootRelPath.endsWith(VERSION_PROPERTY)) {
-							// Log.debug("Allowing value/nested [" + rootRelPath + "]");
+							// Logger.debug("Allowing value/nested [" + rootRelPath + "]");
 							return true;
 						}
 					}
@@ -427,7 +427,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 			if(srcProp instanceof IModelRefProperty) {
 				final Model m = ((IModelRefProperty) srcProp).getModel();
 				if(m != null && m.isMarkedDeleted()) {
-					// Log.debug("Allowing model ref [" + rootRelPath + "]");
+					// Logger.debug("Allowing model ref [" + rootRelPath + "]");
 					return true;
 				}
 			}
@@ -504,7 +504,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 		}
 
 		final String cpp = PropertyPath.getPropertyPath(parentPath, current.getPropertyName());
-		// Log.debug("resolveModelProperty() current prop path: " + cpp);
+		// Logger.debug("resolveModelProperty() current prop path: " + cpp);
 
 		if(descendant == current) return cpp;
 
@@ -555,7 +555,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 		// check visited
 		Binding<Model, Model> b = visited.findBindingBySource(source);
 		if(b != null) {
-			// Log.debug("Already visited target: " + b.tgt);
+			// Logger.debug("Already visited target: " + b.tgt);
 			return b.tgt;
 		}
 		copy = new Model(source.entityType);
@@ -570,7 +570,7 @@ public final class Model implements IMarshalable, IBindable, IEntityTypeProvider
 			assert srcprop != null;
 
 			final String crntPropPath = PropertyPath.getPropertyPath(parentPropPath, srcprop.getPropertyName());
-			// Log.debug("copy() Checking prop: " + crntPropPath);
+			// Logger.debug("copy() Checking prop: " + crntPropPath);
 
 			if(!cp.evaluateProperty(srcprop, crntPropPath)) {
 				continue;

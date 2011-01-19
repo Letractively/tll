@@ -11,8 +11,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -28,7 +28,7 @@ import com.tll.config.IConfigAware;
  */
 public class Bootstrapper implements ServletContextListener {
 
-	private static final Log log = LogFactory.getLog(Bootstrapper.class);
+	private static final Logger log = LoggerFactory.getLogger(Bootstrapper.class);
 
 	/**
 	 * The servlet context param name identifying the dependency injection modules

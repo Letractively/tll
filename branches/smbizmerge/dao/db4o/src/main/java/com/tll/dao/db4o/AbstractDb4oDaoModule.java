@@ -9,8 +9,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springextensions.db4o.Db4oTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.aspectj.AnnotationTransactionAspect;
@@ -43,7 +43,7 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 
 	private static final boolean DEFAULT_EMPLOY_SPRING_TRANSACTIONS = false;
 
-	static final Log log = LogFactory.getLog(AbstractDb4oDaoModule.class);
+	static final Logger log = LoggerFactory.getLogger(AbstractDb4oDaoModule.class);
 
 	/**
 	 * Db4oFile annotation

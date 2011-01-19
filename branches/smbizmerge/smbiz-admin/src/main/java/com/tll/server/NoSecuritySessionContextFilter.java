@@ -15,8 +15,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * NoSecuritySessionContextFilter - Creates {@link HttpSession}s populating it
@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public final class NoSecuritySessionContextFilter implements Filter {
 
-	private static final Log log = LogFactory.getLog(NoSecuritySessionContextFilter.class);
+	private static final Logger log = LoggerFactory.getLogger(NoSecuritySessionContextFilter.class);
 
 	@Override
 	public void destroy() {

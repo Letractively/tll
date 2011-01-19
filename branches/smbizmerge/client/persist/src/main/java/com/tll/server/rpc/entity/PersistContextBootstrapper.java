@@ -7,8 +7,8 @@ package com.tll.server.rpc.entity;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
 import com.tll.server.IBootstrapHandler;
@@ -19,7 +19,7 @@ import com.tll.server.IBootstrapHandler;
  */
 public class PersistContextBootstrapper implements IBootstrapHandler {
 
-	private static final Log log = LogFactory.getLog(PersistContextBootstrapper.class);
+	private static final Logger log = LoggerFactory.getLogger(PersistContextBootstrapper.class);
 
 	@Override
 	public void startup(Injector injector, ServletContext servletContext) {

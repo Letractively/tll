@@ -5,8 +5,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -29,7 +29,7 @@ public final class EntityBeanFactory {
 	 */
 	public static final String DEFAULT_BEAN_DEF_FILENAME = "mock-entities.xml";
 
-	private static final Log log = LogFactory.getLog(EntityBeanFactory.class);
+	private static final Logger log = LoggerFactory.getLogger(EntityBeanFactory.class);
 
 	/**
 	 * Loads a {@link ListableBeanFactory} given a {@link URI} ref to it.

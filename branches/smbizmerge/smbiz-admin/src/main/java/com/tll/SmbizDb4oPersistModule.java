@@ -7,8 +7,8 @@ package com.tll;
 
 import net.sf.ehcache.CacheManager;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
@@ -32,7 +32,7 @@ import com.tll.util.ClassUtil;
  */
 public class SmbizDb4oPersistModule extends AbstractModule implements IConfigAware {
 	
-	static final Log log = LogFactory.getLog(SmbizDb4oPersistModule.class);
+	static final Logger log = LoggerFactory.getLogger(SmbizDb4oPersistModule.class);
 
 	private Config config;
 

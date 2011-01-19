@@ -3,8 +3,8 @@ package com.tll.server;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import com.db4o.EmbeddedObjectContainer;
@@ -17,7 +17,7 @@ import com.google.inject.Provider;
  */
 public class Db4oServletContextListener implements ServletContextListener {
 
-	private static final Log log = LogFactory.getLog(Db4oServletContextListener.class);
+	private static final Logger log = LoggerFactory.getLogger(Db4oServletContextListener.class);
 	
 	static final String KEY = Db4oServletContextListener.class.getName();
 

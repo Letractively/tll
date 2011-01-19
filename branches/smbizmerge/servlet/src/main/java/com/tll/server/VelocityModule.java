@@ -8,8 +8,8 @@ import java.io.FileReader;
 import java.net.URL;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.velocity.app.VelocityEngine;
 
 import com.google.inject.AbstractModule;
@@ -28,7 +28,7 @@ public class VelocityModule extends AbstractModule {
 	 */
 	private static final String VELOCITY_PROPS_RESOURCE = "velocity.properties";
 
-	static final Log log = LogFactory.getLog(VelocityModule.class);
+	static final Logger log = LoggerFactory.getLogger(VelocityModule.class);
 
 	Properties loadProperties() {
 		try {

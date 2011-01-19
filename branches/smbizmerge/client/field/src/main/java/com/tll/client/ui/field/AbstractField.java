@@ -373,10 +373,10 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 
 	/*
 	public final void applyPropertyMetadata(IPropertyMetadataProvider provider, boolean isNewModelData) {
-		// Log.debug("AbstractField.applyPropertyMetadata() for " + toString());
+		// Logger.debug("AbstractField.applyPropertyMetadata() for " + toString());
 		final PropertyMetadata metadata = provider.getPropertyMetadata(getPropertyName());
 		if(metadata == null) {
-			Log.warn("No property metadata found for field: " + toString());
+		 Logger.warn("No property metadata found for field: " + toString());
 		}
 		else {
 			// requiredness

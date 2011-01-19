@@ -5,8 +5,8 @@
  */
 package com.tll.server;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
@@ -32,7 +32,7 @@ import com.tll.service.entity.IEntityServiceFactory;
  */
 public abstract class ClientPersistModule extends AbstractModule {
 
-	private static final Log log = LogFactory.getLog(ClientPersistModule.class);
+	private static final Logger log = LoggerFactory.getLogger(ClientPersistModule.class);
 
 	/**
 	 * Constructor

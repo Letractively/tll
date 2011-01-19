@@ -10,8 +10,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.BindingAnnotation;
@@ -29,7 +29,7 @@ import com.tll.mail.NameEmail;
  */
 public class EmailExceptionHandlerModule extends AbstractModule implements IConfigAware {
 
-	private static final Log log = LogFactory.getLog(EmailExceptionHandlerModule.class);
+	private static final Logger log = LoggerFactory.getLogger(EmailExceptionHandlerModule.class);
 
 	/**
 	 * ConfigKeys - Configuration property keys for the app context.

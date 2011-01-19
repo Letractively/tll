@@ -16,8 +16,8 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Config - Configuration store able to load multiple property files and hold
@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public final class Config implements Configuration {
 
-	private static final Log log = LogFactory.getLog(Config.class);
+	private static final Logger log = LoggerFactory.getLogger(Config.class);
 
 	/**
 	 * The default loading routine where a classpath resource named:

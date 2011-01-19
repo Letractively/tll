@@ -7,8 +7,8 @@ package com.tll.dao;
 
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 
 import com.tll.criteria.Criteria;
@@ -23,7 +23,7 @@ import com.tll.model.egraph.EntityBeanFactory;
  */
 public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements IEntityDaoTestHandler<E> {
 
-	protected final Log log = LogFactory.getLog(getClass());
+	protected final Logger log = LoggerFactory.getLogger(getClass());
 
 	private IEntityDao entityDao;
 	private EntityBeanFactory entityBeanFactory;

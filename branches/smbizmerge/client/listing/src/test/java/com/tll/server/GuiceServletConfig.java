@@ -7,8 +7,8 @@ package com.tll.server;
 
 import java.util.HashMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -23,7 +23,7 @@ import com.tll.server.test.MockSessionFilter;
  */
 public class GuiceServletConfig extends GuiceServletContextListener {
 
-	private static final Log log = LogFactory.getLog(GuiceServletConfig.class);
+	private static final Logger log = LoggerFactory.getLogger(GuiceServletConfig.class);
 	
 	static class ListingServletModule extends ServletModule {
 

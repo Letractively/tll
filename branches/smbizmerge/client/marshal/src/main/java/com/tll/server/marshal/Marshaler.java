@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapperImpl;
 
 import com.google.inject.Inject;
@@ -60,7 +60,7 @@ public final class Marshaler {
 	 */
 	private static final int MAX_DEPTH = 10;
 
-	private static final Log log = LogFactory.getLog(Marshaler.class);
+	private static final Logger log = LoggerFactory.getLogger(Marshaler.class);
 
 	private final IEntityTypeResolver etResolver;
 	private final IEntityFactory entityFactory;

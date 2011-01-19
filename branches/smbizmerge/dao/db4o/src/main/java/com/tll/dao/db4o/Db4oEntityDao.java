@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.math.NumberRange;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springextensions.db4o.Db4oCallback;
 import org.springextensions.db4o.Db4oTemplate;
 import org.springextensions.db4o.support.Db4oDaoSupport;
@@ -137,7 +137,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	@SuppressWarnings("rawtypes")
 	static class Timestamper implements EventListener4 {
 
-		static final Log log = LogFactory.getLog(Timestamper.class);
+		static final Logger log = LoggerFactory.getLogger(Timestamper.class);
 
 		private final boolean creating;
 
@@ -167,7 +167,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	@SuppressWarnings("rawtypes")
 	static class Versioner implements EventListener4 {
 
-		static final Log log = LogFactory.getLog(Versioner.class);
+		static final Logger log = LoggerFactory.getLogger(Versioner.class);
 
 		@Override
 		public void onEvent(Event4 e, EventArgs args) {

@@ -10,8 +10,8 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.db4o.Db4oEmbedded;
 import com.db4o.EmbeddedObjectContainer;
@@ -30,7 +30,7 @@ import com.tll.model.egraph.IEntityGraphPopulator;
  */
 public class Db4oDbShell implements IDbShell {
 
-	private static final Log log = LogFactory.getLog(Db4oDbShell.class);
+	private static final Logger log = LoggerFactory.getLogger(Db4oDbShell.class);
 
 	private final URI dbFile;
 

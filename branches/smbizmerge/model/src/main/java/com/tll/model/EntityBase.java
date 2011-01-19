@@ -2,8 +2,8 @@ package com.tll.model;
 
 import java.util.Collection;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.tll.util.StringUtil;
 
@@ -15,7 +15,7 @@ public abstract class EntityBase implements IEntity {
 
 	private static final long serialVersionUID = -4641847785797486723L;
 
-	protected static final Log LOG = LogFactory.getLog(EntityBase.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(EntityBase.class);
 	
 	private Long id;
 

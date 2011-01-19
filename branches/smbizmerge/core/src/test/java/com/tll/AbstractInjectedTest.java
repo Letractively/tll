@@ -3,8 +3,8 @@ package com.tll;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -27,7 +27,7 @@ public abstract class AbstractInjectedTest {
 		return Guice.createInjector(Stage.DEVELOPMENT, modules);
 	}
 
-	protected final Log logger = LogFactory.getLog(this.getClass());
+	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	/**
 	 * The dependency injector.

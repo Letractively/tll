@@ -9,8 +9,8 @@ import java.util.Date;
 import java.util.Set;
 
 import org.apache.commons.lang.math.RandomUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
@@ -24,7 +24,7 @@ import com.tll.model.bk.NonUniqueBusinessKeyException;
  */
 public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopulator {
 
-	protected final Log log;
+	protected final Logger log;
 
 	/**
 	 * Responsible for generating prototypical entity instances that are subject
@@ -42,7 +42,7 @@ public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopula
 	 * @param entityBeanFactory Required entity bean factory ref
 	 */
 	public AbstractEntityGraphPopulator(EntityBeanFactory entityBeanFactory) {
-		this.log = LogFactory.getLog(getClass());
+		this.log = LoggerFactory.getLogger(getClass());
 		this.entityBeanFactory = entityBeanFactory;
 	}
 
@@ -136,7 +136,7 @@ public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopula
 			return addEntity(generateEntity(entityType, makeUnique));
 		}
 		catch(final Throwable t) {
-			log.error(t);
+			log.error(t.getMessage(), t);
 			throw new RuntimeException(t);
 		}
 	}
