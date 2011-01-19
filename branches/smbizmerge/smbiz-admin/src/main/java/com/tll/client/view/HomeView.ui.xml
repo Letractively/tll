@@ -1,0 +1,16 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+  <ui:style>
+  </ui:style>
+
+  <g:HTMLPanel>
+  
+    Number of addresses: <g:Label ui:field="numAddresses" />
+    Number of ISPs: <g:Label ui:field="numIsps" />
+    Number of Merchants: <g:Label ui:field="numMerchants" />
+    Number of Users: <g:Label ui:field="numUsers" />
+
+  </g:HTMLPanel>
+
+</ui:UiBinder> 
