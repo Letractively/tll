@@ -85,7 +85,7 @@ public class MailSender implements IMailSender {
 			while(retries++ < numberOfSendRetries) {
 				// send the email
 				try {
-					if(log.isDebugEnabled()) log.debug("Sending email: " + context.getName() + "...");
+					log.debug("Sending email: {}...", context.getName());
 					sender.send(mimeMessage);
 					log.info(context.getName() + " Message sent.");
 					return;

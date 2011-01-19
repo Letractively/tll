@@ -39,7 +39,7 @@ public abstract class AbstractEntityFactory implements IEntityFactory {
 					.getName()), ie);
 		}
 
-		if(log.isDebugEnabled()) log.debug("Created entity: " + entity);
+		log.debug("Created entity: {}", entity);
 		return entity;
 	}
 
