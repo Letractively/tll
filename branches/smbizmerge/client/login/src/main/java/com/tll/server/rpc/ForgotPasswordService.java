@@ -60,7 +60,7 @@ public class ForgotPasswordService extends RpcServlet implements IForgotPassword
 				final MailRouting mr = mailManager.buildAppSenderMailRouting(user.getEmailAddress());
 				final IMailContext mailContext = mailManager.buildTextTemplateContext(mr, EMAIL_TEMPLATE_NAME, data);
 				mailManager.sendEmail(mailContext);
-				status.addMsg("Password reminder email was sent.", MsgLevel.INFO, MsgAttr.STATUS.flag);
+				status.addMsg("Password reset email was sent.", MsgLevel.INFO, MsgAttr.STATUS.flag);
 			}
 			catch(final EntityNotFoundException nfe) {
 				exceptionToStatus(nfe, status);

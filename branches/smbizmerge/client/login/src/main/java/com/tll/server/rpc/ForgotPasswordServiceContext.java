@@ -4,16 +4,13 @@
  */
 package com.tll.server.rpc;
 
-import javax.servlet.ServletContext;
-
+import com.google.inject.Inject;
 import com.tll.mail.MailManager;
 import com.tll.server.IExceptionHandler;
 import com.tll.service.IForgotPasswordHandler;
 
 /**
- * AppContext - An instance of this type is stored in the {@link ServletContext}
- * providing references to app scoped constructs for use by servlets to fulfill
- * requests.
+ * Encapsulates needed objects for handling forgot password requests.
  * @author jpk
  */
 public class ForgotPasswordServiceContext {
@@ -30,6 +27,7 @@ public class ForgotPasswordServiceContext {
 	 * @param mailManager
 	 * @param exceptionHandler
 	 */
+	@Inject
 	public ForgotPasswordServiceContext(IForgotPasswordHandler handler, MailManager mailManager,
 			IExceptionHandler exceptionHandler) {
 		super();
@@ -41,22 +39,21 @@ public class ForgotPasswordServiceContext {
 	/**
 	 * @return the userService
 	 */
-	protected IForgotPasswordHandler getForgotPasswordHandler() {
+	public IForgotPasswordHandler getForgotPasswordHandler() {
 		return handler;
 	}
 
 	/**
 	 * @return the mailManager
 	 */
-	protected MailManager getMailManager() {
+	public MailManager getMailManager() {
 		return mailManager;
 	}
 
 	/**
 	 * @return the exceptionHandler
 	 */
-	protected IExceptionHandler getExceptionHandler() {
+	public IExceptionHandler getExceptionHandler() {
 		return exceptionHandler;
 	}
-
 }

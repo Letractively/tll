@@ -1,5 +1,6 @@
 <module>
-  <inherits name="com.tll.ClientModel" />
+	<inherits name="com.tll.Schema" />
+	<inherits name="com.tll.ClientCore" />
   <inherits name="com.tll.Dao" />
   
   <source path="client">
