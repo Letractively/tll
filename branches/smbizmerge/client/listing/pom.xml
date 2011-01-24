@@ -75,7 +75,7 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>server-jar</id>
+						<id>packaging</id>
 						<phase>package</phase>
 						<goals>
 							<goal>single</goal>
@@ -89,6 +89,22 @@
 					</execution>
 				</executions>
 			</plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${basedir}</directory>
+              <includes>
+                <include>debug.bat</include>
+                <include>shell.bat</include>
+              </includes>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
 
 		</plugins>
 	</build>

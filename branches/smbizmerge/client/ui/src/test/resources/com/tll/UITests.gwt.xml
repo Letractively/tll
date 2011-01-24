@@ -25,7 +25,7 @@
 
   <stylesheet src="css/reset.css" />
   <stylesheet src="css/base.css" />
-  <stylesheet src="css/hnav.css" />
+<!--  <stylesheet src="css/hnav.css" />-->
 
   <entry-point class="com.tll.client.UITests" />
 </module>

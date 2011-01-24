@@ -1,7 +1,8 @@
 <module rename-to="uitests">
-  <inherits name="com.tll.ModelTest" />
   <inherits name="com.tll.Listing" />
   <inherits name="com.tll.UI" />
+
+  <inherits name='com.google.gwt.user.theme.standard.Standard'/>
 
   <inherits name='com.google.gwt.logging.Logging' />
   <set-property name="gwt.logging.enabled" value="TRUE"/> 
@@ -28,5 +29,11 @@
   <set-property name="locale" value="default" />
   -->
 
+  <!-- for testing purposts, set the css obfuscator to pretty -->
+  <set-configuration-property name="CssResource.style" value="pretty" />
+
+  <stylesheet src="css/reset.css" />
+  <stylesheet src="css/base.css" />
+  
   <entry-point class="com.tll.client.UITests" />
 </module>

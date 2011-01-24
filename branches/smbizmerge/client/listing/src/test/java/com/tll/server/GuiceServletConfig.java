@@ -46,15 +46,6 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
 	@Override
 	protected Injector getInjector() {
-
-//		final Config config;
-//		try {
-//			config = Config.load(new ConfigRef(true));
-//		}
-//		catch(final IllegalArgumentException e) {
-//			throw new Error("Unable to load config: " + e.getMessage(), e);
-//		}
-
 		log.debug("Creating servlet injector..");
 		Injector injector =
 				Guice.createInjector(new TestListingModule(), new ListingServletModule());

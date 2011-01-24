@@ -286,6 +286,15 @@ public class Address extends EntityBase implements IPropertyValueProvider {
 		if("lastName".equals(propertyPath)) return lastName;
 		if("address1".equals(propertyPath)) return address1;
 		if("address2".equals(propertyPath)) return address2;
+		if("city".equals(propertyPath)) return city;
+		if("province".equals(propertyPath)) return province;
+		if("postalCode".equals(propertyPath)) return postalCode;
+		if("fax".equals(propertyPath)) return fax;
+		if("emailAddress".equals(propertyPath)) return emailAddress;
+		if("mi".equals(propertyPath)) return mi == null ? null : mi.toString();
+		if("company".equals(propertyPath)) return company;
+		if("attn".equals(propertyPath)) return attn;
+		if("country".equals(propertyPath)) return country;
 		throw new IllegalArgumentException();
 	}
 }

@@ -14,13 +14,13 @@ import com.tll.dao.Sorting;
  * @author jpk
  * @param <R> the row type
  */
-public interface IListingOperator<R> {
+public interface IListingOperator<R> extends IHasListingHandlers<R> {
 	
 	/**
-	 * Sets the widget that will source listing/rpc events.
-	 * @param widget
+	 * Sets the widget that will receive listing events upon completion of listing operations.
+	 * @param target
 	 */
-	void setSourcingWidget(Widget widget);
+	void setTarget(Widget target);
 
 	/**
 	 * Acquires or re-acquires the listing data resetting the listing state then

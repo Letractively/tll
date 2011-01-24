@@ -12,34 +12,34 @@ import com.google.gwt.resources.client.ImageResource;
 public class ToolbarStyles {
 
 	@ImportedWithPrefix("tll-toolbar")
-	public interface Toolbar extends CssResource {
+	public interface IToolbar extends CssResource {
 		
 		String toolbar();
 		
 		String separator();
 	}
 	
-	public interface Resources extends ClientBundle {
+	public interface IResources extends ClientBundle {
 		
-		@Source("toolbar.css")
-		Toolbar css();
-
 		@Source(value = "split.gif")
 		ImageResource split();
+
+		@Source("toolbar.css")
+		IToolbar css();
 	}
 	
-	private static Resources resources;
+	private static IResources resources;
 	
 	static {
-		resources = GWT.create(Resources.class);
+		resources = GWT.create(IResources.class);
 		resources.css().ensureInjected();
 	}
 	
-	public static Resources resources() {
+	public static IResources resources() {
 		return resources;
 	}
 	
-	public static Toolbar css() {
+	public static IToolbar css() {
 		return resources.css();
 	}
 }

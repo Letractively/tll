@@ -18,13 +18,13 @@ public interface EditRowImageBundle extends ClientBundle {
 	 * pencil
 	 * @return the image prototype
 	 */
-	@Source(value = "com/tll/public/images/pencil.gif")
+	@Source(value = "pencil.gif")
 	ImageResource edit();
 
 	/**
 	 * trash
 	 * @return the image prototype
 	 */
-	@Source(value = "com/tll/public/images/trash.gif")
+	@Source(value = "trash.gif")
 	ImageResource delete();
 }

@@ -20,7 +20,6 @@ public final class ListingEvent<R> extends GwtEvent<IListingHandler<R>> {
 
 	public static final Type<IListingHandler<?>> TYPE = new Type<IListingHandler<?>>();
 
-	private final String listingId;
 	private final ListingOp listingOp;
 	private final int listSize;
 	private final List<R> pageElements;
@@ -38,7 +37,6 @@ public final class ListingEvent<R> extends GwtEvent<IListingHandler<R>> {
 
 	/**
 	 * Constructor
-	 * @param listingId
 	 * @param listingOp
 	 * @param listSize
 	 * @param pageElements
@@ -46,9 +44,8 @@ public final class ListingEvent<R> extends GwtEvent<IListingHandler<R>> {
 	 * @param sorting
 	 * @param pageSize
 	 */
-	public ListingEvent(String listingId, ListingOp listingOp, int listSize,
+	public ListingEvent(ListingOp listingOp, int listSize,
 			List<R> pageElements, int offset, Sorting sorting, int pageSize) {
-		this.listingId = listingId;
 		this.listingOp = listingOp;
 		this.listSize = listSize;
 		this.pageElements = pageElements;
@@ -75,10 +72,6 @@ public final class ListingEvent<R> extends GwtEvent<IListingHandler<R>> {
 	@Override
 	public Type<IListingHandler<R>> getAssociatedType() {
 		return (Type) TYPE;
-	}
-
-	public String getListingId() {
-		return listingId;
 	}
 
 	public ListingOp getListingOp() {
@@ -127,6 +120,6 @@ public final class ListingEvent<R> extends GwtEvent<IListingHandler<R>> {
 
 	@Override
 	public String toString() {
-		return getListingId();
+		return "ListingEvent [listingOp=" + listingOp + "]";
 	}
 }

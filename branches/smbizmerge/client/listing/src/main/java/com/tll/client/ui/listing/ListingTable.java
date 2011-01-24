@@ -6,7 +6,6 @@ package com.tll.client.ui.listing;
 
 import java.util.List;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -15,7 +14,6 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
@@ -23,7 +21,6 @@ import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.tll.client.listing.Column;
-import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingHandler;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ITableCellRenderer;
@@ -40,41 +37,7 @@ import com.tll.dao.Sorting;
  */
 public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandler, IListingHandler<R> {
 
-	/**
-	 * The listing table specific image bundle.
-	 */
-	private static final ListingTableImageBundle imageBundle =
-			(ListingTableImageBundle) GWT.create(ListingTableImageBundle.class);
-
-	/**
-	 * Styles - (tableview.css)
-	 * @author jpk
-	 */
-	protected static class Styles {
-
-		/**
-		 * The actual HTML table tag containing the listing data gets this style
-		 * (Style class).
-		 */
-		public static final String TABLE = "table";
-		public static final String SORT = "sort";
-		public static final String COUNT_COL = "countCol";
-		public static final String HEAD = "head";
-		public static final String EVEN = "even";
-		public static final String ODD = "odd";
-
-		public static final String ADDED = "added";
-		public static final String UPDATED = "updated";
-		public static final String DELETED = "deleted";
-
-		public static final String CURRENT = "crnt";
-		public static final String ACTIVE = "actv";
-
-	} // Styles
-
-	protected Column[] columns;
-
-	protected boolean ignoreCaseWhenSorting;
+	protected List<Column> columns;
 
 	protected ITableCellRenderer<R> cellRenderer;
 
@@ -119,46 +82,70 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 
 	/**
 	 * Constructor
-	 * @param config
+	 * @param columns
 	 * @param cellRenderer 
 	 */
-	public ListingTable(IListingConfig<R> config, ITableCellRenderer<R> cellRenderer) {
+	public ListingTable(List<Column> columns, ITableCellRenderer<R> cellRenderer) {
 		super();
 		sinkEvents(Event.ONMOUSEOVER | Event.ONMOUSEOUT);
 		addClickHandler(this);
 		addHandler(this, KeyDownEvent.getType());
-		initialize(config, cellRenderer);
+		initialize(columns, cellRenderer);
 	}
 
 	/**
 	 * Initializes the table.
 	 */
-	protected void initialize(IListingConfig<R> config, ITableCellRenderer<R> cellRndrer) {
-		assert config != null;
-
-		this.columns = config.getColumns();
+	protected void initialize(List<Column> clmns, ITableCellRenderer<R> cellRndrer) {
+		if(clmns == null || cellRndrer == null) throw new IllegalArgumentException();
+		this.columns = clmns;
 		this.cellRenderer = cellRndrer;
-		assert columns != null && cellRenderer != null;
 
-		this.ignoreCaseWhenSorting = config.isIgnoreCaseWhenSorting();
-
-		int rn = -1;
-		final Column[] clmns = config.getColumns();
-		for(int i = 0; i < clmns.length; i++) {
-			if(Column.ROW_COUNT_COLUMN == clmns[i]) {
+		int i = 0, rn = -1;
+		for(Column col : clmns) {
+			if(Column.ROW_COUNT_COLUMN == col) {
 				rn = i;
 				break;
 			}
+			i++;
 		}
 		rowNumColIndex = rn;
 
-		if(config.isSortable()) {
-			sortlinks = new ListingTable.SortLink[clmns.length];
+		sortlinks = new ListingTable.SortLink[clmns.size()];
+
+		setStyleName(ListingStyles.css().table());
+
+		// add header row
+		final int numCols = clmns.size();
+
+		resize(1, numCols);
+		getRowFormatter().addStyleName(0, ListingStyles.css().head());
+
+		for(int c = 0; c < clmns.size(); c++) {
+			final Column col = clmns.get(c);
+			final boolean isRowCntCol = Column.ROW_COUNT_COLUMN == col;
+			if(isRowCntCol) {
+				getCellFormatter().addStyleName(0, c, ListingStyles.css().countCol());
+				// getColumnFormatter().addStyleName(c, Styles.COUNT_COL);
+			}
+			if(col.getStyle() != null) {
+				getColumnFormatter().addStyleName(c, col.getStyle());
+				getCellFormatter().addStyleName(0, c, col.getStyle());
+			}
+			if(col.isSortable()) {
+				if(isRowCntCol) {
+					setWidget(0, c, new Label("#"));
+				}
+				else if(col.getPropertyName() != null) {
+					final SortLink sl = new SortLink(col);
+					sortlinks[c] = sl;
+					setWidget(0, c, sl);
+				}
+			}
+			else {
+				setWidget(0, c, new Label(col.getName()));
+			}
 		}
-
-		setStyleName(Styles.TABLE);
-
-		addHeaderRow(config);
 	}
 
 	/**
@@ -181,8 +168,8 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 	 * @return the column index
 	 */
 	private int resolveColumnIndex(String colProp) {
-		for(int i = 0; i < columns.length; i++) {
-			final Column c = columns[i];
+		for(int i = 0; i < columns.size(); i++) {
+			final Column c = columns.get(i);
 			if(c.getPropertyName() != null && c.getPropertyName().equals(colProp)) {
 				return i;
 			}
@@ -202,8 +189,15 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 			sortlinks[crntSortColIndex].clearSortDirection();
 		}
 
+		// ensure this is a sortable column
+		SortLink sl = sortlinks[index];
+		if(sl == null) {
+			crntSortColIndex = -1;
+			return;
+		}
+		
 		// set new sort column
-		sortlinks[index].setSortDirection(sc.getDirection());
+		sl.setSortDirection(sc.getDirection());
 		crntSortColIndex = index;
 	}
 
@@ -215,8 +209,6 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 	// compile can't find it
 	// TODO fix this so it isn't static but gwt compilable
 	public static final class SortLink extends Composite implements ClickHandler {
-
-		private final boolean ignoreCaseWhenSorting;
 
 		/**
 		 * The sort column arrow.
@@ -236,15 +228,13 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		/**
 		 * Constructor
 		 * @param column
-		 * @param ignoreCaseWhenSorting
 		 */
-		public SortLink(Column column, boolean ignoreCaseWhenSorting) {
+		public SortLink(Column column) {
 			assert column.getPropertyName() != null;
 			lnk = new SimpleHyperLink(column.getName(), this);
 			pnl.add(lnk);
 			initWidget(pnl);
 			this.column = column;
-			this.ignoreCaseWhenSorting = ignoreCaseWhenSorting;
 		}
 
 		public void setListingOperator(IListingOperator<?> listingOperator) {
@@ -270,12 +260,12 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 
 			// insert the sort dir arrow image
 			if(direction == SortDir.ASC) {
-				AbstractImagePrototype.create(imageBundle.sort_asc()).applyTo(imgSortDir);
+				imgSortDir.setResource(ListingStyles.resources().sortAsc());
 			}
 			else {
-				AbstractImagePrototype.create(imageBundle.sort_desc()).applyTo(imgSortDir);
+				imgSortDir.setResource(ListingStyles.resources().sortDesc());
 			}
-			imgSortDir.setStyleName(Styles.SORT);
+			imgSortDir.setStyleName(ListingStyles.css().sort());
 			imgSortDir.setTitle(reverseTitle);
 			pnl.insert(imgSortDir, 0);
 		}
@@ -292,45 +282,11 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 			event.stopPropagation();
 			final SortColumn sc =
 					new SortColumn(column.getPropertyName(), column.getParentAlias(), direction == SortDir.ASC ? SortDir.DESC
-							: SortDir.ASC, ignoreCaseWhenSorting ? Boolean.TRUE : Boolean.FALSE);
+							: SortDir.ASC, column.isIgnoreCase()? Boolean.TRUE : Boolean.FALSE);
 			listingOperator.sort(new Sorting(sc));
 		}
 	}
 
-	private void addHeaderRow(IListingConfig<R> config) {
-		final int numCols = columns.length;
-
-		resize(1, numCols);
-		getRowFormatter().addStyleName(0, Styles.HEAD);
-
-		for(int c = 0; c < columns.length; c++) {
-			final Column col = columns[c];
-			final boolean isRowCntCol = Column.ROW_COUNT_COLUMN == col;
-			if(isRowCntCol) {
-				getCellFormatter().addStyleName(0, c, Styles.COUNT_COL);
-				// getColumnFormatter().addStyleName(c, Styles.COUNT_COL);
-			}
-			if(col.getStyle() != null) {
-				getColumnFormatter().addStyleName(c, col.getStyle());
-				getCellFormatter().addStyleName(0, c, col.getStyle());
-			}
-			if(config.isSortable()) {
-				if(isRowCntCol) {
-					setWidget(0, c, new Label("#"));
-				}
-				else if(col.getPropertyName() != null) {
-					assert sortlinks != null;
-					final SortLink sl = new SortLink(col, ignoreCaseWhenSorting);
-					sortlinks[c] = sl;
-					setWidget(0, c, sl);
-				}
-			}
-			else {
-				setWidget(0, c, new Label(col.getName()));
-			}
-		}
-	}
-	
 	public final void setCellRenderer(ITableCellRenderer<R> cellRenderer) {
 		this.cellRenderer = cellRenderer;
 	}
@@ -351,28 +307,20 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 			return; // header row
 		}
 
-		for(int c = 0; c < columns.length; c++) {
-			Column col = columns[c];
+		for(int c = 0; c < columns.size(); c++) {
+			Column col = columns.get(c);
 			if(col.getStyle() != null) {
 				getColumnFormatter().addStyleName(c, col.getStyle());
 				getCellFormatter().addStyleName(rowIndex, c, col.getStyle());
 			}
-			if(Column.ROW_COUNT_COLUMN == columns[c]) {
-				getCellFormatter().addStyleName(rowIndex, c, Styles.COUNT_COL);
+			if(Column.ROW_COUNT_COLUMN == col) {
+				getCellFormatter().addStyleName(rowIndex, c, ListingStyles.css().countCol());
 				if(rowNum > -1) {
 					setText(rowIndex, c, Integer.toString(rowNum));
 				}
 			}
 			else {
-				cellRenderer.renderCell(rowIndex, c, rowData, columns[c], this);
-				/*
-				if(overwriteOnNull || cv != null) {
-					if(cv == null) {
-						cv = "-";
-					}
-					setText(rowIndex, c, cv);
-				}
-				*/
+				cellRenderer.renderCell(rowIndex, c, rowData, col, this);
 			}
 		}
 	}
@@ -383,7 +331,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		boolean evn = false;
 		int rowIndex = offset;
 		for(int r = 0; r < numBodyRows; r++) {
-			getRowFormatter().addStyleName(r + 1, ((evn = !evn) ? Styles.EVEN : Styles.ODD));
+			getRowFormatter().addStyleName(r + 1, ((evn = !evn) ? ListingStyles.css().even(): ListingStyles.css().odd()));
 			setRowData(r + 1, ++rowIndex, page.get(r), true);
 		}
 	}
@@ -427,7 +375,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 
 			case Event.ONMOUSEOUT:
 				if(actvRowIndex >= 0) {
-					getRowFormatter().removeStyleName(actvRowIndex, Styles.ACTIVE);
+					getRowFormatter().removeStyleName(actvRowIndex, ListingStyles.css().actv());
 					actvRowIndex = -1;
 				}
 				break;
@@ -482,9 +430,9 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 			return;
 		}
 		if(actvRowIndex >= 0) {
-			getRowFormatter().removeStyleName(actvRowIndex, Styles.ACTIVE);
+			getRowFormatter().removeStyleName(actvRowIndex, ListingStyles.css().actv());
 		}
-		getRowFormatter().addStyleName(rowIndex, Styles.ACTIVE);
+		getRowFormatter().addStyleName(rowIndex, ListingStyles.css().actv());
 		actvRowIndex = rowIndex;
 	}
 
@@ -493,9 +441,9 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 			return;
 		}
 		if(crntRowIndex >= 0) {
-			getRowFormatter().removeStyleName(crntRowIndex, Styles.CURRENT);
+			getRowFormatter().removeStyleName(crntRowIndex, ListingStyles.css().crnt());
 		}
-		getRowFormatter().addStyleName(rowIndex, Styles.CURRENT);
+		getRowFormatter().addStyleName(rowIndex, ListingStyles.css().crnt());
 		crntRowIndex = rowIndex;
 		// DOM.scrollIntoView(targetTd);
 	}
@@ -513,7 +461,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		// set the row data
 		setRowData(addRowIndex, -1, rowData, true);
 
-		getRowFormatter().addStyleName(addRowIndex, Styles.ADDED);
+		getRowFormatter().addStyleName(addRowIndex, ListingStyles.css().added());
 
 		return addRowIndex;
 	}
@@ -526,7 +474,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 	void updateRow(int rowIndex, R rowData) {
 		assert rowIndex >= 1 : "Can't update the header row";
 		setRowData(rowIndex, -1, rowData, true);
-		getRowFormatter().addStyleName(rowIndex, Styles.UPDATED);
+		getRowFormatter().addStyleName(rowIndex, ListingStyles.css().updated());
 	}
 
 	/**
@@ -556,14 +504,14 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 	void markRowDeleted(int rowIndex, boolean markDeleted) {
 		assert rowIndex >= 1 : "Can't delete the header row";
 		if(markDeleted)
-			getRowFormatter().addStyleName(rowIndex, Styles.DELETED);
+			getRowFormatter().addStyleName(rowIndex, ListingStyles.css().deleted());
 		else
-			getRowFormatter().removeStyleName(rowIndex, Styles.DELETED);
+			getRowFormatter().removeStyleName(rowIndex, ListingStyles.css().deleted());
 	}
 
 	public boolean isRowMarkedDeleted(int rowIndex) {
 		final String sn = getRowFormatter().getStyleName(rowIndex);
-		return sn == null ? false : sn.indexOf(Styles.DELETED) >= 0;
+		return sn == null ? false : sn.indexOf(ListingStyles.css().deleted()) >= 0;
 	}
 
 	private int getPageRowNum(int rowIndex) {
@@ -592,13 +540,13 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 
 				// toggle the odd/even styling
 				final HTMLTable.RowFormatter rf = getRowFormatter();
-				if(rf.getStyleName(i).indexOf(Styles.EVEN) >= 0) {
-					rf.removeStyleName(i, Styles.EVEN);
-					rf.addStyleName(i, Styles.ODD);
+				if(rf.getStyleName(i).indexOf(ListingStyles.css().even()) >= 0) {
+					rf.removeStyleName(i, ListingStyles.css().even());
+					rf.addStyleName(i, ListingStyles.css().odd());
 				}
-				else if(rf.getStyleName(i).indexOf(Styles.ODD) >= 0) {
-					rf.removeStyleName(i, Styles.ODD);
-					rf.addStyleName(i, Styles.EVEN);
+				else if(rf.getStyleName(i).indexOf(ListingStyles.css().odd()) >= 0) {
+					rf.removeStyleName(i, ListingStyles.css().odd());
+					rf.addStyleName(i, ListingStyles.css().even());
 
 				}
 			}
