@@ -135,7 +135,7 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 	protected abstract Class<? extends IDb4oNamedQueryTranslator> getNamedQueryTranslatorImpl();
 
 	@Override
-	protected final void configure() {
+	protected void configure() {
 		log.info("Loading db4o dao module...");
 
 		// db40 db file URI

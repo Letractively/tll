@@ -5,10 +5,15 @@
 package com.tll.client;
 
 import com.google.gwt.activity.shared.AbstractActivity;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.tll.client.place.HomeViewPlace;
+import com.tll.client.rpc.ISiteStatisticsService;
+import com.tll.client.rpc.ISiteStatisticsService.SiteStatisticsPayload;
+import com.tll.client.rpc.ISiteStatisticsServiceAsync;
 import com.tll.client.view.IHomeView;
 
 /**
@@ -26,7 +31,40 @@ public class HomeViewActivity extends AbstractActivity implements IHomeView.Pres
 	}
 
 	@Override
-	public void start(AcceptsOneWidget panel, EventBus eventBus) {
+	public void start(final AcceptsOneWidget panel, EventBus eventBus) {
+	
+		final IHomeView view = cf.getHomeView();
+		
+		// fetch site stats
+		ISiteStatisticsServiceAsync.Util.getInstance().getSiteStatitics(new AsyncCallback<ISiteStatisticsService.SiteStatisticsPayload>() {
+			
+			@Override
+			public void onSuccess(SiteStatisticsPayload result) {
+				view.setStats(result.getDto());
+				panel.setWidget(view.asWidget());
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO impl error handling
+				GWT.log("Error fetching site stats", caught);
+			}
+		});
+	}
+
+	@Override
+	public String mayStop() {
+		return super.mayStop();
+	}
+
+	@Override
+	public void onCancel() {
+		super.onCancel();
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
 	}
 
 	@Override

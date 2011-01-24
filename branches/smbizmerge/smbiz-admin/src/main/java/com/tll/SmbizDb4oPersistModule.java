@@ -56,8 +56,9 @@ public class SmbizDb4oPersistModule extends AbstractModule implements IConfigAwa
 		install(new ValidationModule());
 		install(new SmbizEGraphModule());
 		install(new SmbizDb4oDaoModule(config));
+		
 		bind(IEntityAssembler.class).to(SmbizEntityAssembler.class).in(Scopes.SINGLETON);
-		// satisfy caching requirement for UserService
+		
 		bind(CacheManager.class).annotatedWith(UserCacheAware.class).toProvider(new Provider<CacheManager>() {
 
 			@Override
@@ -65,6 +66,7 @@ public class SmbizDb4oPersistModule extends AbstractModule implements IConfigAwa
 				return new CacheManager(ClassUtil.getResource("ehcache-smbiz-persist.xml"));
 			}
 		}).in(Scopes.SINGLETON);
+		
 		install(new SmbizEntityServiceFactoryModule());
 		
 		// required for satisfying GWT's RequestFactory (entity-RPC) feature

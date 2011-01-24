@@ -73,10 +73,12 @@
     <dependency>
       <groupId>oro</groupId>
       <artifactId>oro</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>commons-validator</groupId>
       <artifactId>commons-validator</artifactId>
+      <optional>true</optional>
       <exclusions>
         <exclusion>
           <groupId>commons-beanutils</groupId>

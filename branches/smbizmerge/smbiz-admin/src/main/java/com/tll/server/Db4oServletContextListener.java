@@ -28,7 +28,7 @@ public class Db4oServletContextListener implements ServletContextListener {
 	EmbeddedObjectContainer oc;
 
 	@Override
-	public void contextDestroyed(ServletContextEvent sce) {
+	public void contextInitialized(ServletContextEvent sce) {
 		log.info("Starting up db4o session..");
 		// instantiate db4o (by forcing instantiation of the trans manager)
 		tm.get();
@@ -37,10 +37,9 @@ public class Db4oServletContextListener implements ServletContextListener {
 	}
 
 	@Override
-	public void contextInitialized(ServletContextEvent arg0) {
+	public void contextDestroyed(ServletContextEvent sce) {
 		log.info("Shutting down db4o session..");
 		oc.close();
 		log.info("Db4o session closed");
 	}
-
 }

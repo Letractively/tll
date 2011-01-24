@@ -21,6 +21,8 @@ public interface IClientFactory {
 	SmbizEntityRequestFactory getCrudFactory();
 	SmbizApp getSmbizApp();
 	
+	Messages getMessages();
+	
 	IHomeView getHomeView();
 
 }

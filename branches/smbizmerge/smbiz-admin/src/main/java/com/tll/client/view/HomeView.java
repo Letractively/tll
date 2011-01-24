@@ -10,6 +10,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.common.dto.SiteStatisticsDto;
 
 /**
  * @author jpk
@@ -21,10 +22,11 @@ public class HomeView extends Composite implements IHomeView {
 	interface HomeViewUiBinder extends UiBinder<Widget, HomeView> {
 	}
 	
-	@UiField Label numAddresses;
 	@UiField Label numIsps;
 	@UiField Label numMerchants;
+	@UiField Label numCustomers;
 	@UiField Label numUsers;
+	@UiField Label numAddresses;
 
 	/**
 	 * Because this class has a default constructor, it can be used as a binder
@@ -39,4 +41,12 @@ public class HomeView extends Composite implements IHomeView {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
+	@Override
+	public void setStats(SiteStatisticsDto stats) {
+		numIsps.setText(Integer.toString(stats.numIsps));
+		numMerchants.setText(Integer.toString(stats.numMerchants));
+		numCustomers.setText(Integer.toString(stats.numCustomers));
+		numUsers.setText(Integer.toString(stats.numUsers));
+		numAddresses.setText(Integer.toString(stats.numAddresses));
+	}
 }

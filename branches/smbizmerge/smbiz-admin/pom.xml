@@ -89,6 +89,10 @@
         </executions>
         <configuration>
           <webappDirectory>${webappDirectory}</webappDirectory>
+          <!-- 
+          TODO need to exclude all tll deps from the lib dir as these instances will be picked up 
+          before the corres. project dir is! 
+          -->
         </configuration>
       </plugin>
 

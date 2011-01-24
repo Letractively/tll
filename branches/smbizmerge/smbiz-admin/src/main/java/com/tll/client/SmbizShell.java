@@ -11,6 +11,8 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasOneWidget;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -37,7 +39,7 @@ public class SmbizShell extends Composite {
 	final FlowPanel navPanel = new FlowPanel();
 	
 	@UiField
-	final FlowPanel center = new FlowPanel();
+	final SimplePanel center = new SimplePanel();
 
 	/**
 	 * Constructor
@@ -45,6 +47,8 @@ public class SmbizShell extends Composite {
 	public SmbizShell() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
-
 	
+	public HasOneWidget getPanel() {
+		return center;
+	}
 }

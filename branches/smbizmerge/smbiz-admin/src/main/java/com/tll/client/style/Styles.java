@@ -3,7 +3,6 @@ package com.tll.client.style;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.resources.client.CssResource.NotStrict;
 
 /**
  * @author jpk
@@ -22,9 +21,8 @@ public class Styles {
    */
   public interface Resources extends ClientBundle {
 
-    @NotStrict
-    @Source("common.css")
-    Common common();
+    //@Source("common.css")
+    //Common common();
 
     //ImageResource approvedIcon();
   }
@@ -33,12 +31,12 @@ public class Styles {
 
   static {
     resources = GWT.create(Resources.class);
-    resources.common().ensureInjected();
+    //resources.common().ensureInjected();
   }
 
-  public static Common common() {
-    return resources.common();
-  }
+//  public static Common common() {
+//    return resources.common();
+//  }
 
   public static Resources resources() {
     return resources;

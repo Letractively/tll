@@ -93,6 +93,9 @@ public class SmbizEntityServiceFactoryModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		log.info("Employing Entity service module");
+		
+		// SiteStatisticsService
+		bind(SiteStatisticsService.class).in(Scopes.SINGLETON);
 
 		// UserCache (userCache)
 		bind(UserCache.class).toProvider(new Provider<UserCache>() {
@@ -139,6 +142,9 @@ public class SmbizEntityServiceFactoryModule extends AbstractModule {
 		bind(IEntityServiceFactory.class).toProvider(new Provider<IEntityServiceFactory>() {
 
 			@Inject
+			SiteStatisticsService sss;
+			
+			@Inject
 			IAuthorityService auths;
 			@Inject
 			IAccountService accs;
@@ -181,6 +187,7 @@ public class SmbizEntityServiceFactoryModule extends AbstractModule {
 			public IEntityServiceFactory get() {
 				final Map<Class<? extends IService>, IService> map = new HashMap<Class<? extends IService>, IService>();
 
+				map.put(SiteStatisticsService.class, sss);
 				map.put(IAuthorityService.class, auths);
 				map.put(IAccountService.class, accs);
 				map.put(ICustomerAccountService.class, cas);

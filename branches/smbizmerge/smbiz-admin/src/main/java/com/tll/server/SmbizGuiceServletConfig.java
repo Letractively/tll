@@ -17,6 +17,7 @@ import com.google.inject.servlet.ServletModule;
 import com.tll.SmbizDb4oPersistModule;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
+import com.tll.server.rpc.SiteStatisticsService;
 
 /**
  * @author jpk
@@ -40,6 +41,9 @@ public class SmbizGuiceServletConfig extends GuiceServletContextListener {
 			HashMap<String, String> cparams = new HashMap<String, String>(1);
 			cparams.put("oneDayCacheFileExts", ".js .css .gif .jpg .png");
 			filter("/*").through(WebClientCacheFilter.class, cparams);
+			
+			// site statistics rpc service
+			serve("/SmbizAdmin/ss").with(SiteStatisticsService.class);
 		}
 
 	}

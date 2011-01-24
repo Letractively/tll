@@ -6,7 +6,10 @@
 package com.tll.dao.db4o;
 
 import com.db4o.config.EmbeddedConfiguration;
+import com.google.inject.Scopes;
 import com.tll.config.Config;
+import com.tll.dao.IPCHDao;
+import com.tll.dao.ISiteStatisticsDao;
 import com.tll.model.Account;
 import com.tll.model.Interface;
 
@@ -30,6 +33,13 @@ public class SmbizDb4oDaoModule extends AbstractDb4oDaoModule {
 	 */
 	public SmbizDb4oDaoModule(Config config) {
 		super(config);
+	}
+
+	@Override
+	protected void configure() {
+		super.configure();
+		bind(ISiteStatisticsDao.class).to(SiteStatisticsDao.class).in(Scopes.SINGLETON);
+		bind(IPCHDao.class).to(PCHDao.class).in(Scopes.SINGLETON);
 	}
 
 	@Override

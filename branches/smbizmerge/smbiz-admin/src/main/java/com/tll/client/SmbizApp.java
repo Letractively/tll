@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * @author jpk
@@ -18,6 +17,15 @@ import com.google.gwt.user.client.ui.RootPanel;
 public class SmbizApp {
 
 	private static final Logger log = Logger.getLogger(SmbizShell.class.getName());
+	
+	private final SmbizShell shell;
+
+	/**
+	 * Constructor
+	 */
+	public SmbizApp(SmbizShell shell) {
+		this.shell = shell;
+	}
 
 	public void run(HasWidgets root) {
 		GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
@@ -31,9 +39,9 @@ public class SmbizApp {
 		IClientFactory clientFactory = GWT.create(IClientFactory.class);
 		SmbizActivityMapper activityMapper = new SmbizActivityMapper(clientFactory);
 		ActivityManager activityManager = new ActivityManager(activityMapper, clientFactory.getEventBus());
-		activityManager.setDisplay(null); // TODO
+		activityManager.setDisplay(shell.getPanel());
 		
-		RootPanel.get().add(null);
+		root.add(shell);
 		clientFactory.getPlaceHistoryController().handleCurrentHistory();
 	}
 }

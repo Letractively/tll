@@ -5,6 +5,7 @@
 package com.tll.client;
 
 import com.google.gwt.core.client.GWT;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.place.shared.PlaceController;
@@ -22,6 +23,8 @@ public class ClientFactory implements IClientFactory {
 	private final PlaceController placeController = new PlaceController(eventBus);
 	private final PlaceHistoryHandler placeHistoryHandler;
 	private final SmbizEntityRequestFactory erf = GWT.create(SmbizEntityRequestFactory.class);
+	
+  private final Messages messages = GWT.create(Messages.class);
 
 	private final IHomeView homeView = null;
 
@@ -54,7 +57,7 @@ public class ClientFactory implements IClientFactory {
 
 	@Override
 	public SmbizApp getSmbizApp() {
-		return new SmbizApp();
+		return new SmbizApp(new SmbizShell());
 	}
 
 	@Override
@@ -68,4 +71,8 @@ public class ClientFactory implements IClientFactory {
 		return homeView;
 	}
 
+	@Override
+	public Messages getMessages() {
+		return messages;
+	}
 }
