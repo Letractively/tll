@@ -14,14 +14,10 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * Toolbar - Simple extension of {@link FlowPanel} that sets common
  * styles/properties relating to a "toolbar" widget implementation.
- * <p>
- * Refer to <code>toolbar.css</code> toolbar Style styles.
  * @author jpk
  */
 public class Toolbar extends Composite {
 	
-	private final String TBBUTTON_STYLE = "tbbutton";
-
 	private final HorizontalPanel pnl = new HorizontalPanel();
 
 	/**
@@ -115,8 +111,8 @@ public class Toolbar extends Composite {
 	 */
 	private void buttonize(ButtonBase b, String title) {
 		final Element td = b.getElement().getParentElement();
-		td.setClassName(TBBUTTON_STYLE);
-		b.setStylePrimaryName(TBBUTTON_STYLE);
+		td.setClassName(ToolbarStyles.css().tbbutton());
+		b.setStylePrimaryName(ToolbarStyles.css().tbbutton());
 		if(title != null) {
 			b.setTitle(title);
 		}

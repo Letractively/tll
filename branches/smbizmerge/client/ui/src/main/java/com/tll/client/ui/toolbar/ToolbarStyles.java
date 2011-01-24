@@ -17,6 +17,8 @@ public class ToolbarStyles {
 		String toolbar();
 		
 		String separator();
+		
+		String tbbutton();
 	}
 	
 	public interface IResources extends ClientBundle {

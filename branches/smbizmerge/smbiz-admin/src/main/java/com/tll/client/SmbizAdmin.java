@@ -2,6 +2,7 @@ package com.tll.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.Messages;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.

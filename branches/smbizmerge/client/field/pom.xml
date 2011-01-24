@@ -11,7 +11,7 @@
   <groupId>com.tll</groupId>
   <artifactId>tll-client-field</artifactId>
   <name>tll-client-field</name>
-  <version>${project.parent.version}</version>
+  <version>0.0.1-SNAPSHOT</version>
   <description>The client field api.</description>
   
   <build>
@@ -98,24 +98,24 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
-      <version>${project.version}</version>
+      <version>0.0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-client-core</artifactId>
-      <version>${project.version}</version>
+      <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-client-ui</artifactId>
-      <version>${project.version}</version>
+      <version>0.0.1-SNAPSHOT</version>
     </dependency>
     
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-client-ui</artifactId>
-      <version>${project.version}</version>
+      <version>0.0.1-SNAPSHOT</version>
       <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>

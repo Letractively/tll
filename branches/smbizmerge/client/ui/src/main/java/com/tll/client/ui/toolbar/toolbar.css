@@ -20,7 +20,10 @@
 	white-space: nowrap;
 }
 
-@external tbbutton,tbbutton-up, tbbutton-up-hovering, tbbutton-up-disabled, tbbutton-down, tbbutton-down-hovering, tbbutton-down-disabled;
+@external tbbutton, tbbutton-up, tbbutton-up-hovering, tbbutton-up-disabled, tbbutton-down, tbbutton-down-hovering, tbbutton-down-disabled;
+
+.tbbutton {
+}
 
 /* PushButton and ToggleButton custom styling for inside a view toolbar. */
 .tbbutton-up,
