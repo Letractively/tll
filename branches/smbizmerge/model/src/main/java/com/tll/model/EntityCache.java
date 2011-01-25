@@ -37,13 +37,13 @@ public class EntityCache implements IEntityProvider {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <E extends IEntity> E getEntity(Class<E> entityType, Object key) {
+	public <E> E getEntity(Class<E> entityType, Object key) {
 		return (E) map.get(key);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <E extends IEntity> Collection<E> getEntitiesByType(Class<E> type) {
+	public <E> Collection<E> getEntitiesByType(Class<E> type) {
 		if(type == null) return null;
 		List<E> list = new ArrayList<E>();
 		for(IEntity e : map.values()) {
@@ -55,7 +55,7 @@ public class EntityCache implements IEntityProvider {
 	}
 
 	@Override
-	public <E extends IEntity> E getEntityByType(Class<E> type) throws IllegalStateException {
+	public <E> E getEntityByType(Class<E> type) throws IllegalStateException {
 		if(type == null) return null;
 		Collection<? extends E> clc = getEntitiesByType(type);
 		if(clc.size() > 1) {

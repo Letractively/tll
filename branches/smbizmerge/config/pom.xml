@@ -23,7 +23,7 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <scope>runtime</scope>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>commons-configuration</groupId>
@@ -37,6 +37,12 @@
           <groupId>commons-beanutils</groupId>
           <artifactId>commons-beanutils-core</artifactId>
         </exclusion>
+        <!--  unfortunately, this is needed
+        <exclusion>
+        	<artifactId>commons-logging</artifactId>
+        	<groupId>commons-logging</groupId>
+        </exclusion>
+         -->
       </exclusions>
     </dependency>
   </dependencies>

@@ -20,7 +20,6 @@ import com.db4o.config.EmbeddedConfiguration;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.tll.dao.IDbShell;
-import com.tll.model.IEntity;
 import com.tll.model.egraph.EntityGraph;
 import com.tll.model.egraph.IEntityGraphPopulator;
 
@@ -133,12 +132,12 @@ public class Db4oDbShell implements IDbShell {
 		try {
 			populator.populateEntityGraph();
 			final EntityGraph eg = populator.getEntityGraph();
-			final Iterator<Class<? extends IEntity>> itr = eg.getEntityTypes();
+			final Iterator<Class<?>> itr = eg.getEntityTypes();
 			while(itr.hasNext()) {
-				final Class<? extends IEntity> et = itr.next();
+				final Class<?> et = itr.next();
 				log.info("Storing entities of type: " + et.getSimpleName() + "...");
-				final Collection<? extends IEntity> ec = eg.getEntitiesByType(et);
-				for(final IEntity e : ec) {
+				final Collection<?> ec = eg.getEntitiesByType(et);
+				for(final Object e : ec) {
 					log.info("Storing entity: " + et + "...");
 					dbSession.store(e);
 				}

@@ -308,6 +308,11 @@ public class SchemaInfoTest {
 	static class TestEntityMetadata implements IEntityMetadata {
 
 		@Override
+		public Object getId(Object entity) {
+			return ((EntityBase)entity).getId();
+		}
+
+		@Override
 		public boolean isEntityType(Class<?> claz) {
 			return EntityBase.class.isAssignableFrom(claz);
 		}

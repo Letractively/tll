@@ -25,6 +25,14 @@ public class EntityMetadata implements IEntityMetadata {
 	}
 
 	@Override
+	public Object getId(Object entity) {
+		if(entity instanceof IEntity) {
+			return ((IEntity) entity).getId();
+		}
+		throw new IllegalArgumentException();
+	}
+
+	@Override
 	public Class<?> getEntityClass(Object entity) {
 		if(entity instanceof IEntity) {
 			return ((IEntity) entity).entityClass();

@@ -88,6 +88,10 @@
           <groupId>commons-digester</groupId>
           <artifactId>commons-digester</artifactId>
         </exclusion>
+        <exclusion>
+        	<artifactId>commons-logging</artifactId>
+        	<groupId>commons-logging</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     
@@ -101,6 +105,12 @@
     	<artifactId>tll-config</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     	<scope>test</scope>
+    	<exclusions>
+    		<exclusion>
+    			<artifactId>commons-logging</artifactId>
+    			<groupId>commons-logging</groupId>
+    		</exclusion>
+    	</exclusions>
     </dependency>
     <dependency>
       <groupId>com.google.code.guice</groupId>

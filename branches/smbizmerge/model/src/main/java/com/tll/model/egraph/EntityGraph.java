@@ -32,7 +32,7 @@ public final class EntityGraph implements IEntityProvider {
 	/**
 	 * The "graph" of entities held in a map keyed by entity type.
 	 */
-	private final LinkedHashMap<Class<? extends IEntity>, LinkedHashSet<? extends IEntity>> graph;
+	private final LinkedHashMap<Class<?>, LinkedHashSet<?>> graph;
 	
 	/**
 	 * Constructor
@@ -44,7 +44,7 @@ public final class EntityGraph implements IEntityProvider {
 		super();
 		this.entityMetadata = entityMetadata;
 		this.bkf = bkf;
-		this.graph = new LinkedHashMap<Class<? extends IEntity>, LinkedHashSet<? extends IEntity>>();
+		this.graph = new LinkedHashMap<Class<?>, LinkedHashSet<?>>();
 	}
 
 	/**
@@ -58,7 +58,7 @@ public final class EntityGraph implements IEntityProvider {
 	 * @return Iterator of all held entity types in the graph ordered in the way
 	 *         it was populated.
 	 */
-	public Iterator<Class<? extends IEntity>> getEntityTypes() {
+	public Iterator<Class<?>> getEntityTypes() {
 		return graph.keySet().iterator();
 	}
 
@@ -66,7 +66,7 @@ public final class EntityGraph implements IEntityProvider {
 	 * @param etype the entity type
 	 * @return The total number of entities of the given type.
 	 */
-	public int size(Class<? extends IEntity> etype) {
+	public int size(Class<?> etype) {
 		return graph.containsKey(etype) ? 0 : graph.get(etype).size();
 	}
 
@@ -75,7 +75,7 @@ public final class EntityGraph implements IEntityProvider {
 	 */
 	public int size() {
 		int size = 0;
-		for(final Set<? extends IEntity> set : graph.values()) {
+		for(final Set<?> set : graph.values()) {
 			size += set.size();
 		}
 		return size;
@@ -84,13 +84,11 @@ public final class EntityGraph implements IEntityProvider {
 	/**
 	 * Grabs the entity set from the calculated root entity type of the given
 	 * entity type.
-	 * @param <E>
 	 * @param entityType
 	 * @return set of distinct root entities
 	 */
-	@SuppressWarnings("unchecked")
-	private <E extends IEntity> Set<? extends E> getRootEntitySet(Class<E> entityType) {
-		return (Set<? extends E>) graph.get(entityMetadata.getRootEntityClass(entityType));
+	private Set<?> getRootEntitySet(Class<?> entityType) {
+		return graph.get(entityMetadata.getRootEntityClass(entityType));
 
 	}
 
@@ -101,10 +99,9 @@ public final class EntityGraph implements IEntityProvider {
 	 * @return The non-<code>null</code> entity set for the <em>root</em> entity
 	 *         type of the given entity type.
 	 */
-	@SuppressWarnings("unchecked")
-	Set<? extends IEntity> getNonNullEntitySet(Class<? extends IEntity> entityType) {
-		final Class<? extends IEntity> rootType = (Class<? extends IEntity>) entityMetadata.getRootEntityClass(entityType);
-		LinkedHashSet<? extends IEntity> set = graph.get(rootType);
+	Set<?> getNonNullEntitySet(Class<?> entityType) {
+		final Class<?> rootType = entityMetadata.getRootEntityClass(entityType);
+		LinkedHashSet<?> set = graph.get(rootType);
 		if(set == null) {
 			set = new LinkedHashSet<IEntity>();
 			graph.put(rootType, set);
@@ -113,12 +110,14 @@ public final class EntityGraph implements IEntityProvider {
 	}
 
 	@Override
-	public <E extends IEntity> Collection<E> getEntitiesByType(Class<E> type) {
-		final Set<? extends E> rootset = getRootEntitySet(type);
+	public <E> Collection<E> getEntitiesByType(Class<E> type) {
+		@SuppressWarnings("unchecked")
+		final Set<E> rootset = (Set<E>) getRootEntitySet(type);
 		if(rootset == null) return null;
 		final Set<E> set = new LinkedHashSet<E>();
 		for(final E e : rootset) {
-			if(type == e.entityClass() || type.isAssignableFrom(e.entityClass())) {
+			Class<?> eclass = entityMetadata.getEntityClass(e);
+			if(type == eclass || type.isAssignableFrom(eclass)) {
 				set.add(e);
 			}
 		}
@@ -126,7 +125,7 @@ public final class EntityGraph implements IEntityProvider {
 	}
 
 	@Override
-	public <E extends IEntity> E getEntityByType(Class<E> type) throws IllegalStateException {
+	public <E> E getEntityByType(Class<E> type) throws IllegalStateException {
 		final Collection<E> clc = getEntitiesByType(type);
 		if(clc == null || clc.size() == 0) return null;
 		if(clc.size() == 1) {
@@ -136,12 +135,13 @@ public final class EntityGraph implements IEntityProvider {
 	}
 
 	@Override
-	public <E extends IEntity> E getEntity(Class<E> entityType, Object pk) {
+	public <E> E getEntity(Class<E> entityType, Object pk) {
 		if(pk == null) throw new IllegalArgumentException("No primary key specified");
 		final Collection<E> clc = getEntitiesByType(entityType);
 		if(clc != null) {
 			for(final E e : clc) {
-				if(pk.equals(e.getId())) {
+				Object eid = entityMetadata.getId(e);
+				if(pk.equals(eid)) {
 					return e;
 				}
 			}
@@ -231,8 +231,8 @@ public final class EntityGraph implements IEntityProvider {
 	 * @throws NonUniqueBusinessKeyException When the entity set is found to be
 	 *         business key non-unique.
 	 */
-	private <E extends IEntity> void validateEntitySet(Class<E> entityType) throws NonUniqueBusinessKeyException {
-		final Set<? extends IEntity> set = getRootEntitySet(entityType);
+	private <E> void validateEntitySet(Class<E> entityType) throws NonUniqueBusinessKeyException {
+		final Set<?> set = getRootEntitySet(entityType);
 		try {
 			bkf.isBusinessKeyUnique(set);
 		}
@@ -248,7 +248,7 @@ public final class EntityGraph implements IEntityProvider {
 	 * @see #validateEntitySet(Class)
 	 */
 	void validate() throws NonUniqueBusinessKeyException {
-		for(final Class<? extends IEntity> entityType : graph.keySet()) {
+		for(final Class<?> entityType : graph.keySet()) {
 			validateEntitySet(entityType);
 		}
 	}

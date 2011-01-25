@@ -94,6 +94,11 @@ public class BusinessKeyFactoryTest {
 	static class TestEntityMetadata implements IEntityMetadata {
 
 		@Override
+		public Object getId(Object entity) {
+			return ((TestEntity) entity).getId();
+		}
+
+		@Override
 		public Class<?> getEntityClass(Object entity) {
 			return entity.getClass();
 		}

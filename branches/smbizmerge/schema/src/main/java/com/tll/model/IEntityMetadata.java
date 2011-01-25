@@ -17,6 +17,13 @@ public interface IEntityMetadata {
 	 * @return true/false
 	 */
 	boolean isEntityType(Class<?> claz);
+	
+	/**
+	 * Gets the entity id. (This avoids having to use reflection).
+	 * @param entity entity instance
+	 * @return entity id
+	 */
+	Object getId(Object entity);
 
 	/**
 	 * Gets the proper entity class given an object ref.
