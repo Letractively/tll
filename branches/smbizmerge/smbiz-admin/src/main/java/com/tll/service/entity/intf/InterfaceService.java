@@ -58,7 +58,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 		assert io != null;
 		final AccountInterfaceOption aio = entityAssembler.assembleEntity(AccountInterfaceOption.class, null);
 		aio.setId(io.getId());
-		aio.setVersion(1);	// mimic non-new entity
+		aio.setVersion(Integer.valueOf(1));	// mimic non-new entity
 		aio.setAnnualCost(io.getAnnualCost());
 		aio.setAnnualPrice(io.getBaseAnnualPrice());
 		aio.setBaseAnnualPrice(io.getBaseAnnualPrice());
@@ -78,7 +78,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 		for(final InterfaceOptionParameterDefinition iopd : io.getParameters()) {
 			final AccountInterfaceOptionParameter aiop = entityAssembler.assembleEntity(AccountInterfaceOptionParameter.class, null);
 			aiop.setId(iopd.getId());
-			aiop.setVersion(1);	// mimic non-new entity
+			aiop.setVersion(Integer.valueOf(1));	// mimic non-new entity
 			aiops.add(aiop);
 			aiop.setCode(iopd.getCode());
 			aiop.setName(iopd.getName());
@@ -120,7 +120,7 @@ public class InterfaceService extends NamedEntityService<Interface> implements I
 		}
 
 		final AccountInterface ai = entityAssembler.assembleEntity(AccountInterface.class, null);
-		ai.setVersion(1); // mimic non-new entity
+		ai.setVersion(Integer.valueOf(1)); // mimic non-new entity
 		ai.setAccountKey(accountKey);
 		ai.setInterfaceKey(interfaceKey);
 		ai.setName(intf.getName());

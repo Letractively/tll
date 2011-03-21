@@ -95,7 +95,7 @@ public class BusinessKeyFactoryTest {
 
 		@Override
 		public Object getId(Object entity) {
-			return ((TestEntity) entity).getId();
+			return Long.valueOf(((TestEntity) entity).getId());
 		}
 
 		@Override

@@ -309,7 +309,7 @@ public class SchemaInfoTest {
 
 		@Override
 		public Object getId(Object entity) {
-			return ((EntityBase)entity).getId();
+			return Long.valueOf(((EntityBase)entity).getId());
 		}
 
 		@Override
