@@ -19,7 +19,6 @@ import com.google.inject.Key;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.config.Config;
-import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
 import com.tll.mail.NameEmail;
 
@@ -27,7 +26,7 @@ import com.tll.mail.NameEmail;
  * EmailExceptionHandlerModule
  * @author jpk
  */
-public class EmailExceptionHandlerModule extends AbstractModule implements IConfigAware {
+public class EmailExceptionHandlerModule extends AbstractModule {
 
 	private static final Logger log = LoggerFactory.getLogger(EmailExceptionHandlerModule.class);
 
@@ -66,13 +65,13 @@ public class EmailExceptionHandlerModule extends AbstractModule implements IConf
 		public @interface OnErrorEmail {
 	}
 
-	Config config;
+	private final Config config;
 
 	/**
 	 * Constructor
 	 */
 	public EmailExceptionHandlerModule() {
-		super();
+		this(null);
 	}
 
 	/**
@@ -81,11 +80,6 @@ public class EmailExceptionHandlerModule extends AbstractModule implements IConf
 	 */
 	public EmailExceptionHandlerModule(Config config) {
 		super();
-		setConfig(config);
-	}
-
-	@Override
-	public void setConfig(Config config) {
 		this.config = config;
 	}
 

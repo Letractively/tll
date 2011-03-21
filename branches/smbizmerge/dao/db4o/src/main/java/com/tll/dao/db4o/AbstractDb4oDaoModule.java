@@ -24,7 +24,6 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.config.Config;
-import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
 import com.tll.dao.IEntityDao;
 import com.tll.model.EntityMetadata;
@@ -35,7 +34,7 @@ import com.tll.model.IEntityMetadata;
  * AbstractDb4oDaoModule - Db4o dao impl module.
  * @author jpk
  */
-public abstract class AbstractDb4oDaoModule extends AbstractModule implements IConfigAware {
+public abstract class AbstractDb4oDaoModule extends AbstractModule {
 
 	private static final int DEFAULT_TRANS_TIMEOUT = 60; // seconds
 
@@ -98,13 +97,13 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 		}
 	}
 
-	Config config;
+	private final Config config;
 
 	/**
 	 * Constructor
 	 */
 	public AbstractDb4oDaoModule() {
-		super();
+		this(null);
 	}
 
 	/**
@@ -113,11 +112,6 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule implements IC
 	 */
 	public AbstractDb4oDaoModule(Config config) {
 		super();
-		this.config = config;
-	}
-
-	@Override
-	public void setConfig(Config config) {
 		this.config = config;
 	}
 

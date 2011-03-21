@@ -23,14 +23,13 @@ import com.google.inject.Key;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.config.Config;
-import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
 
 /**
  * MailModule - Module for programmatic email distribution.
  * @author jpk
  */
-public final class MailModule extends AbstractModule implements IConfigAware {
+public final class MailModule extends AbstractModule {
 
 	private static final Logger log = LoggerFactory.getLogger(MailModule.class);
 
@@ -134,13 +133,13 @@ public final class MailModule extends AbstractModule implements IConfigAware {
 	public @interface SecondaryMailSender {
 	}
 
-	Config config;
+	private final Config config;
 
 	/**
 	 * Constructor
 	 */
 	public MailModule() {
-		super();
+		this(null);
 	}
 
 	/**
@@ -149,11 +148,6 @@ public final class MailModule extends AbstractModule implements IConfigAware {
 	 */
 	public MailModule(Config config) {
 		super();
-		setConfig(config);
-	}
-
-	@Override
-	public void setConfig(Config config) {
 		this.config = config;
 	}
 

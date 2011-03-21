@@ -14,7 +14,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.config.Config;
-import com.tll.config.IConfigAware;
 import com.tll.dao.db4o.SmbizDb4oDaoModule;
 import com.tll.model.EMF;
 import com.tll.model.IEntityAssembler;
@@ -30,11 +29,11 @@ import com.tll.util.ClassUtil;
  * la db4o.
  * @author jpk
  */
-public class SmbizDb4oPersistModule extends AbstractModule implements IConfigAware {
+public class SmbizDb4oPersistModule extends AbstractModule {
 	
 	static final Logger log = LoggerFactory.getLogger(SmbizDb4oPersistModule.class);
 
-	private Config config;
+	private final Config config;
 
 	/**
 	 * Constructor
@@ -45,11 +44,6 @@ public class SmbizDb4oPersistModule extends AbstractModule implements IConfigAwa
 		this.config = config;
 	}
 
-	@Override
-	public void setConfig(Config config) {
-		this.config = config;
-	}
-	
 	@Override
 	public void configure() {
 		log.info("Loading smbiz db4o persist related modules...");
