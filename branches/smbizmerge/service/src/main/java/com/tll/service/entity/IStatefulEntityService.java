@@ -5,7 +5,7 @@ import java.util.Collection;
 import com.tll.model.IEntity;
 
 /**
- * Base interface for all services.
+ * Entity service interface for entities that support the notion of deletion.
  * @author jpk
  * @param <E>
  */
