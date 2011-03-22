@@ -37,10 +37,10 @@
   </build>
 
   <dependencies>
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-    </dependency>
+<!--     <dependency> -->
+<!--       <groupId>commons-lang</groupId> -->
+<!--       <artifactId>commons-lang</artifactId> -->
+<!--     </dependency> -->
     <dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -51,17 +51,11 @@
       <scope>runtime</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.apache.velocity</groupId>
-      <artifactId>velocity</artifactId>
-      <optional>true</optional>
-    </dependency>
-
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-core</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
+<!--     <dependency> -->
+<!--       <groupId>com.tll</groupId> -->
+<!--       <artifactId>tll-core</artifactId> -->
+<!--       <version>0.0.1-SNAPSHOT</version> -->
+<!--     </dependency> -->
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-config</artifactId>

@@ -219,6 +219,35 @@
       <artifactId>tll-client-listing</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
+    
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-core</artifactId>
+      <classifier>testassets</classifier>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-api</artifactId>
+      <classifier>testassets</classifier>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-db4o</artifactId>
+      <classifier>testassets</classifier>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-service</artifactId>
+      <classifier>testassets</classifier>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 

@@ -48,7 +48,6 @@ public class SmbizDb4oPersistModule extends AbstractModule {
 	public void configure() {
 		log.info("Loading smbiz db4o persist related modules...");
 		install(new ValidationModule());
-		install(new SmbizEGraphModule());
 		install(new SmbizDb4oDaoModule(config));
 		
 		bind(IEntityAssembler.class).to(SmbizEntityAssembler.class).in(Scopes.SINGLETON);
@@ -65,5 +64,9 @@ public class SmbizDb4oPersistModule extends AbstractModule {
 		
 		// required for satisfying GWT's RequestFactory (entity-RPC) feature
 		requestStaticInjection(EMF.class);
+		
+		// dev/debug mode only:
+		// TODO turn into config flag or something as we don't want this to boot in production mode!
+		install(new SmbizEGraphModule());		
 	}
 }

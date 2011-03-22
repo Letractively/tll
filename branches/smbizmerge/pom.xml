@@ -38,7 +38,7 @@
 		<gwtVersion>2.2.0</gwtVersion>
 		
 		<junitVersion>4.8.2</junitVersion>
-		<testNGVersion>5.14.6</testNGVersion>
+		<testNGVersion>6.0</testNGVersion>
 	</properties>
 
 	<developers>
@@ -535,13 +535,7 @@
 			<dependency>
 				<groupId>net.sf.ehcache</groupId>
 				<artifactId>ehcache-core</artifactId>
-				<version>1.7.2</version>
-				<exclusions>
-					<exclusion>
-						<groupId>net.sf.jsr107cache</groupId>
-						<artifactId>jsr107cache</artifactId>
-					</exclusion>
-				</exclusions>
+				<version>2.3.2</version>
 			</dependency>
 
 			<!-- db4o -->

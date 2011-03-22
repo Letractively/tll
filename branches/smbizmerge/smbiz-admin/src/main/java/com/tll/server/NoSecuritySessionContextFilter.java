@@ -18,6 +18,10 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Singleton;
+import com.tll.model.User;
+import com.tll.service.entity.user.IUserService;
+
 /**
  * NoSecuritySessionContextFilter - Creates {@link HttpSession}s populating it
  * with an {@link AdminContext}.
@@ -26,6 +30,7 @@ import org.slf4j.LoggerFactory;
  * is employed.
  * @author jpk
  */
+@Singleton
 public final class NoSecuritySessionContextFilter implements Filter {
 
 	private static final Logger log = LoggerFactory.getLogger(NoSecuritySessionContextFilter.class);
@@ -55,18 +60,17 @@ public final class NoSecuritySessionContextFilter implements Filter {
 				if(appContext == null) {
 					throw new ServletException("Unable to obtain the app context");
 				}
-// TODO fix
-//				final PersistContext pc = (PersistContext) sc.getAttribute(PersistContext.KEY);
-//				if(pc == null) {
-//					throw new ServletException("Unable to obtain the persist context");
-//				}
-//				final IUserService userService = pc.getEntityServiceFactory().instance(IUserService.class);
-//				final User user = (User) userService.loadUserByUsername(appContext.getDfltUserEmail());
-//				log.debug("Creating mock admin context from default user email specified in config..");
-//				final AdminContext ac = new AdminContext();
-//				ac.setUser(user);
-//				session.setAttribute(AdminContext.KEY, ac);
-//				log.info("Server-side admin context created and stored in the servlet context");
+				final PersistContext pc = (PersistContext) sc.getAttribute(PersistContext.KEY);
+				if(pc == null) {
+					throw new ServletException("Unable to obtain the persist context");
+				}
+				final IUserService userService = pc.getEntityServiceFactory().instance(IUserService.class);
+				final User user = (User) userService.loadUserByUsername(appContext.getDfltUserEmail());
+				log.debug("Creating mock admin context from default user email specified in config..");
+				final AdminContext ac = new AdminContext();
+				ac.setUser(user);
+				session.setAttribute(AdminContext.KEY, ac);
+				log.info("Server-side admin context created and stored in the servlet context");
 			}
 		}
 		finally {

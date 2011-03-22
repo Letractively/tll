@@ -137,23 +137,16 @@ public final class MailModule extends AbstractModule {
 
 	/**
 	 * Constructor
-	 */
-	public MailModule() {
-		this(null);
-	}
-
-	/**
-	 * Constructor
 	 * @param config
 	 */
 	public MailModule(Config config) {
 		super();
+		if(config == null) throw new IllegalStateException("No config specified.");
 		this.config = config;
 	}
 
 	@Override
 	protected void configure() {
-		if(config == null) throw new IllegalStateException("No config instance set.");
 		log.info("Employing mail module");
 
 		// default mail routing object

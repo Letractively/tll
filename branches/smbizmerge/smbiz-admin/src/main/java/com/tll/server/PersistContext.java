@@ -14,19 +14,17 @@ import com.tll.model.SchemaInfo;
 import com.tll.service.entity.IEntityServiceFactory;
 
 /**
- * PersistContext - Servlet context scoped data object holding needed types for
- * processing persist/model data related functionality.
+ * Servlet context scoped data object holding needed types for processing
+ * persist/model data related functionality.
  * @author jpk
  */
 public final class PersistContext {
-
-	private static final long key = 7366163949288867262L;
 
 	/**
 	 * The key identifying the {@link PersistContext} in the
 	 * {@link ServletContext}.
 	 */
-	public static final String KEY = Long.toString(key);
+	public static final String KEY = Long.toString(7366163949288867262L);
 
 	private final MailManager mailManager;
 	private final SchemaInfo schemaInfo;
@@ -45,9 +43,8 @@ public final class PersistContext {
 	 * @param exceptionHandler
 	 */
 	@Inject
-	public PersistContext(MailManager mailManager, SchemaInfo schemaInfo, 
-			IEntityFactory entityFactory, IEntityAssembler entityAssembler, IEntityServiceFactory entityServiceFactory,
-			IExceptionHandler exceptionHandler) {
+	public PersistContext(MailManager mailManager, SchemaInfo schemaInfo, IEntityFactory entityFactory,
+			IEntityAssembler entityAssembler, IEntityServiceFactory entityServiceFactory, IExceptionHandler exceptionHandler) {
 		super();
 		this.mailManager = mailManager;
 		this.schemaInfo = schemaInfo;

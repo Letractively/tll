@@ -8,7 +8,7 @@ package com.tll.server;
 import com.tll.model.User;
 
 /**
- * AdminContext - Value object intended for session scoped smbiz admin context.
+ * Session scoped smbiz admin context.
  * @author jpk
  */
 public final class AdminContext {

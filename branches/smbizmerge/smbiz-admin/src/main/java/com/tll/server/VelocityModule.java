@@ -8,9 +8,10 @@ import java.io.FileReader;
 import java.net.URL;
 import java.util.Properties;
 
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.log.SLF4JLogChute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.velocity.app.VelocityEngine;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
@@ -48,6 +49,10 @@ public class VelocityModule extends AbstractModule {
 
 	void doInit(VelocityEngine ve, Properties props) {
 		try {
+			
+			// bullshit hack (f*&% velocity) - ClassNotFoundException ocurrs if specified in velocity.properties)
+			ve.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM_CLASS, SLF4JLogChute.class);
+			
 			if(props != null)
 				ve.init(props);
 			else

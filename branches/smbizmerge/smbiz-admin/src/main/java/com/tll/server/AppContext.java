@@ -6,15 +6,14 @@ package com.tll.server;
 
 import javax.servlet.ServletContext;
 
-import com.tll.service.entity.account.AddAccountService;
-
 /**
- * AppContext
+ * App scoped (servlet context) data object.
  * @author jpk
  */
 public class AppContext {
 
-	public static final String DEFAULT_STAGE = "prod"; // production
+	public static final String DEFAULT_STAGE = "dev"; 	
+		// dev (development), prod (production)
 
 	public static final String DEFAULT_ENVIRONMENT = "UNSPECIFIED";
 
@@ -27,21 +26,18 @@ public class AppContext {
 	private final String stage;
 	private final String environment;
 	private final String dfltUserEmail;
-	private final AddAccountService addAccountService;
 
 	/**
 	 * Constructor
 	 * @param stage
 	 * @param environment
 	 * @param dfltUserEmail
-	 * @param addAccountService
 	 */
-	public AppContext(String stage, String environment, String dfltUserEmail, AddAccountService addAccountService) {
+	public AppContext(String stage, String environment, String dfltUserEmail) {
 		super();
 		this.stage = stage;
 		this.environment = environment;
 		this.dfltUserEmail = dfltUserEmail;
-		this.addAccountService = addAccountService;
 	}
 
 	/**
@@ -70,12 +66,5 @@ public class AppContext {
 	 */
 	public String getDfltUserEmail() {
 		return dfltUserEmail;
-	}
-
-	/**
-	 * @return the addAccountService
-	 */
-	public AddAccountService getAddAccountService() {
-		return addAccountService;
 	}
 }
