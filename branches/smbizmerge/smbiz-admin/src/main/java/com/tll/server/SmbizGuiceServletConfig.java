@@ -5,7 +5,6 @@
  */
 package com.tll.server;
 
-import java.util.HashMap;
 
 import javax.servlet.ServletContextEvent;
 
@@ -18,11 +17,9 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 import com.google.inject.servlet.GuiceServletContextListener;
-import com.google.inject.servlet.ServletModule;
 import com.tll.SmbizDb4oPersistModule;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
-import com.tll.server.rpc.SiteStatisticsService;
 
 /**
  * smbiz admin app bootstrapper.
@@ -33,29 +30,6 @@ public class SmbizGuiceServletConfig extends GuiceServletContextListener {
 	private static final Logger log = LoggerFactory.getLogger(SmbizGuiceServletConfig.class);
 	
 	private transient Config config;
-
-	/**
-	 * Encapsulates web.xml bindings.
-	 * @author jpk
-	 */
-	static class SmbizServletModule extends ServletModule {
-
-		@Override
-		protected void configureServlets() {
-			
-			// NoSecuritySessionContextFilter
-			filter("/*").through(NoSecuritySessionContextFilter.class);
-
-			// WebClientCacheFilter
-			HashMap<String, String> cparams = new HashMap<String, String>(1);
-			cparams.put("oneDayCacheFileExts", ".js .css .gif .jpg .png");
-			filter("/*").through(WebClientCacheFilter.class, cparams);
-			
-			// site statistics rpc service
-			serve("/SmbizAdmin/ss").with(SiteStatisticsService.class);
-		}
-
-	}
 
 	@Override
 	protected Injector getInjector() {
@@ -73,7 +47,7 @@ public class SmbizGuiceServletConfig extends GuiceServletContextListener {
 
 		log.debug("Creating servlet injector..");
 		Injector injector =
-				Guice.createInjector(new SmbizDb4oPersistModule(config), new SmbizWebModule(config), new SmbizServletModule());
+				Guice.createInjector(new SmbizDb4oPersistModule(config), new SmbizWebModule(config), new SmbizServletModule(config));
 		log.debug("Servlet injector created");
 		return injector;
 	}
@@ -97,10 +71,10 @@ public class SmbizGuiceServletConfig extends GuiceServletContextListener {
 		// create app and persist contexts
 		AppContext ac = injector.getInstance(AppContext.class);
 		assert ac != null;
-		sce.getServletContext().setAttribute(AppContext.class.getName(), ac);
+		sce.getServletContext().setAttribute(AppContext.KEY, ac);
 		PersistContext pc = injector.getInstance(PersistContext.class);
 		assert pc != null;
-		sce.getServletContext().setAttribute(PersistContext.class.getName(), pc);
+		sce.getServletContext().setAttribute(PersistContext.KEY, pc);
 		
 		config = null;	// no longer need this ref!
 		

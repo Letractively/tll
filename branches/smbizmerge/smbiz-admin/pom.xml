@@ -24,6 +24,22 @@
   <build>
     <outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory>
 
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <!-- don't copy any config prop files as they are managed independently. -->
+        <excludes>
+          <exclude>config*.properties</exclude>
+        </excludes>
+      </resource>
+      <resource>
+        <directory>src/main/resources/refdata</directory>
+        <includes>
+          <include>*.*</include>
+        </includes>
+      </resource>
+    </resources>
+
     <plugins>
 
       <!-- AspectJ bind @Transactional to Spring's trans handling framework -->
@@ -31,7 +47,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>aspectj-maven-plugin</artifactId>
         <configuration>
-          <showWeaveInfo>true</showWeaveInfo>
+          <showWeaveInfo>false</showWeaveInfo>
           <source>1.6</source>
           <target>1.6</target>
           <complianceLevel>1.6</complianceLevel>
@@ -43,13 +59,14 @@
           </aspectLibraries>
         </configuration>
         <executions>
-          <execution>
-            <id>aj compile smbiz</id>
-            <goals>
-              <goal>compile</goal>
-              <goal>test-compile</goal>
-            </goals>
-          </execution>
+<!-- TODO restore -->
+<!--           <execution> -->
+<!--             <id>aj compile smbiz</id> -->
+<!--             <goals> -->
+<!--               <goal>compile</goal> -->
+<!--               <goal>test-compile</goal> -->
+<!--             </goals> -->
+<!--           </execution> -->
         </executions>
       </plugin>
       
@@ -57,22 +74,50 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
-        <version>2.2.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>compile</goal>
-              <goal>test</goal>
-              <goal>i18n</goal>
-              <goal>generateAsync</goal>
-            </goals>
-          </execution>
-        </executions>
         <configuration>
           <runTarget>SmbizAdmin.html</runTarget>
           <hostedWebapp>${webappDirectory}</hostedWebapp>
-          <i18nMessagesBundle>com.tll.client.Messages</i18nMessagesBundle>
         </configuration>
+        <executions>
+          <execution>
+            <id>gwt-i18n</id>
+            <goals>
+              <goal>i18n</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <i18nMessagesBundle>com.tll.client.Messages</i18nMessagesBundle>
+            </configuration>
+          </execution>
+          <execution>
+            <id>gwt-generateAsync</id>
+            <goals>
+              <goal>generateAsync</goal>
+            </goals>
+            <phase>generate-sources</phase>
+          </execution>
+          <execution>
+            <id>gwt-compile</id>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <phase>prepare-package</phase>
+            <configuration>
+              <module>${gwtTargetModule}</module>
+              <style>${gwtCompileStyle}</style>
+            </configuration>
+          </execution>
+          <execution>
+            <id>gwt-test</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <phase>integration-test</phase>
+            <configuration>
+            <!-- TODO finish -->
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
@@ -96,8 +141,127 @@
         </configuration>
       </plugin>
 
+      <!-- gmaven plugin -->
+      <plugin>
+        <groupId>org.codehaus.groovy.maven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+<!--         <configuration> -->
+<!--           <source>println 'config'</source> -->
+<!--         </configuration> -->
+        <executions>
+          <execution>
+            <id>war-resources</id>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <phase>compile</phase><!-- we do compile phase since the *.class files need to be present for db stubbing -->
+            <configuration>
+              <classpath>
+<!--                 <element> -->
+<!--                   <groupId>commons-configuration</groupId> -->
+<!--                   <artifactId>commons-configuration</artifactId> -->
+<!--                 </element> -->
+<!--                 <element> -->
+<!--                   <groupId>com.google.code.guice</groupId> -->
+<!--                   <artifactId>guice</artifactId> -->
+<!--                 </element> -->
+<!--                 <element> -->
+<!--                   <groupId>aopalliance</groupId> -->
+<!--                   <artifactId>aopalliance</artifactId> -->
+<!--                 </element> -->
+<!--                 <element> -->
+<!--                   <groupId>com.tll</groupId> -->
+<!--                   <artifactId>tll-config</artifactId> -->
+<!--                   <version>0.0.1-SNAPSHOT</version> -->
+<!--                 </element> -->
+<!--                 <element> -->
+<!--                   <groupId>com.tll</groupId> -->
+<!--                   <artifactId>tll-model</artifactId> -->
+<!--                   <version>0.0.1-SNAPSHOT</version> -->
+<!--                 </element> -->
+<!--                 <element> -->
+<!--                   <groupId>com.tll</groupId> -->
+<!--                   <artifactId>tll-dao-api</artifactId> -->
+<!--                   <version>0.0.1-SNAPSHOT</version> -->
+<!--                   <classifier>testassets</classifier> -->
+<!--                 </element> -->
+                <element>
+                  <groupId>com.tll</groupId>
+                  <artifactId>tll-dao-db4o</artifactId>
+                  <version>0.0.1-SNAPSHOT</version>
+                  <classifier>testassets</classifier>
+                </element>
+              </classpath>
+              <scriptpath>
+                <element>${project.basedir}/../config/src/main/scripts</element>
+                <element>${project.basedir}/src/main/scripts</element>
+              </scriptpath>
+              <source><![CDATA[com.tll.BuildTools.processWarResources(project, ant);]]></source>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
+  
+  <profiles>
+
+    <!-- stage profiles -->
+    <!-- dev profile -->
+    <profile>
+      <id>dev</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <debug>true</debug>
+        <stage>dev</stage>
+        <gwtCompileStyle>PRETTY</gwtCompileStyle>
+        <gwtTargetModule>com.tll.SmbizAdminDev</gwtTargetModule>
+      </properties>
+    </profile>
+    <!-- prod (production) profile -->
+    <profile>
+      <id>prod</id>
+      <properties>
+        <debug>false</debug>
+        <stage>prod</stage>
+        <gwtCompileStyle>OBF</gwtCompileStyle>
+        <gwtTargetModule>com.tll.SmbizAdmin</gwtTargetModule>
+      </properties>
+      <build>
+        <plugins>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- dao impl profiles -->
+    <profile>
+      <id>db4o</id>
+      <properties>
+        <daoImpl>db4o</daoImpl>
+      </properties>
+    </profile>
+
+    <!-- security impl profiles -->
+    <profile>
+      <id>security</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <securityImpl>acegi</securityImpl>
+      </properties>
+    </profile>
+    <profile>
+      <id>nosecurity</id>
+      <properties>
+        <securityImpl>none</securityImpl>
+      </properties>
+    </profile>
+
+  </profiles>
 
   <dependencies>
     <dependency>
@@ -105,18 +269,13 @@
 			<artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <scope>runtime</scope>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
     </dependency>
     <dependency>
       <groupId>aopalliance</groupId>
       <artifactId>aopalliance</artifactId>
       <scope>runtime</scope>
-    </dependency>
-    <dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
     </dependency>
 
     <dependency>

@@ -17,7 +17,6 @@ import com.tll.config.Config;
 import com.tll.dao.db4o.SmbizDb4oDaoModule;
 import com.tll.model.EMF;
 import com.tll.model.IEntityAssembler;
-import com.tll.model.SmbizEGraphModule;
 import com.tll.model.SmbizEntityAssembler;
 import com.tll.model.validate.ValidationModule;
 import com.tll.service.entity.SmbizEntityServiceFactoryModule;
@@ -64,9 +63,5 @@ public class SmbizDb4oPersistModule extends AbstractModule {
 		
 		// required for satisfying GWT's RequestFactory (entity-RPC) feature
 		requestStaticInjection(EMF.class);
-		
-		// dev/debug mode only:
-		// TODO turn into config flag or something as we don't want this to boot in production mode!
-		install(new SmbizEGraphModule());		
 	}
 }

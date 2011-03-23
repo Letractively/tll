@@ -16,7 +16,7 @@ import com.tll.dao.db4o.Db4oDbShell;
 import com.tll.model.egraph.IEntityGraphPopulator;
 
 /**
- * Db4oDbShellModule - Db4o db shell impl module.
+ * Db4o db shell impl module.
  * @author jpk
  */
 public class Db4oDbShellModule extends AbstractModule {
