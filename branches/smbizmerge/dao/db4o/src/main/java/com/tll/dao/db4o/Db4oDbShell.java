@@ -24,7 +24,6 @@ import com.tll.model.egraph.EntityGraph;
 import com.tll.model.egraph.IEntityGraphPopulator;
 
 /**
- * MockDbShell
  * @author jpk
  */
 public class Db4oDbShell implements IDbShell {
@@ -36,6 +35,15 @@ public class Db4oDbShell implements IDbShell {
 	private final IEntityGraphPopulator populator;
 
 	private final Provider<EmbeddedConfiguration> c;
+
+	public static void clearData(EmbeddedObjectContainer container) {
+		ObjectSet<Object> set = container.queryByExample(null);
+		if(set != null) {
+			for(Object obj : set) {
+				container.delete(obj);
+			}
+		}
+	}
 
 	/**
 	 * Constructor
@@ -79,15 +87,7 @@ public class Db4oDbShell implements IDbShell {
 	public void killDbSession(EmbeddedObjectContainer session) {
 		if(session != null) {
 			log.info("Killing db4o session for: " + dbFile);
-			while(!session.close()) {}
-		}
-	}
-	
-	public static void clearData(EmbeddedObjectContainer container) {
-		ObjectSet<Object> set = container.queryByExample(null);
-		if(set != null) {
-			for(Object obj : set) {
-				container.delete(obj);
+			while(!session.close()) {
 			}
 		}
 	}
@@ -126,7 +126,7 @@ public class Db4oDbShell implements IDbShell {
 		log.info("Deleting db4o db: " + f.getPath());
 		if(!f.delete()) throw new IllegalStateException("Unable to delete db4o file: " + f.getAbsolutePath());
 	}
-	
+
 	public void addData(EmbeddedObjectContainer dbSession) {
 		if(populator == null) throw new IllegalStateException("No populator set");
 		try {
@@ -151,7 +151,7 @@ public class Db4oDbShell implements IDbShell {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	@Override
 	public void addData() {
 		EmbeddedObjectContainer dbSession = null;

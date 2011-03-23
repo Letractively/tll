@@ -110,7 +110,7 @@ public final class EntityGraph implements IEntityProvider {
 	}
 
 	@Override
-	public <E> Collection<E> getEntitiesByType(Class<E> type) {
+	public <E> Set<E> getEntitiesByType(Class<E> type) {
 		@SuppressWarnings("unchecked")
 		final Set<E> rootset = (Set<E>) getRootEntitySet(type);
 		if(rootset == null) return null;

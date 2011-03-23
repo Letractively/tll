@@ -12,8 +12,6 @@ import java.util.List;
 import net.sf.ehcache.CacheManager;
 
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.db4o.EmbeddedObjectContainer;
@@ -75,16 +73,6 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 			this.sorting = sorting;
 		}
 	} // CriteriaAndSorting
-
-	@BeforeClass(alwaysRun = true)
-	public final void onBeforeClass() {
-		beforeClass();
-	}
-
-	@AfterClass(alwaysRun = true)
-	public final void onAfterClass() {
-		afterClass();
-	}
 
 	@Override
 	protected void beforeClass() {

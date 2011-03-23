@@ -8,20 +8,23 @@ import java.util.Set;
 
 import org.testng.Assert;
 
-import com.tll.model.Interface;
+import com.tll.model.InterfaceMulti;
 import com.tll.model.InterfaceOption;
 import com.tll.model.InterfaceOptionParameterDefinition;
 import com.tll.model.bk.BusinessKeyFactory;
 
 /**
- * AbstractInterfaceDaoTestHandler
- * @param <I> interface type
  * @author jpk
  */
-public abstract class AbstractInterfaceDaoTestHandler<I extends Interface> extends AbstractEntityDaoTestHandler<I> {
+public class InterfaceDaoTestHandler extends AbstractEntityDaoTestHandler<InterfaceMulti> {
 
 	protected InterfaceOption removedOption;
 	protected InterfaceOptionParameterDefinition removedParam;
+
+	@Override
+	public Class<InterfaceMulti> entityClass() {
+		return InterfaceMulti.class;
+	}
 
 	/*
 	 * Interfaces don't support paging.
@@ -32,7 +35,7 @@ public abstract class AbstractInterfaceDaoTestHandler<I extends Interface> exten
 	}
 
 	@Override
-	public void assembleTestEntity(I e) throws Exception {
+	public void assembleTestEntity(InterfaceMulti e) throws Exception {
 
 		final InterfaceOption o1 = create(InterfaceOption.class, false);
 		Set<InterfaceOptionParameterDefinition> params =
@@ -47,7 +50,7 @@ public abstract class AbstractInterfaceDaoTestHandler<I extends Interface> exten
 	}
 
 	@Override
-	public void makeUnique(I e) {
+	public void makeUnique(InterfaceMulti e) {
 		super.makeUnique(e);
 		for(final InterfaceOption o : e.getOptions()) {
 			BusinessKeyFactory.makeBusinessKeyUnique(o);
@@ -58,7 +61,7 @@ public abstract class AbstractInterfaceDaoTestHandler<I extends Interface> exten
 	}
 
 	@Override
-	public void verifyLoadedEntityState(I e) throws Exception {
+	public void verifyLoadedEntityState(InterfaceMulti e) throws Exception {
 		super.verifyLoadedEntityState(e);
 
 		Assert.assertNotNull(e.getCode(), "Interface code is null");
@@ -74,7 +77,7 @@ public abstract class AbstractInterfaceDaoTestHandler<I extends Interface> exten
 	}
 
 	@Override
-	public void alterTestEntity(I e) {
+	public void alterTestEntity(InterfaceMulti e) {
 		final Iterator<InterfaceOption> itr = e.getOptions().iterator();
 
 		final InterfaceOption o = itr.next();
@@ -92,7 +95,7 @@ public abstract class AbstractInterfaceDaoTestHandler<I extends Interface> exten
 	}
 
 	@Override
-	public void verifyEntityAlteration(I e) throws Exception {
+	public void verifyEntityAlteration(InterfaceMulti e) throws Exception {
 		// TODO fix
 		//Assert.assertNull(e.getOption(removedOption.getId()), "Orphaned option still persists");
 		final InterfaceOption o = e.getOptions().iterator().next();

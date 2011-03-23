@@ -4,11 +4,11 @@
  */
 package com.tll.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * EntityCache - Generic holder of an arbitrary set of entities. Used, in
@@ -43,9 +43,9 @@ public class EntityCache implements IEntityProvider {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <E> Collection<E> getEntitiesByType(Class<E> type) {
+	public <E> Set<E> getEntitiesByType(Class<E> type) {
 		if(type == null) return null;
-		List<E> list = new ArrayList<E>();
+		HashSet<E> list = new HashSet<E>();
 		for(IEntity e : map.values()) {
 			if(type.isAssignableFrom(e.entityClass())) {
 				list.add((E) e);

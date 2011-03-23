@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
@@ -48,11 +47,6 @@ public class MarshalerTest extends AbstractConfigAwareTest {
 		tupleMap.put("character", new Character('c'));
 		tupleMap.put("enum", AccountStatus.OPEN);
 		tupleMap.put("boolean", new Boolean(true));
-	}
-
-	@BeforeClass(alwaysRun = true)
-	public final void onBeforeClass() {
-		beforeClass();
 	}
 
 	@Override

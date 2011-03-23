@@ -10,17 +10,21 @@ import com.tll.model.AccountAddress;
 import com.tll.model.Address;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
+import com.tll.model.Merchant;
 import com.tll.model.PaymentInfo;
 import com.tll.model.bk.BusinessKeyFactory;
 
 /**
- * AbstractAccountDaoTestHandler
- * @param <A> the account type
  * @author jpk
  */
-public abstract class AbstractAccountDaoTestHandler<A extends Account> extends AbstractEntityDaoTestHandler<A> {
+public class AccountDaoTestHandler extends AbstractEntityDaoTestHandler<Merchant> {
 
 	Long pkPaymentInfo, pkCurrency, pkAccountParent;
+
+	@Override
+	public Class<Merchant> entityClass() {
+		return Merchant.class;
+	}
 
 	@Override
 	public void doPersistDependentEntities() {
@@ -39,13 +43,16 @@ public abstract class AbstractAccountDaoTestHandler<A extends Account> extends A
 
 	@Override
 	public void doPurgeDependentEntities() {
-		purge(Account.class, pkAccountParent); pkAccountParent = null;
-		purge(PaymentInfo.class, pkPaymentInfo); pkPaymentInfo = null;
-		purge(Currency.class, pkCurrency); pkCurrency = null;
+		purge(Account.class, pkAccountParent);
+		pkAccountParent = null;
+		purge(PaymentInfo.class, pkPaymentInfo);
+		pkPaymentInfo = null;
+		purge(Currency.class, pkCurrency);
+		pkCurrency = null;
 	}
 
 	@Override
-	public void assembleTestEntity(A e) throws Exception {
+	public void assembleTestEntity(Merchant e) throws Exception {
 		e.setCurrency(load(Currency.class, pkCurrency));
 		e.setPaymentInfo(load(PaymentInfo.class, pkPaymentInfo));
 		e.setParent(load(Account.class, pkAccountParent));
@@ -62,7 +69,7 @@ public abstract class AbstractAccountDaoTestHandler<A extends Account> extends A
 	}
 
 	@Override
-	public void makeUnique(A e) {
+	public void makeUnique(Merchant e) {
 		super.makeUnique(e);
 		if(e.getAddresses() != null) {
 			for(final AccountAddress aa : e.getAddresses()) {
@@ -73,18 +80,18 @@ public abstract class AbstractAccountDaoTestHandler<A extends Account> extends A
 	}
 
 	@Override
-	public void verifyLoadedEntityState(A e) throws Exception {
+	public void verifyLoadedEntityState(Merchant e) throws Exception {
 		super.verifyLoadedEntityState(e);
 
 		Assert.assertNotNull(e.getCurrency(), "No account currency loaded");
 		Assert.assertNotNull(e.getPaymentInfo(), "No account payment info loaded");
 		Assert.assertNotNull(e.getPaymentInfo().getPaymentData(), "No account payment info data loaded");
 		Assert.assertTrue(e.getAddresses() != null && e.getAddresses().size() == 2,
-		"No account address collection loaded or invalid number of them");
+				"No account address collection loaded or invalid number of them");
 	}
 
 	@Override
-	public void verifyEntityAlteration(A e) throws Exception {
+	public void verifyEntityAlteration(Merchant e) throws Exception {
 		super.verifyEntityAlteration(e);
 		Assert.assertNotNull(e.getCurrency(), "No account currency loaded");
 		Assert.assertNotNull(e.getPaymentInfo(), "No account payment info loaded");

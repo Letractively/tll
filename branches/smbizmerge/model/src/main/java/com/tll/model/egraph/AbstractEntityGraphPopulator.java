@@ -24,6 +24,25 @@ import com.tll.model.bk.NonUniqueBusinessKeyException;
  */
 public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopulator {
 
+	/**
+	 * Makes the given entity unique by its defined business keys.
+	 * @param <E>
+	 * @param e
+	 */
+	protected static final <E extends IEntity> void makeUnique(E e) {
+		BusinessKeyFactory.makeBusinessKeyUnique(e);
+	}
+
+	/**
+	 * Convenience method that generate a random integer between
+	 * <code>0<code> and <code>uboundExclusive</code> (exclusive).
+	 * @param uboundExclusive The exclusive upper bound
+	 * @return integer
+	 */
+	protected static final int randomInt(int uboundExclusive) {
+		return RandomUtils.nextInt(uboundExclusive);
+	}
+
 	protected final Logger log;
 
 	/**
@@ -67,6 +86,7 @@ public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopula
 		catch(final NonUniqueBusinessKeyException e) {
 			throw new IllegalStateException("Non-business key unique entity graph", e);
 		}
+		log.info("Entity graph stubbed");
 	}
 
 	/**
@@ -86,7 +106,9 @@ public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopula
 	 * @return The generated entity.
 	 */
 	protected final <E extends IEntity> E generateEntity(Class<E> entityType, boolean makeUnique) {
-		return entityBeanFactory.getEntityCopy(entityType);
+		E e = entityBeanFactory.getEntityCopy(entityType);
+		if(makeUnique) makeUnique(e);
+		return e;
 	}
 
 	/**
@@ -154,6 +176,7 @@ public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopula
 	protected final <E extends IEntity> Set<E> addN(Class<E> entityType, boolean makeUnique, int n) {
 		final Set<E> set = entityBeanFactory.getNEntityCopies(entityType, n);
 		for(final E e : set) {
+			if(makeUnique) makeUnique(e);
 			addEntity(e);
 		}
 		return set;
@@ -183,7 +206,7 @@ public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopula
 	 *         of entities of the given type.
 	 */
 	protected final <E extends IEntity> E getNthEntity(Class<E> entityType, int n) {
-		final Set<E> set = (Set<E>) graph.getEntitiesByType(entityType);
+		final Set<E> set = graph.getEntitiesByType(entityType);
 		final int size = set == null ? 0 : set.size();
 		if(set != null && size >= n) {
 			int i = 0;
@@ -210,7 +233,7 @@ public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopula
 		if(!INamedEntity.class.isAssignableFrom(entityType)) {
 			throw new IllegalArgumentException("Entity type: " + entityType + " is not a named entity type");
 		}
-		final Set<E> set = (Set<E>) graph.getEntitiesByType(entityType);
+		final Set<E> set = graph.getEntitiesByType(entityType);
 		if(set != null) {
 			for(final E e : set) {
 				final String ename = ((INamedEntity)e).getName();
@@ -228,32 +251,13 @@ public abstract class AbstractEntityGraphPopulator implements IEntityGraphPopula
 	 * @return The randomly selected entity from the graph.
 	 */
 	protected final <E extends IEntity> E getRandomEntity(Class<E> entityType) {
-		final Set<E> set = (Set<E>) graph.getEntitiesByType(entityType);
+		final Set<E> set = graph.getEntitiesByType(entityType);
 		if(set == null || set.size() == 0) {
 			throw new IllegalStateException("No entities of the given type yet exist.");
 		}
 		else if(set.size() == 1) {
 			return set.iterator().next();
 		}
-		return getNthEntity(entityType, RandomUtils.nextInt(set.size()) + 1);
-	}
-
-	/**
-	 * Makes the given entity unique by its defined business keys.
-	 * @param <E>
-	 * @param e
-	 */
-	protected final <E extends IEntity> void makeUnique(E e) {
-		BusinessKeyFactory.makeBusinessKeyUnique(e);
-	}
-
-	/**
-	 * Convenience method that generate a random integer between
-	 * <code>0<code> and <code>uboundExclusive</code> (exclusive).
-	 * @param uboundExclusive The exclusive upper bound
-	 * @return integer
-	 */
-	protected final int randomInt(int uboundExclusive) {
-		return RandomUtils.nextInt(uboundExclusive);
+		return getNthEntity(entityType, randomInt(set.size()) + 1);
 	}
 }

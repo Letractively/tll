@@ -1,6 +1,7 @@
-package org.apache.velocity.runtime.log;
+package com.tll;
 
 import org.apache.velocity.runtime.RuntimeServices;
+import org.apache.velocity.runtime.log.LogChute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

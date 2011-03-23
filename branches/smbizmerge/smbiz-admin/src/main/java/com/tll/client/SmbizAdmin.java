@@ -8,10 +8,10 @@ import com.google.gwt.user.client.ui.RootLayoutPanel;
  * @author jon.kirton
  */
 public class SmbizAdmin implements EntryPoint {
-  
-  @Override
+
+	@Override
 	public void onModuleLoad() {
-    IClientFactory cf = GWT.create(IClientFactory.class);
-  	cf.getSmbizApp().run(RootLayoutPanel.get());
-  }
+		IClientFactory cf = GWT.create(IClientFactory.class);
+		cf.getSmbizApp().run(RootLayoutPanel.get());
+	}
 }

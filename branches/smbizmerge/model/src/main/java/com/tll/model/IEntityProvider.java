@@ -4,7 +4,7 @@
  */
 package com.tll.model;
 
-import java.util.Collection;
+import java.util.Set;
 
 /**
  * IEntityProvider - Definition for an object to provide entities of particular
@@ -29,7 +29,7 @@ public interface IEntityProvider {
 	 * @param type
 	 * @return All entities matching the given type
 	 */
-	<E> Collection<E> getEntitiesByType(Class<E> type);
+	<E> Set<E> getEntitiesByType(Class<E> type);
 
 	/**
 	 * Gets the single entity of the given type or the single entity whose type

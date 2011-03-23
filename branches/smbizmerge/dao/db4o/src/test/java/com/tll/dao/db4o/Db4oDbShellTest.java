@@ -5,7 +5,6 @@ import java.net.URI;
 import java.util.List;
 
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
@@ -43,12 +42,6 @@ public class Db4oDbShellTest extends AbstractDbAwareTest {
 		final Injector i = buildInjector(new TestDb4oDaoModule(cfg));
 		final File f = new File(i.getInstance(Key.get(URI.class, Db4oFile.class)));
 		f.delete();
-	}
-
-	@Override
-	@BeforeClass
-	protected void beforeClass() {
-		super.beforeClass();
 	}
 
 	@Override

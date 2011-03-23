@@ -15,10 +15,9 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 import com.google.inject.Inject;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
-import com.tll.model.bk.BusinessKeyFactory;
 
 /**
- * EntityBeanFactory - Provides prototype entity instances via a Spring bean
+ * Provides prototype entity instances via a Spring bean
  * context.
  * @author jpk
  */
@@ -79,13 +78,13 @@ public final class EntityBeanFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <E extends IEntity> E[] getBeansOfType(Class<E> type) {
+	private <E> E[] getBeansOfType(Class<E> type) {
 		final Map<String, E> map = beanFactory.getBeansOfType(type);
 		if(map == null) return null;
 		return (E[]) map.values().toArray(new IEntity[map.size()]);
 	}
 
-	private <E extends IEntity> E getBean(Class<E> type) {
+	private <E> E getBean(Class<E> type) {
 		final E[] arr = getBeansOfType(type);
 		return (arr == null || arr.length == 0) ? null : arr[0];
 	}
@@ -125,7 +124,6 @@ public final class EntityBeanFactory {
 			if(entityFactory != null && entityFactory.isPrimaryKeyGeneratable()) {
 				entityFactory.generatePrimaryKey(e);
 			}
-			BusinessKeyFactory.makeBusinessKeyUnique(e);
 		}
 		log.debug("Entity copy created: " + e);
 		return e;

@@ -33,7 +33,7 @@ public final class BuildTools {
 		b.createDeployConfigFile();
 		b.createDeployWebXmlFile();
 		b.copyWebappResources();
-		b.stubDbIfNecessary()
+		//b.stubDbIfNecessary()
 	}
 
 	static final String DEFAULT_STAGE = 'debug'

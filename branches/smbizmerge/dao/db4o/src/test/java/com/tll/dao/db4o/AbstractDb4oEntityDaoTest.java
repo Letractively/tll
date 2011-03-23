@@ -70,6 +70,7 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 
 	@Override
 	protected void afterClass() {
+		super.afterClass();
 		dao.getObjectContainer().close();
 	}
 

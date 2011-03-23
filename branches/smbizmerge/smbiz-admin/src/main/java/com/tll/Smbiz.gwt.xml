@@ -13,7 +13,7 @@
 
   <!-- default ClientFactory impl -->
   <replace-with class="com.tll.client.ClientFactory">
-    <when-type-is class="com.hellomvp.client.IClientFactory" />
+    <when-type-is class="com.tll.client.IClientFactory" />
   </replace-with>
 
 </module>

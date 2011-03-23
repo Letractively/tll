@@ -8,9 +8,6 @@ import java.util.List;
 
 import net.sf.ehcache.CacheManager;
 
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.db4o.EmbeddedObjectContainer;
@@ -62,21 +59,6 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 	@Override
 	protected Config doGetConfig() {
 		return Config.load(new ConfigRef("db4o-config.properties"));
-	}
-
-	@BeforeClass(alwaysRun = true)
-	public void onBeforeClass() {
-		beforeClass();
-	}
-
-	@AfterClass(alwaysRun = true)
-	public final void onAfterClass() {
-		afterClass();
-	}
-
-	@BeforeMethod
-	public void onBeforeMethod() {
-		beforeMethod();
 	}
 
 	@Override

@@ -52,7 +52,9 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	 */
 	protected final <D extends IEntity> D create(Class<D> entityType, boolean makeUnique) {
 		log.debug("Creating " + (makeUnique ? "UNIQUE" : "NON-UNIQUE") + " entity of type: " + entityType);
-		return entityBeanFactory.getEntityCopy(entityType);
+		D e = entityBeanFactory.getEntityCopy(entityType);
+		if(makeUnique) BusinessKeyFactory.makeBusinessKeyUnique(e);
+		return e;
 	}
 
 	/**
@@ -156,7 +158,9 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	protected final <D extends IEntity> D createAndPersist(Class<D> entityType, boolean makeUnique) {
 		try {
 			maybeStartTrans();
-			return entityDao.persist(entityBeanFactory.getEntityCopy(entityType));
+			D e = entityDao.persist(entityBeanFactory.getEntityCopy(entityType));
+			if(makeUnique) BusinessKeyFactory.makeBusinessKeyUnique(e);
+			return e;
 		}
 		finally {
 			endAnyTrans();

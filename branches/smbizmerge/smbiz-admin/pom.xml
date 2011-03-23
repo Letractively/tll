@@ -59,14 +59,13 @@
           </aspectLibraries>
         </configuration>
         <executions>
-<!-- TODO restore -->
-<!--           <execution> -->
-<!--             <id>aj compile smbiz</id> -->
-<!--             <goals> -->
-<!--               <goal>compile</goal> -->
-<!--               <goal>test-compile</goal> -->
-<!--             </goals> -->
-<!--           </execution> -->
+          <execution>
+            <id>aj compile smbiz</id>
+            <goals>
+              <goal>compile</goal>
+              <goal>test-compile</goal>
+            </goals>
+          </execution>
         </executions>
       </plugin>
       
@@ -145,9 +144,6 @@
       <plugin>
         <groupId>org.codehaus.groovy.maven</groupId>
         <artifactId>gmaven-plugin</artifactId>
-<!--         <configuration> -->
-<!--           <source>println 'config'</source> -->
-<!--         </configuration> -->
         <executions>
           <execution>
             <id>war-resources</id>
@@ -157,34 +153,6 @@
             <phase>compile</phase><!-- we do compile phase since the *.class files need to be present for db stubbing -->
             <configuration>
               <classpath>
-<!--                 <element> -->
-<!--                   <groupId>commons-configuration</groupId> -->
-<!--                   <artifactId>commons-configuration</artifactId> -->
-<!--                 </element> -->
-<!--                 <element> -->
-<!--                   <groupId>com.google.code.guice</groupId> -->
-<!--                   <artifactId>guice</artifactId> -->
-<!--                 </element> -->
-<!--                 <element> -->
-<!--                   <groupId>aopalliance</groupId> -->
-<!--                   <artifactId>aopalliance</artifactId> -->
-<!--                 </element> -->
-<!--                 <element> -->
-<!--                   <groupId>com.tll</groupId> -->
-<!--                   <artifactId>tll-config</artifactId> -->
-<!--                   <version>0.0.1-SNAPSHOT</version> -->
-<!--                 </element> -->
-<!--                 <element> -->
-<!--                   <groupId>com.tll</groupId> -->
-<!--                   <artifactId>tll-model</artifactId> -->
-<!--                   <version>0.0.1-SNAPSHOT</version> -->
-<!--                 </element> -->
-<!--                 <element> -->
-<!--                   <groupId>com.tll</groupId> -->
-<!--                   <artifactId>tll-dao-api</artifactId> -->
-<!--                   <version>0.0.1-SNAPSHOT</version> -->
-<!--                   <classifier>testassets</classifier> -->
-<!--                 </element> -->
                 <element>
                   <groupId>com.tll</groupId>
                   <artifactId>tll-dao-db4o</artifactId>
