@@ -19,5 +19,5 @@ public interface PaymentInfoProxy extends EntityProxy {
 
 	PaymentData getPaymentData();
 
-	PaymentData setPaymentData(PaymentData pd);
+	void setPaymentData(PaymentData pd);
 }

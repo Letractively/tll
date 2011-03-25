@@ -20,6 +20,9 @@
   			<directory>src/main/java</directory>
   			<includes>
           <include>**/*.gwt.xml</include>
+          <include>**/dao/CriteriaType.java</include>
+          <include>**/dao/IQueryParam.java</include>
+          <include>**/dao/QueryParam.java</include>
   				<include>**/dao/SortColumn.java</include>
   				<include>**/dao/SortDir.java</include>
   				<include>**/dao/Sorting.java</include>

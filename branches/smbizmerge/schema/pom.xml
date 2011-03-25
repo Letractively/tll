@@ -18,9 +18,14 @@
 		<resources>
 			<resource>
 				<directory>src/main/java</directory>
-				<excludes>
-					<exclude>**/SchemaInfo.java</exclude>
-				</excludes>
+				<includes>
+					<include>**/schema/AbstractSchemaProperty.java</include>
+					<include>**/schema/IPropertyMetadataProvider.java</include>
+					<include>**/schema/IPropertyNameProvider.java</include>
+					<include>**/schema/ISchemaProperty.java</include>
+					<include>**/schema/PropertyMetadata.java</include>
+					<include>**/schema/PropertyType.java</include>
+				</includes>
 			</resource>
 			<resource>
 				<directory>src/main/resources</directory>
