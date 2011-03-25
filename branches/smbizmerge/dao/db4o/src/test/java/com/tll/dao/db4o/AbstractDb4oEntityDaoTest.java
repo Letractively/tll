@@ -103,13 +103,7 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 		final EmbeddedObjectContainer oc = Db4oEmbedded.openFile(c, db4oUri.getPath());
 		dao.setObjectContainer(oc);
 		((Db4oTrans) getDbTrans()).setObjectContainer(oc);
-		((Db4oEntityFactory) getEntityFactory()).setObjectContainer(new Provider<EmbeddedObjectContainer>() {
-
-			@Override
-			public EmbeddedObjectContainer get() {
-				return oc;
-			}
-		});
+		((Db4oEntityFactory) getEntityFactory()).setObjectContainer(oc);
 		getDbTrans().startTrans();
 		final IEntity eloaded = dao.load(e.entityClass(), e.getId());
 		entityHandler.verifyLoadedEntityState(eloaded);

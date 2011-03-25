@@ -11,6 +11,7 @@ import com.google.inject.Guice;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.ConfigProcessor;
+import com.tll.dao.IEntityDao;
 import com.tll.dao.db4o.SmbizDb4oDaoModule;
 import com.tll.dao.IDbShell;
 import com.tll.dao.db4o.test.Db4oDbShellModule;
@@ -33,7 +34,7 @@ public final class BuildTools {
 		b.createDeployConfigFile();
 		b.createDeployWebXmlFile();
 		b.copyWebappResources();
-		//b.stubDbIfNecessary()
+		b.stubDbIfNecessary()
 	}
 
 	static final String DEFAULT_STAGE = 'debug'
@@ -213,10 +214,17 @@ public final class BuildTools {
 					def db4oFilename = this.config.getProperty('db.db4o.filename')
 					this.config.setProperty('db.db4o.filename', db4oFilepath)
 					this.config.setProperty('db.transaction.bindToSpringAtTransactional', false)
-					dbShell = Guice.createInjector(
+					def injector = Guice.createInjector(
 						new SmbizDb4oDaoModule(this.config), 
 						new SmbizEGraphModule(), 
-						new Db4oDbShellModule()).getInstance(IDbShell.class);
+						new Db4oDbShellModule());
+					dbShell = injector.getInstance(IDbShell.class)
+					def dbSess = injector.getInstance(IEntityDao.class).getObjectContainer(); 
+					println 'creating sbmiz db4o db..'
+					dbShell.create()
+					dbShell.addData(dbSess)
+					println 'sbmiz db db4o created'
+					// restore config
 					this.config.setProperty('db.db4o.filename', db4oFilename)
 					this.config.setProperty('db.transaction.bindToSpringAtTransactional', origTrans)
 				}
@@ -226,15 +234,5 @@ public final class BuildTools {
 				// TODO implement jdo
 				throw new UnsupportedOperationException()
 		}
-		
-		if(dbShell == null) {
-			println 'sbmiz db exists (no db stub necessary)'
-			return;
-		}
-		
-		println 'creating sbmiz db..'
-		dbShell.create()
-		dbShell.addData()
-		println 'sbmiz db created'
 	}
 }

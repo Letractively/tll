@@ -36,6 +36,13 @@ public class Db4oDbShell implements IDbShell {
 
 	private final Provider<EmbeddedConfiguration> c;
 
+	/**
+	 * Non-robust way to clear all objects held in db4o's object container. This
+	 * method makes no guarantees as to correctness.
+	 * <p>
+	 * <b>WARNING:</b>Use at your own risk.
+	 * @param container
+	 */
 	public static void clearData(EmbeddedObjectContainer container) {
 		ObjectSet<Object> set = container.queryByExample(null);
 		if(set != null) {
@@ -138,7 +145,7 @@ public class Db4oDbShell implements IDbShell {
 				log.info("Storing entities of type: " + et.getSimpleName() + "...");
 				final Collection<?> ec = eg.getEntitiesByType(et);
 				for(final Object e : ec) {
-					log.info("Storing entity: " + et + "...");
+					log.info("Storing entity: " + e + " ...");
 					dbSession.store(e);
 				}
 			}
@@ -156,7 +163,7 @@ public class Db4oDbShell implements IDbShell {
 	public void addData() {
 		EmbeddedObjectContainer dbSession = null;
 		try {
-			log.info("Stubbing db4o db for db4o db: " + dbFile);
+			log.info("Stubbing db4o db: " + dbFile);
 			dbSession = createDbSession();
 			addData(dbSession);
 		}

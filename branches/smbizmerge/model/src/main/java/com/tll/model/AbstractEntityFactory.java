@@ -39,7 +39,6 @@ public abstract class AbstractEntityFactory implements IEntityFactory {
 					.getName()), ie);
 		}
 
-		log.debug("Created entity: {}", entity);
 		return entity;
 	}
 
@@ -47,6 +46,7 @@ public abstract class AbstractEntityFactory implements IEntityFactory {
 	public <E extends IEntity> E createEntity(Class<E> entityClass, boolean generate) throws IllegalStateException {
 		E e = newEntity(entityClass);
 		if(generate) generatePrimaryKey(e);
+		log.debug("Created entity: {}", e);
 		return e;
 	}
 

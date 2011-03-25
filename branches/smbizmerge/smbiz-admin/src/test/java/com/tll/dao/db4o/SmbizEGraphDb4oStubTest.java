@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.db4o.EmbeddedObjectContainer;
@@ -16,8 +17,11 @@ import com.google.inject.Module;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.dao.AbstractDbAwareTest;
+import com.tll.dao.IEntityDao;
 import com.tll.dao.db4o.test.Db4oDbShellModule;
 import com.tll.model.SmbizEGraphModule;
+import com.tll.model.User;
+import com.tll.model.Visitor;
 
 /**
  * Tests the creation of the db4o db file from the smbiz entity graph builder
@@ -65,16 +69,31 @@ public class SmbizEGraphDb4oStubTest extends AbstractDbAwareTest {
 	protected void afterClass() {
 		super.afterClass();
 		// kill db4o's object container
-		injector.getInstance(EmbeddedObjectContainer.class).close();
+		EmbeddedObjectContainer db4oSession = injector.getInstance(EmbeddedObjectContainer.class);
+		while(!db4oSession.close()) {};
 	}
 
 	public void test() {
 		// stub the db (presumes the db file does NOT exist)
+		EmbeddedObjectContainer db4oSession = injector.getInstance(EmbeddedObjectContainer.class);
 		Db4oDbShell dbShell = (Db4oDbShell) getDbShell();
 		dbShell.create();
-		dbShell.addData();
+		dbShell.addData(db4oSession);	// IMPT: this is critical to avoid db file locked exception!
 
 		// subsequent access test
-		// TODO finish
+		// kill db4o's object container
+		while(!db4oSession.close()) {};
+		injector = null;
+		db4oSession = null;
+		buildTestInjector();
+		
+		Db4oEntityDao dao = (Db4oEntityDao) injector.getInstance(IEntityDao.class);
+		List<?> list;
+		
+		list = dao.loadAll(Visitor.class);
+		Assert.assertTrue(list != null && list.size() > 0, "No Visitor type entites found in smbiz db4o db - WTF!");
+		
+		list = dao.loadAll(User.class);
+		Assert.assertTrue(list != null && list.size() > 0, "No users found in smbiz db4o db - WTF!");
 	}
 }
