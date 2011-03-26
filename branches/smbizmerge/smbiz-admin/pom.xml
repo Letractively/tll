@@ -26,6 +26,12 @@
 
     <resources>
       <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/CreditCardType.java</include>
+        </includes>
+      </resource>
+      <resource>
         <directory>src/main/resources</directory>
         <!-- don't copy any config prop files as they are managed independently. -->
         <excludes>

@@ -5,11 +5,11 @@
 package com.tll.client;
 
 import com.google.gwt.core.client.GWT;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.place.shared.PlaceHistoryHandler;
+import com.tll.client.view.HomeView;
 import com.tll.client.view.IHomeView;
 import com.tll.common.dto.SmbizEntityRequestFactory;
 
@@ -26,7 +26,7 @@ public class ClientFactory implements IClientFactory {
 	
   private final Messages messages = GWT.create(Messages.class);
 
-	private final IHomeView homeView = null;
+	private final IHomeView homeView = new HomeView();
 
 	/**
 	 * Constructor
@@ -58,12 +58,6 @@ public class ClientFactory implements IClientFactory {
 	@Override
 	public SmbizApp getSmbizApp() {
 		return new SmbizApp(new SmbizShell());
-	}
-
-	@Override
-	public PlaceHistoryHandler getPlaceHistoryController() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

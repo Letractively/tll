@@ -27,7 +27,7 @@ public class HomeViewActivity extends AbstractActivity implements IHomeView.Pres
 	 * Constructor
 	 */
 	public HomeViewActivity(HomeViewPlace place, IClientFactory cf) {
-
+		this.cf = cf;
 	}
 
 	@Override

@@ -9,7 +9,10 @@ import java.util.logging.Logger;
 
 import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.place.shared.Place;
+import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.tll.client.place.HomeViewPlace;
 
 /**
  * @author jpk
@@ -17,7 +20,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
 public class SmbizApp {
 
 	private static final Logger log = Logger.getLogger(SmbizShell.class.getName());
-	
+
 	private final SmbizShell shell;
 
 	/**
@@ -40,8 +43,14 @@ public class SmbizApp {
 		SmbizActivityMapper activityMapper = new SmbizActivityMapper(clientFactory);
 		ActivityManager activityManager = new ActivityManager(activityMapper, clientFactory.getEventBus());
 		activityManager.setDisplay(shell.getPanel());
-		
+
+		// Start PlaceHistoryHandler with our PlaceHistoryMapper
+		SmbizPlaceHistoryMapper historyMapper = GWT.create(SmbizPlaceHistoryMapper.class);
+		PlaceHistoryHandler historyHandler = new PlaceHistoryHandler(historyMapper);
+		Place defaultPlace = new HomeViewPlace();
+		historyHandler.register(clientFactory.getPlaceController(), clientFactory.getEventBus(), defaultPlace);
+
 		root.add(shell);
-		clientFactory.getPlaceHistoryController().handleCurrentHistory();
+		historyHandler.handleCurrentHistory();
 	}
 }

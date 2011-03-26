@@ -8,13 +8,17 @@
 
   <g:DockLayoutPanel ui:field="dockLayout">
     <g:north size="20">
-      <g:HTML ui:field="header" />
+      <g:HTML ui:field="header">
+        <div><h1>Smbiz Admin</h1></div>
+      </g:HTML>
     </g:north>
     <g:east size="225">
       <g:FlowPanel ui:field="navPanel" />
     </g:east>
     <g:south size="20">
-      <g:HTML ui:field="footer" />
+      <g:HTML ui:field="footer">
+        <p>&copy; 2009 The Logic Lab - smbiz vTODO</p>
+      </g:HTML>
     </g:south>
     <g:center>
       <g:SimplePanel ui:field="center" />

@@ -6,7 +6,6 @@ package com.tll.client;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.tll.client.view.IHomeView;
 import com.tll.common.dto.SmbizEntityRequestFactory;
 
@@ -17,7 +16,7 @@ public interface IClientFactory {
 
 	EventBus getEventBus();
 	PlaceController getPlaceController();
-	PlaceHistoryHandler getPlaceHistoryController();
+	//PlaceHistoryHandler getPlaceHistoryController();
 	SmbizEntityRequestFactory getCrudFactory();
 	SmbizApp getSmbizApp();
 	

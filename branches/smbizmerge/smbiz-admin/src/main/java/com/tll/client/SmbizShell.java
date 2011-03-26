@@ -30,16 +30,16 @@ public class SmbizShell extends Composite {
 	DockLayoutPanel dockLayout;
 	
 	@UiField
-	final HTML header = new HTML("<div><h1>Smbiz Admin</h1></div>");
+	HTML header;
 	
 	@UiField
-	final HTML footer = new HTML("<p>&copy; 2009 The Logic Lab - smbiz vTODO</p>");
+	HTML footer;
 	
 	@UiField
-	final FlowPanel navPanel = new FlowPanel();
+	FlowPanel navPanel;
 	
 	@UiField
-	final SimplePanel center = new SimplePanel();
+	SimplePanel center;
 
 	/**
 	 * Constructor

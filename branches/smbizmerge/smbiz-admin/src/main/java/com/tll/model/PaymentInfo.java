@@ -6,6 +6,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.tll.common.dto.PaymentDataProxy;
 import com.tll.model.bk.BusinessKeyDef;
 import com.tll.model.bk.BusinessObject;
 
@@ -27,7 +28,7 @@ public class PaymentInfo extends NamedEntity {
 
 	public static final int MAXLEN_NAME = 64;
 
-	private PaymentData paymentData;
+	private PaymentDataProxy paymentData;
 
 	@Override
 	public Class<? extends IEntity> entityClass() {
@@ -53,11 +54,11 @@ public class PaymentInfo extends NamedEntity {
 	@NotNull
 	@Valid
 	@Nested
-	public PaymentData getPaymentData() {
+	public PaymentDataProxy getPaymentData() {
 		return paymentData;
 	}
 
-	public void setPaymentData(final PaymentData paymentData) {
+	public void setPaymentData(final PaymentDataProxy paymentData) {
 		this.paymentData = paymentData;
 	}
 
