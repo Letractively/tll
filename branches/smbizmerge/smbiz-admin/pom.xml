@@ -94,13 +94,15 @@
               <i18nMessagesBundle>com.tll.client.Messages</i18nMessagesBundle>
             </configuration>
           </execution>
-          <execution>
-            <id>gwt-generateAsync</id>
-            <goals>
-              <goal>generateAsync</goal>
-            </goals>
-            <phase>generate-sources</phase>
-          </execution>
+  <!-- We don't have enough control on this!! For one thing, the generated Async class' Util.getInstance() convenience method 
+    assert that the service entry point is /{interface name} which is ridiculous -->
+<!--           <execution> -->
+<!--             <id>gwt-generateAsync</id> -->
+<!--             <goals> -->
+<!--               <goal>generateAsync</goal> -->
+<!--             </goals> -->
+<!--             <phase>generate-sources</phase> -->
+<!--           </execution> -->
           <execution>
             <id>gwt-compile</id>
             <goals>

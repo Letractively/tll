@@ -36,7 +36,7 @@ public class HomeViewActivity extends AbstractActivity implements IHomeView.Pres
 		final IHomeView view = cf.getHomeView();
 		
 		// fetch site stats
-		ISiteStatisticsServiceAsync.Util.getInstance().getSiteStatitics(new AsyncCallback<ISiteStatisticsService.SiteStatisticsPayload>() {
+		ISiteStatisticsServiceAsync.Util.instance().getSiteStatitics(new AsyncCallback<ISiteStatisticsService.SiteStatisticsPayload>() {
 			
 			@Override
 			public void onSuccess(SiteStatisticsPayload result) {
@@ -46,7 +46,6 @@ public class HomeViewActivity extends AbstractActivity implements IHomeView.Pres
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO impl error handling
 				GWT.log("Error fetching site stats", caught);
 			}
 		});

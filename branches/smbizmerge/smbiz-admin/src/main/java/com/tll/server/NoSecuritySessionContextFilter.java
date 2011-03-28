@@ -4,7 +4,6 @@
 package com.tll.server;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -66,10 +65,6 @@ public final class NoSecuritySessionContextFilter implements Filter {
 					throw new ServletException("Unable to obtain the persist context");
 				}
 				final IUserService userService = pc.getEntityServiceFactory().instance(IUserService.class);
-				
-				// debug
-				List<? extends User> users = userService.loadAll();
-				
 				final User user = (User) userService.loadUserByUsername(appContext.getDfltUserEmail());
 				log.debug("Creating mock admin context from default user email specified in config..");
 				final AdminContext ac = new AdminContext();

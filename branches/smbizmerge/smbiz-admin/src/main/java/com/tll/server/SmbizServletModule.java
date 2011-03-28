@@ -34,7 +34,7 @@ class SmbizServletModule extends ServletModule {
 
 		// WebClientCacheFilter
 		HashMap<String, String> cparams = new HashMap<String, String>(1);
-		cparams.put("oneDayCacheFileExts", (stage == "debug")? "" : ".js .css .gif .jpg .png");
+		cparams.put("oneDayCacheFileExts", "prod".equals(stage)? ".js .css .gif .jpg .png" : "");
 		filter("/*").through(WebClientCacheFilter.class, cparams);
 
 		// site statistics rpc service

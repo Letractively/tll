@@ -7,7 +7,7 @@ import com.tll.common.dto.SiteStatisticsDto;
 import com.tll.common.msg.Status;
 
 /**
- * @author jon.kirton
+ * @author jpk
  */
 @RemoteServiceRelativePath(value = "ss")
 public interface ISiteStatisticsService extends RemoteService {
