@@ -16,6 +16,19 @@ import com.tll.common.dto.SiteStatisticsDto;
  * @author jpk
  */
 public class HomeView extends Composite implements IHomeView {
+	
+	public static class Clz extends ViewClass {
+
+		@Override
+		public String getName() {
+			return IHomeView.class.getName();
+		}
+
+		@Override
+		public IView newView() {
+			return new HomeView();
+		}
+	}
 
 	private static HomeViewUiBinder uiBinder = GWT.create(HomeViewUiBinder.class);
 

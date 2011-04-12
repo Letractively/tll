@@ -33,7 +33,7 @@ public class HomeViewActivity extends AbstractActivity implements IHomeView.Pres
 	@Override
 	public void start(final AcceptsOneWidget panel, EventBus eventBus) {
 	
-		final IHomeView view = cf.getHomeView();
+		final IHomeView view = cf.getViewFactory().getView(IHomeView.class);
 		
 		// fetch site stats
 		ISiteStatisticsServiceAsync.Util.instance().getSiteStatitics(new AsyncCallback<ISiteStatisticsService.SiteStatisticsPayload>() {

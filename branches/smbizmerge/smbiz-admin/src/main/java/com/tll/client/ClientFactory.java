@@ -9,8 +9,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.place.shared.PlaceHistoryHandler;
-import com.tll.client.view.HomeView;
-import com.tll.client.view.IHomeView;
+import com.tll.client.view.IViewFactory;
 import com.tll.common.dto.SmbizEntityRequestFactory;
 
 /**
@@ -26,7 +25,7 @@ public class ClientFactory implements IClientFactory {
 	
   private final Messages messages = GWT.create(Messages.class);
 
-	private final IHomeView homeView = new HomeView();
+	private final IViewFactory viewFactory = GWT.create(IViewFactory.class);
 
 	/**
 	 * Constructor
@@ -61,8 +60,8 @@ public class ClientFactory implements IClientFactory {
 	}
 
 	@Override
-	public IHomeView getHomeView() {
-		return homeView;
+	public IViewFactory getViewFactory() {
+		return viewFactory;
 	}
 
 	@Override

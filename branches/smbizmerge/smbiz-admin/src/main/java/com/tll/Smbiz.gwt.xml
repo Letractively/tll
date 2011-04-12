@@ -11,7 +11,12 @@
 
   <inherits name='com.google.gwt.logging.Logging' />
 
-  <!-- default ClientFactory impl -->
+  <!-- default IViewFactory impl -->
+  <replace-with class="com.tll.client.view.ViewFactory">
+    <when-type-is class="com.tll.client.view.IViewFactory" />
+  </replace-with>
+
+  <!-- default IClientFactory impl -->
   <replace-with class="com.tll.client.ClientFactory">
     <when-type-is class="com.tll.client.IClientFactory" />
   </replace-with>
