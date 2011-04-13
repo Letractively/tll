@@ -3,11 +3,14 @@
   xmlns:t="urn:import:com.tll.client">
 
   <ui:style>
-    
+    .smbizShell {
+      border: 1px solid red;
+      margin: 5px;
+     }
   </ui:style>
 
-  <g:DockLayoutPanel ui:field="dockLayout">
-    <g:north size="20">
+  <g:DockLayoutPanel ui:field="dockLayout" styleName="{style.smbizShell}" unit="PX">
+    <g:north size="80">
       <g:HTML ui:field="header">
         <div><h1>Smbiz Admin</h1></div>
       </g:HTML>
@@ -15,7 +18,7 @@
     <g:east size="225">
       <g:FlowPanel ui:field="navPanel" />
     </g:east>
-    <g:south size="20">
+    <g:south size="80">
       <g:HTML ui:field="footer">
         <p>&copy; 2009 The Logic Lab - smbiz vTODO</p>
       </g:HTML>
