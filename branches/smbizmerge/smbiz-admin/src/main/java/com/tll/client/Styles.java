@@ -1,4 +1,4 @@
-package com.tll.client.style;
+package com.tll.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
@@ -21,8 +21,8 @@ public class Styles {
    */
   public interface Resources extends ClientBundle {
 
-    //@Source("common.css")
-    //Common common();
+    //@Source("../Messages.properties")
+    //TextResource messages();
 
     //ImageResource approvedIcon();
   }
