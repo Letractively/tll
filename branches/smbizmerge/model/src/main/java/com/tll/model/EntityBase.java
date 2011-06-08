@@ -211,11 +211,7 @@ public abstract class EntityBase implements IEntity {
 	
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((version == null) ? 0 : version.hashCode());
-		return result;
+		return id == null ? super.hashCode() : id.hashCode());
 	}
 
 	@Override
@@ -223,13 +219,7 @@ public abstract class EntityBase implements IEntity {
 		if(this == obj) return true;
 		if(obj == null) return false;
 		if(getClass() != obj.getClass()) return false;
-		final EntityBase other = (EntityBase) obj;
-		final Long otherId = other.getId();
-		if(id == null) {
-			if(otherId != null) return false;
-		}
-		else if(!id.equals(otherId)) return false;
-		return true;
+    return id == null ? false : id.equals(((EntityBase) obj).getId());
 	}
 
 	@Override
