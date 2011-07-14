@@ -8,9 +8,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	
-	<groupId>com.tll</groupId>
 	<artifactId>tll-client-marshal</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>tll-client-marshal</name>
 	<description>Bi-directional transfer of server and client model data.</description>
 	

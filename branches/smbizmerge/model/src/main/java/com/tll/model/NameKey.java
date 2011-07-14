@@ -10,8 +10,6 @@ import com.tll.IDescriptorProvider;
  */
 public final class NameKey<T> implements IDescriptorProvider {
 
-	private static final long serialVersionUID = -3217664978174156618L;
-
 	public static final String DEFAULT_FIELDNAME = INamedEntity.NAME;
 
 	private final Class<T> type;

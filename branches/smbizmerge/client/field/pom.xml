@@ -8,10 +8,8 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
-  <groupId>com.tll</groupId>
   <artifactId>tll-client-field</artifactId>
   <name>tll-client-field</name>
-  <version>0.0.1-SNAPSHOT</version>
   <description>The client field api.</description>
   
   <build>

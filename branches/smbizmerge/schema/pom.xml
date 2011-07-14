@@ -8,9 +8,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	
-	<groupId>com.tll</groupId>
 	<artifactId>tll-schema</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>tll-schema</name>
 	<description>Provides model schema metadata.</description>
 	

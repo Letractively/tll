@@ -7,10 +7,8 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   
-  <groupId>com.tll</groupId>
   <artifactId>tll-client-login</artifactId>
   <name>tll-client-login</name>
-  <version>0.0.1-SNAPSHOT</version>
   <description>Provides client side login/logout functionality.</description>
   
   <build>

@@ -211,7 +211,7 @@ public abstract class EntityBase implements IEntity {
 	
 	@Override
 	public int hashCode() {
-		return id == null ? super.hashCode() : id.hashCode());
+		return id == null ? super.hashCode() : id.hashCode();
 	}
 
 	@Override

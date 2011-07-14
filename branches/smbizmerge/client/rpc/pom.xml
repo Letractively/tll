@@ -8,11 +8,9 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
-  <groupId>com.tll</groupId>
   <artifactId>tll-client-rpc</artifactId>
   <name>tll-client-rpc</name>
-    <version>0.0.1-SNAPSHOT</version>
-  <description>Houses core RPC enabling classes for tll GWT based apps.</description>
+    <description>Houses core RPC enabling classes for tll GWT based apps.</description>
   
   <build>
     <plugins>

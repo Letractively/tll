@@ -8,10 +8,8 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<groupId>com.tll</groupId>
 	<artifactId>tll-client-listing</artifactId>
 	<name>tll-client-listing</name>
-	<version>0.0.1-SNAPSHOT</version>
 	<description>Provides the ability to retrieve large amounts of model data in chunks intended for tabular display in the UI.</description>
 
 	<build>

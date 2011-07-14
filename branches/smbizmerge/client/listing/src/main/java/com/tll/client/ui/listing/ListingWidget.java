@@ -72,6 +72,7 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 
 	/**
 	 * Constructor
+	 * @param listingElementName 
 	 * @param table listing table widget
 	 * @param navBar optional nav bar
 	 */

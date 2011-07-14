@@ -8,7 +8,6 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
-  <groupId>com.tll</groupId>
   <artifactId>tll-client-view</artifactId>
   <name>tll-client-view</name>
   <version>${project.parent.version}</version>

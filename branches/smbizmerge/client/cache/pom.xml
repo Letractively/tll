@@ -8,10 +8,8 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
-  <groupId>com.tll</groupId>
   <artifactId>tll-client-cache</artifactId>
   <name>tll-client-cache</name>
-  <version>0.0.1-SNAPSHOT</version>
   <description>Provides client-side (browser) caching.</description>
 
 </project>

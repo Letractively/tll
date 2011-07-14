@@ -8,10 +8,8 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	
-	<groupId>com.tll</groupId>
 	<artifactId>tll-client-databind</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-	<name>tll-client-databind</name>
+  <name>tll-client-databind</name>
 	<description>Field/Model databinding.</description>
 	
 	<build>

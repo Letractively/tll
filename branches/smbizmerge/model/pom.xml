@@ -8,10 +8,8 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<groupId>com.tll</groupId>
 	<artifactId>tll-model</artifactId>
 	<name>tll-model</name>
-	<version>0.0.1-SNAPSHOT</version>
 	<description>IEntity and ORM related definitions.</description>
 	<packaging>jar</packaging>
 

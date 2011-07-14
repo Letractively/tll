@@ -9,10 +9,8 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
-  <groupId>com.tll</groupId>
   <artifactId>tll-config</artifactId>
   <name>tll-config</name>
-  <version>0.0.1-SNAPSHOT</version>
   <description>Yet another attempt to house configuration properties under one roof.</description>
 
   <dependencies>

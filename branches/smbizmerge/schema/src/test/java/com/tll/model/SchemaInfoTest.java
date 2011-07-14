@@ -183,7 +183,6 @@ public class SchemaInfoTest {
 
 	static class TestEntityC extends NamedTimeStampEntity {
 
-		private static final long serialVersionUID = -8237732782824087760L;
 		public static final int MAXLEN_NAME = 64;
 
 		private TestEnum enm;

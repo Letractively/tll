@@ -152,10 +152,10 @@ public class ConfigTest {
 			String val = props.getProperty(key);
 
 			// verify comma having prop values
-			if(key.equals("props.commas.propA")) {
+			if("props.commas.propA".equals(key)) {
 				assert val.equals("a,b,c") : "props.commas.propA - mismatch!";
 			}
-			else if(key.equals("props.commas.propB")) {
+			else if("props.commas.propB".equals(key)) {
 				assert val.equals("d,e,f") : "props.commas.propB - mismatch!";
 			}
 		}
@@ -178,7 +178,7 @@ public class ConfigTest {
 		while(enm.hasMoreElements()) {
 			Object obj = enm.nextElement();
 			String key = obj == null ? null : obj.toString();
-			assert key.startsWith("props.commas.") : "Key doesn't start with commas.";
+			assert key != null && key.startsWith("props.commas.") : "Key doesn't start with commas.";
 			assert keys.contains(key) : "The props keys list does not contain key: " + key;
 		}
 	}
