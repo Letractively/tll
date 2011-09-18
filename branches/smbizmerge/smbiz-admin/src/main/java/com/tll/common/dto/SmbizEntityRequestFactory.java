@@ -4,7 +4,7 @@
  */
 package com.tll.common.dto;
 
-import com.google.gwt.requestfactory.shared.RequestFactory;
+import com.google.web.bindery.requestfactory.shared.RequestFactory;
 
 /**
  * @author jpk

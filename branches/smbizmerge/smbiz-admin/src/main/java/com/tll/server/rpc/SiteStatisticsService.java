@@ -18,6 +18,7 @@ public class SiteStatisticsService extends RpcServlet implements ISiteStatistics
 
 	/**
 	 * Constructor
+	 * @param persistContext 
 	 */
 	@Inject
 	public SiteStatisticsService(PersistContext persistContext) {

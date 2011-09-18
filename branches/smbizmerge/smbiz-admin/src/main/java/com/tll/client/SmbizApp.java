@@ -25,6 +25,7 @@ public class SmbizApp {
 
 	/**
 	 * Constructor
+	 * @param shell 
 	 */
 	public SmbizApp(SmbizShell shell) {
 		this.shell = shell;

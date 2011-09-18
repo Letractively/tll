@@ -35,7 +35,6 @@ import com.tll.server.marshal.test.TestMarshalModule;
  * @author jpk
  */
 @Test(groups = { "server", "client-marshal" })
-@SuppressWarnings("null")
 public class MarshalerTest extends AbstractConfigAwareTest {
 
 	protected static final Map<String, Object> tupleMap = new HashMap<String, Object>();
@@ -97,6 +96,7 @@ public class MarshalerTest extends AbstractConfigAwareTest {
 	 * Tests the marshaling of a nested entity.
 	 * @throws Exception Upon failure
 	 */
+	@SuppressWarnings("null")
 	public void testNestedEntity() throws Exception {
 		final Marshaler marshaler = getMarshaler();
 		Assert.assertTrue(marshaler != null);
@@ -114,6 +114,7 @@ public class MarshalerTest extends AbstractConfigAwareTest {
 	 * Tests basic marshaling of IScalar instances.
 	 * @throws Exception Upon failure.
 	 */
+	@SuppressWarnings("null")
 	public void testScalarMarshaling() throws Exception {
 		final IScalar scalar = new IScalar() {
 
@@ -148,6 +149,7 @@ public class MarshalerTest extends AbstractConfigAwareTest {
 	 * entities present.
 	 * @throws Exception
 	 */
+	@SuppressWarnings("null")
 	public void testEmptyRelatedMany() throws Exception {
 		final Marshaler marshaler = getMarshaler();
 		Assert.assertTrue(marshaler != null);
@@ -160,6 +162,7 @@ public class MarshalerTest extends AbstractConfigAwareTest {
 		Assert.assertTrue(mp != null);
 	}
 
+	@SuppressWarnings("null")
 	public void testEmptyNested() throws Exception {
 		final Marshaler marshaler = getMarshaler();
 		Assert.assertTrue(marshaler != null);
@@ -173,6 +176,7 @@ public class MarshalerTest extends AbstractConfigAwareTest {
 		Assert.assertTrue(mp != null);
 	}
 
+	@SuppressWarnings("null")
 	public void testEmptyNestedTarget() throws Exception {
 		final Marshaler marshaler = getMarshaler();
 		Assert.assertTrue(marshaler != null);
@@ -187,6 +191,7 @@ public class MarshalerTest extends AbstractConfigAwareTest {
 		Assert.assertTrue(mp != null);
 	}
 
+	@SuppressWarnings("null")
 	public void testUnmarshalAgainstExistingEntity() throws Exception {
 		final Marshaler marshaler = getMarshaler();
 		Assert.assertTrue(marshaler != null);

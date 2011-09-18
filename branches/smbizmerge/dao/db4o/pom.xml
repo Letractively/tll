@@ -100,7 +100,7 @@
 		<dependency>
 			<groupId>org.springextensions.db4o</groupId>
 			<artifactId>org.springextensions.db4o</artifactId>
-			<version>${springextensions.db4o.version}</version>
+			<version>1.0.0e</version>
 		</dependency>
 
 		<dependency>

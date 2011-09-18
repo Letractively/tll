@@ -4,8 +4,8 @@
  */
 package com.tll.common.dto;
 
-import com.google.gwt.requestfactory.shared.EntityProxy;
-import com.google.gwt.requestfactory.shared.ProxyFor;
+import com.google.web.bindery.requestfactory.shared.EntityProxy;
+import com.google.web.bindery.requestfactory.shared.ProxyFor;
 import com.tll.model.Currency;
 
 /**

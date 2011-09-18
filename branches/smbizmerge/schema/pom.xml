@@ -17,12 +17,13 @@
 			<resource>
 				<directory>src/main/java</directory>
 				<includes>
-					<include>**/schema/AbstractSchemaProperty.java</include>
-					<include>**/schema/IPropertyMetadataProvider.java</include>
-					<include>**/schema/IPropertyNameProvider.java</include>
-					<include>**/schema/ISchemaProperty.java</include>
-					<include>**/schema/PropertyMetadata.java</include>
-					<include>**/schema/PropertyType.java</include>
+					<include>**/model/AbstractSchemaProperty.java</include>
+					<include>**/model/IPropertyMetadataProvider.java</include>
+					<include>**/model/IPropertyNameProvider.java</include>
+					<include>**/model/ISchemaProperty.java</include>
+					<include>**/model/PropertyMetadata.java</include>
+					<include>**/model/PropertyType.java</include>
+					<include>**/*.gwt.xml</include>
 				</includes>
 			</resource>
 			<resource>

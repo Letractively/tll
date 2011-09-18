@@ -1,7 +1,7 @@
 package com.tll.common.dto;
 
-import com.google.gwt.requestfactory.shared.ProxyFor;
-import com.google.gwt.requestfactory.shared.ValueProxy;
+import com.google.web.bindery.requestfactory.shared.ProxyFor;
+import com.google.web.bindery.requestfactory.shared.ValueProxy;
 import com.tll.model.CreditCardType;
 import com.tll.model.Currency;
 
