@@ -5,9 +5,6 @@
  */
 package com.tll.dao;
 
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
-
 import com.tll.IPropertyValueProvider;
 import com.tll.model.IEntity;
 import com.tll.model.IScalar;
@@ -45,7 +42,7 @@ public final class SearchResult implements IPropertyValueProvider {
 	/**
 	 * @return The type of this search result. May be <code>null</code>.
 	 */
-	Class<?> getRefType() {
+	public Class<?> getRefType() {
 		if(element instanceof IEntity) {
 			// entity
 			return ((IEntity) element).entityClass();
@@ -57,12 +54,13 @@ public final class SearchResult implements IPropertyValueProvider {
 	@Override
 	public Object getPropertyValue(String propertyPath) {
 		if(element == null) return null;
-		final BeanWrapper bw = new BeanWrapperImpl(element);
+		//final BeanWrapper bw = new BeanWrapperImpl(element);
 		if(element instanceof IEntity) {
-			return bw.getPropertyValue(propertyPath);
+			throw new UnsupportedOperationException("Need to re-impl this w/o spring deps!");
+			//return bw.getPropertyValue(propertyPath);
 		}
 		else if(element instanceof IScalar) {
-			return bw.getPropertyValue("tupleMap[" + propertyPath + "]");
+			return ((IScalar)element).getTupleMap().get(propertyPath);
 		}
 		throw new IllegalStateException("Unhandled element type:" + element.getClass());
 	}

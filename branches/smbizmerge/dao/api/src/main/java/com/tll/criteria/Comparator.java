@@ -1,6 +1,5 @@
 package com.tll.criteria;
 
-import java.util.Collection;
 import java.util.Date;
 
 import org.apache.commons.lang.math.NumberRange;
@@ -136,20 +135,21 @@ public enum Comparator {
 				return actualValue == null;
 			}
 			case IN: {
-				if(checkValue.getClass().isArray()) {
-					return org.springframework.util.ObjectUtils.containsElement((Object[]) actualValue, checkValue);
-				}
-				else if(checkValue instanceof Collection<?>) {
-					return ((Collection<?>) checkValue).contains(actualValue);
-				}
-				else if(checkValue instanceof String) {
-					// assume comma-delimited string
-					final Object[] arr =
-							org.springframework.util.ObjectUtils.toObjectArray(org.springframework.util.StringUtils
-									.commaDelimitedListToStringArray((String) actualValue));
-					return org.springframework.util.ObjectUtils.containsElement(arr, actualValue);
-				}
-				return false;
+				throw new UnsupportedOperationException("Need to re-factor to eliminate spring dependency!");
+//				if(checkValue.getClass().isArray()) {
+//					return org.springframework.util.ObjectUtils.containsElement((Object[]) actualValue, checkValue);
+//				}
+//				else if(checkValue instanceof Collection<?>) {
+//					return ((Collection<?>) checkValue).contains(actualValue);
+//				}
+//				else if(checkValue instanceof String) {
+//					// assume comma-delimited string
+//					final Object[] arr =
+//							org.springframework.util.ObjectUtils.toObjectArray(org.springframework.util.StringUtils
+//									.commaDelimitedListToStringArray((String) actualValue));
+//					return org.springframework.util.ObjectUtils.containsElement(arr, actualValue);
+//				}
+//				return false;
 			}
 			default:
 				throw new IllegalStateException("Unhandled Comparator: " + cmp);

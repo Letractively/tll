@@ -7,7 +7,6 @@ package com.tll.server.listing;
 
 import java.util.List;
 
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
@@ -39,7 +38,6 @@ public class ListingProcessorTest extends AbstractDbAwareTest {
 	}
 
 	@Override
-	@BeforeClass()
 	protected void beforeClass() {
 		super.beforeClass();
 	}

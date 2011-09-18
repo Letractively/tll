@@ -3,8 +3,6 @@ package com.tll.dao.test;
 import java.util.Collection;
 import java.util.List;
 
-import org.springframework.dao.DataAccessException;
-
 import com.tll.criteria.Criteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
@@ -66,7 +64,7 @@ public class EntityDaoTestDecorator<T extends IEntityDao> implements IEntityDao 
 
 	@Override
 	public <E extends IEntity> E findEntity(Criteria<E> criteria) throws InvalidCriteriaException,
-	EntityNotFoundException, NonUniqueResultException, DataAccessException {
+	EntityNotFoundException, NonUniqueResultException{
 		return rawDao.findEntity(criteria);
 	}
 
@@ -83,48 +81,48 @@ public class EntityDaoTestDecorator<T extends IEntityDao> implements IEntityDao 
 	}
 
 	@Override
-	public <E extends IEntity> E load(IBusinessKey<E> key) throws EntityNotFoundException, DataAccessException {
+	public <E extends IEntity> E load(IBusinessKey<E> key) throws EntityNotFoundException{
 		return rawDao.load(key);
 	}
 
 	@Override
 	public <N extends INamedEntity> N load(NameKey<N> nameKey) throws EntityNotFoundException,
-	NonUniqueResultException, DataAccessException {
+	NonUniqueResultException{
 		return rawDao.load(nameKey);
 	}
 
 	@Override
-	public <E extends IEntity> E load(Class<E> entityType, Long pk) throws EntityNotFoundException, DataAccessException {
+	public <E extends IEntity> E load(Class<E> entityType, Long pk) throws EntityNotFoundException{
 		return rawDao.load(entityType, pk);
 	}
 
 	@Override
-	public <E extends IEntity> List<E> loadAll(Class<E> entityType) throws DataAccessException {
+	public <E extends IEntity> List<E> loadAll(Class<E> entityType) {
 		return rawDao.loadAll(entityType);
 	}
 
 	@Override
-	public <E extends IEntity> E persist(E entity) throws DataAccessException {
+	public <E extends IEntity> E persist(E entity) {
 		return rawDao.persist(entity);
 	}
 
 	@Override
-	public <E extends IEntity> Collection<E> persistAll(Collection<E> entities) throws DataAccessException {
+	public <E extends IEntity> Collection<E> persistAll(Collection<E> entities) {
 		return rawDao.persistAll(entities);
 	}
 
 	@Override
-	public <E extends IEntity> void purge(E entity) throws DataAccessException {
+	public <E extends IEntity> void purge(E entity) {
 		rawDao.purge(entity);
 	}
 
 	@Override
-	public <E extends IEntity> void purge(Class<E> entityType, Long pk) throws EntityNotFoundException, DataAccessException {
+	public <E extends IEntity> void purge(Class<E> entityType, Long pk) throws EntityNotFoundException{
 		rawDao.purge(entityType, pk);
 	}
 
 	@Override
-	public <E extends IEntity> void purgeAll(Collection<E> entities) throws DataAccessException {
+	public <E extends IEntity> void purgeAll(Collection<E> entities) {
 		rawDao.purgeAll(entities);
 	}
 

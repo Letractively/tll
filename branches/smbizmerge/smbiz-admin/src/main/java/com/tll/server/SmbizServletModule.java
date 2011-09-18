@@ -2,7 +2,9 @@ package com.tll.server;
 
 import java.util.HashMap;
 
+import com.google.inject.Scopes;
 import com.google.inject.servlet.ServletModule;
+import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
 import com.tll.config.Config;
 import com.tll.server.rpc.SiteStatisticsService;
 
@@ -28,14 +30,22 @@ class SmbizServletModule extends ServletModule {
 	protected void configureServlets() {
 		
 		String stage = config.getString("stage");
+		
+		HashMap<String, String> cparams = new HashMap<String, String>();
 
 		// NoSecuritySessionContextFilter
 		filter("/*").through(NoSecuritySessionContextFilter.class);
 
 		// WebClientCacheFilter
-		HashMap<String, String> cparams = new HashMap<String, String>(1);
+		cparams.clear();
 		cparams.put("oneDayCacheFileExts", "prod".equals(stage)? ".js .css .gif .jpg .png" : "");
 		filter("/*").through(WebClientCacheFilter.class, cparams);
+		
+		// gwt request factory
+		bind(RequestFactoryServlet.class).in(Scopes.SINGLETON);
+		cparams.clear();
+		cparams.put("symbolMapsDirectory", "WEB-INF/classes/symbolMaps/");
+		serve("/SmbizAdmin/gwtRequest").with(RequestFactoryServlet.class, cparams);
 
 		// site statistics rpc service
 		serve("/SmbizAdmin/ss").with(SiteStatisticsService.class);

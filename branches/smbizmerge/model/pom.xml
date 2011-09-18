@@ -10,7 +10,7 @@
 
 	<artifactId>tll-model</artifactId>
 	<name>tll-model</name>
-	<description>IEntity and ORM related definitions.</description>
+	<description>The model/entity layer.</description>
 	<packaging>jar</packaging>
 
 	<build>
@@ -77,13 +77,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.google.code.guice</groupId>
+			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
 		</dependency>
-    <dependency>
-      <groupId>javax.inject</groupId>
-      <artifactId>javax.inject</artifactId>
-    </dependency>
 		<dependency>
 			<groupId>aopalliance</groupId>
 			<artifactId>aopalliance</artifactId>

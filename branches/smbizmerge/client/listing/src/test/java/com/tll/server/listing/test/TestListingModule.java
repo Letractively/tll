@@ -77,7 +77,7 @@ public class TestListingModule extends AbstractModule {
 				Collection<Address> addresses = ebf.getNEntityCopies(Address.class, 500);
 				EntityGraph eg = new EntityGraph(emd, bkf);
 				try {
-					eg.setEntities(addresses);
+					eg.setEntities(addresses, true);
 				}
 				catch(Exception e) {
 					throw new RuntimeException(e);

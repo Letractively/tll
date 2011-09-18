@@ -182,6 +182,7 @@ public final class EntityGraph implements IEntityProvider {
 	 * found invalid.
 	 * @param <E>
 	 * @param entities The entities to set
+	 * @param makeUnique make each collection element business key unique?
 	 * @throws IllegalStateException When one or more of the given entites already
 	 *         exist in the graph.
 	 * @throws NonUniqueBusinessKeyException When the set operation fails due to a
@@ -189,11 +190,16 @@ public final class EntityGraph implements IEntityProvider {
 	 *         result of the added entities.
 	 */
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> void setEntities(Collection<E> entities) throws IllegalStateException,
+	public <E extends IEntity> void setEntities(Collection<E> entities, boolean makeUnique) throws IllegalStateException,
 			NonUniqueBusinessKeyException {
 		if(entities != null && entities.size() > 0) {
 			final Class<E> entityType = (Class<E>) entities.iterator().next().entityClass();
 			final Set<E> set = (Set<E>) getNonNullEntitySet(entityType);
+			if(makeUnique) {
+				for(E e : entities) {
+					BusinessKeyFactory.makeBusinessKeyUnique(e);
+				}
+			}
 			if(!set.addAll(entities)) {
 				throw new IllegalStateException("Unable to add entities to entity set");
 			}
