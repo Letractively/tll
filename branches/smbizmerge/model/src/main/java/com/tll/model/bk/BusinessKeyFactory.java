@@ -82,8 +82,7 @@ public final class BusinessKeyFactory {
 	 * @param <E>
 	 * @param e the entity to be altered
 	 */
-	@SuppressWarnings({
-		"unchecked", "null" })
+	@SuppressWarnings("unchecked")
 	public static <E extends IEntity> void makeBusinessKeyUnique(E e) {
 		IBusinessKeyDefinition<E>[] bkdefs;
 		try {

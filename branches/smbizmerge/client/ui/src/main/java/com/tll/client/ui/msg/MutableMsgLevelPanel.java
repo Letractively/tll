@@ -49,7 +49,6 @@ public class MutableMsgLevelPanel extends Composite {
 		 */
 		final Integer classifier;
 
-		@SuppressWarnings("null")
 		Entry(Msg msg, final IWidgetRef ref, Integer classifier) {
 			this.classifier = classifier;
 			this.sourced = (ref != null && (ref.getWidget() instanceof Focusable));

@@ -5,10 +5,10 @@
 package com.tll.client;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.place.shared.PlaceHistoryHandler;
+import com.google.web.bindery.event.shared.EventBus;
 import com.tll.client.view.IViewFactory;
 import com.tll.common.dto.SmbizEntityRequestFactory;
 

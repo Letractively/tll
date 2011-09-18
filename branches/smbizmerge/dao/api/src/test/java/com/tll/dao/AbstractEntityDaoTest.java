@@ -521,7 +521,6 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	 * Tests the find by ids method
 	 * @throws Exception
 	 */
-	@SuppressWarnings("null")
 	final void daoFindByIds() throws Exception {
 		IEntity e = getTestEntity();
 		e = dao.persist(e);
