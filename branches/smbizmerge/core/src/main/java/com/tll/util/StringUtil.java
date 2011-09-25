@@ -213,7 +213,7 @@ public abstract class StringUtil {
 			}
 			else if(ch == '.') {
 				// add a space in place of the period and set flag to true
-				result.append(" ");
+				result.append(' ');
 				foundDot = true;
 			}
 			else if(Character.isLowerCase(ch)) {
@@ -222,7 +222,7 @@ public abstract class StringUtil {
 			}
 			else {
 				// if uppercase, add a space
-				result.append(" ");
+				result.append(' ');
 				result.append(ch);
 			}
 		}

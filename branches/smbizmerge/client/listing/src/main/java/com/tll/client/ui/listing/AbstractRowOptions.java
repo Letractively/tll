@@ -3,14 +3,14 @@
  * @author jpk
  * May 8, 2008
  */
-package com.tll.client.listing;
+package com.tll.client.ui.listing;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.tll.client.ui.listing.EditRowImageBundle;
+import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.ui.option.Option;
 
 /**

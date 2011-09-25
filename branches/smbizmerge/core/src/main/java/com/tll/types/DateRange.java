@@ -1,4 +1,4 @@
-package com.tll.util;
+package com.tll.types;
 
 import java.util.Date;
 
@@ -8,15 +8,16 @@ import com.tll.IMarshalable;
  * DateRange
  * @author jpk
  */
-public class DateRange implements Cloneable, IMarshalable {
+public class DateRange implements IMarshalable {
 
 	public static final Date DATE_PAST = new Date(0L);
 
-	public static final Date DATE_FUTURE = new Date(new Date().getTime() + 1000 * 3600 * 24 * 365); // now + 1 year
+	// now + 1 year
+	public static final Date DATE_FUTURE = new Date(new Date().getTime() + 1000 * 3600 * 24 * 365);
 
 	static {
 		// sanity check
-		if(DATE_FUTURE.getTime() < 0l) throw new IllegalStateException("Date rolled!");
+		if(DATE_FUTURE.getTime() < 0L) throw new IllegalStateException("Date rolled!");
 	}
 
 	public static DateRange upTo(Date end) {
@@ -76,25 +77,8 @@ public class DateRange implements Cloneable, IMarshalable {
 		return !arg.before(start) && !arg.after(end);
 	}
 
-	@Override
-	public String toString() {
-		return isEmpty() ? "Empty Date Range" : (start.toString() + " - " + end.toString());
-	}
-
 	public boolean isEmpty() {
 		return (DATE_PAST.equals(start) && DATE_FUTURE.equals(end)) || start.after(end);
-	}
-
-	@Override
-	public boolean equals(Object arg) {
-		if(!(arg instanceof DateRange)) return false;
-		final DateRange other = (DateRange) arg;
-		return start.equals(other.start) && end.equals(other.end);
-	}
-
-	@Override
-	public int hashCode() {
-		return start.hashCode() * 7 * end.hashCode();
 	}
 
 	public boolean overlaps(DateRange arg) {
@@ -127,4 +111,21 @@ public class DateRange implements Cloneable, IMarshalable {
 		}
 	}
 	 */
+
+	@Override
+	public boolean equals(Object arg) {
+		if(!(arg instanceof DateRange)) return false;
+		final DateRange other = (DateRange) arg;
+		return start.equals(other.start) && end.equals(other.end);
+	}
+
+	@Override
+	public int hashCode() {
+		return start.hashCode() * 7 * end.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return isEmpty() ? "Empty Date Range" : (start.toString() + " - " + end.toString());
+	}
 }

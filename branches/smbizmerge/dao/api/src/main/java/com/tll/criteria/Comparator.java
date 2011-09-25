@@ -4,8 +4,8 @@ import java.util.Date;
 
 import org.apache.commons.lang.math.NumberRange;
 
+import com.tll.types.DateRange;
 import com.tll.util.CommonUtil;
-import com.tll.util.DateRange;
 
 /**
  * Comparator - Enumarates comparators that can be used to specify a criterion.

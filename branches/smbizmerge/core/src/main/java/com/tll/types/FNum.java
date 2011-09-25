@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.tll.util;
+package com.tll.types;
 
 import com.google.gwt.i18n.client.NumberFormat;
 import com.tll.IMarshalable;
@@ -13,30 +13,38 @@ import com.tll.IMarshalable;
  */
 public class FNum implements IMarshalable {
 
-	/**
-	 * The numerical value
-	 */
 	private Double value;
-	/**
-	 * The string-wise formatting directive by which the <code>value</code> is
-	 * formatted for display. The "format" of this property is consistent with the
-	 * formatting rules for Java's decimal formatting.
-	 */
+
 	private String format;
 
+	/**
+	 * Constructor
+	 */
 	public FNum() {
 	}
 
+	/**
+	 * Constructor
+	 * @param value
+	 */
 	public FNum(Double value) {
 		this(value, null);
 	}
 
+	/**
+	 * Constructor
+	 * @param value
+	 * @param format
+	 */
 	public FNum(Double value, String format) {
 		this();
 		setValue(value);
 		setFormat(format);
 	}
 
+	/**
+	 * @return The numerical value
+	 */
 	public Double getValue() {
 		return value;
 	}
@@ -45,6 +53,12 @@ public class FNum implements IMarshalable {
 		this.value = value;
 	}
 
+	/**
+	 * @return The string-wise formatting directive by which the
+	 *         <code>value</code> is formatted for display. The "format" of this
+	 *         property is consistent with the formatting rules for Java's decimal
+	 *         formatting.
+	 */
 	public String getFormat() {
 		return format;
 	}

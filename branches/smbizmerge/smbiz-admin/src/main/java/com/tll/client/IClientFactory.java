@@ -5,6 +5,7 @@
 package com.tll.client;
 
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.web.bindery.event.shared.EventBus;
 import com.tll.client.view.IViewFactory;
 import com.tll.common.dto.SmbizEntityRequestFactory;
@@ -15,12 +16,14 @@ import com.tll.common.dto.SmbizEntityRequestFactory;
 public interface IClientFactory {
 
 	EventBus getEventBus();
+
 	PlaceController getPlaceController();
-	//PlaceHistoryHandler getPlaceHistoryController();
+
+	PlaceHistoryHandler getPlaceHistoryHandler();
+
 	SmbizEntityRequestFactory getCrudFactory();
-	SmbizApp getSmbizApp();
-	
+
 	Messages getMessages();
-	
+
 	IViewFactory getViewFactory();
 }

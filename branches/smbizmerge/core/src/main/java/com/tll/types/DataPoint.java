@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.tll.util;
+package com.tll.types;
 
 
 /**

@@ -28,12 +28,14 @@
 					<include>**/ITypeDescriptorProvider.java</include>
 					<include>**/IMarshalable.java</include>
 					<include>**/ApplicationException.java</include>
-					<include>**/util/DataPoint.java</include>
-					<include>**/util/DateRange.java</include>
-					<include>**/util/FNum.java</include>
+					
 					<include>**/util/ObjectUtil.java</include>
 					<include>**/util/PropertyPath.java</include>
 					<include>**/util/StringUtil.java</include>
+					
+					<include>**/types/DataPoint.java</include>
+					<include>**/types/DateRange.java</include>
+					<include>**/types/FNum.java</include>
 				</includes>
 			</resource>
 		</resources>

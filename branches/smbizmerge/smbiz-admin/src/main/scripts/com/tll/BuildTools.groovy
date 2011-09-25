@@ -220,9 +220,10 @@ public final class BuildTools {
 						new Db4oDbShellModule());
 					dbShell = injector.getInstance(IDbShell.class)
 					def dbSess = injector.getInstance(IEntityDao.class).getObjectContainer(); 
-					println 'creating sbmiz db4o db..'
+					println "***>> creating sbmiz db4o db (${db4oFilepath}).."
 					dbShell.create()
 					dbShell.addData(dbSess)
+					dbSess.close();
 					println 'sbmiz db db4o created'
 					// restore config
 					this.config.setProperty('db.db4o.filename', db4oFilename)

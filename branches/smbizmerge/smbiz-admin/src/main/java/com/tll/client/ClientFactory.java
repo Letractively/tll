@@ -45,6 +45,7 @@ public class ClientFactory implements IClientFactory {
 		return placeController;
 	}
 
+	@Override
 	public PlaceHistoryHandler getPlaceHistoryHandler() {
 		return placeHistoryHandler;
 	}
@@ -52,11 +53,6 @@ public class ClientFactory implements IClientFactory {
 	@Override
 	public SmbizEntityRequestFactory getCrudFactory() {
 		return erf;
-	}
-
-	@Override
-	public SmbizApp getSmbizApp() {
-		return new SmbizApp(new SmbizShell());
 	}
 
 	@Override

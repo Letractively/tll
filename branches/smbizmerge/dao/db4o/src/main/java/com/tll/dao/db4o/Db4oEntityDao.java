@@ -62,7 +62,7 @@ import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.bk.BusinessKeyPropertyException;
 import com.tll.model.bk.IBusinessKey;
 import com.tll.model.bk.NonUniqueBusinessKeyException;
-import com.tll.util.DateRange;
+import com.tll.types.DateRange;
 import com.tll.util.PropertyPath;
 
 /**

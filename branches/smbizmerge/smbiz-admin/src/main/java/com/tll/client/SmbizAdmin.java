@@ -1,7 +1,6 @@
 package com.tll.client;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 
 /**
@@ -11,7 +10,7 @@ public class SmbizAdmin implements EntryPoint {
 
 	@Override
 	public void onModuleLoad() {
-		IClientFactory cf = GWT.create(IClientFactory.class);
-		cf.getSmbizApp().run(RootLayoutPanel.get());
+		SmbizApp app = new SmbizApp(new SmbizShell());
+		app.run(RootLayoutPanel.get());
 	}
 }
