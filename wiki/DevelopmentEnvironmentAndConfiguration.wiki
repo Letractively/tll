@@ -5,13 +5,12 @@ Lists the necessary local environment and IDE settings for building and deployin
 The following software is required:
 || *Name* || *Version* || *Notes* ||
 || [http://java.sun.com/javase/downloads/index.jsp jdk] || 1.6.0_14+ || ||
-|| [http://www.eclipse.org/ eclipse] || 3.5.0+|| JEE version ||
-|| [http://maven.apache.org/ maven] || 2.2.1+|| ||
+|| [http://www.eclipse.org/ eclipse] || 3.7+|| JEE version ||
+|| [http://maven.apache.org/ maven] || 3.0.3+|| ||
 || [http://ant.apache.org/ ant] || 1.7.1+ || Not strictly necessary as maven maintains its own instance. ||
 || [http://groovy.codehaus.org/ groovy] || 1.6+ || Use the windows installer download is possible. ||
 || [http://subversion.tigris.org/ subversion client] || 1.6.0+ || Preferred windows client: [http://www.sliksvn.com/en/download sliksvn] ||
-|| [http://code.google.com/p/google-web-toolkit/ GWT] || 1.6.4+ || ||
-|| [http://code.google.com/p/gwt-log/downloads/list gwt-log] || 2.6.2+ || ||
+|| [http://code.google.com/p/google-web-toolkit/ GWT] || 2.4+ || ||
 
 =environment=
   * Create the tll root directory in a desired location.  This will be the root dir of all tll source code.
@@ -39,7 +38,6 @@ The following software is required:
 {TLL_ROOT}/build-tools/bin
 }}}
 
- for Windows:
   {{{
 %JAVA_HOME%\bin;%GROOVY_HOME%\bin;%ANT_HOME%\bin;%SVN_HOME%\bin;%M2_HOME%\bin;%TLL_ROOT%\build-tools\bin;
 }}}
@@ -78,24 +76,6 @@ global-ignores = war debug.bat shell.bat .metadata build classes bin bin-groovy 
 svn checkout http://tll.googlecode.com/svn/trunk/ {TLL_ROOT}
 }}}
 
-  * Install non-standard tll dependencies to your local maven repo by invoking the following commands from a shell window:
- {{{
-
-rem for jdo dao impl
-install-datanucleus
-
-rem for db4o dao impl
-install-db4o
-install-springex-db4o
-
-rem needed for tll client projects
-install-gwt-log
-
-rem needed for tll client projects only if GWT is built from source
-rem otherwise maven should handle it.
-install-gwt
-}}}
-
   * Install the tll modules into the local maven repository by invoking the following maven command from the tll root directory:
  {{{
 mvn install
@@ -118,14 +98,7 @@ Specify the -vm option in the eclipse.ini or at the command line (This is necess
 || TestNG || [http://beust.com/eclipse http://beust.com/eclipse] || ||
 || Groovy || [http://dist.groovy.codehaus.org/distributions/updateDev/ http://dist.groovy.codehaus.org/distributions/updateDev/] || ||
 || FindBugs || [http://findbugs.cs.umd.edu/eclipse/ http://findbugs.cs.umd.edu/eclipse/] || ||
-|| google eclipse plugin || http://dl.google.com/eclipse/plugin/3.5 || ||
+|| google eclipse plugin || http://dl.google.com/eclipse/plugin/3.7 || ||
 
 ==Preferences==
 Import the tll eclipse preferences files.  These files are located under:  [http://tll.googlecode.com/svn/eclipse eclipse].
-
-==Misc==
-
-===smbiz===
-To quickly update only the lib dependencies for GWT host mode, do:
- {{{ mvn dependency:copy-dependencies -DoutputDirectory=target/war/WEB-INF/lib }}}
-from the smbiz root dir.
