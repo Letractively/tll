@@ -53,8 +53,6 @@ global-ignores = war debug.bat shell.bat .metadata build classes bin bin-groovy 
 	xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
                       http://maven.apache.org/xsd/settings-1.0.0.xsd">
 
-	<localRepository>C:\mr</localRepository>
-
 	<activeProfiles>
 
 		<!-- stage profile ('dev' or 'prod') -->
