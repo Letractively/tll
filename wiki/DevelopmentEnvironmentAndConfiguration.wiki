@@ -92,7 +92,7 @@ Specify the -vm option in the eclipse.ini or at the command line (This is necess
 ==Add Ons==
 || *Name* || *URL* || *Notes* ||
 || subclipse || [http://subclipse.tigris.org/update_1.6.x http://subclipse.tigris.org/update_1.6.x] || ||
-|| m2eclipse || [http://m2eclipse.sonatype.org/update/ http://m2eclipse.sonatype.org/update/] || ||
+|| m2e || [http://m2eclipse.sonatype.org/update/ http://m2eclipse.sonatype.org/update/] || Install configurator: aspectj and groovy and more as needed. (Preferences -> Maven -> Discovery) ||
 || TestNG || [http://beust.com/eclipse http://beust.com/eclipse] || ||
 || Groovy || [http://dist.groovy.codehaus.org/distributions/updateDev/ http://dist.groovy.codehaus.org/distributions/updateDev/] || ||
 || FindBugs || [http://findbugs.cs.umd.edu/eclipse/ http://findbugs.cs.umd.edu/eclipse/] || ||
