@@ -81,7 +81,8 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <execute />
+                    <!-- TODO: restore to exeute -->
+                    <ignore />
                   </action>
                 </pluginExecution>
               </pluginExecutions>
