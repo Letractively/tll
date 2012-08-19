@@ -3,12 +3,12 @@ package com.tll.common.dto;
 import com.google.web.bindery.requestfactory.shared.ProxyFor;
 import com.google.web.bindery.requestfactory.shared.ValueProxy;
 import com.tll.model.CreditCardType;
-import com.tll.model.Currency;
+import com.tll.model.PaymentData;
 
 /**
  * @author jpk
  */
-@ProxyFor(Currency.class)
+@ProxyFor(PaymentData.class)
 public interface PaymentDataProxy extends ValueProxy {
 
 	String getCcAddress1();

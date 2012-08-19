@@ -23,5 +23,5 @@ public interface CurrencyProxy extends EntityProxy {
 	void setSymbol(String s);
 	
 	float getUsdExchangeRate();
-	void setUsdExchangeRate(Float f);
+	void setUsdExchangeRate(float f);
 }
