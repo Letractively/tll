@@ -95,11 +95,6 @@
 			</exclusions>
 		</dependency>
 
-		<dependency><!-- solely for IsSerializable ref -->
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-servlet</artifactId>
-		</dependency>
-
 		<dependency>
 			<groupId>com.tll</groupId>
 			<artifactId>tll-config</artifactId>

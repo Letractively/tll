@@ -44,6 +44,12 @@
     </dependency>
 
     <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-servlet</artifactId>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
       <version>0.0.1-SNAPSHOT</version>

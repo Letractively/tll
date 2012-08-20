@@ -3,7 +3,8 @@
  */
 package com.tll.types;
 
-import com.google.gwt.i18n.client.NumberFormat;
+import java.text.NumberFormat;
+
 import com.tll.IMarshalable;
 
 /**
@@ -69,6 +70,6 @@ public class FNum implements IMarshalable {
 
 	@Override
 	public String toString() {
-		return NumberFormat.getDecimalFormat().format(getValue().doubleValue());
+		return NumberFormat.getInstance().format(getValue().doubleValue());
 	}
 }
