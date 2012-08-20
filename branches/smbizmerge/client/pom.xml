@@ -22,7 +22,6 @@
     <module>ui</module>
     <module>field</module>
     <module>rpc</module>
-    <module>databind</module>
     <module>view</module>
     <module>listing</module>
     <module>login</module>
