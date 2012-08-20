@@ -206,33 +206,30 @@ public final class BuildTools {
 		IDbShell dbShell = null;
 		switch(daoImpl) {
 			case 'db4o':
-				String db4oFilepath = project.build.outputDirectory.toString() + '/' + this.config.getString('db.db4o.filename')
-				File f = new File(db4oFilepath);
+				String db4oFilename = this.config.getString('db.db4o.filename')
+				String db4oFilepath = project.build.outputDirectory.toString() + '/' + db4oFilename
+				File f = new File(db4oFilename);
 				if(!f.exists()) {
-					// NOTE: we need to temporarily change a few db props to avoid db4o's dbfilelocked exception
-					def origTrans = this.config.getProperty('db.transaction.bindToSpringAtTransactional')
-					def db4oFilename = this.config.getProperty('db.db4o.filename')
-					this.config.setProperty('db.db4o.filename', db4oFilepath)
-					this.config.setProperty('db.transaction.bindToSpringAtTransactional', false)
+					println 'smbiz db4o db not found.  Creating: ' + db4oFilepath
+					def bconfig = new Config()
+					bconfig.setProperty('db.db4o.filename', db4oFilename)
+					bconfig.setProperty('db.transaction.bindToSpringAtTransactional', false)
 					def injector = Guice.createInjector(
-						new SmbizDb4oDaoModule(this.config), 
+						new SmbizDb4oDaoModule(bconfig), 
 						new SmbizEGraphModule(), 
 						new Db4oDbShellModule());
 					dbShell = injector.getInstance(IDbShell.class)
 					def dbSess = injector.getInstance(IEntityDao.class).getObjectContainer(); 
-					println "***>> creating sbmiz db4o db (${db4oFilepath}).."
+					println ">>>>> creating sbmiz db4o db: '${db4oFilepath}'.."
 					dbShell.create()
 					dbShell.addData(dbSess)
 					dbSess.close();
 					println 'sbmiz db db4o created'
-					// restore config
-					this.config.setProperty('db.db4o.filename', db4oFilename)
-					this.config.setProperty('db.transaction.bindToSpringAtTransactional', origTrans)
 				}
 				break
 			case 'jdo':
-			default:
 				// TODO implement jdo
+			default:
 				throw new UnsupportedOperationException()
 		}
 	}

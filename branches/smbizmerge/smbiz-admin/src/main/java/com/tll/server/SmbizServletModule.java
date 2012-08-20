@@ -44,6 +44,7 @@ class SmbizServletModule extends ServletModule {
 		// gwt request factory
 		bind(RequestFactoryServlet.class).in(Scopes.SINGLETON);
 		cparams.clear();
+		// You'll need to compile with -extras and move the symbolMaps directory to this location if you want stack trace deobfuscation to work
 		cparams.put("symbolMapsDirectory", "WEB-INF/classes/symbolMaps/");
 		serve("/SmbizAdmin/gwtRequest").with(RequestFactoryServlet.class, cparams);
 

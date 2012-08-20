@@ -58,7 +58,7 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 					@Override
 					public URI get() {
 						String dbPath = getConfig().getString(AbstractDb4oDaoModule.ConfigKeys.DB4O_FILENAME.getKey());
-						return AbstractDb4oDaoModule.getDb4oFileRef(dbPath);
+						return AbstractDb4oDaoModule.getDb4oClasspathFileRef(dbPath);
 					}
 				}).in(Scopes.SINGLETON);
 			}

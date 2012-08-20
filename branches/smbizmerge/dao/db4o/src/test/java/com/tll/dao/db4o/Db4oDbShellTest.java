@@ -53,7 +53,7 @@ public class Db4oDbShellTest extends AbstractDbAwareTest {
 			protected void configure() {
 				bind(IEntityMetadata.class).to(EntityMetadata.class);
 				bind(IEntityFactory.class).to(TestEntityFactory.class);
-				bind(URI.class).annotatedWith(Db4oFile.class).toInstance(AbstractDb4oDaoModule.getDb4oFileRef("target/testshelldb"));
+				bind(URI.class).annotatedWith(Db4oFile.class).toInstance(AbstractDb4oDaoModule.getDb4oClasspathFileRef("testshelldb"));
 			}
 		});
 		modules.add(new Db4oDbShellModule());

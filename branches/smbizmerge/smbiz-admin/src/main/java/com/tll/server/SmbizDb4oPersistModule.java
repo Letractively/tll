@@ -3,7 +3,7 @@
  * @author jpk
  * @since Dec 31, 2010
  */
-package com.tll;
+package com.tll.server;
 
 import net.sf.ehcache.CacheManager;
 
@@ -61,7 +61,7 @@ public class SmbizDb4oPersistModule extends AbstractModule {
 		
 		install(new SmbizEntityServiceFactoryModule());
 		
-		// required for satisfying GWT's RequestFactory (entity-RPC) feature
+		// required for satisfying GWT's RequestFactory feature
 		requestStaticInjection(EMF.class);
 	}
 }

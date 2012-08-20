@@ -17,7 +17,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 import com.google.inject.servlet.GuiceServletContextListener;
-import com.tll.SmbizDb4oPersistModule;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 
@@ -25,9 +24,9 @@ import com.tll.config.ConfigRef;
  * smbiz admin app bootstrapper.
  * @author jpk
  */
-public class SmbizGuiceServletConfig extends GuiceServletContextListener {
+public class SmbizBootstrapper extends GuiceServletContextListener {
 
-	private static final Logger log = LoggerFactory.getLogger(SmbizGuiceServletConfig.class);
+	private static final Logger log = LoggerFactory.getLogger(SmbizBootstrapper.class);
 	
 	private transient Config config;
 

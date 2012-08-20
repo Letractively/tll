@@ -11,6 +11,10 @@
   <artifactId>tll-dao-db4o</artifactId>
   <name>tll-dao-db4o</name>
   <description>db4o dao implementation</description>
+  
+  <properties>
+    <db4oVersion>8.0.249.16098-all-java5</db4oVersion>
+  </properties>
 
   <build>
     <plugins>
@@ -27,11 +31,11 @@
               <goal>install-file</goal>
             </goals>
             <configuration>
-              <file>etc/db4o-8.0.249.16098-all-java5.jar</file>
-              <sources>etc/db4o-8.0.249.16098-all-java5-sources.jar</sources>
+              <file>etc/db4o-${db4oVersion}.jar</file>
+              <sources>etc/db4o-${db4oVersion}-sources.jar</sources>
               <groupId>db4o</groupId>
               <artifactId>db4o</artifactId>
-              <version>8.0.249.16098-all-java5</version>
+              <version>${db4oVersion}</version>
               <packaging>jar</packaging>
               <generatePom>true</generatePom>
             </configuration>
@@ -137,7 +141,7 @@
     <dependency>
       <groupId>db4o</groupId>
       <artifactId>db4o</artifactId>
-      <version>8.0.249.16098-all-java5</version>
+      <version>${db4oVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>

@@ -60,6 +60,7 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule {
 	 */
 	public static enum ConfigKeys implements IConfigKey {
 
+		// the non-path name of the db4o db file
 		DB4O_FILENAME("db.db4o.filename"),
 		DB_TRANS_TIMEOUT("db.transaction.timeout"),
 		DB_TRANS_BINDTOSPRING("db.transaction.bindToSpringAtTransactional");
@@ -77,17 +78,24 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule {
 	} // ConfigKeys
 
 	/**
-	 * @param path the db4o file path
+	 * Provides a non-null {@link URI} pointing to the given filename even if the
+	 * file doesn't exist based on the root classpath location.
+	 * <p>
+	 * IMPT: this method gives "undefined" results if a path is contained in the
+	 * filename argument.
+	 * @param filename the non-path filename
 	 * @return the corresponding URI
 	 */
-	public static URI getDb4oFileRef(String path) {
+	public static URI getDb4oClasspathFileRef(String filename) {
 		try {
 			// first attempt to load existing file
-			final URL url = AbstractDb4oDaoModule.class.getClassLoader().getResource(path);
+			URL url = AbstractDb4oDaoModule.class.getClassLoader().getResource(filename);
 			URI uri = url == null ? null : url.toURI();
 			if(uri == null) {
-				// create in working dir
-				final File f = new File(path);
+				url = AbstractDb4oDaoModule.class.getClassLoader().getResource("");
+				String npath = url.getPath() + '/' + filename;
+				final File f = new File(npath);
+				log.info("Db4o db file: {} does not exist.", f.getPath());
 				uri = f.toURI();
 			}
 			return uri;
@@ -134,7 +142,7 @@ public abstract class AbstractDb4oDaoModule extends AbstractModule {
 
 		// db40 db file URI
 		bind(URI.class).annotatedWith(Db4oFile.class).toInstance(
-				getDb4oFileRef(config == null ? DEFAULT_DB4O_FILENAME : config.getString(ConfigKeys.DB4O_FILENAME.getKey())));
+				getDb4oClasspathFileRef(config == null ? DEFAULT_DB4O_FILENAME : config.getString(ConfigKeys.DB4O_FILENAME.getKey())));
 
 		// Configuration (db4o)
 		// NOTE: we need to always generate a fresh instance to avoid db4o exception

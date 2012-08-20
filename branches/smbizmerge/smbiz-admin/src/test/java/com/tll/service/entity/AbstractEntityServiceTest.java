@@ -17,7 +17,6 @@ import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
-import com.tll.SmbizDb4oPersistModule;
 import com.tll.config.Config;
 import com.tll.config.ConfigRef;
 import com.tll.dao.AbstractDbAwareTest;
@@ -32,6 +31,7 @@ import com.tll.dao.db4o.test.Db4oTrans;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
 import com.tll.model.egraph.EntityBeanFactory;
+import com.tll.server.SmbizDb4oPersistModule;
 
 /**
  * AbstractEntityServiceTest - Base class for all entity service related testing
@@ -73,7 +73,7 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 					@Override
 					public URI get() {
 						String dbPath = getConfig().getString(AbstractDb4oDaoModule.ConfigKeys.DB4O_FILENAME.getKey());
-						return AbstractDb4oDaoModule.getDb4oFileRef(dbPath);
+						return AbstractDb4oDaoModule.getDb4oClasspathFileRef(dbPath);
 					}
 				}).in(Scopes.SINGLETON);
 			}
