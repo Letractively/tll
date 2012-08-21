@@ -6,19 +6,18 @@
 
 package com.tll;
 
-import com.google.inject.Guice;
+import java.net.URI
 
-import com.tll.config.Config;
-import com.tll.config.ConfigRef;
-import com.tll.ConfigProcessor;
-import com.tll.dao.IEntityDao;
-import com.tll.dao.db4o.SmbizDb4oDaoModule;
-import com.tll.dao.IDbShell;
-import com.tll.dao.db4o.test.Db4oDbShellModule;
-import com.tll.model.egraph.IEntityGraphPopulator;
-import com.tll.model.egraph.EGraphModule;
-import com.tll.model.SmbizEGraphModule;
-import com.tll.model.SmbizEntityGraphBuilder;
+import com.google.inject.Guice
+import com.tll.config.Config
+import com.tll.config.ConfigRef
+import com.tll.dao.IDbShell
+import com.tll.dao.IEntityDao
+import com.tll.dao.db4o.Db4oConfigKeys;
+import com.tll.dao.db4o.Db4oDbShell
+import com.tll.dao.db4o.SmbizDb4oDaoModule
+import com.tll.dao.db4o.test.Db4oDbShellModule
+import com.tll.model.SmbizEGraphModule
 
 /**
  * Utility class for smbiz project building.
@@ -32,8 +31,6 @@ public final class BuildTools {
 	static void processWarResources(def project, def ant) {
 		BuildTools b = new BuildTools(project, ant);
 		b.createDeployConfigFile();
-		b.createDeployWebXmlFile();
-		b.copyWebappResources();
 		b.stubDbIfNecessary()
 	}
 
@@ -42,11 +39,6 @@ public final class BuildTools {
 	static final String DEFAULT_SECURITY_IMPL = 'none'
 
 	static final def NL = System.getProperty("line.separator")
-
-	static final def regex_db_db4o = /(?s)<!-- START DB DB4O -->(.*)<!-- END DB DB4O -->/
-	static final def regex_db_jdo = /(?s)<!-- START DB JDO -->(.*)<!-- END DB JDO -->/
-	static final def regex_security_acegi = /(?s)<!-- START SECURITY ACEGI -->(.*)<!-- END SECURITY ACEGI -->/
-	static final def regex_security_none = /(?s)<!-- START NO SECURITY -->(.*)<!-- END NO SECURITY -->/
 
 	/**
 	 * Replaces all occurrences of ${prop.name} with the property value held in the provided property map
@@ -95,9 +87,6 @@ public final class BuildTools {
 		init();
 	}
 
-	/**
-	 * Init routing called by constructor.
-	 */
 	private void init() {
 		this.basedir = project.basedir.toString()
 		this.webappDir = project.properties.webappDirectory
@@ -125,67 +114,6 @@ public final class BuildTools {
 	}
 
 	/**
-	 * Copies webapp resources to the target war dir.
-	 */
-	public void copyWebappResources() {
-		println 'Copying webapp resources..'
-		String sdir = this.basedir + '/src/main/webapp'
-		String tdir = this.webappDir
-		ant.mkdir(dir: tdir)
-		ant.copy(todir: tdir, preservelastmodified:true) {
-			fileset(dir: sdir) { exclude(name: '**/web.xml') }
-		}
-		println 'webapp resources copied.'
-	}
-
-	/**
-	 * Generates the web.xml file based on the configuration/project state.
-	 */
-	public void createDeployWebXmlFile() {
-		println 'Generating deploy web.xml..'
-
-		Map props = [:];
-
-		// read web.xml
-		StringBuilder sbuf = new StringBuilder(3000)
-		new File(this.basedir + '/src/main/webapp/WEB-INF', 'web.xml').eachLine{ line ->
-			sbuf.append(rplProps(line, props))
-			sbuf.append(NL)
-		}
-		String s = sbuf.toString()
-
-		// dao impl filtering
-		println "  applying dao impl: ${daoImpl}"
-		switch(daoImpl) {
-			case 'db4o':
-				s = s.replaceAll(regex_db_jdo, '')
-				break;
-			case 'jdo':
-				s = s.replaceAll(regex_db_db4o, '')
-				break
-		}
-
-		// security impl filtering
-		println "  applying security impl: ${securityImpl}"
-		switch(securityImpl) {
-			case 'none':
-				s = s.replaceAll(regex_security_acegi, '')
-				break
-			case 'acegi':
-				s = s.replaceAll(regex_security_none, '')
-				break
-		}
-
-		s = s.replaceFirst(/(?s)<web-app>\s+/, '<web-app>' + NL + '\t')
-
-		// create the resolved web.xml
-		String dir = this.webappDir + '/WEB-INF'
-		ant.mkdir(dir: dir)
-		(new File(dir, 'web.xml')).write(s);
-		println 'web.xml created'
-	}
-
-	/**
 	 * Saves the generated config to disk that is deploy ready.
 	 */
 	public void createDeployConfigFile() {
@@ -201,18 +129,19 @@ public final class BuildTools {
 	 * Stubs the app db if it doesn't exist.
 	 */
 	private void stubDbIfNecessary() {
-
+		println 'checking for existance of db..'
 		// get a db shell instance
-		IDbShell dbShell = null;
+		Db4oDbShell dbShell = null;
 		switch(daoImpl) {
 			case 'db4o':
-				String db4oFilename = this.config.getString('db.db4o.filename')
-				String db4oFilepath = project.build.outputDirectory.toString() + '/' + db4oFilename
-				File f = new File(db4oFilename);
+				URI uri = Db4oDbShell.resolveDb4oFileLocationFromConfig(config);
+				println 'resolved smbiz db location: ' + uri.getPath()
+				String db4oFilepath = uri.getPath()
+				File f = new File(db4oFilepath);
 				if(!f.exists()) {
-					println 'smbiz db4o db not found.  Creating: ' + db4oFilepath
+					println 'Stubbing smbiz db4o db: ' + db4oFilepath
 					def bconfig = new Config()
-					bconfig.setProperty('db.db4o.filename', db4oFilename)
+					bconfig.setProperty('db.db4o.filepath', db4oFilepath)
 					bconfig.setProperty('db.transaction.bindToSpringAtTransactional', false)
 					def injector = Guice.createInjector(
 						new SmbizDb4oDaoModule(bconfig), 
@@ -224,7 +153,7 @@ public final class BuildTools {
 					dbShell.create()
 					dbShell.addData(dbSess)
 					dbSess.close();
-					println 'sbmiz db db4o created'
+					println "sbmiz db db4o file: '" + db4oFilepath + "\' created."
 				}
 				break
 			case 'jdo':

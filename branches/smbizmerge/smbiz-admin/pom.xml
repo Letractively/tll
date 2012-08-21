@@ -196,7 +196,8 @@
             <goals>
               <goal>execute</goal>
             </goals>
-            <phase>compile</phase><!-- we do compile phase since the *.class files need to be present for db stubbing -->
+            <!-- just after compile since the .class files need to be present for db4o db stubbing -->
+            <phase>process-classes</phase>
             <configuration>
               <classpath>
                 <element>
@@ -257,19 +258,6 @@
                     <ignore></ignore>
                   </action>
                 </pluginExecution>
-                <!-- <pluginExecution> -->
-                <!-- <pluginExecutionFilter> -->
-                <!-- <groupId>org.apache.maven.plugins</groupId> -->
-                <!-- <artifactId>maven-war-plugin</artifactId> -->
-                <!-- <versionRange>[2.1.1,)</versionRange> -->
-                <!-- <goals> -->
-                <!-- <goal>exploded</goal> -->
-                <!-- </goals> -->
-                <!-- </pluginExecutionFilter> -->
-                <!-- <action> -->
-                <!-- <ignore></ignore> -->
-                <!-- </action> -->
-                <!-- </pluginExecution> -->
                 <pluginExecution>
                   <pluginExecutionFilter>
                     <groupId>org.codehaus.gmaven</groupId>

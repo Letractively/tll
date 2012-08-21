@@ -35,8 +35,8 @@ import com.tll.dao.IEntityDao;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
-import com.tll.dao.db4o.AbstractDb4oDaoModule;
 import com.tll.dao.db4o.AbstractDb4oDaoModule.Db4oFile;
+import com.tll.dao.db4o.Db4oConfigKeys;
 import com.tll.dao.db4o.Db4oDbShell;
 import com.tll.dao.db4o.test.Db4oDbShellModule;
 import com.tll.dao.db4o.test.Db4oTrans;
@@ -85,8 +85,8 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 					
 					@Override
 					public URI get() {
-						String dbPath = getConfig().getString(AbstractDb4oDaoModule.ConfigKeys.DB4O_FILENAME.getKey());
-						return AbstractDb4oDaoModule.getDb4oClasspathFileRef(dbPath);
+						String dbPath = getConfig().getString(Db4oConfigKeys.DB4O_FILENAME.getKey());
+						return Db4oDbShell.getDb4oClasspathFileRef(dbPath);
 					}
 				}).in(Scopes.SINGLETON);
 			}

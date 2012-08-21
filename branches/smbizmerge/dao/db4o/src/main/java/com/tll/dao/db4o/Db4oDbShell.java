@@ -7,6 +7,8 @@ package com.tll.dao.db4o;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -19,6 +21,7 @@ import com.db4o.ObjectSet;
 import com.db4o.config.EmbeddedConfiguration;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.tll.config.Config;
 import com.tll.dao.IDbShell;
 import com.tll.model.egraph.EntityGraph;
 import com.tll.model.egraph.IEntityGraphPopulator;
@@ -35,6 +38,8 @@ public class Db4oDbShell implements IDbShell {
 	private final IEntityGraphPopulator populator;
 
 	private final Provider<EmbeddedConfiguration> c;
+
+	public static final String DEFAULT_DB4O_FILENAME = "db4o";
 
 	/**
 	 * Non-robust way to clear all objects held in db4o's object container. This
@@ -169,6 +174,61 @@ public class Db4oDbShell implements IDbShell {
 		}
 		finally {
 			killDbSession(dbSession);
+		}
+	}
+
+	/**
+	 * Resolves the full db4o file path following these rules in order of priority:
+	 * <ol>
+	 * <li>If the config {@link Db4oConfigKeys#DB4O_FILEREF} property value is present, it is considered the
+	 * full absolute path
+	 * <li>else if config {@link Db4oConfigKeys#DB4O_FILENAME} property value is present, it is appended
+	 * to the classpath root to establist the full path
+	 * <li>else the {@link DEFAULT_DB4O_FILENAME} is employed at the classpath
+	 * root to establish the full path
+	 * </ol>
+	 * <br><b>NOTE</b> The db4o file isn't required to exist for the proper function of this method.
+	 * @param config
+	 * @return never null URI pointing to the db4o file existant or not.
+	 */
+	public static URI resolveDb4oFileLocationFromConfig(Config config) {
+		if(config == null) return getDb4oClasspathFileRef(null);
+		
+		String fileref = config.getString(Db4oConfigKeys.DB4O_FILEREF.getKey());
+		if(fileref != null) {
+			File f = new File(fileref);
+			return f.toURI();
+		}
+		
+		return getDb4oClasspathFileRef(config.getString(Db4oConfigKeys.DB4O_FILENAME.getKey()));
+	}
+
+	/**
+	 * Provides a non-null {@link URI} pointing to the given filename even if the
+	 * file doesn't exist based on the root classpath location.
+	 * <p>
+	 * IMPT: this method gives "undefined" results if a path is contained in the
+	 * filename argument.
+	 * @param filename the non-path filename
+	 * @return the corresponding URI
+	 */
+	public static URI getDb4oClasspathFileRef(String filename) {
+		if(filename == null) filename = Db4oDbShell.DEFAULT_DB4O_FILENAME;
+		try {
+			// first attempt to load existing file
+			URL url = Db4oDbShell.class.getClassLoader().getResource(filename);
+			URI uri = url == null ? null : url.toURI();
+			if(uri == null) {
+				url = Db4oDbShell.class.getClassLoader().getResource("");
+				String npath = url.getPath() + '/' + filename;
+				final File f = new File(npath);
+				log.info("Db4o db file: {} does not exist.", f.getPath());
+				uri = f.toURI();
+			}
+			return uri;
+		}
+		catch(final URISyntaxException e) {
+			throw new IllegalStateException(e);
 		}
 	}
 }
