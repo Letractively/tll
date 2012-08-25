@@ -10,6 +10,7 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HasHTML;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -18,7 +19,10 @@ import com.google.gwt.user.client.ui.Widget;
  * invoking the browser's default click event action which involves GWT's
  * history mechanism which is what we want to avoid.
  * @author jpk
+ * 
+ * @deprecated Use {@link Anchor} instead.
  */
+@Deprecated
 public class SimpleHyperLink extends Widget implements HasHTML, HasClickHandlers {
 
 	/**

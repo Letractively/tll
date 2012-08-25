@@ -1,246 +1,177 @@
-/**
- * The Logic Lab
- */
 package com.tll.client.ui;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.dom.client.LabelElement;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
-import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.tll.client.data.rpc.ForgotPasswordCommand;
-import com.tll.client.data.rpc.IHasRpcHandlers;
-import com.tll.client.data.rpc.IRpcHandler;
-import com.tll.client.data.rpc.RpcEvent;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
- * LoginPanel
  * @author jpk
+ * @since Aug 22, 2012
  */
-public class LoginPanel extends Composite implements IHasUserSessionHandlers, IHasRpcHandlers, HasValueChangeHandlers<LoginPanel.Mode> {
+public class LoginPanel extends Composite implements ClickHandler, SubmitHandler {
 
-	public static enum Mode {
+	private static LoginPanel2UiBinder uiBinder = GWT.create(LoginPanel2UiBinder.class);
+
+	interface LoginPanel2UiBinder extends UiBinder<Widget, LoginPanel> {
+	}
+
+	static enum Mode {
 		LOGIN,
 		FORGOT_PASSWORD,
 	}
 
-	final Label lblStatusMsg;
-	final FormPanel form;
-	final TextBox tbEmail;
-	final Label lblEmail, lblPswd;
-	final PasswordTextBox tbPswd;
-	final Button btnSubmit;
-	final SimpleHyperLink lnkTgl;
+	Mode mode = Mode.LOGIN; // default
+
+	@UiField
+	DivElement title;
+	@UiField
+	DivElement statusMsg;
+
+	@UiField
+	LabelElement lblUsername;
+	@UiField
+	TextBox tbUsername;
+	@UiField
+	LabelElement lblPassword;
+	@UiField
+	TextBox tbPassword;
+	@UiField
+	Anchor lnkTgl; // toggles btwn view modes
+	@UiField
+	Button btnSubmit;
+	@UiField
+	FormPanel form;
 
 	/**
-	 * Constructor
-	 * <p>
-	 * Default, Spring-Security based, form field names and form action.
+	 * Because this class has a default constructor, it can be used as a binder
+	 * template. In other words, it can be used in other *.ui.xml files as
+	 * follows: <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	 * xmlns:g="urn:import:**user's package**">
+	 * <g:**UserClassName**>Hello!</g:**UserClassName> </ui:UiBinder> Note that
+	 * depending on the widget that is used, it may be necessary to implement
+	 * HasHTML instead of HasText.
 	 */
 	public LoginPanel() {
-		this("j_username", "j_password", GWT.getModuleBaseURL());
+		tbUsername.getElement().setId(DOM.createUniqueId());
+		tbPassword.getElement().setId(DOM.createUniqueId());
+		initWidget(uiBinder.createAndBindUi(this));
+
 	}
 
-	/**
-	 * Constructor
-	 * <p>
-	 * Uses default username/password field names.
-	 * @param formRoot where to send login form submission.
-	 */
-	public LoginPanel(String formRoot) {
-		this("j_username", "j_password", formRoot);
-	}
-
-	/**
-	 * Constructor
-	 * @param fldUsername name of the username field
-	 * @param fldPassword name of the password field
-	 * @param formAction path to which the form is submitted (e.g.: "/login") <br>
-	 *        <b>NOTE:</b> "j_spring_security_check" will then be appended
-	 */
-	public LoginPanel(String fldUsername, String fldPassword, String formAction) {
-		super();
-
-		// setText("Login");
-
-		lblStatusMsg = new Label("");
-		lblStatusMsg.setStyleName("loginStatus");
-
-		lblEmail = new Label("Email Address");
-		lblEmail.setStyleName("loginLbl");
-		tbEmail = new TextBox();
-		tbEmail.addStyleName("loginUsername");
-		tbEmail.setName(fldUsername);
-		tbEmail.setMaxLength(50);
-
-		lblPswd = new Label("Password");
-		lblPswd.setStyleName("loginLbl");
-		tbPswd = new PasswordTextBox();
-		tbPswd.addStyleName("loginPswd");
-		tbPswd.setName(fldPassword);
-		tbPswd.setMaxLength(50);
-
-		form = new FormPanel();
-		form.setStyleName("loginForm");
-		form.setAction(formAction + "j_spring_security_check");
-		form.setMethod(FormPanel.METHOD_POST);
-
-		final VerticalPanel vert = new VerticalPanel();
-		vert.setSpacing(2);
-
-		vert.add(lblStatusMsg);
-
-		btnSubmit = new Button("Login", new ClickHandler() {
-
-			@SuppressWarnings("synthetic-access")
-			@Override
-			public void onClick(ClickEvent event) {
-				if(isLoginMode()) {
-					// DeferredCommand.addCommand(new FocusCommand(btnSubmit, false));
-					setVisible(false);
-					form.submit();
-				}
-				else {
-					final String emailAddress = tbEmail.getText();
-					if(emailAddress.length() == 0) {
-						lblStatusMsg.setText("Your email address must be specified for password retrieval.");
-						return;
-					}
-
-					final ForgotPasswordCommand fpc = new ForgotPasswordCommand(emailAddress);
-					fpc.setSource(LoginPanel.this);
-					fpc.execute();
-				}
-			}
-		});
-
-		lnkTgl = new SimpleHyperLink("Forgot Password", new ClickHandler() {
-
-			@SuppressWarnings("synthetic-access")
-			@Override
-			public void onClick(ClickEvent event) {
-				if(!isLoginMode()) {
-					// to login mode
-					lblStatusMsg.setText(null);
-					lblPswd.setVisible(true);
-					tbPswd.setVisible(true);
-					lnkTgl.setTitle("Forgot Password");
-					lnkTgl.setText("Forgot Password");
-					btnSubmit.setText("Login");
-					// setText("Login");
-					ValueChangeEvent.fire(LoginPanel.this, Mode.LOGIN);
-				}
-				else {
-					// to forgot password mode
-					lblStatusMsg.setText("Please specify your email address and your password will be emailed to you.");
-					lblPswd.setVisible(false);
-					tbPswd.setVisible(false);
-					lnkTgl.setTitle("Back to Login");
-					lnkTgl.setText("Back to Login");
-					btnSubmit.setText("Email Password");
-					// setText("Forgot Password");
-					ValueChangeEvent.fire(LoginPanel.this, Mode.FORGOT_PASSWORD);
-				}
-				// center();
-			}
-		});
-		lnkTgl.setTitle("Forgot Password");
-
-		final Grid grid = new Grid(3, 2);
-		grid.setStyleName("loginGrid");
-		grid.setWidth("100%");
-		grid.setCellSpacing(2);
-		grid.setWidget(0, 0, lblEmail);
-		grid.setWidget(0, 1, tbEmail);
-		grid.setWidget(1, 0, lblPswd);
-		grid.setWidget(1, 1, tbPswd);
-		grid.setWidget(2, 0, btnSubmit);
-		grid.setWidget(2, 1, lnkTgl);
-		vert.add(grid);
-
-		form.addSubmitHandler(new SubmitHandler() {
-
-			@Override
-			public void onSubmit(SubmitEvent event) {
-				final StringBuilder msg = new StringBuilder(128);
-				if(tbEmail.getText().length() == 0) {
-					msg.append("Please specify your email address.");
-					event.cancel();
-				}
-				if(tbPswd.getText().length() == 0) {
-					msg.append("Please specify your password.");
-					event.cancel();
-				}
-				if(event.isCanceled()) {
-					setVisible(false);
-				}
-				lblStatusMsg.setText(msg.toString());
-			}
-		});
-		form.addSubmitCompleteHandler(new SubmitCompleteHandler() {
-
-			@Override
-			public void onSubmitComplete(SubmitCompleteEvent event) {
-				final String results = event.getResults();
-				if(results == null || results.length() == 0) {
-					// successful login
-
-					// userSessionListeners.fireLogin();
-					fireEvent(new UserSessionEvent(true));
-
-					tbEmail.setText(null);
-					tbPswd.setText(null);
-					return;
-				}
-				// unsuccessful login
-				setVisible(true);
-				lblStatusMsg.setText(event.getResults());
-			}
-		});
-
-		form.setWidget(vert);
-
-		initWidget(form);
+	void setViewMode(Mode mode) {
+		switch(mode) {
+			default:
+			case LOGIN:
+				statusMsg.setInnerText("");
+				lblUsername.setInnerText(LoginStyles.constants().labelUsername());
+				lblPassword.setInnerText(LoginStyles.constants().labelPassword());
+				lblPassword.getStyle().setDisplay(Display.INLINE);
+				tbPassword.setVisible(true);
+				lnkTgl.setTitle(LoginStyles.constants().toResetPasswordText());
+				lnkTgl.setText(LoginStyles.constants().toResetPasswordText());
+				btnSubmit.setText(LoginStyles.constants().buttonLoginText());
+				break;
+			case FORGOT_PASSWORD:
+				statusMsg.setInnerText(LoginStyles.constants().resetPasswordText());
+				lblUsername.setInnerText(LoginStyles.constants().labelUsernameResetPassword());
+				lblPassword.getStyle().setDisplay(Display.NONE);
+				tbPassword.setVisible(false);
+				lnkTgl.setTitle(LoginStyles.constants().toLoginText());
+				lnkTgl.setText(LoginStyles.constants().toLoginText());
+				btnSubmit.setText(LoginStyles.constants().buttonResetPasswordText());
+				break;
+		}
+		this.mode = mode;
 	}
 
 	@Override
-	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Mode> handler) {
-		return addHandler(handler, ValueChangeEvent.getType());
+	public void onClick(ClickEvent event) {
+		Object src = event.getSource();
+		if(src == lnkTgl) {
+			// toggle view model
+			setViewMode(mode == Mode.LOGIN ? Mode.FORGOT_PASSWORD : Mode.LOGIN);
+		} else if(src == btnSubmit) {
+			if(mode == Mode.LOGIN) {
+				// submit form
+				form.submit();
+			} else {
+				// xhr to reset password
+				String url = LoginStyles.constants().formResetPasswordTarget();
+				RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, URL.encode(url));
+				StringBuilder sb = new StringBuilder();
+				sb.append(tbUsername.getValue());
+				sb.append('=');
+				sb.append(tbUsername.getValue());
+				String requestData = URL.encode(sb.toString());
+				int timeoutMillis = Integer.parseInt(LoginStyles.constants().resetPasswordTimeoutMillis());
+				builder.setTimeoutMillis(timeoutMillis);
+				builder.setHeader("Content-Type", "application/x-www-form-urlencoded");
+				builder.setHeader("Content-Length", String.valueOf(requestData.length()));
+				try {
+					builder.sendRequest(requestData, new RequestCallback() {
+
+						public void onError(Request request, Throwable exception) {
+							// Couldn't connect to server (could be timeout, SOP violation, etc.)
+							statusMsg.setInnerText(LoginStyles.constants().resetPasswordConnectionErrorMsg());
+						}
+
+						public void onResponseReceived(Request request, Response response) {
+							if(200 == response.getStatusCode()) {
+								// success
+								Window.Location.replace(LoginStyles.constants().urlLoginSuccess());
+							} else {
+								// Handle the error. Can get the status text from
+								statusMsg.setInnerText(response.getStatusText());
+							}
+						}
+					});
+				}
+				catch(RequestException e) {
+					// Couldn't connect to server
+					statusMsg.setInnerText(LoginStyles.constants().resetPasswordConnectionErrorMsg());
+				}
+			}
+		}
 	}
 
 	@Override
-	public HandlerRegistration addUserSessionHandler(IUserSessionHandler handler) {
-		return addHandler(handler, UserSessionEvent.TYPE);
+	public void onSubmit(SubmitEvent event) {
+		final StringBuilder msg = new StringBuilder(128);
+		if(tbUsername.getText().length() == 0) {
+			msg.append("Please specify your ");
+			msg.append(LoginStyles.constants().labelUsername());
+			event.cancel();
+		}
+		if(tbPassword.getText().length() == 0) {
+			msg.append("Please specify your ");
+			msg.append(LoginStyles.constants().labelPassword());
+			event.cancel();
+		}
+		if(event.isCanceled()) {
+			setVisible(false);
+		}
+		statusMsg.setInnerText(msg.toString());
 	}
 
-	/*
-	@Override
-	public void center() {
-		super.center();
-		DeferredCommand.addCommand(new FocusCommand(tbEmail, true));
-	}
-	*/
-
-	private boolean isLoginMode() {
-		return "Forgot Password".equals(lnkTgl.getTitle());
-	}
-
-	@Override
-	public HandlerRegistration addRpcHandler(IRpcHandler handler) {
-		return addHandler(handler, RpcEvent.TYPE);
-	}
 }

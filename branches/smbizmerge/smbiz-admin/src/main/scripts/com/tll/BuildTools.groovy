@@ -30,7 +30,7 @@ public final class BuildTools {
 	 */
 	static void processWarResources(def project, def ant) {
 		BuildTools b = new BuildTools(project, ant);
-		b.createDeployConfigFile();
+		b.createDeployConfigFile()
 		b.stubDbIfNecessary()
 	}
 
@@ -153,7 +153,7 @@ public final class BuildTools {
 					dbShell.create()
 					dbShell.addData(dbSess)
 					dbSess.close();
-					println "sbmiz db db4o file: '" + db4oFilepath + "\' created."
+					println "sbmiz db db4o file: '" + db4oFilepath + "' created."
 				}
 				break
 			case 'jdo':

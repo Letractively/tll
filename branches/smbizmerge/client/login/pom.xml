@@ -1,41 +1,105 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
+
   <parent>
     <artifactId>tll-client</artifactId>
     <groupId>com.tll</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  
+
   <artifactId>tll-client-login</artifactId>
   <name>tll-client-login</name>
-  <description>Provides client side login/logout functionality.</description>
-  
+  <description>Provides client side login functionality.</description>
+
   <build>
     <plugins>
+
+      <!-- GWT Maven Plugin -->
       <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>gwt-maven-plugin</artifactId>
+        <configuration>
+        </configuration>
         <executions>
           <execution>
-            <phase>package</phase>
+            <id>gwt-i18n</id>
             <goals>
-              <goal>single</goal>
+              <goal>i18n</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <i18nConstantsBundle>com.tll.client.ui.LoginConstants</i18nConstantsBundle>
+            </configuration>
+          </execution>
+          <!-- <execution>
+            <id>gwt-test</id>
+            <goals>
+            <goal>test</goal>
+            </goals>
+            <phase>integration-test</phase>
+            <configuration>
+            </configuration>
+            </execution> -->
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add-gwt-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
             </goals>
             <configuration>
-              <descriptorRefs>
-                <descriptorRef>client-server-jar</descriptorRef>
-              </descriptorRefs>
+              <sources>
+                <source>${project.build.directory}/generated-sources/gwt</source>
+              </sources>
             </configuration>
           </execution>
         </executions>
       </plugin>
+
     </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>gwt-maven-plugin</artifactId>
+                    <versionRange>[2.4.0,)</versionRange>
+                    <goals>
+                      <goal>i18n</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <execute />
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
   </build>
-  
+
   <dependencies>
     <dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
@@ -43,12 +107,7 @@
       <scope>runtime</scope>
     </dependency>
 
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-servlet</artifactId>
-      <scope>compile</scope>
-    </dependency>
-
+    <!-- 
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
@@ -61,70 +120,11 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-model</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-dao-api</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-service</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-servlet</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-client-core</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
       <artifactId>tll-client-ui</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-client-rpc</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
+    -->
 
-    <dependency>
-    	<groupId>com.google.inject</groupId>
-    	<artifactId>guice</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context-support</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>aopalliance</groupId>
-          <artifactId>aopalliance</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-beans</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-context</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <!-- for guice 2.0 -->
-    <dependency>
-      <groupId>aopalliance</groupId>
-      <artifactId>aopalliance</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    
   </dependencies>
-  
+
 </project>
