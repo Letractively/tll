@@ -8,6 +8,6 @@ import com.tll.IMarshalable;
 
 public interface IListingServiceAsync {
 
-	<S extends IMarshalable, R extends IMarshalable> void process(ListingRequest<S> listingCommand,
+	<S extends IMarshalable, R extends IMarshalable> void process(ListingRequest<S> listingRequest,
 			AsyncCallback<ListingPayload<R>> callback);
 }

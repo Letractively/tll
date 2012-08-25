@@ -4,7 +4,7 @@
  */
 package com.tll.model;
 
-import java.util.Collection;
+import java.util.Set;
 
 /**
  * IEntityProvider - Definition for an object to provide entities of particular
@@ -20,7 +20,7 @@ public interface IEntityProvider {
 	 * @param key The primary key
 	 * @return The entity if present or <code>null</code> if not.
 	 */
-	<E extends IEntity> E getEntity(Class<E> entityType, Object key);
+	<E> E getEntity(Class<E> entityType, Object key);
 
 	/**
 	 * Get all entities of the given type and all entities whose type derives from
@@ -29,7 +29,7 @@ public interface IEntityProvider {
 	 * @param type
 	 * @return All entities matching the given type
 	 */
-	<E extends IEntity> Collection<E> getEntitiesByType(Class<E> type);
+	<E> Set<E> getEntitiesByType(Class<E> type);
 
 	/**
 	 * Gets the single entity of the given type or the single entity whose type
@@ -41,5 +41,5 @@ public interface IEntityProvider {
 	 * @throws IllegalStateException When more than one entity exists that satisfy
 	 *         the given type.
 	 */
-	<E extends IEntity> E getEntityByType(Class<E> type) throws IllegalStateException;
+	<E> E getEntityByType(Class<E> type) throws IllegalStateException;
 }

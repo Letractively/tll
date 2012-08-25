@@ -50,6 +50,7 @@ public class MsgPopup extends PopupPanel implements IMsgOperator {
 	public MsgPopup() {
 		super(false, false);
 		setWidget(msgPanel);
+		setStyleName(null);
 	}
 
 	/**

@@ -7,6 +7,7 @@ package com.tll.client.listing;
 
 import java.util.List;
 
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.common.data.ListingOp;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.EmptyListException;
@@ -25,31 +26,28 @@ public class DataListingOperator<R, H extends IListHandler<R>> extends AbstractL
 	/**
 	 * The data provider.
 	 */
-	private final H dataProvider;
+	protected final H dataProvider;
 
-	private final int pageSize;
+	protected final int pageSize;
 
 	/**
 	 * The current chunk of listing data.
 	 */
-	private transient List<R> current;
+	protected transient List<R> current;
 
 	/**
 	 * Constructor
+	 * @param target
 	 * @param pageSize
 	 * @param dataProvider
-	 * @param sorting
 	 */
-	public DataListingOperator(int pageSize, H dataProvider, Sorting sorting) {
+	public DataListingOperator(Widget target, int pageSize, H dataProvider) {
+		super(target, dataProvider.getSorting());
 		this.pageSize = pageSize;
 		this.dataProvider = dataProvider;
-		this.sorting = sorting;
+		this.sorting = dataProvider.getSorting();
 	}
 	
-	protected final H getDataProvider() {
-		return dataProvider;
-	}
-
 	@Override
 	protected void doFetch(int ofst, Sorting srtg) {
 		try {
@@ -70,66 +68,60 @@ public class DataListingOperator<R, H extends IListHandler<R>> extends AbstractL
 	}
 
 	@Override
-	protected String getListingId() {
-		return null; // local listings don't need an id
-	}
-
-	@Override
 	protected int getPageSize() {
 		return pageSize;
 	}
 
 	@Override
 	public void refresh() {
-		doFetch(0, sorting);
-		fireListingEvent(ListingOp.REFRESH);
+		doFetch(0, defaultSorting);
+		fireListingEvent(ListingOp.REFRESH, current);
 	}
 	
-	private void fireListingEvent(ListingOp listingOp) {
-		fireListingEvent(listingOp, current);
-	}
-
 	@Override
 	public void firstPage() {
 		super.firstPage();
-		fireListingEvent(ListingOp.FETCH);
+		fireListingEvent(ListingOp.FETCH, current);
 	}
 
 	@Override
 	public void lastPage() {
 		super.lastPage();
-		fireListingEvent(ListingOp.FETCH);
+		fireListingEvent(ListingOp.FETCH, current);
 	}
 
 	@Override
 	public void nextPage() {
 		super.nextPage();
-		fireListingEvent(ListingOp.FETCH);
+		fireListingEvent(ListingOp.FETCH, current);
 	}
 
 	@Override
 	public void previousPage() {
 		super.previousPage();
-		fireListingEvent(ListingOp.FETCH);
+		fireListingEvent(ListingOp.FETCH, current);
 	}
 
 	@Override
 	public void gotoPage(int pageNum) {
 		super.gotoPage(pageNum);
-		fireListingEvent(ListingOp.FETCH);
+		fireListingEvent(ListingOp.FETCH, current);
 	}
 
 	@Override
 	public void sort(Sorting srtg) {
 		super.sort(srtg);
-		fireListingEvent(ListingOp.FETCH);
+		fireListingEvent(ListingOp.FETCH, current);
 	}
 
 	@Override
 	public void clear() {
 		offset = 0;
 		sorting = null;
-		fireListingEvent(ListingOp.CLEAR);
-		current.clear();
+		if(current != null) {
+			current.clear();
+			current = null;
+		}
+		fireListingEvent(ListingOp.CLEAR, null);
 	}
 }

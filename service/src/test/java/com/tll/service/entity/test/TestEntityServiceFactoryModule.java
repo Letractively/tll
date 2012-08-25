@@ -6,8 +6,8 @@ package com.tll.service.entity.test;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
@@ -23,7 +23,7 @@ import com.tll.service.entity.IEntityServiceFactory;
  */
 public class TestEntityServiceFactoryModule extends AbstractModule {
 
-	private static final Log log = LogFactory.getLog(TestEntityServiceFactoryModule.class);
+	private static final Logger log = LoggerFactory.getLogger(TestEntityServiceFactoryModule.class);
 
 	@Override
 	protected void configure() {

@@ -7,8 +7,8 @@ package com.tll.server;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
 
@@ -18,7 +18,7 @@ import com.google.inject.Injector;
  */
 public class AppContextBootstrapper implements IBootstrapHandler {
 
-	private static final Log log = LogFactory.getLog(AppContextBootstrapper.class);
+	private static final Logger log = LoggerFactory.getLogger(AppContextBootstrapper.class);
 
 	@Override
 	public void startup(Injector injector, ServletContext servletContext) {

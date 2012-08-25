@@ -1,0 +1,44 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder' 
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'
+>
+
+  <ui:style import="com.tll.client.ui.msg.MsgStyles.IMsgCss">
+		.statusDisplay {
+			background-color: black;
+		}
+		
+		.statusDisplay table {
+		}
+		
+		.statusDisplay div {
+			padding: 2px;
+		}
+		
+		.statusDisplay * {
+			font-size: 10px;
+			font-family: monospace;
+		}
+		
+		.statusDisplay .tll-msg-info {
+			color: aqua;
+		}
+		
+		.statusDisplay .tll-msg-warn {
+			color: yellow;
+		}
+		
+		.statusDisplay .tll-msg-error {
+			color: red;
+		}
+		
+		.statusDisplay .tll-msg-fatal {
+			color: red;
+			font-weight: bold;
+		}
+  </ui:style>
+  
+  <g:ScrollPanel ui:field="sp" styleName="{style.statusDisplay}">
+    <g:VerticalPanel ui:field="vp" />
+  </g:ScrollPanel>
+
+</ui:UiBinder>

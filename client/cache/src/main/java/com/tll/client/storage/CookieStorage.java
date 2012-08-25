@@ -58,10 +58,10 @@ public class CookieStorage extends Storage {
 	@Override
 	public void load() /*throws StorageException*/{
 		// read the cookies to build the string
-		String valueString = "";
+		//String valueString = "";
 		String cookieValue = Cookies.getCookie(constants.cookiePrefix() + "0");
 		for(int cookieNum = 0; cookieValue != null && cookieValue.length() > 0;) {
-			valueString += cookieValue;
+			//valueString += cookieValue;
 			++cookieNum;
 			cookieValue = Cookies.getCookie(constants.cookiePrefix() + cookieNum);
 		}

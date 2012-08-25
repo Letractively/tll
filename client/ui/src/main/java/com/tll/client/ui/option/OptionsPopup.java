@@ -86,6 +86,7 @@ public class OptionsPopup extends PopupPanel implements MouseDownHandler, MouseO
 		this.offsetX = offsetX;
 		this.offsetY = offsetY;
 		optionsPanel.addOptionHandler(this);
+		setStyleName(null);
 		setWidget(optionsPanel);
 	}
 

@@ -3,8 +3,12 @@ package com.tll;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -27,7 +31,7 @@ public abstract class AbstractInjectedTest {
 		return Guice.createInjector(Stage.DEVELOPMENT, modules);
 	}
 
-	protected final Log logger = LogFactory.getLog(this.getClass());
+	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	/**
 	 * The dependency injector.
@@ -68,6 +72,27 @@ public abstract class AbstractInjectedTest {
 	 * @param modules the modules to add
 	 */
 	protected void addModules(List<Module> modules) {
+		// base impl no-op
+	}
+	
+	@BeforeClass(alwaysRun = true)
+	public final void onBeforeClass() {
+		beforeClass();
+	}
+
+	@AfterClass(alwaysRun = true)
+	public final void onAfterClass() {
+		afterClass();
+	}
+
+	@BeforeMethod(alwaysRun = true)
+	public final void onBeforeMethod() {
+		beforeMethod();
+	}
+
+	@AfterMethod(alwaysRun = true)
+	public final void onAfterMethod() {
+		afterMethod();
 	}
 
 	/**
@@ -88,13 +113,13 @@ public abstract class AbstractInjectedTest {
 	 * Before method hook
 	 */
 	protected void beforeMethod() {
-		// no-op
+		// base impl no-op
 	}
 
 	/**
 	 * After method hook.
 	 */
 	protected void afterMethod() {
-		// no-op
+		// base impl no-op
 	}
 }

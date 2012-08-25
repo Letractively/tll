@@ -5,8 +5,8 @@
  */
 package com.tll.server.rpc.entity;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -23,7 +23,7 @@ import com.tll.util.CommonUtil;
  */
 @Test
 public class SmbizEntityTypeResolverTest {
-	private static final Log log = LogFactory.getLog(SmbizEntityTypeResolver.class);
+	private static final Logger log = LoggerFactory.getLogger(SmbizEntityTypeResolver.class);
 
 	@Test
 	public void testResolveEntityType() throws Exception {

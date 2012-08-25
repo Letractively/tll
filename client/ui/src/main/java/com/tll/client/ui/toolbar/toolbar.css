@@ -1,0 +1,76 @@
+.toolbar {
+	height: 24px;
+	background-color: #EAEAEA;
+}
+
+.toolbar td {
+	/* NOTE: this middle aligns ALL toolbar contents which can't be overridden! */
+	vertical-align: middle !important;
+	padding: 2px;
+}
+
+.separator {
+}
+
+.toolbar .separator {
+	margin: 0 4px 0 4px;
+}
+
+.toolbar * {
+	white-space: nowrap;
+}
+
+@external tbbutton, tbbutton-up, tbbutton-up-hovering, tbbutton-up-disabled, tbbutton-down, tbbutton-down-hovering, tbbutton-down-disabled;
+
+.tbbutton {
+}
+
+/* PushButton and ToggleButton custom styling for inside a view toolbar. */
+.tbbutton-up,
+.tbbutton-up-hovering,
+.tbbutton-up-disabled,
+.tbbutton-down,
+.tbbutton-down-hovering,
+.tbbutton-down-disabled {
+  margin: 0;
+  text-decoration: none;
+}
+.tbbutton-up,
+.tbbutton-up-hovering,
+.tbbutton-up-disabled {
+  padding: 3px 4px 3px 4px;
+}
+.tbbutton-up {
+  border: 1px solid #EAEAEA;
+  cursor: pointer;
+  cursor: hand;
+}
+.tbbutton-up-hovering {
+  border: 1px solid #CFCFCF;
+	background-color: white;
+  cursor: pointer;
+  cursor: hand;
+}
+.tbbutton-up-disabled {
+  border: 1px solid #EAEAEA;
+  cursor: default;
+}
+.tbbutton-down,
+.tbbutton-down-hovering,
+.tbbutton-down-disabled {
+  padding: 4px 3px 2px 5px;
+}
+.tbbutton-down {
+  border: 1px solid #EAEAEA;
+  cursor: pointer;
+  cursor: hand;
+}
+.tbbutton-down-hovering {
+  border: 1px solid #EAEAEA;
+  cursor: pointer;
+  cursor: hand;
+}
+.tbbutton-down-disabled {
+  border: 1px solid #EAEAEA;
+  cursor: default;
+}

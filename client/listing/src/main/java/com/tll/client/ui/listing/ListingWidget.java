@@ -6,6 +6,7 @@ package com.tll.client.ui.listing;
 
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
@@ -25,34 +26,7 @@ import com.tll.client.listing.ListingEvent;
  */
 public class ListingWidget<R, T extends ListingTable<R>> extends Composite implements Focusable, KeyDownHandler, IListingHandler<R> {
 
-	/**
-	 * Styles - (tableview.css)
-	 * @author jpk
-	 */
-	protected static class Styles {
-
-		/**
-		 * The css class the top-most containing div gets.
-		 */
-		public static final String TABLE_VIEW = "tableView";
-
-		/**
-		 * The css class for table view captions.
-		 */
-		public static final String CAPTION = "caption";
-
-		/**
-		 * The css class for the label that is displayed when no data rows exist.
-		 */
-		public static final String NODATA = "nodata";
-
-		/**
-		 * The listing portal style.
-		 */
-		public static final String PORTAL = "portal";
-	} // Styles
-
-	protected final String listingId, listingElementName;
+	protected final String listingElementName;
 
 	/**
 	 * The listing table.
@@ -79,6 +53,8 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 	 */
 	protected final ScrollPanel portal = new ScrollPanel();
 
+	protected final FlowPanel tableViewPanel = new FlowPanel();
+	
 	/**
 	 * The listing operator
 	 */
@@ -88,25 +64,27 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 	 * The optional row popup.
 	 */
 	// protected RowContextPopup rowPopup;
+	
+	/**
+	 * Listing and RPC event registrations. 
+	 */
+	private HandlerRegistration hrListing, hrRpc;
 
 	/**
 	 * Constructor
-	 * @param listingId
-	 * @param listingElementName
+	 * @param listingElementName 
 	 * @param table listing table widget
 	 * @param navBar optional nav bar
 	 */
-	public ListingWidget(String listingId, String listingElementName, T table, ListingNavBar<R> navBar) {
+	public ListingWidget(String listingElementName, T table, ListingNavBar<R> navBar) {
 		super();
-
-		this.listingId = listingId;
+		
 		this.listingElementName = listingElementName;
 
-		final FlowPanel tableViewPanel = new FlowPanel();
-		tableViewPanel.setStylePrimaryName(Styles.TABLE_VIEW);
+		tableViewPanel.setStyleName(ListingStyles.css().tableView());
 
 		// portal
-		portal.setStyleName(Styles.PORTAL);
+		portal.setStyleName(ListingStyles.css().portal());
 		tableViewPanel.add(portal);
 
 		// table
@@ -116,37 +94,18 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 
 		// generate nav bar
 		this.navBar = navBar;
-		/*
-		if(config.isShowNavBar()) {
-			navBar = new ListingNavBar<R>(config, getAddRowHandler());
+		if(navBar != null) {
 			tableViewPanel.add(navBar.getWidget());
 		}
-		else {
-			navBar = null;
-		}
 
+		// TODO fix row delegate wiring in listing widget
 		// row delegate?
-		final IRowOptionsDelegate rod = getRowOptionsHandler();
-		if(rod != null) rowPopup = new RowContextPopup(2000, table, rod);
-		*/
+//		final IRowOptionsDelegate rod = getRowOptionsHandler();
+//		if(rod != null) rowPopup = new RowContextPopup(2000, table, rod);
 
 		focusPanel.add(tableViewPanel);
 
 		initWidget(focusPanel);
-	}
-
-	/**
-	 * @return the unique listing id
-	 */
-	public final String getListingId() {
-		return listingId;
-	}
-
-	/**
-	 * @return the presentation worthy listing elment data type name.
-	 */
-	public final String getListingElementName() {
-		return listingElementName;
 	}
 
 	/**
@@ -156,14 +115,22 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 	 */
 	public final void setOperator(IListingOperator<R> operator) {
 		if(operator == null) throw new IllegalArgumentException();
-		if(this.operator != null) throw new IllegalStateException();
+		if(this.operator != null) {
+			// un-bind existing
+			assert hrListing != null && hrRpc != null;
+			hrListing.removeHandler();
+			hrListing = null;
+			hrRpc.removeHandler();
+			hrRpc = null;
+		}
 		this.operator = operator;
-		operator.setSourcingWidget(this);
+		operator.setTarget(this);
 		this.table.setListingOperator(operator);
 		if(navBar != null) navBar.setListingOperator(operator);
 		
-		// why is this needed?
-		addHandler(this, ListingEvent.TYPE);
+		// needed to get notified of listing events the operator will fire
+		assert hrListing == null && hrRpc == null;
+		hrListing = addHandler(this, ListingEvent.TYPE);
 	}
 
 	/**
@@ -251,6 +218,10 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 		portal.setHeight(height);
 	}
 	
+	public final void setPortalWidth(String width) {
+		portal.setWidth(width);
+	}
+	
 	protected Widget createNoDataRowsWidget() {
 		return new Label("Currently, no " + listingElementName + "s exist.");
 	}
@@ -259,12 +230,12 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 		// handle no data rows case
 		boolean noDataRows = table.getRowCount() <= 1;
 		portal.setVisible(!noDataRows);
-		if(noDataRowsWidget == null) {
+		if(noDataRows && noDataRowsWidget == null) {
 			// no data rows widget
 			noDataRowsWidget = createNoDataRowsWidget();
-			noDataRowsWidget.setStyleName(Styles.NODATA);
+			noDataRowsWidget.setStyleName(ListingStyles.css().nodata());
 			noDataRowsWidget.setVisible(false);
-			((FlowPanel)portal.getParent()).add(noDataRowsWidget);
+			tableViewPanel.insert(noDataRowsWidget, navBar == null ? 0 : 1);
 		}
 		if(noDataRowsWidget != null) noDataRowsWidget.setVisible(noDataRows);
 	}

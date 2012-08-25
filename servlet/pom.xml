@@ -8,33 +8,52 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
-  <groupId>com.tll</groupId>
   <artifactId>tll-servlet</artifactId>
   <name>tll-servlet</name>
-  <version>0.0.1-SNAPSHOT</version>
   <description>Houses common servlet routines.</description>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptorRefs>
+                <descriptorRef>test-assets</descriptorRef>
+              </descriptorRefs>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
   <dependencies>
+<!--     <dependency> -->
+<!--       <groupId>commons-lang</groupId> -->
+<!--       <artifactId>commons-lang</artifactId> -->
+<!--     </dependency> -->
     <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <scope>runtime</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.apache.velocity</groupId>
-      <artifactId>velocity</artifactId>
-      <optional>true</optional>
-    </dependency>
-
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-core</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
+<!--     <dependency> -->
+<!--       <groupId>com.tll</groupId> -->
+<!--       <artifactId>tll-core</artifactId> -->
+<!--       <version>0.0.1-SNAPSHOT</version> -->
+<!--     </dependency> -->
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-config</artifactId>
@@ -48,7 +67,7 @@
     </dependency>
 
     <dependency>
-      <groupId>com.google.code.guice</groupId>
+      <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
     </dependency>
     <!-- for guice 2.0 -->

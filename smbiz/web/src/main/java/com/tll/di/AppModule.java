@@ -5,8 +5,8 @@
  */
 package com.tll.di;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
@@ -24,7 +24,7 @@ import com.tll.service.entity.account.AddAccountService;
  */
 public class AppModule extends AbstractModule implements IConfigAware {
 
-	private static final Log log = LogFactory.getLog(AppModule.class);
+	private static final Logger log = LoggerFactory.getLogger(AppModule.class);
 
 	/**
 	 * ConfigKeys - Configuration property keys for the app context.

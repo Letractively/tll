@@ -9,8 +9,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidatorFactory;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tll.criteria.Criteria;
@@ -32,7 +32,7 @@ import com.tll.model.bk.IBusinessKey;
  */
 public abstract class EntityService<E extends IEntity> implements IEntityService<E> {
 
-	protected final Log log;
+	protected final Logger log;
 
 	/**
 	 * The entity dao.
@@ -56,7 +56,7 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	 */
 	protected EntityService(IEntityDao dao, IEntityAssembler entityAssembler, ValidatorFactory validationFactory) {
 		super();
-		this.log = LogFactory.getLog(this.getClass());
+		this.log = LoggerFactory.getLogger(this.getClass());
 		this.dao = dao;
 		this.entityAssembler = entityAssembler;
 		this.validationFactory = validationFactory;

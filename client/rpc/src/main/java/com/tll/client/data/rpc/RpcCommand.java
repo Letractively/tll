@@ -9,17 +9,11 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.common.data.Payload;
-import com.tll.common.msg.Msg;
-import com.tll.common.msg.Status;
-import com.tll.common.msg.Msg.MsgLevel;
 
 /**
- * RpcCommand - Intended base class for all client-side RPC based requests.
+ * Intended base class for all client-side RPC based requests.
  * <p>
  * Fires {@link RpcEvent}s on the source widget if non-<code>null</code>.
- * <p>
- * Fires {@link StatusEvent}s via the {@link StatusEventDispatcher} upon rpc
- * return.
  * @author jpk
  * @param <P> payload type
  */
@@ -84,7 +78,7 @@ public abstract class RpcCommand<P extends Payload> implements AsyncCallback<P>,
 		// fire RPC event
 		if(source != null) source.fireEvent(new RpcEvent(RpcEvent.Type.RECEIVED));
 		// fire status event
-		StatusEventDispatcher.get().fireEvent(new StatusEvent(result.getStatus()));
+		//StatusEventDispatcher.get().fireEvent(new StatusEvent(result.getStatus()));
 	}
 
 	/**
@@ -97,10 +91,10 @@ public abstract class RpcCommand<P extends Payload> implements AsyncCallback<P>,
 		if(source != null) source.fireEvent(new RpcEvent(RpcEvent.Type.ERROR));
 
 		// fire status event
-		String msg = caught.getMessage();
-		if(msg == null) msg = "An unknown RPC error occurred";
-		final Status status = new Status(msg, MsgLevel.ERROR, (Msg.MsgAttr.STATUS.flag | Msg.MsgAttr.EXCEPTION.flag) );
-		StatusEventDispatcher.get().fireEvent(new StatusEvent(status));
+		//String msg = caught.getMessage();
+		//if(msg == null) msg = "An unknown RPC error occurred";
+		//final Status status = new Status(msg, MsgLevel.ERROR, (Msg.MsgAttr.STATUS.flag | Msg.MsgAttr.EXCEPTION.flag) );
+		//StatusEventDispatcher.get().fireEvent(new StatusEvent(status));
 	}
 
 }

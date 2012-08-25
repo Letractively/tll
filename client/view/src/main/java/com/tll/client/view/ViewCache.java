@@ -79,7 +79,7 @@ final class ViewCache {
 		log.fine("ViewCache.cache() - caching queue entry: " + key);
 		final int qindex = searchQueue(key);
 		if(qindex >= 0) {
-			// Log.fine("ViewCache.set() - removing OLD queue cache entry: " + key);
+			// Logger.fine("ViewCache.set() - removing OLD queue cache entry: " + key);
 			queue.remove(qindex);
 		}
 		// insert at head

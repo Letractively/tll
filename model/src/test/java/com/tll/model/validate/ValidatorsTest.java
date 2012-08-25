@@ -12,8 +12,8 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.testng.annotations.Test;
@@ -28,7 +28,7 @@ import com.tll.model.NamedTimeStampEntity;
 @Test(groups = "model.validate")
 public class ValidatorsTest {
 
-	private static final Log logger = LogFactory.getLog(ValidatorsTest.class);
+	private static final Logger logger = LoggerFactory.getLogger(ValidatorsTest.class);
 
 	/**
 	 * Constructor

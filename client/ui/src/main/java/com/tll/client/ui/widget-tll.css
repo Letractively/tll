@@ -1,0 +1,12 @@
+.simpleHyperlink {
+}
+
+.imageContainer {
+}
+
+.glassPanel {
+	background-color: #000;
+	opacity: 0.6;
+	/*filter: progid:DXImageTransform.Microsoft.Alpha(opacity=60); NOTE: this doesn't work with CssResource!!!*/
+	z-index: 1; /* critical to ensure overlaying of relatively positioned elements! */
+}

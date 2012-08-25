@@ -5,8 +5,8 @@ package com.tll.model.egraph;
 
 import java.net.URI;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
 
 import com.google.inject.AbstractModule;
@@ -24,7 +24,7 @@ import com.tll.util.ClassUtil;
  */
 public class EGraphModule extends AbstractModule {
 
-	private static final Log log = LogFactory.getLog(EGraphModule.class);
+	private static final Logger log = LoggerFactory.getLogger(EGraphModule.class);
 
 	private static final String DEFAULT_BEANDEF_FILENAME = "com/tll/model/test/mock-entities.xml";
 

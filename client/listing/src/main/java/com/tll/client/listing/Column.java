@@ -15,12 +15,12 @@ public class Column implements IPropertyNameProvider {
 	/**
 	 * The UI presentable column name.
 	 */
-	private final String name;
+	private String name;
 
 	/**
 	 * The data format directive.
 	 */
-	private final GlobalFormat format;
+	private GlobalFormat format;
 
 	/**
 	 * Optional CSS style class.
@@ -30,14 +30,24 @@ public class Column implements IPropertyNameProvider {
 	/**
 	 * Optional property name (dot notation).
 	 */
-	private final String propertyName;
+	private String propertyName;
 
 	/**
 	 * Optional data-store specific parent alias mainly called on when a [remote]
 	 * named query is involved in fetching listing data as this is when aliasing
 	 * is necessary for query column disambiguation.
 	 */
-	private final String parentAlias;
+	private String parentAlias;
+	
+	/**
+	 * Is this column sortable;
+	 */
+	private boolean sortable;
+
+	/**
+	 * Ignore case when sorting?
+	 */
+	private boolean ignoreCase;
 
 	/**
 	 * Constructor - No property binding
@@ -86,7 +96,7 @@ public class Column implements IPropertyNameProvider {
 	}
 
 	/**
-	 * Constructor - Property binding
+	 * Constructor
 	 * @param name
 	 * @param format
 	 * @param propertyName
@@ -97,7 +107,7 @@ public class Column implements IPropertyNameProvider {
 	}
 
 	/**
-	 * Constructor - Property binding
+	 * Constructor
 	 * @param name
 	 * @param format
 	 * @param propertyName
@@ -105,12 +115,29 @@ public class Column implements IPropertyNameProvider {
 	 * @param style
 	 */
 	public Column(String name, GlobalFormat format, String propertyName, String parentAlias, String style) {
+		this(name, format, style, propertyName, parentAlias, false, false);
+	}
+
+	/**
+	 * Constructor - all properties
+	 * @param name
+	 * @param format
+	 * @param style
+	 * @param propertyName
+	 * @param parentAlias
+	 * @param sortable
+	 * @param ignoreCase
+	 */
+	public Column(String name, GlobalFormat format, String style, String propertyName, String parentAlias,
+			boolean sortable, boolean ignoreCase) {
 		super();
 		this.name = name;
 		this.format = format;
+		this.style = style;
 		this.propertyName = propertyName;
 		this.parentAlias = parentAlias;
-		this.style = style;
+		this.sortable = sortable;
+		this.ignoreCase = ignoreCase;
 	}
 
 	/**
@@ -150,9 +177,30 @@ public class Column implements IPropertyNameProvider {
 	public void setStyle(String style) {
 		this.style = style;
 	}
+	
+	public boolean isSortable() {
+		return sortable;
+	}
+	
+	public void setSortable(boolean sortable) {
+		this.sortable = sortable;
+	}
+
+	public boolean isIgnoreCase() {
+		return ignoreCase;
+	}
+
+	public void setIgnoreCase(boolean ignoreCase) {
+		this.ignoreCase = ignoreCase;
+	}
 
 	@Override
 	public String toString() {
-		return "name: " + name + ", format: " + format;
+		StringBuilder builder = new StringBuilder();
+		builder.append("Column [name=").append(name).append(", format=").append(format).append(", style=").append(style)
+				.append(", propertyName=").append(propertyName).append(", parentAlias=").append(parentAlias)
+				.append(", ignoreCase=").append(ignoreCase).append("]");
+		return builder.toString();
 	}
+
 }

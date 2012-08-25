@@ -1,0 +1,114 @@
+.tableView {  
+}
+
+.tableView .portal {
+  border: 1px solid #BFBFBF;
+  background-color: #BFBFBF;
+}
+
+.tableView .caption {
+  font-weight: bold;
+  margin: 2px 0 1px 0;
+}
+
+.tableView .nodata {
+  font-style: italic;
+  font-size: larger;
+}
+
+.tableView .table {
+  width: 100%;
+}
+
+.tableView tr.head td {
+  border: 1px solid #BFBFBF;
+  border-top: 0;
+  white-space: nowrap;
+}
+
+.tableView .sort {
+  margin: 0 0 2px 2px;
+}
+
+.tableView .table a:link,.tableView a:visited {
+  text-decoration: none;
+}
+
+.tableView tr.head a:link,.tableView tr.head a:visited {
+  text-decoration: none;
+}
+
+.tableView tr.head a:hover {
+  text-decoration: underline;
+}
+
+.tableView .table a:hover {
+  text-decoration: underline;
+}
+
+.tableView tr.head, .tableView .table td {
+  padding: 1px 3px 2px 3px;
+  margin: 0;
+}
+
+.tableView .countCol {
+  padding: 0px 1px 0px 0px;
+  margin: 0;
+  border: 1px solid #B4B4B4;
+  border-width: 0 1px 1px 0 !important;
+  text-align: center;
+  font-style: italic !important;
+}
+
+.tableView .table table {
+  border: 0;
+}
+
+.tableView a:link, .tableView a:visited, .tll-tvnav-tvnav {
+  color: #7F7F7F;
+}
+
+.tableView .head td, .tableView .countCol {
+  color: #838383;
+  background-color: #EAEAEA;
+}
+
+.tableView tr.even {
+  background-color: white;
+}
+
+.tableView tr.odd {
+  background-color: #f1f1f1;
+}
+
+.tableView tr.crnt {
+  /*background-color: #DFDFDF;*/
+  cursor: pointer;
+}
+
+.tableView tr.actv {
+  background-color: #EAEAEA;
+  cursor: pointer;
+}
+
+.tableView tr.added {
+  background-color: #EBFFBF !important;
+}
+
+.tableView tr.updated {
+  background-color: #FFF1AF !important;
+}
+
+.tableView tr.deleted {
+  background-color: #FFDFE3 !important;
+  color: maroon;
+  text-decoration: line-through;
+}
+
+@external glass;
+
+.glass {
+  background-color: #000;
+  opacity: 0.3;
+  filter: alpha(opacity=30);
+}

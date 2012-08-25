@@ -8,11 +8,9 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   
-  <groupId>com.tll</groupId>
   <artifactId>tll-client</artifactId>
   <packaging>pom</packaging>
   <name>tll-client</name>
-  <version>0.0.1-SNAPSHOT</version>
   <description>Contains client modules.</description>
   
   <properties>
@@ -24,11 +22,7 @@
     <module>ui</module>
     <module>field</module>
     <module>rpc</module>
-    <module>model</module>
-    <module>databind</module>
     <module>view</module>
-    <module>marshal</module>
-    <module>persist</module>
     <module>listing</module>
     <module>login</module>
   </modules>
@@ -43,6 +37,7 @@
         <includes>
           <include>**/client/**</include>
           <include>**/common/**</include>
+          <include>**/*.gwt.xml</include>
         </includes>
       </resource>
     </resources>
@@ -55,22 +50,32 @@
         <includes>
           <include>**/client/**</include>
           <include>**/common/**</include>
+          <include>**/*.gwt.xml</include>
         </includes>
       </testResource>
     </testResources>
 
-	<pluginManagement>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>gwt-maven-plugin</artifactId>
-				<version>2.1.0-1</version>
-			</plugin>
-		</plugins>
-	</pluginManagement>
-    
     <plugins>
 
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>gwt-maven-plugin</artifactId>
+        <configuration>
+          <includes>**/*GWTTest.java</includes>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <mode>htmlunit</mode>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
       <!--
         currently, gwt surefire driven GWTTest derived tests create these project dirs 
         which should be removed during the clean phase.
@@ -91,16 +96,16 @@
         </configuration>
       </plugin>
   
-      <!-- tweak surefire to run JUnit tests extending GWTTestCase -->
+      <!-- exclude GWT unit tests from surefire -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <useSystemClassLoader>false</useSystemClassLoader>
-          <argLine>-Xms128m -Xmx512m -ea</argLine>
-          <includes>
-            <include>**/*GWTTest.java</include>
-          </includes>
+<!--          <useSystemClassLoader>false</useSystemClassLoader>-->
+<!--          <argLine>-Xms128m -Xmx512m -ea</argLine>-->
+          <excludes>
+            <exclude>**/*GWTTest.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
       
@@ -134,11 +139,6 @@
   <dependencies>
     <dependency>
       <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-servlet</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
       <scope>provided</scope>
     </dependency>
@@ -146,6 +146,11 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

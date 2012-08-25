@@ -8,8 +8,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.inject.Binder;
@@ -28,7 +26,8 @@ import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.model.egraph.EGraphModule;
-import com.tll.model.egraph.EntityBeanFactory;
+import com.tll.model.egraph.EntityGraph;
+import com.tll.model.egraph.IEntityGraphPopulator;
 import com.tll.model.test.Address;
 import com.tll.model.test.TestPersistenceUnitEntityGraphBuilder;
 
@@ -105,11 +104,6 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 		}
 	} // TestDataProvider
 
-	/**
-	 * The number of listing elements for which to test.
-	 */
-	private static final int NUM_LIST_ELEMENTS = 100;
-
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
@@ -124,16 +118,6 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 		});
 	}
 
-	@BeforeClass(alwaysRun = true)
-	public void onBeforeClass() {
-		beforeClass();
-	}
-
-	@AfterClass(alwaysRun = true)
-	public void onAfterClass() {
-		afterClass();
-	}
-
 	protected final IEntityDao getEntityDao() {
 		return injector.getInstance(IEntityDao.class);
 	}
@@ -142,14 +126,15 @@ public abstract class AbstractPagingSearchListHandlerTest extends AbstractDbAwar
 		return injector.getInstance(Key.get(new TypeLiteral<IListingDataProvider<Address>>() {}));
 	}
 
-	protected final EntityBeanFactory getEntityBeanFactory() {
-		return injector.getInstance(EntityBeanFactory.class);
+	protected final EntityGraph getEntityGraph() {
+		return injector.getInstance(EntityGraph.class);
 	}
 
 	protected final void stubListElements() {
 		// stub the list elements
 		getDbTrans().startTrans();
-		final Set<Address> elements = getEntityBeanFactory().getNEntityCopies(Address.class, NUM_LIST_ELEMENTS);
+		injector.getInstance(IEntityGraphPopulator.class).populateEntityGraph();
+		final Set<Address> elements = getEntityGraph().getEntitiesByType(Address.class);
 		getEntityDao().persistAll(elements);
 		getDbTrans().setComplete();
 		getDbTrans().endTrans();

@@ -10,7 +10,7 @@ import java.util.Set;
 
 import com.tll.model.NameKey;
 import com.tll.model.bk.IBusinessKey;
-import com.tll.util.DateRange;
+import com.tll.types.DateRange;
 
 /**
  * CriterionGroup

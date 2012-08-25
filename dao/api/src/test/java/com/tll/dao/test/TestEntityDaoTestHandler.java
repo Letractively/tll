@@ -15,7 +15,7 @@ import com.tll.model.test.AccountAddress;
 import com.tll.model.test.Address;
 import com.tll.model.test.Currency;
 import com.tll.model.test.NestedEntity;
-import com.tll.util.DateRange;
+import com.tll.types.DateRange;
 
 /**
  * TestEntityDaoTestHandler

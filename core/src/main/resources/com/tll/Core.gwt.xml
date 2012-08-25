@@ -8,10 +8,12 @@
 		<include name="IMarshalable.java" />
 		<include name="ApplicationException.java" />
 	</source>
-	<source path="util">
+	<source path="types">
 		<include name="DataPoint.java" />
 		<include name="DateRange.java" />
 		<include name="FNum.java" />
+  </source>
+  <source path="util">
 		<include name="ObjectUtil.java" />
 		<include name="PropertyPath.java" />
 		<include name="StringUtil.java" />

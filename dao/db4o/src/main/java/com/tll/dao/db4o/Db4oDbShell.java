@@ -7,11 +7,13 @@ package com.tll.dao.db4o;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.db4o.Db4oEmbedded;
 import com.db4o.EmbeddedObjectContainer;
@@ -19,24 +21,41 @@ import com.db4o.ObjectSet;
 import com.db4o.config.EmbeddedConfiguration;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.tll.config.Config;
 import com.tll.dao.IDbShell;
-import com.tll.model.IEntity;
 import com.tll.model.egraph.EntityGraph;
 import com.tll.model.egraph.IEntityGraphPopulator;
 
 /**
- * MockDbShell
  * @author jpk
  */
 public class Db4oDbShell implements IDbShell {
 
-	private static final Log log = LogFactory.getLog(Db4oDbShell.class);
+	private static final Logger log = LoggerFactory.getLogger(Db4oDbShell.class);
 
 	private final URI dbFile;
 
 	private final IEntityGraphPopulator populator;
 
 	private final Provider<EmbeddedConfiguration> c;
+
+	public static final String DEFAULT_DB4O_FILENAME = "db4o";
+
+	/**
+	 * Non-robust way to clear all objects held in db4o's object container. This
+	 * method makes no guarantees as to correctness.
+	 * <p>
+	 * <b>WARNING:</b>Use at your own risk.
+	 * @param container
+	 */
+	public static void clearData(EmbeddedObjectContainer container) {
+		ObjectSet<Object> set = container.queryByExample(null);
+		if(set != null) {
+			for(Object obj : set) {
+				container.delete(obj);
+			}
+		}
+	}
 
 	/**
 	 * Constructor
@@ -80,15 +99,7 @@ public class Db4oDbShell implements IDbShell {
 	public void killDbSession(EmbeddedObjectContainer session) {
 		if(session != null) {
 			log.info("Killing db4o session for: " + dbFile);
-			while(!session.close()) {}
-		}
-	}
-	
-	public static void clearData(EmbeddedObjectContainer container) {
-		ObjectSet<Object> set = container.queryByExample(null);
-		if(set != null) {
-			for(Object obj : set) {
-				container.delete(obj);
+			while(!session.close()) {
 			}
 		}
 	}
@@ -127,19 +138,19 @@ public class Db4oDbShell implements IDbShell {
 		log.info("Deleting db4o db: " + f.getPath());
 		if(!f.delete()) throw new IllegalStateException("Unable to delete db4o file: " + f.getAbsolutePath());
 	}
-	
+
 	public void addData(EmbeddedObjectContainer dbSession) {
 		if(populator == null) throw new IllegalStateException("No populator set");
 		try {
 			populator.populateEntityGraph();
 			final EntityGraph eg = populator.getEntityGraph();
-			final Iterator<Class<? extends IEntity>> itr = eg.getEntityTypes();
+			final Iterator<Class<?>> itr = eg.getEntityTypes();
 			while(itr.hasNext()) {
-				final Class<? extends IEntity> et = itr.next();
+				final Class<?> et = itr.next();
 				log.info("Storing entities of type: " + et.getSimpleName() + "...");
-				final Collection<? extends IEntity> ec = eg.getEntitiesByType(et);
-				for(final IEntity e : ec) {
-					log.info("Storing entity: " + et + "...");
+				final Collection<?> ec = eg.getEntitiesByType(et);
+				for(final Object e : ec) {
+					log.info("Storing entity: " + e + " ...");
 					dbSession.store(e);
 				}
 			}
@@ -152,17 +163,72 @@ public class Db4oDbShell implements IDbShell {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	@Override
 	public void addData() {
 		EmbeddedObjectContainer dbSession = null;
 		try {
-			log.info("Stubbing db4o db for db4o db: " + dbFile);
+			log.info("Stubbing db4o db: " + dbFile);
 			dbSession = createDbSession();
 			addData(dbSession);
 		}
 		finally {
 			killDbSession(dbSession);
+		}
+	}
+
+	/**
+	 * Resolves the full db4o file path following these rules in order of priority:
+	 * <ol>
+	 * <li>If the config {@link Db4oConfigKeys#DB4O_FILEREF} property value is present, it is considered the
+	 * full absolute path
+	 * <li>else if config {@link Db4oConfigKeys#DB4O_FILENAME} property value is present, it is appended
+	 * to the classpath root to establist the full path
+	 * <li>else the {@link DEFAULT_DB4O_FILENAME} is employed at the classpath
+	 * root to establish the full path
+	 * </ol>
+	 * <br><b>NOTE</b> The db4o file isn't required to exist for the proper function of this method.
+	 * @param config
+	 * @return never null URI pointing to the db4o file existant or not.
+	 */
+	public static URI resolveDb4oFileLocationFromConfig(Config config) {
+		if(config == null) return getDb4oClasspathFileRef(null);
+		
+		String fileref = config.getString(Db4oConfigKeys.DB4O_FILEREF.getKey());
+		if(fileref != null) {
+			File f = new File(fileref);
+			return f.toURI();
+		}
+		
+		return getDb4oClasspathFileRef(config.getString(Db4oConfigKeys.DB4O_FILENAME.getKey()));
+	}
+
+	/**
+	 * Provides a non-null {@link URI} pointing to the given filename even if the
+	 * file doesn't exist based on the root classpath location.
+	 * <p>
+	 * IMPT: this method gives "undefined" results if a path is contained in the
+	 * filename argument.
+	 * @param filename the non-path filename
+	 * @return the corresponding URI
+	 */
+	public static URI getDb4oClasspathFileRef(String filename) {
+		if(filename == null) filename = Db4oDbShell.DEFAULT_DB4O_FILENAME;
+		try {
+			// first attempt to load existing file
+			URL url = Db4oDbShell.class.getClassLoader().getResource(filename);
+			URI uri = url == null ? null : url.toURI();
+			if(uri == null) {
+				url = Db4oDbShell.class.getClassLoader().getResource("");
+				String npath = url.getPath() + '/' + filename;
+				final File f = new File(npath);
+				log.info("Db4o db file: {} does not exist.", f.getPath());
+				uri = f.toURI();
+			}
+			return uri;
+		}
+		catch(final URISyntaxException e) {
+			throw new IllegalStateException(e);
 		}
 	}
 }

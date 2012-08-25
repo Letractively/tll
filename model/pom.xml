@@ -8,11 +8,9 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<groupId>com.tll</groupId>
 	<artifactId>tll-model</artifactId>
 	<name>tll-model</name>
-	<version>0.0.1-SNAPSHOT</version>
-	<description>IEntity and ORM related definitions.</description>
+	<description>The model/entity layer.</description>
 	<packaging>jar</packaging>
 
 	<build>
@@ -58,10 +56,10 @@
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-		</dependency>
+    <dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+    </dependency>
 
 		<dependency>
 			<groupId>javax.validation</groupId>
@@ -79,13 +77,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.google.code.guice</groupId>
+			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
 		</dependency>
-    <dependency>
-      <groupId>javax.inject</groupId>
-      <artifactId>javax.inject</artifactId>
-    </dependency>
 		<dependency>
 			<groupId>aopalliance</groupId>
 			<artifactId>aopalliance</artifactId>
@@ -112,17 +106,6 @@
 			<groupId>com.tll</groupId>
 			<artifactId>tll-schema</artifactId>
       <version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<scope>runtime</scope>
 		</dependency>
 
 	</dependencies>

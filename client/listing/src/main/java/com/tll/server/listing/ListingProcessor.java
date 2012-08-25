@@ -5,8 +5,8 @@
  */
 package com.tll.server.listing;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.tll.IMarshalable;
 import com.tll.common.data.ListingOp;
@@ -29,7 +29,7 @@ import com.tll.server.rpc.RpcServlet;
  */
 final class ListingProcessor {
 
-	private final Log log = LogFactory.getLog(this.getClass());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	
 	/**
 	 * Processes all listing requests.
@@ -73,30 +73,28 @@ final class ListingProcessor {
 				// get listing state (if cached)
 				final ListingState state = lcache.getState(sessionId, listingId);
 				if(state != null) {
-					if(log.isDebugEnabled())
-						log.debug("Found cached state for listing '" + listingId + "': " + state.toString());
+					log.debug("Found cached state for listing '{}': {}", listingId, state.toString());
 					if(offset == null) {
 						offset = state.getOffset();
 						assert offset != null;
-						if(log.isDebugEnabled()) log.debug("Setting offset (" + offset + ") from cache for listing:" + listingId);
+						log.debug("Setting offset ({}) from cache for listing: {}", offset, listingId);
 					}
 					if(sorting == null) {
 						sorting = state.getSorting();
 						assert sorting != null;
-						if(log.isDebugEnabled())
-							log.debug("Setting sorting (" + sorting.toString() + ") from cache for listing:" + listingId);
+						log.debug("Setting sorting ({}) from cache for listing: {}", sorting.toString(), listingId);
 					}
 				}
 
 				handler = lcache.getHandler(sessionId, listingId);
 				listingStatus = (handler == null ? ListingStatus.NOT_CACHED : ListingStatus.CACHED);
-				if(log.isDebugEnabled()) log.debug("Listing status: " + listingStatus);
+				log.debug("Listing status: {}", listingStatus);
 
 				try {
 					// acquire the listing handler
 					if(handler == null || listingOp == ListingOp.REFRESH) {
 
-						if(log.isDebugEnabled()) log.debug("Generating listing handler for listing: '" + listingId + "'...");
+						log.debug("Generating listing handler for listing: '{}'...", listingId);
 
 						final RemoteListingDefinition<S> listingDef = request.getListingDef();
 						if(listingDef == null) {
@@ -161,8 +159,7 @@ final class ListingProcessor {
 
 					// do the query related listing op
 					if(handler != null && listingOp != null && listingOp.isQuery()) {
-						if(log.isDebugEnabled())
-							log.debug("Performing : '" + listingOp.getName() + "' for '" + listingId + "'...");
+						log.debug("Performing : '{}' for '{}'", listingOp.getName(), listingId);
 						try {
 							handler.query(offset.intValue(), sorting, (listingOp == ListingOp.REFRESH));
 							status.addMsg(listingOp.getName() + " for '" + listingId + "' successful.", MsgLevel.INFO,
@@ -190,7 +187,7 @@ final class ListingProcessor {
 				// do caching
 				if(listingOp == ListingOp.CLEAR) {
 					// clear
-					if(log.isDebugEnabled()) log.debug("Clearing listing '" + listingId + "'...");
+					log.debug("Clearing listing '{}'...", listingId);
 					lcache.clearHandler(sessionId, listingId);
 					if(!request.getRetainStateOnClear()) {
 						lcache.clearState(sessionId, listingId);
@@ -200,7 +197,7 @@ final class ListingProcessor {
 				}
 				else if(listingOp == ListingOp.CLEAR_ALL) {
 					// clear all
-					if(log.isDebugEnabled()) log.debug("Clearing ALL listings...");
+					log.debug("Clearing ALL listings...");
 					lcache.clearHandler(sessionId, listingId);
 					if(!request.getRetainStateOnClear()) {
 						lcache.clearAll(request.getRetainStateOnClear());
@@ -210,10 +207,10 @@ final class ListingProcessor {
 				}
 				else if(handler != null && !status.hasErrors()) {
 					// cache listing handler
-					if(log.isDebugEnabled()) log.debug("[Re-]Caching listing '" + listingId + "'...");
+					log.debug("[Re-]Caching listing '{}'...", listingId);
 					lcache.storeHandler(sessionId, listingId, handler);
 					// cache listing state
-					if(log.isDebugEnabled()) log.debug("[Re-]Caching listing state '" + listingId + "'...");
+					log.debug("[Re-]Caching listing state '{}'...", listingId);
 					lcache.storeState(sessionId, listingId, new ListingState(Integer.valueOf(handler.getOffset()), handler
 							.getSorting()));
 					listingStatus = ListingStatus.CACHED;
@@ -226,7 +223,7 @@ final class ListingProcessor {
 		// only provide page data when it is needed at the client and there are no
 		// errors
 		if(handler != null && !status.hasErrors() && (listingOp != null && !listingOp.isClear())) {
-			if(log.isDebugEnabled()) log.debug("Sending page data for '" + listingId + "'...");
+			log.debug("Sending page data for '{}'...", listingId);
 			p.setPageData(new Page<R>(handler.size(), handler.getPageSize(), handler.getOffset(), handler.getSorting(), handler
 					.getElements()));
 		}

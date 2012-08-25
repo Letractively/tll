@@ -1,7 +1,7 @@
 package com.tll.listhandler;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.tll.criteria.Criteria;
 import com.tll.dao.SearchResult;
@@ -15,7 +15,7 @@ import com.tll.dao.Sorting;
  */
 public abstract class SearchListHandler<E> extends AbstractListHandler<SearchResult> {
 
-	protected final Log LOG = LogFactory.getLog(this.getClass());
+	protected final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
 	/**
 	 * The list handler data provider.

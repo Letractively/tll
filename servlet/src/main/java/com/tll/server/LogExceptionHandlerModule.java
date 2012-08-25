@@ -5,8 +5,8 @@
  */
 package com.tll.server;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
@@ -17,7 +17,7 @@ import com.google.inject.Scopes;
  */
 public class LogExceptionHandlerModule extends AbstractModule {
 
-	private static final Log log = LogFactory.getLog(LogExceptionHandlerModule.class);
+	private static final Logger log = LoggerFactory.getLogger(LogExceptionHandlerModule.class);
 
 	/**
 	 * Constructor

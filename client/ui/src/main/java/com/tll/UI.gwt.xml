@@ -1,0 +1,9 @@
+<module>
+  <inherits name="com.tll.ClientCore" />
+  
+  <!-- Don't force these on our clients -->
+<!--  <stylesheet src="css/reset.css" />-->
+<!--  <stylesheet src="css/base.css" />-->
+<!--  <stylesheet src="css/hnav.css" />-->
+
+</module>

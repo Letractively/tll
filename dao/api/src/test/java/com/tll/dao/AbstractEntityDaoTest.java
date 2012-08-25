@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Stack;
 
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.tll.criteria.Comparator;
@@ -157,16 +155,6 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	 * @return The dao test handlers subject to testing.
 	 */
 	protected abstract IEntityDaoTestHandler<?>[] getDaoTestHandlers();
-
-	@BeforeClass(alwaysRun = true)
-	public final void onBeforeClass() {
-		beforeClass();
-	}
-
-	@AfterClass(alwaysRun = true)
-	public final void onAfterClass() {
-		afterClass();
-	}
 
 	/**
 	 * Called before any tests are run ensuring the db is in a test-ready state.
@@ -341,6 +329,8 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	@SuppressWarnings("unchecked")
 	@Test
 	public final void test() throws Exception {
+		
+		if(getDbTrans().isTransStarted()) getDbTrans().endTrans();
 
 		for(final IEntityDaoTestHandler<?> handler : entityHandlers) {
 			handler.init(dao, getEntityBeanFactory(), getDbTrans());
@@ -531,7 +521,6 @@ public abstract class AbstractEntityDaoTest<R extends IEntityDao, D extends Enti
 	 * Tests the find by ids method
 	 * @throws Exception
 	 */
-	@SuppressWarnings("null")
 	final void daoFindByIds() throws Exception {
 		IEntity e = getTestEntity();
 		e = dao.persist(e);

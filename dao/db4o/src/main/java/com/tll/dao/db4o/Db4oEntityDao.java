@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.math.NumberRange;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springextensions.db4o.Db4oCallback;
 import org.springextensions.db4o.Db4oTemplate;
 import org.springextensions.db4o.support.Db4oDaoSupport;
@@ -62,7 +62,7 @@ import com.tll.model.bk.BusinessKeyFactory;
 import com.tll.model.bk.BusinessKeyPropertyException;
 import com.tll.model.bk.IBusinessKey;
 import com.tll.model.bk.NonUniqueBusinessKeyException;
-import com.tll.util.DateRange;
+import com.tll.types.DateRange;
 import com.tll.util.PropertyPath;
 
 /**
@@ -84,7 +84,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	 *        scalarized.
 	 * @return A new {@link IScalar} instance
 	 */
-	private static <E extends IEntity> IScalar scalarize(final E entity, Collection<String> inclusionProperties) {
+	protected static <E extends IEntity> IScalar scalarize(final E entity, Collection<String> inclusionProperties) {
 		final BeanWrapper bw = new BeanWrapperImpl(entity);
 		final Map<String, Object> map = new LinkedHashMap<String, Object>();
 		for(final PropertyDescriptor pd : bw.getPropertyDescriptors()) {
@@ -107,7 +107,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	 * @param inclusionProperties May be <code>null</code>
 	 * @return New list of transormed {@link SearchResult}s.
 	 */
-	private static <E extends IEntity> List<SearchResult> transformEntityList(final List<E> entityList,
+	protected static <E extends IEntity> List<SearchResult> transformEntityList(final List<E> entityList,
 			final Collection<String> inclusionProperties) {
 		final List<SearchResult> slist = new ArrayList<SearchResult>(entityList.size());
 		for(final E e : entityList) {
@@ -137,7 +137,7 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	@SuppressWarnings("rawtypes")
 	static class Timestamper implements EventListener4 {
 
-		static final Log log = LogFactory.getLog(Timestamper.class);
+		static final Logger log = LoggerFactory.getLogger(Timestamper.class);
 
 		private final boolean creating;
 
@@ -167,15 +167,15 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	@SuppressWarnings("rawtypes")
 	static class Versioner implements EventListener4 {
 
-		static final Log log = LogFactory.getLog(Versioner.class);
+		static final Logger log = LoggerFactory.getLogger(Versioner.class);
 
 		@Override
 		public void onEvent(Event4 e, EventArgs args) {
 			final ObjectEventArgs queryArgs = ((ObjectEventArgs) args);
 			final Object o = queryArgs.object();
 			if(o instanceof IVersionSupport) {
-				final long cv = ((IVersionSupport) o).getVersion();
-				((IVersionSupport) o).setVersion(cv + 1);
+				final Integer cv = ((IVersionSupport) o).getVersion();
+				((IVersionSupport) o).setVersion(Integer.valueOf(cv == null ? 0 : cv.intValue() + 1));
 				log.debug("Versioned entity: " + o);
 			}
 		}
@@ -382,7 +382,34 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 			}
 		}
 
-		// apply sorting
+		applySorting(query, sorting);
+
+		return runQuery(query);
+	}
+
+	/**
+	 * Runs the query in spring's context to take advantage of spring's unified
+	 * data access exceptions.
+	 * @param <E>
+	 * @param q
+	 * @return
+	 */
+	protected <E> List<E> runQuery(final Query q) {
+		return (List<E>) getDb4oTemplate().execute(new Db4oCallback() {
+
+			@Override
+			public Object doInDb4o(ObjectContainer container) throws RuntimeException {
+				return q.execute();
+			}
+		});
+	}
+
+	/**
+	 * Apply sorting to the given query.
+	 * @param query
+	 * @param sorting
+	 */
+	protected void applySorting(final Query query, final Sorting sorting) {
 		if(sorting != null) {
 			for(final SortColumn sc : sorting.getColumns()) {
 				if(sc.isAscending()) {
@@ -393,14 +420,6 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 				}
 			}
 		}
-
-		return (List<E>) getDb4oTemplate().execute(new Db4oCallback() {
-
-			@Override
-			public Object doInDb4o(ObjectContainer container) throws RuntimeException {
-				return query.execute();
-			}
-		});
 	}
 
 	@Override
@@ -466,13 +485,26 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	}
 
 	/**
+	 * Loads all objects of a given type.
+	 * @param <E> object type
+	 * @param type
+	 * @param sorting optional
+	 */
+	protected <E> List<E> loadAllOfType(Class<E> type, Sorting sorting) {
+		final Query q = getDb4oTemplate().query();
+		q.constrain(type);
+		applySorting(q, sorting);
+		return runQuery(q);
+	}
+
+	/**
 	 * Loads entities by a given {@link Predicate}.
 	 * @param <E>
 	 * @param p the predicate
 	 * @param key The key that identifies the entity to be loaded
 	 * @return All matching entities
 	 */
-	private <E extends IEntity> E loadByPredicate(Predicate<E> p, Object key) throws EntityNotFoundException,
+	protected <E extends IEntity> E loadByPredicate(Predicate<E> p, Object key) throws EntityNotFoundException,
 			DataAccessException {
 		final List<E> list = getDb4oTemplate().query(p);
 		if(list == null || list.size() < 1) {
@@ -547,11 +579,10 @@ public class Db4oEntityDao extends Db4oDaoSupport implements IEntityDao {
 	@Override
 	public <E extends IEntity> E persist(E entity) throws EntityExistsException, DataAccessException {
 		// we require a pre-set id
-		if(entity.isNew() && entity.getId() == null)
-			throw new IllegalArgumentException("No entity id set");
+		if(entity.isNew() && entity.getId() == null) throw new IllegalArgumentException("No entity id set");
 
 		logger.debug("Persisting entity: " + entity);
-		
+
 		// must check for business key uniqueness first!
 		try {
 			final List<E> list = (List<E>) loadAll(entity.entityClass());

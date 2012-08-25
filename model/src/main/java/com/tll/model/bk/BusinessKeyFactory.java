@@ -13,8 +13,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.math.RandomUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.NullValueInNestedPathException;
 
@@ -30,7 +30,7 @@ import com.tll.model.IEntityMetadata;
  */
 public final class BusinessKeyFactory {
 
-	private static final Log log = LogFactory.getLog(BusinessKeyFactory.class);
+	private static final Logger log = LoggerFactory.getLogger(BusinessKeyFactory.class);
 
 	/**
 	 * BusinessKeyDefinition - Local impl of {@link IBusinessKeyDefinition}.

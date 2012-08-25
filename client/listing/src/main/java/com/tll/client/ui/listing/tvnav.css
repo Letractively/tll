@@ -1,0 +1,55 @@
+.tvnav {
+  border: 1px solid #BFBFBF;
+  border-width: 0 1px 1px 1px;
+  width: 100%;
+}
+
+.tvnav td {
+  padding: 0 2px 0 2px;
+}
+
+@external gwt-PushButton, gwt-PushButton-up, gwt-PushButton-up-disabled, gwt-PushButton-down, gwt-PushButton-up-hovering, gwt-PushButton-down-hovering;
+
+.tvnav .gwt-PushButton {
+}
+
+.tvnav .gwt-PushButton-up, .tvnav .gwt-PushButton-up-disabled {
+  border: 1px solid #BFBFBF;
+  border-color: transparent;
+  cursor: auto;
+}
+
+.tvnav .gwt-PushButton-up-hovering, .tvnav .gwt-PushButton-down, .tvnav .gwt-PushButton-down-hovering {
+  border: 1px solid #BFBFBF;
+  background-color: #fff;
+}
+
+.page {
+}
+
+.tbPage {
+}
+
+.tvnav .page {
+  white-space: nowrap;
+}
+
+.tvnav .page div {
+  display: inline;
+}
+
+.tvnav .tbPage {
+  border: solid 1px #BFBFBF;
+  width: 35px;
+  height: 18px;
+  margin: 0 5px 0 5px;
+  text-align: center;
+}
+
+.smry {
+}
+.tvnav .smry {
+  width: 100%; /* to squeeze table cells */
+  font-size: 90%;
+  text-align: right;
+}

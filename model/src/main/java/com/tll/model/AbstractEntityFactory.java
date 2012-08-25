@@ -5,8 +5,8 @@
  */
 package com.tll.model;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.tll.util.StringUtil;
 
@@ -16,7 +16,7 @@ import com.tll.util.StringUtil;
  */
 public abstract class AbstractEntityFactory implements IEntityFactory {
 
-	protected final Log log = LogFactory.getLog(getClass());
+	protected final Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
 	 * News an entity instance of the given type only.
@@ -39,7 +39,6 @@ public abstract class AbstractEntityFactory implements IEntityFactory {
 					.getName()), ie);
 		}
 
-		if(log.isDebugEnabled()) log.debug("Created entity: " + entity);
 		return entity;
 	}
 
@@ -47,6 +46,7 @@ public abstract class AbstractEntityFactory implements IEntityFactory {
 	public <E extends IEntity> E createEntity(Class<E> entityClass, boolean generate) throws IllegalStateException {
 		E e = newEntity(entityClass);
 		if(generate) generatePrimaryKey(e);
+		log.debug("Created entity: {}", e);
 		return e;
 	}
 
