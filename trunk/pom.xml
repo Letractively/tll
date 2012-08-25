@@ -21,7 +21,7 @@
 
 		<aspectjVersion>1.6.11</aspectjVersion>
 		<springVersion>3.0.6.RELEASE</springVersion>
-    <logbackVersion>0.9.27</logbackVersion>
+    <logbackVersion>1.0.6</logbackVersion>
 		<gwtVersion>2.4.0</gwtVersion>
 	</properties>
 
