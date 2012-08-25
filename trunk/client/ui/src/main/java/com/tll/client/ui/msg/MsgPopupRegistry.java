@@ -14,8 +14,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * MsgPopupRegistry - Cache of message popups each referencing a widget by which
- * it is positioned.
+ * Cache of message popups each referencing a widget by which it is positioned.
  * <p>
  * Since this type of registry caches these popups, thier life-cycle is
  * "extended" beyond hiding the popup. As such, <b>the registry client is

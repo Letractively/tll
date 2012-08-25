@@ -1,4 +1,0 @@
-<module>
-	<inherits name="com.tll.Field" />
-	<inherits name="com.tll.ClientModel" />
-</module>

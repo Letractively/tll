@@ -9,8 +9,6 @@ import java.util.Arrays;
  */
 final class BusinessKey<E> implements IBusinessKey<E> {
 
-	private static final long serialVersionUID = 2415120120614040086L;
-
 	private final Class<E> type;
 	private final String businessKeyName;
 	private final String[] propertyNames;

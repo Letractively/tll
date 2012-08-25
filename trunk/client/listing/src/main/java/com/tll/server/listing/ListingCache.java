@@ -42,6 +42,18 @@ public final class ListingCache {
 
 	private static final String LISTING_STATE_CACHE_NAME = "ListingStateCache";
 
+	/**
+	 * Generates the hash that is http session and listing name dependent.
+	 * @param sessionId the required user session id (normally gotten from the
+	 *        http request instance)
+	 * @param listingId
+	 * @return the corresponding hash key for the given listing name in the given
+	 *         http session.
+	 */
+	private static Integer key(String sessionId, String listingId) {
+		return Integer.valueOf(sessionId.hashCode() + 37 * listingId.hashCode());
+	}
+
 	private final CacheManager cm;
 
 	/**
@@ -61,18 +73,6 @@ public final class ListingCache {
 	 */
 	public void shutdown() {
 		cm.shutdown();
-	}
-
-	/**
-	 * Generates the hash that is http session and listing name dependent.
-	 * @param sessionId the required user session id (normally gotten from the
-	 *        http request instance)
-	 * @param listingId
-	 * @return the corresponding hash key for the given listing name in the given
-	 *         http session.
-	 */
-	private Integer key(String sessionId, String listingId) {
-		return Integer.valueOf(sessionId.hashCode() + 37 * listingId.hashCode());
 	}
 
 	private Cache handlerCache() {

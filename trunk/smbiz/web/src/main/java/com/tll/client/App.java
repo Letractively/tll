@@ -54,7 +54,7 @@ public abstract class App {
 	 * onModuleLoad()
 	 */
 	public static void init() {
-		Log.setUncaughtExceptionHandler();
+	 Logger.setUncaughtExceptionHandler();
 
 		// setup history tracking by establishing an initial token name in the
 		// history queue

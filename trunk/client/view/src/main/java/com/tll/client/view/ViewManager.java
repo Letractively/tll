@@ -300,7 +300,6 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			final ViewKey vk = pendingUnload.getViewKey();
 			Scheduler.get().scheduleDeferred(new Command() {
 
-				@SuppressWarnings("synthetic-access")
 				@Override
 				public void execute() {
 					fireEvent(ViewChangeEvent.viewUnloadedEvent(vk));
@@ -326,7 +325,6 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			// fire view un-load event
 			Scheduler.get().scheduleDeferred(new Command() {
 
-				@SuppressWarnings("synthetic-access")
 				@Override
 				public void execute() {
 					fireEvent(ViewChangeEvent.viewUnloadedEvent(old.getViewKey()));

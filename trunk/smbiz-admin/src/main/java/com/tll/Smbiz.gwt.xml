@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+  <inherits name='com.google.gwt.logging.Logging' />
+  <inherits name='com.google.gwt.resources.Resources' />
+  <inherits name='com.google.gwt.activity.Activity' />
+  <inherits name='com.google.gwt.place.Place' />
+	<inherits name='com.google.web.bindery.requestfactory.RequestFactory' />
+
+  <inherits name="com.tll.ClientCore" />
+  <inherits name="com.tll.Listing" />
+<!--   <inherits name="com.tll.Login" /> -->
+
+  <!-- default IViewFactory impl -->
+  <replace-with class="com.tll.client.view.ViewFactory">
+    <when-type-is class="com.tll.client.view.IViewFactory" />
+  </replace-with>
+
+  <!-- default IClientFactory impl -->
+  <replace-with class="com.tll.client.ClientFactory">
+    <when-type-is class="com.tll.client.IClientFactory" />
+  </replace-with>
+
+  <source path="model">
+    <include name="CreditCardType.java" />
+  </source>
+
+</module>

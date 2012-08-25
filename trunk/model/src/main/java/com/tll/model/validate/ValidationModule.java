@@ -8,8 +8,8 @@ package com.tll.model.validate;
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
@@ -21,7 +21,7 @@ import com.google.inject.Scopes;
  */
 public class ValidationModule extends AbstractModule {
 	
-	private static final Log log = LogFactory.getLog(ValidationModule.class);
+	private static final Logger log = LoggerFactory.getLogger(ValidationModule.class);
 
 	@Override
 	protected void configure() {

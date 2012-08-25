@@ -30,17 +30,6 @@ public class OptionsPanel<O extends Option> extends FocusPanel implements KeyDow
 MouseOutHandler, IHasOptionHandlers {
 
 	/**
-	 * Styles - (options.css)
-	 * @author jpk
-	 */
-	protected static class Styles {
-
-		public static final String OPTIONS = "options";
-
-		public static final String ACTIVE = "active";
-	}
-
-	/**
 	 * MRegs
 	 * @author jpk
 	 */
@@ -67,7 +56,7 @@ MouseOutHandler, IHasOptionHandlers {
 		super();
 		setWidget(vp);
 		addKeyDownHandler(this);
-		setStyleName(Styles.OPTIONS);
+		setStyleName(OptionStyles.getOptions().options());
 	}
 
 	@Override
@@ -146,7 +135,7 @@ MouseOutHandler, IHasOptionHandlers {
 
 		// set new current
 		final Option crntOption = (Option) vp.getWidget(index);
-		crntOption.getElement().getParentElement().setClassName(Styles.ACTIVE);
+		crntOption.getElement().getParentElement().setClassName(OptionStyles.getOptions().active());
 		this.crntIndx = index;
 
 		if(fireCurrentOptionChanged) {

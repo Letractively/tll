@@ -1,0 +1,17 @@
+<module>
+	<inherits name="com.tll.Schema" />
+	<inherits name="com.tll.ClientCore" />
+  <inherits name="com.tll.Dao" />
+  
+  <source path="client">
+  	<include name="**" />
+  	<exclude name="**/rpc/**" />
+  </source>
+  
+  <source path="common">
+  	<exclude name="**/rpc/**" />
+  </source>
+  
+  <stylesheet src="css/tableview.css" />
+
+</module>

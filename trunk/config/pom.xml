@@ -9,16 +9,19 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
-  <groupId>com.tll</groupId>
   <artifactId>tll-config</artifactId>
   <name>tll-config</name>
-  <version>0.0.1-SNAPSHOT</version>
   <description>Yet another attempt to house configuration properties under one roof.</description>
 
   <dependencies>
     <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>commons-configuration</groupId>
@@ -32,6 +35,12 @@
           <groupId>commons-beanutils</groupId>
           <artifactId>commons-beanutils-core</artifactId>
         </exclusion>
+        <!--  unfortunately, this is needed
+        <exclusion>
+        	<artifactId>commons-logging</artifactId>
+        	<groupId>commons-logging</groupId>
+        </exclusion>
+         -->
       </exclusions>
     </dependency>
   </dependencies>

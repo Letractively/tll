@@ -1,0 +1,31 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+  xmlns:t="urn:import:com.tll.client">
+  <ui:with field='msgs' type='com.tll.client.Messages'/>
+  <ui:style>
+    .smbizShell {
+      border: 1px solid red;
+      margin: 5px;
+     }
+  </ui:style>
+
+  <g:DockLayoutPanel ui:field="dockLayout" styleName="{style.smbizShell}" unit="PX">
+    <g:north size="80">
+      <g:HTML ui:field="header">
+        <div><h1>Smbiz Admin</h1></div>
+      </g:HTML>
+    </g:north>
+    <g:east size="225">
+      <g:FlowPanel ui:field="navPanel" />
+    </g:east>
+    <g:south size="80">
+      <g:HTML ui:field="footer">
+        <p>&copy; 2009 The Logic Lab - smbiz v{msgs.version}</p>
+      </g:HTML>
+    </g:south>
+    <g:center>
+      <g:SimplePanel ui:field="center" />
+    </g:center>
+  </g:DockLayoutPanel>
+
+</ui:UiBinder>

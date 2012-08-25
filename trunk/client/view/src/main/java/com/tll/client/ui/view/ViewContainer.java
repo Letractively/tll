@@ -18,7 +18,6 @@ import com.tll.client.view.ViewOptions;
  * ViewContainer - UI container for {@link IView} implementations.
  * @author jpk
  */
-@SuppressWarnings("synthetic-access")
 public final class ViewContainer extends SimplePanel implements ClickHandler {
 
 	/**

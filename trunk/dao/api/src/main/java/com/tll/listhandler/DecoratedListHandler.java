@@ -3,8 +3,8 @@ package com.tll.listhandler;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.tll.dao.Sorting;
 
@@ -17,7 +17,7 @@ import com.tll.dao.Sorting;
  */
 public abstract class DecoratedListHandler<T, V> implements IListHandler<V> {
 
-	static final Log LOG = LogFactory.getLog(DecoratedListHandler.class);
+	static final Logger LOG = LoggerFactory.getLogger(DecoratedListHandler.class);
 
 	/**
 	 * The wrapped list handler. This class supports the case when it is
@@ -52,6 +52,11 @@ public abstract class DecoratedListHandler<T, V> implements IListHandler<V> {
 	@Override
 	public int size() {
 		return (listHandler == null) ? 0 : listHandler.size();
+	}
+
+	@Override
+	public Sorting getSorting() {
+		return (listHandler == null) ? null : listHandler.getSorting();
 	}
 
 	@Override

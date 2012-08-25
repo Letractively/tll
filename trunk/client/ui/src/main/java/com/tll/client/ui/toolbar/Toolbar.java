@@ -14,32 +14,10 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * Toolbar - Simple extension of {@link FlowPanel} that sets common
  * styles/properties relating to a "toolbar" widget implementation.
- * <p>
- * Refer to <code>toolbar.css</code> toolbar Style styles.
  * @author jpk
  */
 public class Toolbar extends Composite {
-
-	/**
-	 * Styles - (toolbar.css)
-	 * @author jpk
-	 */
-	protected static class Styles {
-
-		/**
-		 * Style for a toolbar.
-		 */
-		public static final String TOOLBAR = "toolbar";
-		/**
-		 * Style for a toolbar separator widget.
-		 */
-		public static final String SPLIT = "separator";
-		/**
-		 * Style for a toolbar button.
-		 */
-		public static final String BUTTON = "button";
-	}
-
+	
 	private final HorizontalPanel pnl = new HorizontalPanel();
 
 	/**
@@ -47,7 +25,7 @@ public class Toolbar extends Composite {
 	 */
 	public Toolbar() {
 		super();
-		pnl.setStyleName(Styles.TOOLBAR);
+		pnl.setStyleName(ToolbarStyles.css().toolbar());
 		initWidget(pnl);
 	}
 
@@ -133,8 +111,8 @@ public class Toolbar extends Composite {
 	 */
 	private void buttonize(ButtonBase b, String title) {
 		final Element td = b.getElement().getParentElement();
-		td.setClassName(Styles.BUTTON);
-		b.setStylePrimaryName(Styles.BUTTON);
+		td.setClassName(ToolbarStyles.css().tbbutton());
+		b.setStylePrimaryName(ToolbarStyles.css().tbbutton());
 		if(title != null) {
 			b.setTitle(title);
 		}

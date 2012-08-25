@@ -23,23 +23,6 @@ import com.tll.common.msg.Msg.MsgLevel;
 public class MsgPanel extends Composite {
 
 	/**
-	 * Styles - (msg.css)
-	 * @author jpk
-	 */
-	static class Styles {
-
-		/**
-		 * Style applied to the containing div.
-		 */
-		public static final String CMSG = "cmsg";
-
-		/**
-		 * Style applied to to widgets containing messages.
-		 */
-		public static final String MSG = "msg";
-	} // Styles
-
-	/**
 	 * Entry
 	 * @author jpk
 	 */
@@ -80,8 +63,8 @@ public class MsgPanel extends Composite {
 	 */
 	public MsgPanel() {
 		super();
-		container.setStyleName(Styles.CMSG);
-		container.addStyleName(Styles.MSG);
+		container.setStyleName(MsgStyles.css().cmsg());
+		container.addStyleName(MsgStyles.css().msg());
 		initWidget(container);
 	}
 
@@ -199,7 +182,7 @@ public class MsgPanel extends Composite {
 				// no image so create it
 				final MsgLevel level = MsgLevel.values()[mlp.getElement().getPropertyInt(ELEM_PROP_MSG_LEVEL)];
 				// NOTE: since this is a clipped image, the width/height should be known
-				mlp.insert(new ImageContainer(Util.getMsgLevelImage(level)), 0);
+				mlp.insert(new ImageContainer(MsgStyles.getMsgLevelImage(level)), 0);
 			}
 			if(mlp.getWidgetCount() == 2) {
 				mlp.getWidget(0).setVisible(show);
@@ -252,8 +235,8 @@ public class MsgPanel extends Composite {
 		// stub the msg level panel
 		// (child widget FORMAT: [{msg level img}]{ul html list of msg texts})
 		mlp = new HorizontalPanel();
-		mlp.addStyleName(Styles.MSG);
-		mlp.addStyleName(level.getName().toLowerCase());
+		mlp.addStyleName(MsgStyles.css().msg());
+		mlp.addStyleName(MsgStyles.getMsgLevelStyle(level));
 		mlp.getElement().setPropertyInt(ELEM_PROP_MSG_LEVEL, level.ordinal());
 		mlp.add(new HtmlListPanel(false));
 		container.add(mlp);

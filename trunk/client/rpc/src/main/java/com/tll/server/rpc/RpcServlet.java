@@ -3,8 +3,8 @@
  */
 package com.tll.server.rpc;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.tll.common.msg.Status;
@@ -20,7 +20,7 @@ public abstract class RpcServlet extends RemoteServiceServlet {
 
 	private static final long serialVersionUID = 5032508084607776181L;
 
-	protected final Log log = LogFactory.getLog(this.getClass());
+	protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	/**
 	 * Appends ui-friendly message(s) to the given {@link Status} instance from

@@ -61,4 +61,9 @@ public final class RpcEvent extends GwtEvent<IRpcHandler> {
 	public Type getType() {
 		return type;
 	}
+
+	@Override
+	public String toString() {
+		return "RpcEvent [type=" + type + "]";
+	}
 }

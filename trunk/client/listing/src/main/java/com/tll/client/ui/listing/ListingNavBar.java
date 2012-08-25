@@ -4,7 +4,6 @@
  */
 package com.tll.client.ui.listing;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -12,7 +11,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Image;
@@ -21,13 +19,13 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.listing.IAddRowDelegate;
-import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingHandler;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ListingEvent;
 import com.tll.client.ui.Position;
 import com.tll.client.ui.msg.Msgs;
 import com.tll.client.ui.toolbar.Toolbar;
+import com.tll.client.ui.toolbar.ToolbarStyles;
 import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.util.StringUtil;
@@ -39,44 +37,12 @@ import com.tll.util.StringUtil;
  */
 public class ListingNavBar<R> extends Toolbar implements ClickHandler, KeyUpHandler, ChangeHandler,
 IListingHandler<R> {
-
-	/**
-	 * The listing nav bar specific image bundle.
-	 */
-	private static final ListingNavBarImageBundle imageBundle =
-		(ListingNavBarImageBundle) GWT.create(ListingNavBarImageBundle.class);
-
-	/**
-	 * Styles - (tableview.css)
-	 * @author jpk
-	 */
-	protected static class Styles {
-
-		/**
-		 * Style for a listing's nav bar.
-		 */
-		public static final String TABLE_VIEW_NAVBAR = "tvnav";
-		/**
-		 * Style for a listing's page container.
-		 */
-		public static final String PAGE_CONTAINER = "page";
-		/**
-		 * 
-		 */
-		public static final String SUMMARY = "smry";
-		/**
-		 * 
-		 */
-		public static final String PAGE = "tbPage";
-	}
-
+	
 	private final String listingElementName;
 
 	private IListingOperator<R> listingOperator;
 
 	private IAddRowDelegate addRowDelegate;
-
-	private final int pageSize;
 
 	// page nav related
 	private Image imgPageFirst;
@@ -97,6 +63,8 @@ IListingHandler<R> {
 
 	// add related
 	private PushButton btnAdd;
+	
+	final FlowPanel pageXofY;
 
 	// summary text ("Displaying elements x of y")
 	private final Label lblSmry;
@@ -115,88 +83,80 @@ IListingHandler<R> {
 
 	/**
 	 * Constructor
-	 * @param config Must be specified.
+	 * @param listingElementName
+	 * @param showRefreshBtn
 	 * @param addRowHandler Optional handler that handles row adding
 	 */
-	public ListingNavBar(IListingConfig<R> config, IAddRowDelegate addRowHandler) {
+	public ListingNavBar(String listingElementName, boolean showRefreshBtn, IAddRowDelegate addRowHandler) {
 		super();
-		assert config != null;
 
-		this.listingElementName = config.getListingElementName();
+		this.listingElementName = listingElementName;
 		assert listingElementName != null;
 
-		addStyleName(Styles.TABLE_VIEW_NAVBAR);
+		addStyleName(ListingNavStyles.css().tvnav());
 
 		Image split;
 
-		pageSize = config.getPageSize();
+		imgPageFirst = new Image();
+		imgPagePrev = new Image();
+		imgPageNext = new Image();
+		imgPageLast = new Image();
 
-		if(pageSize > 0) {
-			imgPageFirst = AbstractImagePrototype.create(imageBundle.page_first()).createImage();
-			imgPagePrev = AbstractImagePrototype.create(imageBundle.page_prev()).createImage();
-			imgPageNext = AbstractImagePrototype.create(imageBundle.page_next()).createImage();
-			imgPageLast = AbstractImagePrototype.create(imageBundle.page_last()).createImage();
+		btnPageFirst = new PushButton(imgPageFirst, this);
+		btnPagePrev = new PushButton(imgPagePrev, this);
+		btnPageNext = new PushButton(imgPageNext, this);
+		btnPageLast = new PushButton(imgPageLast, this);
 
-			btnPageFirst = new PushButton(imgPageFirst, this);
-			btnPagePrev = new PushButton(imgPagePrev, this);
-			btnPageNext = new PushButton(imgPageNext, this);
-			btnPageLast = new PushButton(imgPageLast, this);
+		// prev buttons (divs)
+		addButton(btnPageFirst, "First Page");
+		addButton(btnPagePrev, "Previous Page");
 
-			tbPage.addKeyUpHandler(this);
-			tbPage.addChangeHandler(this);
-			tbPage.setMaxLength(4);
-			tbPage.setStyleName(Styles.PAGE);
+		// separator
+		split = new Image(ListingNavStyles.resources().split());
+		split.setStyleName(ToolbarStyles.css().separator());
+		add(split);
 
-			// prev buttons (divs)
-			addButton(btnPageFirst, "First Page");
-			addButton(btnPagePrev, "Previous Page");
+		// Page x of y
+		tbPage.addKeyUpHandler(this);
+		tbPage.addChangeHandler(this);
+		tbPage.setMaxLength(4);
+		tbPage.setStyleName(ListingNavStyles.css().tbPage());
+		pageXofY = new FlowPanel();
+		pageXofY.setStyleName(ListingNavStyles.css().page());
+		pageXofY.add(lblPagePre);
+		pageXofY.add(tbPage);
+		pageXofY.add(lblPagePost);
+		add(pageXofY);
 
-			// separator
-			split = AbstractImagePrototype.create(imageBundle.split()).createImage();
-			split.setStylePrimaryName(Toolbar.Styles.SPLIT);
-			add(split);
+		// separator
+		split = new Image(ListingNavStyles.resources().split());
+		split.setStyleName(ToolbarStyles.css().separator());
+		add(split);
 
-			// Page x of y
-			final FlowPanel pageXofY = new FlowPanel();
-			pageXofY.addStyleName(Styles.PAGE_CONTAINER);
-			pageXofY.add(lblPagePre);
-			pageXofY.add(tbPage);
-			pageXofY.add(lblPagePost);
-			add(pageXofY);
-
-			// separator
-			split = AbstractImagePrototype.create(imageBundle.split()).createImage();
-			split.setStylePrimaryName(Toolbar.Styles.SPLIT);
-			add(split);
-
-			// next buttons (divs)
-			addButton(btnPageNext, "Next Page");
-			addButton(btnPageLast, "Last Page");
-		}
+		// next buttons (divs)
+		addButton(btnPageNext, "Next Page");
+		addButton(btnPageLast, "Last Page");
 
 		// show refresh button?
-		if(config.isShowRefreshBtn()) {
-			imgRefresh = AbstractImagePrototype.create(imageBundle.refresh()).createImage();
+		if(showRefreshBtn) {
+			imgRefresh = new Image(ListingNavStyles.resources().refresh());
 			btnRefresh = new PushButton(imgRefresh, this);
-
-			if(pageSize > 0) {
-				// separator
-				split = AbstractImagePrototype.create(imageBundle.split()).createImage();
-				split.setStylePrimaryName(Toolbar.Styles.SPLIT);
-				add(split);
-			}
+			// separator
+			split = new Image(ListingNavStyles.resources().split());
+			split.setStyleName(ToolbarStyles.css().separator());
+			add(split);
 			addButton(btnRefresh, "Refresh");
 		}
 
 		// show add button?
 		if(addRowHandler != null) {
 			// imgAdd = imageBundle.add().createImage();
-			final String title = "Add " + config.getListingElementName();
+			final String title = "Add " + listingElementName;
 			btnAdd = new PushButton(title, this);
-			if(pageSize > 0 || config.isShowRefreshBtn()) {
+			if(showRefreshBtn) {
 				// separator
-				split = AbstractImagePrototype.create(imageBundle.split()).createImage();
-				split.setStylePrimaryName(Toolbar.Styles.SPLIT);
+				split = new Image(ListingNavStyles.resources().split());
+				split.setStyleName(ToolbarStyles.css().separator());
 				add(split);
 			}
 			addButton(btnAdd, title);
@@ -204,15 +164,15 @@ IListingHandler<R> {
 		}
 
 		// separator
-		if(pageSize > 0 || config.isShowRefreshBtn() || addRowHandler != null) {
-			split = AbstractImagePrototype.create(imageBundle.split()).createImage();
-			split.setStylePrimaryName(Toolbar.Styles.SPLIT);
+		if(showRefreshBtn || addRowHandler != null) {
+			split = new Image(ListingNavStyles.resources().split());
+			split.setStyleName(ToolbarStyles.css().separator());
 			add(split);
 		}
 
 		// Displaying {listing element name} x - y of TOTAL
 		lblSmry = new Label();
-		lblSmry.setStyleName(Styles.SUMMARY);
+		lblSmry.setStyleName(ListingNavStyles.css().smry());
 		add(lblSmry);
 
 		// NOTE: we do this to squish the other table cells to their smallest
@@ -313,58 +273,58 @@ IListingHandler<R> {
 	 * Re-draws the contents of the nav bar.
 	 */
 	private void draw() {
-		if(pageSize > 0) {
-			// first page btn
-			btnPageFirst.setEnabled(!isFirstPage && hasRows);
-			if(isFirstPage || !hasRows) {
-				AbstractImagePrototype.create(imageBundle.page_first_disabled()).applyTo(imgPageFirst);
-			}
-			else {
-				AbstractImagePrototype.create(imageBundle.page_first()).applyTo(imgPageFirst);
-			}
-
-			// last page btn
-			btnPageLast.setEnabled(!isLastPage && hasRows);
-			if(isLastPage || !hasRows) {
-				AbstractImagePrototype.create(imageBundle.page_last_disabled()).applyTo(imgPageLast);
-			}
-			else {
-				AbstractImagePrototype.create(imageBundle.page_last()).applyTo(imgPageLast);
-			}
-
-			// prev page btn
-			btnPagePrev.setEnabled(!isFirstPage && hasRows);
-			if(isFirstPage || !hasRows) {
-				AbstractImagePrototype.create(imageBundle.page_prev_disabled()).applyTo(imgPagePrev);
-			}
-			else {
-				AbstractImagePrototype.create(imageBundle.page_prev()).applyTo(imgPagePrev);
-			}
-
-			// next page btn
-			btnPageNext.setEnabled(!isLastPage && hasRows);
-			if(isLastPage || !hasRows) {
-				AbstractImagePrototype.create(imageBundle.page_next_disabled()).applyTo(imgPageNext);
-			}
-			else {
-				AbstractImagePrototype.create(imageBundle.page_next()).applyTo(imgPageNext);
-			}
-
-			tbPage.setEnabled(hasRows);
-			lblPagePost.setVisible(hasRows);
-			if(hasRows) {
-				tbPage.setText(Integer.toString(crntPage));
-				tbPage.setEnabled(numPages > 1);
-				lblPagePost.setText("of " + numPages);
-			}
-			else {
-				tbPage.setText("");
-			}
+		// first page btn
+		btnPageFirst.setEnabled(!isFirstPage && hasRows);
+		if(isFirstPage || !hasRows) {
+			imgPageFirst.setResource(ListingNavStyles.resources().page_first_disabled());
 		}
+		else {
+			imgPageFirst.setResource(ListingNavStyles.resources().page_first());
+		}
+
+		// last page btn
+		btnPageLast.setEnabled(!isLastPage && hasRows);
+		if(isLastPage || !hasRows) {
+			imgPageLast.setResource(ListingNavStyles.resources().page_last_disabled());
+		}
+		else {
+			imgPageLast.setResource(ListingNavStyles.resources().page_last());
+		}
+
+		// prev page btn
+		btnPagePrev.setEnabled(!isFirstPage && hasRows);
+		if(isFirstPage || !hasRows) {
+			imgPagePrev.setResource(ListingNavStyles.resources().page_prev_disabled());
+		}
+		else {
+			imgPagePrev.setResource(ListingNavStyles.resources().page_prev());
+		}
+
+		// next page btn
+		btnPageNext.setEnabled(!isLastPage && hasRows);
+		if(isLastPage || !hasRows) {
+			imgPageNext.setResource(ListingNavStyles.resources().page_next_disabled());
+		}
+		else {
+			imgPageNext.setResource(ListingNavStyles.resources().page_next());
+		}
+
+		tbPage.setEnabled(hasRows);
+		lblPagePost.setVisible(hasRows);
+		if(hasRows) {
+			tbPage.setText(Integer.toString(crntPage));
+			tbPage.setEnabled(numPages > 1);
+			lblPagePost.setText("of " + numPages);
+		}
+		else {
+			tbPage.setText("");
+		}
+		
+		pageXofY.setVisible(hasRows);
 
 		// summary caption
 		assert listingElementName != null;
-		if(totalSize == 0) {
+		if(totalSize < 1) {
 			lblSmry.setText("No " + listingElementName + "s exist");
 		}
 		else {
@@ -393,5 +353,11 @@ IListingHandler<R> {
 			}
 			draw();
 		}
+	}
+
+	@Override
+	protected void onLoad() {
+		super.onLoad();
+		draw();
 	}
 }

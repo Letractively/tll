@@ -22,10 +22,10 @@ public interface IVersionSupport {
 	/**
 	 * @return the version
 	 */
-	long getVersion();
+	Integer getVersion();
 
 	/**
 	 * @param version the version to set
 	 */
-	void setVersion(long version);
+	void setVersion(Integer version);
 }

@@ -57,8 +57,8 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 					
 					@Override
 					public URI get() {
-						String dbPath = getConfig().getString(AbstractDb4oDaoModule.ConfigKeys.DB4O_FILENAME.getKey());
-						return AbstractDb4oDaoModule.getDb4oFileRef(dbPath);
+						String dbPath = getConfig().getString(Db4oConfigKeys.DB4O_FILENAME.getKey());
+						return Db4oDbShell.getDb4oClasspathFileRef(dbPath);
 					}
 				}).in(Scopes.SINGLETON);
 			}
@@ -70,6 +70,7 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 
 	@Override
 	protected void afterClass() {
+		super.afterClass();
 		dao.getObjectContainer().close();
 	}
 
@@ -102,13 +103,7 @@ public abstract class AbstractDb4oEntityDaoTest extends AbstractEntityDaoTest<Db
 		final EmbeddedObjectContainer oc = Db4oEmbedded.openFile(c, db4oUri.getPath());
 		dao.setObjectContainer(oc);
 		((Db4oTrans) getDbTrans()).setObjectContainer(oc);
-		((Db4oEntityFactory) getEntityFactory()).setObjectContainer(new Provider<EmbeddedObjectContainer>() {
-
-			@Override
-			public EmbeddedObjectContainer get() {
-				return oc;
-			}
-		});
+		((Db4oEntityFactory) getEntityFactory()).setObjectContainer(oc);
 		getDbTrans().startTrans();
 		final IEntity eloaded = dao.load(e.entityClass(), e.getId());
 		entityHandler.verifyLoadedEntityState(eloaded);

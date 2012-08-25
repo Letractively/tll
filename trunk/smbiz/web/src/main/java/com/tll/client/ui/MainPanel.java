@@ -304,7 +304,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		}
 
 		public void onSubmit(SubmitEvent event) {
-			if(!Window.confirm("Are you sure you want to Log out?")) {
+			if(!Window.confirm("Are you sure you want to Logger out?")) {
 				event.cancel();
 			}
 		}

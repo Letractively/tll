@@ -4,6 +4,7 @@
  */
 package com.tll.client.ui;
 
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -13,15 +14,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
  * @author jpk
  */
 public final class ImageContainer extends Composite {
-
-	/**
-	 * Styles - (widget-tll.css)
-	 * @author jpk
-	 */
-	protected static final class Styles {
-
-		public static final String IMAGE_CONTAINER = "ic";
-	}
 
 	private final SimplePanel sp = new SimplePanel();
 
@@ -33,7 +25,7 @@ public final class ImageContainer extends Composite {
 	public ImageContainer(Image img) {
 		setClippedImage(img);
 		initWidget(sp);
-		setStyleName(Styles.IMAGE_CONTAINER);
+		setStyleName(Styles.tllWidgetStyle().imageContainer());
 	}
 
 	/**
@@ -46,6 +38,27 @@ public final class ImageContainer extends Composite {
 	public ImageContainer(Image img, int width, int height) {
 		setUnclippedImage(img, width, height);
 		initWidget(sp);
+	}
+	
+	/**
+	 * Constructor - Use this constructor for 'clipped' images (i.e. the image IS
+	 * aware of its dimensions).
+	 * @param img The image.
+	 */
+	public ImageContainer(ImageResource img) {
+		setClippedImage(new Image(img));
+		initWidget(sp);
+		setStyleName(Styles.tllWidgetStyle().imageContainer());
+	}
+
+	/**
+	 * Constructor
+	 * @param ir
+	 * @param width
+	 * @param height
+	 */
+	public ImageContainer(ImageResource ir, int width, int height) {
+		setUnclippedImage(new Image(ir), width, height);
 	}
 
 	public Image getImage() {

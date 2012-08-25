@@ -7,8 +7,8 @@ package com.tll.dao;
 
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 
 import com.tll.criteria.Criteria;
@@ -23,7 +23,7 @@ import com.tll.model.egraph.EntityBeanFactory;
  */
 public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements IEntityDaoTestHandler<E> {
 
-	protected final Log log = LogFactory.getLog(getClass());
+	protected final Logger log = LoggerFactory.getLogger(getClass());
 
 	private IEntityDao entityDao;
 	private EntityBeanFactory entityBeanFactory;
@@ -52,7 +52,9 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	 */
 	protected final <D extends IEntity> D create(Class<D> entityType, boolean makeUnique) {
 		log.debug("Creating " + (makeUnique ? "UNIQUE" : "NON-UNIQUE") + " entity of type: " + entityType);
-		return entityBeanFactory.getEntityCopy(entityType);
+		D e = entityBeanFactory.getEntityCopy(entityType);
+		if(makeUnique) BusinessKeyFactory.makeBusinessKeyUnique(e);
+		return e;
 	}
 
 	/**
@@ -156,7 +158,9 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	protected final <D extends IEntity> D createAndPersist(Class<D> entityType, boolean makeUnique) {
 		try {
 			maybeStartTrans();
-			return entityDao.persist(entityBeanFactory.getEntityCopy(entityType));
+			D e = entityDao.persist(entityBeanFactory.getEntityCopy(entityType));
+			if(makeUnique) BusinessKeyFactory.makeBusinessKeyUnique(e);
+			return e;
 		}
 		finally {
 			endAnyTrans();

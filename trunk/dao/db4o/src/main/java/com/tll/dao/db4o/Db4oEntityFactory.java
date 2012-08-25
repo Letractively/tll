@@ -7,7 +7,6 @@ package com.tll.dao.db4o;
 
 import com.db4o.EmbeddedObjectContainer;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.tll.model.AbstractEntityFactory;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityMetadata;
@@ -19,7 +18,7 @@ import com.tll.model.IEntityMetadata;
 public class Db4oEntityFactory extends AbstractEntityFactory {
 
 	private final IEntityMetadata entityMetadata;
-	private Provider<EmbeddedObjectContainer> oc;
+	private EmbeddedObjectContainer oc;
 	private IdState state;
 
 	/**
@@ -29,7 +28,7 @@ public class Db4oEntityFactory extends AbstractEntityFactory {
 	 *        potentially non-unique business keys!
 	 */
 	@Inject
-	public Db4oEntityFactory(IEntityMetadata entityMetadata, Provider<EmbeddedObjectContainer> oc) {
+	public Db4oEntityFactory(IEntityMetadata entityMetadata, EmbeddedObjectContainer oc) {
 		super();
 		this.entityMetadata = entityMetadata;
 		setObjectContainer(oc);
@@ -44,7 +43,7 @@ public class Db4oEntityFactory extends AbstractEntityFactory {
 	 * Sets the object container provider.
 	 * @param oc required
 	 */
-	public void setObjectContainer(Provider<EmbeddedObjectContainer> oc) {
+	public void setObjectContainer(EmbeddedObjectContainer oc) {
 		if(oc == null) throw new NullPointerException();
 		this.oc = oc;
 	}
@@ -53,13 +52,13 @@ public class Db4oEntityFactory extends AbstractEntityFactory {
 	public Long generatePrimaryKey(IEntity entity) {
 		if(state == null) {
 			try {
-				state = oc.get().query(IdState.class).get(0);
+				state = oc.query(IdState.class).get(0);
 				log.info(state == null ? "Db4o primary key state NOT acquired." : "Db4o primary key state acquired.");
 			}
 			catch(Exception e) {
 				log.info("Creating Db4o primary key state entity.");
 				state = new IdState();
-				oc.get().store(state);
+				oc.store(state);
 			}
 		}
 
@@ -71,7 +70,7 @@ public class Db4oEntityFactory extends AbstractEntityFactory {
 
 		final Long next = Long.valueOf(current == null ? 1L : current.longValue() + 1);
 		state.setCurrentId(rootEntityClass, next);
-		oc.get().store(state);
+		oc.store(state);
 		entity.setGenerated(next);
 		log.info("Generated Db4o primary key: " + next + " for: " + rootEntityClass.getSimpleName());
 		return next;

@@ -8,9 +8,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	
-	<groupId>com.tll</groupId>
 	<artifactId>tll-schema</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>tll-schema</name>
 	<description>Provides model schema metadata.</description>
 	
@@ -18,9 +16,15 @@
 		<resources>
 			<resource>
 				<directory>src/main/java</directory>
-				<excludes>
-					<exclude>**/SchemaInfo.java</exclude>
-				</excludes>
+				<includes>
+					<include>**/model/AbstractSchemaProperty.java</include>
+					<include>**/model/IPropertyMetadataProvider.java</include>
+					<include>**/model/IPropertyNameProvider.java</include>
+					<include>**/model/ISchemaProperty.java</include>
+					<include>**/model/PropertyMetadata.java</include>
+					<include>**/model/PropertyType.java</include>
+					<include>**/*.gwt.xml</include>
+				</includes>
 			</resource>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -29,10 +33,15 @@
 	</build>
 
 	<dependencies>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-		</dependency>
+    <dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <scope>runtime</scope>
+    </dependency>
 	
 		<dependency>
 			<groupId>javax.validation</groupId>
@@ -45,7 +54,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.google.code.guice</groupId>
+			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
 		</dependency>
 		<dependency>

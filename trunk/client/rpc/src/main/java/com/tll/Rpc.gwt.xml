@@ -1,0 +1,7 @@
+<module>
+	<inherits name="com.tll.ClientCore" />
+
+  <source path="client" />
+  <source path="common" />
+  
+</module>

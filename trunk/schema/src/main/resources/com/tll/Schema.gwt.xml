@@ -1,7 +1,0 @@
-<module>
-
-  <source path="model">
-    <exclude name="SchemaInfo" />
-  </source>
-
-</module>

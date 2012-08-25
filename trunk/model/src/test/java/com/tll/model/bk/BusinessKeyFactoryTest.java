@@ -27,8 +27,6 @@ public class BusinessKeyFactoryTest {
 			"authNum", "refNum" }) })
 	static class TestEntity {
 
-		private static final long serialVersionUID = 1L;
-
 		public static final String BK_NAME = "Name";
 		public static final String BK_CODE = "Code";
 		public static final String BK_AR = "Auth Num & Ref Num";
@@ -90,8 +88,13 @@ public class BusinessKeyFactoryTest {
 		e.setRefNum("refNum");
 		return e;
 	}
-	
+
 	static class TestEntityMetadata implements IEntityMetadata {
+
+		@Override
+		public Object getId(Object entity) {
+			return Long.valueOf(((TestEntity) entity).getId());
+		}
 
 		@Override
 		public Class<?> getEntityClass(Object entity) {
@@ -117,11 +120,11 @@ public class BusinessKeyFactoryTest {
 		public boolean isEntityType(Class<?> claz) {
 			return TestEntity.class.isAssignableFrom(claz);
 		}
-		
+
 	}
-	
+
 	static final IEntityMetadata entityMetadata = new TestEntityMetadata();
-	
+
 	static final BusinessKeyFactory bkf = new BusinessKeyFactory(entityMetadata);
 
 	public void testBusinessKeyFactoryCreateFromClass() throws Exception {

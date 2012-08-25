@@ -5,8 +5,8 @@
  */
 package com.tll.dao.db4o.test;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springextensions.db4o.Db4oTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -22,7 +22,7 @@ import com.tll.dao.IDbTrans;
  */
 public class Db4oTrans implements IDbTrans {
 
-	private static final Log log = LogFactory.getLog(Db4oTrans.class);
+	private static final Logger log = LoggerFactory.getLogger(Db4oTrans.class);
 
 	/**
 	 * The trans manager.

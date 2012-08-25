@@ -7,6 +7,7 @@ package com.tll.client.listing;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.IMarshalable;
 import com.tll.client.data.rpc.RpcCommand;
 import com.tll.common.data.ListingOp;
@@ -31,6 +32,7 @@ public final class RemoteListingOperator<R extends IMarshalable, S extends IMars
 	 * Factory method that creates a listing command to control acccess to a remote listing.
 	 * @param <R> row data type
 	 * @param <S> search criteria type
+	 * @param target required target widget that will recieve listing events
 	 * @param listingId the unique listing id
 	 * @param searchCriteria The search criteria that generates the remote
 	 *        listing.
@@ -41,12 +43,12 @@ public final class RemoteListingOperator<R extends IMarshalable, S extends IMars
 	 * @param initialSorting The initial sorting directive
 	 * @return A new {@link RemoteListingOperator}
 	 */
-	public static <R extends IMarshalable, S extends IMarshalable> RemoteListingOperator<R, S> create(
+	public static <R extends IMarshalable, S extends IMarshalable> RemoteListingOperator<R, S> create(Widget target,
 			String listingId, S searchCriteria, String[] propKeys, int pageSize, Sorting initialSorting) {
 
 		final RemoteListingDefinition<S> rld =
 			new RemoteListingDefinition<S>(searchCriteria, propKeys, pageSize, initialSorting);
-		return new RemoteListingOperator<R, S>(listingId, rld);
+		return new RemoteListingOperator<R, S>(target, listingId, rld);
 	}
 
 	private static final IListingServiceAsync svc;
@@ -68,7 +70,7 @@ public final class RemoteListingOperator<R extends IMarshalable, S extends IMars
 			if(listingRequest == null) {
 				throw new IllegalStateException("Null listing command");
 			}
-			if(sourcingWidget == null) {
+			if(target == null) {
 				throw new IllegalStateException("Null sourcing widget");
 			}
 			svc.process((ListingRequest) listingRequest, (AsyncCallback) getAsyncCallback());
@@ -118,24 +120,21 @@ public final class RemoteListingOperator<R extends IMarshalable, S extends IMars
 
 	/**
 	 * Constructor
+	 * @param target required target widget to recieve listing events
 	 * @param listingId unique listing id
 	 * @param listingDef the remote listing definition
 	 */
-	public RemoteListingOperator(String listingId, RemoteListingDefinition<S> listingDef) {
-		if(listingId == null || listingDef == null) throw new IllegalArgumentException();
+	public RemoteListingOperator(Widget target, String listingId, RemoteListingDefinition<S> listingDef) {
+		super(target, listingDef.getInitialSorting());
+		if(listingId == null) throw new IllegalArgumentException();
 		this.listingId = listingId;
 		this.listingDef = listingDef;
-	}
-
-	@Override
-	protected String getListingId() {
-		return listingId;
 	}
 
 	private void execute() {
 		assert listingRequest != null;
 		final ListingCommand cmd = new ListingCommand();
-		cmd.setSource(sourcingWidget);
+		cmd.setSource(target);
 		cmd.execute();
 	}
 
@@ -185,7 +184,7 @@ public final class RemoteListingOperator<R extends IMarshalable, S extends IMars
 
 	@Override
 	public void refresh() {
-		fetch(offset, sorting, true);
+		fetch(0, defaultSorting, true);
 	}
 
 	@Override

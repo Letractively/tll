@@ -34,9 +34,9 @@ public class FormatGWTTest extends GWTTestCase {
 
 	@SuppressWarnings("deprecation")
 	public void testDateFormatting() {
-		final Date now = new Date(2009, 0, 1);
+		final Date now = new Date((2009-1900), 0, 1);
 		final String s = Fmt.format(now, GlobalFormat.DATE);
-		Assert.assertEquals("1/1/09", s);
+		Assert.assertEquals("2009-01-01", s);
 	}
 
 	public void testBooleanFormatting() {

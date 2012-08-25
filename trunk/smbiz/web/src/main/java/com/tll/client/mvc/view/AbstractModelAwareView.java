@@ -44,7 +44,7 @@ public abstract class AbstractModelAwareView<I extends IViewInitializer> extends
 	@Override
 	public final void onModelChangeEvent(ModelChangeEvent event) {
 		if(shouldHandleModelChangeEvent(event)) {
-			Log.debug("View ( " + toString() + " ) is handling model change event: " + event.toString() + "..");
+		 Logger.debug("View ( " + toString() + " ) is handling model change event: " + event.toString() + "..");
 
 			// global handling
 			//if(event.getStatus() != null && event.getStatus().hasErrors()) {

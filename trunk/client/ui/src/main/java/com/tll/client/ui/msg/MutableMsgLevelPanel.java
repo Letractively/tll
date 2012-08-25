@@ -12,10 +12,10 @@ import java.util.Map;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.HtmlListPanel;
@@ -49,7 +49,6 @@ public class MutableMsgLevelPanel extends Composite {
 		 */
 		final Integer classifier;
 
-		@SuppressWarnings("null")
 		Entry(Msg msg, final IWidgetRef ref, Integer classifier) {
 			this.classifier = classifier;
 			this.sourced = (ref != null && (ref.getWidget() instanceof Focusable));
@@ -84,28 +83,6 @@ public class MutableMsgLevelPanel extends Composite {
 	} // Entry
 
 	/**
-	 * Styles - (msg.css)
-	 * @author jpk
-	 */
-	static class Styles {
-
-		/**
-		 * Style applied to to the containing div that contains the table.
-		 */
-		public static final String CONTAINER = "container";
-
-		/**
-		 * Style applied to to widgets containing messages.
-		 */
-		public static final String MSG = "msg";
-
-		/**
-		 * Style applied to the title of this panel.
-		 */
-		public static final String TITLE = "title";
-	}
-
-	/**
 	 * The filtering message level. Only messages matching this level are
 	 * displayed.
 	 */
@@ -137,11 +114,11 @@ public class MutableMsgLevelPanel extends Composite {
 	}
 
 	private void init() {
-		container.setStyleName(Styles.CONTAINER);
-		container.addStyleName(mlevel.getName().toLowerCase());
+		container.setStyleName(MsgStyles.css().container());
+		container.addStyleName(MsgStyles.getMsgLevelStyle(mlevel));
 		initWidget(container);
 
-		final Image img = Util.getMsgLevelImage(mlevel);
+		final ImageResource img = MsgStyles.getMsgLevelImage(mlevel);
 		// NOTE: since this is a clipped image, the width/height should be known
 		final FlowPanel fp = new FlowPanel();
 		fp.add(new ImageContainer(img));
@@ -163,7 +140,7 @@ public class MutableMsgLevelPanel extends Composite {
 		}
 		final Label l = new Label(title);
 		l.setStyleName("bold");
-		l.addStyleName(Styles.TITLE);
+		l.addStyleName(MsgStyles.css().title());
 		fp.add(l);
 		container.add(fp);
 		container.add(list);
@@ -265,7 +242,7 @@ public class MutableMsgLevelPanel extends Composite {
 	 * @param classifier optional classifier id
 	 */
 	public void remove(IWidgetRef wref, Integer classifier) {
-		final List<Entry> elist = entries.get(wref.getWidget());
+		final List<Entry> elist = entries.get(wref == null ? null : wref.getWidget());
 		if(elist != null) {
 			final ArrayList<Entry> tormv = new ArrayList<Entry>();
 			for(final Entry entry : elist) {

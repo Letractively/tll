@@ -1,0 +1,12 @@
+<module>
+  <inherits name="com.tll.Schema" />
+  <inherits name="com.tll.ClientCore" />
+  <inherits name="com.tll.Dao" />
+
+  <!-- <stylesheet src="css/tableview.css" /> -->
+
+  <source path="client" />
+
+  <source path="common" />
+
+</module>

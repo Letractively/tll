@@ -16,8 +16,8 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Config - Configuration store able to load multiple property files and hold
@@ -26,9 +26,9 @@ import org.apache.commons.logging.LogFactory;
  * <strong>NOTE: </strong>Delimeter parsing is disabled.
  * @author jpk
  */
-public final class Config implements Configuration {
+public final class Config {
 
-	private static final Log log = LogFactory.getLog(Config.class);
+	private static final Logger log = LoggerFactory.getLogger(Config.class);
 
 	/**
 	 * The default loading routine where a classpath resource named:
@@ -107,212 +107,169 @@ public final class Config implements Configuration {
 		log.info("Properties loaded for: " + url.getPath());
 	}
 
-	@Override
 	public void addProperty(String key, Object value) {
 		root.addProperty(key, value);
 	}
 
-	@Override
 	public void clear() {
 		root.clear();
 	}
 
-	@Override
 	public void clearProperty(String key) {
 		root.clearProperty(key);
 	}
 
-	@Override
 	public boolean containsKey(String key) {
 		return root.containsKey(key);
 	}
 
-	@Override
 	public BigDecimal getBigDecimal(String key, BigDecimal defaultValue) {
 		return root.getBigDecimal(key, defaultValue);
 	}
 
-	@Override
 	public BigDecimal getBigDecimal(String key) {
 		return root.getBigDecimal(key);
 	}
 
-	@Override
 	public BigInteger getBigInteger(String key, BigInteger defaultValue) {
 		return root.getBigInteger(key, defaultValue);
 	}
 
-	@Override
 	public BigInteger getBigInteger(String key) {
 		return root.getBigInteger(key);
 	}
 
-	@Override
 	public boolean getBoolean(String key, boolean defaultValue) {
 		return root.getBoolean(key, defaultValue);
 	}
 
-	@Override
 	public Boolean getBoolean(String key, Boolean defaultValue) {
 		return root.getBoolean(key, defaultValue);
 	}
 
-	@Override
 	public boolean getBoolean(String key) {
 		return root.getBoolean(key);
 	}
 
-	@Override
 	public byte getByte(String key, byte defaultValue) {
 		return root.getByte(key, defaultValue);
 	}
 
-	@Override
 	public Byte getByte(String key, Byte defaultValue) {
 		return root.getByte(key, defaultValue);
 	}
 
-	@Override
 	public byte getByte(String key) {
 		return root.getByte(key);
 	}
 
-	@Override
 	public double getDouble(String key, double defaultValue) {
 		return root.getDouble(key, defaultValue);
 	}
 
-	@Override
 	public Double getDouble(String key, Double defaultValue) {
 		return root.getDouble(key, defaultValue);
 	}
 
-	@Override
 	public double getDouble(String key) {
 		return root.getDouble(key);
 	}
 
-	@Override
 	public float getFloat(String key, float defaultValue) {
 		return root.getFloat(key, defaultValue);
 	}
 
-	@Override
 	public Float getFloat(String key, Float defaultValue) {
 		return root.getFloat(key, defaultValue);
 	}
 
-	@Override
 	public float getFloat(String key) {
 		return root.getFloat(key);
 	}
 
-	@Override
 	public int getInt(String key, int defaultValue) {
 		return root.getInt(key, defaultValue);
 	}
 
-	@Override
 	public int getInt(String key) {
 		return root.getInt(key);
 	}
 
-	@Override
 	public Integer getInteger(String key, Integer defaultValue) {
 		return root.getInteger(key, defaultValue);
 	}
 
-	@Override
 	@SuppressWarnings("unchecked")
 	public Iterator<String> getKeys() {
 		return root.getKeys();
 	}
 
-	@Override
 	@SuppressWarnings("unchecked")
 	public Iterator<String> getKeys(String prefix) {
 		return root.getKeys(prefix);
 	}
 
-	@Override
-	@SuppressWarnings({
-		"rawtypes"
-	})
+	@SuppressWarnings("rawtypes")
 	public List<?> getList(String key, List defaultValue) {
 		return root.getList(key, defaultValue);
 	}
 
-	@Override
 	public List<?> getList(String key) {
 		return root.getList(key);
 	}
 
-	@Override
 	public long getLong(String key, long defaultValue) {
 		return root.getLong(key, defaultValue);
 	}
 
-	@Override
 	public Long getLong(String key, Long defaultValue) {
 		return root.getLong(key, defaultValue);
 	}
 
-	@Override
 	public long getLong(String key) {
 		return root.getLong(key);
 	}
 
-	@Override
 	public Properties getProperties(String key) {
 		return root.getProperties(key);
 	}
 
-	@Override
 	public Object getProperty(String key) {
 		return root.getProperty(key);
 	}
 
-	@Override
 	public short getShort(String key, short defaultValue) {
 		return root.getShort(key, defaultValue);
 	}
 
-	@Override
 	public Short getShort(String key, Short defaultValue) {
 		return root.getShort(key, defaultValue);
 	}
 
-	@Override
 	public short getShort(String key) {
 		return root.getShort(key);
 	}
 
-	@Override
 	public String getString(String key, String defaultValue) {
 		return root.getString(key, defaultValue);
 	}
 
-	@Override
 	public String getString(String key) {
 		return root.getString(key);
 	}
 
-	@Override
 	public String[] getStringArray(String key) {
 		return root.getStringArray(key);
 	}
 
-	@Override
 	public boolean isEmpty() {
 		return root.isEmpty();
 	}
 
-	@Override
 	public void setProperty(String key, Object value) {
 		root.setProperty(key, value);
 	}
 
-	@Override
 	public Configuration subset(String prefix) {
 		return root.subset(prefix);
 	}

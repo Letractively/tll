@@ -11,8 +11,6 @@ import java.util.List;
  */
 public final class Criteria<E> {
 
-	private static final long serialVersionUID = 4274638102260498756L;
-
 	private CriteriaType criteriaType;
 
 	private Class<E> entityClass;

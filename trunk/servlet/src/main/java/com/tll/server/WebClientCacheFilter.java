@@ -23,6 +23,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.inject.Singleton;
+
 /**
  * <em>IMPT:</em>This file was derived from Mat Gessel's gwtTk framework java
  * class GWTCacheFilter (TODO verify class name) class.
@@ -57,6 +59,7 @@ import javax.servlet.http.HttpServletResponse;
  *      href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.32">Pragma
  *      directive</a>
  */
+@Singleton
 public class WebClientCacheFilter implements Filter {
 
 	public static final String INITPARAM_GWT_NOCACHE = "gwtNoCachePattern";
