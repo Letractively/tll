@@ -2,6 +2,7 @@ package com.tll.config;
 
 import java.io.File;
 import java.io.FileReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -125,7 +126,8 @@ public class ConfigTest {
 	}
 
 	private File stubTestConfigOutputPropsFile() throws Exception {
-		File f = new File(TEST_PROPS_FILE);
+		URL turl = getClass().getResource("/");
+		File f = new File(turl.getPath() + TEST_PROPS_FILE);
 		f.createNewFile();
 		f.deleteOnExit();
 		return f;
@@ -142,7 +144,7 @@ public class ConfigTest {
 		config.saveAsPropFile(f, null, null);
 
 		Properties props = new Properties();
-		props.load(new FileReader(TEST_PROPS_FILE));
+		props.load(new FileReader(f));
 
 		Enumeration<?> enm = props.propertyNames();
 
@@ -172,7 +174,7 @@ public class ConfigTest {
 		config.saveAsPropFile(f, "props.commas", "props.commas.");
 
 		Properties props = new Properties();
-		props.load(new FileReader(TEST_PROPS_FILE));
+		props.load(new FileReader(f));
 
 		Enumeration<?> enm = props.propertyNames();
 		while(enm.hasMoreElements()) {
